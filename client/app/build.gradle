@@ -49,15 +49,6 @@ android {
 configurations {
 //    exclude group: '', module: ''
     all {
-        exclude group: 'org.springframework.security', module: 'spring-security-crypto'
-        exclude group: 'org.aspectj', module: 'aspectjweaver'
-        exclude group: 'org.springframework', module: 'spring-jcl'
-        exclude group: 'javax.persistence', module: 'javax.persistence-api'
-        exclude group: 'org.apache.tomcat', module: 'tomcat-annotations-api'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-        exclude group: 'javax.activation', module: 'javax.activation-api'
-        exclude group: 'net.jcip', module: 'jcip-annotations'
-        exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
     }
 }
 
@@ -65,7 +56,7 @@ configurations {
 
 dependencies {
     // https://mvnrepository.com/artifact/io.mosip.kernel/kernel-keymanager-service
-    implementation 'io.mosip.kernel:kernel-keymanager-service:1.2.0-rc1:lib'
+    implementation ('io.mosip.kernel:kernel-keymanager-service:1.2.0-rc1:lib') { transitive = false }
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
