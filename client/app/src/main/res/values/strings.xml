@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestApp</string>
+    <string name="app_name">registration_client</string>
     <string name="end">End</string>
     <string name="start">Start</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.mosip.testapp;
+package io.mosip.registration.app;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

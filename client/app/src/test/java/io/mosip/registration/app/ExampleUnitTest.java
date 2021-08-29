@@ -1,4 +1,4 @@
-package com.mosip.testapp;
+package io.mosip.registration.app;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.mosip.testapp;
+package io.mosip.registration.app;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.mosip.testapp", appContext.getPackageName());
+        assertEquals("io.mosip.registration.app", appContext.getPackageName());
     }
 }
