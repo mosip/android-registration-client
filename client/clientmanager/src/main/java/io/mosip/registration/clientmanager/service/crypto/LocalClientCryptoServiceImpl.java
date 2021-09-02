@@ -85,6 +85,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     @Override
     public SignResponseDto sign(SignRequestDto signRequestDto) {
         byte[] dataToSign = base64decoder.decode(signRequestDto.getData());
+        SignResponseDto signResponseDto = new SignResponseDto();
         try {
             Signature sign = Signature.getInstance(SIGN_ALGORITHM);
             sign.initSign(getPrivateKey());
@@ -97,31 +98,47 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
                 }
                 byte[] signedData = sign.sign();
 
-                SignResponseDto signResponseDto = new SignResponseDto();
+
                 signResponseDto.setData(base64encoder.encodeToString(signedData));
-                return signResponseDto;
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return null;
+        return signResponseDto;
     }
 
     @Override
     public SignVerifyResponseDto verifySign(SignVerifyRequestDto signVerifyRequestDto) {
-//        byte[] message;
-//        byte[] signature;
-//        PublicKey key;
-//        Signature s = null;
-//        try {
-//            s = Signature.getInstance("SHA256withRSA");
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        }
-//        s.initVerify(key);
-//        s.update(message);
-//        boolean valid = s.verify(signature);
-        return null;
+        boolean result = false;
+        SignVerifyResponseDto signVerifyResponseDto = new SignVerifyResponseDto();
+        try {
+            byte[] public_key = base64decoder.decode(signVerifyRequestDto.getPublicKey());
+            byte[] signature = base64decoder.decode(signVerifyRequestDto.getSignature());
+            byte[] actualData = base64decoder.decode(signVerifyRequestDto.getData());
+
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
+            KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
+            PublicKey publicKey = kf.generatePublic(keySpec);
+
+            Signature sign = Signature.getInstance(SIGN_ALGORITHM);
+            sign.initVerify(publicKey);
+
+            try(ByteArrayInputStream in = new ByteArrayInputStream(actualData)) {
+                byte[] buffer = new byte[2048];
+                int len = 0;
+
+                while((len = in.read(buffer)) != -1) {
+                    sign.update(buffer, 0, len);
+                }
+                result = sign.verify(signature);
+            }
+            signVerifyResponseDto.setVerified(result);
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return signVerifyResponseDto;
     }
 
     @Override
