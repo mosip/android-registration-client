@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
