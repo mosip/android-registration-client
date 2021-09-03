@@ -223,17 +223,6 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     }
 
 
-    // Setup Keystore
-    private void setupKeys() throws NoSuchProviderException, NoSuchAlgorithmException {
-        final KeyGenerator keyGenerator = KeyGenerator
-                .getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
-        final KeyGenParameterSpec keyGenParameterSpec = new KeyGenParameterSpec.Builder(ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .build();
-    }
-
     private static byte[] generateRandomBytes(int length) {
         if(secureRandom == null)
             secureRandom = new SecureRandom();
