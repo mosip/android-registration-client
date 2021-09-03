@@ -95,6 +95,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     LocalClientCryptoServiceImpl() {
         Context context = getApplicationContext();
         this.context = context;
+        initializeClientSecurity();
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                     KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
