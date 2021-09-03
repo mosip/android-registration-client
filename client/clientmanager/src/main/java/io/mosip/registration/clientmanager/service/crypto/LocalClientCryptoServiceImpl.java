@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 
 import androidx.annotation.Nullable;
 
@@ -16,16 +18,34 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Signature;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 import java.util.Objects;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -36,32 +56,35 @@ import io.mosip.registration.clientmanager.util.ConfigService;
 @Singleton
 public class LocalClientCryptoServiceImpl extends Service implements ClientCryptoManagerService {
 
-    private static Context context;
-    private static String ALGORITHM;
-    private static int KEY_LENGTH;
-    private static String SIGN_ALGORITHM;
-    private static String PRIVATE_KEY = "reg.key";
-    private static String PUBLIC_KEY = "reg.pub";
+    private Context context;
+
     private static Encoder base64encoder;
     private static Decoder base64decoder;
+
+    private static String CRYPTO_ASYMMETRIC_ALGORITHM;
+    private static String CRYPTO_SYMMETRIC_ALGORITHM;
+    private static String KEYGEN_ASYMMETRIC_ALGORITHM;
+    private static String KEYGEN_SYMMETRIC_ALGORITHM;
+    private static int KEYGEN_ASYMMETRIC_KEY_LENGTH;
+    private static int KEYGEN_SYMMETRIC_KEY_LENGTH;
+    private static int CRYPTO_GCM_TAG_LENGTH;
+    private static final int IV_LENGTH = 12;
+    private static final int AAD_LENGTH = 32;
+    private static String CRYPTO_HASH_ALGORITHM;
+    private static int CRYPTO_HASH_SYMMETRIC_KEY_LENGTH;
+    private static int CRYPTO_HASH_ITERATION;
+    private static String CRYPTO_SIGN_ALGORITHM;
+    private static String CERTIFICATE_SIGN_ALGORITHM;
+
+    private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    private static final String ALIAS = "DUMMY_ALIAS";
+
+    private static SecureRandom secureRandom = null;
 
 
 
     @Inject
     LocalClientCryptoServiceImpl() {
-        try {
-            if (!doesKeysExists()) {
-                setupKeysDir();
-                KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ALGORITHM);
-                keyGenerator.initialize(KEY_LENGTH, new SecureRandom());
-                KeyPair keypair = keyGenerator.generateKeyPair();
-                createKeyFile(PRIVATE_KEY, keypair.getPrivate().getEncoded());
-                createKeyFile(PUBLIC_KEY, keypair.getPublic().getEncoded());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
     }
 
     @Nullable
@@ -73,9 +96,25 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private void initializeClientSecurity() {
         // get context from main activity
         Context context = getApplicationContext();
-        ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-algorithm-name",context);
-        KEY_LENGTH = Integer.parseInt(ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-key-length",context));
-        SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm", context);
+        this.context = context;
+        CRYPTO_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-name",context);
+        CRYPTO_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-name",context);
+        KEYGEN_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-algorithm-name",context);
+        KEYGEN_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.symmetric-algorithm-name",context);
+        KEYGEN_ASYMMETRIC_KEY_LENGTH = Integer.parseInt(
+                ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-key-length",context));
+        KEYGEN_SYMMETRIC_KEY_LENGTH = Integer.parseInt(
+                ConfigService.getProperty("mosip.kernel.keygenerator.symmetric-key-length",context));
+        CRYPTO_GCM_TAG_LENGTH = Integer.parseInt(
+                ConfigService.getProperty("mosip.kernel.crypto.gcm-tag-length",context));
+        CRYPTO_HASH_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.hash-algorithm-name",context);
+        CRYPTO_HASH_SYMMETRIC_KEY_LENGTH = Integer.parseInt(
+                ConfigService.getProperty("mosip.kernel.crypto.hash-symmetric-key-length",context));
+        CRYPTO_HASH_ITERATION = Integer.parseInt(
+                ConfigService.getProperty("mosip.kernel.crypto.hash-iteration",context));
+        CRYPTO_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-name",context);
+        CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);
+
         base64encoder = Base64.getEncoder();
         base64decoder = Base64.getDecoder();
 
@@ -87,30 +126,26 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         byte[] dataToSign = base64decoder.decode(signRequestDto.getData());
         SignResponseDto signResponseDto = new SignResponseDto();
         try {
-            Signature sign = Signature.getInstance(SIGN_ALGORITHM);
-            sign.initSign(getPrivateKey());
+//          read private key from keystore
+            PrivateKey privateKey = getPrivateKey();
 
-            try(ByteArrayInputStream in = new ByteArrayInputStream(dataToSign)) {
-                byte[] buffer = new byte[2048];
-                int len = 0;
-                while((len = in.read(buffer)) != -1) {
-                    sign.update(buffer, 0, len);
-                }
-                byte[] signedData = sign.sign();
+            Signature sign = Signature.getInstance(CRYPTO_SIGN_ALGORITHM);
+            sign.initSign(privateKey);
+            sign.update(dataToSign);
+            byte[] signedData = sign.sign();
 
+            signResponseDto.setData(base64encoder.encodeToString(signedData));
+            return signResponseDto;
 
-                signResponseDto.setData(base64encoder.encodeToString(signedData));
-
-            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return signResponseDto;
+        return null;
     }
 
     @Override
     public SignVerifyResponseDto verifySign(SignVerifyRequestDto signVerifyRequestDto) {
-        boolean result = false;
+
         SignVerifyResponseDto signVerifyResponseDto = new SignVerifyResponseDto();
         try {
             byte[] public_key = base64decoder.decode(signVerifyRequestDto.getPublicKey());
@@ -118,59 +153,48 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             byte[] actualData = base64decoder.decode(signVerifyRequestDto.getData());
 
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
-            KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
+            KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
             PublicKey publicKey = kf.generatePublic(keySpec);
 
-            Signature sign = Signature.getInstance(SIGN_ALGORITHM);
+            Signature sign = Signature.getInstance(CRYPTO_SIGN_ALGORITHM);
             sign.initVerify(publicKey);
+            sign.update(actualData);
+            boolean result = sign.verify(signature);
 
-            try(ByteArrayInputStream in = new ByteArrayInputStream(actualData)) {
-                byte[] buffer = new byte[2048];
-                int len = 0;
-
-                while((len = in.read(buffer)) != -1) {
-                    sign.update(buffer, 0, len);
-                }
-                result = sign.verify(signature);
-            }
             signVerifyResponseDto.setVerified(result);
+            return signVerifyResponseDto;
         }
         catch(Exception ex) {
             ex.printStackTrace();
         }
-        return signVerifyResponseDto;
+        return null;
     }
 
     @Override
     public CryptoResponseDto encrypt(CryptoRequestDto cryptoRequestDto) {
-//        byte[] message;
-//        byte[] signature;
-//        Signature sign = Signature.getInstance("SHA256withRSA");
-//
-//        //Creating KeyPair generator object
-//        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
-//
-//        //Initializing the key pair generator
-//        keyPairGen.initialize(2048);
-//
-//        //Generate the pair of keys
-//        KeyPair pair = keyPairGen.generateKeyPair();
-//
-//        //Getting the public key from the key pair
-//        PublicKey publicKey = pair.getPublic();
-//
-//        //Creating a Cipher object
-//        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-//
-//        //Initializing a Cipher object
-//        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-//
-//        //Add data to the cipher
-//        byte[] input = "Welcome to Tutorialspoint".getBytes();
-//        cipher.update(input);
-//
-//        //encrypting the data
-//        byte[] cipherText = cipher.doFinal();
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+
+        try {
+            byte[] publicKey = base64decoder.decode(cryptoRequestDto.getPublicKey());
+            byte[] dataToEncrypt = base64decoder.decode(cryptoRequestDto.getValue());
+            // read secret key from keystore
+            SecretKey secretKey = getSecretKey();
+
+
+            final Cipher cipher = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
+
+            byte[] iv = cipher.getIV();
+
+            byte[] encryption = cipher.doFinal(dataToEncrypt));
+
+
+            cryptoResponseDto.setValue(base64encoder.encodeToString(encryption));
+            return cryptoResponseDto;
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
         return null;
     }
 
@@ -185,39 +209,37 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         return null;
     }
 
-    private void setupKeysDir() {
-        File keysDir = new File(getKeysDirPath());
-        keysDir.mkdirs();
+    private static SecretKey getSecretKey() throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        final KeyGenerator keyGenerator = KeyGenerator
+                .getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+
+        keyGenerator.init(new KeyGenParameterSpec.Builder(ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .build());
+
+        return keyGenerator.generateKey();
     }
 
-    private boolean doesKeysExists() {
-        File keysDir = new File(getKeysDirPath());
-        return (keysDir.exists() && Objects.requireNonNull(keysDir.list()).length >= 2);
+
+    // Setup Keystore
+    private void setupKeys() throws NoSuchProviderException, NoSuchAlgorithmException {
+        final KeyGenerator keyGenerator = KeyGenerator
+                .getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+        final KeyGenParameterSpec keyGenParameterSpec = new KeyGenParameterSpec.Builder(ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .build();
     }
 
-    private String getKeysDirPath() {
-        return System.getProperty("user.dir") + File.separator + ".mosipkeys";
-    }
+    private static byte[] generateRandomBytes(int length) {
+        if(secureRandom == null)
+            secureRandom = new SecureRandom();
 
-    private void createKeyFile(String fileName, byte[] key) throws IOException {
-        try(FileOutputStream os =
-                    new FileOutputStream(getKeysDirPath() + File.separator + fileName)) {
-            os.write(key);
-        }
+        byte[] bytes = new byte[length];
+        secureRandom.nextBytes(bytes);
+        return bytes;
     }
-
-    private PrivateKey getPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] key = Files.readAllBytes(Paths.get(getKeysDirPath() + File.separator + PRIVATE_KEY));
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(key);
-        KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
-        return kf.generatePrivate(keySpec);
-    }
-
-    private PublicKey getPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] key = Files.readAllBytes(Paths.get(getKeysDirPath() + File.separator + PUBLIC_KEY));
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(key);
-        KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
-        return kf.generatePublic(keySpec);
-    }
-
 }
