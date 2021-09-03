@@ -252,7 +252,32 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     @Override
     public CryptoResponseDto decrypt(CryptoRequestDto cryptoRequestDto) {
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        byte[] dataToDecrypt =  base64decoder.decode(cryptoRequestDto.getValue());
+        byte[] public_key =  base64decoder.decode(cryptoRequestDto.getPublicKey());
 
+        byte[] encryptedSecretKey = Arrays.copyOfRange(dataToDecrypt, 0, KEYGEN_SYMMETRIC_KEY_LENGTH);
+        byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+IV_LENGTH);
+        byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH+IV_LENGTH, dataToDecrypt.length);
+
+        try {
+            PrivateKey privateKey = getPrivateKey();
+            final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
+            cipher_asymmetric.init(Cipher.DECRYPT_MODE, privateKey);
+            byte[] secretKeyBytes = cipher_asymmetric.doFinal(encryptedSecretKey);
+
+            SecretKey secretKey = new SecretKeySpec(secretKeyBytes, KEYGEN_SYMMETRIC_ALGORITHM);
+
+            final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+            final GCMParameterSpec spec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv);
+            cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, spec);
+            String decrypted_data = base64encoder.encodeToString(cipher_symmetric.doFinal(encrypted_data));
+
+            cryptoResponseDto.setValue(decrypted_data);
+            return cryptoResponseDto;
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
         return null;
     }
 
