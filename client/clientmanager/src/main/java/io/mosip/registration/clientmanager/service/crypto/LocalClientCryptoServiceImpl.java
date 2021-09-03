@@ -12,6 +12,7 @@ import android.security.keystore.KeyProperties;
 import androidx.annotation.Nullable;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,14 +24,19 @@ import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAKeyGenParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
@@ -45,6 +51,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -77,7 +84,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private static String CERTIFICATE_SIGN_ALGORITHM;
 
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
-    private static final String ALIAS = "DUMMY_ALIAS";
+    private static final String PRIVATE_ALIAS = "PRIVATE_ALIAS";
+    private static final String SECRET_ALIAS = "SECRET_ALIAS";
 
     private static SecureRandom secureRandom = null;
 
@@ -85,6 +93,40 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     @Inject
     LocalClientCryptoServiceImpl() {
+        Context context = getApplicationContext();
+        this.context = context;
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                    KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
+            kpg.initialize(new KeyGenParameterSpec.Builder(
+                    PRIVATE_ALIAS,
+                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY |
+                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                    .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
+                    .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+                    .build());
+
+            KeyPair kp = kpg.generateKeyPair();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        try {
+            KeyGenerator kg = KeyGenerator
+                    .getInstance(KEYGEN_SYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
+
+            final KeyGenParameterSpec keyGenParameterSpec = new KeyGenParameterSpec.Builder(SECRET_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                    .setKeySize(KEYGEN_SYMMETRIC_KEY_LENGTH)
+                    .build();
+
+            kg.init(keyGenParameterSpec);
+           SecretKey secretKey = kg.generateKey();
+
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Nullable
@@ -95,8 +137,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     private void initializeClientSecurity() {
         // get context from main activity
-        Context context = getApplicationContext();
-        this.context = context;
+
         CRYPTO_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-name",context);
         CRYPTO_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-name",context);
         KEYGEN_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-algorithm-name",context);
@@ -123,10 +164,10 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     }
     @Override
     public SignResponseDto sign(SignRequestDto signRequestDto) {
-        byte[] dataToSign = base64decoder.decode(signRequestDto.getData());
         SignResponseDto signResponseDto = new SignResponseDto();
+
+        byte[] dataToSign = base64decoder.decode(signRequestDto.getData());
         try {
-//          read private key from keystore
             PrivateKey privateKey = getPrivateKey();
 
             Signature sign = Signature.getInstance(CRYPTO_SIGN_ALGORITHM);
@@ -145,13 +186,12 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     @Override
     public SignVerifyResponseDto verifySign(SignVerifyRequestDto signVerifyRequestDto) {
-
         SignVerifyResponseDto signVerifyResponseDto = new SignVerifyResponseDto();
-        try {
-            byte[] public_key = base64decoder.decode(signVerifyRequestDto.getPublicKey());
-            byte[] signature = base64decoder.decode(signVerifyRequestDto.getSignature());
-            byte[] actualData = base64decoder.decode(signVerifyRequestDto.getData());
 
+        byte[] public_key = base64decoder.decode(signVerifyRequestDto.getPublicKey());
+        byte[] signature = base64decoder.decode(signVerifyRequestDto.getSignature());
+        byte[] actualData = base64decoder.decode(signVerifyRequestDto.getData());
+        try {
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
             KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
             PublicKey publicKey = kf.generatePublic(keySpec);
@@ -174,22 +214,33 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     public CryptoResponseDto encrypt(CryptoRequestDto cryptoRequestDto) {
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
 
+        byte[] public_key = base64decoder.decode(cryptoRequestDto.getPublicKey());
+        byte[] dataToEncrypt = base64decoder.decode(cryptoRequestDto.getValue());
         try {
-            byte[] publicKey = base64decoder.decode(cryptoRequestDto.getPublicKey());
-            byte[] dataToEncrypt = base64decoder.decode(cryptoRequestDto.getValue());
-            // read secret key from keystore
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
+            KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
+            PublicKey publicKey = kf.generatePublic(keySpec);
+
             SecretKey secretKey = getSecretKey();
 
+            final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+            cipher_symmetric.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] iv = cipher_symmetric.getIV();
+            byte[] data_encryption = cipher_symmetric.doFinal(dataToEncrypt);
 
-            final Cipher cipher = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
+            final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
+            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] key_encryption = cipher_asymmetric.doFinal(secretKey.getEncoded());
 
-            byte[] iv = cipher.getIV();
+            // store iv and encryption in encrypted_data
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+            outputStream.write(key_encryption);
+            outputStream.write(iv);
+            outputStream.write(data_encryption);
+            byte encrypted_key_iv_data[] = outputStream.toByteArray();
 
-            byte[] encryption = cipher.doFinal(dataToEncrypt));
 
-
-            cryptoResponseDto.setValue(base64encoder.encodeToString(encryption));
+            cryptoResponseDto.setValue(base64encoder.encodeToString(encrypted_key_iv_data));
             return cryptoResponseDto;
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -209,26 +260,27 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         return null;
     }
 
-    private static SecretKey getSecretKey() throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        final KeyGenerator keyGenerator = KeyGenerator
-                .getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+    private SecretKey getSecretKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
+        KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
+        ks.load(null);
+        KeyStore.Entry entry = ks.getEntry(SECRET_ALIAS, null);
+        if (!(entry instanceof KeyStore.SecretKeyEntry)) {
+            return null;
+        }
+        return ((KeyStore.SecretKeyEntry) entry).getSecretKey();
+    }
 
-        keyGenerator.init(new KeyGenParameterSpec.Builder(ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .build());
-
-        return keyGenerator.generateKey();
+    private PrivateKey getPrivateKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
+        KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
+        ks.load(null);
+        KeyStore.Entry entry = ks.getEntry(PRIVATE_ALIAS, null);
+        if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
+            return null;
+        }
+        return ((KeyStore.PrivateKeyEntry) entry).getPrivateKey();
     }
 
 
-    private static byte[] generateRandomBytes(int length) {
-        if(secureRandom == null)
-            secureRandom = new SecureRandom();
 
-        byte[] bytes = new byte[length];
-        secureRandom.nextBytes(bytes);
-        return bytes;
-    }
+
 }
