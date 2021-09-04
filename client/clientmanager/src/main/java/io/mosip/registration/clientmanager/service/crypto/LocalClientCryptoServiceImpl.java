@@ -44,6 +44,10 @@ import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 import java.util.Objects;
 
+import java.lang.*;
+import java.security.SecureRandom;
+import java.util.Random;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -65,18 +69,32 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     private Context context;
 
+    // encoder and decoder from java itself
     private static Encoder base64encoder;
     private static Decoder base64decoder;
 
+
+    // asymmetric encryption details together-----------------------------
     private static String CRYPTO_ASYMMETRIC_ALGORITHM;
-    private static String CRYPTO_SYMMETRIC_ALGORITHM;
     private static String KEYGEN_ASYMMETRIC_ALGORITHM;
-    private static String KEYGEN_SYMMETRIC_ALGORITHM;
+    private static String KEYGEN_ASYMMETRIC_ALGO_BLOCK;
+    private static String KEYGEN_ASYMMETRIC_ALGO_PAD;
     private static int KEYGEN_ASYMMETRIC_KEY_LENGTH;
+
+    // symmetric encryption details together-----------------------------
+    private static String CRYPTO_SYMMETRIC_ALGORITHM;
+    private static String KEYGEN_SYMMETRIC_ALGORITHM;
+    private static String KEYGEN_SYMMETRIC_ALGO_BLOCK;
+    private static String KEYGEN_SYMMETRIC_ALGO_PAD;
     private static int KEYGEN_SYMMETRIC_KEY_LENGTH;
+
     private static int CRYPTO_GCM_TAG_LENGTH;
-    private static final int IV_LENGTH = 12;
-    private static final int AAD_LENGTH = 32;
+
+
+    // need to read aad and iv length from config files-----
+    private static int IV_LENGTH = 12;
+    private static int AAD_LENGTH = 32;
+
     private static String CRYPTO_HASH_ALGORITHM;
     private static int CRYPTO_HASH_SYMMETRIC_KEY_LENGTH;
     private static int CRYPTO_HASH_ITERATION;
@@ -96,35 +114,63 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         Context context = getApplicationContext();
         this.context = context;
         initializeClientSecurity();
-        try {
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
-                    KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
-            kpg.initialize(new KeyGenParameterSpec.Builder(
-                    PRIVATE_ALIAS,
-                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY |
-                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
-                    .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                    .build());
 
-            KeyPair kp = kpg.generateKeyPair();
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
+
+        // hardcoding some initializations for now
+        // for symmetric encryption----------------------------------------------------------
+
+        // first set the encruption algorithm variables like blocks,padding,key length etc.....should be originally from the config file
+        // NOTE:CURRENTLY HARDCODED
+        // [
+        KEYGEN_SYMMETRIC_ALGO_BLOCK=KeyProperties.BLOCK_MODE_GCM;
+        KEYGEN_SYMMETRIC_ALGO_PAD=KeyProperties.ENCRYPTION_PADDING_PKCS7;
+        // ]
+
         try {
             KeyGenerator kg = KeyGenerator
                     .getInstance(KEYGEN_SYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
 
             final KeyGenParameterSpec keyGenParameterSpec = new KeyGenParameterSpec.Builder(SECRET_ALIAS,
                     KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                    .setBlockModes(KEYGEN_SYMMETRIC_ALGO_BLOCK)
+                    .setEncryptionPaddings(KEYGEN_SYMMETRIC_ALGO_PAD)
                     .setKeySize(KEYGEN_SYMMETRIC_KEY_LENGTH)
                     .build();
 
             kg.init(keyGenParameterSpec);
-           SecretKey secretKey = kg.generateKey();
+            SecretKey secretKey = kg.generateKey();
 
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        // for assymetric encruption storing keypair---------------------------
+        //set the asymmetric encruption algorithm variables like blocks,padding,key length etc.....should be originally from the config file
+        // NOTE:CURRENTLY HARDCODED
+        // [
+        KEYGEN_ASYMMETRIC_ALGO_BLOCK=KeyProperties.BLOCK_MODE_ECB;
+        KEYGEN_ASYMMETRIC_ALGO_PAD=KeyProperties.ENCRYPTION_PADDING_RSA_OAEP;
+        // ]
+
+        try {
+            // lot of errors in assymetric part
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                    KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
+
+            // after creating keypairgenerator,instead of again creating KeyGenParameterSpec,creating inside parameter for initialize itslef-
+            // -----------------------------------
+
+            kpg.initialize(new KeyGenParameterSpec.Builder(
+                    PRIVATE_ALIAS,
+                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY |
+                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                    .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
+                    .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
+                    .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
+                    .setDigests(KeyProperties.DIGEST_SHA256)
+                    .build());
+
+            KeyPair kp = kpg.generateKeyPair();
         } catch(Exception ex) {
             ex.printStackTrace();
         }
@@ -224,20 +270,24 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
             SecretKey secretKey = getSecretKey();
 
+            // symmetric encryption of data-----------------------------------------------------
             final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
             cipher_symmetric.init(Cipher.ENCRYPT_MODE, secretKey);
             byte[] iv = cipher_symmetric.getIV();
             byte[] data_encryption = cipher_symmetric.doFinal(dataToEncrypt);
 
+
+            // asymmetric encryption of secret key----------------------------------------------------
             final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
             cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] key_encryption = cipher_asymmetric.doFinal(secretKey.getEncoded());
 
-            // store iv and encryption in encrypted_data
+            // storing iv and encryption in encrypted_data
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
             outputStream.write(key_encryption);
             outputStream.write(iv);
             outputStream.write(data_encryption);
+            // need to add aad
             byte encrypted_key_iv_data[] = outputStream.toByteArray();
 
 
@@ -262,12 +312,15 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
         try {
             PrivateKey privateKey = getPrivateKey();
+
+            // asymmetric decryption of secret key----------------------------------------------------
             final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
             cipher_asymmetric.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] secretKeyBytes = cipher_asymmetric.doFinal(encryptedSecretKey);
 
             SecretKey secretKey = new SecretKeySpec(secretKeyBytes, KEYGEN_SYMMETRIC_ALGORITHM);
 
+            // symmetric decryption of data-----------------------------------------------------
             final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
             final GCMParameterSpec spec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv);
             cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, spec);
@@ -286,6 +339,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         return null;
     }
 
+    // get secret key from keystore
     private SecretKey getSecretKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
@@ -296,6 +350,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         return ((KeyStore.SecretKeyEntry) entry).getSecretKey();
     }
 
+    // get private key from keystore
     private PrivateKey getPrivateKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
@@ -306,6 +361,15 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         return ((KeyStore.PrivateKeyEntry) entry).getPrivateKey();
     }
 
+    //  random byte generation for AAD
+    public static byte[] generateRandomBytes(int length) {
+
+        SecureRandom secureRandom = new SecureRandom();
+
+        byte[] bytes = new byte[length];
+        secureRandom.nextBytes(bytes);
+        return bytes;
+    }
 
 
 
