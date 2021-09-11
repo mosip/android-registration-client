@@ -53,8 +53,8 @@ import android.R;
 
 @Singleton
 public class LocalClientCryptoServiceImpl extends Service implements ClientCryptoManagerService {
-
-    private Context context;
+    private static final String TAG = LocalClientCryptoServiceImpl.class.getSimpleName();
+    private static Context context;
 
     // encoder and decoder from java itself
     private static Encoder base64encoder;
@@ -106,15 +106,19 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     //creating instance of binder to be passed to MainActivity
     private IBinder mBinder=new ClientCryptoServiceBinder();
 
-
     @Inject
-    LocalClientCryptoServiceImpl() {
-        Context context = getApplicationContext();
-        this.context = context;
+    public LocalClientCryptoServiceImpl() {
+        Log.d(TAG, "LocalClientCryptoServiceImpl: Constructor call successful");
+    }
+
+    public void initLocalClientCryptoService() {
+        context = getApplicationContext();
         initializeClientSecurity();
 
         genSecretKey();
         genPrivPubKey();
+
+        Log.d(TAG, "LocalClientCryptoServiceImpl: Initialization call successful");
     }
 
     //    ON BIND BINDER FOR MAIN CLASS HERE
@@ -139,8 +143,6 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 //        stopSelf();
 //        return START_STICKY;
 //    }
-
-
     //    onDestroy service
     @Override
     public void onDestroy() {
@@ -165,7 +167,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     private void initializeClientSecurity() {
         // get context from main activity
-
+        Log.d(TAG, "LocalClientCryptoServiceImpl: Initializating");
         CRYPTO_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-name",context);
         CRYPTO_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-name",context);
         KEYGEN_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-algorithm-name",context);
@@ -213,6 +215,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             kg.init(keyGenParameterSpec);
             SecretKey secretKey = kg.generateKey();
 
+            Log.d(TAG, "LocalClientCryptoServiceImpl: Secret key generation successful");
+
         } catch(Exception ex) {
             ex.printStackTrace();
         }
@@ -243,8 +247,10 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
                     .build();
 
             kpg.initialize(keyPairGenParameterSpec);
-
             KeyPair kp = kpg.generateKeyPair();
+
+            Log.d(TAG, "LocalClientCryptoServiceImpl: Private key generation successful");
+
         } catch(Exception ex) {
             ex.printStackTrace();
         }

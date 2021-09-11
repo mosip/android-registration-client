@@ -7,32 +7,31 @@
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_2"
+        android:id="@+id/btn_decrypt"
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginEnd="52dp"
         android:background="@drawable/btn_end"
-        android:text="Button2"
+        android:onClick="click_decrypt"
+        android:text="Decrypt"
         android:textAllCaps="false"
         android:textColor="#FFF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/btn_1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.229" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_1"
+        android:id="@+id/btn_encrypt"
         android:layout_width="150dp"
         android:layout_height="60dp"
 
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="40dp"
         android:background="@drawable/btn_start"
         android:backgroundTintMode="add"
-        android:onClick="click_start"
-        android:text="Button1"
+        android:onClick="click_encrypt"
+        android:text="Encrypt"
         android:textAllCaps="false"
         android:textColor="#FFF"
         android:textSize="20sp"
@@ -40,5 +39,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.229" />
+
+    <TextView
+        android:id="@+id/testerView"
+        android:layout_width="339dp"
+        android:layout_height="105dp"
+        android:text="Service Loaded"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.442"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

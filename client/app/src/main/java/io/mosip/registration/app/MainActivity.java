@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
@@ -24,28 +25,27 @@ public class MainActivity extends AppCompatActivity {
     private ServiceConnection serviceConnection;
     private boolean mStopLoop;
 
+    TextView textView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        textView = (TextView) findViewById(R.id.testerView);
         serviceIntent= new Intent(getApplicationContext(), LocalClientCryptoServiceImpl.class);
         bindService();
     }
 
 
-    public void click_start(View view) {
-        switch (view.getId()) {
-
-
-        }
-        openStart();
+    public void click_encrypt(View view) {
+        textView.setText("Clicked Encrypt");
     }
 
-    public void openStart() {
-        OpenDialog od1 = new OpenDialog();
-        od1.show(getSupportFragmentManager(),"od1");
+    public void click_decrypt(View view) {
+        textView.setText("Clicked Decrypt");
     }
+
 
     private void bindService(){
         if(serviceConnection==null){
@@ -59,11 +59,12 @@ public class MainActivity extends AppCompatActivity {
                             (LocalClientCryptoServiceImpl.ClientCryptoServiceBinder) service;
                     //Get instance of your service
                     localClientCryptoService = binder.getServiceInstance();
+                    localClientCryptoService.initLocalClientCryptoService();
                     isServiceBound = true;
                 }
 
                 @Override
-                public void onServiceDisconnected(ComponentName arg0) {
+                public void onServiceDisconnected(ComponentName className) {
                     isServiceBound = false;
                 }
             };
