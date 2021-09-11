@@ -4,66 +4,52 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
 import androidx.annotation.Nullable;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAKeyGenParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-import java.util.Objects;
 
-import java.lang.*;
-import java.security.SecureRandom;
-import java.util.Random;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.security.cert.Certificate;
 
-import io.mosip.registration.clientmanager.dto.crypto.*;
+import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
+import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
+import io.mosip.registration.clientmanager.dto.crypto.PublicKeyRequestDto;
+import io.mosip.registration.clientmanager.dto.crypto.PublicKeyResponseDto;
+import io.mosip.registration.clientmanager.dto.crypto.SignRequestDto;
+import io.mosip.registration.clientmanager.dto.crypto.SignResponseDto;
+import io.mosip.registration.clientmanager.dto.crypto.SignVerifyRequestDto;
+import io.mosip.registration.clientmanager.dto.crypto.SignVerifyResponseDto;
 import io.mosip.registration.clientmanager.spi.crypto.ClientCryptoManagerService;
 import io.mosip.registration.clientmanager.util.ConfigService;
+import android.util.Log;
+import android.R;
 
 @Singleton
 public class LocalClientCryptoServiceImpl extends Service implements ClientCryptoManagerService {
@@ -110,24 +96,72 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
 
 
+    //    implementing service...extending binder
+    public class ClientCryptoServiceBinder extends Binder {
+        public  LocalClientCryptoServiceImpl getServiceInstance(){
+            return LocalClientCryptoServiceImpl.this;
+        }
+    }
+
+    //creating instance of binder to be passed to MainActivity
+    private IBinder mBinder=new ClientCryptoServiceBinder();
+
+
     @Inject
     LocalClientCryptoServiceImpl() {
         Context context = getApplicationContext();
         this.context = context;
         initializeClientSecurity();
 
-
         genSecretKey();
         genPrivPubKey();
-
-
     }
 
+    //    ON BIND BINDER FOR MAIN CLASS HERE
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
+
+
+    //    on start of service
+//    @Override
+//    public void onStart(Intent intent, int startId) {
+//        super.onStart(intent, startId);
+//    }
+
+    //    on start command
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        initializeClientSecurity();
+//
+//        stopSelf();
+//        return START_STICKY;
+//    }
+
+
+    //    onDestroy service
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        any object to be destroyed should be destroyed here
+    }
+
+
+    //    UNBIND METHOD
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return super.onUnbind(intent);
+    }
+
+    //    REBIND
+    public void onRebind(Intent intent) {
+        super.onRebind(intent);
+    }
+
+
+
 
     private void initializeClientSecurity() {
         // get context from main activity
@@ -298,7 +332,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             outputStream.write(aad);
             outputStream.write(data_encryption);
             // need to add aad
-            byte encrypted_key_iv_data[] = outputStream.toByteArray();
+            byte[] encrypted_key_iv_data = outputStream.toByteArray();
 
 
             cryptoResponseDto.setValue(base64encoder.encodeToString(encrypted_key_iv_data));
