@@ -1,5 +1,6 @@
 package io.mosip.registration.app;
 
+import io.mosip.registration.clientmanager.dto.crypto.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ComponentName;
@@ -40,6 +41,48 @@ public class MainActivity extends AppCompatActivity {
 
     public void click_encrypt(View view) {
         textView.setText("Clicked Encrypt");
+        try{
+            Thread.sleep(2000);
+        } catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText("Starting encryption process");
+//            creating public key request
+                PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
+                PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+//                PublicKeyResponseDto publicKeyResponseDto;
+                try{
+                    Thread.sleep(2000);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+                textView.setText("Got public key..creating cryptoRequest");
+
+                CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
+                        "message", publicKeyResponseDto.getPublicKey());
+
+                CryptoResponseDto cryptoResponseDto = localClientCryptoService.encrypt(cryptoRequestDto);
+
+//                SignRequestDto signRequestDto = new SignRequestDto("dummy");
+
+                try{
+                    Thread.sleep(2000);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+
+                textView.setText("Encryption done");
+                try{
+                    Thread.sleep(2000);
+                }catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+                textView.setText(cryptoResponseDto.getValue());
+            }
+        }).start();
     }
 
     public void click_decrypt(View view) {
