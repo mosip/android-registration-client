@@ -245,20 +245,22 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
             kg.init(keyGenParameterSpec);
             SecretKey secretKey = kg.generateKey();
+            Log.d(TAG, "LocalClientCryptoService: Generated secret key successfully");
 
-            byte[] mosipSecretKey = generateRandomBytes(KEYGEN_SYMMETRIC_KEY_LENGTH);
+            byte[] mosipSecretKey = generateRandomBytes(KEYGEN_SYMMETRIC_KEY_LENGTH/8);
             final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-            byte[] iv = cipher_symmetric.getIV();
             cipher_symmetric.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] iv = cipher_symmetric.getIV();
             byte[] secret_key_encryption = cipher_symmetric.doFinal(mosipSecretKey);
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
             outputStream.write(iv);
             outputStream.write(secret_key_encryption);
+            byte[] encryption_iv_secretKey = outputStream.toByteArray();
 
-            createKeyFile(SECRET_ALIAS, outputStream.toByteArray());
+            createKeyFile(SECRET_ALIAS, encryption_iv_secretKey);
 
-            Log.d(TAG, "LocalClientCryptoService: Generated secret key successfully " + secret_key_encryption);
+            Log.d(TAG, "LocalClientCryptoService: Generated mosip key successfully " + mosipSecretKey);
 
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -357,10 +359,10 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
             KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
             PublicKey publicKey = kf.generatePublic(keySpec);
-            Log.d(TAG, "encrypt: Generated public key obj");
+            Log.d(TAG, "encrypt: Read public key obj");
             SecretKey secretKey = getSecretKey();
             Log.d(TAG, "encrypt: Read secret key obj");
-            Log.d(TAG, "LocalClientCryptoService: Generated secret key successfully " + secretKey.getEncoded());
+            Log.d(TAG, "LocalClientCryptoService: Read secret key successfully " + secretKey.getEncoded());
             // symmetric encryption of data-----------------------------------------------------
             final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
             cipher_symmetric.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -501,16 +503,23 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
         SecretKey secretKey = ((KeyStore.SecretKeyEntry) entry).getSecretKey();
 
-        byte[] secret_key_encryption = new byte[256];
+
         FileInputStream fis = openFileInput(getKeysDirPath());
-        fis.read(secret_key_encryption);
+        int size = (int) fis.getChannel().size();
+        byte[] encryption_iv_secretKey = new byte[size];
+        fis.read(encryption_iv_secretKey);
         fis.close();
 
-        final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-        cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey);
-        byte[] mosipSecretKey = cipher_symmetric.doFinal(secret_key_encryption);
+        byte[] iv = Arrays.copyOfRange(encryption_iv_secretKey, 0, IV_LENGTH);
+        byte[] encryptedSecretKey = Arrays.copyOfRange(encryption_iv_secretKey, IV_LENGTH, size);
 
-        return new SecretKeySpec(mosipSecretKey, 0, mosipSecretKey.length, KEYGEN_SYMMETRIC_ALGORITHM);
+        final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+        final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv);
+        cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
+        byte[] mosipSecretKey = cipher_symmetric.doFinal(encryptedSecretKey);
+
+        SecretKey mosip_secret_key =  new SecretKeySpec(mosipSecretKey, 0, mosipSecretKey.length, KEYGEN_SYMMETRIC_ALGORITHM);
+        return mosip_secret_key;
     }
 
     // get private key from keystore

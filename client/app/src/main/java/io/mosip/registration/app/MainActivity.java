@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mStopLoop;
 
     TextView textView;
+    private String encryption;
 
 
     @Override
@@ -81,12 +82,54 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 textView.setText(cryptoResponseDto.getValue());
+                encryption = cryptoResponseDto.getValue();
             }
         }).start();
     }
 
     public void click_decrypt(View view) {
-        textView.setText("Clicked Decrypt");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PublicKeyRequestDto publicKeyRequestDto=new PublicKeyRequestDto();
+                    PublicKeyResponseDto publicKeyResponseDto=localClientCryptoService.getPublicKey(publicKeyRequestDto);
+//                PublicKeyResponseDto publicKeyResponseDto;
+                    textView.setText("Got public key..creating cryptoRequest for decrypt");
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                    CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(encryption, publicKeyResponseDto.getPublicKey());
+                    textView.setText("Decrypting......");
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                    CryptoResponseDto cryptoResponseDto=localClientCryptoService.decrypt(cryptoRequestDto);
+                    System.out.println(cryptoResponseDto.getValue());
+                    textView.setText("Decrypted message is : "+cryptoResponseDto.getValue() );
+
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+
+
+                textView.setText("Clicked Decrypt");
+            }
+        }).start();
+
     }
 
 
