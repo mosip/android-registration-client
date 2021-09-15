@@ -357,7 +357,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
 
         byte[] public_key = base64decoder.decode(cryptoRequestDto.getPublicKey());
-        byte[] dataToEncrypt = base64decoder.decode(cryptoRequestDto.getValue());
+        byte[] dataToEncrypt = base64decoder.decode(base64encoder.encodeToString(cryptoRequestDto.getValue().getBytes()));
+
         try {
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
             KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
@@ -428,9 +429,9 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv);
             cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
             cipher_symmetric.updateAAD(aad);
-            String decrypted_data = base64encoder.encodeToString(cipher_symmetric.doFinal(encrypted_data));
-
-            cryptoResponseDto.setValue(decrypted_data);
+            byte[] decodedBytes = cipher_symmetric.doFinal(encrypted_data);
+            String decodedString = new String(decodedBytes);
+            cryptoResponseDto.setValue(decodedString);
             return cryptoResponseDto;
         } catch(Exception ex) {
             ex.printStackTrace();

@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText("Got public key..creating cryptoRequest");
 
                 CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
-                        "message", publicKeyResponseDto.getPublicKey());
+                        "This is a new message.Hoergt this workds", publicKeyResponseDto.getPublicKey());
 
                 CryptoResponseDto cryptoResponseDto = localClientCryptoService.encrypt(cryptoRequestDto);
 
