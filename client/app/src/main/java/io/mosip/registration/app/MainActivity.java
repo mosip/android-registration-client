@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textView;
     private String encryption;
+    private String signed_string;
 
 
     @Override
@@ -38,9 +39,15 @@ public class MainActivity extends AppCompatActivity {
         serviceIntent= new Intent(getApplicationContext(), LocalClientCryptoServiceImpl.class);
         bindService();
     }
-
-
     public void click_encrypt(View view) {
+        test_sign(view);
+    };
+    public void click_decrypt(View view) {
+        test_verify(view);
+    };
+
+
+    public void test_encrypt(View view) {
         textView.setText("Clicked Encrypt");
         try{
             Thread.sleep(2000);
@@ -85,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    public void click_decrypt(View view) {
+    public void test_decrypt(View view) {
 
         new Thread(new Runnable() {
             @Override
@@ -126,6 +133,102 @@ public class MainActivity extends AppCompatActivity {
 
                 textView.setText("Clicked Decrypt");
             }
+        }).start();
+
+    }
+
+    // click_sign
+    public void test_sign(View view){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    textView.setText("Clicked Sign Data.Data is: message to sign");
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                    textView.setText("Creating Sign Request ");
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                    SignRequestDto signRequestDto=new SignRequestDto("message to sign");
+                    SignResponseDto signResponseDto=localClientCryptoService.sign(signRequestDto);
+                    signed_string=signResponseDto.getData();
+
+                    textView.setText("Signature Generated for string");
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                    textView.setText("Signature is: "+ signed_string);
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+
+                }
+                catch (Exception ex){
+                    ex.printStackTrace();
+                }
+
+            }
+        }).start();
+
+    }
+
+
+    //    verifying
+    // click_verify
+    public void test_verify(View view){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    PublicKeyRequestDto publicKeyRequestDto=new PublicKeyRequestDto();
+                    PublicKeyResponseDto publicKeyResponseDto=localClientCryptoService.getPublicKey(publicKeyRequestDto);
+//                PublicKeyResponseDto publicKeyResponseDto;
+                    textView.setText("Got public key..verifying signed data");
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+
+                    SignVerifyRequestDto signVerifyRequestDto=new SignVerifyRequestDto("message to sign",signed_string,publicKeyResponseDto.getPublicKey());
+                    SignVerifyResponseDto signVerifyResponseDto=localClientCryptoService.verifySign(signVerifyRequestDto);
+
+                    textView.setText("Verified Data");
+                    try{
+                        Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                        System.out.println(e);
+                    }
+
+                    if(signVerifyResponseDto.isVerified()){
+                        textView.setText("Data is correctly signed and matching");
+                    }
+                    else{
+                        textView.setText("Incorrect Signature");
+                    }
+
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+
+            }
+
         }).start();
 
     }

@@ -83,6 +83,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private static String KEYGEN_ASYMMETRIC_ALGORITHM;
     private static String KEYGEN_ASYMMETRIC_ALGO_BLOCK;
     private static String KEYGEN_ASYMMETRIC_ALGO_PAD;
+    private static String KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD;
     private static int KEYGEN_ASYMMETRIC_KEY_LENGTH;
 
     // symmetric encryption details together-----------------------------
@@ -108,6 +109,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     private static final String PRIVATE_ALIAS = "PRIVATE_ALIAS";
     private static final String SECRET_ALIAS = "SECRET_ALIAS";
+    private static final String SIGN_ALIAS = "SIGN_ALIAS";
 
     private static String KEYS_DIR = "mosipkeys";
 
@@ -221,6 +223,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         CRYPTO_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-name",context);
         CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);
 
+
         base64encoder = Base64.getEncoder();
         base64decoder = Base64.getDecoder();
     }
@@ -276,8 +279,9 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     private void genPrivPubKey() {
 
-        KEYGEN_ASYMMETRIC_ALGO_BLOCK=KeyProperties.BLOCK_MODE_ECB;
-        KEYGEN_ASYMMETRIC_ALGO_PAD=KeyProperties.ENCRYPTION_PADDING_RSA_OAEP;
+        KEYGEN_ASYMMETRIC_ALGO_BLOCK = KeyProperties.BLOCK_MODE_ECB;
+        KEYGEN_ASYMMETRIC_ALGO_PAD = KeyProperties.ENCRYPTION_PADDING_RSA_OAEP;
+        KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD = KeyProperties.SIGNATURE_PADDING_RSA_PKCS1;
 
         try {
             // lot of errors in asymmetric part
@@ -291,7 +295,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
                     .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
                     .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
                     .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
-//                    .setUserAuthenticationRequired(true)
+                    .setSignaturePaddings(KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD)
                     .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                     .build();
 
@@ -308,11 +312,10 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     public SignResponseDto sign(SignRequestDto signRequestDto) {
         SignResponseDto signResponseDto = new SignResponseDto();
 
-        byte[] dataToSign = base64decoder.decode(signRequestDto.getData());
+        byte[] dataToSign = base64decoder.decode(base64encoder.encodeToString(signRequestDto.getData().getBytes()));
         try {
             PrivateKey privateKey = getPrivateKey();
-
-            Signature sign = Signature.getInstance(CRYPTO_SIGN_ALGORITHM);
+            Signature sign = Signature.getInstance(CERTIFICATE_SIGN_ALGORITHM);
             sign.initSign(privateKey);
             sign.update(dataToSign);
             byte[] signedData = sign.sign();
@@ -332,13 +335,14 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
         byte[] public_key = base64decoder.decode(signVerifyRequestDto.getPublicKey());
         byte[] signature = base64decoder.decode(signVerifyRequestDto.getSignature());
-        byte[] actualData = base64decoder.decode(signVerifyRequestDto.getData());
+        byte[] actualData = base64decoder.decode(base64encoder.encodeToString(signVerifyRequestDto.getData().getBytes()));
+
         try {
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
             KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
             PublicKey publicKey = kf.generatePublic(keySpec);
 
-            Signature sign = Signature.getInstance(CRYPTO_SIGN_ALGORITHM);
+            Signature sign = Signature.getInstance(CERTIFICATE_SIGN_ALGORITHM);
             sign.initVerify(publicKey);
             sign.update(actualData);
             boolean result = sign.verify(signature);
