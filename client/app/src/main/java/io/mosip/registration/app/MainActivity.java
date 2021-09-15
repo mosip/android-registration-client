@@ -67,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
                 CryptoResponseDto cryptoResponseDto = localClientCryptoService.encrypt(cryptoRequestDto);
 
-//                SignRequestDto signRequestDto = new SignRequestDto("dummy");
-
                 try{
                     Thread.sleep(2000);
                 }catch(InterruptedException e){

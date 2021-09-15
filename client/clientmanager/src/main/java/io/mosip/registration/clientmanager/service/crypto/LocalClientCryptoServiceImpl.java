@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
@@ -31,6 +33,7 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -46,6 +49,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -132,14 +137,14 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         try {
             // keys do not exist
             if(!doesKeysExists()) {
-                Log.d(TAG, "LocalClientCryptoServiceImpl: Keys do not exist. Generating keys ");
+                Log.e(TAG, "LocalClientCryptoServiceImpl: Keys do not exist. Generating keys ");
                 genSecretKey();
                 genPrivPubKey();
 
 
             }
             else {
-                Log.d(TAG, "LocalClientCryptoServiceImpl: Keys exist ");
+                Log.e(TAG, "LocalClientCryptoServiceImpl: Keys exist ");
             }
 
         } catch (Exception ex) {
@@ -147,7 +152,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         }
 
 
-        Log.d(TAG, "LocalClientCryptoServiceImpl: Initialization call successful");
+        Log.e(TAG, "LocalClientCryptoServiceImpl: Initialization call successful");
     }
 
     //    ON BIND BINDER FOR MAIN CLASS HERE
@@ -221,46 +226,48 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     }
 
     private void genSecretKey() {
-        // hardcoding some initializations for now
-        // for symmetric encryption----------------------------------------------------------
-
-        // first set the encryption algorithm variables like blocks,padding,key length etc.....should be originally from the config file
-        // NOTE:CURRENTLY HARDCODED
-        // [
-        KEYGEN_SYMMETRIC_ALGO_BLOCK=KeyProperties.BLOCK_MODE_GCM;
-        KEYGEN_SYMMETRIC_ALGO_PAD=KeyProperties.ENCRYPTION_PADDING_NONE;
-        // ]
+        KEYGEN_ASYMMETRIC_ALGO_BLOCK=KeyProperties.BLOCK_MODE_ECB;
+        KEYGEN_ASYMMETRIC_ALGO_PAD=KeyProperties.ENCRYPTION_PADDING_RSA_OAEP;
 
         try {
-            KeyGenerator kg = KeyGenerator
-                    .getInstance(KEYGEN_SYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                    KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
 
-            final KeyGenParameterSpec keyGenParameterSpec = new KeyGenParameterSpec.Builder(
+            final KeyGenParameterSpec keyPairGenParameterSpec = new KeyGenParameterSpec.Builder(
                     SECRET_ALIAS,
-                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KEYGEN_SYMMETRIC_ALGO_BLOCK)
-                    .setEncryptionPaddings(KEYGEN_SYMMETRIC_ALGO_PAD)
-                    .setKeySize(KEYGEN_SYMMETRIC_KEY_LENGTH)
+                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                    .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
+                    .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
+                    .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
+//                    .setUserAuthenticationRequired(true)
+                    .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                     .build();
 
-            kg.init(keyGenParameterSpec);
-            SecretKey secretKey = kg.generateKey();
-            Log.d(TAG, "LocalClientCryptoService: Generated secret key successfully");
+            kpg.initialize(keyPairGenParameterSpec);
+            KeyPair kp = kpg.generateKeyPair();
 
-            byte[] mosipSecretKey = generateRandomBytes(KEYGEN_SYMMETRIC_KEY_LENGTH/8);
-            final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-            cipher_symmetric.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] iv = cipher_symmetric.getIV();
-            byte[] secret_key_encryption = cipher_symmetric.doFinal(mosipSecretKey);
+            PublicKey publicKey = kp.getPublic();
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-            outputStream.write(iv);
-            outputStream.write(secret_key_encryption);
-            byte[] encryption_iv_secretKey = outputStream.toByteArray();
+            Log.e(TAG, "genSecretKey: Generated private key successfully " + kp.getPublic());
 
-            createKeyFile(SECRET_ALIAS, encryption_iv_secretKey);
+            KeyGenerator keyGen = KeyGenerator.getInstance(KEYGEN_SYMMETRIC_ALGORITHM);
+            keyGen.init(KEYGEN_SYMMETRIC_KEY_LENGTH);
+            SecretKey mosipSecretKey = keyGen.generateKey();
 
-            Log.d(TAG, "LocalClientCryptoService: Generated mosip key successfully " + mosipSecretKey);
+            Log.e(TAG, "genSecretKey: Generated mosip key successfully " + mosipSecretKey.getEncoded());
+
+            final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
+            OAEPParameterSpec spec = new OAEPParameterSpec(
+                    "SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
+            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey, spec);
+
+            byte[] secretKeyEncryption = cipher_asymmetric.doFinal(mosipSecretKey.getEncoded());
+            Log.e(TAG, "genSecretKey: Generated secret key encryption");
+
+            Log.e(TAG, "getSecretKey: Key length " + (secretKeyEncryption.length));
+            createKeyFile(getKeysDirPath(), secretKeyEncryption);
+
+            Log.e(TAG, "genSecretKey: Generated secret key successfully ");
 
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -268,13 +275,9 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     }
 
     private void genPrivPubKey() {
-        // for asymmetric encryption storing keypair---------------------------
-        //set the asymmetric encryption algorithm variables like blocks,padding,key length etc.....should be originally from the config file
-        // NOTE:CURRENTLY HARDCODED
-        // [
+
         KEYGEN_ASYMMETRIC_ALGO_BLOCK=KeyProperties.BLOCK_MODE_ECB;
         KEYGEN_ASYMMETRIC_ALGO_PAD=KeyProperties.ENCRYPTION_PADDING_RSA_OAEP;
-        // ]
 
         try {
             // lot of errors in asymmetric part
@@ -288,13 +291,13 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
                     .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
                     .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
                     .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
-                    .setDigests(KeyProperties.DIGEST_SHA256)
+//                    .setUserAuthenticationRequired(true)
+                    .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                     .build();
 
             kpg.initialize(keyPairGenParameterSpec);
             KeyPair kp = kpg.generateKeyPair();
-
-            Log.d(TAG, "LocalClientCryptoService: Generated private key successfully ");
+            Log.e(TAG, "genPrivateKey: Generated private key successfully " + base64encoder.encodeToString(kp.getPublic().getEncoded()));
 
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -359,24 +362,26 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
             KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
             PublicKey publicKey = kf.generatePublic(keySpec);
-            Log.d(TAG, "encrypt: Read public key obj");
-            SecretKey secretKey = getSecretKey();
-            Log.d(TAG, "encrypt: Read secret key obj");
-            Log.d(TAG, "LocalClientCryptoService: Read secret key successfully " + secretKey.getEncoded());
+            Log.e(TAG, "encrypt: Read public key obj");
+            SecretKey mosipSecretKey = getSecretKey();
+            Log.e(TAG, "encrypt: Read mosip key successfully " + mosipSecretKey.getEncoded());
             // symmetric encryption of data-----------------------------------------------------
             final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-            cipher_symmetric.init(Cipher.ENCRYPT_MODE, secretKey);
+
+            cipher_symmetric.init(Cipher.ENCRYPT_MODE, mosipSecretKey);
             byte[] iv = cipher_symmetric.getIV();
             byte[] aad = generateRandomBytes(AAD_LENGTH);
             cipher_symmetric.updateAAD(aad);
             byte[] data_encryption = cipher_symmetric.doFinal(dataToEncrypt);
-            Log.d(TAG, "encrypt: Generated message encryption" + data_encryption);
+            Log.e(TAG, "encrypt: Generated message encryption" + data_encryption);
 
             // asymmetric encryption of secret key----------------------------------------------------
             final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
-            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey);
-            byte[] key_encryption = cipher_asymmetric.doFinal(secretKey.getEncoded());
-            Log.d(TAG, "encrypt: Generated private key encryption");
+            OAEPParameterSpec spec = new OAEPParameterSpec(
+                    "SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
+            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey,spec);
+            byte[] key_encryption = cipher_asymmetric.doFinal(mosipSecretKey.getEncoded());
+            Log.e(TAG, "encrypt: Generated secret key encryption");
 
             // storing iv and encryption in encrypted_data
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
@@ -387,7 +392,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             // need to add aad
             byte[] encrypted_key_iv_data = outputStream.toByteArray();
 
-            Log.d(TAG, "encrypt: Generated encrypted data");
+            Log.e(TAG, "encrypt: Generated encrypted data");
             cryptoResponseDto.setValue(base64encoder.encodeToString(encrypted_key_iv_data));
             return cryptoResponseDto;
         } catch(Exception ex) {
@@ -440,6 +445,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         try {
             PublicKey publicKey = getPublicKey();
             String public_key = base64encoder.encodeToString(publicKey.getEncoded());
+            Log.e(TAG, "getPublicKey: Public key accessed " + public_key);
             publicKeyResponseDto.setPublicKey(public_key);
             return publicKeyResponseDto;
         } catch(Exception ex) {
@@ -457,22 +463,22 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         if (!(entry instanceof KeyStore.SecretKeyEntry)) {
             return false;
         }
-        Log.d(TAG, "doesKeysExists: Secret key exists");
+        Log.e(TAG, "doesKeysExists: Secret key exists");
 
         // check if private key exists
         entry = ks.getEntry(PRIVATE_ALIAS, null);
         if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
             return false;
         }
-        Log.d(TAG, "doesKeysExists: Private key exists");
+        Log.e(TAG, "doesKeysExists: Private key exists");
 
-        // check if mosip secret key exists
-        File keysDir = new File(getKeysDirPath());
-        if(!keysDir.exists()) {
+        File file = new File(context.getFilesDir(),getKeysDirPath());
+        if(!file.exists()) {
+            file.createNewFile();
+            Log.e(TAG, "doesKeysExists: File created...");
             return false;
         }
-
-        Log.d(TAG, "doesKeysExists: Mosip key exists");
+        Log.e(TAG, "doesKeysExists: Mosip key exists");
         return true;
     }
 
@@ -482,13 +488,30 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     }
 
     // create a key file to store the encrypted secret key
-    private void createKeyFile(String fileName, byte[] key) throws IOException {
+    private void createKeyFile(String keyDir, byte[] key) throws IOException {
 
-        try(FileOutputStream fos = openFileOutput(getKeysDirPath(), Context.MODE_PRIVATE)) {
-            fos.write(key);
+        String keyEncoded = Base64.getEncoder().encodeToString(key);
+        try {
+            File file = new File(context.getFilesDir(), getKeysDirPath());
+            if(!file.exists()) {
+                try {
+                    file.createNewFile();
+                    Log.e(TAG, "createKeyFile: File");
+                } catch (AccessDeniedException ex) {
+                    Log.e(TAG, "createKeyFile: Access Denied", ex);
+                }
+            }
+            FileOutputStream stream = new FileOutputStream(file);
+            try {
+                stream.write(keyEncoded.getBytes());
+            } finally {
+                stream.close();
+            }
+
+            Log.e(TAG, "createKeyFile: key " + keyEncoded);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-
     }
 
 
@@ -496,54 +519,50 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private SecretKey getSecretKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
-        KeyStore.Entry entry = ks.getEntry(SECRET_ALIAS, null);
-        if (!(entry instanceof KeyStore.SecretKeyEntry)) {
-            return null;
+        PrivateKey privateKey = (PrivateKey) ks.getKey(SECRET_ALIAS, null);
+
+        String keyEncoded = "";
+        File file = new File(context.getFilesDir(), getKeysDirPath());
+        if(file.exists()) {
+            int length = (int) file.length();
+            byte[] bytes = new byte[length];
+            FileInputStream in = new FileInputStream(file);
+            try {
+                in.read(bytes);
+            } finally {
+                in.close();
+            }
+            keyEncoded += new String(bytes);
+            Log.e(TAG, "createKeyFile: key " + keyEncoded);
+        }
+        else {
+            Log.e(TAG, "getSecretKey: File not exists");
         }
 
-        SecretKey secretKey = ((KeyStore.SecretKeyEntry) entry).getSecretKey();
+        byte[] secretKeyEncryption = base64decoder.decode(keyEncoded);
+        Log.e(TAG, "getSecretKey: Key length " + (secretKeyEncryption.length));
 
 
-        FileInputStream fis = openFileInput(getKeysDirPath());
-        int size = (int) fis.getChannel().size();
-        byte[] encryption_iv_secretKey = new byte[size];
-        fis.read(encryption_iv_secretKey);
-        fis.close();
+        final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
+        cipher_asymmetric.init(Cipher.DECRYPT_MODE, privateKey);
 
-        byte[] iv = Arrays.copyOfRange(encryption_iv_secretKey, 0, IV_LENGTH);
-        byte[] encryptedSecretKey = Arrays.copyOfRange(encryption_iv_secretKey, IV_LENGTH, size);
-
-        final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-        final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv);
-        cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
-        byte[] mosipSecretKey = cipher_symmetric.doFinal(encryptedSecretKey);
-
-        SecretKey mosip_secret_key =  new SecretKeySpec(mosipSecretKey, 0, mosipSecretKey.length, KEYGEN_SYMMETRIC_ALGORITHM);
-        return mosip_secret_key;
+        byte[] secretKeyBytes = cipher_asymmetric.doFinal(secretKeyEncryption);
+        Log.e(TAG, "getSecretKey: secretKeyBytes " + secretKeyBytes);
+        return new SecretKeySpec(secretKeyBytes, KEYGEN_SYMMETRIC_ALGORITHM);
     }
 
     // get private key from keystore
     private PrivateKey getPrivateKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
-        KeyStore.Entry entry = ks.getEntry(PRIVATE_ALIAS, null);
-        if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-            return null;
-        }
-
-        return ((KeyStore.PrivateKeyEntry) entry).getPrivateKey();
+        return  (PrivateKey) ks.getKey(PRIVATE_ALIAS, null);
     }
 
     // get public key from keystore
     private PublicKey getPublicKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
-        KeyStore.Entry entry = ks.getEntry(PRIVATE_ALIAS, null);
-        if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-            return null;
-        }
-
-        return ((KeyStore.PrivateKeyEntry) entry).getCertificate().getPublicKey();
+        return (PublicKey) ks.getCertificate(PRIVATE_ALIAS).getPublicKey();
     }
 
     //  random byte generation for AAD
