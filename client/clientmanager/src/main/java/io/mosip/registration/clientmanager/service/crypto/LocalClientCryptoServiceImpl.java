@@ -80,17 +80,16 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     // asymmetric encryption details together-----------------------------
     private static String CRYPTO_ASYMMETRIC_ALGORITHM;
-    private static String KEYGEN_ASYMMETRIC_ALGORITHM;
     private static String KEYGEN_ASYMMETRIC_ALGO_BLOCK;
     private static String KEYGEN_ASYMMETRIC_ALGO_PAD;
+    private static String KEYGEN_ASYMMETRIC_ALGORITHM;
+
     private static String KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD;
     private static int KEYGEN_ASYMMETRIC_KEY_LENGTH;
 
     // symmetric encryption details together-----------------------------
     private static String CRYPTO_SYMMETRIC_ALGORITHM;
     private static String KEYGEN_SYMMETRIC_ALGORITHM;
-    private static String KEYGEN_SYMMETRIC_ALGO_BLOCK;
-    private static String KEYGEN_SYMMETRIC_ALGO_PAD;
     private static int KEYGEN_SYMMETRIC_KEY_LENGTH;
 
     private static int CRYPTO_GCM_TAG_LENGTH;
@@ -100,6 +99,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private static int IV_LENGTH = 12;
     private static int AAD_LENGTH = 32;
 
+
     private static String CRYPTO_HASH_ALGORITHM;
     private static int CRYPTO_HASH_SYMMETRIC_KEY_LENGTH;
     private static int CRYPTO_HASH_ITERATION;
@@ -107,11 +107,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private static String CERTIFICATE_SIGN_ALGORITHM;
 
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
-    private static final String PRIVATE_ALIAS = "PRIVATE_ALIAS";
-    private static final String SECRET_ALIAS = "SECRET_ALIAS";
-    private static final String SIGN_ALIAS = "SIGN_ALIAS";
-
-    private static String KEYS_DIR = "mosipkeys";
+    private static final String ENDEC_ALIAS = "ENDEC";
+    private static final String SIGN_ALIAS = "SIGN";
 
     private static SecureRandom secureRandom = null;
 
@@ -129,32 +126,18 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
     @Inject
     public LocalClientCryptoServiceImpl() {
-        Log.d(TAG, "LocalClientCryptoServiceImpl: Constructor call successful");
+        Log.i(TAG, "LocalClientCryptoServiceImpl: Constructor call successful");
     }
 
     public void initLocalClientCryptoService() {
         context = getApplicationContext();
         initializeClientSecurity();
 
-        try {
-            // keys do not exist
-            if(!doesKeysExists()) {
-                Log.e(TAG, "LocalClientCryptoServiceImpl: Keys do not exist. Generating keys ");
-                genSecretKey();
-                genPrivPubKey();
 
+        genSignKey();
+        genEnDecKey();
 
-            }
-            else {
-                Log.e(TAG, "LocalClientCryptoServiceImpl: Keys exist ");
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-
-        Log.e(TAG, "LocalClientCryptoServiceImpl: Initialization call successful");
+        Log.i(TAG, "initLocalClientCryptoService: Initialization call successful");
     }
 
     //    ON BIND BINDER FOR MAIN CLASS HERE
@@ -203,9 +186,10 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
 
     private void initializeClientSecurity() {
-        // get context from main activity
-        Log.d(TAG, "LocalClientCryptoServiceImpl: Initializating");
+        Log.i(TAG, "LocalClientCryptoServiceImpl: Initializing");
         CRYPTO_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-name",context);
+        KEYGEN_ASYMMETRIC_ALGO_BLOCK = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-block-mode",context);
+        KEYGEN_ASYMMETRIC_ALGO_PAD = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-padding-scheme",context);
         CRYPTO_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-name",context);
         KEYGEN_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-algorithm-name",context);
         KEYGEN_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.symmetric-algorithm-name",context);
@@ -221,90 +205,57 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         CRYPTO_HASH_ITERATION = Integer.parseInt(
                 ConfigService.getProperty("mosip.kernel.crypto.hash-iteration",context));
         CRYPTO_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-name",context);
+        KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-padding-scheme",context);
         CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);
-
 
         base64encoder = Base64.getEncoder();
         base64decoder = Base64.getDecoder();
     }
 
-    private void genSecretKey() {
-        KEYGEN_ASYMMETRIC_ALGO_BLOCK=KeyProperties.BLOCK_MODE_ECB;
-        KEYGEN_ASYMMETRIC_ALGO_PAD=KeyProperties.ENCRYPTION_PADDING_RSA_OAEP;
-
+    private void genSignKey() {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                     KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
 
             final KeyGenParameterSpec keyPairGenParameterSpec = new KeyGenParameterSpec.Builder(
-                    SECRET_ALIAS,
-                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
+                    SIGN_ALIAS,
+                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
                     .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
-                    .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
-//                    .setUserAuthenticationRequired(true)
-                    .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                    .build();
-
-            kpg.initialize(keyPairGenParameterSpec);
-            KeyPair kp = kpg.generateKeyPair();
-
-            PublicKey publicKey = kp.getPublic();
-
-            Log.e(TAG, "genSecretKey: Generated private key successfully " + kp.getPublic());
-
-            KeyGenerator keyGen = KeyGenerator.getInstance(KEYGEN_SYMMETRIC_ALGORITHM);
-            keyGen.init(KEYGEN_SYMMETRIC_KEY_LENGTH);
-            SecretKey mosipSecretKey = keyGen.generateKey();
-
-            Log.e(TAG, "genSecretKey: Generated mosip key successfully " + mosipSecretKey.getEncoded());
-
-            final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
-            OAEPParameterSpec spec = new OAEPParameterSpec(
-                    "SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
-            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey, spec);
-
-            byte[] secretKeyEncryption = cipher_asymmetric.doFinal(mosipSecretKey.getEncoded());
-            Log.e(TAG, "genSecretKey: Generated secret key encryption");
-
-            Log.e(TAG, "getSecretKey: Key length " + (secretKeyEncryption.length));
-            createKeyFile(getKeysDirPath(), secretKeyEncryption);
-
-            Log.e(TAG, "genSecretKey: Generated secret key successfully ");
-
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void genPrivPubKey() {
-
-        KEYGEN_ASYMMETRIC_ALGO_BLOCK = KeyProperties.BLOCK_MODE_ECB;
-        KEYGEN_ASYMMETRIC_ALGO_PAD = KeyProperties.ENCRYPTION_PADDING_RSA_OAEP;
-        KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD = KeyProperties.SIGNATURE_PADDING_RSA_PKCS1;
-
-        try {
-            // lot of errors in asymmetric part
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
-                    KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
-
-            final KeyGenParameterSpec keyPairGenParameterSpec = new KeyGenParameterSpec.Builder(
-                    PRIVATE_ALIAS,
-                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY |
-                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
-                    .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
-                    .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
                     .setSignaturePaddings(KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD)
                     .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                     .build();
 
             kpg.initialize(keyPairGenParameterSpec);
             KeyPair kp = kpg.generateKeyPair();
-            Log.e(TAG, "genPrivateKey: Generated private key successfully " + base64encoder.encodeToString(kp.getPublic().getEncoded()));
+            Log.i(TAG, "genSignKey: Generated signing private key successfully " +
+                    base64encoder.encodeToString(kp.getPublic().getEncoded()));
 
-        } catch(Exception ex) {
-            ex.printStackTrace();
+        } catch(Exception e) {
+            Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+        }
+    }
+
+    private void genEnDecKey() {
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                    KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
+
+            final KeyGenParameterSpec keyPairGenParameterSpec = new KeyGenParameterSpec.Builder(
+                    ENDEC_ALIAS,
+                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                    .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
+                    .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
+                    .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
+                    .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+                    .build();
+
+            kpg.initialize(keyPairGenParameterSpec);
+            KeyPair kp = kpg.generateKeyPair();
+            Log.i(TAG, "genEnDecKey: Generated encryption private key successfully " +
+                    base64encoder.encodeToString(kp.getPublic().getEncoded()));
+
+        } catch(Exception e) {
+            Log.e(TAG, "genEnDecKey: Encryption key generation failed ", e);
         }
     }
 
@@ -314,7 +265,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
         byte[] dataToSign = base64decoder.decode(base64encoder.encodeToString(signRequestDto.getData().getBytes()));
         try {
-            PrivateKey privateKey = getPrivateKey();
+            PrivateKey privateKey = getSignPrivateKey();
             Signature sign = Signature.getInstance(CERTIFICATE_SIGN_ALGORITHM);
             sign.initSign(privateKey);
             sign.update(dataToSign);
@@ -323,8 +274,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             signResponseDto.setData(base64encoder.encodeToString(signedData));
             return signResponseDto;
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            Log.e(TAG, "sign: Signing Failed ", e);
         }
         return null;
     }
@@ -350,8 +301,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             signVerifyResponseDto.setVerified(result);
             return signVerifyResponseDto;
         }
-        catch(Exception ex) {
-            ex.printStackTrace();
+        catch(Exception e) {
+            Log.e(TAG, "verifySign: Sign Verification Failed", e);
         }
         return null;
     }
@@ -367,41 +318,39 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
             KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
             PublicKey publicKey = kf.generatePublic(keySpec);
-            Log.e(TAG, "encrypt: Read public key obj");
-            SecretKey mosipSecretKey = getSecretKey();
-            Log.e(TAG, "encrypt: Read mosip key successfully " + mosipSecretKey.getEncoded());
-            // symmetric encryption of data-----------------------------------------------------
-            final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
 
+            KeyGenerator keyGen = KeyGenerator.getInstance(KEYGEN_SYMMETRIC_ALGORITHM);
+            keyGen.init(KEYGEN_SYMMETRIC_KEY_LENGTH);
+            SecretKey mosipSecretKey = keyGen.generateKey();
+
+            // symmetric encryption of data---------------------------------------------------------
+            final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
             cipher_symmetric.init(Cipher.ENCRYPT_MODE, mosipSecretKey);
             byte[] iv = cipher_symmetric.getIV();
             byte[] aad = generateRandomBytes(AAD_LENGTH);
             cipher_symmetric.updateAAD(aad);
             byte[] data_encryption = cipher_symmetric.doFinal(dataToEncrypt);
-            Log.e(TAG, "encrypt: Generated message encryption" + data_encryption);
 
-            // asymmetric encryption of secret key----------------------------------------------------
+            // asymmetric encryption of secret key--------------------------------------------------
             final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
             OAEPParameterSpec spec = new OAEPParameterSpec(
                     "SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
-            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey,spec);
+            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey, spec);
             byte[] key_encryption = cipher_asymmetric.doFinal(mosipSecretKey.getEncoded());
-            Log.e(TAG, "encrypt: Generated secret key encryption");
 
-            // storing iv and encryption in encrypted_data
+            // constructing key, iv, add and encryption stream--------------------------------------
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
             outputStream.write(key_encryption);
             outputStream.write(iv);
             outputStream.write(aad);
             outputStream.write(data_encryption);
-            // need to add aad
+
             byte[] encrypted_key_iv_data = outputStream.toByteArray();
 
-            Log.e(TAG, "encrypt: Generated encrypted data");
             cryptoResponseDto.setValue(base64encoder.encodeToString(encrypted_key_iv_data));
             return cryptoResponseDto;
-        } catch(Exception ex) {
-            ex.printStackTrace();
+        } catch(Exception e) {
+            Log.e(TAG, "encrypt: Encryption failed ", e);
         }
 
         return null;
@@ -419,7 +368,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH+IV_LENGTH+AAD_LENGTH, dataToDecrypt.length);
 
         try {
-            PrivateKey privateKey = getPrivateKey();
+            PrivateKey privateKey = getEnDecPrivateKey();
 
             // asymmetric decryption of secret key----------------------------------------------------
             final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
@@ -437,8 +386,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             String decodedString = new String(decodedBytes);
             cryptoResponseDto.setValue(decodedString);
             return cryptoResponseDto;
-        } catch(Exception ex) {
-            ex.printStackTrace();
+        } catch(Exception e) {
+            Log.e(TAG, "decrypt: Decryption failed", e);
         }
         return null;
     }
@@ -448,138 +397,61 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         PublicKeyResponseDto publicKeyResponseDto = new PublicKeyResponseDto();
 
         try {
-            PublicKey publicKey = getPublicKey();
-            String public_key = base64encoder.encodeToString(publicKey.getEncoded());
-            Log.e(TAG, "getPublicKey: Public key accessed " + public_key);
-            publicKeyResponseDto.setPublicKey(public_key);
-            return publicKeyResponseDto;
-        } catch(Exception ex) {
-            ex.printStackTrace();
+            String keyRequest = publicKeyRequestDto.getServerProfile();
+            Log.i(TAG, "getPublicKey: Public key accessed for " + keyRequest);
+            if(keyRequest == "sign") {
+                PublicKey publicKey = getSignPublicKey();
+                Log.i(TAG, "getPublicKey: Sign Public key accessed ");
+                String public_key = base64encoder.encodeToString(publicKey.getEncoded());
+                publicKeyResponseDto.setPublicKey(public_key);
+                return publicKeyResponseDto;
+            }
+            else if(keyRequest == "endec") {
+                PublicKey publicKey = getEnDecPublicKey();
+                Log.i(TAG, "getPublicKey: EnDec Public key accessed ");
+                String public_key = base64encoder.encodeToString(publicKey.getEncoded());
+                publicKeyResponseDto.setPublicKey(public_key);
+                return publicKeyResponseDto;
+            }
+        } catch(Exception e) {
+            Log.e(TAG, "getPublicKey: Public key access failed ", e);
         }
         return null;
     }
 
-    private boolean doesKeysExists() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
+    // get endec private key from keystore
+    private PrivateKey getEnDecPrivateKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
-
-        // check if secret key exists
-        KeyStore.Entry entry = ks.getEntry(SECRET_ALIAS, null);
-        if (!(entry instanceof KeyStore.SecretKeyEntry)) {
-            return false;
-        }
-        Log.e(TAG, "doesKeysExists: Secret key exists");
-
-        // check if private key exists
-        entry = ks.getEntry(PRIVATE_ALIAS, null);
-        if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-            return false;
-        }
-        Log.e(TAG, "doesKeysExists: Private key exists");
-
-        File file = new File(context.getFilesDir(),getKeysDirPath());
-        if(!file.exists()) {
-            file.createNewFile();
-            Log.e(TAG, "doesKeysExists: File created...");
-            return false;
-        }
-        Log.e(TAG, "doesKeysExists: Mosip key exists");
-        return true;
+        return  (PrivateKey) ks.getKey(ENDEC_ALIAS, null);
     }
 
-    private String getKeysDirPath() {
-//        return KEYS_DIR + File.separator + SECRET_ALIAS;
-        return SECRET_ALIAS;
-    }
-
-    // create a key file to store the encrypted secret key
-    private void createKeyFile(String keyDir, byte[] key) throws IOException {
-
-        String keyEncoded = Base64.getEncoder().encodeToString(key);
-        try {
-            File file = new File(context.getFilesDir(), getKeysDirPath());
-            if(!file.exists()) {
-                try {
-                    file.createNewFile();
-                    Log.e(TAG, "createKeyFile: File");
-                } catch (AccessDeniedException ex) {
-                    Log.e(TAG, "createKeyFile: Access Denied", ex);
-                }
-            }
-            FileOutputStream stream = new FileOutputStream(file);
-            try {
-                stream.write(keyEncoded.getBytes());
-            } finally {
-                stream.close();
-            }
-
-            Log.e(TAG, "createKeyFile: key " + keyEncoded);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-
-    // get secret key from keystore
-    private SecretKey getSecretKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    // get endec public key from keystore
+    private PublicKey getEnDecPublicKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
-        PrivateKey privateKey = (PrivateKey) ks.getKey(SECRET_ALIAS, null);
-
-        String keyEncoded = "";
-        File file = new File(context.getFilesDir(), getKeysDirPath());
-        if(file.exists()) {
-            int length = (int) file.length();
-            byte[] bytes = new byte[length];
-            FileInputStream in = new FileInputStream(file);
-            try {
-                in.read(bytes);
-            } finally {
-                in.close();
-            }
-            keyEncoded += new String(bytes);
-            Log.e(TAG, "createKeyFile: key " + keyEncoded);
-        }
-        else {
-            Log.e(TAG, "getSecretKey: File not exists");
-        }
-
-        byte[] secretKeyEncryption = base64decoder.decode(keyEncoded);
-        Log.e(TAG, "getSecretKey: Key length " + (secretKeyEncryption.length));
-
-
-        final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
-        cipher_asymmetric.init(Cipher.DECRYPT_MODE, privateKey);
-
-        byte[] secretKeyBytes = cipher_asymmetric.doFinal(secretKeyEncryption);
-        Log.e(TAG, "getSecretKey: secretKeyBytes " + secretKeyBytes);
-        return new SecretKeySpec(secretKeyBytes, KEYGEN_SYMMETRIC_ALGORITHM);
+        return (PublicKey) ks.getCertificate(ENDEC_ALIAS).getPublicKey();
     }
 
-    // get private key from keystore
-    private PrivateKey getPrivateKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
+    // get sign private key from keystore
+    private PrivateKey getSignPrivateKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
-        return  (PrivateKey) ks.getKey(PRIVATE_ALIAS, null);
+        return  (PrivateKey) ks.getKey(SIGN_ALIAS, null);
     }
 
-    // get public key from keystore
-    private PublicKey getPublicKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
+    // get sign public key from keystore
+    private PublicKey getSignPublicKey() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
-        return (PublicKey) ks.getCertificate(PRIVATE_ALIAS).getPublicKey();
+        return (PublicKey) ks.getCertificate(SIGN_ALIAS).getPublicKey();
     }
 
-    //  random byte generation for AAD
+    //  random byte generation
     public static byte[] generateRandomBytes(int length) {
-
         SecureRandom secureRandom = new SecureRandom();
-
         byte[] bytes = new byte[length];
         secureRandom.nextBytes(bytes);
         return bytes;
     }
-
-
-
 }

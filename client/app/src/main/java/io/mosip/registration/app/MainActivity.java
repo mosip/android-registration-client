@@ -3,12 +3,14 @@ package io.mosip.registration.app;
 import io.mosip.registration.clientmanager.dto.crypto.*;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean mStopLoop;
 
     TextView textView;
+
+    private String endecMessage = "encode dummy text";
+    private String signMessage = "sign dummy text";
     private String encryption;
     private String signed_string;
 
@@ -46,190 +51,95 @@ public class MainActivity extends AppCompatActivity {
         test_verify(view);
     };
 
-
     public void test_encrypt(View view) {
-        textView.setText("Clicked Encrypt");
-        try{
-            Thread.sleep(2000);
-        } catch(InterruptedException e){
-            e.printStackTrace();
+        try {
+            Log.i(TAG, "test_encrypt: Encrypting...." + endecMessage);
+            //            creating public key request
+            PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
+            publicKeyRequestDto.setServerProfile("endec");
+
+            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+            Log.i(TAG,"Got public key..creating cryptoRequest");
+
+            CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
+                    endecMessage, publicKeyResponseDto.getPublicKey());
+
+            CryptoResponseDto cryptoResponseDto = localClientCryptoService.encrypt(cryptoRequestDto);
+
+            Log.i(TAG, "test_encrypt: Encryption completed");
+
+            textView.setText("Encrypted message is : " + cryptoResponseDto.getValue() );
+            encryption = cryptoResponseDto.getValue();
+        } catch (Exception e) {
+            Log.e(TAG, "test_encrypt: Encryption Failed ", e);
         }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText("Starting encryption process");
-//            creating public key request
-                PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
-                PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
-//                PublicKeyResponseDto publicKeyResponseDto;
-                try{
-                    Thread.sleep(2000);
-                }catch(InterruptedException e){
-                    e.printStackTrace();
-                }
-                textView.setText("Got public key..creating cryptoRequest");
-
-                CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
-                        "This is a new message.Hoergt this workds", publicKeyResponseDto.getPublicKey());
-
-                CryptoResponseDto cryptoResponseDto = localClientCryptoService.encrypt(cryptoRequestDto);
-
-                try{
-                    Thread.sleep(2000);
-                }catch(InterruptedException e){
-                    e.printStackTrace();
-                }
-
-                textView.setText("Encryption done");
-                try{
-                    Thread.sleep(2000);
-                }catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
-                textView.setText(cryptoResponseDto.getValue());
-                encryption = cryptoResponseDto.getValue();
-            }
-        }).start();
     }
 
     public void test_decrypt(View view) {
+        try {
+            Log.i(TAG, "test_decrypt: Decrypting....");
+            PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
+            publicKeyRequestDto.setServerProfile("endec");
+            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PublicKeyRequestDto publicKeyRequestDto=new PublicKeyRequestDto();
-                    PublicKeyResponseDto publicKeyResponseDto=localClientCryptoService.getPublicKey(publicKeyRequestDto);
-//                PublicKeyResponseDto publicKeyResponseDto;
-                    textView.setText("Got public key..creating cryptoRequest for decrypt");
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
-
-                    CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(encryption, publicKeyResponseDto.getPublicKey());
-                    textView.setText("Decrypting......");
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
-
-                    CryptoResponseDto cryptoResponseDto=localClientCryptoService.decrypt(cryptoRequestDto);
-                    System.out.println(cryptoResponseDto.getValue());
-                    textView.setText("Decrypted message is : "+cryptoResponseDto.getValue() );
-
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
-
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                }
+            CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(encryption, publicKeyResponseDto.getPublicKey());
+            Log.i(TAG,"Got public key..creating cryptoRequest");
 
 
-                textView.setText("Clicked Decrypt");
-            }
-        }).start();
+            CryptoResponseDto cryptoResponseDto=localClientCryptoService.decrypt(cryptoRequestDto);
+            Log.i(TAG, "test_decrypt: Decryption Completed");
+
+            textView.setText("Decrypted message is : " + cryptoResponseDto.getValue() );
+
+
+        } catch(Exception e) {
+            Log.e(TAG, "test_decrypt: Decryption Failed ", e);
+        }
 
     }
 
-    // click_sign
     public void test_sign(View view){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    textView.setText("Clicked Sign Data.Data is: message to sign");
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
+        try {
+            Log.i(TAG, "test_sign: Signing...." + signMessage);
 
-                    textView.setText("Creating Sign Request ");
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
+            Log.i(TAG, "test_sign: Creating Sign Request ");
+            SignRequestDto signRequestDto = new SignRequestDto(signMessage);
 
-                    SignRequestDto signRequestDto=new SignRequestDto("message to sign");
-                    SignResponseDto signResponseDto=localClientCryptoService.sign(signRequestDto);
-                    signed_string=signResponseDto.getData();
+            SignResponseDto signResponseDto = localClientCryptoService.sign(signRequestDto);
+            signed_string=signResponseDto.getData();
 
-                    textView.setText("Signature Generated for string");
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
+            Log.i(TAG, "test_sign: Signing completed");
+            textView.setText("Signature is: "+ signed_string);
 
-                    textView.setText("Signature is: "+ signed_string);
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
-
-
-                }
-                catch (Exception ex){
-                    ex.printStackTrace();
-                }
-
-            }
-        }).start();
-
+        }
+        catch (Exception e) {
+            Log.e(TAG, "test_sign: Signing Failed", e);
+        }
     }
 
-
-    //    verifying
-    // click_verify
     public void test_verify(View view){
+        try{
+            Log.i(TAG, "test_verify: SignVerifying....");
+            PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
+            publicKeyRequestDto.setServerProfile("sign");
+            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+            Log.i(TAG, "test_verify: Got public key..verifying signed data");
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    PublicKeyRequestDto publicKeyRequestDto=new PublicKeyRequestDto();
-                    PublicKeyResponseDto publicKeyResponseDto=localClientCryptoService.getPublicKey(publicKeyRequestDto);
-//                PublicKeyResponseDto publicKeyResponseDto;
-                    textView.setText("Got public key..verifying signed data");
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
+            SignVerifyRequestDto signVerifyRequestDto=new SignVerifyRequestDto(signMessage, signed_string, publicKeyResponseDto.getPublicKey());
+            SignVerifyResponseDto signVerifyResponseDto=localClientCryptoService.verifySign(signVerifyRequestDto);
 
+            Log.i(TAG, "test_verify: Verification Completed");
 
-                    SignVerifyRequestDto signVerifyRequestDto=new SignVerifyRequestDto("message to sign",signed_string,publicKeyResponseDto.getPublicKey());
-                    SignVerifyResponseDto signVerifyResponseDto=localClientCryptoService.verifySign(signVerifyRequestDto);
-
-                    textView.setText("Verified Data");
-                    try{
-                        Thread.sleep(2000);
-                    }catch(InterruptedException e){
-                        System.out.println(e);
-                    }
-
-                    if(signVerifyResponseDto.isVerified()){
-                        textView.setText("Data is correctly signed and matching");
-                    }
-                    else{
-                        textView.setText("Incorrect Signature");
-                    }
-
-                }catch(Exception ex){
-                    ex.printStackTrace();
-                }
-
+            if(signVerifyResponseDto.isVerified()){
+                textView.setText("Data is correctly signed and matching");
+            }
+            else{
+                textView.setText("Incorrect Signature");
             }
 
-        }).start();
+        }catch(Exception e){
+            Log.e(TAG, "test_verify: SignVerification Failed ", e);
+        }
 
     }
 
