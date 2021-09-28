@@ -83,6 +83,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private static String KEYGEN_ASYMMETRIC_ALGO_BLOCK;
     private static String KEYGEN_ASYMMETRIC_ALGO_PAD;
     private static String KEYGEN_ASYMMETRIC_ALGORITHM;
+    private static String CRYPTO_ASYMMETRIC_ALGO_MD;
+    private static String CRYPTO_ASYMMETRIC_ALGO_MGF;
 
     private static String KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD;
     private static int KEYGEN_ASYMMETRIC_KEY_LENGTH;
@@ -190,6 +192,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         CRYPTO_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-name",context);
         KEYGEN_ASYMMETRIC_ALGO_BLOCK = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-block-mode",context);
         KEYGEN_ASYMMETRIC_ALGO_PAD = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-padding-scheme",context);
+        CRYPTO_ASYMMETRIC_ALGO_MD = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-message-digest-function",context);
+        CRYPTO_ASYMMETRIC_ALGO_MGF = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-mask-generation-function",context);
         CRYPTO_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-name",context);
         KEYGEN_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-algorithm-name",context);
         KEYGEN_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.symmetric-algorithm-name",context);
@@ -338,7 +342,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             // asymmetric encryption of secret key--------------------------------------------------
             final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
             OAEPParameterSpec spec = new OAEPParameterSpec(
-                    "SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
+                    CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
             cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey, spec);
             byte[] key_encryption = cipher_asymmetric.doFinal(mosipSecretKey.getEncoded());
 

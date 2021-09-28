@@ -6,11 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <EditText
+        android:id="@+id/msg_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="message"
+        android:inputType="textLongMessage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.138" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_decrypt"
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_marginEnd="52dp"
+        android:layout_marginEnd="36dp"
         android:background="@drawable/btn_end"
         android:onClick="click_decrypt"
         android:text="Decrypt"
@@ -19,15 +33,17 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.615"
+        app:layout_constraintStart_toEndOf="@+id/btn_encrypt"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.229" />
+        app:layout_constraintVertical_bias="0.289" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_encrypt"
         android:layout_width="150dp"
         android:layout_height="60dp"
 
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="36dp"
         android:background="@drawable/btn_start"
         android:backgroundTintMode="add"
         android:onClick="click_encrypt"
@@ -38,17 +54,66 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.229" />
+        app:layout_constraintVertical_bias="0.289" />
 
     <TextView
-        android:id="@+id/testerView"
-        android:layout_width="339dp"
-        android:layout_height="105dp"
+        android:id="@+id/EnDecTextView"
+        android:layout_width="326dp"
+        android:layout_height="89dp"
         android:text="Service Loaded"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.442"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.436" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_verify"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+
+        android:layout_marginStart="208dp"
+        android:background="@drawable/btn_end"
+        android:backgroundTintMode="add"
+        android:onClick="click_verify"
+        android:text="Verify"
+        android:textAllCaps="false"
+        android:textColor="#FFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.597" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_sign"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+
+        android:layout_marginStart="32dp"
+        android:background="@drawable/btn_start"
+        android:backgroundTintMode="add"
+        android:onClick="click_sign"
+        android:text="Sign"
+        android:textAllCaps="false"
+        android:textColor="#FFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.597" />
+
+    <TextView
+        android:id="@+id/SignTextView"
+        android:layout_width="326dp"
+        android:layout_height="89dp"
+        android:text="Service Loaded"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.423"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.76" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

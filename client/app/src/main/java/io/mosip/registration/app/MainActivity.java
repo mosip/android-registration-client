@@ -3,7 +3,6 @@ package io.mosip.registration.app;
 import io.mosip.registration.clientmanager.dto.crypto.*;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +11,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 
@@ -28,10 +27,12 @@ public class MainActivity extends AppCompatActivity {
     private ServiceConnection serviceConnection;
     private boolean mStopLoop;
 
-    TextView textView;
+    EditText messageInput;
+    TextView endecTextView;
+    TextView signTextView;
 
-    private String endecMessage = "encode dummy text";
-    private String signMessage = "sign dummy text";
+    private String endecMessage;
+    private String signMessage;
     private String encryption;
     private String signed_string;
 
@@ -40,19 +41,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = (TextView) findViewById(R.id.testerView);
+        messageInput = (EditText) findViewById(R.id.msg_input);
+        endecTextView = (TextView) findViewById(R.id.EnDecTextView);
+        signTextView = (TextView) findViewById(R.id.SignTextView);
         serviceIntent= new Intent(getApplicationContext(), LocalClientCryptoServiceImpl.class);
         bindService();
     }
     public void click_encrypt(View view) {
         test_encrypt(view);
     };
-    public void click_decrypt(View view) {
-        test_decrypt(view);
+    public void click_decrypt(View view) { test_decrypt(view); };
+
+    public void click_sign(View view) {
+        test_sign(view);
     };
+    public void click_verify(View view) { test_verify(view); };
+
 
     public void test_encrypt(View view) {
         try {
+            endecMessage = messageInput.getText().toString();
             Log.i(TAG, "test_encrypt: Encrypting...." + endecMessage);
             //            creating public key request
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
@@ -68,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i(TAG, "test_encrypt: Encryption completed");
 
-            textView.setText("Encrypted message is : " + cryptoResponseDto.getValue() );
+            endecTextView.setText("Encrypted message is : " + cryptoResponseDto.getValue() );
             encryption = cryptoResponseDto.getValue();
         } catch (Exception e) {
             Log.e(TAG, "test_encrypt: Encryption Failed ", e);
@@ -89,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             CryptoResponseDto cryptoResponseDto=localClientCryptoService.decrypt(cryptoRequestDto);
             Log.i(TAG, "test_decrypt: Decryption Completed");
 
-            textView.setText("Decrypted message is : " + cryptoResponseDto.getValue() );
+            endecTextView.setText("Decrypted message is : " + cryptoResponseDto.getValue() );
 
 
         } catch(Exception e) {
@@ -100,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void test_sign(View view){
         try {
+            signMessage = messageInput.getText().toString();
             Log.i(TAG, "test_sign: Signing...." + signMessage);
 
             Log.i(TAG, "test_sign: Creating Sign Request ");
@@ -109,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             signed_string=signResponseDto.getData();
 
             Log.i(TAG, "test_sign: Signing completed");
-            textView.setText("Signature is: "+ signed_string);
+            signTextView.setText("Signature is: "+ signed_string);
 
         }
         catch (Exception e) {
@@ -131,10 +140,10 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "test_verify: Verification Completed");
 
             if(signVerifyResponseDto.isVerified()){
-                textView.setText("Data is correctly signed and matching");
+                signTextView.setText("Data is correctly signed and matching");
             }
             else{
-                textView.setText("Incorrect Signature");
+                signTextView.setText("Incorrect Signature");
             }
 
         }catch(Exception e){
