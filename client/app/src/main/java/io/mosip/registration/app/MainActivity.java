@@ -45,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
         bindService();
     }
     public void click_encrypt(View view) {
-        test_sign(view);
+        test_encrypt(view);
     };
     public void click_decrypt(View view) {
-        test_verify(view);
+        test_decrypt(view);
     };
 
     public void test_encrypt(View view) {

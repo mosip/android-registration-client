@@ -96,8 +96,8 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
 
     // need to read aad and iv length from config files-----
-    private static int IV_LENGTH = 12;
-    private static int AAD_LENGTH = 32;
+    private static int CRYPTO_SYMMETRIC_IV_LENGTH;
+    private static int CRYPTO_SYMMETRIC_AAD_LENGTH;
 
 
     private static String CRYPTO_HASH_ALGORITHM;
@@ -197,6 +197,10 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
                 ConfigService.getProperty("mosip.kernel.keygenerator.asymmetric-key-length",context));
         KEYGEN_SYMMETRIC_KEY_LENGTH = Integer.parseInt(
                 ConfigService.getProperty("mosip.kernel.keygenerator.symmetric-key-length",context));
+        CRYPTO_SYMMETRIC_IV_LENGTH = Integer.parseInt(
+                ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-iv-length",context));
+        CRYPTO_SYMMETRIC_AAD_LENGTH = Integer.parseInt(
+                ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-aad-length",context));
         CRYPTO_GCM_TAG_LENGTH = Integer.parseInt(
                 ConfigService.getProperty("mosip.kernel.crypto.gcm-tag-length",context));
         CRYPTO_HASH_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.hash-algorithm-name",context);
@@ -327,7 +331,7 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
             final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
             cipher_symmetric.init(Cipher.ENCRYPT_MODE, mosipSecretKey);
             byte[] iv = cipher_symmetric.getIV();
-            byte[] aad = generateRandomBytes(AAD_LENGTH);
+            byte[] aad = generateRandomBytes(CRYPTO_SYMMETRIC_AAD_LENGTH);
             cipher_symmetric.updateAAD(aad);
             byte[] data_encryption = cipher_symmetric.doFinal(dataToEncrypt);
 
@@ -363,9 +367,9 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
         byte[] public_key =  base64decoder.decode(cryptoRequestDto.getPublicKey());
 
         byte[] encryptedSecretKey = Arrays.copyOfRange(dataToDecrypt, 0, KEYGEN_SYMMETRIC_KEY_LENGTH);
-        byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+IV_LENGTH);
-        byte[] aad = Arrays.copyOfRange(dataToDecrypt,KEYGEN_SYMMETRIC_KEY_LENGTH+IV_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+IV_LENGTH+AAD_LENGTH);
-        byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH+IV_LENGTH+AAD_LENGTH, dataToDecrypt.length);
+        byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH);
+        byte[] aad = Arrays.copyOfRange(dataToDecrypt,KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH+CRYPTO_SYMMETRIC_AAD_LENGTH);
+        byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH+CRYPTO_SYMMETRIC_AAD_LENGTH, dataToDecrypt.length);
 
         try {
             PrivateKey privateKey = getEnDecPrivateKey();
