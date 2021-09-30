@@ -1,5 +1,6 @@
 package io.mosip.registration.app;
 
+import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.clientmanager.dto.crypto.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,18 +15,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends DaggerAppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private LocalClientCryptoServiceImpl localClientCryptoService;
-    private boolean isServiceBound;
-
-
-    private Intent serviceIntent;
-    private ServiceConnection serviceConnection;
-    private boolean mStopLoop;
+    @Inject
+    public LocalClientCryptoServiceImpl localClientCryptoService;
 
     EditText messageInput;
     TextView endecTextView;
@@ -44,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
         messageInput = (EditText) findViewById(R.id.msg_input);
         endecTextView = (TextView) findViewById(R.id.EnDecTextView);
         signTextView = (TextView) findViewById(R.id.SignTextView);
-        serviceIntent= new Intent(getApplicationContext(), LocalClientCryptoServiceImpl.class);
-        bindService();
+
     }
     public void click_encrypt(View view) {
         test_encrypt(view);
@@ -149,42 +146,5 @@ public class MainActivity extends AppCompatActivity {
         }catch(Exception e){
             Log.e(TAG, "test_verify: SignVerification Failed ", e);
         }
-
     }
-
-
-    private void bindService(){
-        if(serviceConnection==null){
-            serviceConnection = new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName className,
-                                               IBinder service) {
-                    // Binding to LocalClientCryptoServiceImpl, cast the IBinder and
-                    // getting LocalClientCryptoServiceImpl instance
-                    LocalClientCryptoServiceImpl.ClientCryptoServiceBinder binder =
-                            (LocalClientCryptoServiceImpl.ClientCryptoServiceBinder) service;
-                    //Get instance of your service
-                    localClientCryptoService = binder.getServiceInstance();
-                    localClientCryptoService.initLocalClientCryptoService();
-                    isServiceBound = true;
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName className) {
-                    isServiceBound = false;
-                }
-            };
-        }
-
-        bindService(serviceIntent,serviceConnection, Context.BIND_AUTO_CREATE);
-
-    }
-
-    private void unbindService(){
-        if(isServiceBound){
-            unbindService(serviceConnection);
-            isServiceBound=false;
-        }
-    }
-
 }

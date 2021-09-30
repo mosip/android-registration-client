@@ -69,9 +69,9 @@ import android.util.Log;
 import android.R;
 
 @Singleton
-public class LocalClientCryptoServiceImpl extends Service implements ClientCryptoManagerService {
+public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService {
     private static final String TAG = LocalClientCryptoServiceImpl.class.getSimpleName();
-    private static Context context;
+    private Context context;
 
     // encoder and decoder from java itself
     private static Encoder base64encoder;
@@ -115,24 +115,19 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
     private static SecureRandom secureRandom = null;
 
 
-
-    //    implementing service...extending binder
-    public class ClientCryptoServiceBinder extends Binder {
-        public  LocalClientCryptoServiceImpl getServiceInstance(){
-            return LocalClientCryptoServiceImpl.this;
-        }
-    }
-
-    //creating instance of binder to be passed to MainActivity
-    private IBinder mBinder=new ClientCryptoServiceBinder();
-
     @Inject
-    public LocalClientCryptoServiceImpl() {
+    public LocalClientCryptoServiceImpl(Context appContext) {
         Log.i(TAG, "LocalClientCryptoServiceImpl: Constructor call successful");
+        try {
+            initLocalClientCryptoService(appContext);
+        } catch (Exception e) {
+            Log.e(TAG, "LocalClientCryptoServiceImpl: Failed Initialization", e);
+        }
+
     }
 
-    public void initLocalClientCryptoService() {
-        context = getApplicationContext();
+    public void initLocalClientCryptoService(Context appContext) {
+        this.context = appContext;
         initializeClientSecurity();
 
 
@@ -141,51 +136,6 @@ public class LocalClientCryptoServiceImpl extends Service implements ClientCrypt
 
         Log.i(TAG, "initLocalClientCryptoService: Initialization call successful");
     }
-
-    //    ON BIND BINDER FOR MAIN CLASS HERE
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-
-
-    //    on start of service
-//    @Override
-//    public void onStart(Intent intent, int startId) {
-//        super.onStart(intent, startId);
-//    }
-
-    //    on start command
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        initializeClientSecurity();
-//
-//        stopSelf();
-//        return START_STICKY;
-//    }
-
-    //    onDestroy service
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        any object to be destroyed should be destroyed here
-    }
-
-
-    //    UNBIND METHOD
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
-    }
-
-    //    REBIND
-    public void onRebind(Intent intent) {
-        super.onRebind(intent);
-    }
-
-
-
 
     private void initializeClientSecurity() {
         Log.i(TAG, "LocalClientCryptoServiceImpl: Initializing");
