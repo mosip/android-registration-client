@@ -14,6 +14,9 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 
+import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_ENDEC;
+import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_SIGN;
+
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 
 
@@ -57,14 +60,14 @@ public class ExampleInstrumentedTest {
         localClientCryptoService=new LocalClientCryptoServiceImpl(appContext);
         localClientCryptoService.initLocalClientCryptoService(appContext);
 
-//        creating keys for encryption and dcryption testing
+//        creating keys for encryption and decryption testing
         publicKeyRequestDto_encdec= new PublicKeyRequestDto();
-        publicKeyRequestDto_encdec.setAlias("endec");
+        publicKeyRequestDto_encdec.setAlias(KEY_ENDEC);
         publicKeyResponseDto_encdec = localClientCryptoService.getPublicKey(publicKeyRequestDto_encdec);
 
 //        creating keys for sign and verify
         publicKeyRequestDto_sign= new PublicKeyRequestDto();
-        publicKeyRequestDto_sign.setAlias("sign");
+        publicKeyRequestDto_sign.setAlias(KEY_SIGN);
         publicKeyResponseDto_sign = localClientCryptoService.getPublicKey(publicKeyRequestDto_sign);
 
     }
@@ -88,13 +91,13 @@ public class ExampleInstrumentedTest {
     public void getPublicKey_test(){
 //        checking public key for valid types such as endec
         PublicKeyRequestDto pub_RequestDto = new PublicKeyRequestDto();
-        pub_RequestDto.setAlias("endec");
+        pub_RequestDto.setAlias(KEY_ENDEC);
         PublicKeyResponseDto pub_ResponseDto = localClientCryptoService.getPublicKey(pub_RequestDto);
         assertNotNull(pub_ResponseDto);
 
 //        checking for sign
         PublicKeyRequestDto pub_RequestDto_sign = new PublicKeyRequestDto();
-        pub_RequestDto_sign.setAlias("sign");
+        pub_RequestDto_sign.setAlias(KEY_SIGN);
         PublicKeyResponseDto pub_ResponseDto_sign = localClientCryptoService.getPublicKey(pub_RequestDto_sign);
         assertNotNull(pub_ResponseDto_sign);
 

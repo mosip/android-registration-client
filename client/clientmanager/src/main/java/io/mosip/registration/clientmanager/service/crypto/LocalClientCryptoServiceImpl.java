@@ -1,5 +1,8 @@
 package io.mosip.registration.clientmanager.service.crypto;
 
+import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_ENDEC;
+import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_SIGN;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -357,14 +360,14 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         try {
             String keyRequest = publicKeyRequestDto.getAlias();
             Log.i(TAG, "getPublicKey: Public key accessed for " + keyRequest);
-            if(keyRequest == "sign") {
+            if(keyRequest == KEY_SIGN) {
                 PublicKey publicKey = getSignPublicKey();
                 Log.i(TAG, "getPublicKey: Sign Public key accessed ");
                 String public_key = base64encoder.encodeToString(publicKey.getEncoded());
                 publicKeyResponseDto.setPublicKey(public_key);
                 return publicKeyResponseDto;
             }
-            else if(keyRequest == "endec") {
+            else if(keyRequest == KEY_ENDEC) {
                 PublicKey publicKey = getEnDecPublicKey();
                 Log.i(TAG, "getPublicKey: EnDec Public key accessed ");
                 String public_key = base64encoder.encodeToString(publicKey.getEncoded());
