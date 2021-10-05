@@ -166,8 +166,8 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-padding-scheme",context);
         CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);
 
-        base64encoder = Base64.getEncoder();
-        base64decoder = Base64.getDecoder();
+        base64encoder = Base64.getUrlEncoder();
+        base64decoder = Base64.getUrlDecoder();
     }
 
     private void genSignKey() {
@@ -355,7 +355,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         PublicKeyResponseDto publicKeyResponseDto = new PublicKeyResponseDto();
 
         try {
-            String keyRequest = publicKeyRequestDto.getServerProfile();
+            String keyRequest = publicKeyRequestDto.getAlias();
             Log.i(TAG, "getPublicKey: Public key accessed for " + keyRequest);
             if(keyRequest == "sign") {
                 PublicKey publicKey = getSignPublicKey();

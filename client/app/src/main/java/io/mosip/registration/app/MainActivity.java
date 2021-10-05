@@ -61,7 +61,7 @@ public class MainActivity extends DaggerAppCompatActivity {
             Log.i(TAG, "test_encrypt: Encrypting...." + endecMessage);
             //            creating public key request
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
-            publicKeyRequestDto.setServerProfile("endec");
+            publicKeyRequestDto.setAlias("endec");
 
             PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
             Log.i(TAG,"Got public key..creating cryptoRequest");
@@ -84,7 +84,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         try {
             Log.i(TAG, "test_decrypt: Decrypting....");
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
-            publicKeyRequestDto.setServerProfile("endec");
+            publicKeyRequestDto.setAlias("endec");
             PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
 
             CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(encryption, publicKeyResponseDto.getPublicKey());
@@ -127,7 +127,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         try{
             Log.i(TAG, "test_verify: SignVerifying....");
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
-            publicKeyRequestDto.setServerProfile("sign");
+            publicKeyRequestDto.setAlias("sign");
             PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
             Log.i(TAG, "test_verify: Got public key..verifying signed data");
 

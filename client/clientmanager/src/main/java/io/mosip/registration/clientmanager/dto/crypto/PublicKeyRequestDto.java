@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PublicKeyRequestDto {
     @NotBlank(message = "Invalid Request")
-    String serverProfile;
+    String alias;
 }

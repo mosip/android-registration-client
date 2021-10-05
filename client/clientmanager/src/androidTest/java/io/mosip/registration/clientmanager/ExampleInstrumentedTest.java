@@ -59,12 +59,12 @@ public class ExampleInstrumentedTest {
 
 //        creating keys for encryption and dcryption testing
         publicKeyRequestDto_encdec= new PublicKeyRequestDto();
-        publicKeyRequestDto_encdec.setServerProfile("endec");
+        publicKeyRequestDto_encdec.setAlias("endec");
         publicKeyResponseDto_encdec = localClientCryptoService.getPublicKey(publicKeyRequestDto_encdec);
 
 //        creating keys for sign and verify
         publicKeyRequestDto_sign= new PublicKeyRequestDto();
-        publicKeyRequestDto_sign.setServerProfile("sign");
+        publicKeyRequestDto_sign.setAlias("sign");
         publicKeyResponseDto_sign = localClientCryptoService.getPublicKey(publicKeyRequestDto_sign);
 
     }
@@ -88,19 +88,19 @@ public class ExampleInstrumentedTest {
     public void getPublicKey_test(){
 //        checking public key for valid types such as endec
         PublicKeyRequestDto pub_RequestDto = new PublicKeyRequestDto();
-        pub_RequestDto.setServerProfile("endec");
+        pub_RequestDto.setAlias("endec");
         PublicKeyResponseDto pub_ResponseDto = localClientCryptoService.getPublicKey(pub_RequestDto);
         assertNotNull(pub_ResponseDto);
 
 //        checking for sign
         PublicKeyRequestDto pub_RequestDto_sign = new PublicKeyRequestDto();
-        pub_RequestDto_sign.setServerProfile("sign");
+        pub_RequestDto_sign.setAlias("sign");
         PublicKeyResponseDto pub_ResponseDto_sign = localClientCryptoService.getPublicKey(pub_RequestDto_sign);
         assertNotNull(pub_ResponseDto_sign);
 
         //        checking for random string
         PublicKeyRequestDto pub_RequestDto_sign2 = new PublicKeyRequestDto();
-        pub_RequestDto_sign2.setServerProfile("random");
+        pub_RequestDto_sign2.setAlias("random");
         PublicKeyResponseDto pub_ResponseDto_sign2 = localClientCryptoService.getPublicKey(pub_RequestDto_sign2);
         assertNull(pub_ResponseDto_sign2);
 
