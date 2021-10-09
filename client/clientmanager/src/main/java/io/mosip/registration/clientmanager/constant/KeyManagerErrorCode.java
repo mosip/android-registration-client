@@ -46,7 +46,34 @@ public enum KeyManagerErrorCode {
 
     ENCRYPT_NOT_ALLOWED_ERROR("KER-CRY-011", "Not Allowed to preform encryption with Master Key. Use Base to encrypt data."),
 
+//NEWLY ADDED ERROR CODES
+
+    NO_SUCH_PROVIDER_EXCEPTION("KER-CRY-012","Specified provider is not registered in the security provider list"),
+
+    INVALID_ALGORITHM_PARAMETER_EXCEPTION("KER-CRY-013","Invalid ALgorithm Parameter provided for function call"),
+
+    ILLEGAL_ARGUMENT_EXCEPTION("KER-CRY-013","Illegal argument provided to function(NULL or EMPTY)"),
+
+    KEY_STORE_EXCEPTION("KER-CRY-014","implementation for the specified type is not available from the specified provider"),
+
+    CERTIFICATE_EXCEPTION("KER-CRY-015","Some of the certificates included in the keystore data could not be stored"),
+
+    IO_EXCEPTION("KER-CRY-016","There was an I/O problem with data"),
+
+    UNRECOVERABLE_ENTRY_EXCEPTION("KER-CRY-017","the specified protection Parameter for Keystore were insufficient or invalid"),
+
+    SIGNATURE_EXCEPTION("KER-CRY-018","Signature object not initialized properly / signature algorithm unable to process input data"),
+
+    INVALID_KEY_EXCEPTION("KER-CRY-019","Provided Key is Invalid"),
+
+    BAD_PADDING_EXCEPTION("KER-CRY-020","The decrypted data is not bounded by the appropriate padding bytes"),
+
+    NO_SUCH_PADDING_EXCEPTION("KER-CRY-021","Padding scheme is not available"),
+
+    ILLEGAL_BLOCKSIZE_EXCEPTION("KER-CRY-022"," Input Data length processed by cipher is not multiple of block size"),
+
     INTERNAL_SERVER_ERROR("KER-CRY-500", "Internal server error");
+
 
     /**
      * The errorCode

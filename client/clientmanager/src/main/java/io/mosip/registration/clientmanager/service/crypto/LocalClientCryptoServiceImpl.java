@@ -3,25 +3,12 @@ package io.mosip.registration.clientmanager.service.crypto;
 import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_ENDEC;
 import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_SIGN;
 
-import android.app.Service;
+
 import android.content.Context;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
-
-import androidx.annotation.Nullable;
-
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.file.AccessDeniedException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -40,13 +27,11 @@ import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.MGF1ParameterSpec;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -72,7 +57,7 @@ import io.mosip.registration.clientmanager.dto.crypto.SignVerifyResponseDto;
 import io.mosip.registration.clientmanager.spi.crypto.ClientCryptoManagerService;
 import io.mosip.registration.clientmanager.util.ConfigService;
 import android.util.Log;
-import android.R;
+import io.mosip.registration.clientmanager.constant.*;
 
 @Singleton
 public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService {
@@ -176,7 +161,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         base64decoder = Base64.getUrlDecoder();
     }
 
-    //    done with errors
+    //    done with errors completely
     private void genSignKey() {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(
@@ -197,20 +182,23 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
         }
         catch(NoSuchAlgorithmException e) {
-            Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_ALGORITHM_EXCEPTION.getErrorMessage(), e);
         }
         catch(NoSuchProviderException e) {
-            Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+            Log.e(TAG,KeyManagerErrorCode.NO_SUCH_PROVIDER_EXCEPTION.getErrorMessage(), e);
         }
         catch(IllegalArgumentException e) {
-            Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+            Log.e(TAG,KeyManagerErrorCode.ILLEGAL_ARGUMENT_EXCEPTION.getErrorMessage(), e);
         }
         catch(InvalidAlgorithmParameterException e) {
+            Log.e(TAG, KeyManagerErrorCode.INVALID_ALGORITHM_PARAMETER_EXCEPTION.getErrorMessage(), e);
+        }
+        catch(Exception e){
             Log.e(TAG, "genSignKey: Sign key generation failed ", e);
         }
     }
 
-    //    done with error
+    //    done with error completely
     private void genEnDecKey() {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(
@@ -230,22 +218,27 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             Log.i(TAG, "genEnDecKey: Generated encryption private key successfully " +
                     base64encoder.encodeToString(kp.getPublic().getEncoded()));
 
-        } catch(NoSuchAlgorithmException e) {
-            Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+        }
+        catch(NoSuchAlgorithmException e) {
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_ALGORITHM_EXCEPTION.getErrorMessage(), e);
         }
         catch(NoSuchProviderException e) {
-            Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+            Log.e(TAG,KeyManagerErrorCode.NO_SUCH_PROVIDER_EXCEPTION.getErrorMessage(), e);
         }
         catch(IllegalArgumentException e) {
-            Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+            Log.e(TAG,KeyManagerErrorCode.ILLEGAL_ARGUMENT_EXCEPTION.getErrorMessage(), e);
         }
         catch(InvalidAlgorithmParameterException e) {
+            Log.e(TAG, KeyManagerErrorCode.INVALID_ALGORITHM_PARAMETER_EXCEPTION.getErrorMessage(), e);
+        }
+        catch(Exception e){
             Log.e(TAG, "genSignKey: Sign key generation failed ", e);
         }
+
     }
 
 
-    //    done
+    //    done with error completely
     @Override
     public SignResponseDto sign(SignRequestDto signRequestDto) {
         SignResponseDto signResponseDto = new SignResponseDto();
@@ -263,30 +256,31 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
         }
         catch (KeyStoreException e) {
-            Log.e(TAG, "sign: Signing Failed ", e);
+            Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         }
         catch (CertificateException e) {
-            Log.e(TAG, "sign: Signing Failed ", e);
+            Log.e(TAG, KeyManagerErrorCode.CERTIFICATE_EXCEPTION.getErrorMessage(), e);
         }
         catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "sign: Signing Failed ", e);
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_ALGORITHM_EXCEPTION.getErrorMessage(), e);
         }
         catch (IOException e) {
-            Log.e(TAG, "sign: Signing Failed ", e);
+            Log.e(TAG, KeyManagerErrorCode.IO_EXCEPTION.getErrorMessage(), e);
         }
         catch (UnrecoverableEntryException e) {
-            Log.e(TAG, "sign: Signing Failed ", e);
+            Log.e(TAG, KeyManagerErrorCode.UNRECOVERABLE_ENTRY_EXCEPTION.getErrorMessage(), e);
         }
         catch (SignatureException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.SIGNATURE_EXCEPTION.getErrorMessage(), e);
+        }
+        catch (InvalidKeyException e) {
+            Log.e(TAG, KeyManagerErrorCode.INVALID_KEY_EXCEPTION.getErrorMessage(), e);
         }
 
         return null;
     }
 
-    //    done
+    //    done with error completely
     @Override
     public SignVerifyResponseDto verifySign(SignVerifyRequestDto signVerifyRequestDto) {
         SignVerifyResponseDto signVerifyResponseDto = new SignVerifyResponseDto();
@@ -308,13 +302,13 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             signVerifyResponseDto.setVerified(result);
             return signVerifyResponseDto;
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_ALGORITHM_EXCEPTION.getErrorMessage(), e);
         } catch (SignatureException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.SIGNATURE_EXCEPTION.getErrorMessage(), e);
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.INVALID_KEY_EXCEPTION.getErrorMessage(), e);
         } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.INVALID_SPEC_PUBLIC_KEY.getErrorMessage(), e);
         }
 
         return null;
@@ -364,28 +358,31 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             cryptoResponseDto.setValue(base64encoder.encodeToString(encrypted_key_iv_data));
             return cryptoResponseDto;
         } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.INVALID_SPEC_PUBLIC_KEY.getErrorMessage(), e);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_ALGORITHM_EXCEPTION.getErrorMessage(), e);
+        }
+        catch (BadPaddingException e) {
+            Log.e(TAG, KeyManagerErrorCode.BAD_PADDING_EXCEPTION.getErrorMessage(), e);
+        }
+        catch (InvalidKeyException e) {
+            Log.e(TAG, KeyManagerErrorCode.INVALID_KEY_EXCEPTION.getErrorMessage(), e);
         } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.INVALID_ALGORITHM_PARAMETER_EXCEPTION.getErrorMessage(), e);
         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_PADDING_EXCEPTION.getErrorMessage(), e);
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.IO_EXCEPTION.getErrorMessage(), e);
+        }
+        catch (IllegalBlockSizeException e) {
+            Log.e(TAG, KeyManagerErrorCode.ILLEGAL_BLOCKSIZE_EXCEPTION.getErrorMessage(), e);
         }
 
 
         return null;
     }
 
-    //    done
+    //    done completely with errors
     @Override
     public CryptoResponseDto decrypt(CryptoRequestDto cryptoRequestDto) {
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
@@ -418,30 +415,31 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             return cryptoResponseDto;
         }
         catch (InvalidKeyException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.INVALID_KEY_EXCEPTION.getErrorMessage(), e);
         } catch (UnrecoverableEntryException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.UNRECOVERABLE_ENTRY_EXCEPTION.getErrorMessage(), e);
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_ALGORITHM_EXCEPTION.getErrorMessage(), e);
         } catch (CertificateException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.CERTIFICATE_EXCEPTION.getErrorMessage(), e);
         } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.INVALID_ALGORITHM_PARAMETER_EXCEPTION.getErrorMessage(), e);
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.ILLEGAL_BLOCKSIZE_EXCEPTION.getErrorMessage(), e);
         } catch (BadPaddingException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.BAD_PADDING_EXCEPTION.getErrorMessage(), e);
         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_PADDING_EXCEPTION.getErrorMessage(), e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.IO_EXCEPTION.getErrorMessage(), e);
         }
 
         return null;
     }
 
+    //    done completely with errors
     @Override
     public PublicKeyResponseDto getPublicKey(PublicKeyRequestDto publicKeyRequestDto) {
         PublicKeyResponseDto publicKeyResponseDto = new PublicKeyResponseDto();
@@ -464,15 +462,15 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                 return publicKeyResponseDto;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.IO_EXCEPTION.getErrorMessage(), e);
         } catch (CertificateException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.CERTIFICATE_EXCEPTION.getErrorMessage(), e);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.NO_SUCH_ALGORITHM_EXCEPTION.getErrorMessage(), e);
         } catch (UnrecoverableEntryException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.UNRECOVERABLE_ENTRY_EXCEPTION.getErrorMessage(), e);
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         }
         return null;
     }
