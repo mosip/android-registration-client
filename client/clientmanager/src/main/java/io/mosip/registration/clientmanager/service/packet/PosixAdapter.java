@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -66,32 +68,18 @@ public class PosixAdapter implements ObjectStoreAdapter {
             Log.e(TAG, "PosixAdapter: Failed Initialization", e);
         }
     }
-//
-//    @Inject
-//    public void PosixAdapter(Context appContext) {
-//        Log.i(TAG, "PosixAdapter: Constructor call successful");
-//        try {
-//            initPosixAdapterService(appContext);
-//        } catch (Exception e) {
-//            Log.e(TAG, "PosixAdapter: Failed Initialization", e);
-//        }
-//    }
 
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
         helper = new EncryptionHelper(appContext);
         objectMapper = new ObjectMapper();
-        BASE_LOCATION = ConfigService.getProperty("object.store.base.location", context);
 
-        if (BASE_LOCATION == null){
-            String state = Environment.getExternalStorageState();
-            if (!Environment.MEDIA_MOUNTED.equals(state)) {
-
-                Log.e(TAG, "External Storage not mounted");
-            }
-            BASE_LOCATION = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS).getPath();
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            BASE_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath();
+        } else {
+            Log.e(TAG, "External Storage not mounted");
         }
-
         Log.i(TAG, "initLocalClientCryptoService: Initialization call successful");
     }
 
@@ -110,8 +98,15 @@ public class PosixAdapter implements ObjectStoreAdapter {
             InputStream ios = new FileInputStream(containerZip);
             Map<ZipEntry, ByteArrayOutputStream> entries = getAllExistingEntries(ios);
 
-            Optional<ZipEntry> zipEntry = entries.keySet().stream().filter(e ->
-                    e.getName().contains(ObjectStoreUtil.getName(source, process, objectName) + ZIP)).findAny();
+            Set<ZipEntry> set = entries.keySet();
+            Stream<ZipEntry> stream = set.stream();
+            String name = ObjectStoreUtil.getName(source, process, objectName) + JSON;
+
+            Optional<ZipEntry> zipEntry = stream.filter(e ->
+                    e.getName().contains(name)).findAny();
+
+//            Optional<ZipEntry> zipEntry = entries.keySet().stream().filter(e ->
+//                    e.getName().contains(ObjectStoreUtil.getName(source, process, objectName) + ZIP)).findAny();
 
             if (zipEntry.isPresent() && zipEntry.get() != null)
                 return new ByteArrayInputStream(entries.get(zipEntry.get()).toByteArray());
@@ -246,13 +241,11 @@ public class PosixAdapter implements ObjectStoreAdapter {
     public boolean pack(String account, String container, String source, String process, String refId) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
+            File accountLoc = new File(BASE_LOCATION + SEPARATOR + account);
+            if (!accountLoc.exists())
+                return false;
+            File containerZip = new File(accountLoc.getPath() + SEPARATOR + container + ZIP);
 
-            File containerZip = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS) ,container + ZIP);
-            //if (!containerZip.exists())
-                //containerZip.mkdir();
-            //File containerZip = new File(accountLoc.getPath() + SEPARATOR + container + ZIP);
-            //boolean fileCreated = containerZip.createNewFile();
             if (!containerZip.exists())
                 throw new RuntimeException("Files not found in destinations");
 
@@ -358,8 +351,6 @@ public class PosixAdapter implements ObjectStoreAdapter {
             return;
         }
 
-        BASE_LOCATION = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOCUMENTS).getPath();
-
         new File(BASE_LOCATION + SEPARATOR + account).mkdir();
 
         File containerZip = new File(BASE_LOCATION + SEPARATOR + account, container + ZIP);
@@ -404,6 +395,8 @@ public class PosixAdapter implements ObjectStoreAdapter {
             containerZip.createNewFile();
             fileOutputStream = new FileOutputStream(containerZip);
             fileOutputStream.write(out.toByteArray());
+        } catch (Exception ex){
+            Log.e(TAG, "createContainerZipWithSubPacket : Exception while writing a file");
         }
         finally {
             fileOutputStream.flush();

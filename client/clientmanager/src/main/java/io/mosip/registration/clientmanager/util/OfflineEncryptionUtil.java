@@ -19,12 +19,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import dagger.Component;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 import io.mosip.registration.clientmanager.spi.crypto.ClientCryptoManagerService;
 
+@Singleton
 public class OfflineEncryptionUtil {
     public static final String APPLICATION_ID = "REGISTRATION";
 
@@ -64,6 +68,7 @@ public class OfflineEncryptionUtil {
     //@Value("${crypto.PrependThumbprint.enable:true}")
     private boolean isPrependThumbprintEnabled;
 
+    @Inject
     public OfflineEncryptionUtil(Context context) {
         applicationContext = context;
         DATETIME_PATTERN = ConfigService.getProperty("mosip.utc-datetime-pattern", context);

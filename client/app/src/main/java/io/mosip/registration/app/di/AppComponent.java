@@ -13,6 +13,7 @@ import io.mosip.registration.app.BaseApplication;
                 AndroidSupportInjectionModule.class,
                 ActivityBuildersModule.class,
                 ObjectStoreBuildersModule.class,
+                OfflineEncrytionBuildersModule.class,
                 AppModule.class,
         }
 )

@@ -2,6 +2,8 @@ package io.mosip.registration.clientmanager.util;
 
 import android.content.Context;
 
+import javax.inject.Inject;
+
 //import org.springframework.stereotype.Component;
 
 public class EncryptionHelper {
@@ -11,8 +13,8 @@ public class EncryptionHelper {
     //@Value("${objectstore.crypto.name:OfflinePacketCryptoServiceImpl}")
     private String cryptoName;
 
-    //@Autowired
-    private OfflineEncryptionUtil offlineEncryptionUtil;
+    @Inject
+    public OfflineEncryptionUtil offlineEncryptionUtil;
 
     //@Autowired
     private OnlineCryptoUtil onlineCryptoUtil;

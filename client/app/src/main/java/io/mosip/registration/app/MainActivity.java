@@ -25,7 +25,7 @@ import io.mosip.registration.clientmanager.service.packet.PosixAdapter;
 
 public class MainActivity extends DaggerAppCompatActivity {
 
-    //@Inject
+    @Inject
     public LocalClientCryptoServiceImpl localClientCryptoService;
 
     EditText messageInput;

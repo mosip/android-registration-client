@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,20 @@ public class ObjectStoreDemo extends AppCompatActivity {
     @Inject
     public PosixAdapter posixAdapter;
 
+    // Packet meta info constants
+    private static final String ID = "id";
+    private static final String PACKET_NAME = "packetname";
+    private static final String SOURCE = "source";
+    private static final String PROCESS = "process";
+    private static final String SCHEMA_VERSION = "schemaversion";
+    private static final String SIGNATURE = "signature";
+    private static final String ENCRYPTED_HASH = "encryptedhash";
+    private static final String PROVIDER_NAME = "providername";
+    private static final String PROVIDER_VERSION = "providerversion";
+    private static final String CREATION_DATE = "creationdate";
+    private static final String REFID = "refid";
+
+
     private static final String TAG = ObjectStoreDemo.class.getSimpleName();
 
     private static final String PACKET_MANAGER_ACCOUNT = "PACKET_MANAGER_ACCOUNT";
@@ -31,19 +46,6 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private static final String id = "110111101120191111121111";
     private static final String objectName = "Test";
     private static final String refId = "0";
-
-    // Packet meta info constants
-    public static final String ID = "id";
-    public static final String PACKET_NAME = "packetname";
-    public static final String SOURCE = "source";
-    public static final String PROCESS = "process";
-    public static final String SCHEMA_VERSION = "schemaversion";
-    public static final String SIGNATURE = "signature";
-    public static final String ENCRYPTED_HASH = "encryptedhash";
-    public static final String PROVIDER_NAME = "providername";
-    public static final String PROVIDER_VERSION = "providerversion";
-    public static final String CREATION_DATE = "creationdate";
-    public static final String REFID = "refid";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,34 +81,45 @@ public class ObjectStoreDemo extends AppCompatActivity {
                     id, source, process, id + objectName, metaMap);
             Snackbar snackbar = Snackbar.make(view, "Object Meta Data added successfully", Snackbar.LENGTH_SHORT);
             snackbar.show();
+            return;
         } catch (Exception e) {
-            Snackbar snackbar = Snackbar.make(view, "Object Meta Data test failed", Snackbar.LENGTH_SHORT);
-            snackbar.show();
+            Log.e(TAG, "test_addObjectMetaData failed: ", e);
         }
+        Snackbar snackbar = Snackbar.make(view, "Object Meta Data test failed", Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void test_getObject(View view) {
         try {
-            posixAdapter.getObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName);
-            Snackbar snackbar = Snackbar.make(view, "Object fetched successfully", Snackbar.LENGTH_SHORT);
-            snackbar.show();
+            InputStream inputStream = posixAdapter.getObject(PACKET_MANAGER_ACCOUNT, id, source, process, id + objectName);
+
+            if (inputStream != null) {
+                Snackbar snackbar = Snackbar.make(view, "Object fetched successfully", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
         } catch (Exception e) {
-            Snackbar snackbar = Snackbar.make(view, "Object fetching failed", Snackbar.LENGTH_SHORT);
-            snackbar.show();
+            Log.e(TAG, "test_getObject failed: ", e);
         }
+        Snackbar snackbar = Snackbar.make(view, "Object fetching failed", Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void test_pack(View view) {
         try {
-            posixAdapter.pack(PACKET_MANAGER_ACCOUNT, id, source, process, refId);
-            Snackbar snackbar = Snackbar.make(view, "Packed successfully", Snackbar.LENGTH_SHORT);
-            snackbar.show();
+            boolean success = posixAdapter.pack(PACKET_MANAGER_ACCOUNT, id, source, process, refId);
+
+            if (success) {
+                Snackbar snackbar = Snackbar.make(view, "Packed successfully", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
         } catch (Exception e) {
             Log.e(TAG, "test_StoreInZip: StoringInZip Failed ", e);
-            Snackbar snackbar = Snackbar.make(view, "Packing failed", Snackbar.LENGTH_SHORT);
-            snackbar.show();
         }
+        Snackbar snackbar = Snackbar.make(view, "Packing failed", Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }

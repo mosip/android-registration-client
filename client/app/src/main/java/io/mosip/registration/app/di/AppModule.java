@@ -11,6 +11,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 import io.mosip.registration.clientmanager.service.packet.PosixAdapter;
+import io.mosip.registration.clientmanager.util.OfflineEncryptionUtil;
 
 @Module
 public class AppModule {
@@ -42,5 +43,10 @@ public class AppModule {
     @Provides
     public PosixAdapter posixAdapter(){
         return new PosixAdapter(appContext);
+    }
+
+    @Provides
+    public OfflineEncryptionUtil offlineEncryptionUtil(){
+        return new OfflineEncryptionUtil(appContext);
     }
 }
