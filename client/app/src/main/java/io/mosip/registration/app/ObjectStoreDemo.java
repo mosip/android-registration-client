@@ -1,12 +1,12 @@
 package io.mosip.registration.app;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -44,8 +44,9 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private static final String source = "reg-client";
     private static final String process = "NEW";
     private static final String id = "110111101120191111121111";
-    private static final String objectName = "Test";
-    private static final String refId = "0";
+    private static final String objectSuffix = "Test";
+    private static final String objectName = id + "_" + objectSuffix;
+    private static final String refId = "1234512345_121212";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,26 @@ public class ObjectStoreDemo extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void click_getMetaData(View view) {
+        test_getMetaData(view);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void click_removeContainer(View view) {
+        test_removeContainer(view);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void click_addTags(View view) {
+        test_addTags(view);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void click_getTags(View view) {
+        test_getTags(view);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void test_addObjectMetaData(View view) {
         try {
             Map<String, Object> metaMap = new HashMap<>();
@@ -78,12 +99,12 @@ public class ObjectStoreDemo extends AppCompatActivity {
             metaMap.put(PROCESS, process);
 
             posixAdapter.addObjectMetaData(PACKET_MANAGER_ACCOUNT,
-                    id, source, process, id + objectName, metaMap);
+                    id, source, process, objectName, metaMap);
             Snackbar snackbar = Snackbar.make(view, "Object Meta Data added successfully", Snackbar.LENGTH_SHORT);
             snackbar.show();
             return;
         } catch (Exception e) {
-            Log.e(TAG, "test_addObjectMetaData failed: ", e);
+            Log.e(TAG, "test_addObjectMetaData failed : ", e);
         }
         Snackbar snackbar = Snackbar.make(view, "Object Meta Data test failed", Snackbar.LENGTH_SHORT);
         snackbar.show();
@@ -92,7 +113,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void test_getObject(View view) {
         try {
-            InputStream inputStream = posixAdapter.getObject(PACKET_MANAGER_ACCOUNT, id, source, process, id + objectName);
+            InputStream inputStream = posixAdapter.getObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName);
 
             if (inputStream != null) {
                 Snackbar snackbar = Snackbar.make(view, "Object fetched successfully", Snackbar.LENGTH_SHORT);
@@ -100,7 +121,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
                 return;
             }
         } catch (Exception e) {
-            Log.e(TAG, "test_getObject failed: ", e);
+            Log.e(TAG, "test_getObject failed : ", e);
         }
         Snackbar snackbar = Snackbar.make(view, "Object fetching failed", Snackbar.LENGTH_SHORT);
         snackbar.show();
@@ -117,9 +138,82 @@ public class ObjectStoreDemo extends AppCompatActivity {
                 return;
             }
         } catch (Exception e) {
-            Log.e(TAG, "test_StoreInZip: StoringInZip Failed ", e);
+            Log.e(TAG, "test_pack : Failed ", e);
         }
         Snackbar snackbar = Snackbar.make(view, "Packing failed", Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    private void test_getMetaData(View view) {
+
+        try {
+            Map metaData = posixAdapter.getMetaData(PACKET_MANAGER_ACCOUNT, id, source, process, objectName);
+
+            if (metaData != null && metaData.containsKey(ID)) {
+                Snackbar snackbar = Snackbar.make(view, "Meta data fetched successfully", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "test_getMetaData : Failed ", e);
+        }
+        Snackbar snackbar = Snackbar.make(view, "Meta data fetching failed", Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    private void test_removeContainer(View view) {
+
+        try {
+            boolean deleted = posixAdapter.removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);
+
+            if (deleted) {
+                Snackbar snackbar = Snackbar.make(view, "Container Removed successfully", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "test_removeContainer : Failed ", e);
+        }
+        Snackbar snackbar = Snackbar.make(view, "Remove Container failed", Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    private void test_addTags(View view) {
+
+        try {
+            Map<String, String> tags = new HashMap<>();
+            tags.put(ID, id);
+            tags.put(SOURCE, source);
+            tags.put(PROCESS, process);
+
+            Map _tags = posixAdapter.addTags(PACKET_MANAGER_ACCOUNT, id, tags);
+
+            if (_tags != null) {
+                Snackbar snackbar = Snackbar.make(view, "Tags Added successfully", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "test_addTags : Failed ", e);
+        }
+        Snackbar snackbar = Snackbar.make(view, "Add Tags failed", Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    private void test_getTags(View view) {
+
+        try {
+            Map tags = posixAdapter.getTags(PACKET_MANAGER_ACCOUNT, id);
+
+            if (tags != null) {
+                Snackbar snackbar = Snackbar.make(view, "Tags fetched successfully", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "test_getTags : Failed ", e);
+        }
+        Snackbar snackbar = Snackbar.make(view, "Get Tags failed", Snackbar.LENGTH_SHORT);
         snackbar.show();
     }
 }

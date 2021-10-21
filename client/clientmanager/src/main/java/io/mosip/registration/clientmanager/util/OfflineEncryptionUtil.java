@@ -14,15 +14,11 @@ package io.mosip.registration.clientmanager.util;
 
 import android.content.Context;
 
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import dagger.Component;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
@@ -69,7 +65,7 @@ public class OfflineEncryptionUtil {
     private boolean isPrependThumbprintEnabled;
 
     @Inject
-    public OfflineEncryptionUtil(Context context) {
+    public  OfflineEncryptionUtil(Context context) {
         applicationContext = context;
         DATETIME_PATTERN = ConfigService.getProperty("mosip.utc-datetime-pattern", context);
         signApplicationid = ConfigService.getProperty("mosip.sign.applicationid", context);
@@ -84,7 +80,7 @@ public class OfflineEncryptionUtil {
     public byte[] encrypt(String id, byte[] packet) {
         String centerId = id.substring(0, centerIdLength);
         String machineId = id.substring(centerIdLength, centerIdLength + machineIdLength);
-        String refId = centerId + "_" + machineId;
+        String refId = base64encoder.encodeToString((centerId + "_" + machineId).getBytes());
         String packetString = base64encoder.encodeToString(packet);
         CryptoRequestDto cryptomanagerRequestDto = new CryptoRequestDto();
 //        cryptomanagerRequestDto.setApplicationId(APPLICATION_ID);

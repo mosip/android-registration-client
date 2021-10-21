@@ -21,6 +21,7 @@ public class EncryptionHelper {
 
     public EncryptionHelper(Context context) {
         cryptoName = ConfigService.getProperty("object.store.crypto.name", context);
+        offlineEncryptionUtil = new OfflineEncryptionUtil(context);
     }
 
     public byte[] encrypt(String id, byte[] packet) {

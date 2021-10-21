@@ -41,7 +41,6 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.objectstore.ObjectDto;
 import io.mosip.registration.clientmanager.spi.packet.ObjectStoreAdapter;
-import io.mosip.registration.clientmanager.util.ConfigService;
 import io.mosip.registration.clientmanager.util.EncryptionHelper;
 import io.mosip.registration.clientmanager.util.ObjectStoreUtil;
 
@@ -200,19 +199,17 @@ public class PosixAdapter implements ObjectStoreAdapter {
 
     @Override
     public Integer incMetadata(String account, String container, String source, String process, String objectName, String metaDataKey) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new RuntimeException("incMetadata not implemented");
     }
 
     @Override
     public Integer decMetadata(String account, String container, String source, String process, String objectName, String metaDataKey) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new RuntimeException("decMetadata not implemented");
     }
 
     @Override
     public boolean deleteObject(String account, String container, String source, String process, String objectName) {
-        return true;
+        throw new RuntimeException("deleteObject not implemented");
     }
 
     @Override
@@ -265,7 +262,7 @@ public class PosixAdapter implements ObjectStoreAdapter {
 
     @Override
     public List<ObjectDto> getAllObjects(String account, String container) {
-        return null;
+        throw new RuntimeException("getAllObjects not implemented");
     }
 
     @Override
@@ -273,10 +270,11 @@ public class PosixAdapter implements ObjectStoreAdapter {
         try {
             JSONObject jsonObject = containerTagging(account, container, tags);
             createContainerWithTagging(account, container, new ByteArrayInputStream(jsonObject.toString().getBytes()));
+            return tags;
         } catch (Exception e) {
             Log.e(TAG, "exception occured while packing");
         }
-        return tags;
+        return null;
     }
 
     @Override
@@ -302,16 +300,17 @@ public class PosixAdapter implements ObjectStoreAdapter {
                 JSONObject jsonObject = objectMapper.readValue(objectMapper.writeValueAsString(responseStrBuilder.toString()),
                         JSONObject.class);
                 metaMap = objectMapper.readValue(jsonObject.toString(), HashMap.class);
+                return metaMap;
             }
         } catch (Exception e) {
             Log.e(TAG, "exception occured to get tags for id - " + container);
         }
-        return metaMap;
+        return null;
     }
 
     @Override
     public void deleteTags(String account, String container, List<String> tags) {
-
+        throw new RuntimeException("Delete Tags not implemented");
     }
 
     //Private methods
