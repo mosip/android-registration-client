@@ -5,7 +5,6 @@
 //import io.mosip.registration.clientmanager.entities.BiometricRecord;
 //import io.mosip.registration.clientmanager.spi.packet.PacketWriterService;
 //import io.mosip.registration.clientmanager.util.PacketManagerHelper;
-//import io.mosip.registration.clientmanager.util.PacketManagerLogger;
 //
 //import org.json.JSONArray;
 //import org.json.JSONException;

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.mosip.registration.app">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -10,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.registration_client">
-
+        <activity
+            android:name=".ObjectStoreDemo"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -21,7 +26,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name="io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl" android:exported="false"/>
+        <service
+            android:name="io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl"
+            android:exported="false" />
+        <service
+            android:name="io.mosip.registration.clientmanager.service.packet.PosixAdapter"
+            android:exported="false" />
     </application>
 
 </manifest>

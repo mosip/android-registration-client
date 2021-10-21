@@ -6,8 +6,8 @@ import io.mosip.registration.app.MainActivity;
 import io.mosip.registration.app.ObjectStoreDemo;
 
 @Module
-public abstract class ActivityBuildersModule {
+public abstract class ObjectStoreBuildersModule {
 
     @ContributesAndroidInjector
-    abstract MainActivity contributeMainActivity();
+    abstract ObjectStoreDemo contributeObjectStoreDemo();
 }

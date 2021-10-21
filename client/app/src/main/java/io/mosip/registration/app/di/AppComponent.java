@@ -7,12 +7,12 @@ import dagger.Component;
 import dagger.android.AndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
 import io.mosip.registration.app.BaseApplication;
-import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 
 @Component(
         modules = {
                 AndroidSupportInjectionModule.class,
                 ActivityBuildersModule.class,
+                ObjectStoreBuildersModule.class,
                 AppModule.class,
         }
 )
@@ -25,5 +25,4 @@ public interface AppComponent extends AndroidInjector<BaseApplication> {
         Builder appModule(AppModule appModule);
         AppComponent build();
     }
-
 }

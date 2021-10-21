@@ -4,7 +4,6 @@ import android.content.Context;
 
 //import org.springframework.stereotype.Component;
 
-//@Component
 public class EncryptionHelper {
 
     private static final String CRYPTO = "OfflinePacketCryptoServiceImpl";
@@ -23,10 +22,7 @@ public class EncryptionHelper {
     }
 
     public byte[] encrypt(String id, byte[] packet) {
-        if (cryptoName.equalsIgnoreCase(CRYPTO))
-            return offlineEncryptionUtil.encrypt(id, packet);
-        else
-            return onlineCryptoUtil.encrypt(id, packet);
+        return offlineEncryptionUtil.encrypt(id, packet);
     }
 
 }

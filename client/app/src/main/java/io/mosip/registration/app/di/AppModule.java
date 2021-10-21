@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
+import io.mosip.registration.clientmanager.service.packet.PosixAdapter;
 
 @Module
 public class AppModule {
@@ -36,5 +37,10 @@ public class AppModule {
     @Provides
     public LocalClientCryptoServiceImpl provideLocalClientCryptoServiceImpl(){
         return new LocalClientCryptoServiceImpl(appContext);
+    }
+
+    @Provides
+    public PosixAdapter posixAdapter(){
+        return new PosixAdapter(appContext);
     }
 }

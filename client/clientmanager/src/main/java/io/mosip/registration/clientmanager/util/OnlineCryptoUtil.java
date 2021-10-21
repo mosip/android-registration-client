@@ -13,7 +13,6 @@ import java.util.Base64;
 import dagger.Component;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
 
-//@Component
 public class OnlineCryptoUtil {
 
     public static final String APPLICATION_ID = "REGISTRATION";

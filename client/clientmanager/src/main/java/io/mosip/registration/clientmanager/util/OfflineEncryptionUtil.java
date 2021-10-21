@@ -21,10 +21,10 @@ import java.util.Base64;
 
 import dagger.Component;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
+import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 import io.mosip.registration.clientmanager.spi.crypto.ClientCryptoManagerService;
 
-//@Component
 public class OfflineEncryptionUtil {
     public static final String APPLICATION_ID = "REGISTRATION";
 
@@ -83,10 +83,10 @@ public class OfflineEncryptionUtil {
         String packetString = base64encoder.encodeToString(packet);
         CryptoRequestDto cryptomanagerRequestDto = new CryptoRequestDto();
 //        cryptomanagerRequestDto.setApplicationId(APPLICATION_ID);
-          cryptomanagerRequestDto.setValue(packetString);
+        cryptomanagerRequestDto.setValue(packetString);
 //        cryptomanagerRequestDto.setPrependThumbprint(isPrependThumbprintEnabled);
 //        cryptomanagerRequestDto.setReferenceId(refId);
-//
+        cryptomanagerRequestDto.setPublicKey(refId);
 //        SecureRandom sRandom = new SecureRandom();
         //TODO remove hardcoding
         byte[] nonce = new byte[12];
@@ -107,10 +107,10 @@ public class OfflineEncryptionUtil {
             //throw new ObjectStoreAdapterException(KhazanaErrorCodes.ENCRYPTION_FAILURE.getErrorCode(), KhazanaErrorCodes.ENCRYPTION_FAILURE.getErrorMessage());
         }
 
-        //byte[] encryptedData = base64decoder.decode((getCryptomanagerService().encrypt(cryptomanagerRequestDto).getValue());
+        CryptoResponseDto cryptoResponseDto = getCryptomanagerService().encrypt(cryptomanagerRequestDto);
 
-        //return EncryptionUtil.mergeEncryptedData(encryptedData, nonce, aad);
-        return null;
+        byte[] encryptedData = base64decoder.decode(cryptoResponseDto.getValue());
+        return EncryptionUtil.mergeEncryptedData(encryptedData, nonce, aad);
     }
 
     private ClientCryptoManagerService getCryptomanagerService() {
