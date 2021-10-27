@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.ui.login;
+package io.mosip.registration.app.ui.login;
 
 import android.app.Activity;
 
@@ -23,8 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.mosip.registrationclient.mobile.MainActivity;
-import io.mosip.registrationclient.mobile.R;
+import io.mosip.registration.app.MainActivity;
+import io.mosip.registration.app.R;
 
 
 public class LoginActivity extends AppCompatActivity {

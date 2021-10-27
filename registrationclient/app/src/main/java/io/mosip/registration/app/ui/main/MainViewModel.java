@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.ui.main;
+package io.mosip.registration.app.ui.main;
 
 import androidx.lifecycle.ViewModel;
 

@@ -49,6 +49,8 @@
                 android:layout_marginEnd="24dp"
                 android:drawableRight="@drawable/outline_person_24"
                 android:hint="@string/prompt_username"
+                android:text="username"
+
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -64,6 +66,7 @@
                 android:layout_marginEnd="24dp"
                 android:drawableRight="@drawable/outline_lock_24"
                 android:hint="@string/prompt_password"
+                android:text="Password"
                 android:imeActionLabel="@string/action_sign_in_short"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"

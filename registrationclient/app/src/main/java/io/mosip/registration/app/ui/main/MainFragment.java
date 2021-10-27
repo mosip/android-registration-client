@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.ui.main;
+package io.mosip.registration.app.ui.main;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.mosip.registrationclient.mobile.R;
+import io.mosip.registration.app.R;
 
 public class MainFragment extends Fragment {
 

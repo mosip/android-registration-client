@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.ui.login;
+package io.mosip.registration.app.ui.login;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import io.mosip.registrationclient.mobile.data.LoginRepository;
-import io.mosip.registrationclient.mobile.data.Result;
-import io.mosip.registrationclient.mobile.data.model.LoggedInUser;
-import io.mosip.registrationclient.mobile.R;
+import io.mosip.registration.app.data.LoginRepository;
+import io.mosip.registration.app.data.Result;
+import io.mosip.registration.app.data.model.LoggedInUser;
+import io.mosip.registration.app.R;
 
 public class LoginViewModel extends ViewModel {
 

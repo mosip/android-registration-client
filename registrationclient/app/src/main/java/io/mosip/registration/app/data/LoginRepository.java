@@ -1,6 +1,7 @@
-package io.mosip.registrationclient.mobile.data;
+package io.mosip.registration.app.data;
 
-import io.mosip.registrationclient.mobile.data.model.LoggedInUser;
+
+import io.mosip.registration.app.data.model.LoggedInUser;
 
 /**
  * Class that requests authentication and user information from the remote data source and

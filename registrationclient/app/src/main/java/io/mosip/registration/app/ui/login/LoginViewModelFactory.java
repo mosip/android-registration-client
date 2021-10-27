@@ -1,11 +1,12 @@
-package io.mosip.registrationclient.mobile.ui.login;
+package io.mosip.registration.app.ui.login;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.NonNull;
 
-import io.mosip.registrationclient.mobile.data.LoginDataSource;
-import io.mosip.registrationclient.mobile.data.LoginRepository;
+import io.mosip.registration.app.data.LoginDataSource;
+import io.mosip.registration.app.data.LoginRepository;
+
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

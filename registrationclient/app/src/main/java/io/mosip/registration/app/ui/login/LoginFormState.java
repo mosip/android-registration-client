@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.ui.login;
+package io.mosip.registration.app.ui.login;
 
 import androidx.annotation.Nullable;
 

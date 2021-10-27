@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.data;
+package io.mosip.registration.app.data;
 
 /**
  * A generic class that holds a result success w/ data or an error exception.

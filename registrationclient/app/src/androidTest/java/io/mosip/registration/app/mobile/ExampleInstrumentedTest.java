@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("io.mosip.registrationclient.mobile", appContext.getPackageName());
+        assertEquals("io.mosip.registration.app.mobile", appContext.getPackageName());
     }
 }

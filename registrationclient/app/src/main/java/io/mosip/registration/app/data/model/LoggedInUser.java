@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.data.model;
+package io.mosip.registration.app.data.model;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository

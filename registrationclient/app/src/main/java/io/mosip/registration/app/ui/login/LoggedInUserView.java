@@ -1,4 +1,4 @@
-package io.mosip.registrationclient.mobile.ui.login;
+package io.mosip.registration.app.ui.login;
 
 /**
  * Class exposing authenticated user details to the UI.

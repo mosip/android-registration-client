@@ -1,8 +1,9 @@
-package io.mosip.registrationclient.mobile.data;
+package io.mosip.registration.app.data;
 
-import io.mosip.registrationclient.mobile.data.model.LoggedInUser;
 
 import java.io.IOException;
+
+import io.mosip.registration.app.data.model.LoggedInUser;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
