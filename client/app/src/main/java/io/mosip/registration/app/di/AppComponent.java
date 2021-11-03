@@ -2,6 +2,8 @@ package io.mosip.registration.app.di;
 
 import android.app.Application;
 
+import javax.inject.Singleton;
+
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjector;
@@ -9,6 +11,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 import io.mosip.registration.app.BaseApplication;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 
+@Singleton
 @Component(
         modules = {
                 AndroidSupportInjectionModule.class,
