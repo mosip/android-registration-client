@@ -38,130 +38,130 @@ public class RestService {
     }
 
     // GET request for UserDefined class
-    public void requestClassGET() {
-        AndroidNetworking.get("link")
-                .setTag(this)
-                .setPriority(Priority.LOW)
-                .build()
-                .getAsObject(myClass.class, new ParsedRequestListener<myClass>() {
-                    @Override
-                    public void onResponse(myClass classObj) {
-                        // do anything with response
-                        Log.d(TAG, "id : " + classObj.details);
-                    }
-
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on UserDefinedClass get request ", e);
-                    }
-                });
-    }
-
-    // GET request for UserDefined class list
-    public void requestClassListGET() {
-        AndroidNetworking.get("link")
-                .setTag(this)
-                .setPriority(Priority.LOW)
-                .build()
-                .getAsObjectList(myClass.class, new ParsedRequestListener<List<myClass>>() {
-                    @Override
-                    public void onResponse(List<myClass> myClassList) {
-                        // do anything with response
-                        Log.d(TAG, "userList size : " + myClassList.size());
-                        for (myClass classObj : myClassList) {
-                            Log.d(TAG, "id : " + classObj.details);
-                        }
-                    }
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on UserDefinedClassList get request ", e);
-                    }
-                });
-    }
-
-    // POST request for UserDefined class
-    public void requestClassPOST() {
-        AndroidNetworking.post("link")
-                .addBodyParameter(myClass) // posting java object
-                .setTag("test")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        // do anything with response
-                    }
-
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-                    }
-                });
-    }
-
-    // POST request for Json Object
-    public void requestPOST() {
-        AndroidNetworking.post("link")
-                .addJSONObjectBody(myJsonObject) // posting json
-                .setTag("test")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        // do anything with response
-                    }
-
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-                    }
-                });
-    }
-
-    // POST request for any File
-    public void requestPOST() {
-        AndroidNetworking.post("link")
-                .addFileBody(myFile) // posting any type of file
-                .setTag("test")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // do anything with response
-                    }
-
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-                    }
-                });
-    }
-
-    // DOWNLOAD request for a File
-    public void requestDOWNLOAD() {
-        AndroidNetworking.download(url,dirPath,fileName)
-                .setTag("downloadTest")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .setDownloadProgressListener(new DownloadProgressListener() {
-                    @Override
-                    public void onProgress(long bytesDownloaded, long totalBytes) {
-                        // do anything with progress
-                    }
-                })
-                .startDownload(new DownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        // do anything after completion
-                    }
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on file download request ", e);
-                    }
-                });
-    }
+//    public void requestClassGET() {
+//        AndroidNetworking.get("link")
+//                .setTag(this)
+//                .setPriority(Priority.LOW)
+//                .build()
+//                .getAsObject(myClass.class, new ParsedRequestListener<myClass>() {
+//                    @Override
+//                    public void onResponse(myClass classObj) {
+//                        // do anything with response
+//                        Log.d(TAG, "id : " + classObj.details);
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError e) {
+//                        Log.e(TAG, "onError: Error on UserDefinedClass get request ", e);
+//                    }
+//                });
+//    }
+//
+//    // GET request for UserDefined class list
+//    public void requestClassListGET() {
+//        AndroidNetworking.get("link")
+//                .setTag(this)
+//                .setPriority(Priority.LOW)
+//                .build()
+//                .getAsObjectList(myClass.class, new ParsedRequestListener<List<myClass>>() {
+//                    @Override
+//                    public void onResponse(List<myClass> myClassList) {
+//                        // do anything with response
+//                        Log.d(TAG, "userList size : " + myClassList.size());
+//                        for (myClass classObj : myClassList) {
+//                            Log.d(TAG, "id : " + classObj.details);
+//                        }
+//                    }
+//                    @Override
+//                    public void onError(ANError e) {
+//                        Log.e(TAG, "onError: Error on UserDefinedClassList get request ", e);
+//                    }
+//                });
+//    }
+//
+//    // POST request for UserDefined class
+//    public void requestClassPOST() {
+//        AndroidNetworking.post("link")
+//                .addBodyParameter(myClass) // posting java object
+//                .setTag("test")
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .getAsJSONArray(new JSONArrayRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//                        // do anything with response
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError e) {
+//                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
+//                    }
+//                });
+//    }
+//
+//    // POST request for Json Object
+//    public void requestPOST() {
+//        AndroidNetworking.post("link")
+//                .addJSONObjectBody(myJsonObject) // posting json
+//                .setTag("test")
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .getAsJSONArray(new JSONArrayRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//                        // do anything with response
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError e) {
+//                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
+//                    }
+//                });
+//    }
+//
+//    // POST request for any File
+//    public void requestPOST() {
+//        AndroidNetworking.post("link")
+//                .addFileBody(myFile) // posting any type of file
+//                .setTag("test")
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .getAsJSONObject(new JSONObjectRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        // do anything with response
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError e) {
+//                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
+//                    }
+//                });
+//    }
+//
+//    // DOWNLOAD request for a File
+//    public void requestDOWNLOAD() {
+//        AndroidNetworking.download(url,dirPath,fileName)
+//                .setTag("downloadTest")
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .setDownloadProgressListener(new DownloadProgressListener() {
+//                    @Override
+//                    public void onProgress(long bytesDownloaded, long totalBytes) {
+//                        // do anything with progress
+//                    }
+//                })
+//                .startDownload(new DownloadListener() {
+//                    @Override
+//                    public void onDownloadComplete() {
+//                        // do anything after completion
+//                    }
+//                    @Override
+//                    public void onError(ANError e) {
+//                        Log.e(TAG, "onError: Error on file download request ", e);
+//                    }
+//                });
+//    }
 
 
 }
