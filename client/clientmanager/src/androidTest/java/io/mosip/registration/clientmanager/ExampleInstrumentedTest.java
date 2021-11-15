@@ -23,6 +23,8 @@ import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServi
 import android.util.Log;
 import android.R;
 
+import com.androidnetworking.AndroidNetworking;
+
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
 import io.mosip.registration.clientmanager.dto.crypto.PublicKeyRequestDto;
@@ -33,6 +35,7 @@ import io.mosip.registration.clientmanager.dto.crypto.SignVerifyRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.SignVerifyResponseDto;
 import io.mosip.registration.clientmanager.spi.crypto.ClientCryptoManagerService;
 import io.mosip.registration.clientmanager.util.ConfigService;
+import io.mosip.registration.clientmanager.util.RestService;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -43,6 +46,7 @@ import io.mosip.registration.clientmanager.util.ConfigService;
 public class ExampleInstrumentedTest {
 
     private static LocalClientCryptoServiceImpl localClientCryptoService;
+    public static RestService restService;
 
     //    encryption and decryption keys
     private static PublicKeyRequestDto publicKeyRequestDto_encdec;
@@ -59,6 +63,9 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         localClientCryptoService=new LocalClientCryptoServiceImpl(appContext);
         localClientCryptoService.initLocalClientCryptoService(appContext);
+
+        AndroidNetworking.initialize(appContext);
+        restService = new RestService();
 
 //        creating keys for encryption and decryption testing
         publicKeyRequestDto_encdec= new PublicKeyRequestDto();
@@ -162,4 +169,9 @@ public class ExampleInstrumentedTest {
 
     }
 
+
+    @Test
+    public void fast_android_networking_test() {
+        restService.requestGET("https://jsonplaceholder.typicode.com/todos/1");
+    }
 }

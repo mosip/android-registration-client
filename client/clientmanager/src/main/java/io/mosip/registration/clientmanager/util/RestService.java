@@ -9,39 +9,46 @@ import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.StringRequestListener;
+import com.androidnetworking.interfaces.UploadProgressListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 public class RestService {
     private static final String TAG = RestService.class.getSimpleName();
 
-    // GET request for jsonObjectArray
-    public void requestGET() {
-        AndroidNetworking.get("https://jsonplaceholder.typicode.com/todos/1")
-//                .addPathParameter("id", "1")
-                .addQueryParameter("limit", "3")
+    // GET request for jsonObject
+    public void requestGET(String url) {
+        AndroidNetworking.get(url)
+                .setTag(this)
                 .setPriority(Priority.LOW)
                 .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
+                .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         // do anything with response
                         System.out.println(response);
+                        Log.i(TAG,"onResponse: Successful get request");
+
                     }
                     @Override
                     public void onError(ANError e) {
                         // handle error
-                        Log.e(TAG, "onError: Error on JSOMArray get request ", e);
+                        Log.e(TAG, "onError: Error on JSONArray get request ", e);
                     }
                 });
     }
 
-    // GET request for UserDefined class
+//  //   GET request for UserDefined class
 //    public void requestClassGET() {
 //        AndroidNetworking.get("link")
 //                .setTag(this)
-//                .setPriority(Priority.LOW)
+//                .setPriority(Priority.LOW) // LOW MEDIUM HIGH IMMEDIATE
 //                .build()
 //                .getAsObject(myClass.class, new ParsedRequestListener<myClass>() {
 //                    @Override
@@ -61,7 +68,7 @@ public class RestService {
 //    public void requestClassListGET() {
 //        AndroidNetworking.get("link")
 //                .setTag(this)
-//                .setPriority(Priority.LOW)
+//                .setPriority(Priority.MEDIUM)
 //                .build()
 //                .getAsObjectList(myClass.class, new ParsedRequestListener<List<myClass>>() {
 //                    @Override
@@ -69,7 +76,7 @@ public class RestService {
 //                        // do anything with response
 //                        Log.d(TAG, "userList size : " + myClassList.size());
 //                        for (myClass classObj : myClassList) {
-//                            Log.d(TAG, "id : " + classObj.details);
+////                            Log.d(TAG, "id : " + classObj.details);
 //                        }
 //                    }
 //                    @Override
@@ -83,12 +90,12 @@ public class RestService {
 //    public void requestClassPOST() {
 //        AndroidNetworking.post("link")
 //                .addBodyParameter(myClass) // posting java object
-//                .setTag("test")
+//                .setTag(this)
 //                .setPriority(Priority.MEDIUM)
 //                .build()
-//                .getAsJSONArray(new JSONArrayRequestListener() {
+//                .getAsJSONObject(new JSONObjectRequestListener() {
 //                    @Override
-//                    public void onResponse(JSONArray response) {
+//                    public void onResponse(JSONObject response) {
 //                        // do anything with response
 //                    }
 //
@@ -103,12 +110,12 @@ public class RestService {
 //    public void requestPOST() {
 //        AndroidNetworking.post("link")
 //                .addJSONObjectBody(myJsonObject) // posting json
-//                .setTag("test")
+//                .setTag(this)
 //                .setPriority(Priority.MEDIUM)
 //                .build()
-//                .getAsJSONArray(new JSONArrayRequestListener() {
+//                .getAsJSONObject(new JSONObjectRequestListener() {
 //                    @Override
-//                    public void onResponse(JSONArray response) {
+//                    public void onResponse(JSONObject response) {
 //                        // do anything with response
 //                    }
 //
@@ -120,10 +127,10 @@ public class RestService {
 //    }
 //
 //    // POST request for any File
-//    public void requestPOST() {
+//    public void requestFilePOST() {
 //        AndroidNetworking.post("link")
 //                .addFileBody(myFile) // posting any type of file
-//                .setTag("test")
+//                .setTag(this)
 //                .setPriority(Priority.MEDIUM)
 //                .build()
 //                .getAsJSONObject(new JSONObjectRequestListener() {
@@ -140,9 +147,9 @@ public class RestService {
 //    }
 //
 //    // DOWNLOAD request for a File
-//    public void requestDOWNLOAD() {
+//    public void requestFileDOWNLOAD() {
 //        AndroidNetworking.download(url,dirPath,fileName)
-//                .setTag("downloadTest")
+//                .setTag(this)
 //                .setPriority(Priority.MEDIUM)
 //                .build()
 //                .setDownloadProgressListener(new DownloadProgressListener() {
@@ -162,6 +169,39 @@ public class RestService {
 //                    }
 //                });
 //    }
-
+//
+//    // UPLOAD multipart file
+//    public void requestFileUPLOAD() {
+//        Map<String, File> multiPartFileMap = new HashMap<>();
+//        multiPartFileMap.put("image1" , file1);
+//        multiPartFileMap.put("image2" , file2);
+//        // ... more files
+//
+//        AndroidNetworking.upload(url)
+//                //.addMultipartFileList(mMultiPartFileMap)
+//                .addMultipartFile(multiPartFileMap)
+//                .addMultipartParameter("key","STRING_VALUE")
+//                .setTag(this)
+//                .setPriority(Priority.HIGH)
+//                .build()
+//                .setUploadProgressListener(new UploadProgressListener() {
+//                    @Override
+//                    public void onProgress(long bytesUploaded, long totalBytes) {
+//                        // do anything with progress
+//                        // console("progress => " + bytesUploaded);
+//                    }
+//                })
+//                .getAsString(new StringRequestListener() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        // console("upload => " + response);
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError e) {
+//                        Log.e(TAG, "onError: Error on multipart file upload request ", e);
+//                    }
+//                });
+//    }
 
 }

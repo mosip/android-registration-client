@@ -31,8 +31,6 @@ public class MainActivity extends DaggerAppCompatActivity {
     @Inject
     public LocalClientCryptoServiceImpl localClientCryptoService;
 
-//    @Inject
-//    public RestService restService;
 
     EditText messageInput;
     TextView endecTextView;
@@ -51,8 +49,6 @@ public class MainActivity extends DaggerAppCompatActivity {
         messageInput = (EditText) findViewById(R.id.msg_input);
         endecTextView = (TextView) findViewById(R.id.EnDecTextView);
         signTextView = (TextView) findViewById(R.id.SignTextView);
-//        AndroidNetworking.initialize(getApplicationContext());
-//        restService.requestGET();
     }
     public void click_encrypt(View view) {
         test_encrypt(view);

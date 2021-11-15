@@ -1,7 +1,5 @@
 package io.mosip.registration.clientmanager.util.advice;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -10,7 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 public class TestAdvice {
     private static final String localClientCryptoServiceAdvice =
             "execution(* io.mosip.registration.clientmanager.service.crypto." +
-                    "LocalClientCryptoServiceImpl.*(..))";
+                    "LocalClientCryptoServiceImpl.encrypt(..))";
 
     @Pointcut(localClientCryptoServiceAdvice)
     public void k(){}//pointcut name
