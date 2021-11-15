@@ -4,6 +4,8 @@ import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.R;
 
 import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.interfaces.Parser;
 
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
@@ -172,6 +175,9 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void fast_android_networking_test() {
-        restService.requestGET("https://jsonplaceholder.typicode.com/todos/1");
+        boolean response = restService.requestGET("https://jsonplaceholder.typicode.com/todos/1");
+        assertEquals(true,response);
     }
+
+
 }

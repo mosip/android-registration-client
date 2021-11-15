@@ -23,7 +23,7 @@ public class RestService {
     private static final String TAG = RestService.class.getSimpleName();
 
     // GET request for jsonObject
-    public void requestGET(String url) {
+    public boolean requestGET(String url) {
         AndroidNetworking.get(url)
                 .setTag(this)
                 .setPriority(Priority.LOW)
@@ -42,11 +42,12 @@ public class RestService {
                         Log.e(TAG, "onError: Error on JSONArray get request ", e);
                     }
                 });
+        return true;
     }
 
 //  //   GET request for UserDefined class
-//    public void requestClassGET() {
-//        AndroidNetworking.get("link")
+//    public void requestClassGET(String url) {
+//        AndroidNetworking.get(url)
 //                .setTag(this)
 //                .setPriority(Priority.LOW) // LOW MEDIUM HIGH IMMEDIATE
 //                .build()
@@ -65,8 +66,8 @@ public class RestService {
 //    }
 //
 //    // GET request for UserDefined class list
-//    public void requestClassListGET() {
-//        AndroidNetworking.get("link")
+//    public void requestClassListGET(String url) {
+//        AndroidNetworking.get(url)
 //                .setTag(this)
 //                .setPriority(Priority.MEDIUM)
 //                .build()
@@ -87,8 +88,8 @@ public class RestService {
 //    }
 //
 //    // POST request for UserDefined class
-//    public void requestClassPOST() {
-//        AndroidNetworking.post("link")
+//    public void requestClassPOST(String url, MyClass myClass) {
+//        AndroidNetworking.post(url)
 //                .addBodyParameter(myClass) // posting java object
 //                .setTag(this)
 //                .setPriority(Priority.MEDIUM)
@@ -106,102 +107,99 @@ public class RestService {
 //                });
 //    }
 //
-//    // POST request for Json Object
-//    public void requestPOST() {
-//        AndroidNetworking.post("link")
-//                .addJSONObjectBody(myJsonObject) // posting json
-//                .setTag(this)
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONObject(new JSONObjectRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        // do anything with response
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-//                    }
-//                });
-//    }
-//
-//    // POST request for any File
-//    public void requestFilePOST() {
-//        AndroidNetworking.post("link")
-//                .addFileBody(myFile) // posting any type of file
-//                .setTag(this)
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONObject(new JSONObjectRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        // do anything with response
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-//                    }
-//                });
-//    }
-//
-//    // DOWNLOAD request for a File
-//    public void requestFileDOWNLOAD() {
-//        AndroidNetworking.download(url,dirPath,fileName)
-//                .setTag(this)
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .setDownloadProgressListener(new DownloadProgressListener() {
-//                    @Override
-//                    public void onProgress(long bytesDownloaded, long totalBytes) {
-//                        // do anything with progress
-//                    }
-//                })
-//                .startDownload(new DownloadListener() {
-//                    @Override
-//                    public void onDownloadComplete() {
-//                        // do anything after completion
-//                    }
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on file download request ", e);
-//                    }
-//                });
-//    }
-//
-//    // UPLOAD multipart file
-//    public void requestFileUPLOAD() {
-//        Map<String, File> multiPartFileMap = new HashMap<>();
+    // POST request for Json Object
+    public void requestPOST(String url, JSONObject myJsonObject) {
+        AndroidNetworking.post(url)
+                .addJSONObjectBody(myJsonObject) // posting json
+                .setTag(this)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // do anything with response
+                    }
+
+                    @Override
+                    public void onError(ANError e) {
+                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
+                    }
+                });
+    }
+
+    // POST request for any File
+    public void requestFilePOST(String url,File myFile) {
+        AndroidNetworking.post(url)
+                .addFileBody(myFile) // posting any type of file
+                .setTag(this)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // do anything with response
+                    }
+
+                    @Override
+                    public void onError(ANError e) {
+                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
+                    }
+                });
+    }
+
+    // DOWNLOAD request for a File
+    public void requestFileDOWNLOAD(String url, String dirPath, String fileName) {
+        AndroidNetworking.download(url,dirPath,fileName)
+                .setTag(this)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .setDownloadProgressListener(new DownloadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesDownloaded, long totalBytes) {
+                        // do anything with progress
+                    }
+                })
+                .startDownload(new DownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        // do anything after completion
+                    }
+                    @Override
+                    public void onError(ANError e) {
+                        Log.e(TAG, "onError: Error on file download request ", e);
+                    }
+                });
+    }
+
+//    Map<String, File> multiPartFileMap = new HashMap<>();
 //        multiPartFileMap.put("image1" , file1);
 //        multiPartFileMap.put("image2" , file2);
-//        // ... more files
-//
-//        AndroidNetworking.upload(url)
-//                //.addMultipartFileList(mMultiPartFileMap)
-//                .addMultipartFile(multiPartFileMap)
-//                .addMultipartParameter("key","STRING_VALUE")
-//                .setTag(this)
-//                .setPriority(Priority.HIGH)
-//                .build()
-//                .setUploadProgressListener(new UploadProgressListener() {
-//                    @Override
-//                    public void onProgress(long bytesUploaded, long totalBytes) {
-//                        // do anything with progress
-//                        // console("progress => " + bytesUploaded);
-//                    }
-//                })
-//                .getAsString(new StringRequestListener() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        // console("upload => " + response);
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on multipart file upload request ", e);
-//                    }
-//                });
-//    }
+//    // ... more files
+    // UPLOAD multipart file
+    public void requestFileUPLOAD(String url, Map<String, File> multiPartFileMap) {
+        AndroidNetworking.upload(url)
+                .addMultipartFile(multiPartFileMap)
+                .addMultipartParameter("key","STRING_VALUE")
+                .setTag(this)
+                .setPriority(Priority.HIGH)
+                .build()
+                .setUploadProgressListener(new UploadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesUploaded, long totalBytes) {
+                        // do anything with progress
+                        // console("progress => " + bytesUploaded);
+                    }
+                })
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        // console("upload => " + response);
+                    }
 
+                    @Override
+                    public void onError(ANError e) {
+                        Log.e(TAG, "onError: Error on multipart file upload request ", e);
+                    }
+                });
+    }
 }
