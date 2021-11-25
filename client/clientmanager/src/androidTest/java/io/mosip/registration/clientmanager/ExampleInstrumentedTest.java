@@ -175,7 +175,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void fast_android_networking_test() {
-        boolean response = restService.requestGET("https://jsonplaceholder.typicode.com/todos/1");
+        boolean response = restService.requestGET("http://jsonplaceholder.typicode.com/todos/1");
         assertEquals(true,response);
     }
 
