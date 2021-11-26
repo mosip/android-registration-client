@@ -11,20 +11,19 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestDTO{
+public class RequestDto {
     @NotBlank(message = "Invalid Request")
     private String url;
 
     private JSONObject body;
 
-    @NotBlank(message = "Invalid Request")
-    private ArrayList<String> header;
+    private List<String> header;
 
     @NotBlank(message = "Invalid Request")
     private boolean authRequired;
 
     @NotBlank(message = "Invalid Request")
-    private Boolean isSignRequired;
+    private boolean isSignRequired;
 
     @NotBlank(message = "Invalid Request")
     private boolean isRequestSignRequired;

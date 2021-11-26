@@ -11,6 +11,7 @@ import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.androidnetworking.interfaces.UploadProgressListener;
+import com.androidnetworking.model.MultipartFileBody;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,15 +19,18 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
+
+import io.mosip.registration.clientmanager.dto.http.RequestDto;
 
 public class RestService {
     private static final String TAG = RestService.class.getSimpleName();
 
     // GET request for jsonObject
-    public boolean requestGET(String url) {
-        AndroidNetworking.get(url)
+    public Map<String, Object> get(RequestDto request) {
+        AndroidNetworking.get(request.getUrl())
                 .setTag(this)
-                .setPriority(Priority.LOW)
+                .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
@@ -42,75 +46,13 @@ public class RestService {
                         Log.e(TAG, "onError: Error on JSONArray get request ", e);
                     }
                 });
-        return true;
+        return null;
     }
 
-//  //   GET request for UserDefined class
-//    public void requestClassGET(String url) {
-//        AndroidNetworking.get(url)
-//                .setTag(this)
-//                .setPriority(Priority.LOW) // LOW MEDIUM HIGH IMMEDIATE
-//                .build()
-//                .getAsObject(myClass.class, new ParsedRequestListener<myClass>() {
-//                    @Override
-//                    public void onResponse(myClass classObj) {
-//                        // do anything with response
-//                        Log.d(TAG, "id : " + classObj.details);
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on UserDefinedClass get request ", e);
-//                    }
-//                });
-//    }
-//
-//    // GET request for UserDefined class list
-//    public void requestClassListGET(String url) {
-//        AndroidNetworking.get(url)
-//                .setTag(this)
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsObjectList(myClass.class, new ParsedRequestListener<List<myClass>>() {
-//                    @Override
-//                    public void onResponse(List<myClass> myClassList) {
-//                        // do anything with response
-//                        Log.d(TAG, "userList size : " + myClassList.size());
-//                        for (myClass classObj : myClassList) {
-////                            Log.d(TAG, "id : " + classObj.details);
-//                        }
-//                    }
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on UserDefinedClassList get request ", e);
-//                    }
-//                });
-//    }
-//
-//    // POST request for UserDefined class
-//    public void requestClassPOST(String url, MyClass myClass) {
-//        AndroidNetworking.post(url)
-//                .addBodyParameter(myClass) // posting java object
-//                .setTag(this)
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONObject(new JSONObjectRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        // do anything with response
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-//                    }
-//                });
-//    }
-//
     // POST request for Json Object
-    public void requestPOST(String url, JSONObject myJsonObject) {
-        AndroidNetworking.post(url)
-                .addJSONObjectBody(myJsonObject) // posting json
+    public Map<String, Object> post(RequestDto request) {
+        AndroidNetworking.post(request.getUrl())
+                .addJSONObjectBody(request.getBody()) // posting json
                 .setTag(this)
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -125,63 +67,16 @@ public class RestService {
                         Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
                     }
                 });
+        return null;
     }
 
-    // POST request for any File
-    public void requestFilePOST(String url,File myFile) {
-        AndroidNetworking.post(url)
-                .addFileBody(myFile) // posting any type of file
-                .setTag(this)
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // do anything with response
-                    }
-
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-                    }
-                });
-    }
-
-    // DOWNLOAD request for a File
-    public void requestFileDOWNLOAD(String url, String dirPath, String fileName) {
-        AndroidNetworking.download(url,dirPath,fileName)
-                .setTag(this)
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .setDownloadProgressListener(new DownloadProgressListener() {
-                    @Override
-                    public void onProgress(long bytesDownloaded, long totalBytes) {
-                        // do anything with progress
-                    }
-                })
-                .startDownload(new DownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        // do anything after completion
-                    }
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on file download request ", e);
-                    }
-                });
-    }
-
-//    Map<String, File> multiPartFileMap = new HashMap<>();
-//        multiPartFileMap.put("image1" , file1);
-//        multiPartFileMap.put("image2" , file2);
-//    // ... more files
     // UPLOAD multipart file
-    public void requestFileUPLOAD(String url, Map<String, File> multiPartFileMap) {
-        AndroidNetworking.upload(url)
+    public Map<String, Object> fileUpload(RequestDto request, Map<String, File> multiPartFileMap) {
+        AndroidNetworking.upload(request.getUrl())
                 .addMultipartFile(multiPartFileMap)
-                .addMultipartParameter("key","STRING_VALUE")
+                .addMultipartParameter("key","value")
                 .setTag(this)
-                .setPriority(Priority.HIGH)
+                .setPriority(Priority.MEDIUM)
                 .build()
                 .setUploadProgressListener(new UploadProgressListener() {
                     @Override
@@ -201,5 +96,31 @@ public class RestService {
                         Log.e(TAG, "onError: Error on multipart file upload request ", e);
                     }
                 });
+        return null;
+    }
+
+    // DOWNLOAD request for a File
+    public Stream fileDownload(RequestDto request) {
+        AndroidNetworking.download(request.getUrl(), request.getBody(), request.getBody())
+                .setTag(this)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .setDownloadProgressListener(new DownloadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesDownloaded, long totalBytes) {
+                        // do anything with progress
+                    }
+                })
+                .startDownload(new DownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        // do anything after completion
+                    }
+                    @Override
+                    public void onError(ANError e) {
+                        Log.e(TAG, "onError: Error on file download request ", e);
+                    }
+                });
+        return null;
     }
 }

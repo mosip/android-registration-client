@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_ENDEC;
 import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_SIGN;
 
+import io.mosip.registration.clientmanager.dto.http.RequestDto;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 
 
@@ -175,8 +176,8 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void fast_android_networking_test() {
-        boolean response = restService.requestGET("http://jsonplaceholder.typicode.com/todos/1");
-        assertEquals(true,response);
+        RequestDto request = new RequestDto("http://jsonplaceholder.typicode.com/todos/1",null,null,false,false,false);
+        restService.get(request);
     }
 
 
