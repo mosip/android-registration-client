@@ -1,22 +1,21 @@
 package io.mosip.registration.clientmanager.dto.http;
 
 import org.json.JSONObject;
+import java.util.List;
+import javax.validation.constraints.NotBlank;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.*;
-
-import javax.validation.constraints.NotBlank;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class RequestDto {
     @NotBlank(message = "Invalid Request")
     private String url;
 
     private JSONObject body;
-
     private List<String> header;
 
     @NotBlank(message = "Invalid Request")

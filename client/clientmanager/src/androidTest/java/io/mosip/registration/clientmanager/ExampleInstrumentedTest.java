@@ -1,33 +1,24 @@
 package io.mosip.registration.clientmanager;
 
-import android.content.Context;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-
-import org.junit.Before;
-
-
-import static org.junit.Assert.*;
-
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_ENDEC;
 import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_SIGN;
 
-import io.mosip.registration.clientmanager.dto.http.RequestDto;
-import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
+import android.content.Context;
 
-
-import android.util.Log;
-import android.R;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.interfaces.Parser;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
@@ -37,20 +28,13 @@ import io.mosip.registration.clientmanager.dto.crypto.SignRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.SignResponseDto;
 import io.mosip.registration.clientmanager.dto.crypto.SignVerifyRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.SignVerifyResponseDto;
-import io.mosip.registration.clientmanager.spi.crypto.ClientCryptoManagerService;
-import io.mosip.registration.clientmanager.util.ConfigService;
+import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
 import io.mosip.registration.clientmanager.util.RestService;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
 
     private static LocalClientCryptoServiceImpl localClientCryptoService;
-    public static RestService restService;
 
     //    encryption and decryption keys
     private static PublicKeyRequestDto publicKeyRequestDto_encdec;
@@ -67,9 +51,6 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         localClientCryptoService=new LocalClientCryptoServiceImpl(appContext);
         localClientCryptoService.initLocalClientCryptoService(appContext);
-
-        AndroidNetworking.initialize(appContext);
-        restService = new RestService();
 
 //        creating keys for encryption and decryption testing
         publicKeyRequestDto_encdec= new PublicKeyRequestDto();
@@ -124,8 +105,6 @@ public class ExampleInstrumentedTest {
     public void encryption_decryption_test(){
 
 //        TESTCASE 1
-
-
         String input_message="First Message _+& 9901234 ";
 //        encryption
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
@@ -169,16 +148,5 @@ public class ExampleInstrumentedTest {
         SignVerifyRequestDto signVerifyRequestDto_2=new SignVerifyRequestDto("DUMMY", signed_string, publicKeyResponseDto_sign.getPublicKey());
         SignVerifyResponseDto signVerifyResponseDto_2=localClientCryptoService.verifySign(signVerifyRequestDto_2);
         assertFalse(signVerifyResponseDto_2.isVerified());
-
-
     }
-
-
-    @Test
-    public void fast_android_networking_test() {
-        RequestDto request = new RequestDto("http://jsonplaceholder.typicode.com/todos/1",null,null,false,false,false);
-        restService.get(request);
-    }
-
-
 }
