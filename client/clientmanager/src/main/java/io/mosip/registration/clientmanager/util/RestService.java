@@ -2,7 +2,11 @@ package io.mosip.registration.clientmanager.util;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
@@ -19,112 +23,112 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
+import okhttp3.Response;
 
 public class RestService {
     private static final String TAG = RestService.class.getSimpleName();
 
 
+
     // GET request for jsonObject
-    public Map<String, Object> get(RequestDto request) {
+    public Map<String, Object> get(@NonNull RequestDto requestDto) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
-        AndroidNetworking.get(request.getUrl())
+        ANRequest request = AndroidNetworking.get(requestDto.getUrl())
                 .setTag(this)
                 .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // do anything with response
-                        System.out.println(response);
-                        responseObj.put("String", response);
-                        Log.i(TAG,"onResponse: Successful get request");
+                .build();
 
-                    }
-                    @Override
-                    public void onError(ANError e) {
-                        // handle error
-                        Log.e(TAG, "onError: Error on JSONArray get request ", e);
-                    }
-                });
+        ANResponse<JSONObject> response = request.executeForJSONObject();
+
+        if (response.isSuccess()) {
+            JSONObject jsonObject = response.getResult();
+            Log.i(TAG, "response : " + jsonObject.toString());
+            responseObj.put("get",jsonObject);
+            Response okHttpResponse = response.getOkHttpResponse();
+            Log.i(TAG, "headers : " + okHttpResponse.headers().toString());
+
+        } else {
+            ANError error = response.getError();
+            Log.e(TAG, "onError: Error on get request ", error);
+        }
+        System.out.println("Response at end = " + responseObj.get("get"));
         return responseObj;
     }
 
     // POST request for Json Object
-    public Map<String, Object> post(RequestDto request) {
+    public Map<String, Object> post(@NonNull RequestDto requestDto) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
-        AndroidNetworking.post(request.getUrl())
-                .addJSONObjectBody(request.getBody()) // posting json
+        ANRequest request = AndroidNetworking.post(requestDto.getUrl())
+                .addJSONObjectBody(requestDto.getBody())
                 .setTag(this)
                 .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // do anything with response
-                        responseObj.put("String", response);
-                    }
+                .build();
 
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on UserDefinedClass post request ", e);
-                    }
-                });
+        ANResponse<JSONObject> response = request.executeForJSONObject();
+
+        if (response.isSuccess()) {
+            JSONObject jsonObject = response.getResult();
+            Log.i(TAG, "response : " + jsonObject.toString());
+            responseObj.put("post", response);
+            Response okHttpResponse = response.getOkHttpResponse();
+            Log.i(TAG, "headers : " + okHttpResponse.headers().toString());
+        } else {
+            ANError error = response.getError();
+            Log.e(TAG, "onError: Error on post request ", error);
+        }
         return responseObj;
     }
 
     // UPLOAD multipart file
-    public Map<String, Object> fileUpload(RequestDto request, Map<String, File> multiPartFileMap) {
+    public Map<String, Object> fileUpload(@NonNull RequestDto requestDto,@NonNull Map<String, File> multiPartFileMap) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
-        AndroidNetworking.upload(request.getUrl())
-                .addMultipartFile(multiPartFileMap)
-                .addMultipartParameter("key","value")
+        ANRequest.MultiPartBuilder requestBuilder = AndroidNetworking.upload(requestDto.getUrl())
+                .setTag(this)
+                .setPriority(Priority.MEDIUM);
+
+        for(Map.Entry<String,File> entry : multiPartFileMap.entrySet()) {
+            requestBuilder.addMultipartFile(entry.getKey(),entry.getValue());
+        }
+        ANRequest request = requestBuilder.build();
+
+
+        ANResponse<JSONObject> response = request.executeForJSONObject();
+
+        if (response.isSuccess()) {
+            JSONObject jsonObject = response.getResult();
+            Log.d(TAG, "response : " + jsonObject.toString());
+            responseObj.put("upload", response);
+            Response okHttpResponse = response.getOkHttpResponse();
+            Log.d(TAG, "headers : " + okHttpResponse.headers().toString());
+        } else {
+            ANError error = response.getError();
+            Log.e(TAG, "onError: Error on fileUpload request ", error);
+        }
+        return responseObj;
+    }
+
+    //     DOWNLOAD request for a File
+    public void fileDownload(@NonNull RequestDto requestDto, String directory, String filename) {
+        ANRequest request = AndroidNetworking
+                .download(requestDto.getUrl(), directory, filename)
                 .setTag(this)
                 .setPriority(Priority.MEDIUM)
                 .build()
-                .setUploadProgressListener(new UploadProgressListener() {
+                .setDownloadProgressListener(new DownloadProgressListener() {
                     @Override
-                    public void onProgress(long bytesUploaded, long totalBytes) {
-                        // do anything with progress
-                        // console("progress => " + bytesUploaded);
-                    }
-                })
-                .getAsString(new StringRequestListener() {
-                    @Override
-                    public void onResponse(String response) {
-                        responseObj.put("String", response);
-                        // console("upload => " + response);
-                    }
+                    public void onProgress(long bytesDownloaded, long totalBytes) {
 
-                    @Override
-                    public void onError(ANError e) {
-                        Log.e(TAG, "onError: Error on multipart file upload request ", e);
                     }
                 });
-        return responseObj;
+
+        ANResponse<String> response = request.executeForDownload();
+
+        if (response.isSuccess()) {
+            Response okHttpResponse = response.getOkHttpResponse();
+            Log.d(TAG, "headers : " + okHttpResponse.headers().toString());
+        } else {
+            ANError error = response.getError();
+            Log.e(TAG, "onError: Error on fileDownload request ", error);
+        }
     }
-//
-////     DOWNLOAD request for a File
-//    public Stream fileDownload(RequestDto request) {
-//        AndroidNetworking.download(request.getUrl(), request.getBody(), request.getBody())
-//                .setTag(this)
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .setDownloadProgressListener(new DownloadProgressListener() {
-//                    @Override
-//                    public void onProgress(long bytesDownloaded, long totalBytes) {
-//                        // do anything with progress
-//                    }
-//                })
-//                .startDownload(new DownloadListener() {
-//                    @Override
-//                    public void onDownloadComplete() {
-//                        // do anything after completion
-//                    }
-//                    @Override
-//                    public void onError(ANError e) {
-//                        Log.e(TAG, "onError: Error on file download request ", e);
-//                    }
-//                });
-//        return null;
-//    }
 }
