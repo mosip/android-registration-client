@@ -10,6 +10,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.androidnetworking.AndroidNetworking;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ public class AndroidNetworkingTest {
         System.out.println("download_directory = " + directory);
         String filename = "dummy";
         RequestDto requestDto = new RequestDto("http://speedtest.ftp.otenet.gr/files/test100k.db",null,null,false,false,false);
-        restService.fileDownload(requestDto,directory,filename);
+        restService.fileDownload(requestDto);
+
     }
 }
