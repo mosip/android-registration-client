@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
+import okhttp3.Request;
 import okhttp3.Response;
 
 public class RestService {
@@ -91,6 +92,12 @@ public class RestService {
         }
         ANRequest request = requestBuilder.build();
 
+        request.setUploadProgressListener(new UploadProgressListener() {
+            @Override
+            public void onProgress(long bytesUploaded, long totalBytes) {
+                // do anything with progress
+            }
+        });
 
         ANResponse<JSONObject> response = request.executeForJSONObject();
 
