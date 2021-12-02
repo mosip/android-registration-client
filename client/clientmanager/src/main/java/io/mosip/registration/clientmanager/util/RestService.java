@@ -132,8 +132,8 @@ public class RestService {
     public void fileDownload(@NonNull RequestDto requestDto) {
         try {
             ANRequest request = AndroidNetworking
-                    .download(requestDto.getUrl(), requestDto.getBody().getString("directory"),
-                            requestDto.getBody().getString("filename"))
+                    .download(requestDto.getUrl(), requestDto.getBody().getString("Directory"),
+                            requestDto.getBody().getString("Filename"))
                     .setTag(this)
                     .setPriority(Priority.MEDIUM)
                     .build()

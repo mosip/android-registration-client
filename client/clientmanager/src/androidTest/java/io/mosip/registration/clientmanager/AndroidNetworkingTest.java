@@ -11,6 +11,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.androidnetworking.AndroidNetworking;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
 import io.mosip.registration.clientmanager.util.RestService;
+import lombok.SneakyThrows;
 
 @RunWith(AndroidJUnit4.class)
 public class AndroidNetworkingTest {
@@ -41,14 +43,20 @@ public class AndroidNetworkingTest {
         assertNotNull(response.get("get"));
     }
 
+    @SneakyThrows
     @Test
     public void download_test() {
 
         String directory = "/storage/emulated/0/Download";
-        System.out.println("download_directory = " + directory);
         String filename = "dummy";
-        RequestDto requestDto = new RequestDto("http://speedtest.ftp.otenet.gr/files/test100k.db",null,null,false,false,false);
-        restService.fileDownload(requestDto);
 
+        JSONObject body = new JSONObject(
+                "{" +
+                        "Directory: " + directory + "," +
+                        "Filename: " + filename +
+                        "}"
+        );
+        RequestDto requestDto = new RequestDto("http://speedtest.ftp.otenet.gr/files/test100k.db",body,null,false,false,false);
+        restService.fileDownload(requestDto);
     }
 }
