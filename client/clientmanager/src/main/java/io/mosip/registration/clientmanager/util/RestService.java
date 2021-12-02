@@ -128,8 +128,8 @@ public class RestService {
         return responseObj;
     }
 
-    //     DOWNLOAD request for a File
-    public void fileDownload(@NonNull RequestDto requestDto) {
+    // DOWNLOAD request for a File
+    public boolean fileDownload(@NonNull RequestDto requestDto) {
         try {
             ANRequest request = AndroidNetworking
                     .download(requestDto.getUrl(), requestDto.getBody().getString("Directory"),
@@ -148,13 +148,17 @@ public class RestService {
             if (response.isSuccess()) {
                 Response okHttpResponse = response.getOkHttpResponse();
                 Log.d(TAG, "headers : " + okHttpResponse.headers().toString());
+                return true;
             } else {
                 ANError error = response.getError();
                 Log.e(TAG, "onError: Error on fileDownload request ", error);
+                return false;
             }
         }
         catch (Exception e) {
             Log.e(TAG, "fileDownload: download request failed");
         }
+        return false;
     }
+
 }

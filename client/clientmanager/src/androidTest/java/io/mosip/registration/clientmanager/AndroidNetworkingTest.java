@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.os.Environment;
@@ -21,7 +22,6 @@ import java.util.Map;
 
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
 import io.mosip.registration.clientmanager.util.RestService;
-import lombok.SneakyThrows;
 
 @RunWith(AndroidJUnit4.class)
 public class AndroidNetworkingTest {
@@ -43,20 +43,25 @@ public class AndroidNetworkingTest {
         assertNotNull(response.get("get"));
     }
 
-    @SneakyThrows
     @Test
     public void download_test() {
 
         String directory = "/storage/emulated/0/Download";
         String filename = "dummy";
 
-        JSONObject body = new JSONObject(
-                "{" +
-                        "Directory: " + directory + "," +
-                        "Filename: " + filename +
-                        "}"
-        );
+        JSONObject body = null;
+        try {
+            body = new JSONObject(
+                    "{" +
+                            "Directory: " + directory + "," +
+                            "Filename: " + filename +
+                            "}"
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         RequestDto requestDto = new RequestDto("http://speedtest.ftp.otenet.gr/files/test100k.db",body,null,false,false,false);
-        restService.fileDownload(requestDto);
+        boolean response = restService.fileDownload(requestDto);
+        assertTrue(response);
     }
 }
