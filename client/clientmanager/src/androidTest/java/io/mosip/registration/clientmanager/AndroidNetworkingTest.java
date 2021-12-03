@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
@@ -37,16 +38,44 @@ public class AndroidNetworkingTest {
 
     @Test
     public void get_test(){
-        RequestDto requestDto = new RequestDto("http://jsonplaceholder.typicode.com/todos/1",null,null,false,false,false);
+        RequestDto requestDto = new RequestDto("https://9b44531f-ce8a-4170-8801-0cce58e7fcea.mock.pstmn.io",null,null,false,false,false);
         Map<String, Object> response = restService.get(requestDto);
 
         assertNotNull(response.get("get"));
     }
 
     @Test
+    public void post_test(){
+        JSONObject body = null;
+        try {
+            body = new JSONObject(
+                    "{" +
+                            "Directory: test_android," +
+                            "Filename: test-android" +
+                            "}"
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestDto requestDto = new RequestDto("https://9b44531f-ce8a-4170-8801-0cce58e7fcea.mock.pstmn.io",body,null,false,false,false);
+        Map<String, Object> response = restService.post(requestDto);
+
+        assertNotNull(response.get("post"));
+    }
+
+    @Test
+    public void upload_test() {
+        RequestDto requestDto = new RequestDto("test_url",null,null,false,false,false);
+        Map<String, File> multiPartFileMap = new HashMap<String, File> ();
+        Map<String, Object> response = restService.fileUpload(requestDto, multiPartFileMap);
+
+        assertNotNull(response.get("upload"));
+    }
+
+    @Test
     public void download_test() {
 
-        String directory = "/storage/emulated/0/Download";
+        String directory = "dummy";
         String filename = "dummy";
 
         JSONObject body = null;
@@ -60,8 +89,10 @@ public class AndroidNetworkingTest {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        RequestDto requestDto = new RequestDto("http://speedtest.ftp.otenet.gr/files/test100k.db",body,null,false,false,false);
+        RequestDto requestDto = new RequestDto("test_url",body,null,false,false,false);
         boolean response = restService.fileDownload(requestDto);
         assertTrue(response);
     }
+
+
 }
