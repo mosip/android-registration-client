@@ -75,7 +75,7 @@ public class RestService {
             if (response.isSuccess()) {
                 JSONObject jsonObject = response.getResult();
                 Log.i(TAG, "response : " + jsonObject.toString());
-                responseObj.put("post", response);
+                responseObj.put("post", jsonObject);
                 Response okHttpResponse = response.getOkHttpResponse();
                 Log.i(TAG, "headers : " + okHttpResponse.headers().toString());
             } else {
@@ -114,7 +114,7 @@ public class RestService {
             if (response.isSuccess()) {
                 JSONObject jsonObject = response.getResult();
                 Log.d(TAG, "response : " + jsonObject.toString());
-                responseObj.put("upload", response);
+                responseObj.put("upload", jsonObject);
                 Response okHttpResponse = response.getOkHttpResponse();
                 Log.d(TAG, "headers : " + okHttpResponse.headers().toString());
             } else {

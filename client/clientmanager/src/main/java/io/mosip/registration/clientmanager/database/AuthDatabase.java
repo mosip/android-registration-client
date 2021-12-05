@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import io.mosip.registration.clientmanager.database.entities.UserToken;
 import io.mosip.registration.clientmanager.database.objectdao.UserTokenDao;
 
-@Database(entities = {UserToken.class}, version = 1)
+@Database(entities = {UserToken.class}, version = 1, exportSchema = false)
 public abstract class AuthDatabase extends RoomDatabase {
     //    instance of database
     private static AuthDatabase INSTANCE;
