@@ -16,7 +16,7 @@ public class UserToken {
     @NonNull
     public String id;
     public String version;
-    public String responseTime;
+    public String responsetime;
     public String metadata;
     public String response;
     public String errors;

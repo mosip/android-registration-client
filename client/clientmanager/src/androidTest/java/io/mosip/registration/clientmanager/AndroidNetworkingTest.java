@@ -11,6 +11,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.androidnetworking.AndroidNetworking;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -58,6 +59,33 @@ public class AndroidNetworkingTest {
             e.printStackTrace();
         }
         RequestDto requestDto = new RequestDto("https://9b44531f-ce8a-4170-8801-0cce58e7fcea.mock.pstmn.io",body,null,false,false,false);
+        Map<String, Object> response = restService.post(requestDto);
+
+        assertNotNull(response.get("post"));
+    }
+
+    @Test
+    public void mosip_post_test(){
+        JSONObject body = new JSONObject();;
+        JSONObject item = new JSONObject();;
+
+        try {
+            body.put("id","string");
+            body.put("version","string");
+            body.put("requesttime","2021-12-05T04:54:39.337Z");
+            body.put("metadata",new JSONObject());
+
+            item.put("userName","string");
+            item.put("password","string");
+            item.put("appId","string");
+
+            body.put("request",item);
+
+            System.out.println(body.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestDto requestDto = new RequestDto("https://dev.mosip.net/v1/authmanager/authenticate/useridPwd",body,null,false,false,false);
         Map<String, Object> response = restService.post(requestDto);
 
         assertNotNull(response.get("post"));
