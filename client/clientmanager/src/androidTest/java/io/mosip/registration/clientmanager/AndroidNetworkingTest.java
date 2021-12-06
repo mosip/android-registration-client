@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -39,6 +40,7 @@ public class AndroidNetworkingTest {
 
     @Test
     public void get_test(){
+        // postman test
         RequestDto requestDto = new RequestDto("https://9b44531f-ce8a-4170-8801-0cce58e7fcea.mock.pstmn.io",null,null,false,false,false);
         Map<String, Object> response = restService.get(requestDto);
 
@@ -56,8 +58,9 @@ public class AndroidNetworkingTest {
                             "}"
             );
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("post_test", "JSON obj creation failed", e);
         }
+        // postman test
         RequestDto requestDto = new RequestDto("https://9b44531f-ce8a-4170-8801-0cce58e7fcea.mock.pstmn.io",body,null,false,false,false);
         Map<String, Object> response = restService.post(requestDto);
 
@@ -83,7 +86,7 @@ public class AndroidNetworkingTest {
 
             System.out.println(body.toString());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("mosip_post_test", "JSON obj creation failed", e);
         }
         RequestDto requestDto = new RequestDto("https://dev.mosip.net/v1/authmanager/authenticate/useridPwd",body,null,false,false,false);
         Map<String, Object> response = restService.post(requestDto);
@@ -93,9 +96,18 @@ public class AndroidNetworkingTest {
 
     @Test
     public void upload_test() {
-        RequestDto requestDto = new RequestDto("test_url",null,null,false,false,false);
-        Map<String, File> multiPartFileMap = new HashMap<String, File> ();
-        Map<String, Object> response = restService.fileUpload(requestDto, multiPartFileMap);
+        JSONObject body = new JSONObject();
+        try {
+            body.put("file1", "path1");
+            body.put("file2", "path2");
+//            more file paths
+        } catch (JSONException e) {
+            Log.e("upload_test", "JSON obj creation failed", e);
+
+        }
+
+        RequestDto requestDto = new RequestDto("test_url",body,null,false,false,false);
+        Map<String, Object> response = restService.fileUpload(requestDto);
 
         assertNotNull(response.get("upload"));
     }
@@ -106,16 +118,13 @@ public class AndroidNetworkingTest {
         String directory = "dummy";
         String filename = "dummy";
 
-        JSONObject body = null;
+        JSONObject body = new JSONObject();
         try {
-            body = new JSONObject(
-                    "{" +
-                            "Directory: " + directory + "," +
-                            "Filename: " + filename +
-                            "}"
-            );
+            body.put("Directory", directory);
+            body.put("Filename", filename);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("download_test", "JSON obj creation failed", e);
+
         }
         RequestDto requestDto = new RequestDto("test_url",body,null,false,false,false);
         boolean response = restService.fileDownload(requestDto);

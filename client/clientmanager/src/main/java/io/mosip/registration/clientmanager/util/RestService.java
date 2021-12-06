@@ -15,6 +15,7 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.androidnetworking.interfaces.UploadProgressListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,7 +90,7 @@ public class RestService {
     }
 
     // UPLOAD multipart file
-    public Map<String, Object> fileUpload(@NonNull RequestDto requestDto, @NonNull Map<String, File> multiPartFileMap) {
+    public Map<String, Object> fileUpload(@NonNull RequestDto requestDto) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
         try {
 
@@ -97,9 +98,16 @@ public class RestService {
                     .setTag(this)
                     .setPriority(Priority.MEDIUM);
 
-            for (Map.Entry<String, File> entry : multiPartFileMap.entrySet()) {
-                requestBuilder.addMultipartFile(entry.getKey(), entry.getValue());
+            // key corresponds to file identifier and value corresponds to path string of file
+            JSONObject files = requestDto.getBody();
+            JSONArray keys = files.names();
+            for (int i = 0; i < keys.length(); i++) {
+                String key = keys.getString(i);
+                File file = new File(files.getString (key));
+
+                requestBuilder.addMultipartFile(key, file);
             }
+
             ANRequest request = requestBuilder.build();
 
             request.setUploadProgressListener(new UploadProgressListener() {
@@ -131,6 +139,7 @@ public class RestService {
     // DOWNLOAD request for a File
     public boolean fileDownload(@NonNull RequestDto requestDto) {
         try {
+            // Directory: file download directory, Filename: filename to save to
             ANRequest request = AndroidNetworking
                     .download(requestDto.getUrl(), requestDto.getBody().getString("Directory"),
                             requestDto.getBody().getString("Filename"))
@@ -140,7 +149,7 @@ public class RestService {
                     .setDownloadProgressListener(new DownloadProgressListener() {
                         @Override
                         public void onProgress(long bytesDownloaded, long totalBytes) {
-
+                            // do anything with progress
                         }
                     });
             ANResponse<String> response = request.executeForDownload();

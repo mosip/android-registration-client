@@ -59,7 +59,6 @@ public class DaoTest {
 
             body.put("request",item);
 
-            System.out.println(body.toString());
         } catch (JSONException e) {
             Log.e("insert_test","JSON obj creation failed", e);
         }
