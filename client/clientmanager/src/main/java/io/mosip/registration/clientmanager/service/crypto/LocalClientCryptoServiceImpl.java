@@ -46,6 +46,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import dagger.Component;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
 import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
 import io.mosip.registration.clientmanager.dto.crypto.PublicKeyRequestDto;

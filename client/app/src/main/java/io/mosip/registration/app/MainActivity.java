@@ -18,15 +18,19 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.androidnetworking.AndroidNetworking;
+
 import javax.inject.Inject;
 
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
+import io.mosip.registration.clientmanager.util.RestService;
 
 public class MainActivity extends DaggerAppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Inject
     public LocalClientCryptoServiceImpl localClientCryptoService;
+
 
     EditText messageInput;
     TextView endecTextView;
@@ -45,7 +49,6 @@ public class MainActivity extends DaggerAppCompatActivity {
         messageInput = (EditText) findViewById(R.id.msg_input);
         endecTextView = (TextView) findViewById(R.id.EnDecTextView);
         signTextView = (TextView) findViewById(R.id.SignTextView);
-
     }
     public void click_encrypt(View view) {
         test_encrypt(view);

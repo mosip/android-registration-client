@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
+import io.mosip.registration.clientmanager.util.RestService;
 
 @Module
 public class AppModule {
@@ -33,8 +34,15 @@ public class AppModule {
         return appContext;
     }
 
+    @Singleton
     @Provides
     public LocalClientCryptoServiceImpl provideLocalClientCryptoServiceImpl(){
         return new LocalClientCryptoServiceImpl(appContext);
+    }
+
+    @Singleton
+    @Provides
+    public RestService provideRestServiceImpl(){
+        return new RestService();
     }
 }

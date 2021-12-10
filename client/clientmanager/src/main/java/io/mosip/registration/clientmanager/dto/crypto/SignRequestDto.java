@@ -11,5 +11,4 @@ import javax.validation.constraints.NotBlank;
 public class SignRequestDto {
     @NotBlank(message = "Invalid Request")
     private String data;
-
 }
