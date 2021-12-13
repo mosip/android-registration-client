@@ -10,7 +10,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.ANResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,8 +19,8 @@ import org.junit.runner.RunWith;
 
 import java.util.Map;
 
-import io.mosip.registration.clientmanager.database.AuthDatabase;
-import io.mosip.registration.clientmanager.database.entities.UserToken;
+import io.mosip.registration.clientmanager.config.AuthDatabase;
+import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
 import io.mosip.registration.clientmanager.util.RestService;
 
