@@ -10,3 +10,5 @@ dependencyResolutionManagement {
 rootProject.name = "registration_client"
 include ':app'
 include ':clientmanager'
+include ':packetmanager'
+include ':keymanager'
