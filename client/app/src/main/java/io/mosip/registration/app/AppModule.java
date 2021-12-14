@@ -1,4 +1,4 @@
-package io.mosip.registration.app.di;
+package io.mosip.registration.app;
 
 import android.app.Application;
 import android.content.Context;
@@ -9,8 +9,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
-import io.mosip.registration.clientmanager.util.RestService;
+
+import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 @Module
 public class AppModule {
@@ -36,13 +37,7 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public LocalClientCryptoServiceImpl provideLocalClientCryptoServiceImpl(){
+    public ClientCryptoManagerService provideClientCryptoManagerService(){
         return new LocalClientCryptoServiceImpl(appContext);
-    }
-
-    @Singleton
-    @Provides
-    public RestService provideRestServiceImpl(){
-        return new RestService();
     }
 }
