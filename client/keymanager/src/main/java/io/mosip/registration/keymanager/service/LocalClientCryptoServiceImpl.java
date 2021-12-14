@@ -6,6 +6,7 @@ import android.security.keystore.KeyProperties;
 import android.util.Log;
 import io.mosip.registration.keymanager.dto.*;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.util.ConfigService;
 import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 
 import javax.crypto.*;
@@ -89,7 +90,6 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         } catch (Exception e) {
             Log.e(TAG, "LocalClientCryptoServiceImpl: Failed Initialization", e);
         }
-
     }
 
     public void initLocalClientCryptoService(Context appContext) {
@@ -105,7 +105,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
     private void initializeClientSecurity() {
         Log.i(TAG, "LocalClientCryptoServiceImpl: Initializing");
-        /*CRYPTO_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-name",context);
+        CRYPTO_ASYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-name",context);
         KEYGEN_ASYMMETRIC_ALGO_BLOCK = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-block-mode",context);
         KEYGEN_ASYMMETRIC_ALGO_PAD = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-padding-scheme",context);
         CRYPTO_ASYMMETRIC_ALGO_MD = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-message-digest-function",context);
@@ -130,7 +130,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                 ConfigService.getProperty("mosip.kernel.crypto.hash-iteration",context));
         CRYPTO_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-name",context);
         KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-padding-scheme",context);
-        CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);*/
+        CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);
 
         base64encoder = Base64.getUrlEncoder();
         base64decoder = Base64.getUrlDecoder();

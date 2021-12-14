@@ -1,4 +1,4 @@
-package io.mosip.registration.app.di;
+package io.mosip.registration.app;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;

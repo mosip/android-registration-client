@@ -1,4 +1,4 @@
-package io.mosip.registration.clientmanager.util;
+package io.mosip.registration.keymanager.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * @Author George T Abraham
+ * @Author Eric John
+ */
 public class ConfigService {
 
     private final static Properties properties = new Properties();
