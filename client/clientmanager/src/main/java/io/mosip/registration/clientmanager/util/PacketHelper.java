@@ -1,9 +1,13 @@
 package io.mosip.registration.clientmanager.util;
 
-import io.mosip.registration.clientmanager.dto.packet.ProviderDto;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import io.mosip.registration.clientmanager.dto.packet.ProviderDto;
 
 public class PacketHelper {
 
@@ -15,7 +19,7 @@ public class PacketHelper {
 
     private static List<ProviderDto> writerProvider = null;
 
-    public enum Provider {
+    public enum   Provider {
         READER, WRITER;
     }
 

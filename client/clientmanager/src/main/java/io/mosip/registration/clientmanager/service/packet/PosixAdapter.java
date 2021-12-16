@@ -14,24 +14,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.file.FileSystemNotFoundException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -39,7 +32,6 @@ import java.util.zip.ZipOutputStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.mosip.registration.clientmanager.dto.objectstore.ObjectDto;
 import io.mosip.registration.clientmanager.spi.packet.ObjectStoreAdapter;
 import io.mosip.registration.clientmanager.util.EncryptionHelper;
 import io.mosip.registration.clientmanager.util.ObjectStoreUtil;
@@ -73,6 +65,8 @@ public class PosixAdapter implements ObjectStoreAdapter {
         helper = new EncryptionHelper(appContext);
         objectMapper = new ObjectMapper();
 
+        //TODO Take base location from Config
+
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             BASE_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath();
@@ -80,47 +74,6 @@ public class PosixAdapter implements ObjectStoreAdapter {
             Log.e(TAG, "External Storage not mounted");
         }
         Log.i(TAG, "initLocalClientCryptoService: Initialization call successful");
-    }
-
-
-    //Object store Adapter impl methods
-    @Override
-    public InputStream getObject(String account, String container, String source, String process, String objectName) {
-        try {
-            File accountLoc = new File(BASE_LOCATION + SEPARATOR + account);
-            if (!accountLoc.exists())
-                return null;
-            File containerZip = new File(accountLoc.getPath() + SEPARATOR + container + ZIP);
-            if (!containerZip.exists())
-                throw new FileNotFoundException("containerZip File Not found");
-
-            InputStream ios = new FileInputStream(containerZip);
-            Map<ZipEntry, ByteArrayOutputStream> entries = getAllExistingEntries(ios);
-
-            Set<ZipEntry> set = entries.keySet();
-            Stream<ZipEntry> stream = set.stream();
-            String name = ObjectStoreUtil.getName(source, process, objectName) + JSON;
-
-            Optional<ZipEntry> zipEntry = stream.filter(e ->
-                    e.getName().contains(name)).findAny();
-
-//            Optional<ZipEntry> zipEntry = entries.keySet().stream().filter(e ->
-//                    e.getName().contains(ObjectStoreUtil.getName(source, process, objectName) + ZIP)).findAny();
-
-            if (zipEntry.isPresent() && zipEntry.get() != null)
-                return new ByteArrayInputStream(entries.get(zipEntry.get()).toByteArray());
-
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "exception occurred to get object for id - " + container + ":::" + e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, "exception occurred to get object for id - " + container + ":::" + e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public boolean exists(String account, String container, String source, String process, String objectName) {
-        return getObject(account, container, source, process, objectName) != null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -142,33 +95,18 @@ public class PosixAdapter implements ObjectStoreAdapter {
             JSONObject jsonObject = objectMetadata(account, container, source, process, objectName, metadata);
             createContainerZipWithSubPacket(account, container, source, process, objectName + JSON,
                     new ByteArrayInputStream(jsonObject.toString().getBytes()));
+            return metadata;
         } catch (
                 IOException e) {
             Log.e(TAG, "exception occurred to add metadata for id - " + container);
         } catch (Exception e1) {
             Log.e(TAG, "exception occurred to add metadata for id - " + container);
         }
-
-        return metadata;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    @Override
-    public Map<String, Object> addObjectMetaData(String account, String container, String source, String process, String objectName, String key, String value) {
-        try {
-            Map<String, Object> metaMap = new HashMap<>();
-            metaMap.put(key, value);
-            JSONObject jsonObject = objectMetadata(account, container, source, process, objectName, metaMap);
-            createContainerZipWithSubPacket(account, container, source, process, objectName + JSON, new ByteArrayInputStream(jsonObject.toString().getBytes()));
-            return metaMap;
-        } catch (IOException e) {
-            Log.e(TAG, "exception occurred to add metadata for id - " + container);
-        }
         return null;
     }
 
-    @Override
-    public Map<String, Object> getMetaData(String account, String container, String source, String process, String objectName) {
+    //@Override
+    private Map<String, Object> getMetaData(String account, String container, String source, String process, String objectName) {
         Map<String, Object> metaMap = null;
         try {
             File accountLoc = new File(BASE_LOCATION + SEPARATOR + account);
@@ -195,21 +133,6 @@ public class PosixAdapter implements ObjectStoreAdapter {
             Log.e(TAG, "exception occurred to add metadata for id - " + container);
         }
         return metaMap;
-    }
-
-    @Override
-    public Integer incMetadata(String account, String container, String source, String process, String objectName, String metaDataKey) {
-        throw new RuntimeException("incMetadata not implemented");
-    }
-
-    @Override
-    public Integer decMetadata(String account, String container, String source, String process, String objectName, String metaDataKey) {
-        throw new RuntimeException("decMetadata not implemented");
-    }
-
-    @Override
-    public boolean deleteObject(String account, String container, String source, String process, String objectName) {
-        throw new RuntimeException("deleteObject not implemented");
     }
 
     @Override
@@ -260,61 +183,7 @@ public class PosixAdapter implements ObjectStoreAdapter {
         }
     }
 
-    @Override
-    public List<ObjectDto> getAllObjects(String account, String container) {
-        throw new RuntimeException("getAllObjects not implemented");
-    }
-
-    @Override
-    public Map<String, String> addTags(String account, String container, Map<String, String> tags) {
-        try {
-            JSONObject jsonObject = containerTagging(account, container, tags);
-            createContainerWithTagging(account, container, new ByteArrayInputStream(jsonObject.toString().getBytes()));
-            return tags;
-        } catch (Exception e) {
-            Log.e(TAG, "exception occured while packing");
-        }
-        return null;
-    }
-
-    @Override
-    public Map<String, String> getTags(String account, String container) {
-        Map<String, String> metaMap = new HashMap<String, String>();
-        File accountLocation = new File(BASE_LOCATION + SEPARATOR + account);
-        if (!accountLocation.exists())
-            accountLocation.mkdir();
-        File tagFile = new File(accountLocation.getPath() + SEPARATOR + container + TAGS + JSON);
-        try {
-            if (tagFile.createNewFile()) {
-                Log.e(TAG, " tags file not yet present for  id - " + container);
-            } else {
-                InputStream inputstream = new FileInputStream(tagFile);
-                BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
-                StringBuilder responseStrBuilder = new StringBuilder();
-
-                String inputTags;
-                while ((inputTags = inputStreamReader.readLine()) != null)
-                    responseStrBuilder.append(inputTags);
-
-                inputStreamReader.close();
-                JSONObject jsonObject = objectMapper.readValue(objectMapper.writeValueAsString(responseStrBuilder.toString()),
-                        JSONObject.class);
-                metaMap = objectMapper.readValue(jsonObject.toString(), HashMap.class);
-                return metaMap;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "exception occured to get tags for id - " + container);
-        }
-        return null;
-    }
-
-    @Override
-    public void deleteTags(String account, String container, List<String> tags) {
-        throw new RuntimeException("Delete Tags not implemented");
-    }
-
     //Private methods
-
 
     private Map<ZipEntry, ByteArrayOutputStream> getAllExistingEntries(InputStream packetStream) throws IOException {
         Map<ZipEntry, ByteArrayOutputStream> entries = new HashMap<>();
@@ -375,7 +244,7 @@ public class PosixAdapter implements ObjectStoreAdapter {
                         packetZip.putNextEntry(e.getKey());
                         packetZip.write(e.getValue().toByteArray());
                     } catch (IOException e1) {
-                        Log.e(TAG, "exception occurred. Will create a new connection. :::" + e1.getMessage());
+                        Log.e(TAG, "exception occurred. Create a new zip. :::" + e1.getMessage());
                     }
                 });
 
@@ -394,10 +263,9 @@ public class PosixAdapter implements ObjectStoreAdapter {
             containerZip.createNewFile();
             fileOutputStream = new FileOutputStream(containerZip);
             fileOutputStream.write(out.toByteArray());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "createContainerZipWithSubPacket : Exception while writing a file");
-        }
-        finally {
+        } finally {
             fileOutputStream.flush();
             fileOutputStream.close();
         }
@@ -429,30 +297,6 @@ public class PosixAdapter implements ObjectStoreAdapter {
                 }
             });
         return jsonObject;
-    }
-
-    private JSONObject containerTagging(String account, String container, Map<String, String> tags) {
-        JSONObject jsonObject = new JSONObject(tags);
-        Map<String, String> existingTags = getTags(account, container);
-        if (existingTags != null && !existingTags.isEmpty())
-            existingTags.entrySet().forEach(entry -> {
-                try {
-                    jsonObject.put(entry.getKey(), entry.getValue());
-                } catch (JSONException e) {
-                    Log.e(TAG, "exception occurred to add metadata for id - " + container);
-                }
-            });
-        return jsonObject;
-    }
-
-    private void createContainerWithTagging(String account, String container, InputStream data) throws IOException {
-        File accountLocation = new File(BASE_LOCATION + SEPARATOR + account);
-        if (!accountLocation.exists())
-            accountLocation.mkdir();
-        File tagFile = new File(accountLocation.getPath() + SEPARATOR + container + TAGS + JSON);
-        OutputStream outStream = new FileOutputStream(tagFile);
-        outStream.write(data.read());
-        outStream.close();
     }
 
     private boolean deleteFile(File file) throws IOException {

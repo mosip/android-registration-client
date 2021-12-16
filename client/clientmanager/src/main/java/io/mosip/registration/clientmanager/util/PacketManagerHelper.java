@@ -1,38 +1,25 @@
 //package io.mosip.registration.clientmanager.util;
 //
-////import io.mosip.commons.packet.constants.PacketManagerConstants;
-////import io.mosip.commons.packet.dto.PacketInfo;
-////import io.mosip.kernel.biometrics.constant.BiometricType;
-////import io.mosip.kernel.biometrics.entities.BiometricRecord;
-////import io.mosip.kernel.cbeffutil.container.impl.CbeffContainerImpl;
-////import io.mosip.kernel.core.cbeffutil.common.CbeffValidator;
-////import io.mosip.kernel.core.cbeffutil.entity.BDBInfo;
-////import io.mosip.kernel.core.cbeffutil.entity.BIR;
-////import io.mosip.kernel.core.cbeffutil.entity.BIRInfo;
-////import io.mosip.kernel.core.cbeffutil.entity.BIRVersion;
-////import io.mosip.kernel.core.cbeffutil.jaxbclasses.*;
-////import io.mosip.kernel.core.util.HMACUtils2;
-////import org.apache.commons.io.IOUtils;
-////import org.springframework.beans.factory.annotation.Value;
-////import org.springframework.stereotype.Component;
-//
-//import java.io.ByteArrayOutputStream;
-//import java.io.IOException;
 //import java.io.InputStream;
 //import java.net.URL;
-//import java.security.NoSuchAlgorithmException;
 //import java.util.ArrayList;
-//import java.util.HashMap;
 //import java.util.List;
-//import java.util.Map;
-//import java.util.Objects;
 //
-//import dagger.Component;
+//import io.mosip.kernel.core.cbeffutil.common.CbeffValidator;
+//import io.mosip.kernel.core.cbeffutil.entity.BDBInfo;
+//import io.mosip.kernel.core.cbeffutil.entity.BIR;
+//import io.mosip.kernel.core.cbeffutil.entity.BIRInfo;
+//import io.mosip.kernel.core.cbeffutil.entity.BIRVersion;
+//import io.mosip.kernel.core.cbeffutil.jaxbclasses.BIRType;
+//import io.mosip.kernel.core.cbeffutil.jaxbclasses.ProcessedLevelType;
+//import io.mosip.kernel.core.cbeffutil.jaxbclasses.PurposeType;
+//import io.mosip.kernel.core.cbeffutil.jaxbclasses.QualityType;
+//import io.mosip.kernel.core.cbeffutil.jaxbclasses.RegistryIDType;
+//import io.mosip.kernel.core.cbeffutil.jaxbclasses.SingleType;
+//import io.mosip.registration.clientmanager.contant.PacketManagerConstants;
 //import io.mosip.registration.clientmanager.entities.BiometricRecord;
+//import io.mosip.registration.clientmanager.entities.BIR;
 //
-////import static io.mosip.commons.packet.constants.PacketManagerConstants.*;
-//
-//@Component
 //public class PacketManagerHelper {
 //
 //    /**
@@ -73,120 +60,120 @@
 //        }
 //        return xmlBytes;
 //    }
-//
-//    public static byte[] generateHash(List<String> order, Map<String, byte[]> data) throws IOException, NoSuchAlgorithmException {
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        if (order != null && !order.isEmpty()) {
-//            for (String name : order) {
-//                outputStream.write(data.get(name));
-//            }
-//            return HMACUtils2.digestAsPlainText(outputStream.toByteArray()).getBytes();
-//        }
-//        return null;
-//    }
-//
-//    public static Map<String, Object> getMetaMap(PacketInfo packetInfo) {
-//        Map<String, Object> metaMap = new HashMap<>();
-//        metaMap.put(ID, packetInfo.getId());
-//        metaMap.put(PACKET_NAME, packetInfo.getPacketName());
-//        metaMap.put(SOURCE, packetInfo.getSource());
-//        metaMap.put(PROCESS, packetInfo.getProcess());
-//        metaMap.put(SCHEMA_VERSION, packetInfo.getSchemaVersion());
-//        metaMap.put(SIGNATURE, packetInfo.getSignature());
-//        metaMap.put(ENCRYPTED_HASH, packetInfo.getEncryptedHash());
-//        metaMap.put(PROVIDER_NAME, packetInfo.getProviderName());
-//        metaMap.put(PROVIDER_VERSION, packetInfo.getProviderVersion());
-//        metaMap.put(CREATION_DATE, packetInfo.getCreationDate());
-//        return metaMap;
-//    }
-//
-//    public static PacketInfo getPacketInfo(Map<String, Object> metaMap) {
-//        PacketInfo packetInfo = new PacketInfo();
-//        packetInfo.setId((String) metaMap.get(ID));
-//        packetInfo.setPacketName((String) metaMap.get(PACKET_NAME));
-//        packetInfo.setSource((String) metaMap.get(SOURCE));
-//        packetInfo.setProcess((String) metaMap.get(PROCESS));
-//        packetInfo.setSchemaVersion((String) metaMap.get(SCHEMA_VERSION));
-//        packetInfo.setSignature((String) metaMap.get(SIGNATURE));
-//        packetInfo.setEncryptedHash((String) metaMap.get(ENCRYPTED_HASH));
-//        packetInfo.setProviderName((String) metaMap.get(PROVIDER_NAME));
-//        packetInfo.setProviderVersion((String) metaMap.get(PROVIDER_VERSION));
-//        packetInfo.setCreationDate((String) metaMap.get(CREATION_DATE));
-//        return packetInfo;
-//    }
-//
-//    public static io.mosip.kernel.biometrics.entities.BIR convertToBiometricRecordBIR(BIR bir) {
-//        List<BiometricType> bioTypes = new ArrayList<>();
-//        for(SingleType type : bir.getBdbInfo().getType()) {
-//            bioTypes.add(BiometricType.fromValue(type.value()));
-//        }
-//
-//        io.mosip.kernel.biometrics.entities.RegistryIDType format = new io.mosip.kernel.biometrics.entities.RegistryIDType(bir.getBdbInfo().getFormat().getOrganization(),
-//                bir.getBdbInfo().getFormat().getType());
-//
-//        io.mosip.kernel.biometrics.constant.QualityType qualityType;
-//
-//        if(Objects.nonNull(bir.getBdbInfo().getQuality())) {
-//            io.mosip.kernel.biometrics.entities.RegistryIDType birAlgorithm = bir.getBdbInfo().getQuality()
-//                    .getAlgorithm() == null ? null : new io.mosip.kernel.biometrics.entities.RegistryIDType(
-//                    bir.getBdbInfo().getQuality().getAlgorithm().getOrganization(),
-//                    bir.getBdbInfo().getQuality().getAlgorithm().getType());
-//
-//            qualityType = new io.mosip.kernel.biometrics.constant.QualityType();
-//            qualityType.setAlgorithm(birAlgorithm);
-//            qualityType.setQualityCalculationFailed(bir.getBdbInfo().getQuality().getQualityCalculationFailed());
-//            qualityType.setScore(bir.getBdbInfo().getQuality().getScore());
-//
-//        } else {
-//            qualityType = null;
-//        }
-//
-//        io.mosip.kernel.biometrics.entities.VersionType version;
-//        if(Objects.nonNull(bir.getVersion())) {
-//            version = new io.mosip.kernel.biometrics.entities.VersionType(bir.getVersion().getMajor(),
-//                    bir.getVersion().getMinor());
-//        } else {
-//            version = null;
-//        }
-//
-//        io.mosip.kernel.biometrics.entities.VersionType cbeffversion;
-//        if(Objects.nonNull(bir.getCbeffversion())) {
-//            cbeffversion = new io.mosip.kernel.biometrics.entities.VersionType(bir.getCbeffversion().getMajor(),
-//                    bir.getCbeffversion().getMinor());
-//        } else {
-//            cbeffversion = null;
-//        }
-//
-//        io.mosip.kernel.biometrics.constant.PurposeType purposeType;
-//        if(Objects.nonNull(bir.getBdbInfo().getPurpose())) {
-//            purposeType = io.mosip.kernel.biometrics.constant.PurposeType.fromValue(bir.getBdbInfo().getPurpose().name());
-//        } else {
-//            purposeType = null;
-//        }
-//
-//        io.mosip.kernel.biometrics.constant.ProcessedLevelType processedLevelType;
-//        if(Objects.nonNull(bir.getBdbInfo().getLevel())) {
-//            processedLevelType = io.mosip.kernel.biometrics.constant.ProcessedLevelType.fromValue(
-//                    bir.getBdbInfo().getLevel().name());
-//        } else{
-//            processedLevelType = null;
-//        }
-//
-//        return new io.mosip.kernel.biometrics.entities.BIR.BIRBuilder()
-//                .withBdb(bir.getBdb())
-//                .withVersion(version)
-//                .withCbeffversion(cbeffversion)
-//                .withBirInfo(new io.mosip.kernel.biometrics.entities.BIRInfo.BIRInfoBuilder().withIntegrity(true).build())
-//                .withBdbInfo(new io.mosip.kernel.biometrics.entities.BDBInfo.BDBInfoBuilder()
-//                        .withFormat(format)
-//                        .withType(bioTypes)
-//                        .withQuality(qualityType)
-//                        .withCreationDate(bir.getBdbInfo().getCreationDate())
-//                        .withIndex(bir.getBdbInfo().getIndex())
-//                        .withPurpose(purposeType)
-//                        .withLevel(processedLevelType)
-//                        .withSubtype(bir.getBdbInfo().getSubtype()).build()).build();
-//    }
+////
+////    public static byte[] generateHash(List<String> order, Map<String, byte[]> data) throws IOException, NoSuchAlgorithmException {
+////        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+////        if (order != null && !order.isEmpty()) {
+////            for (String name : order) {
+////                outputStream.write(data.get(name));
+////            }
+////            return HMACUtils2.digestAsPlainText(outputStream.toByteArray()).getBytes();
+////        }
+////        return null;
+////    }
+////
+////    public static Map<String, Object> getMetaMap(PacketInfo packetInfo) {
+////        Map<String, Object> metaMap = new HashMap<>();
+////        metaMap.put(ID, packetInfo.getId());
+////        metaMap.put(PACKET_NAME, packetInfo.getPacketName());
+////        metaMap.put(SOURCE, packetInfo.getSource());
+////        metaMap.put(PROCESS, packetInfo.getProcess());
+////        metaMap.put(SCHEMA_VERSION, packetInfo.getSchemaVersion());
+////        metaMap.put(SIGNATURE, packetInfo.getSignature());
+////        metaMap.put(ENCRYPTED_HASH, packetInfo.getEncryptedHash());
+////        metaMap.put(PROVIDER_NAME, packetInfo.getProviderName());
+////        metaMap.put(PROVIDER_VERSION, packetInfo.getProviderVersion());
+////        metaMap.put(CREATION_DATE, packetInfo.getCreationDate());
+////        return metaMap;
+////    }
+////
+////    public static PacketInfo getPacketInfo(Map<String, Object> metaMap) {
+////        PacketInfo packetInfo = new PacketInfo();
+////        packetInfo.setId((String) metaMap.get(ID));
+////        packetInfo.setPacketName((String) metaMap.get(PACKET_NAME));
+////        packetInfo.setSource((String) metaMap.get(SOURCE));
+////        packetInfo.setProcess((String) metaMap.get(PROCESS));
+////        packetInfo.setSchemaVersion((String) metaMap.get(SCHEMA_VERSION));
+////        packetInfo.setSignature((String) metaMap.get(SIGNATURE));
+////        packetInfo.setEncryptedHash((String) metaMap.get(ENCRYPTED_HASH));
+////        packetInfo.setProviderName((String) metaMap.get(PROVIDER_NAME));
+////        packetInfo.setProviderVersion((String) metaMap.get(PROVIDER_VERSION));
+////        packetInfo.setCreationDate((String) metaMap.get(CREATION_DATE));
+////        return packetInfo;
+////    }
+////
+////    public static io.mosip.kernel.biometrics.entities.BIR convertToBiometricRecordBIR(BIR bir) {
+////        List<BiometricType> bioTypes = new ArrayList<>();
+////        for(SingleType type : bir.getBdbInfo().getType()) {
+////            bioTypes.add(BiometricType.fromValue(type.value()));
+////        }
+////
+////        io.mosip.kernel.biometrics.entities.RegistryIDType format = new io.mosip.kernel.biometrics.entities.RegistryIDType(bir.getBdbInfo().getFormat().getOrganization(),
+////                bir.getBdbInfo().getFormat().getType());
+////
+////        io.mosip.kernel.biometrics.constant.QualityType qualityType;
+////
+////        if(Objects.nonNull(bir.getBdbInfo().getQuality())) {
+////            io.mosip.kernel.biometrics.entities.RegistryIDType birAlgorithm = bir.getBdbInfo().getQuality()
+////                    .getAlgorithm() == null ? null : new io.mosip.kernel.biometrics.entities.RegistryIDType(
+////                    bir.getBdbInfo().getQuality().getAlgorithm().getOrganization(),
+////                    bir.getBdbInfo().getQuality().getAlgorithm().getType());
+////
+////            qualityType = new io.mosip.kernel.biometrics.constant.QualityType();
+////            qualityType.setAlgorithm(birAlgorithm);
+////            qualityType.setQualityCalculationFailed(bir.getBdbInfo().getQuality().getQualityCalculationFailed());
+////            qualityType.setScore(bir.getBdbInfo().getQuality().getScore());
+////
+////        } else {
+////            qualityType = null;
+////        }
+////
+////        io.mosip.kernel.biometrics.entities.VersionType version;
+////        if(Objects.nonNull(bir.getVersion())) {
+////            version = new io.mosip.kernel.biometrics.entities.VersionType(bir.getVersion().getMajor(),
+////                    bir.getVersion().getMinor());
+////        } else {
+////            version = null;
+////        }
+////
+////        io.mosip.kernel.biometrics.entities.VersionType cbeffversion;
+////        if(Objects.nonNull(bir.getCbeffversion())) {
+////            cbeffversion = new io.mosip.kernel.biometrics.entities.VersionType(bir.getCbeffversion().getMajor(),
+////                    bir.getCbeffversion().getMinor());
+////        } else {
+////            cbeffversion = null;
+////        }
+////
+////        io.mosip.kernel.biometrics.constant.PurposeType purposeType;
+////        if(Objects.nonNull(bir.getBdbInfo().getPurpose())) {
+////            purposeType = io.mosip.kernel.biometrics.constant.PurposeType.fromValue(bir.getBdbInfo().getPurpose().name());
+////        } else {
+////            purposeType = null;
+////        }
+////
+////        io.mosip.kernel.biometrics.constant.ProcessedLevelType processedLevelType;
+////        if(Objects.nonNull(bir.getBdbInfo().getLevel())) {
+////            processedLevelType = io.mosip.kernel.biometrics.constant.ProcessedLevelType.fromValue(
+////                    bir.getBdbInfo().getLevel().name());
+////        } else{
+////            processedLevelType = null;
+////        }
+////
+////        return new io.mosip.kernel.biometrics.entities.BIR.BIRBuilder()
+////                .withBdb(bir.getBdb())
+////                .withVersion(version)
+////                .withCbeffversion(cbeffversion)
+////                .withBirInfo(new io.mosip.kernel.biometrics.entities.BIRInfo.BIRInfoBuilder().withIntegrity(true).build())
+////                .withBdbInfo(new io.mosip.kernel.biometrics.entities.BDBInfo.BDBInfoBuilder()
+////                        .withFormat(format)
+////                        .withType(bioTypes)
+////                        .withQuality(qualityType)
+////                        .withCreationDate(bir.getBdbInfo().getCreationDate())
+////                        .withIndex(bir.getBdbInfo().getIndex())
+////                        .withPurpose(purposeType)
+////                        .withLevel(processedLevelType)
+////                        .withSubtype(bir.getBdbInfo().getSubtype()).build()).build();
+////    }
 //
 //    public static BIR convertToBIR(io.mosip.kernel.biometrics.entities.BIR bir) {
 //        List<SingleType> bioTypes = new ArrayList<>();

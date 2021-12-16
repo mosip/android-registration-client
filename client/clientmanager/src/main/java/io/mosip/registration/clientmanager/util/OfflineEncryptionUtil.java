@@ -108,6 +108,7 @@ public class OfflineEncryptionUtil {
             //throw new ObjectStoreAdapterException(KhazanaErrorCodes.ENCRYPTION_FAILURE.getErrorCode(), KhazanaErrorCodes.ENCRYPTION_FAILURE.getErrorMessage());
         }
 
+        //TODO Encryption
         CryptoResponseDto cryptoResponseDto = getCryptomanagerService().encrypt(cryptomanagerRequestDto);
 
         byte[] encryptedData = base64decoder.decode(cryptoResponseDto.getValue());

@@ -1,11 +1,11 @@
 package io.mosip.registration.clientmanager.spi.packet;
 
+import java.util.List;
+import java.util.Map;
+
 import io.mosip.registration.clientmanager.dto.packet.Document;
 import io.mosip.registration.clientmanager.dto.packet.PacketInfo;
 import io.mosip.registration.clientmanager.entities.BiometricRecord;
-
-import java.util.List;
-import java.util.Map;
 
 public interface PacketWriterService {
 

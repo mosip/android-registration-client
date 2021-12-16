@@ -98,11 +98,13 @@ public class ObjectStoreDemo extends AppCompatActivity {
             metaMap.put(SOURCE, source);
             metaMap.put(PROCESS, process);
 
-            posixAdapter.addObjectMetaData(PACKET_MANAGER_ACCOUNT,
+            Map map = posixAdapter.addObjectMetaData(PACKET_MANAGER_ACCOUNT,
                     id, source, process, objectName, metaMap);
-            Snackbar snackbar = Snackbar.make(view, "Object Meta Data added successfully", Snackbar.LENGTH_SHORT);
-            snackbar.show();
-            return;
+            if (map != null) {
+                Snackbar snackbar = Snackbar.make(view, "Object Meta Data added successfully : " + map.toString(), Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
         } catch (Exception e) {
             Log.e(TAG, "test_addObjectMetaData failed : ", e);
         }
@@ -113,10 +115,10 @@ public class ObjectStoreDemo extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void test_getObject(View view) {
         try {
-            InputStream inputStream = posixAdapter.getObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName);
+            InputStream inputStream = null; //posixAdapter.getObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName);
 
             if (inputStream != null) {
-                Snackbar snackbar = Snackbar.make(view, "Object fetched successfully", Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(view, "Object fetched successfully : " + inputStream.toString(), Snackbar.LENGTH_SHORT);
                 snackbar.show();
                 return;
             }
@@ -147,7 +149,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private void test_getMetaData(View view) {
 
         try {
-            Map metaData = posixAdapter.getMetaData(PACKET_MANAGER_ACCOUNT, id, source, process, objectName);
+            Map metaData = null; //posixAdapter.getMetaData(PACKET_MANAGER_ACCOUNT, id, source, process, objectName);
 
             if (metaData != null && metaData.containsKey(ID)) {
                 Snackbar snackbar = Snackbar.make(view, "Meta data fetched successfully", Snackbar.LENGTH_SHORT);
@@ -186,7 +188,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
             tags.put(SOURCE, source);
             tags.put(PROCESS, process);
 
-            Map _tags = posixAdapter.addTags(PACKET_MANAGER_ACCOUNT, id, tags);
+            Map _tags = null; //posixAdapter.addTags(PACKET_MANAGER_ACCOUNT, id, tags);
 
             if (_tags != null) {
                 Snackbar snackbar = Snackbar.make(view, "Tags Added successfully", Snackbar.LENGTH_SHORT);
@@ -203,10 +205,10 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private void test_getTags(View view) {
 
         try {
-            Map tags = posixAdapter.getTags(PACKET_MANAGER_ACCOUNT, id);
+            Map tags = null; //posixAdapter.getTags(PACKET_MANAGER_ACCOUNT, id);
 
             if (tags != null) {
-                Snackbar snackbar = Snackbar.make(view, "Tags fetched successfully", Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(view, "Tags fetched successfully : " + tags.toString() , Snackbar.LENGTH_SHORT);
                 snackbar.show();
                 return;
             }
