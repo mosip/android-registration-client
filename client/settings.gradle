@@ -3,8 +3,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://jitpack.io" }
+
     }
 }
 rootProject.name = "registration_client"
 include ':app'
 include ':clientmanager'
+include ':packetmanager'
+include ':keymanager'

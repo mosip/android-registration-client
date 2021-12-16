@@ -1,38 +1,31 @@
 package io.mosip.registration.app;
 
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_ENDEC;
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_SIGN;
+
 import dagger.android.support.DaggerAppCompatActivity;
-import io.mosip.registration.clientmanager.dto.crypto.*;
-
-import androidx.annotation.RequiresApi;
-
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.HashMap;
-import java.util.Map;
+import io.mosip.registration.keymanager.dto.*;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 import javax.inject.Inject;
 
-import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
-import io.mosip.registration.clientmanager.service.packet.PosixAdapter;
 
 public class MainActivity extends DaggerAppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Inject
-    public LocalClientCryptoServiceImpl localClientCryptoService;
+    public ClientCryptoManagerService clientCryptoManagerService;
+
 
     EditText messageInput;
     TextView endecTextView;
     TextView signTextView;
-
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     private String endecMessage;
     private String signMessage;
@@ -48,22 +41,15 @@ public class MainActivity extends DaggerAppCompatActivity {
         endecTextView = (TextView) findViewById(R.id.EnDecTextView);
         signTextView = (TextView) findViewById(R.id.SignTextView);
     }
-
     public void click_encrypt(View view) {
         test_encrypt(view);
-    }
-
-    public void click_decrypt(View view) {
-        test_decrypt(view);
-    }
+    };
+    public void click_decrypt(View view) { test_decrypt(view); };
 
     public void click_sign(View view) {
         test_sign(view);
-    }
-
-    public void click_verify(View view) {
-        test_verify(view);
-    }
+    };
+    public void click_verify(View view) { test_verify(view); };
 
     public void click_objectStoreDemo(View view) {
         Intent intent = new Intent(this, ObjectStoreDemo.class);
@@ -76,19 +62,19 @@ public class MainActivity extends DaggerAppCompatActivity {
             Log.i(TAG, "test_encrypt: Encrypting...." + endecMessage);
             //            creating public key request
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
-            publicKeyRequestDto.setServerProfile("endec");
+            publicKeyRequestDto.setAlias(KEY_ENDEC);
 
-            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
-            Log.i(TAG, "Got public key..creating cryptoRequest");
+            PublicKeyResponseDto publicKeyResponseDto = clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
+            Log.i(TAG,"Got public key..creating cryptoRequest");
 
             CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
                     endecMessage, publicKeyResponseDto.getPublicKey());
 
-            CryptoResponseDto cryptoResponseDto = localClientCryptoService.encrypt(cryptoRequestDto);
+            CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.encrypt(cryptoRequestDto);
 
             Log.i(TAG, "test_encrypt: Encryption completed");
 
-            endecTextView.setText("Encrypted message is : " + cryptoResponseDto.getValue());
+            endecTextView.setText("Encrypted message is : " + cryptoResponseDto.getValue() );
             encryption = cryptoResponseDto.getValue();
         } catch (Exception e) {
             Log.e(TAG, "test_encrypt: Encryption Failed ", e);
@@ -99,26 +85,26 @@ public class MainActivity extends DaggerAppCompatActivity {
         try {
             Log.i(TAG, "test_decrypt: Decrypting....");
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
-            publicKeyRequestDto.setServerProfile("endec");
-            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+            publicKeyRequestDto.setAlias(KEY_ENDEC);
+            PublicKeyResponseDto publicKeyResponseDto = clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
 
             CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(encryption, publicKeyResponseDto.getPublicKey());
-            Log.i(TAG, "Got public key..creating cryptoRequest");
+            Log.i(TAG,"Got public key..creating cryptoRequest");
 
 
-            CryptoResponseDto cryptoResponseDto = localClientCryptoService.decrypt(cryptoRequestDto);
+            CryptoResponseDto cryptoResponseDto=clientCryptoManagerService.decrypt(cryptoRequestDto);
             Log.i(TAG, "test_decrypt: Decryption Completed");
 
-            endecTextView.setText("Decrypted message is : " + cryptoResponseDto.getValue());
+            endecTextView.setText("Decrypted message is : " + cryptoResponseDto.getValue() );
 
 
-        } catch (Exception e) {
+        } catch(Exception e) {
             Log.e(TAG, "test_decrypt: Decryption Failed ", e);
         }
 
     }
 
-    public void test_sign(View view) {
+    public void test_sign(View view){
         try {
             signMessage = messageInput.getText().toString();
             Log.i(TAG, "test_sign: Signing...." + signMessage);
@@ -126,37 +112,39 @@ public class MainActivity extends DaggerAppCompatActivity {
             Log.i(TAG, "test_sign: Creating Sign Request ");
             SignRequestDto signRequestDto = new SignRequestDto(signMessage);
 
-            SignResponseDto signResponseDto = localClientCryptoService.sign(signRequestDto);
-            signed_string = signResponseDto.getData();
+            SignResponseDto signResponseDto = clientCryptoManagerService.sign(signRequestDto);
+            signed_string=signResponseDto.getData();
 
             Log.i(TAG, "test_sign: Signing completed");
-            signTextView.setText("Signature is: " + signed_string);
+            signTextView.setText("Signature is: "+ signed_string);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Log.e(TAG, "test_sign: Signing Failed", e);
         }
     }
 
-    public void test_verify(View view) {
-        try {
+    public void test_verify(View view){
+        try{
             Log.i(TAG, "test_verify: SignVerifying....");
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
-            publicKeyRequestDto.setServerProfile("sign");
-            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+            publicKeyRequestDto.setAlias(KEY_SIGN);
+            PublicKeyResponseDto publicKeyResponseDto = clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
             Log.i(TAG, "test_verify: Got public key..verifying signed data");
 
-            SignVerifyRequestDto signVerifyRequestDto = new SignVerifyRequestDto(signMessage, signed_string, publicKeyResponseDto.getPublicKey());
-            SignVerifyResponseDto signVerifyResponseDto = localClientCryptoService.verifySign(signVerifyRequestDto);
+            SignVerifyRequestDto signVerifyRequestDto=new SignVerifyRequestDto(signMessage, signed_string, publicKeyResponseDto.getPublicKey());
+            SignVerifyResponseDto signVerifyResponseDto=clientCryptoManagerService.verifySign(signVerifyRequestDto);
 
             Log.i(TAG, "test_verify: Verification Completed");
 
-            if (signVerifyResponseDto.isVerified()) {
+            if(signVerifyResponseDto.isVerified()){
                 signTextView.setText("Data is correctly signed and matching");
-            } else {
+            }
+            else{
                 signTextView.setText("Incorrect Signature");
             }
 
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e(TAG, "test_verify: SignVerification Failed ", e);
         }
     }
