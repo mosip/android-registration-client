@@ -19,10 +19,9 @@ import java.util.Base64;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.mosip.registration.clientmanager.dto.crypto.CryptoRequestDto;
-import io.mosip.registration.clientmanager.dto.crypto.CryptoResponseDto;
-import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
-import io.mosip.registration.clientmanager.spi.crypto.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.dto.CryptoRequestDto;
+import io.mosip.registration.keymanager.dto.CryptoResponseDto;
+import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 
 @Singleton
 public class OfflineEncryptionUtil {
@@ -41,7 +40,7 @@ public class OfflineEncryptionUtil {
     /**
      * The cryptomanager service.
      */
-    private ClientCryptoManagerService cryptomanagerService = null;
+    //private ClientCryptoManagerService cryptomanagerService = null;
 
     /**
      * The sign applicationid.
@@ -67,12 +66,12 @@ public class OfflineEncryptionUtil {
     @Inject
     public  OfflineEncryptionUtil(Context context) {
         applicationContext = context;
-        DATETIME_PATTERN = ConfigService.getProperty("mosip.utc-datetime-pattern", context);
-        signApplicationid = ConfigService.getProperty("mosip.sign.applicationid", context);
-        signRefid = ConfigService.getProperty("mosip.sign.refid", context);
-        centerIdLength = Integer.parseInt(ConfigService.getProperty("mosip.kernel.registrationcenterid.length", context));
-        machineIdLength = Integer.parseInt(ConfigService.getProperty("mosip.kernel.machineid.length", context));
-        isPrependThumbprintEnabled = Boolean.parseBoolean(ConfigService.getProperty("crypto.PrependThumbprint.enable", context));
+        //DATETIME_PATTERN = ConfigService.getProperty("mosip.utc-datetime-pattern", context);
+        ///signApplicationid = ConfigService.getProperty("mosip.sign.applicationid", context);
+        //signRefid = ConfigService.getProperty("mosip.sign.refid", context);
+        //centerIdLength = Integer.parseInt(ConfigService.getProperty("mosip.kernel.registrationcenterid.length", context));
+        //machineIdLength = Integer.parseInt(ConfigService.getProperty("mosip.kernel.machineid.length", context));
+        //isPrependThumbprintEnabled = Boolean.parseBoolean(ConfigService.getProperty("crypto.PrependThumbprint.enable", context));
         base64encoder = Base64.getEncoder();
         base64decoder = Base64.getDecoder();
     }
@@ -109,15 +108,15 @@ public class OfflineEncryptionUtil {
         }
 
         //TODO Encryption
-        CryptoResponseDto cryptoResponseDto = getCryptomanagerService().encrypt(cryptomanagerRequestDto);
+        CryptoResponseDto cryptoResponseDto = null;//getCryptomanagerService().encrypt(cryptomanagerRequestDto);
 
         byte[] encryptedData = base64decoder.decode(cryptoResponseDto.getValue());
         return EncryptionUtil.mergeEncryptedData(encryptedData, nonce, aad);
     }
 
-    private ClientCryptoManagerService getCryptomanagerService() {
-        if (cryptomanagerService == null)
-            cryptomanagerService = new LocalClientCryptoServiceImpl(applicationContext);
-        return cryptomanagerService;
-    }
+//    private ClientCryptoManagerService getCryptomanagerService() {
+//        if (cryptomanagerService == null)
+//            cryptomanagerService = new LocalClientCryptoServiceImpl(applicationContext);
+//        return cryptomanagerService;
+//    }
 }

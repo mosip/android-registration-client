@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @Singleton
-public class MasterDataServiceImpl implements MasterDataService {
+public class   MasterDataServiceImpl implements MasterDataService {
 
 
     /**

@@ -4,6 +4,8 @@ import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_ENDEC
 import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_SIGN;
 
 import dagger.android.support.DaggerAppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;

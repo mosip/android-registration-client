@@ -20,7 +20,7 @@ public class EncryptionHelper {
     private OnlineCryptoUtil onlineCryptoUtil;
 
     public EncryptionHelper(Context context) {
-        cryptoName = ConfigService.getProperty("object.store.crypto.name", context);
+        //cryptoName = ConfigService.getProperty("object.store.crypto.name", context);
         offlineEncryptionUtil = new OfflineEncryptionUtil(context);
     }
 
