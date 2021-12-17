@@ -68,5 +68,5 @@ dependencies {
 
     // added client-manager Android library module as a dependency
     implementation project(':keymanager')
-    implementation project(':clientmanager')
+    implementation project(':packetmanager')
 }

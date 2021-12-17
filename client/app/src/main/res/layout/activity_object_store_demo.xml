@@ -13,6 +13,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:onClick="click_putObject"
+        android:text="Put Object"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
         android:onClick="click_addObjectMetaData"
         android:text="Add Object Meta Data"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,27 +31,9 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
-        android:onClick="click_getObject"
-        android:text="Get Object"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
+        android:layout_marginTop="136dp"
         android:onClick="click_pack"
         android:text="Pack"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="192dp"
-        android:onClick="click_getMetaData"
-        android:text="Get Meta Data"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -49,27 +41,9 @@
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="376dp"
+        android:layout_marginTop="196dp"
         android:onClick="click_removeContainer"
         android:text="Remove Container"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="252dp"
-        android:onClick="click_addTags"
-        android:text="Add Tags"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="312dp"
-        android:onClick="click_getTags"
-        android:text="Get Tags"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
