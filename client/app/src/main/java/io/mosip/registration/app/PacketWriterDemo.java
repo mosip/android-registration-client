@@ -62,7 +62,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_packet_writer_demo);
 
-        packetWriter = new PacketWriterServiceImpl();
+        packetWriter = new PacketWriterServiceImpl(this);
         packetWriter.initialize(id);
         packetWriterTextView = (TextView) findViewById(R.id.packetWriterTextView);
     }
@@ -280,8 +280,6 @@ public class PacketWriterDemo extends AppCompatActivity {
         String resultMsg = "";
         try {
             String identitySchema = loadSchemeFile(R.raw.identity_schema);
-
-            List<PacketInfo> packetInfos = new ArrayList<>();
 
             List<PacketInfo> result = packetWriter.persistPacket(id, "0.2", identitySchema, source, process, true);
 

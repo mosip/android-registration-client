@@ -1,5 +1,6 @@
 package io.mosip.registration.packetmanager.service;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import io.mosip.registration.keymanager.util.ConfigService;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricsType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
@@ -54,6 +56,14 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     private PacketManagerHelper packetManagerHelper;
     private PacketKeeper packetKeeper;
 
+    private String defaultSubpacketName;
+    private String defaultProviderVersion;
+    private Context context;
+
+    public PacketWriterServiceImpl(Context context){
+        this.context = context;
+    }
+
     public RegistrationPacket initialize(String id) {
 
         if (this.registrationPacket == null || !registrationPacket.getRegistrationId().equalsIgnoreCase(id)) {
@@ -62,13 +72,12 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         }
 
         packetManagerHelper = new PacketManagerHelper();
-        packetKeeper = new PacketKeeper();
+        packetKeeper = new PacketKeeper(context);
+        defaultSubpacketName = ConfigService.getProperty("mosip.kernel.packet.default_subpacket_name", context);
+        defaultProviderVersion = ConfigService.getProperty("default.provider.version", context);
+
         return registrationPacket;
     }
-
-    //TODO initialize these in constructor
-    private String defaultSubpacketName;
-    private String defaultProviderVersion;
 
     @Override
     public void setField(String id, String fieldName, String value) {
@@ -155,7 +164,9 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                 Packet packet = new Packet();
                 packet.setPacketInfo(packetInfo);
                 packet.setPacket(subpacketBytes);
+
                 packetKeeper.putPacket(packet);
+
                 packetInfos.add(packetInfo);
                 Log.i(TAG, "Completed SubPacket Creation");
 
