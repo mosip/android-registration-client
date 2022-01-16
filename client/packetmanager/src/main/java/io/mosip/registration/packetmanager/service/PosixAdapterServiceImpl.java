@@ -60,7 +60,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
         objectMapper = new ObjectMapper();
-        packetCryptoServiceImpl = new PacketCryptoServiceImpl(appContext);
+        packetCryptoServiceImpl = new PacketCryptoServiceImpl();
         //TODO Take base location from Config
 
         String state = Environment.getExternalStorageState();

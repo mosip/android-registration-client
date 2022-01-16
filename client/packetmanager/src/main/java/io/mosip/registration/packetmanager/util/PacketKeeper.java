@@ -1,6 +1,5 @@
 package io.mosip.registration.packetmanager.util;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -36,12 +35,8 @@ public class PacketKeeper {
     private IPacketCryptoService cryptoService;
     private static final String UNDERSCORE = "_";
 
-    private Context context;
-
-
-    public PacketKeeper(Context context){
-        this.context = context;
-        cryptoService = new PacketCryptoServiceImpl(context);
+    public PacketKeeper(){
+        cryptoService = new PacketCryptoServiceImpl();
     }
 
     public PacketInfo putPacket(Packet packet) throws PacketKeeperException {

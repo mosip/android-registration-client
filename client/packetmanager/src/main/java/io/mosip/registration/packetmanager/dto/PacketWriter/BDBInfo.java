@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 /**
  * @author Ramadurai Pandian
@@ -16,8 +19,8 @@ import java.util.List;
 //@XmlType(name = "BDBInfoType", propOrder = { "challengeResponse", "index", "format", "encryption", "creationDate",
 //		"notValidBefore", "notValidAfter", "type", "subtype", "level", "product", "captureDevice",
 //		"featureExtractionAlgorithm", "comparisonAlgorithm", "compressionAlgorithm", "purpose", "quality" })
-//@Data
-//@NoArgsConstructor
+@Data
+@NoArgsConstructor
 //@JsonDeserialize(builder = BDBInfo.BDBInfoBuilder.class)
 public class BDBInfo implements Serializable {
 

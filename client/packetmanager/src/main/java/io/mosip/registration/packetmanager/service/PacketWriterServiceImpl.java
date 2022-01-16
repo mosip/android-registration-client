@@ -43,15 +43,26 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     private static final String HASHSEQUENCE1 = "hashSequence1";
     private static final String HASHSEQUENCE2 = "hashSequence2";
 
+    static {
+        categorySubpacketMapping.put("pvt", "id");
+        categorySubpacketMapping.put("kyc", "id");
+        categorySubpacketMapping.put("none", "id,evidence,optional");
+        categorySubpacketMapping.put("evidence", "evidence");
+        categorySubpacketMapping.put("optional", "optional");
+    }
+
     private PacketManagerHelper packetManagerHelper;
     private PacketKeeper packetKeeper;
 
-
     public RegistrationPacket initialize(String id) {
+
         if (this.registrationPacket == null || !registrationPacket.getRegistrationId().equalsIgnoreCase(id)) {
             this.registrationPacket = new RegistrationPacket();
             this.registrationPacket.setRegistrationId(id);
         }
+
+        packetManagerHelper = new PacketManagerHelper();
+        packetKeeper = new PacketKeeper();
         return registrationPacket;
     }
 
@@ -337,8 +348,9 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                     PacketManagerHelper.generateHash(hashSequenceMetaInfo.getValue(), hashSequenceMetaInfo.getHashSource()),
                     zipOutputStream);
 
-            //TODO find alternative
-            //this.registrationPacket.getMetaData().put(HASHSEQUENCE2, Lists.newArrayList(hashSequenceMetaInfo));
+            List list = new ArrayList<HashSequenceMetaInfo>();
+            list.add(hashSequenceMetaInfo);
+            this.registrationPacket.getMetaData().put(HASHSEQUENCE2, list);
         }
 
         addPacketDataHash(hashSequences, zipOutputStream);

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="-8dp">
+    tools:layout_editor_absoluteY="-22dp">
 
     <EditText
         android:id="@+id/msg_input"
@@ -15,26 +15,30 @@
         android:ems="10"
         android:hint="message"
         android:inputType="textLongMessage"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.055" />
+        app:layout_constraintVertical_bias="0.043" />
 
-    <EditText
-        android:id="@+id/msg_input"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="message"
-        android:inputType="textLongMessage"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_encrypt"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+
+        android:layout_marginStart="32dp"
+        android:background="@drawable/btn_start"
+        android:backgroundTintMode="add"
+        android:onClick="click_encrypt"
+        android:text="Encrypt"
+        android:textAllCaps="false"
+        android:textColor="#FFF"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.138" />
+        app:layout_constraintTop_toBottomOf="@+id/msg_input"
+        app:layout_constraintVertical_bias="0.037" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_decrypt"
@@ -49,28 +53,9 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.615"
-        app:layout_constraintStart_toEndOf="@+id/btn_encrypt"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.204" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_encrypt"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-
-        android:layout_marginStart="36dp"
-        android:background="@drawable/btn_start"
-        android:backgroundTintMode="add"
-        android:onClick="click_encrypt"
-        android:text="Encrypt"
-        android:textAllCaps="false"
-        android:textColor="#FFF"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.204" />
+        app:layout_constraintTop_toBottomOf="@+id/msg_input"
+        app:layout_constraintVertical_bias="0.037"
+        tools:ignore="DuplicateClickableBoundsCheck" />
 
     <TextView
         android:id="@+id/EnDecTextView"
@@ -79,17 +64,16 @@
         android:text="Service Loaded"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_encrypt"
+        app:layout_constraintVertical_bias="0.045" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_verify"
         android:layout_width="150dp"
         android:layout_height="60dp"
 
-        android:layout_marginStart="212dp"
         android:background="@drawable/btn_end"
         android:backgroundTintMode="add"
         android:onClick="click_verify"
@@ -98,16 +82,18 @@
         android:textColor="#FFF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.86"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.512" />
+        app:layout_constraintTop_toBottomOf="@+id/EnDecTextView"
+        app:layout_constraintVertical_bias="0.051" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_sign"
         android:layout_width="150dp"
         android:layout_height="60dp"
 
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="32dp"
         android:background="@drawable/btn_start"
         android:backgroundTintMode="add"
         android:onClick="click_sign"
@@ -117,26 +103,45 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.512" />
+        app:layout_constraintTop_toBottomOf="@+id/EnDecTextView"
+        app:layout_constraintVertical_bias="0.051" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_Store"
-        android:layout_width="260dp"
-        android:layout_height="61dp"
+        android:layout_width="155dp"
+        android:layout_height="63dp"
 
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="32dp"
         android:background="@drawable/btn_start"
         android:backgroundTintMode="add"
         android:onClick="click_objectStoreDemo"
-        android:text="Go To Object Store Demo"
+        android:text="Object Store"
         android:textAllCaps="false"
         android:textColor="#FFF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.853" />
+        app:layout_constraintTop_toBottomOf="@+id/SignTextView"
+        app:layout_constraintVertical_bias="0.707" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_Writer"
+        android:layout_width="151dp"
+        android:layout_height="64dp"
+
+        android:background="@drawable/btn_start"
+        android:backgroundTintMode="add"
+        android:onClick="click_PacketWriterDemo"
+        android:text="Packet Writer"
+        android:textAllCaps="false"
+        android:textColor="#FFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.863"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignTextView"
+        app:layout_constraintVertical_bias="0.71" />
 
     <TextView
         android:id="@+id/SignTextView"
@@ -145,9 +150,9 @@
         android:text="Service Loaded"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.423"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.671" />
+        app:layout_constraintVertical_bias="0.56" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

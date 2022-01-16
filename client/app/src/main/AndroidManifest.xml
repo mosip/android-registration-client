@@ -15,7 +15,10 @@
         android:theme="@style/Theme.registration_client">
 
         <activity
-            android:name=".ObjectStoreDemo"
+            android:name=".PosixAdapterDemo"
+            android:exported="true" />
+        <activity
+            android:name=".PacketWriterDemo"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

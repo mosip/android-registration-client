@@ -21,7 +21,7 @@ import javax.inject.Inject;
 
 import io.mosip.registration.packetmanager.service.PosixAdapterServiceImpl;
 
-public class ObjectStoreDemo extends AppCompatActivity {
+public class PosixAdapterDemo extends AppCompatActivity {
 
     @Inject
     public PosixAdapterServiceImpl posixAdapter;
@@ -46,7 +46,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private static final String objectName = id + "_" + objectSuffix;
     private static final String refId = "1234512345_121212";
 
-    private static final String TAG = ObjectStoreDemo.class.getSimpleName();
+    private static final String TAG = PosixAdapterDemo.class.getSimpleName();
 
     TextView objectStoreTextView;
     Snackbar snackbar;
@@ -54,14 +54,14 @@ public class ObjectStoreDemo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_object_store_demo);
+        setContentView(R.layout.activity_posix_adapter_demo);
         posixAdapter = new PosixAdapterServiceImpl(this);
         objectStoreTextView = (TextView) findViewById(R.id.objectStoreTextView);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_putObject(View view) {
-        String resultMsg = test_putObject(view);
+        String resultMsg = test_putObject();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
         objectStoreTextView.setText(resultMsg);
@@ -69,7 +69,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_addObjectMetaData(View view) {
-        String resultMsg = test_addObjectMetaData(view);
+        String resultMsg = test_addObjectMetaData();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
         objectStoreTextView.setText(resultMsg);
@@ -77,7 +77,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_pack(View view) {
-        String resultMsg = test_pack(view);
+        String resultMsg = test_pack();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
         objectStoreTextView.setText(resultMsg);
@@ -85,14 +85,14 @@ public class ObjectStoreDemo extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_removeContainer(View view) {
-        String resultMsg = test_removeContainer(view);
+        String resultMsg = test_removeContainer();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
         objectStoreTextView.setText(resultMsg);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public String test_putObject(View view) {
+    public String test_putObject() {
         String resultMsg = "";
         try {
             Map<String, Object> metaMap = new HashMap<>();
@@ -107,14 +107,14 @@ public class ObjectStoreDemo extends AppCompatActivity {
                 resultMsg = "Put Object test failed";
             }
         } catch (Exception e) {
-            resultMsg = "test_putObject failed";
-            Log.e(TAG, resultMsg, e);
+            resultMsg = "test_putObject failed : " + e.getStackTrace();
+            Log.e(TAG, resultMsg);
         }
         return resultMsg;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public String test_addObjectMetaData(View view) {
+    public String test_addObjectMetaData() {
         String resultMsg = "";
         try {
             Map<String, Object> metaMap = new HashMap<>();
@@ -139,7 +139,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public String test_pack(View view) {
+    public String test_pack() {
         String resultMsg = "";
         try {
             boolean success = posixAdapter.pack(PACKET_MANAGER_ACCOUNT, id, source, process);
@@ -157,7 +157,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
         return resultMsg;
     }
 
-    private String test_removeContainer(View view) {
+    private String test_removeContainer() {
         String resultMsg = "";
         try {
             boolean deleted = posixAdapter.removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);

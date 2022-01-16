@@ -1,16 +1,10 @@
 package io.mosip.registration.packetmanager.service;
 
-import android.content.Context;
-
 import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class PacketCryptoServiceImpl implements IPacketCryptoService {
-
-    private Context context;
-
-    public PacketCryptoServiceImpl (Context context){
-        this.context = context;
-    }
 
     @Override
     public byte[] sign(byte[] packet) {

@@ -3,19 +3,25 @@ package io.mosip.registration.app;
 import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_ENDEC;
 import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_SIGN;
 
-import dagger.android.support.DaggerAppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import io.mosip.registration.keymanager.dto.*;
-import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 import javax.inject.Inject;
+
+import dagger.android.support.DaggerAppCompatActivity;
+import io.mosip.registration.keymanager.dto.CryptoRequestDto;
+import io.mosip.registration.keymanager.dto.CryptoResponseDto;
+import io.mosip.registration.keymanager.dto.PublicKeyRequestDto;
+import io.mosip.registration.keymanager.dto.PublicKeyResponseDto;
+import io.mosip.registration.keymanager.dto.SignRequestDto;
+import io.mosip.registration.keymanager.dto.SignResponseDto;
+import io.mosip.registration.keymanager.dto.SignVerifyRequestDto;
+import io.mosip.registration.keymanager.dto.SignVerifyResponseDto;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 
 public class MainActivity extends DaggerAppCompatActivity {
@@ -54,7 +60,12 @@ public class MainActivity extends DaggerAppCompatActivity {
     public void click_verify(View view) { test_verify(view); };
 
     public void click_objectStoreDemo(View view) {
-        Intent intent = new Intent(this, ObjectStoreDemo.class);
+        Intent intent = new Intent(this, PosixAdapterDemo.class);
+        startActivity(intent);
+    }
+
+    public void click_PacketWriterDemo(View view) {
+        Intent intent = new Intent(this, PacketWriterDemo.class);
         startActivity(intent);
     }
 
