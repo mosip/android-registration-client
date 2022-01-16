@@ -71,7 +71,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             this.registrationPacket.setRegistrationId(id);
         }
 
-        packetManagerHelper = new PacketManagerHelper();
+        packetManagerHelper = new PacketManagerHelper(context);
         packetKeeper = new PacketKeeper(context);
         defaultSubpacketName = ConfigService.getProperty("mosip.kernel.packet.default_subpacket_name", context);
         defaultProviderVersion = ConfigService.getProperty("default.provider.version", context);

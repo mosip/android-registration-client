@@ -30,6 +30,8 @@ import io.mosip.registration.packetmanager.service.PacketWriterServiceImpl;
 
 public class PacketWriterDemo extends AppCompatActivity {
 
+    //TODO implement Dependency Injection singleton
+
     // Packet meta info constants
     private static final String ID = "id";
     private static final String PACKET_NAME = "packetname";

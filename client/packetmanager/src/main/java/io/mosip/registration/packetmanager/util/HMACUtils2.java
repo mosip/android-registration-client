@@ -2,14 +2,13 @@ package io.mosip.registration.packetmanager.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import javax.xml.datatype.DatatypeFactory;
 
 public class HMACUtils2 {
 
     private static final String HASH_ALGORITHM_NAME = "SHA-256";
 
     public static byte[] generateHash(byte[] bytes) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM_NAME);
         return messageDigest.digest(bytes);
     }
 

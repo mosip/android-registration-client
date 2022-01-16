@@ -29,9 +29,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.inject.Inject;
-
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
+import io.mosip.registration.packetmanager.util.ConfigService;
 import io.mosip.registration.packetmanager.util.ObjectStoreUtil;
 
 public class PosixAdapterServiceImpl implements ObjectAdapterService {
@@ -47,7 +46,6 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private String BASE_LOCATION;
     private PacketCryptoServiceImpl packetCryptoServiceImpl;
 
-    @Inject
     public PosixAdapterServiceImpl(Context appContext) {
         Log.i(TAG, "PosixAdapter: Constructor call successful");
         try {
@@ -61,11 +59,18 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
         this.appContext = context;
         objectMapper = new ObjectMapper();
         packetCryptoServiceImpl = new PacketCryptoServiceImpl();
-        //TODO Take base location from Config
 
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
-            BASE_LOCATION = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath();
+            String location = ConfigService.getProperty("objectstore.base.location", context);
+
+            File file = new File(Environment.getExternalStorageDirectory() + SEPARATOR + location);
+
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+
+            BASE_LOCATION = file.getAbsolutePath();
         } else {
             Log.e(TAG, "External Storage not mounted");
         }

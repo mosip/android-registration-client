@@ -6,7 +6,4 @@ public interface IPacketCryptoService {
 
     public byte[] encrypt(String id, byte[] packet);
 
-    public byte[] decrypt(String id, byte[] packet);
-
-    public boolean verify(byte[] packet, byte[] signature);
 }

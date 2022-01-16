@@ -1,27 +1,41 @@
 package io.mosip.registration.packetmanager.util;
 
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.CREATION_DATE;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.ENCRYPTED_HASH;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.ID;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.PACKET_NAME;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.PROCESS;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.PROVIDER_NAME;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.PROVIDER_VERSION;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.SCHEMA_VERSION;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.SIGNATURE;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.SOURCE;
+
+import android.content.Context;
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import io.mosip.registration.packetmanager.dto.PacketWriter.BIR;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.*;
-
-import android.util.Log;
 
 public class PacketManagerHelper {
 
     private static final String TAG = PacketManagerHelper.class.getSimpleName();
 
-    //TODO get values from config
     private String configServerFileStorageURL;
     private String schemaName;
+
+    public PacketManagerHelper(Context context){
+        configServerFileStorageURL = ConfigService.getProperty("mosip.kernel.xsdstorage-uri", context);
+        schemaName = ConfigService.getProperty("mosip.kernel.xsdfile", context);
+    }
 
 
     public byte[] getXMLData(BiometricRecord biometricRecord, boolean offlineMode) throws Exception {

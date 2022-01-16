@@ -11,7 +11,6 @@ public interface ObjectAdapterService {
 
     public boolean removeContainer(String account, String container, String source, String process);
 
-    //TODO encryption
     public boolean pack(String account, String container, String source, String process);
 
 }
