@@ -14,10 +14,13 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 
 import java.io.Serializable;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "QualityType", propOrder = { "algorithm", "score", "qualityCalculationFailed" })
-//@Data
-//@NoArgsConstructor
+@Data
+@NoArgsConstructor
 //@AllArgsConstructor
 public class QualityType implements Serializable {
 

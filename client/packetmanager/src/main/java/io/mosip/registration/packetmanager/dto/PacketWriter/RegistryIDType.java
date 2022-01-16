@@ -15,13 +15,17 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 //import javax.xml.bind.annotation.XmlAccessorType;
 //import javax.xml.bind.annotation.XmlElement;
 //import javax.xml.bind.annotation.XmlType;
+
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "RegistryIDType", propOrder = { "organization", "type" })
-//@Data
-//@AllArgsConstructor
+@Data
+@AllArgsConstructor
 //@NoArgsConstructor
 public class RegistryIDType implements Serializable {
 

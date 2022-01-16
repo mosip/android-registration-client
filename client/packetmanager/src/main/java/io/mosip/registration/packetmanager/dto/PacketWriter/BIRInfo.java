@@ -10,8 +10,12 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 
 //import javax.xml.bind.annotation.*;
 //import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Ramadurai Pandian
@@ -20,8 +24,8 @@ import java.time.LocalDateTime;
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "BIRInfoType", propOrder = { "creator", "index", "payload", "integrity", "creationDate",
 //		"notValidBefore", "notValidAfter" })
-//@Data
-//@NoArgsConstructor
+@Data
+@NoArgsConstructor
 //@JsonDeserialize(builder = BIRInfo.BIRInfoBuilder.class)
 public class BIRInfo implements Serializable {
 

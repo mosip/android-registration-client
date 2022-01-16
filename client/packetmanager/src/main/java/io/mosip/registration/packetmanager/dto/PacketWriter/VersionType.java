@@ -13,12 +13,17 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 //import lombok.NoArgsConstructor;
 
 //import javax.xml.bind.annotation.*;
+
 import java.io.Serializable;
 
-//@Data
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
 //@JsonDeserialize(builder = VersionType.VersionTypeBuilder.class)
-//@AllArgsConstructor
-//@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "VersionType", propOrder = { "major", "minor" })
 public class VersionType implements Serializable {

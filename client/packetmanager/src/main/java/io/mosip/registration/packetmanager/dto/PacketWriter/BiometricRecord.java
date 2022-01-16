@@ -3,8 +3,6 @@
  */
 package io.mosip.registration.packetmanager.dto.PacketWriter;
 
-//import lombok.Data;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;

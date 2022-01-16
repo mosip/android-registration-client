@@ -4,19 +4,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.InputStream;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
 import io.mosip.registration.packetmanager.service.PosixAdapterServiceImpl;
 
 public class ObjectStoreDemo extends AppCompatActivity {
@@ -36,10 +38,6 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private static final String PROVIDER_VERSION = "providerversion";
     private static final String CREATION_DATE = "creationdate";
     private static final String REFID = "refid";
-
-
-    private static final String TAG = ObjectStoreDemo.class.getSimpleName();
-
     private static final String PACKET_MANAGER_ACCOUNT = "PACKET_MANAGER_ACCOUNT";
     private static final String source = "reg-client";
     private static final String process = "NEW";
@@ -48,11 +46,16 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private static final String objectName = id + "_" + objectSuffix;
     private static final String refId = "1234512345_121212";
 
+    private static final String TAG = ObjectStoreDemo.class.getSimpleName();
+
+    TextView objectStoreTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_store_demo);
+        posixAdapter = new PosixAdapterServiceImpl(this);
+        objectStoreTextView = (TextView) findViewById(R.id.objectStoreTextView);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -78,12 +81,21 @@ public class ObjectStoreDemo extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void test_putObject(View view) {
         try {
-
+            Map<String, Object> metaMap = new HashMap<>();
+            metaMap.put(ID, id);
+            metaMap.put(SOURCE, source);
+            metaMap.put(PROCESS, process);
+            JSONObject jsonObject = new JSONObject(metaMap);
+            boolean result = posixAdapter.putObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName, new ByteArrayInputStream(jsonObject.toString().getBytes()));
+            if (result == true) {
+                Snackbar snackbar = Snackbar.make(view, "Put Object successful", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                return;
+            }
         } catch (Exception e) {
             Log.e(TAG, "test_addObjectMetaData failed : ", e);
         }
-        Snackbar snackbar = Snackbar.make(view, "Object Meta Data test failed", Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        Snackbar snackbar = Snackbar.make(view, "Put Object test failed", Snackbar.LENGTH_SHORT);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)

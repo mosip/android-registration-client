@@ -7,10 +7,14 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 
 //import javax.xml.bind.annotation.*;
 //import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -24,9 +28,8 @@ import java.util.Objects;
 //@XmlType(name = "BIRType", propOrder = { "version", "cbeffversion", "birInfo", "bdbInfo",  "bdb",
 //		"sb" ,"birs","sbInfo","others"})
 //@XmlRootElement(name = "BIR")
-//@Data
-//@NoArgsConstructor
-//@JsonDeserialize(builder = BIR.BIRBuilder.class)
+@Data
+@NoArgsConstructor
 public class BIR implements Serializable {
 
 	//@XmlElement(name = "Version")

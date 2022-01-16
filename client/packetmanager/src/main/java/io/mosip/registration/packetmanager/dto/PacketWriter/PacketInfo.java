@@ -3,10 +3,8 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 import java.io.Serializable;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode
 public class PacketInfo implements Serializable {
 
     private String id;

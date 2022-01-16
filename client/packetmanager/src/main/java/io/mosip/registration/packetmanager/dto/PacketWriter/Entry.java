@@ -8,12 +8,15 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "Entry", propOrder = { "key", "value" })
-//@Data
-//@AllArgsConstructor
 //@NoArgsConstructor
 //@JsonDeserialize(builder = Entry.EntryBuilder.class)
+@Data
+@AllArgsConstructor
 public class Entry implements Serializable {
 
     //@XmlElement(name = "Key")

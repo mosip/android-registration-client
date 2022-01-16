@@ -3,18 +3,6 @@
  */
 package io.mosip.registration.packetmanager.dto.PacketWriter;
 
-//import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-//import io.mosip.kernel.biometrics.constant.BiometricType;
-//import io.mosip.kernel.biometrics.constant.ProcessedLevelType;
-//import io.mosip.kernel.biometrics.constant.PurposeType;
-//import io.mosip.kernel.biometrics.constant.QualityType;
-//import io.mosip.kernel.core.cbeffutil.common.DateAdapter;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//import javax.xml.bind.annotation.*;
-//import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;

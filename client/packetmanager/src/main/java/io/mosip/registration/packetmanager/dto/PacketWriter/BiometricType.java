@@ -13,8 +13,6 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 //import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-//@XmlType(name = "SingleTypeType")
-//@XmlEnum
 public enum BiometricType implements Serializable {
 
 	//@XmlEnumValue("Scent")

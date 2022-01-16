@@ -1,12 +1,10 @@
 package io.mosip.registration.packetmanager.dto.PacketWriter;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.io.Serializable;
 
+import lombok.Data;
+
 @Data
-@EqualsAndHashCode
 public class Document implements Serializable {
 
     private byte[] document;

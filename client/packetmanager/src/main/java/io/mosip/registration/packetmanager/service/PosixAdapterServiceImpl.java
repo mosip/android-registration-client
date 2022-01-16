@@ -32,8 +32,8 @@ import java.util.zip.ZipOutputStream;
 import javax.inject.Inject;
 
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
-import io.mosip.registration.packetmanager.util.ObjectStoreUtil;
 import io.mosip.registration.packetmanager.util.EncryptionUtil;
+import io.mosip.registration.packetmanager.util.ObjectStoreUtil;
 
 public class PosixAdapterServiceImpl implements ObjectAdapterService {
 

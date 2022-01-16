@@ -11,13 +11,16 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 //import javax.xml.bind.annotation.XmlAccessorType;
 //import javax.xml.bind.annotation.XmlElement;
 //import javax.xml.bind.annotation.XmlType;
+
 import java.io.Serializable;
+
+import lombok.Data;
 
 /**
  * @author Ramadurai Pandian
  *
  */
-//@Data
+@Data
 //@JsonDeserialize(builder = SBInfo.SBInfoBuilder.class)
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "SBInfoType", propOrder = { "format" })
