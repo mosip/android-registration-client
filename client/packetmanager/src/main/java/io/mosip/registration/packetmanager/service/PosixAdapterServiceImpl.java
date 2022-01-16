@@ -32,7 +32,6 @@ import java.util.zip.ZipOutputStream;
 import javax.inject.Inject;
 
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
-import io.mosip.registration.packetmanager.util.EncryptionUtil;
 import io.mosip.registration.packetmanager.util.ObjectStoreUtil;
 
 public class PosixAdapterServiceImpl implements ObjectAdapterService {
@@ -46,7 +45,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
     private ObjectMapper objectMapper;
     private String BASE_LOCATION;
-    private EncryptionUtil EncryptionUtil;
+    private PacketCryptoServiceImpl packetCryptoServiceImpl;
 
     @Inject
     public PosixAdapterServiceImpl(Context appContext) {
@@ -61,7 +60,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
         objectMapper = new ObjectMapper();
-        EncryptionUtil = new EncryptionUtil(appContext);
+        packetCryptoServiceImpl = new PacketCryptoServiceImpl(appContext);
         //TODO Take base location from Config
 
         String state = Environment.getExternalStorageState();
@@ -136,8 +135,9 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
             InputStream ios = new FileInputStream(containerZip);
             outputStream.write(ios.read());
+
             //TODO Encrypt packet
-            byte[] encryptedPacket = new EncryptionUtil(appContext).encrypt(container, outputStream.toByteArray());
+            byte[] encryptedPacket = packetCryptoServiceImpl.encrypt(container, outputStream.toByteArray());
 
             outputStream.flush();
             FileUtils.copy(new ByteArrayInputStream(encryptedPacket), outputStream);

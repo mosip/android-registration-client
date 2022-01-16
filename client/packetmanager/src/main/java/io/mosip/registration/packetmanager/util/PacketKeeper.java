@@ -1,5 +1,6 @@
 package io.mosip.registration.packetmanager.util;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -9,6 +10,8 @@ import io.mosip.registration.packetmanager.dto.PacketWriter.Packet;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import io.mosip.registration.packetmanager.exception.BaseCheckedException;
 import io.mosip.registration.packetmanager.exception.PacketKeeperException;
+import io.mosip.registration.packetmanager.service.PacketCryptoServiceImpl;
+import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
 
 /**
@@ -30,23 +33,21 @@ public class PacketKeeper {
     private String adapterName;
     private String cryptoName;
 
-//
-//    private IPacketCryptoService onlineCrypto;
-//
-//    private IPacketCryptoService offlineCrypto;
-
+    private IPacketCryptoService cryptoService;
     private static final String UNDERSCORE = "_";
 
-    /**
-     * Put packet into storage/cache
-     *
-     * @param packet : the Packet
-     * @return PacketInfo
-     */
+    private Context context;
+
+
+    public PacketKeeper(Context context){
+        this.context = context;
+        cryptoService = new PacketCryptoServiceImpl(context);
+    }
+
     public PacketInfo putPacket(Packet packet) throws PacketKeeperException {
         try {
             //TODO encrypt packet
-            //byte[] encryptedSubPacket = getCryptoService().encrypt(packet.getPacketInfo().getId(), packet.getPacket());
+            byte[] encryptedSubPacket = cryptoService.encrypt(packet.getPacketInfo().getId(), packet.getPacket());
             byte[] subPacket = packet.getPacket();
 
             // put packet in object store
@@ -58,9 +59,7 @@ public class PacketKeeper {
                 PacketInfo packetInfo = packet.getPacketInfo();
 
                 //TODO sign encrypted packet
-                //packetInfo.setSignature(CryptoUtil.encodeBase64(getCryptoService().sign(packet.getPacket())));
-                packetInfo.setSignature(CryptoUtil.encodeBase64(packet.getPacket()));
-
+                packetInfo.setSignature(CryptoUtil.encodeBase64(cryptoService.sign(packet.getPacket())));
 
                 // generate encrypted packet hash
                 packetInfo.setEncryptedHash(CryptoUtil.encodeBase64(HMACUtils2.generateHash(subPacket)));
@@ -92,15 +91,6 @@ public class PacketKeeper {
             return null;
         }
     }
-
-//    private IPacketCryptoService getCryptoService() {
-//        if (cryptoName.equalsIgnoreCase(onlineCrypto.getClass().getSimpleName()))
-//            return onlineCrypto;
-//        else if (cryptoName.equalsIgnoreCase(offlineCrypto.getClass().getSimpleName()))
-//            return offlineCrypto;
-//        else
-//            throw new CryptoException();
-//    }
 
     public boolean deletePacket(String id, String source, String process) {
         return getAdapter().removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);

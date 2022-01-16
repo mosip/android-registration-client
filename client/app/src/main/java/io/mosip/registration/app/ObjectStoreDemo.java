@@ -49,6 +49,7 @@ public class ObjectStoreDemo extends AppCompatActivity {
     private static final String TAG = ObjectStoreDemo.class.getSimpleName();
 
     TextView objectStoreTextView;
+    Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,26 +61,39 @@ public class ObjectStoreDemo extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_putObject(View view) {
-        test_putObject(view);
+        String resultMsg = test_putObject(view);
+        snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
+        snackbar.show();
+        objectStoreTextView.setText(resultMsg);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_addObjectMetaData(View view) {
-        test_addObjectMetaData(view);
+        String resultMsg = test_addObjectMetaData(view);
+        snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
+        snackbar.show();
+        objectStoreTextView.setText(resultMsg);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_pack(View view) {
-        test_pack(view);
+        String resultMsg = test_pack(view);
+        snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
+        snackbar.show();
+        objectStoreTextView.setText(resultMsg);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void click_removeContainer(View view) {
-        test_removeContainer(view);
+        String resultMsg = test_removeContainer(view);
+        snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
+        snackbar.show();
+        objectStoreTextView.setText(resultMsg);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void test_putObject(View view) {
+    public String test_putObject(View view) {
+        String resultMsg = "";
         try {
             Map<String, Object> metaMap = new HashMap<>();
             metaMap.put(ID, id);
@@ -88,18 +102,20 @@ public class ObjectStoreDemo extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject(metaMap);
             boolean result = posixAdapter.putObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName, new ByteArrayInputStream(jsonObject.toString().getBytes()));
             if (result == true) {
-                Snackbar snackbar = Snackbar.make(view, "Put Object successful", Snackbar.LENGTH_SHORT);
-                snackbar.show();
-                return;
+                resultMsg = "Put Object successful";
+            } else {
+                resultMsg = "Put Object test failed";
             }
         } catch (Exception e) {
-            Log.e(TAG, "test_addObjectMetaData failed : ", e);
+            resultMsg = "test_putObject failed";
+            Log.e(TAG, resultMsg, e);
         }
-        Snackbar snackbar = Snackbar.make(view, "Put Object test failed", Snackbar.LENGTH_SHORT);
+        return resultMsg;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void test_addObjectMetaData(View view) {
+    public String test_addObjectMetaData(View view) {
+        String resultMsg = "";
         try {
             Map<String, Object> metaMap = new HashMap<>();
             metaMap.put(ID, id);
@@ -108,50 +124,53 @@ public class ObjectStoreDemo extends AppCompatActivity {
 
             Map map = posixAdapter.addObjectMetaData(PACKET_MANAGER_ACCOUNT,
                     id, source, process, objectName, metaMap);
+
             if (map != null) {
-                Snackbar snackbar = Snackbar.make(view, "Object Meta Data added successfully : " + map.toString(), Snackbar.LENGTH_SHORT);
-                snackbar.show();
-                return;
+                resultMsg = "Object Meta Data added successfully : " + map.toString();
+            } else {
+                resultMsg = "Object Meta Data test failed";
             }
+
         } catch (Exception e) {
-            Log.e(TAG, "test_addObjectMetaData failed : ", e);
+            resultMsg = "test_addObjectMetaData failed : " + e.getStackTrace();
+            Log.e(TAG, resultMsg);
         }
-        Snackbar snackbar = Snackbar.make(view, "Object Meta Data test failed", Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        return resultMsg;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void test_pack(View view) {
+    public String test_pack(View view) {
+        String resultMsg = "";
         try {
             boolean success = posixAdapter.pack(PACKET_MANAGER_ACCOUNT, id, source, process);
 
             if (success) {
-                Snackbar snackbar = Snackbar.make(view, "Packed successfully", Snackbar.LENGTH_SHORT);
-                snackbar.show();
-                return;
+                resultMsg = "Packed successfully";
+            } else {
+                resultMsg = "Packing failed";
             }
+
         } catch (Exception e) {
-            Log.e(TAG, "test_pack : Failed ", e);
+            resultMsg = "test_pack : Failed " + e.getStackTrace();
+            Log.e(TAG, resultMsg);
         }
-        Snackbar snackbar = Snackbar.make(view, "Packing failed", Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        return resultMsg;
     }
 
-    private void test_removeContainer(View view) {
-
+    private String test_removeContainer(View view) {
+        String resultMsg = "";
         try {
             boolean deleted = posixAdapter.removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);
 
             if (deleted) {
-                Snackbar snackbar = Snackbar.make(view, "Container Removed successfully", Snackbar.LENGTH_SHORT);
-                snackbar.show();
-                return;
+                resultMsg = "Container Removed successfully";
+            } else {
+                resultMsg = "Remove Container failed";
             }
         } catch (Exception e) {
-            Log.e(TAG, "test_removeContainer : Failed ", e);
+            resultMsg = "test_removeContainer : Failed " + e.getStackTrace();
+            Log.e(TAG, resultMsg);
         }
-        Snackbar snackbar = Snackbar.make(view, "Remove Container failed", Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        return resultMsg;
     }
-
 }
