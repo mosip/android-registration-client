@@ -64,7 +64,8 @@ public class PosixAdapterDemo extends AppCompatActivity {
         String resultMsg = test_putObject();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        objectStoreTextView.setText(resultMsg);
+        CharSequence text = objectStoreTextView.getText();
+        objectStoreTextView.setText(resultMsg + "\n" + text);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -72,7 +73,8 @@ public class PosixAdapterDemo extends AppCompatActivity {
         String resultMsg = test_addObjectMetaData();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        objectStoreTextView.setText(resultMsg);
+        CharSequence text = objectStoreTextView.getText();
+        objectStoreTextView.setText(resultMsg + "\n" + text);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -80,7 +82,8 @@ public class PosixAdapterDemo extends AppCompatActivity {
         String resultMsg = test_pack();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        objectStoreTextView.setText(resultMsg);
+        CharSequence text = objectStoreTextView.getText();
+        objectStoreTextView.setText(resultMsg + "\n" + text);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -88,7 +91,8 @@ public class PosixAdapterDemo extends AppCompatActivity {
         String resultMsg = test_removeContainer();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        objectStoreTextView.setText(resultMsg);
+        CharSequence text = objectStoreTextView.getText();
+        objectStoreTextView.setText(resultMsg + "\n" + text);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)

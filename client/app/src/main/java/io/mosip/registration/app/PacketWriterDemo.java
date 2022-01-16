@@ -80,56 +80,64 @@ public class PacketWriterDemo extends AppCompatActivity {
         String resultMsg = SetFields();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     public void click_SetBiometrics(View view) {
         String resultMsg = SetBiometrics();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     public void click_SetDocument(View view) {
         String resultMsg = SetDocument();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     public void click_AddMetaInfo(View view) {
         String resultMsg = AddMetaInfo();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     public void click_AddMetaInfoKeyValue(View view) {
         String resultMsg = AddMetaInfoKeyValue();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     public void click_AddAudit(View view) {
         String resultMsg = AddAudit();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     public void click_AddAudits(View view) {
         String resultMsg = AddAudits();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     public void click_PersistPacket(View view) {
         String resultMsg = PersistPacket();
         snackbar = Snackbar.make(view, resultMsg.substring(0, Math.min(30, resultMsg.length())), Snackbar.LENGTH_SHORT);
         snackbar.show();
-        packetWriterTextView.setText(resultMsg);
+        CharSequence text = packetWriterTextView.getText();
+        packetWriterTextView.setText(resultMsg + "\n" + text);
     }
 
     //----------------------------------------------
@@ -298,8 +306,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         return resultMsg;
     }
 
-    private String loadSchemeFile(int rID) throws IOException
-    {
+    private String loadSchemeFile(int rID) throws IOException {
         InputStream iS;
         iS = getResources().openRawResource(rID);
 

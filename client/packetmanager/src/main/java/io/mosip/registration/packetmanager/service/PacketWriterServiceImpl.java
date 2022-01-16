@@ -13,6 +13,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -59,6 +60,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     private String defaultSubpacketName;
     private String defaultProviderVersion;
     private Context context;
+    private String timeFormat;
 
     public PacketWriterServiceImpl(Context context){
         this.context = context;
@@ -75,6 +77,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         packetKeeper = new PacketKeeper(context);
         defaultSubpacketName = ConfigService.getProperty("mosip.kernel.packet.default_subpacket_name", context);
         defaultProviderVersion = ConfigService.getProperty("default.provider.version", context);
+        timeFormat = ConfigService.getProperty("mosip.utc-datetime-pattern", context);
 
         return registrationPacket;
     }
@@ -123,7 +126,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     public List<PacketInfo> persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode) {
         try {
             return createPacket(id, version, schemaJson, source, process, offlineMode);
-        } catch (Exception e) { //TODO throw specific exception
+        } catch (Exception e) {
             Log.e(TAG, "Persist packet failed : " + e.getStackTrace());
             //throw e;
             return null;
@@ -156,9 +159,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                 packetInfo.setSource(source);
                 packetInfo.setProcess(process);
                 packetInfo.setPacketName(id + UNDERSCORE + subPacketName);
-
-                //TODO getUTC dattime string for createddate
-                //packetInfo.setCreationDate(DateUtils.getUTCCurrentDateTimeString());
+                packetInfo.setCreationDate(OffsetDateTime.now().toInstant().toString());
 
                 packetInfo.setProviderVersion(defaultProviderVersion);
                 Packet packet = new Packet();

@@ -1,17 +1,19 @@
 package io.mosip.registration.packetmanager.dto.PacketWriter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
-import lombok.Data;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import lombok.Data;
 
 
 @Data
@@ -29,8 +31,7 @@ public class RegistrationPacket {
 	private List<HashSequenceMetaInfo> hashSequence2;
 
 	public RegistrationPacket() {
-		//TODO creationDate format to ISO String
-		this.creationDate = ""; //DateUtils.formatToISOString(LocalDateTime.now());
+		this.creationDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		this.demographics = new HashMap<String, Object>();
 		this.documents = new HashMap<String, Document>();
 		this.biometrics = new HashMap<String, BiometricRecord>();
