@@ -17,17 +17,4 @@ public class PacketCryptoServiceImpl implements IPacketCryptoService {
         //TODO Encrypt packet impl
         return packet;
     }
-
-    @Override
-    public byte[] decrypt(String id, byte[] packet) {
-        //TODO decrypt packet impl
-        return packet;
-    }
-
-
-    @Override
-    public boolean verify(byte[] packet, byte[] signature) {
-        //TODO verify packet impl
-        return false;
-    }
 }
