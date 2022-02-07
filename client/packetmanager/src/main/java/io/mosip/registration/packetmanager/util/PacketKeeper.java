@@ -57,9 +57,9 @@ public class PacketKeeper {
                 PacketInfo packetInfo = packet.getPacketInfo();
 
                 //TODO sign encrypted packet
-                packetInfo.setSignature(CryptoUtil.encodeBase64(cryptoService.sign(packet.getPacket())));
+                packetInfo.setSignature(CryptoUtil.encodeToURLSafeBase64(cryptoService.sign(packet.getPacket())));
                 // generate encrypted packet hash
-                packetInfo.setEncryptedHash(CryptoUtil.encodeBase64(HMACUtils2.generateHash(encryptedSubPacket)));
+                packetInfo.setEncryptedHash(CryptoUtil.encodeToURLSafeBase64(HMACUtils2.generateHash(encryptedSubPacket)));
                 Map<String, Object> metaMap = PacketManagerHelper.getMetaMap(packetInfo);
                 metaMap = getAdapter().addObjectMetaData(PACKET_MANAGER_ACCOUNT,
                         packet.getPacketInfo().getId(), packet.getPacketInfo().getSource(), packet.getPacketInfo().getProcess(), packet.getPacketInfo().getPacketName(), metaMap);

@@ -34,8 +34,8 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.38.1'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.38.1'
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
