@@ -28,16 +28,15 @@ android {
 }
 
 dependencies {
-
-    implementation 'com.google.dagger:dagger:2.38.1'
-    implementation 'com.google.dagger:dagger-android-support:2.38.1'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.38.1'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.38.1'
+    implementation 'com.google.dagger:dagger:2.40.3'
+    implementation 'com.google.dagger:dagger-android-support:2.40.3'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.40.3'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.40.3'
 
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
-    implementation 'javax.validation:validation-api:2.0.0.Final'
+    implementation 'javax.validation:validation-api:2.0.1.Final'
 
     implementation 'com.github.amitshekhariitbhu:Fast-Android-Networking:1.0.2'
 
