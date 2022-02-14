@@ -29,9 +29,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class RestService {
+
     private static final String TAG = RestService.class.getSimpleName();
-
-
 
     // GET request for jsonObject
     public Map<String, Object> get(@NonNull RequestDto requestDto) {

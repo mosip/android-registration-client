@@ -1,35 +1,26 @@
 package io.mosip.registration.app;
 
-import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_ENDEC;
-import static io.mosip.registration.clientmanager.constant.KeyManagerConstant.KEY_SIGN;
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_ENDEC;
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_SIGN;
 
 import dagger.android.support.DaggerAppCompatActivity;
-import io.mosip.registration.clientmanager.dto.crypto.*;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.androidnetworking.AndroidNetworking;
+import io.mosip.registration.keymanager.dto.*;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 import javax.inject.Inject;
 
-import io.mosip.registration.clientmanager.service.crypto.LocalClientCryptoServiceImpl;
-import io.mosip.registration.clientmanager.util.RestService;
 
 public class MainActivity extends DaggerAppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Inject
-    public LocalClientCryptoServiceImpl localClientCryptoService;
+    public ClientCryptoManagerService clientCryptoManagerService;
 
 
     EditText messageInput;
@@ -69,13 +60,13 @@ public class MainActivity extends DaggerAppCompatActivity {
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
             publicKeyRequestDto.setAlias(KEY_ENDEC);
 
-            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+            PublicKeyResponseDto publicKeyResponseDto = clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
             Log.i(TAG,"Got public key..creating cryptoRequest");
 
             CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
                     endecMessage, publicKeyResponseDto.getPublicKey());
 
-            CryptoResponseDto cryptoResponseDto = localClientCryptoService.encrypt(cryptoRequestDto);
+            CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.encrypt(cryptoRequestDto);
 
             Log.i(TAG, "test_encrypt: Encryption completed");
 
@@ -91,13 +82,13 @@ public class MainActivity extends DaggerAppCompatActivity {
             Log.i(TAG, "test_decrypt: Decrypting....");
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
             publicKeyRequestDto.setAlias(KEY_ENDEC);
-            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+            PublicKeyResponseDto publicKeyResponseDto = clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
 
             CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(encryption, publicKeyResponseDto.getPublicKey());
             Log.i(TAG,"Got public key..creating cryptoRequest");
 
 
-            CryptoResponseDto cryptoResponseDto=localClientCryptoService.decrypt(cryptoRequestDto);
+            CryptoResponseDto cryptoResponseDto=clientCryptoManagerService.decrypt(cryptoRequestDto);
             Log.i(TAG, "test_decrypt: Decryption Completed");
 
             endecTextView.setText("Decrypted message is : " + cryptoResponseDto.getValue() );
@@ -117,7 +108,7 @@ public class MainActivity extends DaggerAppCompatActivity {
             Log.i(TAG, "test_sign: Creating Sign Request ");
             SignRequestDto signRequestDto = new SignRequestDto(signMessage);
 
-            SignResponseDto signResponseDto = localClientCryptoService.sign(signRequestDto);
+            SignResponseDto signResponseDto = clientCryptoManagerService.sign(signRequestDto);
             signed_string=signResponseDto.getData();
 
             Log.i(TAG, "test_sign: Signing completed");
@@ -134,11 +125,11 @@ public class MainActivity extends DaggerAppCompatActivity {
             Log.i(TAG, "test_verify: SignVerifying....");
             PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto();
             publicKeyRequestDto.setAlias(KEY_SIGN);
-            PublicKeyResponseDto publicKeyResponseDto = localClientCryptoService.getPublicKey(publicKeyRequestDto);
+            PublicKeyResponseDto publicKeyResponseDto = clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
             Log.i(TAG, "test_verify: Got public key..verifying signed data");
 
             SignVerifyRequestDto signVerifyRequestDto=new SignVerifyRequestDto(signMessage, signed_string, publicKeyResponseDto.getPublicKey());
-            SignVerifyResponseDto signVerifyResponseDto=localClientCryptoService.verifySign(signVerifyRequestDto);
+            SignVerifyResponseDto signVerifyResponseDto=clientCryptoManagerService.verifySign(signVerifyRequestDto);
 
             Log.i(TAG, "test_verify: Verification Completed");
 
