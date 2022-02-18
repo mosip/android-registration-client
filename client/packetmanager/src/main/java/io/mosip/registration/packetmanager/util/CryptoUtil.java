@@ -26,4 +26,13 @@ public class CryptoUtil {
         }
         return Base64.getUrlDecoder().decode(data);
     }
+
+    public static byte[] decodeBase64(String data) {
+        return Base64.getDecoder().decode(data);
+    }
+
+    public static String encodeBase64String(byte[] data) {
+        return Base64.getEncoder().encodeToString(data);
+    }
+
 }

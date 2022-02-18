@@ -39,7 +39,6 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private static final String SEPARATOR = "/";
     private static final String ZIP = ".zip";
     private static final String JSON = ".json";
-    private static final String TAGS = "_tags";
     private static Context appContext;
 
     private ObjectMapper objectMapper;
