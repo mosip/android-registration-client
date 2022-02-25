@@ -2,6 +2,8 @@ package io.mosip.registration.packetmanager.service;
 
 import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_ENDEC;
 
+import android.content.Context;
+
 import java.nio.charset.StandardCharsets;
 
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
@@ -10,14 +12,15 @@ import io.mosip.registration.keymanager.dto.PublicKeyRequestDto;
 import io.mosip.registration.keymanager.dto.PublicKeyResponseDto;
 import io.mosip.registration.keymanager.dto.SignRequestDto;
 import io.mosip.registration.keymanager.dto.SignResponseDto;
+import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 
 public class PacketCryptoServiceImpl implements IPacketCryptoService {
 
     ClientCryptoManagerService clientCryptoManagerService;
-    public PacketCryptoServiceImpl(){
-        //clientCryptoManagerService = new LocalClientCryptoServiceImpl();
+    public PacketCryptoServiceImpl(Context context){
+        clientCryptoManagerService = new LocalClientCryptoServiceImpl(context);
     }
     @Override
     public byte[] sign(byte[] packet) {

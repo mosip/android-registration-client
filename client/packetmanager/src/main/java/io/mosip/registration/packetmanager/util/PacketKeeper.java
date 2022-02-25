@@ -37,7 +37,7 @@ public class PacketKeeper {
     private static final String UNDERSCORE = "_";
 
     public PacketKeeper(Context context){
-        cryptoService = new PacketCryptoServiceImpl();
+        cryptoService = new PacketCryptoServiceImpl(context);
         adapterName = ConfigService.getProperty("objectstore.adapter.name", context);
         PACKET_MANAGER_ACCOUNT = ConfigService.getProperty("packet.manager.account.name", context);
         posixAdapter = new PosixAdapterServiceImpl(context);

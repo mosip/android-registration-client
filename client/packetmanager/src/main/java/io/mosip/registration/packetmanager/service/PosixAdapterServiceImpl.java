@@ -57,7 +57,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
         objectMapper = new ObjectMapper();
-        packetCryptoServiceImpl = new PacketCryptoServiceImpl();
+        packetCryptoServiceImpl = new PacketCryptoServiceImpl(context);
 
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -147,7 +147,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             FileUtils.copy(new ByteArrayInputStream(encryptedPacket), outputStream);
             return encryptedPacket != null;
         } catch (Exception e) {
-            Log.e(TAG, "exception occurred while packing");
+              Log.e(TAG, "exception occurred while packing");
             return false;
         }
     }
