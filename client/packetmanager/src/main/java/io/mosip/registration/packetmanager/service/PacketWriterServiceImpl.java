@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import io.mosip.registration.keymanager.util.ConfigService;
+import io.mosip.registration.packetmanager.util.ConfigService;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricsType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Document;

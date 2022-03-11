@@ -179,7 +179,6 @@ public class BDBInfo implements Serializable {
 		}
 
 		public BDBInfo build() {
-			//TODO
 			return new BDBInfo(this);
 		}
 

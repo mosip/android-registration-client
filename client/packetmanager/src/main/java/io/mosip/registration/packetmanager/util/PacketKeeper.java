@@ -6,7 +6,6 @@ import android.util.Log;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
-import io.mosip.registration.keymanager.util.ConfigService;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Packet;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import io.mosip.registration.packetmanager.exception.BaseCheckedException;
@@ -55,7 +54,6 @@ public class PacketKeeper {
             if (response) {
                 PacketInfo packetInfo = packet.getPacketInfo();
 
-                //TODO sign encrypted packet
                 packetInfo.setSignature(CryptoUtil.encodeToURLSafeBase64(cryptoService.sign(packet.getPacket())));
                 // generate encrypted packet hash
                 packetInfo.setEncryptedHash(CryptoUtil.encodeToURLSafeBase64(HMACUtils2.generateHash(encryptedSubPacket)));

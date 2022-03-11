@@ -140,7 +140,6 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             InputStream ios = new FileInputStream(containerZip);
             outputStream.write(ios.read());
 
-            //TODO Encrypt packet
             byte[] encryptedPacket = packetCryptoServiceImpl.encrypt(outputStream.toByteArray());
 
             outputStream.flush();

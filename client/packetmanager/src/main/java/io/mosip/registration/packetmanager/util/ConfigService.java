@@ -16,7 +16,7 @@ public class ConfigService {
         try {
             if(properties.isEmpty()) {
                 AssetManager assetManager = context.getAssets();
-                InputStream inputStream = assetManager.open("config.properties");
+                InputStream inputStream = assetManager.open("packetmanagerconfig.properties");
                 properties.load(inputStream);
             }
         } catch (IOException e) {
