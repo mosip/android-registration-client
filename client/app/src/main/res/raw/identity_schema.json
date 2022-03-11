@@ -1,0 +1,118 @@
+{
+  "$schema": "http:\\/\\/json-schema.org\\/draft-07\\/schema#",
+  "description": "MOSIP Sample identity",
+  "additionalProperties": false,
+  "title": "MOSIP identity",
+  "type": "object",
+  "definitions": {
+    "simpleType": {
+      "uniqueItems": true,
+      "additionalItems": false,
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "language",
+          "value"
+        ],
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "identity": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "IDSchemaVersion",
+        "fullName",
+        "dateOfBirth",
+        "gender",
+        "addressLine"
+      ],
+      "properties": {
+        "gender": {
+          "bioAttributes": [
+            
+          ],
+          "fieldCategory": "pvt",
+          "format": "",
+          "fieldType": "default",
+          "$ref": "#\\/definitions\\/simpleType"
+        },
+        "addressLine": {
+          "bioAttributes": [
+            
+          ],
+          "validators": [
+            {
+              "validator": "^(?=.{0,50}$).*",
+              "arguments": [
+                
+              ],
+              "type": "regex"
+            }
+          ],
+          "fieldCategory": "pvt",
+          "format": "none",
+          "fieldType": "default",
+          "$ref": "#\\/definitions\\/simpleType"
+        },
+        "fullName": {
+          "bioAttributes": [
+            
+          ],
+          "validators": [
+            {
+              "validator": "^(?=.{3,50}$).*",
+              "arguments": [
+                
+              ],
+              "type": "regex"
+            }
+          ],
+          "fieldCategory": "pvt",
+          "format": "none",
+          "fieldType": "default",
+          "$ref": "#\\/definitions\\/simpleType"
+        },
+        "dateOfBirth": {
+          "bioAttributes": [
+            
+          ],
+          "validators": [
+            {
+              "validator": "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])\\/([0][1-9]|1[0-2])\\/([0][1-9]|[1-2][0-9]|3[01])$",
+              "arguments": [
+                
+              ],
+              "type": "regex"
+            }
+          ],
+          "fieldCategory": "pvt",
+          "format": "none",
+          "type": "string",
+          "fieldType": "default"
+        },
+        "IDSchemaVersion": {
+          "bioAttributes": [
+            
+          ],
+          "fieldCategory": "none",
+          "format": "none",
+          "type": "number",
+          "fieldType": "default",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
