@@ -15,6 +15,9 @@ import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRInfoType;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRType;
 
+/**
+ * @Author Anshul Vanawat
+ */
 public class CbeffContainerImpl {
 
 	private BIRType birType;

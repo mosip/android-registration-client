@@ -29,10 +29,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
 import io.mosip.registration.packetmanager.util.ConfigService;
 import io.mosip.registration.packetmanager.util.ObjectStoreUtil;
 
+/**
+ * @Author Anshul Vanawat
+ */
+@Singleton
 public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
     private static final String TAG = PosixAdapterServiceImpl.class.getSimpleName();
@@ -45,6 +52,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private String BASE_LOCATION;
     private PacketCryptoServiceImpl packetCryptoServiceImpl;
 
+    @Inject
     public PosixAdapterServiceImpl(Context appContext) {
         Log.i(TAG, "PosixAdapter: Constructor call successful");
         try {
@@ -57,6 +65,8 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
         objectMapper = new ObjectMapper();
+
+        //TODO Dependency Inject
         packetCryptoServiceImpl = new PacketCryptoServiceImpl(context);
 
         String state = Environment.getExternalStorageState();

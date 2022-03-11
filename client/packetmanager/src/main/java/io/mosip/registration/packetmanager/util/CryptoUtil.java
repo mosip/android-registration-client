@@ -3,7 +3,6 @@ package io.mosip.registration.packetmanager.util;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 
-
 public class CryptoUtil {
 
     private static Encoder urlSafeEncoder;

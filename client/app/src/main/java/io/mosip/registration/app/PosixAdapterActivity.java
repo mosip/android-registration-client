@@ -20,11 +20,12 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.mosip.registration.packetmanager.service.PosixAdapterServiceImpl;
+import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
 
-public class PosixAdapterDemo extends AppCompatActivity {
+public class PosixAdapterActivity extends AppCompatActivity {
 
     @Inject
-    public PosixAdapterServiceImpl posixAdapter;
+    public ObjectAdapterService objectAdapterService;
 
     // Packet meta info constants
     private static final String ID = "id";
@@ -46,7 +47,7 @@ public class PosixAdapterDemo extends AppCompatActivity {
     private static final String objectName = id + "_" + objectSuffix;
     private static final String refId = "1234512345_121212";
 
-    private static final String TAG = PosixAdapterDemo.class.getSimpleName();
+    private static final String TAG = PosixAdapterActivity.class.getSimpleName();
 
     TextView objectStoreTextView;
     Snackbar snackbar;
@@ -54,8 +55,8 @@ public class PosixAdapterDemo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_posix_adapter_demo);
-        posixAdapter = new PosixAdapterServiceImpl(this);
+        setContentView(R.layout.activity_posix_adapter);
+        objectAdapterService = new PosixAdapterServiceImpl(this);
         objectStoreTextView = (TextView) findViewById(R.id.objectStoreTextView);
     }
 
@@ -104,7 +105,7 @@ public class PosixAdapterDemo extends AppCompatActivity {
             metaMap.put(SOURCE, source);
             metaMap.put(PROCESS, process);
             JSONObject jsonObject = new JSONObject(metaMap);
-            boolean result = posixAdapter.putObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName, new ByteArrayInputStream(jsonObject.toString().getBytes()));
+            boolean result = objectAdapterService.putObject(PACKET_MANAGER_ACCOUNT, id, source, process, objectName, new ByteArrayInputStream(jsonObject.toString().getBytes()));
             if (result == true) {
                 resultMsg = "Put Object successful";
             } else {
@@ -126,7 +127,7 @@ public class PosixAdapterDemo extends AppCompatActivity {
             metaMap.put(SOURCE, source);
             metaMap.put(PROCESS, process);
 
-            Map map = posixAdapter.addObjectMetaData(PACKET_MANAGER_ACCOUNT,
+            Map map = objectAdapterService.addObjectMetaData(PACKET_MANAGER_ACCOUNT,
                     id, source, process, objectName, metaMap);
 
             if (map != null) {
@@ -146,7 +147,7 @@ public class PosixAdapterDemo extends AppCompatActivity {
     public String test_pack() {
         String resultMsg = "";
         try {
-            boolean success = posixAdapter.pack(PACKET_MANAGER_ACCOUNT, id, source, process);
+            boolean success = objectAdapterService.pack(PACKET_MANAGER_ACCOUNT, id, source, process);
 
             if (success) {
                 resultMsg = "Packed successfully";
@@ -164,7 +165,7 @@ public class PosixAdapterDemo extends AppCompatActivity {
     private String test_removeContainer() {
         String resultMsg = "";
         try {
-            boolean deleted = posixAdapter.removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);
+            boolean deleted = objectAdapterService.removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);
 
             if (deleted) {
                 resultMsg = "Container Removed successfully";

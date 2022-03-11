@@ -3,6 +3,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import io.mosip.registration.packetmanager.util.CryptoUtil;
 
+/**
+ * @Author Anshul Vanawat
+ */
 public class Base64Adapter extends XmlAdapter<String, byte[]> {
 
 	@Override

@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.mosip.registration.packetmanager.util.ConfigService;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricsType;
@@ -37,7 +40,13 @@ import io.mosip.registration.packetmanager.util.PacketKeeper;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 import io.mosip.registration.packetmanager.util.PacketManagerHelper;
 
+/**
+ * @Author Anshul Vanawat
+ */
+@Singleton
 public class PacketWriterServiceImpl implements PacketWriterService {
+
+    private static final String id = "110111101120191111121111";
 
     private static final String TAG = PacketWriterServiceImpl.class.getSimpleName();
     private static final String UNDERSCORE = "_";
@@ -54,16 +63,19 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         categorySubpacketMapping.put("optional", "optional");
     }
 
-    private PacketManagerHelper packetManagerHelper;
-    private PacketKeeper packetKeeper;
+    public PacketManagerHelper packetManagerHelper;
+
+    public PacketKeeper packetKeeper;
 
     private String defaultSubpacketName;
     private String defaultProviderVersion;
     private Context context;
     private String timeFormat;
 
-    public PacketWriterServiceImpl(Context context){
-        this.context = context;
+    @Inject
+    public PacketWriterServiceImpl(Context appContext){
+        this.context = appContext;
+        initialize(id);
     }
 
     public RegistrationPacket initialize(String id) {
@@ -73,8 +85,10 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             this.registrationPacket.setRegistrationId(id);
         }
 
+        //TODO Dependency Inject
         packetManagerHelper = new PacketManagerHelper(context);
         packetKeeper = new PacketKeeper(context);
+
         defaultSubpacketName = ConfigService.getProperty("mosip.kernel.packet.default_subpacket_name", context);
         defaultProviderVersion = ConfigService.getProperty("default.provider.version", context);
         timeFormat = ConfigService.getProperty("mosip.utc-datetime-pattern", context);

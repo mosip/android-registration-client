@@ -8,6 +8,9 @@ import java.time.format.DateTimeFormatter;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * @Author Anshul Vanawat
+ */
 public class DateAdapter extends XmlAdapter<String, LocalDateTime> {
 
 	@Override

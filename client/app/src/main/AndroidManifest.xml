@@ -13,10 +13,10 @@
         android:theme="@style/Theme.registration_client">
 
         <activity
-            android:name=".PosixAdapterDemo"
+            android:name=".PosixAdapterActivity"
             android:exported="true" />
         <activity
-            android:name=".PacketWriterDemo"
+            android:name=".PacketWriterActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
@@ -28,6 +28,4 @@
             </intent-filter>
         </activity>
     </application>
-
-
 </manifest>
