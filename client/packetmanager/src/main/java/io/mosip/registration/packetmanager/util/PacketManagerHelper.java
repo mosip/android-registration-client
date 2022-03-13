@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.mosip.registration.packetmanager.cbeffutil.CbeffContainerImpl;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRVersion;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.QualityType;
@@ -33,6 +36,10 @@ import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import io.mosip.registration.packetmanager.dto.PacketWriter.ProcessedLevelType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PurposeType;
 
+/**
+ * @Author Anshul Vanawat
+ */
+@Singleton
 public class PacketManagerHelper {
 
     private static final String TAG = PacketManagerHelper.class.getSimpleName();
@@ -40,6 +47,7 @@ public class PacketManagerHelper {
     private String configServerFileStorageURL;
     private String schemaName;
 
+    @Inject
     public PacketManagerHelper(Context context){
         configServerFileStorageURL = ConfigService.getProperty("mosip.kernel.xsdstorage-uri", context);
         schemaName = ConfigService.getProperty("mosip.kernel.xsdfile", context);

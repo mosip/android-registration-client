@@ -6,6 +6,9 @@ import android.util.Log;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.mosip.registration.packetmanager.dto.PacketWriter.Packet;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import io.mosip.registration.packetmanager.exception.BaseCheckedException;
@@ -16,9 +19,14 @@ import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
 
 /**
+ * @Author Anshul Vanawat
+ */
+
+/**
  * The packet keeper is used to store & retrieve packet, creation of audit, encrypt and sign packet.
  * Packet keeper is used to get container information and list of sources from a packet.
  */
+@Singleton
 public class PacketKeeper {
 
     /**
@@ -35,11 +43,14 @@ public class PacketKeeper {
     private IPacketCryptoService cryptoService;
     private static final String UNDERSCORE = "_";
 
+    @Inject
     public PacketKeeper(Context context){
+        //TODO Dependency Inject
         cryptoService = new PacketCryptoServiceImpl(context);
+        posixAdapter = new PosixAdapterServiceImpl(context);
+
         adapterName = ConfigService.getProperty("objectstore.adapter.name", context);
         PACKET_MANAGER_ACCOUNT = ConfigService.getProperty("packet.manager.account.name", context);
-        posixAdapter = new PosixAdapterServiceImpl(context);
     }
 
     public PacketInfo putPacket(Packet packet) throws PacketKeeperException {

@@ -9,9 +9,12 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.packetmanager.service.PacketWriterServiceImpl;
+import io.mosip.registration.packetmanager.service.PosixAdapterServiceImpl;
+import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
+import io.mosip.registration.packetmanager.spi.PacketWriterService;
 
 @Module
 public class AppModule {
@@ -39,5 +42,17 @@ public class AppModule {
     @Provides
     public ClientCryptoManagerService provideClientCryptoManagerService(){
         return new LocalClientCryptoServiceImpl(appContext);
+    }
+
+    @Singleton
+    @Provides
+    public PacketWriterService providePacketWriterService(){
+        return new PacketWriterServiceImpl(appContext);
+    }
+
+    @Singleton
+    @Provides
+    public ObjectAdapterService provideObjectAdapterService() {
+        return new PosixAdapterServiceImpl(appContext);
     }
 }

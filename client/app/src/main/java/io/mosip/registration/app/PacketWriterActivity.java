@@ -5,8 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
@@ -18,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BDBInfo;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BIR;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
@@ -26,9 +27,9 @@ import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import io.mosip.registration.packetmanager.dto.PacketWriter.QualityType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.RegistryIDType;
-import io.mosip.registration.packetmanager.service.PacketWriterServiceImpl;
+import io.mosip.registration.packetmanager.spi.PacketWriterService;
 
-public class PacketWriterDemo extends AppCompatActivity {
+public class PacketWriterActivity extends DaggerAppCompatActivity {
 
     //TODO implement Dependency Injection singleton
 
@@ -52,9 +53,10 @@ public class PacketWriterDemo extends AppCompatActivity {
     private static final String objectName = id + "_" + objectSuffix;
     private static final String refId = "1234512345_121212";
 
-    private static final String TAG = PacketWriterDemo.class.getSimpleName();
+    private static final String TAG = PacketWriterActivity.class.getSimpleName();
 
-    public PacketWriterServiceImpl packetWriter;
+    @Inject
+    public PacketWriterService packetWriterService;
 
     TextView packetWriterTextView;
     Snackbar snackbar;
@@ -62,10 +64,8 @@ public class PacketWriterDemo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_packet_writer_demo);
+        setContentView(R.layout.activity_packet_writer);
 
-        packetWriter = new PacketWriterServiceImpl(this);
-        packetWriter.initialize(id);
         packetWriterTextView = (TextView) findViewById(R.id.packetWriterTextView);
     }
 
@@ -146,7 +146,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         String resultMsg = "";
         try {
 
-            packetWriter.setField(id, "name", "mono");
+            packetWriterService.setField(id, "name", "mono");
             resultMsg = "SetField successful";
 
         } catch (Exception e) {
@@ -161,7 +161,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         String resultMsg = "";
         try {
             Map<String, String> fields = new HashMap<>();
-            packetWriter.setFields(id, fields);
+            packetWriterService.setFields(id, fields);
             resultMsg = "SetFields successful";
 
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class PacketWriterDemo extends AppCompatActivity {
             Document document = new Document();
             document.setValue("document");
 
-            packetWriter.setDocument(id, "poa", document);
+            packetWriterService.setDocument(id, "poa", document);
 
             resultMsg = "SetDocument successful";
 
@@ -213,7 +213,7 @@ public class PacketWriterDemo extends AppCompatActivity {
             BiometricRecord biometricRecord = new BiometricRecord();
             biometricRecord.setSegments(birTypeList);
 
-            packetWriter.setBiometric(id, "individualBiometrics", biometricRecord);
+            packetWriterService.setBiometric(id, "individualBiometrics", biometricRecord);
 
             resultMsg = "SetBiometrics successful";
 
@@ -228,7 +228,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         String resultMsg = "";
         try {
             Map<String, String> fields = new HashMap<>();
-            packetWriter.addMetaInfo(id, fields);
+            packetWriterService.addMetaInfo(id, fields);
             resultMsg = "AddMetaInfo successful";
 
         } catch (Exception e) {
@@ -242,7 +242,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         String resultMsg = "";
         try {
 
-            packetWriter.addMetaInfo(id, "rid", "regid");
+            packetWriterService.addMetaInfo(id, "rid", "regid");
 
             resultMsg = "AddMetaInfoKeyValue successful";
 
@@ -257,7 +257,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         String resultMsg = "";
         try {
             Map<String, String> fields = new HashMap<>();
-            packetWriter.addAudit(id, fields);
+            packetWriterService.addAudit(id, fields);
 
             resultMsg = "AddAudit successful";
 
@@ -276,7 +276,7 @@ public class PacketWriterDemo extends AppCompatActivity {
             List<Map<String, String>> auditList = new ArrayList<>();
             auditList.add(auditMap);
 
-            packetWriter.addAudits(id, auditList);
+            packetWriterService.addAudits(id, auditList);
             resultMsg = "AddAudits successful";
 
         } catch (Exception e) {
@@ -291,7 +291,7 @@ public class PacketWriterDemo extends AppCompatActivity {
         try {
             String identitySchema = loadSchemeFile(R.raw.identity_schema);
 
-            List<PacketInfo> result = packetWriter.persistPacket(id, "0.2", identitySchema, source, process, true);
+            List<PacketInfo> result = packetWriterService.persistPacket(id, "0.2", identitySchema, source, process, true);
 
             if (result != null) {
                 resultMsg = "Persist Packet successful";

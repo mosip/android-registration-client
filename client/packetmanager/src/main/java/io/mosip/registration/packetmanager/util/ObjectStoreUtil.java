@@ -1,7 +1,8 @@
 package io.mosip.registration.packetmanager.util;
 
-//import io.mosip.kernel.core.util.StringUtils;
-
+/**
+ * @Author Anshul Vanawat
+ */
 public class ObjectStoreUtil {
 
     private static final String SEPARATOR = "/";

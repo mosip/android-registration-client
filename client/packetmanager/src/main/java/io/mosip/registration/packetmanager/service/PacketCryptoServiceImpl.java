@@ -6,6 +6,9 @@ import android.content.Context;
 
 import java.nio.charset.StandardCharsets;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.dto.PublicKeyRequestDto;
@@ -16,12 +19,21 @@ import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 
+/**
+ * @Author Anshul Vanawat
+ */
+@Singleton
 public class PacketCryptoServiceImpl implements IPacketCryptoService {
 
     ClientCryptoManagerService clientCryptoManagerService;
+
+    @Inject
     public PacketCryptoServiceImpl(Context context){
+
+        //TODO Dependency Inject
         clientCryptoManagerService = new LocalClientCryptoServiceImpl(context);
     }
+
     @Override
     public byte[] sign(byte[] packet) {
         String packetData = new String(packet, StandardCharsets.UTF_8);

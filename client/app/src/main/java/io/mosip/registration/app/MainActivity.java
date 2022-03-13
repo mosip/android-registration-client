@@ -60,12 +60,12 @@ public class MainActivity extends DaggerAppCompatActivity {
     public void click_verify(View view) { test_verify(view); };
 
     public void click_objectStoreDemo(View view) {
-        Intent intent = new Intent(this, PosixAdapterDemo.class);
+        Intent intent = new Intent(this, PosixAdapterActivity.class);
         startActivity(intent);
     }
 
     public void click_PacketWriterDemo(View view) {
-        Intent intent = new Intent(this, PacketWriterDemo.class);
+        Intent intent = new Intent(this, PacketWriterActivity.class);
         startActivity(intent);
     }
 
