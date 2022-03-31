@@ -11,8 +11,6 @@ import lombok.Data;
  *
  * @author Anshul vanawat
  */
-
-//@MappedSuperclass
 @Data
 public class RegistrationCommonFields {
 
@@ -26,12 +24,4 @@ public class RegistrationCommonFields {
     protected String updBy;
     @ColumnInfo(name = "UPD_DTIMES")
     protected Timestamp updDtimes;
-
-//	public void setCrDtime(Timestamp crDtime) {
-//		this.crDtime = Timestamp.valueOf(DateUtils.getUTCCurrentDateTime());
-//	}
-//
-//	public void setUpdDtimes(Timestamp updDtimes) {
-//		this.updDtimes = Timestamp.valueOf(DateUtils.getUTCCurrentDateTime());
-//	}
 }

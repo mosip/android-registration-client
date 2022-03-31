@@ -33,26 +33,8 @@ public class MachineMaster extends RegistrationCommonFields implements Serializa
     @ColumnInfo(name = "name")
     private String name;
 
-    @ColumnInfo(name = "serial_num")
-    private String serialNum;
-
-    @ColumnInfo(name = "ip_address")
-    private String ipAddress;
-
-    @ColumnInfo(name = "mac_address")
-    private String macAddress;
-
-    @ColumnInfo(name = "mspec_id")
-    private String machineSpecId;
-
     @ColumnInfo(name = "validity_end_dtimes")
     private LocalDateTime validityDateTime;
-
-    @ColumnInfo(name = "public_key" /*, columnDefinition = "CLOB"*/)
-    private String publicKey;
-
-    @ColumnInfo(name = "key_index")
-    private String keyIndex;
 
     @ColumnInfo(name = "reg_cntr_id")
     private String regCenterId;

@@ -13,24 +13,17 @@ import javax.validation.constraints.NotNull;
 /**
  * @author Anshul vanawat
  */
-
-@Entity(tableName = "loc_hierarchy_list", primaryKeys = {"hierarchyLevel", "hierarchyLevelName", "langCode"})
 @Data
+@Entity(tableName = "loc_hierarchy_list", primaryKeys = {"hierarchyLevel", "hierarchyLevelName", "langCode"})
 public class LocationHierarchy extends RegistrationCommonFields implements Serializable {
 
     @PrimaryKey
-    @NotNull
     @ColumnInfo(name = "hierarchy_level")
-    //length = 36
     private Integer hierarchyLevel;
 
-    @NotNull
     @ColumnInfo(name = "hierarchy_level_name")
-    //length=64
     private String hierarchyLevelName;
 
-    @NotNull
     @ColumnInfo(name = "lang_code")
-    //length=3
     private String langCode;
 }
