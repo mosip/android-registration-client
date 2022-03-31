@@ -1,17 +1,22 @@
 package io.mosip.registration.clientmanager.service;
 
+import android.content.Context;
+import android.util.Log;
 import io.mosip.registration.clientmanager.dto.GenericDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Singleton
 public class MasterDataServiceImpl implements MasterDataService {
 
-
+    @Inject
+    public MasterDataServiceImpl(Context appContext) {
+        //Nothing to initialize
+    }
     /**
      * TODO - Currently stubbed to support dependent tasks
      */
@@ -30,11 +35,11 @@ public class MasterDataServiceImpl implements MasterDataService {
      * TODO - Currently stubbed to support dependent tasks
      */
     @Override
-    public List<GenericDto> getFieldValues(String fieldName, String langCode) {
-        List<GenericDto> list = new ArrayList<>();
-        list.add(new GenericDto("code-a", fieldName+"-a", langCode));
-        list.add(new GenericDto("code-b", fieldName+"-b", langCode));
-        list.add(new GenericDto("code-c", fieldName+"-c", langCode));
+    public List<String> getFieldValues(String fieldName, String langCode) {
+        List<String> list = new ArrayList<>();
+        list.add(fieldName+"-a");
+        list.add(fieldName+"-b");
+        list.add(fieldName+"-c");
         return list;
     }
 

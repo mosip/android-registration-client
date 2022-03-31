@@ -20,7 +20,7 @@ public interface MasterDataService {
      * @param langCode
      * @return
      */
-    List<GenericDto> getFieldValues(String fieldName, String langCode);
+    List<String> getFieldValues(String fieldName, String langCode);
 
     /**
      * Returns the list of immediate children for the provided parent location code

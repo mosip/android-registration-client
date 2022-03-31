@@ -12,6 +12,7 @@ public class KeyManagerConstant {
     public static final String EMPTY_ATTRIBUTE = "should not be empty";
     public static final String EMPTY_REGEX = ".+\\S.*";
 
-    public static final String KEY_ENDEC = "ENDEC";
-    public static final String KEY_SIGN = "SIGN";
+    public static final String ENCDEC_ALIAS = "ENDEC";
+    public static final String SIGNV_ALIAS = "SIGN";
+    public static final String NAME_ALIAS = "MACHINEID";
 }

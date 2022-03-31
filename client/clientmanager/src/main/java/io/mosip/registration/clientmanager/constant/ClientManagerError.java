@@ -2,7 +2,8 @@ package io.mosip.registration.clientmanager.constant;
 
 public enum ClientManagerError {
 
-    DATE_PARSE_ERROR("REG-PARSE-001", "Date parsing error");
+    DATE_PARSE_ERROR("MOS-REG-001", "Date parsing error"),
+    SBI_DISCOVER_ERROR("MOS-REG-002", "Failed to discover SBI");
 
     ClientManagerError(String errorCode, String errorMessage) {
         this.setErrorCode(errorCode);

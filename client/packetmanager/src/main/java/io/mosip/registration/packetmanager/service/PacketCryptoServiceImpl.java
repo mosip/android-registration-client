@@ -1,10 +1,6 @@
 package io.mosip.registration.packetmanager.service;
 
-import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_ENDEC;
-
 import android.content.Context;
-
-import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,8 +11,9 @@ import io.mosip.registration.keymanager.dto.PublicKeyRequestDto;
 import io.mosip.registration.keymanager.dto.PublicKeyResponseDto;
 import io.mosip.registration.keymanager.dto.SignRequestDto;
 import io.mosip.registration.keymanager.dto.SignResponseDto;
-import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.util.CryptoUtil;
+import io.mosip.registration.keymanager.util.KeyManagerConstant;
 import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 
 /**
@@ -25,39 +22,28 @@ import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 @Singleton
 public class PacketCryptoServiceImpl implements IPacketCryptoService {
 
-    ClientCryptoManagerService clientCryptoManagerService;
+    private ClientCryptoManagerService clientCryptoManagerService;
 
     @Inject
-    public PacketCryptoServiceImpl(Context context){
-
-        //TODO Dependency Inject
-        clientCryptoManagerService = new LocalClientCryptoServiceImpl(context);
+    public PacketCryptoServiceImpl(Context context, ClientCryptoManagerService clientCryptoManagerService){
+        this.clientCryptoManagerService = clientCryptoManagerService;
     }
 
     @Override
     public byte[] sign(byte[] packet) {
-        String packetData = new String(packet, StandardCharsets.UTF_8);
-
-        SignRequestDto signRequestDto = new SignRequestDto(packetData);
-
+        SignRequestDto signRequestDto = new SignRequestDto(CryptoUtil.base64encoder.encodeToString(packet));
         SignResponseDto signResponseDto = clientCryptoManagerService.sign(signRequestDto);
-        String signedPacketData = signResponseDto.getData();
-
-        return signedPacketData.getBytes(StandardCharsets.UTF_8);
+        return CryptoUtil.base64decoder.decode(signResponseDto.getData());
     }
 
     @Override
     public byte[] encrypt(byte[] packet) {
-        String packetData = new String(packet, StandardCharsets.UTF_8);
-
-        PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto(KEY_ENDEC);
+        //TODO packet to be created with refId machine key, Need to change this logic
+        PublicKeyRequestDto publicKeyRequestDto = new PublicKeyRequestDto(KeyManagerConstant.ENCDEC_ALIAS);
         PublicKeyResponseDto publicKeyResponseDto = clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
-
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto(
-                packetData, publicKeyResponseDto.getPublicKey());
+                CryptoUtil.base64encoder.encodeToString(packet), publicKeyResponseDto.getPublicKey());
         CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.encrypt(cryptoRequestDto);
-        String encryptedPacketData = cryptoResponseDto.getValue();
-
-        return encryptedPacketData.getBytes(StandardCharsets.UTF_8);
+        return CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
     }
 }

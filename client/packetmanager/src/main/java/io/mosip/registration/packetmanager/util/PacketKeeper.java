@@ -36,26 +36,25 @@ public class PacketKeeper {
 
     private String PACKET_MANAGER_ACCOUNT;
 
-    private ObjectAdapterService posixAdapter;
-
     private String adapterName;
 
-    private IPacketCryptoService cryptoService;
+    private IPacketCryptoService iPacketCryptoService;
+    private ObjectAdapterService objectAdapterService;
+
     private static final String UNDERSCORE = "_";
 
     @Inject
-    public PacketKeeper(Context context){
-        //TODO Dependency Inject
-        cryptoService = new PacketCryptoServiceImpl(context);
-        posixAdapter = new PosixAdapterServiceImpl(context);
-
+    public PacketKeeper(Context context, IPacketCryptoService iPacketCryptoService,
+                        ObjectAdapterService objectAdapterService){
         adapterName = ConfigService.getProperty("objectstore.adapter.name", context);
         PACKET_MANAGER_ACCOUNT = ConfigService.getProperty("packet.manager.account.name", context);
+        this.iPacketCryptoService = iPacketCryptoService;
+        this.objectAdapterService = objectAdapterService;
     }
 
     public PacketInfo putPacket(Packet packet) throws PacketKeeperException {
         try {
-            byte[] encryptedSubPacket = cryptoService.encrypt(packet.getPacket());
+            byte[] encryptedSubPacket = iPacketCryptoService.encrypt(packet.getPacket());
 
             // put packet in object store
             boolean response = getAdapter().putObject(PACKET_MANAGER_ACCOUNT,
@@ -65,7 +64,7 @@ public class PacketKeeper {
             if (response) {
                 PacketInfo packetInfo = packet.getPacketInfo();
 
-                packetInfo.setSignature(CryptoUtil.encodeToURLSafeBase64(cryptoService.sign(packet.getPacket())));
+                packetInfo.setSignature(CryptoUtil.encodeToURLSafeBase64(iPacketCryptoService.sign(packet.getPacket())));
                 // generate encrypted packet hash
                 packetInfo.setEncryptedHash(CryptoUtil.encodeToURLSafeBase64(HMACUtils2.generateHash(encryptedSubPacket)));
                 Map<String, Object> metaMap = PacketManagerHelper.getMetaMap(packetInfo);
@@ -78,7 +77,7 @@ public class PacketKeeper {
 
 
         } catch (Exception e) {
-            Log.i(TAG, "putPacket: " + e.getStackTrace());
+            Log.i(TAG, "Error in putPacket: ", e);
             if (e instanceof BaseCheckedException) {
                 BaseCheckedException ex = (BaseCheckedException) e;
                 throw new PacketKeeperException(ex.getErrorCode(), ex.getMessage());
@@ -90,7 +89,7 @@ public class PacketKeeper {
 
     private ObjectAdapterService getAdapter() {
         if (adapterName.equalsIgnoreCase("PosixAdapter"))
-            return posixAdapter;
+            return objectAdapterService;
         else {
             Log.i(TAG, "getAdapter: " + adapterName + " Service not found");
             return null;
