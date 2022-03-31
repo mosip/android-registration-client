@@ -1,4 +1,4 @@
-package io.mosip.registration.app;
+package io.mosip.registration.app.activites;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import io.mosip.registration.app.R;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
@@ -56,7 +57,6 @@ public class PosixAdapterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posix_adapter);
-        objectAdapterService = new PosixAdapterServiceImpl(this);
         objectStoreTextView = (TextView) findViewById(R.id.objectStoreTextView);
     }
 

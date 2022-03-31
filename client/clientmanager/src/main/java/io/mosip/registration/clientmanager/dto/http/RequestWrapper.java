@@ -13,12 +13,8 @@ public class RequestWrapper<T> {
     private String id;
     private String version;
     @Schema(name = "requestTime", type = "dateTime", description = "Time of request generation", example = "2018-12-10T06:12:52.994Z", required = true)
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
-    // "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime requestTime;
-
     private Object metadata;
-
     @NotNull
     @Valid
     private T request;

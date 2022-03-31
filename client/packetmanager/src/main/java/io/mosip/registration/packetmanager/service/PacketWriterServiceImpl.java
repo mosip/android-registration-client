@@ -63,9 +63,8 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         categorySubpacketMapping.put("optional", "optional");
     }
 
-    public PacketManagerHelper packetManagerHelper;
-
-    public PacketKeeper packetKeeper;
+    private PacketManagerHelper packetManagerHelper;
+    private PacketKeeper packetKeeper;
 
     private String defaultSubpacketName;
     private String defaultProviderVersion;
@@ -73,8 +72,11 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     private String timeFormat;
 
     @Inject
-    public PacketWriterServiceImpl(Context appContext){
+    public PacketWriterServiceImpl(Context appContext, PacketManagerHelper packetManagerHelper,
+                                   PacketKeeper packetKeeper){
         this.context = appContext;
+        this.packetKeeper = packetKeeper;
+        this.packetManagerHelper = packetManagerHelper;
         initialize(id);
     }
 
@@ -85,10 +87,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             this.registrationPacket.setRegistrationId(id);
         }
 
-        //TODO Dependency Inject
-        packetManagerHelper = new PacketManagerHelper(context);
-        packetKeeper = new PacketKeeper(context);
-
         defaultSubpacketName = ConfigService.getProperty("mosip.kernel.packet.default_subpacket_name", context);
         defaultProviderVersion = ConfigService.getProperty("default.provider.version", context);
         timeFormat = ConfigService.getProperty("mosip.utc-datetime-pattern", context);
@@ -97,7 +95,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     }
 
     @Override
-    public void setField(String id, String fieldName, String value) {
+    public void setField(String id, String fieldName, Object value) {
         this.initialize(id).setField(fieldName, value);
     }
 
@@ -141,10 +139,9 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         try {
             return createPacket(id, version, schemaJson, source, process, offlineMode);
         } catch (Exception e) {
-            Log.e(TAG, "Persist packet failed : " + e.getStackTrace());
-            //throw e;
-            return null;
+            Log.e(TAG, "Persist packet failed : ", e);
         }
+        return null;
     }
 
     private List<PacketInfo> createPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode) throws Exception {
@@ -187,8 +184,10 @@ public class PacketWriterServiceImpl implements PacketWriterService {
 
                 if (counter == identityProperties.keySet().size()) {
                     boolean res = packetKeeper.pack(packetInfo.getId(), packetInfo.getSource(), packetInfo.getProcess());
-                    if (!res)
+                    if (!res) {
                         packetKeeper.deletePacket(id, source, process);
+                        throw new Exception("Failed to pack the created zip");
+                    }
                 }
                 counter++;
             }
@@ -247,7 +246,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             addOtherFilesToZip(isDefault, subpacketZip, hashSequences, offlineMode);
 
         } catch (Exception e) {
-            Log.e(TAG, "Error while createSubPacket : " + e.getStackTrace());
+            Log.e(TAG, "Error while createSubPacket : ", e);
             throw e;
         }
 

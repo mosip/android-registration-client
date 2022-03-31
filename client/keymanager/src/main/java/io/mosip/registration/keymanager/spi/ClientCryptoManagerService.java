@@ -18,4 +18,8 @@ public interface ClientCryptoManagerService {
     CryptoResponseDto decrypt(CryptoRequestDto cryptoRequestDto);
 
     PublicKeyResponseDto getPublicKey(PublicKeyRequestDto publicKeyRequestDto);
+
+    String getMachineName();
+
+    void printMachineDetails();
 }

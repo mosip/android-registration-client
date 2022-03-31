@@ -76,6 +76,7 @@ public enum KeyManagerErrorCode {
     NO_SUCH_PADDING_EXCEPTION("KER-CRY-021","Padding scheme is not available"),
 
     ILLEGAL_BLOCKSIZE_EXCEPTION("KER-CRY-022"," Input Data length processed by cipher is not multiple of block size"),
+    CRYPTO_EXCEPTION("KER-CRY-023","Crypto operation failed"),
 
     INTERNAL_SERVER_ERROR("KER-CRY-500", "Internal server error");
 

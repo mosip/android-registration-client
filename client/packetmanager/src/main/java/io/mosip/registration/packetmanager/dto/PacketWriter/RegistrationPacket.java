@@ -39,13 +39,13 @@ public class RegistrationPacket {
 		this.audits = new ArrayList<Map<String, String>>();
 	}
 
-	public void setField(String fieldName, String value) {
-		setFields(fieldName, value, demographics);
+	public void setField(String fieldName, Object value) {
+		this.demographics.put(fieldName, value);
 	}
 	
 	public void setFields(Map<String, String> fields) {
 		fields.entrySet().forEach(entry -> {
-			setFields(entry.getKey(), entry.getValue(), demographics);
+			this.demographics.put(entry.getKey(), entry.getValue());
 		});
 	}
 	

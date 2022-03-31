@@ -11,7 +11,7 @@ import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
  * @Author Anshul Vanawat
  */
 public interface PacketWriterService {
-    void setField(String id, String fieldName, String value);
+    void setField(String id, String fieldName, Object value);
 
     void setFields(String id, Map<String, String> fields);
 

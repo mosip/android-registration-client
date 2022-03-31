@@ -1,4 +1,4 @@
-package io.mosip.registration.app;
+package io.mosip.registration.app.activites;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
+import io.mosip.registration.app.R;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BDBInfo;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BIR;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
@@ -197,7 +198,7 @@ public class PacketWriterActivity extends DaggerAppCompatActivity {
             RegistryIDType registryIDType = new RegistryIDType("Mosip", "257");
             QualityType quality = new QualityType();
             quality.setAlgorithm(registryIDType);
-            quality.setScore(90l);
+            quality.setScore(90L);
             bdbInfoType1.setQuality(quality);
             BiometricType singleType1 = BiometricType.FINGER;
             List<BiometricType> singleTypeList1 = new ArrayList<>();

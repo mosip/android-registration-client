@@ -1,158 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="-22dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="50dp"
+              android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/msg_input"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="message"
-        android:inputType="textLongMessage"
-        android:minHeight="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.043" />
+    <Button
+            android:text="Sync Masterdata"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:onClick="click_sync_masterdata"
+            android:id="@+id/button12"/>
+    <Button
+            android:text="New Registration"
+            android:layout_width="match_parent"
+            android:layout_margin="20dp"
+            android:layout_height="wrap_content"
+            android:onClick="click_new_registration"
+            android:id="@+id/button14" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_encrypt"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
+    <Button
+            android:text="Upload Packet"
+            android:layout_width="match_parent"
+            android:layout_margin="20dp"
+            android:layout_height="wrap_content"
+            android:onClick="click_upload_packet"
+            android:id="@+id/button15" />
 
-        android:layout_marginStart="32dp"
-        android:background="@drawable/btn_start"
-        android:backgroundTintMode="add"
-        android:onClick="click_encrypt"
-        android:text="Encrypt"
-        android:textAllCaps="false"
-        android:textColor="#FFF"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/msg_input"
-        app:layout_constraintVertical_bias="0.037" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_decrypt"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="36dp"
-        android:background="@drawable/btn_end"
-        android:onClick="click_decrypt"
-        android:text="Decrypt"
-        android:textAllCaps="false"
-        android:textColor="#FFF"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/msg_input"
-        app:layout_constraintVertical_bias="0.037"
-        tools:ignore="DuplicateClickableBoundsCheck" />
-
-    <TextView
-        android:id="@+id/EnDecTextView"
-        android:layout_width="326dp"
-        android:layout_height="89dp"
-        android:text="Service Loaded"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_encrypt"
-        app:layout_constraintVertical_bias="0.045" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_verify"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-
-        android:background="@drawable/btn_end"
-        android:backgroundTintMode="add"
-        android:onClick="click_verify"
-        android:text="Verify"
-        android:textAllCaps="false"
-        android:textColor="#FFF"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.86"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EnDecTextView"
-        app:layout_constraintVertical_bias="0.051" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_sign"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-
-        android:layout_marginStart="32dp"
-        android:background="@drawable/btn_start"
-        android:backgroundTintMode="add"
-        android:onClick="click_sign"
-        android:text="Sign"
-        android:textAllCaps="false"
-        android:textColor="#FFF"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EnDecTextView"
-        app:layout_constraintVertical_bias="0.051" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_Store"
-        android:layout_width="155dp"
-        android:layout_height="63dp"
-
-        android:layout_marginStart="32dp"
-        android:background="@drawable/btn_start"
-        android:backgroundTintMode="add"
-        android:onClick="click_objectStoreDemo"
-        android:text="Object Store"
-        android:textAllCaps="false"
-        android:textColor="#FFF"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SignTextView"
-        app:layout_constraintVertical_bias="0.707" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_Writer"
-        android:layout_width="151dp"
-        android:layout_height="64dp"
-
-        android:background="@drawable/btn_start"
-        android:backgroundTintMode="add"
-        android:onClick="click_PacketWriterDemo"
-        android:text="Packet Writer"
-        android:textAllCaps="false"
-        android:textColor="#FFF"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.863"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SignTextView"
-        app:layout_constraintVertical_bias="0.71" />
-
-    <TextView
-        android:id="@+id/SignTextView"
-        android:layout_width="326dp"
-        android:layout_height="89dp"
-        android:text="Service Loaded"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.56" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -3,13 +3,15 @@ package io.mosip.registration.packetmanager.service;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
-import android.os.FileUtils;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,17 +45,22 @@ import io.mosip.registration.packetmanager.util.ObjectStoreUtil;
 public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
     private static final String TAG = PosixAdapterServiceImpl.class.getSimpleName();
-    private static final String SEPARATOR = "/";
+    private static final String SEPARATOR = File.separator;
     private static final String ZIP = ".zip";
     private static final String JSON = ".json";
     private static Context appContext;
+    private String BASE_LOCATION;
+
 
     private ObjectMapper objectMapper;
-    private String BASE_LOCATION;
-    private PacketCryptoServiceImpl packetCryptoServiceImpl;
+    private IPacketCryptoService iPacketCryptoService;
 
     @Inject
-    public PosixAdapterServiceImpl(Context appContext) {
+    public PosixAdapterServiceImpl(Context appContext, IPacketCryptoService iPacketCryptoService,
+                                   ObjectMapper objectMapper) {
+        this.iPacketCryptoService = iPacketCryptoService;
+        this.objectMapper = objectMapper;
+
         Log.i(TAG, "PosixAdapter: Constructor call successful");
         try {
             initPosixAdapterService(appContext);
@@ -64,10 +71,6 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
-        objectMapper = new ObjectMapper();
-
-        //TODO Dependency Inject
-        packetCryptoServiceImpl = new PacketCryptoServiceImpl(context);
 
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -92,7 +95,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             createContainerZipWithSubPacket(account, container, source, process, objectName + ZIP, data);
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "exception occurred. Will create a new connection. ::" + e.getMessage());
+            Log.e(TAG, "exception occurred. Will create a new connection. ::",e);
         }
         return false;
     }
@@ -130,14 +133,13 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             return true;
         } catch (Exception e) {
             Log.e(TAG, "exception occured while packing");
-            return false;
         }
+        return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public boolean pack(String account, String container, String source, String process) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             File accountLoc = new File(BASE_LOCATION + SEPARATOR + account);
             if (!accountLoc.exists())
@@ -148,17 +150,14 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
                 throw new RuntimeException("Files not found in destinations");
 
             InputStream ios = new FileInputStream(containerZip);
-            outputStream.write(ios.read());
-
-            byte[] encryptedPacket = packetCryptoServiceImpl.encrypt(outputStream.toByteArray());
-
-            outputStream.flush();
-            FileUtils.copy(new ByteArrayInputStream(encryptedPacket), outputStream);
+            byte[] encryptedPacket = iPacketCryptoService.encrypt(IOUtils.toByteArray(ios));
+            FileUtils.copyInputStreamToFile(new ByteArrayInputStream(encryptedPacket), containerZip);
             return encryptedPacket != null;
+
         } catch (Exception e) {
-              Log.e(TAG, "exception occurred while packing");
-            return false;
+              Log.e(TAG, "exception occurred while packing", e);
         }
+        return false;
     }
 
 
@@ -215,8 +214,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     }
 
     private void createContainerZipWithSubPacket(String account, String container, String source, String process, String objectName, InputStream data)
-            throws
-            IOException {
+            throws IOException {
 
         String state = Environment.getExternalStorageState();
         //external storage availability check
@@ -224,55 +222,47 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             return;
         }
 
-        new File(BASE_LOCATION + SEPARATOR + account).mkdir();
-
+        File containerFolder = new File(BASE_LOCATION, account);
+        containerFolder.mkdirs();
         File containerZip = new File(BASE_LOCATION + SEPARATOR + account, container + ZIP);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        if (!containerZip.exists()) {
+        try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            if (!containerZip.exists()) {
 
-            ByteArrayOutputStream byteArrayOutStream = new ByteArrayOutputStream();
-            try (ZipOutputStream packetZip = new ZipOutputStream(new BufferedOutputStream(out))) {
-                byteArrayOutStream.write(data.read());
-                addEntryToZip(String.format(objectName),
-                        byteArrayOutStream.toByteArray(), packetZip, source, process);
-            } finally {
-                byteArrayOutStream.close();
+                try (ByteArrayOutputStream byteArrayOutStream = new ByteArrayOutputStream();
+                     ZipOutputStream packetZip = new ZipOutputStream(new BufferedOutputStream(out))) {
+                    byteArrayOutStream.write(data.read());
+                    addEntryToZip(String.format(objectName),
+                            byteArrayOutStream.toByteArray(), packetZip, source, process);
+                }
+
+            } else {
+                InputStream ios = new FileInputStream(containerZip);
+                Map<ZipEntry, ByteArrayOutputStream> entries = getAllExistingEntries(ios);
+
+                try (ByteArrayOutputStream byteArrayOutStream = new ByteArrayOutputStream();
+                     ZipOutputStream packetZip = new ZipOutputStream(out)) {
+                    entries.entrySet().forEach(e -> {
+                        try {
+                            packetZip.putNextEntry(e.getKey());
+                            packetZip.write(e.getValue().toByteArray());
+                        } catch (IOException e1) {
+                            Log.e(TAG, "exception occurred. Create a new zip. :::", e1);
+                        }
+                    });
+
+                    byteArrayOutStream.write(data.read());
+                    addEntryToZip(String.format(objectName),
+                            byteArrayOutStream.toByteArray(), packetZip, source, process);
+                }
             }
-        } else {
-            InputStream ios = new FileInputStream(containerZip);
-            Map<ZipEntry, ByteArrayOutputStream> entries = getAllExistingEntries(ios);
-            ByteArrayOutputStream byteArrayOutStream = new ByteArrayOutputStream();
-            try (ZipOutputStream packetZip = new ZipOutputStream(out)) {
-                entries.entrySet().forEach(e -> {
-                    try {
-                        packetZip.putNextEntry(e.getKey());
-                        packetZip.write(e.getValue().toByteArray());
-                    } catch (IOException e1) {
-                        Log.e(TAG, "exception occurred. Create a new zip. :::" + e1.getMessage());
-                    }
-                });
 
-
-                byteArrayOutStream.write(data.read());
-
-                addEntryToZip(String.format(objectName),
-                        byteArrayOutStream.toByteArray(), packetZip, source, process);
-            } finally {
-                byteArrayOutStream.close();
-            }
-        }
-
-        FileOutputStream fileOutputStream = null;
-        try {
             containerZip.createNewFile();
-            fileOutputStream = new FileOutputStream(containerZip);
-            fileOutputStream.write(out.toByteArray());
-        } catch (Exception ex) {
-            Log.e(TAG, "createContainerZipWithSubPacket : Exception while writing a file");
-        } finally {
-            fileOutputStream.flush();
-            fileOutputStream.close();
+            try (FileOutputStream fileOutputStream = new FileOutputStream(containerZip)) {
+                fileOutputStream.write(out.toByteArray());
+            } catch (Exception ex) {
+                Log.e(TAG, "createContainerZipWithSubPacket : Exception while writing a file", ex);
+            }
         }
     }
 

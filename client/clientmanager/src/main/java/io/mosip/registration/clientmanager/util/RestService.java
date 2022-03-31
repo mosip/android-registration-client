@@ -9,35 +9,33 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.DownloadProgressListener;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.androidnetworking.interfaces.StringRequestListener;
 import com.androidnetworking.interfaces.UploadProgressListener;
 
+import io.mosip.registration.clientmanager.exception.RestServiceException;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class RestService {
 
+    public static final String RESPONSE_BODY = "response";
+    public static final String ERROR = "error";
+
     private static final String TAG = RestService.class.getSimpleName();
 
     // GET request for jsonObject
-    public Map<String, Object> get(@NonNull RequestDto requestDto) {
+    public static Map<String, Object> get(@NonNull RequestDto requestDto) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
         try {
             ANRequest request = AndroidNetworking.get(requestDto.getUrl())
-                    .setTag(this)
+                    .setTag(RestService.class)
                     .setPriority(Priority.MEDIUM)
                     .build();
 
@@ -61,12 +59,11 @@ public class RestService {
     }
 
     // POST request for Json Object
-    public Map<String, Object> post(@NonNull RequestDto requestDto) {
-        final Map<String, Object> responseObj = new HashMap<String, Object>();
+    public static Map<String, Object> post(@NonNull RequestDto requestDto) {
         try {
             ANRequest request = AndroidNetworking.post(requestDto.getUrl())
                     .addJSONObjectBody(requestDto.getBody())
-                    .setTag(this)
+                    .setTag(RestService.class)
                     .setPriority(Priority.MEDIUM)
                     .build();
 
@@ -74,27 +71,27 @@ public class RestService {
 
             if (response.isSuccess()) {
                 JSONObject jsonObject = response.getResult();
-                Log.i(TAG, "response : " + jsonObject.toString());
-                responseObj.put("post", jsonObject);
-                Response okHttpResponse = response.getOkHttpResponse();
-                Log.i(TAG, "headers : " + okHttpResponse.headers().toString());
-            } else {
-                ANError error = response.getError();
-                Log.e(TAG, "onError: Error on post request ", error);
+                final Map<String, Object> responseObj = new HashMap<String, Object>();
+                responseObj.put(RESPONSE_BODY, jsonObject);
+                return responseObj;
             }
+
+            ANError error = response.getError();
+            Log.e(TAG, "ANError: Error on post request >> "+ requestDto.getUrl(), error);
+
         } catch (Exception e) {
-            Log.e(TAG, "post: post request failed");
+            Log.e(TAG, "Post request failed >> "+ requestDto.getUrl(), e);
         }
-        return responseObj;
+        return null;
     }
 
     // UPLOAD multipart file
-    public Map<String, Object> fileUpload(@NonNull RequestDto requestDto) {
+    public static Map<String, Object> fileUpload(@NonNull RequestDto requestDto) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
         try {
 
             ANRequest.MultiPartBuilder requestBuilder = AndroidNetworking.upload(requestDto.getUrl())
-                    .setTag(this)
+                    .setTag(RestService.class)
                     .setPriority(Priority.MEDIUM);
 
             // key corresponds to file identifier and value corresponds to path string of file
@@ -136,13 +133,13 @@ public class RestService {
     }
 
     // DOWNLOAD request for a File
-    public boolean fileDownload(@NonNull RequestDto requestDto) {
+    public static boolean fileDownload(@NonNull RequestDto requestDto) {
         try {
             // Directory: file download directory, Filename: filename to save to
             ANRequest request = AndroidNetworking
                     .download(requestDto.getUrl(), requestDto.getBody().getString("Directory"),
                             requestDto.getBody().getString("Filename"))
-                    .setTag(this)
+                    .setTag(RestService.class)
                     .setPriority(Priority.MEDIUM)
                     .build()
                     .setDownloadProgressListener(new DownloadProgressListener() {
@@ -167,6 +164,29 @@ public class RestService {
             Log.e(TAG, "fileDownload: download request failed");
         }
         return false;
+    }
+
+    public static Object getResponseObject(Map<String, Object> response) throws RestServiceException {
+        try {
+            if(response != null && response.get(RestService.RESPONSE_BODY) != null) {
+                JSONObject jsonObject = (JSONObject) response.get(RestService.RESPONSE_BODY);
+                if(jsonObject.get("errors") != null) {
+                    JSONArray errors = jsonObject.getJSONArray("errors");
+                    Log.i(TAG, "errors from server >>> " + errors);
+                    JSONObject error = errors.getJSONObject(0);
+                    throw new RestServiceException(error.getString("errorCode"),
+                            error.getString("message"));
+                }
+
+                if(jsonObject.get("response") == null)
+                    throw new RestServiceException("MOS-REG-999", "Empty response from server");
+
+                return jsonObject.get("response");
+            }
+        } catch (Exception exception) {
+            Log.e(TAG, "Failed to parse response", exception);
+        }
+        throw new RestServiceException("MOS-REG-999", "Failed to parse response");
     }
 
 }
