@@ -16,10 +16,9 @@ public abstract class ClientDatabase extends RoomDatabase {
     private static ClientDatabase INSTANCE;
     public abstract UserTokenDao userTokenDao();
 
-
     public static ClientDatabase getDatabase(Context context){
-        if(INSTANCE==null) {
-            synchronized (INSTANCE) {
+        if(INSTANCE == null) {
+            synchronized ("") {
                 INSTANCE = Room.databaseBuilder(context, ClientDatabase.class, DATABASE_NAME)
                         .allowMainThreadQueries()
                         .build();

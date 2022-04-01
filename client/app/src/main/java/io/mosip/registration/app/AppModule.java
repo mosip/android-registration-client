@@ -15,6 +15,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.factory.ClientWorkerFactory;
 import io.mosip.registration.clientmanager.factory.SyncRestFactory;
+import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -127,6 +128,7 @@ public class AppModule {
     OkHttpClient provideOkhttpClient(Cache cache) {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.cache(cache);
+        client.addInterceptor(new RestAuthInterceptor(appContext));
         return client.build();
     }
 
