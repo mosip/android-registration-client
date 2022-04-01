@@ -2,14 +2,13 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 
+import android.content.SharedPreferences;
+import android.util.Log;
+import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.config.SessionManager;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-/*import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;*/
-import io.mosip.registration.clientmanager.config.ClientDatabase;
-import io.mosip.registration.clientmanager.dao.UserTokenDao;
-import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.clientmanager.factory.SyncRestFactory;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
@@ -25,34 +24,33 @@ public class LoginService {
 
     private static final String TAG = LoginService.class.getSimpleName();
 
-    private Context context;
+    private SessionManager sessionManager;
 
     @Inject
     ClientCryptoManagerService clientCryptoManagerService;
 
-    @Inject
-    SyncRestFactory syncRestFactory;
-
-    @Inject
-    SyncRestService syncRestService;
-
     public LoginService(Context context, ClientCryptoManagerService clientCryptoManagerService) {
-        this.context = context;
         this.clientCryptoManagerService = clientCryptoManagerService;
+        this.sessionManager = SessionManager.getSessionManager(context);
     }
 
-    public void login(String authResponse) throws Exception {
+    public void saveAuthToken(String authResponse) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);
         CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
         if(cryptoResponseDto != null) {
             byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
-            JSONObject authResponseJson = new JSONObject(new String(decodedBytes));
-            //Jws<Claims> claims = Jwts.parserBuilder().build().parseClaimsJws((String) authResponseJson.get("token"));
-            UserTokenDao userTokenDao = ClientDatabase.getDatabase(this.context).userTokenDao();
-            UserToken userToken = new UserToken("test","test", "test", 0L, 0L);
-            userTokenDao.insert(userToken);
+            try {
+                JSONObject jsonObject = new JSONObject(new String(decodedBytes));
+                this.sessionManager.saveAuthToken(jsonObject.getString("token"));
+            } catch (Exception ex) {
+                Log.e(TAG, "Failed to parse the decrypted auth response", ex);
+                throw ex;
+            }
         }
-        throw new Exception("Login failed, Unable to extract auth token");
+    }
+
+    public String fetchAuthToken() {
+        return this.sessionManager.fetchAuthToken();
     }
 }

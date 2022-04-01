@@ -34,7 +34,7 @@ public class DaoTest {
 
         // inserting into database
         clientDatabase.userTokenDao().deleteAll();
-        UserToken usertoken = new UserToken();
+        UserToken usertoken = new UserToken("test", "test", "test", 0L, 0L);
         clientDatabase.userTokenDao().insert(usertoken);
         assertEquals(clientDatabase.userTokenDao().findByUsername("string"),"string");
     }

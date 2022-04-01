@@ -106,22 +106,24 @@ public class LoginActivity extends DaggerAppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) {
                 ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
-                if(response.isSuccessful()){
+                if(response.isSuccessful()) {
                     if((wrapper.getErrors() == null || wrapper.getErrors().isEmpty()) && wrapper.getResponse() != null) {
                         try {
-                            loginService.login(wrapper.getResponse());
+                            loginService.saveAuthToken(wrapper.getResponse());
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("username", username);
                             startActivity(intent);
-                            return;
-                        } catch (Exception ex) {
-                            Log.e(TAG, "Failed to login",ex);
+
+                        } catch (Exception e) {
+                            Toast.makeText(LoginActivity.this, "Failed to save auth token, Kindly try again",
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
-                    Toast.makeText(LoginActivity.this, wrapper.getErrors().get(0).getMessage(), Toast.LENGTH_LONG).show();
+                    else {
+                        Toast.makeText(LoginActivity.this, wrapper.getErrors().get(0).getMessage(), Toast.LENGTH_LONG).show();
+                    }
                     return;
                 }
-
                 Log.e(TAG, response.raw().toString());
                 Toast.makeText(LoginActivity.this, "Failed to login, Kindly try again", Toast.LENGTH_LONG).show();
             }
