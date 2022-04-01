@@ -12,19 +12,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.mosip.registration.clientmanager.config.AuthDatabase;
+import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.clientmanager.util.RestService;
 
 @RunWith(AndroidJUnit4.class)
 public class DaoTest {
-    private static AuthDatabase authDatabase;
+    private static ClientDatabase clientDatabase;
     private static RestService restService;
 
     @Before
     public void init() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        authDatabase = AuthDatabase.getDatabase(appContext);
+        clientDatabase = ClientDatabase.getDatabase(appContext);
         AndroidNetworking.initialize(appContext);
         restService = new RestService();
     }
@@ -33,9 +33,9 @@ public class DaoTest {
     public void insert_test() {
 
         // inserting into database
-        authDatabase.userTokenDao().deleteAll();
+        clientDatabase.userTokenDao().deleteAll();
         UserToken usertoken = new UserToken();
-        authDatabase.userTokenDao().insertAll(usertoken);
-        assertEquals(authDatabase.userTokenDao().loadById("string"),"string");
+        clientDatabase.userTokenDao().insert(usertoken);
+        assertEquals(clientDatabase.userTokenDao().findByUsername("string"),"string");
     }
 }

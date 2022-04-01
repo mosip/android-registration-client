@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.entity;
 
 import static androidx.room.ColumnInfo.TEXT;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -28,6 +29,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Audit {
 
+    @NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "log_id")
     private String uuid;

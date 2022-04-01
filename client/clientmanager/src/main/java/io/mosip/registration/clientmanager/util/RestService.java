@@ -25,10 +25,11 @@ import okhttp3.Response;
 
 public class RestService {
 
-    /*private static final String TAG = RestService.class.getSimpleName();
+    private static final String TAG = RestService.class.getSimpleName();
+    private static final String RESPONSE_BODY = "response";
 
     // GET request for jsonObject
-    public static Map<String, Object> get(@NonNull RequestDto requestDto) {
+   /* public static Map<String, Object> get(@NonNull RequestDto requestDto) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
         try {
             ANRequest request = AndroidNetworking.get(requestDto.getUrl())

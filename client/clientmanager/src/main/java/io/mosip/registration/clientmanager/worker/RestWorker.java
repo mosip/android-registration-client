@@ -69,7 +69,7 @@ public class RestWorker extends Worker {
 
     @SuppressLint("RestrictedApi")
     private Result doAuthCall() throws JSONException {
-        String username = getInputData().getString("username");
+        /*String username = getInputData().getString("username");
         String password = getInputData().getString("password");
 
         try {
@@ -108,6 +108,7 @@ public class RestWorker extends Worker {
             return Result.failure(new Data.Builder()
                     .put("errorCode", e.getErrorCode())
                     .put("errorMessage", e.getMessage()).build());
-        }
+        }*/
+        return Result.failure();
     }
 }

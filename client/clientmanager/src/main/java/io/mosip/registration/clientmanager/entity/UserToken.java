@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -10,9 +11,9 @@ import lombok.Data;
 @Entity(tableName = "user_token")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class UserToken {
 
+    @NonNull
     @PrimaryKey
     @ColumnInfo(name = "username")
     private String username;

@@ -108,11 +108,15 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
                 if(response.isSuccessful()){
                     if((wrapper.getErrors() == null || wrapper.getErrors().isEmpty()) && wrapper.getResponse() != null) {
-                        loginService.login(wrapper.getResponse());
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("username", username);
-                        startActivity(intent);
-                        return;
+                        try {
+                            loginService.login(wrapper.getResponse());
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("username", username);
+                            startActivity(intent);
+                            return;
+                        } catch (Exception ex) {
+                            Log.e(TAG, "Failed to login",ex);
+                        }
                     }
                     Toast.makeText(LoginActivity.this, wrapper.getErrors().get(0).getMessage(), Toast.LENGTH_LONG).show();
                     return;

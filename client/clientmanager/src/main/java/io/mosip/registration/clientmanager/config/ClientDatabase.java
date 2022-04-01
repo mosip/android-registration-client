@@ -10,25 +10,24 @@ import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
 
 @Database(entities = {UserToken.class}, version = 1, exportSchema = false)
-public abstract class AuthDatabase extends RoomDatabase {
-    //    instance of database
-    private static AuthDatabase INSTANCE;
+public abstract class ClientDatabase extends RoomDatabase {
 
-    //    DAOs
+    private static final String DATABASE_NAME = "regclient";
+    private static ClientDatabase INSTANCE;
     public abstract UserTokenDao userTokenDao();
 
-    //    get database instance
-    public static AuthDatabase getDatabase(Context context){
-        if(INSTANCE==null){
-//            might need to change
-            INSTANCE= Room.databaseBuilder(context, AuthDatabase.class,"userdatabase").allowMainThreadQueries().build();
-        }
 
+    public static ClientDatabase getDatabase(Context context){
+        if(INSTANCE==null) {
+            synchronized (INSTANCE) {
+                INSTANCE = Room.databaseBuilder(context, ClientDatabase.class, DATABASE_NAME)
+                        .allowMainThreadQueries()
+                        .build();
+            }
+        }
         return INSTANCE;
     }
 
-
-    //    destroy DB instance
     public static void destroyDB(){
         INSTANCE=null;
     }

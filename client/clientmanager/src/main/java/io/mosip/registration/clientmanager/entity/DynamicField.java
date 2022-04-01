@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.entity;
 
 import static androidx.room.ColumnInfo.TEXT;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -19,7 +20,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity(tableName = "dynamic_field")
 public class DynamicField {
-	
+
+	@NonNull
 	@PrimaryKey
 	@ColumnInfo(name="id")
 	private String id;

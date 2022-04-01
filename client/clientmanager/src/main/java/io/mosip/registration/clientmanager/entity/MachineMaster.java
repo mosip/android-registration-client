@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -23,6 +24,7 @@ public class MachineMaster extends RegistrationCommonFields implements Serializa
 
     private static final long serialVersionUID = -5585825705521742941L;
 
+    @NonNull
     @PrimaryKey
     @ColumnInfo(name = "id")
     private String id;

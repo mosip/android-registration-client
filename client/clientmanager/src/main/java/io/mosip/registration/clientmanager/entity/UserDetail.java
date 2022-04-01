@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -19,6 +20,7 @@ import lombok.Data;
 public class UserDetail extends RegistrationCommonFields implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@NonNull
 	@PrimaryKey
 	@ColumnInfo(name = "id")
 	private String id;
