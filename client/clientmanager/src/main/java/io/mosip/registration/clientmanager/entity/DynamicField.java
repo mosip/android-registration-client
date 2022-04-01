@@ -1,6 +1,9 @@
 package io.mosip.registration.clientmanager.entity;
 
 
+import static androidx.room.ColumnInfo.TEXT;
+
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -15,10 +18,10 @@ import lombok.EqualsAndHashCode;
  * @author Anshul vanawat
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Entity(tableName = "dynamic_field")
 public class DynamicField {
-	
+
+	@NonNull
 	@PrimaryKey
 	@ColumnInfo(name="id")
 	private String id;
@@ -35,7 +38,7 @@ public class DynamicField {
 	@ColumnInfo(name="data_type")
 	private String dataType;
 	
-	@ColumnInfo(name="value_json")
+	@ColumnInfo(name="value_json", typeAffinity = TEXT)
 	private String valueJson;
 	
 	@ColumnInfo(name="is_active")

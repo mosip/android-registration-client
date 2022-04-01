@@ -22,16 +22,8 @@ public class UserBiometric extends RegistrationCommonFields {
 	@PrimaryKey
 	private UserBiometricId userBiometricId;
 
-	//@Lob
-	@ColumnInfo(name = "bio_raw_image")
-	private byte[] bioRawImage;
-
-	@ColumnInfo(name = "bio_minutia")
-	private String bioMinutia;
-
-	//@Lob
-	@ColumnInfo(name = "bio_iso_image")
-	private byte[] bioIsoImage;
+	@ColumnInfo(name = "bio_template")
+	private byte[] bioTemplate;
 
 	@ColumnInfo(name = "quality_score")
 	private Integer qualityScore;

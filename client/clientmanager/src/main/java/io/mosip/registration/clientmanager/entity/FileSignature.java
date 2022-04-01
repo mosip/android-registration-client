@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -14,6 +15,7 @@ import lombok.Data;
 @Data
 public class FileSignature {
 
+    @NonNull
     @PrimaryKey
     @ColumnInfo(name = "file_name")
     private String fileName;

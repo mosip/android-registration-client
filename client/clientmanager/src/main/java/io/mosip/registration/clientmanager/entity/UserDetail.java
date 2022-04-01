@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -19,15 +20,13 @@ import lombok.Data;
 public class UserDetail extends RegistrationCommonFields implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@NonNull
 	@PrimaryKey
 	@ColumnInfo(name = "id")
 	private String id;
 
 	@ColumnInfo(name = "reg_id")
-	private String regid;
-
-	@ColumnInfo(name = "salt")
-	private String salt;
+	private String regId;
 
 	@ColumnInfo(name = "name")
 	private String name;
@@ -54,7 +53,7 @@ public class UserDetail extends RegistrationCommonFields implements Serializable
 	private Integer unsuccessfulLoginCount;
 
 	@ColumnInfo(name = "userlock_till_dtimes")
-	private Timestamp userlockTillDtimes;
+	private Timestamp userLockTillDtimes;
 
 	@ColumnInfo(name = "is_deleted")
 	private Boolean isDeleted;
@@ -65,38 +64,6 @@ public class UserDetail extends RegistrationCommonFields implements Serializable
 	@ColumnInfo(name = "reg_cntr_id")
 	private String regCenterId;
 
-	@ColumnInfo(name = "token")
-	private String token;
-
-	@ColumnInfo(name = "refresh_token")
-	private String refreshToken;
-
-	@ColumnInfo(name = "token_expiry")
-	private long tokenExpiry;
-
-	@ColumnInfo(name = "rtoken_expiry")
-	private long rtokenExpiry;
-
 	@ColumnInfo(name = "is_onboarded")
 	private boolean isOnboarded;
-
-	//Usr ID added In UserRole Table for mapping
-// 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "userDetail", orphanRemoval = true, cascade = CascadeType.ALL)
-//	private Set<UserRole> userRole;
-
- 	//NOT REQUIRED
-//	@OneToMany(fetch = FetchType.EAGER, mappedBy = "userDetail", cascade = CascadeType.ALL)
-//	private Set<UserMachineMapping> userMachineMapping;
-
-	//Usr ID added In UserRole Table for mapping
-//	@OneToMany(fetch = FetchType.EAGER, mappedBy = "userDetail", cascade = CascadeType.ALL)
-//	private Set<UserBiometric> userBiometric;
-
-	//NOT REQUIRED
-//	@OneToOne(fetch = FetchType.EAGER, mappedBy = "userDetail", cascade = CascadeType.ALL)
-//	private UserPassword userPassword;
-
-	//All Fields moved into User Details table
-//	@OneToOne(fetch = FetchType.EAGER, mappedBy = "userDetail", optional = true, cascade = CascadeType.ALL)
-//	private UserToken userToken;
 }

@@ -1,7 +1,11 @@
 package io.mosip.registration.clientmanager.entity;
 
+import static androidx.room.ColumnInfo.TEXT;
+
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import java.time.LocalDateTime;
 
@@ -20,84 +24,64 @@ import lombok.NoArgsConstructor;
  *
  */
 @Entity(tableName = "app_audit_log")
-//schema = "audit"
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Audit extends BaseAudit {
+public class Audit {
 
-    @NotNull
-    @Size(min = 1, max = 64)
-    @ColumnInfo(name = "event_id")//, nullable = false, updatable = false, length = 64)
-    @NotNull
+    @NonNull
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "log_id")
+    private String uuid;
+
+    @ColumnInfo(name = "log_dtimes")
+    private LocalDateTime createdAt;
+
+    @ColumnInfo(name = "event_id")
     private String eventId;
 
-    @NotNull
-    @Size(min = 1, max = 128)
-    @ColumnInfo(name = "event_name")//, nullable = false, updatable = false, length = 128)
+    @ColumnInfo(name = "event_name")
     private String eventName;
 
-    @NotNull
-    @Size(min = 1, max = 64)
-    @ColumnInfo(name = "event_type")//, nullable = false, updatable = false, length = 64)
+    @ColumnInfo(name = "event_type")
     private String eventType;
 
-    @NotNull
-    @ColumnInfo(name = "action_dtimes")//, nullable = false, updatable = false)
+    @ColumnInfo(name = "action_dtimes")
     private LocalDateTime actionTimeStamp;
 
-    @NotNull
-    @Size(min = 1, max = 128)
-    @ColumnInfo(name = "host_name")//, nullable = false, updatable = false, length = 128)
+    @ColumnInfo(name = "host_name")
     private String hostName;
 
-    @NotNull
-    @Size(min = 1, max = 256)
-    @ColumnInfo(name = "host_ip")//, nullable = false, updatable = false, length = 256)
+    @ColumnInfo(name = "host_ip")
     private String hostIp;
 
-    @NotNull
-    @Size(min = 1, max = 64)
-    @ColumnInfo(name = "app_id")//, nullable = false, updatable = false, length = 64)
+    @ColumnInfo(name = "app_id")
     private String applicationId;
 
-    @NotNull
-    @Size(min = 1, max = 128)
-    @ColumnInfo(name = "app_name")//, nullable = false, updatable = false, length = 128)
+    @ColumnInfo(name = "app_name")
     private String applicationName;
 
-    @NotNull
-    @Size(min = 1, max = 256)
-    @ColumnInfo(name = "session_user_id")//, nullable = false, updatable = false, length = 256)
+    @ColumnInfo(name = "session_user_id")
     private String sessionUserId;
 
-    @Size(max = 128)
-    @ColumnInfo(name = "session_user_name")//, updatable = false, length = 128)
+    @ColumnInfo(name = "session_user_name")
     private String sessionUserName;
 
-    @Size( max = 64)
-    @ColumnInfo(name = "ref_id")//, nullable = true, updatable = false, length = 64)
-    private String id;
+    @ColumnInfo(name = "ref_id")
+    private String refId;
 
-    @Size(max = 64)
-    @ColumnInfo(name = "ref_id_type")//, nullable = true, updatable = false, length = 64)
-    private String idType;
+    @ColumnInfo(name = "ref_id_type")
+    private String refIdType;
 
-    @NotNull
-    @Size(min = 1, max = 256)
-    @ColumnInfo(name = "cr_by")//, nullable = false, updatable = false, length = 256)
+    @ColumnInfo(name = "cr_by")
     private String createdBy;
 
-    @Size(max = 128)
-    @ColumnInfo(name = "module_name")//, updatable = false, length = 128)
+    @ColumnInfo(name = "module_name")
     private String moduleName;
 
-    @Size(max = 64)
-    @ColumnInfo(name = "module_id")//, updatable = false, length = 64)
+    @ColumnInfo(name = "module_id")
     private String moduleId;
 
-    @Size(max = 2048)
-    @ColumnInfo(name = "log_desc")//, updatable = false, length = 2048)
+    @ColumnInfo(name = "log_desc")
     private String description;
 }

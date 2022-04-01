@@ -6,8 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @Author George T Abraham
- * @Author Eric John
+ * @author George T Abraham
+ * @author Eric John
+ *
  */
 @Data
 @AllArgsConstructor

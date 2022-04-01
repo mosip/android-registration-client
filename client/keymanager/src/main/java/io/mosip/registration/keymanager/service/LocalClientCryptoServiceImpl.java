@@ -27,8 +27,9 @@ import static io.mosip.registration.keymanager.util.KeyManagerConstant.*;
 
 
 /**
- * @Author George T Abraham
- * @Author Eric John
+ * @author George T Abraham
+ * @author Eric John
+ * @author Anusha
  */
 @Singleton
 public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService {
@@ -111,13 +112,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
     private void setMachineName() {
         try {
-            //final KeyStore.SecretKeyEntry keyEntry = (KeyStore.SecretKeyEntry) keyStore.getEntry(NAME_ALIAS, null);
-            //if(keyEntry == null) {
-                KeyGenerator keyGen = KeyGenerator.getInstance(KEYGEN_SYMMETRIC_ALGORITHM);
-                keyGen.init(KEYGEN_SYMMETRIC_KEY_LENGTH);
-                SecretKey secretKey = keyGen.generateKey();
-                keyStore.setKeyEntry(NAME_ALIAS, secretKey.getEncoded(), null);
-            //}
+            //TODO
         } catch (Exception e) {
             Log.e(TAG, "genSignKey: Machine name generation failed ", e);
         }
@@ -268,7 +263,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
 
         try {
-            byte[] dataToDecrypt =  CryptoUtil.base64decoder.decode(cryptoRequestDto.getValue());
+            byte[] dataToDecrypt = CryptoUtil.base64decoder.decode(cryptoRequestDto.getValue());
             byte[] encryptedSecretKey = Arrays.copyOfRange(dataToDecrypt, 0, KEYGEN_SYMMETRIC_KEY_LENGTH);
             byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH);
             byte[] aad = Arrays.copyOfRange(dataToDecrypt,KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH+CRYPTO_SYMMETRIC_AAD_LENGTH);
@@ -320,9 +315,10 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
     @Override
     public String getMachineName() {
-        try {
-            final Key key = keyStore.getKey(NAME_ALIAS, null);
-            return CryptoUtil.generateMD5Hash(key.getEncoded());
+        try { //TODO
+            //final Key key = keyStore.getKey(NAME_ALIAS, null);
+            //return CryptoUtil.generateMD5Hash(key.getEncoded());
+            return "android-test-machine";
         } catch (Exception e) {
             Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         }

@@ -10,8 +10,6 @@ import java.sql.Timestamp;
 
 import io.mosip.registration.clientmanager.entity.id.RegistrationCenterId;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * The Entity Class for Registration Center details

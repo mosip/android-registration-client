@@ -25,13 +25,11 @@ import okhttp3.Response;
 
 public class RestService {
 
-    public static final String RESPONSE_BODY = "response";
-    public static final String ERROR = "error";
-
     private static final String TAG = RestService.class.getSimpleName();
+    private static final String RESPONSE_BODY = "response";
 
     // GET request for jsonObject
-    public static Map<String, Object> get(@NonNull RequestDto requestDto) {
+   /* public static Map<String, Object> get(@NonNull RequestDto requestDto) {
         final Map<String, Object> responseObj = new HashMap<String, Object>();
         try {
             ANRequest request = AndroidNetworking.get(requestDto.getUrl())
@@ -187,6 +185,6 @@ public class RestService {
             Log.e(TAG, "Failed to parse response", exception);
         }
         throw new RestServiceException("MOS-REG-999", "Failed to parse response");
-    }
+    }*/
 
 }

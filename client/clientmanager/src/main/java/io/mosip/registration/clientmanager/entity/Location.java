@@ -1,10 +1,13 @@
 package io.mosip.registration.clientmanager.entity;
 
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
+import io.mosip.registration.clientmanager.entity.id.CodeLanguageId;
 import lombok.Data;
 
 /**
@@ -15,16 +18,14 @@ import lombok.Data;
  */
 
 @Data
-    @Entity(tableName = "location", primaryKeys = {"code", "langCode"})
+@Entity(tableName = "location")
 public class Location extends RegistrationCommonFields implements Serializable {
 
     private static final long serialVersionUID = -5585825705521742941L;
 
-    @ColumnInfo(name = "code")
-    private String code;
-
-    @ColumnInfo(name = "lang_code")
-    private String langCode;
+    @Embedded
+    @PrimaryKey
+    private CodeLanguageId codeLanguageId;
 
     @ColumnInfo(name = "name")
     private String name;
