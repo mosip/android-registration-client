@@ -41,5 +41,4 @@ public class DynamicComponent    {
         else
             return 0;
     }
-//    public abstract void init();
 }

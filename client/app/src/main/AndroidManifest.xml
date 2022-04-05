@@ -15,14 +15,6 @@
         android:theme="@style/Theme.registration_client">
 
         <activity
-            android:name=".activites.PosixAdapterActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".activites.PacketWriterActivity"
-            android:exported="true" />
-
-        <activity
             android:name=".activites.BiometricsActivity"
             android:exported="true">
         </activity>
@@ -31,7 +23,7 @@
                   android:label="@string/app_name" />
 
         <activity
-                android:name=".activites.RegistrationController"
+                android:name=".activites.RegistrationActivity"
                 android:parentActivityName=".activites.MainActivity"
                 android:windowSoftInputMode="adjustResize"
                 android:exported="true">

@@ -81,4 +81,13 @@ public class DynamicDropDownBox extends LinearLayout implements DynamicView {
         Spinner sItems = (Spinner) findViewById(R.id.dropdown_input);
         return sItems.getSelectedItem().toString();
     }
+
+    @Override
+    public void setValue() {
+    }
+
+    @Override
+    public boolean validValue() {
+        return true;
+    }
 }

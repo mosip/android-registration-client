@@ -1,6 +1,6 @@
 package io.mosip.registration.clientmanager.spi;
 
-import io.mosip.registration.clientmanager.dto.GenericDto;
+import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 
 import java.util.List;
 

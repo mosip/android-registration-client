@@ -24,12 +24,9 @@ public class MainActivity extends DaggerAppCompatActivity {
     }
 
     public void click_new_registration(View view) {
-        Intent intent = new Intent(this, DemographicsActivity.class);
+        Intent intent = new Intent(this, RegistrationActivity.class);
         startActivity(intent);
     }
 
-    public void click_upload_packet(View view) {
-        Intent intent = new Intent(this, UploadActivity.class);
-        startActivity(intent);
-    }
+
 }

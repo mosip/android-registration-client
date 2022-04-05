@@ -1,8 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
-import android.util.Log;
-import io.mosip.registration.clientmanager.dto.GenericDto;
+import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 
 import javax.inject.Inject;

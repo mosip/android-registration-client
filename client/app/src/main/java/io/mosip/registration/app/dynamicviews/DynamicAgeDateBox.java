@@ -70,4 +70,13 @@ public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
         return dateBox.getText().toString()+"/"+monthBox.getText().toString()+"/"+yearBox.getText().toString();
     }
 
+    @Override
+    public void setValue() {
+    }
+
+    @Override
+    public boolean validValue() {
+        return true;
+    }
+
 }

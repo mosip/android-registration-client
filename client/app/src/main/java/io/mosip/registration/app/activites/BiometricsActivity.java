@@ -15,20 +15,13 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
-import io.mosip.registration.clientmanager.spi.MasterDataService;
-import io.mosip.registration.clientmanager.util.DateUtils;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
-import io.mosip.registration.packetmanager.spi.PacketWriterService;
+import io.mosip.registration.clientmanager.service.RegistrationService;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 
 import static android.content.pm.PackageManager.MATCH_DEFAULT_ONLY;
@@ -41,9 +34,6 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
     private Map<String, DynamicView> dynamicViews = new HashMap<>();
     private ViewGroup pnlPrimary = null;
 
-    private String process = "";
-    private String schemaVersion = "";
-    private String RID = "";
     private JSONArray bioattributes = null;
     private String fieldId = null;
     private String currentModality = null;
@@ -57,39 +47,25 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
     String serialNo = null;
 
     @Inject
-    public PacketWriterService packetWriterService;
+    RegistrationService registrationService;
 
     @Inject
-    public MasterDataService masterDataService;
+    UserInterfaceHelperService userInterfaceHelperService;
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        this.process = intent.getStringExtra("process");
-        this.schemaVersion = intent.getStringExtra("schemaVersion");
-        this.RID = intent.getStringExtra("RID");
         startActivity();
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.process = "NEW";
-        this.schemaVersion = "0.1";
-        this.RID = generateRID();
         startActivity();
     }
 
-    //TODO replace the logic with valid RID generator
-    private String generateRID() {
-        String timestamp = DateUtils.formatToISOStringWithoutMillis(LocalDateTime.now(ZoneOffset.UTC));
-        timestamp = timestamp.replaceAll(":|T|Z|-", "");
-        return String.format("100011007710031%s", timestamp);
-    }
-
-
     private void startActivity() {
-        setContentView(R.layout.registration_controller);
+        setContentView(R.layout.screen_activity);
         this.button = findViewById(R.id.submit);
 
 
@@ -101,11 +77,12 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Biometrics");
 
         this.button.setOnClickListener( v -> {
             this.button.setEnabled(false);
             Log.i(TAG, "Clicked on Registration form submit...");
-            saveBiometrics();
+            goToNextActivity();
         });
 
         pnlPrimary = findViewById(R.id.pnlPrimaryLanguagePanel);
@@ -131,23 +108,8 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
         }
     }
 
-    private void saveBiometrics() {
-        for (String fieldId : dynamicViews.keySet()) {
-            switch (dynamicViews.get(fieldId).getDataType()) {
-                case "biometricType" :
-                    packetWriterService.setBiometric(RID, fieldId,
-                            (BiometricRecord) dynamicViews.get(fieldId).getValue());
-            }
-        }
-
-        goToNextActivity();
-    }
-
     public void goToNextActivity() {
         Intent intent = new Intent(this, PreviewActivity.class);
-        intent.putExtra("process", this.process);
-        intent.putExtra("schemaVersion", this.schemaVersion);
-        intent.putExtra("RID", this.RID);
         startActivity(intent);
     }
 
@@ -165,9 +127,9 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
         dynamicViews.clear();
         pnlPrimary.removeAllViews();
 
-        DynamicComponentFactory factory = new DynamicComponentFactory(getApplicationContext(), masterDataService);
+        DynamicComponentFactory factory = new DynamicComponentFactory(getApplicationContext(), null);
 
-        String spec = loadJSONFromResource(R.raw.ui_specification);
+        String spec = userInterfaceHelperService.loadJSONFromResource();
         try {
             JSONArray compFromJson = new JSONArray(spec);
             for (int i = 0; i < compFromJson.length(); i++) {
@@ -189,20 +151,6 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
             Log.e(TAG, "Failed to build dynamic ui", ex);
         }
     }
-
-    private String loadJSONFromResource(int resourceNumber) {
-        String json = null;
-        try(InputStream is = getApplicationContext().getResources().openRawResource(resourceNumber)) {
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            json = new String(buffer, StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            Log.e(TAG, "Failed to load ui spec json", ex);
-        }
-        return json;
-    }
-
 
     private void discoverSBI() {
         this.textView.append("Started to discover " + this.currentModality + " SBI" + NEW_LINE);

@@ -2,9 +2,6 @@ package io.mosip.registration.app.dynamicviews;
 
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
-
 
 import android.util.Log;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -52,29 +49,6 @@ public class DynamicComponentFactory {
         }
         return dd;
     }
-
-
-
-    private void setTextWatcher(DynamicTextBox mainObject, DynamicTextBox secondObject){
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
-        mainObject.setTextChangeListener(textWatcher);
-    }
-
-
 
     public DynamicComponent getAgeDateComponent(JSONObject labels, JSONArray validatorRules) {
 

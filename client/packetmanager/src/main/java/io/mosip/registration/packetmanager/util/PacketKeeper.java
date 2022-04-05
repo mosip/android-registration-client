@@ -100,7 +100,7 @@ public class PacketKeeper {
         return getAdapter().removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);
     }
 
-    public boolean pack(String id, String source, String process) {
+    public String pack(String id, String source, String process) {
         return getAdapter().pack(PACKET_MANAGER_ACCOUNT, id, source, process);
     }
 

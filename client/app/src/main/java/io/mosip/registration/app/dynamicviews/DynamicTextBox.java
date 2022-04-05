@@ -1,9 +1,9 @@
 package io.mosip.registration.app.dynamicviews;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import android.widget.TextView;
@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class DynamicTextBox extends LinearLayout implements DynamicView {
 
-    EditText editText;
     String languageCode="";
     String labelText="";
     String validationRule="";
@@ -55,7 +54,19 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
    }
 
     private void initComponents() {
-        editText = findViewById(R.id.text_input_edit);
+        ((TextView)findViewById(R.id.text_input_edit)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
     @Override
@@ -64,7 +75,7 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
     }
 
     public Object getValue() {
-        String value = editText.getText().toString();
+        String value = ((TextView)findViewById(R.id.text_input_edit)).getText().toString();
         if (getDataType().equalsIgnoreCase("simpleType")) {
             Map<String, String> map = new HashMap<>();
             map.put("eng", value);
@@ -73,11 +84,13 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
         return value;
     }
 
+    @Override
+    public void setValue() {
+    }
 
-    public EditText getEditText() {
-        return editText;
+    @Override
+    public boolean validValue() {
+        return true;
     }
-    public void setTextChangeListener(TextWatcher textWatcher){
-        editText.addTextChangedListener(textWatcher);
-    }
+
 }

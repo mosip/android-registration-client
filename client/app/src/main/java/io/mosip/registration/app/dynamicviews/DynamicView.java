@@ -4,4 +4,6 @@ public interface DynamicView {
 
      String getDataType();
      Object getValue();
+     void setValue();
+     boolean validValue();
 }

@@ -64,7 +64,6 @@ public class PacketManagerConstant {
     public static final String META_KEYINDEX ="keyIndex";
     public static final String META_CENTER_ID ="centerId";
     public static final String META_APPLICANT_CONSENT ="consentOfApplicant";
-
     public static final String META_OFFICER_ID ="officerId";
     public static final String META_OFFICER_BIOMETRIC_FILE ="officerBiometricFileName";
     public static final String META_SUPERVISOR_ID ="supervisorId";
@@ -75,6 +74,8 @@ public class PacketManagerConstant {
     public static final String META_OFFICER_PIN ="officerPIN";
     public static final String META_SUPERVISOR_OTP ="supervisorOTPAuthentication";
     public static final String META_OFFICER_OTP ="officerOTPAuthentication";
+    public static final String META_REGISTRATION_ID = "registrationId";
+    public static final String META_APPLICATION_ID = "applicationId";
 
     /** The Constant ABIS. */
     public static final String SCHEMA = "schema";

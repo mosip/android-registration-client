@@ -107,4 +107,12 @@ public class DynamicSwitchBox extends LinearLayout implements DynamicView {
         return selectedOption;
     }
 
+    @Override
+    public void setValue() {
+    }
+
+    @Override
+    public boolean validValue() {
+        return true;
+    }
 }

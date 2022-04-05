@@ -47,4 +47,13 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
     public Object getValue() {
         return null;
     }
+
+    @Override
+    public void setValue() {
+    }
+
+    @Override
+    public boolean validValue() {
+        return true;
+    }
 }

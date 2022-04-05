@@ -39,22 +39,16 @@ public class RegistrationPacket {
 		this.audits = new ArrayList<Map<String, String>>();
 	}
 
-	public void setField(String fieldName, Object value) {
-		this.demographics.put(fieldName, value);
+	public void setField(String fieldId, Object value) {
+		this.demographics.put(fieldId, value);
 	}
 	
-	public void setFields(Map<String, String> fields) {
-		fields.entrySet().forEach(entry -> {
-			this.demographics.put(entry.getKey(), entry.getValue());
-		});
+	public void setBiometricField(String fieldId, BiometricRecord value) {
+		this.biometrics.put(fieldId, value);
 	}
 	
-	public void setBiometricField(String fieldName, BiometricRecord value) {
-		this.biometrics.put(fieldName, value);
-	}
-	
-	public void setDocumentField(String fieldName, Document dto) {
-		this.documents.put(fieldName, dto);		
+	public void setDocumentField(String fieldId, Document dto) {
+		this.documents.put(fieldId, dto);
 	}
 
 	public void setMetaData(Map<String, String> metaInfo) {

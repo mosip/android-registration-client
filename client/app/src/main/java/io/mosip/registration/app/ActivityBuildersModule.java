@@ -8,19 +8,13 @@ import io.mosip.registration.app.activites.*;
 public abstract class ActivityBuildersModule {
 
     @ContributesAndroidInjector
-    abstract MainActivity contributeMainActivity();
-
-    @ContributesAndroidInjector
-    abstract PacketWriterActivity contributePacketWriterActivity();
-
-    @ContributesAndroidInjector
-    abstract PosixAdapterActivity contributePosixAdapterActivity();
-
-    @ContributesAndroidInjector
     abstract LoginActivity contributeLoginActivity();
 
     @ContributesAndroidInjector
-    abstract RegistrationController contributeDemographicRegistrationController();
+    abstract MainActivity contributeMainActivity();
+
+    @ContributesAndroidInjector
+    abstract RegistrationActivity contributeRegistrationActivity();
 
     @ContributesAndroidInjector
     abstract BiometricsActivity contributeBiometricsActivity();

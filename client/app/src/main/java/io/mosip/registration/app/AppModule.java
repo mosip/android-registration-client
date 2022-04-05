@@ -18,8 +18,10 @@ import io.mosip.registration.clientmanager.factory.SyncRestFactory;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
+import io.mosip.registration.clientmanager.service.RegistrationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.service.PacketCryptoServiceImpl;
@@ -158,5 +160,17 @@ public class AppModule {
     @Singleton
     LoginService provideLoginService(ClientCryptoManagerService clientCryptoManagerService) {
         return new LoginService(appContext, clientCryptoManagerService);
+    }
+
+    @Provides
+    @Singleton
+    RegistrationService provideRegistrationService() {
+        return new RegistrationService(appContext);
+    }
+
+    @Provides
+    @Singleton
+    UserInterfaceHelperService provideUserInterfaceHelperService() {
+        return new UserInterfaceHelperService(appContext);
     }
 }
