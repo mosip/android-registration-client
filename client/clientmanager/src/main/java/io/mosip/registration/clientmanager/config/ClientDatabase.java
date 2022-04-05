@@ -6,15 +6,16 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import io.mosip.registration.clientmanager.dao.RegistrationDao;
+import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
 
-@Database(entities = {UserToken.class}, version = 1, exportSchema = false)
+@Database(entities = {UserToken.class, Registration.class}, version = 1, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "regclient";
     private static ClientDatabase INSTANCE;
-    public abstract UserTokenDao userTokenDao();
 
     public static ClientDatabase getDatabase(Context context){
         if(INSTANCE == null) {
@@ -26,6 +27,9 @@ public abstract class ClientDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+
+    public abstract UserTokenDao userTokenDao();
+    public abstract RegistrationDao registrationDao();
 
     public static void destroyDB(){
         INSTANCE=null;

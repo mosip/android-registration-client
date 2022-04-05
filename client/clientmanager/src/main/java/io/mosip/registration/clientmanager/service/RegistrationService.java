@@ -1,10 +1,13 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
+import android.util.Log;
+import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.util.DateUtils;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -27,22 +30,19 @@ public class RegistrationService {
     private Context context;
     private RegistrationDto registrationDto;
 
-    @Inject
-    PacketWriterService packetWriterService;
+    private RegistrationRepository registrationRepository;
+    private PacketWriterService packetWriterService;
+    private UserInterfaceHelperService userInterfaceHelperService;
 
     @Inject
-    UserInterfaceHelperService userInterfaceHelperService;
-
-    @Inject
-    MasterDataService masterDataService;
-
-    @Inject
-    RegistrationDao registrationDao;
-
-    @Inject
-    public RegistrationService(Context context) {
+    public RegistrationService(Context context, PacketWriterService packetWriterService,
+                               UserInterfaceHelperService userInterfaceHelperService,
+                               RegistrationRepository registrationRepository) {
         this.context = context;
         this.registrationDto = null;
+        this.packetWriterService = packetWriterService;
+        this.userInterfaceHelperService = userInterfaceHelperService;
+        this.registrationRepository = registrationRepository;
     }
 
     public void approveRegistration(Registration registration) {
@@ -92,7 +92,7 @@ public class RegistrationService {
         });
 
         packetWriterService.addAudits(this.registrationDto.getRId(), getAudits());
-        packetWriterService.addMetaInfo(this.registrationDto.getRId(), getMetaInfoMap());
+        addMetaInfoMap();
 
         String containerPath = packetWriterService.persistPacket(this.registrationDto.getRId(),
                 this.registrationDto.getSchemaVersion(),
@@ -101,32 +101,28 @@ public class RegistrationService {
                 this.registrationDto.getProcess(),
                 true);
 
+        Log.i(TAG, "Packet created here : " + containerPath);
+
         if(containerPath == null || containerPath.trim().isEmpty()) {
             throw new Exception("Failed to create registration packet");
         }
 
-        //TODO parse container path and only take packet Id
-        Registration registration = new Registration(containerPath);
-        registration.setPacketId(this.registrationDto.getRId());
-        registration.setCenterId("");
-        registration.setClientStatus(PacketClientStatus.CREATED.name());
-        registration.setCrDtime(LocalDateTime.now());
-        registration.setCrBy("");
-        registrationDao.insert(registration);
-
+        registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath);
     }
 
-    private Map<String, String> getMetaInfoMap() {
+    private Map<String, String> addMetaInfoMap() {
+        String rid = this.registrationDto.getRId();
         Map<String, String> metaData = new LinkedHashMap<>();
-        metaData.put(PacketManagerConstant.META_MACHINE_ID, "");
-        metaData.put(PacketManagerConstant.META_CENTER_ID, "");
-        metaData.put(PacketManagerConstant.META_KEYINDEX, "");
-        metaData.put(PacketManagerConstant.META_REGISTRATION_ID, this.registrationDto.getRId());
-        metaData.put(PacketManagerConstant.META_APPLICATION_ID, this.registrationDto.getRId());
-        metaData.put(PacketManagerConstant.META_CREATION_DATE, "");
-        metaData.put(PacketManagerConstant.META_CLIENT_VERSION, "1.0");
-        metaData.put(PacketManagerConstant.META_REGISTRATION_TYPE, this.registrationDto.getProcess().toUpperCase());
-        metaData.put(PacketManagerConstant.META_PRE_REGISTRATION_ID, null);
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_MACHINE_ID, "");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_MACHINE_ID, "");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CENTER_ID, "");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_KEYINDEX, "");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_REGISTRATION_ID, this.registrationDto.getRId());
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_APPLICATION_ID, this.registrationDto.getRId());
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CREATION_DATE, "");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CLIENT_VERSION, "1.0");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_REGISTRATION_TYPE, this.registrationDto.getProcess().toUpperCase());
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_PRE_REGISTRATION_ID, null);
         return metaData;
     }
 

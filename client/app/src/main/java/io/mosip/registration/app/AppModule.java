@@ -13,9 +13,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.app.viewmodel.ListingViewModel;
+import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.factory.ClientWorkerFactory;
 import io.mosip.registration.clientmanager.factory.SyncRestFactory;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
+import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationService;
@@ -164,13 +167,22 @@ public class AppModule {
 
     @Provides
     @Singleton
-    RegistrationService provideRegistrationService() {
-        return new RegistrationService(appContext);
+    RegistrationService provideRegistrationService(PacketWriterService packetWriterService,
+                                                   UserInterfaceHelperService userInterfaceHelperService,
+                                                   RegistrationRepository registrationRepository) {
+        return new RegistrationService(appContext, packetWriterService, userInterfaceHelperService,
+                registrationRepository);
     }
 
     @Provides
     @Singleton
     UserInterfaceHelperService provideUserInterfaceHelperService() {
         return new UserInterfaceHelperService(appContext);
+    }
+
+    @Provides
+    @Singleton
+    RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
+        return new RegistrationRepository(registrationDao);
     }
 }

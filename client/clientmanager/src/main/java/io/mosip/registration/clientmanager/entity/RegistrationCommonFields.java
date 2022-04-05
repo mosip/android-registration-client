@@ -20,9 +20,9 @@ public class RegistrationCommonFields {
     @ColumnInfo(name = "CR_BY")
     protected String crBy;
     @ColumnInfo(name = "CR_DTIMES")
-    protected LocalDateTime crDtime;
+    protected Long crDtime;
     @ColumnInfo(name = "UPD_BY")
     protected String updBy;
     @ColumnInfo(name = "UPD_DTIMES")
-    protected LocalDateTime updDtimes;
+    protected Long updDtimes;
 }

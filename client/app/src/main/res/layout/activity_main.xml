@@ -21,11 +21,11 @@
             android:id="@+id/button14" />
 
     <Button
-            android:text="Upload Packet"
+            android:text="List Registrations"
             android:layout_width="match_parent"
             android:layout_margin="20dp"
             android:layout_height="wrap_content"
-            android:onClick="click_upload_packet"
+            android:onClick="click_list_packets"
             android:id="@+id/button15" />
 
 </LinearLayout>

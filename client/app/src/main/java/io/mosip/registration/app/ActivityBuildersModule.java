@@ -28,4 +28,7 @@ public abstract class ActivityBuildersModule {
     @ContributesAndroidInjector
     abstract PreviewActivity contributePreviewActivity();
 
+    @ContributesAndroidInjector
+    abstract ListingActivity contributeListingActivity();
+
 }

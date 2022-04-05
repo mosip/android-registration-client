@@ -137,6 +137,13 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             }
         } catch(Exception e){
             Log.e(TAG, "genSignKey: Sign key generation failed ", e);
+            if(e  instanceof  UnrecoverableKeyException) {
+                try {
+                    keyStore.deleteEntry(SIGNV_ALIAS);
+                } catch (KeyStoreException ex) {
+                    Log.e(TAG, "genSignKey: Entry deletion also failed", e);
+                }
+            }
         }
     }
 
@@ -158,10 +165,17 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
                 kpg.initialize(keyPairGenParameterSpec);
                 kpg.generateKeyPair();
-                Log.i(TAG, "genSignKey: Initialized the machine crypto key");
+                Log.i(TAG, "genEncDecKey: Initialized the machine crypto key");
            }
         } catch(Exception e){
-            Log.e(TAG, "genSignKey: Crypto key generation failed ", e);
+            Log.e(TAG, "genEncDecKey: Crypto key generation failed ", e);
+            if(e  instanceof  UnrecoverableKeyException) {
+                try {
+                    keyStore.deleteEntry(ENCDEC_ALIAS);
+                } catch (KeyStoreException ex) {
+                    Log.e(TAG, "genEncDecKey: Entry deletion also failed", e);
+                }
+            }
         }
     }
 

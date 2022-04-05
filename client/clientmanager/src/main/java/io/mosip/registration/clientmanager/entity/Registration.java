@@ -7,8 +7,6 @@ import androidx.room.PrimaryKey;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 /**
  * The Entity Class for Registration details
  *
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
  */
 @Entity(tableName = "registration")
 @Data
-public class Registration extends RegistrationCommonFields {
+public class Registration {
 
     @NonNull
     @PrimaryKey
@@ -42,10 +40,10 @@ public class Registration extends RegistrationCommonFields {
     private String serverStatus;
 
     @ColumnInfo(name = "CLIENT_STATUS_DTIMES")
-    private LocalDateTime clientStatusDtimes;
+    private Long clientStatusDtimes;
 
     @ColumnInfo(name = "SERVER_STATUS_DTIMES")
-    private LocalDateTime serverStatusDtimes;
+    private Long serverStatusDtimes;
 
     @ColumnInfo(name = "CLIENT_STATUS_COMMENT")
     private String clientStatusComment;
@@ -69,7 +67,7 @@ public class Registration extends RegistrationCommonFields {
     private Short uploadCount;
 
     @ColumnInfo(name = "UPLOAD_DTIMES")
-    private LocalDateTime uploadDtimes;
+    private Long uploadDtimes;
 
     @ColumnInfo(name = "ADDITIONAL_INFO")
     private byte[] additionalInfo;
@@ -85,5 +83,27 @@ public class Registration extends RegistrationCommonFields {
 
     @ColumnInfo(name = "HAS_BWORDS")
     private Boolean hasBwords;
+
+    @ColumnInfo(name = "IS_ACTIVE")
+    private Boolean isActive;
+
+    @ColumnInfo(name = "CR_BY")
+    private String crBy;
+
+    @ColumnInfo(name = "CR_DTIMES")
+    private Long crDtime;
+
+    @ColumnInfo(name = "UPD_BY")
+    private String updBy;
+
+    @ColumnInfo(name = "UPD_DTIMES")
+    private Long updDtimes;
+
+    @Override
+    public String toString() {
+        return packetId +
+                "\nStatus : " + clientStatus +
+                "\t\t" + ( serverStatus == null ? "Not Synced" : serverStatus);
+    }
 
 }

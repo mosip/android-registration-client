@@ -57,10 +57,10 @@ public class PreviewActivity extends DaggerAppCompatActivity {
     private void submitForm() {
         try {
             registrationService.submitRegistrationDto();
-            Toast.makeText(getApplicationContext(), "Registration packet created successfully", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Registration packet created successfully", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, "Failed on registration submission", e);
-            Toast.makeText(getApplicationContext(), "Packet creation failed", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Packet creation failed", Toast.LENGTH_LONG).show();
         }
         goToHome();
     }

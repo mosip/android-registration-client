@@ -28,5 +28,10 @@ public class MainActivity extends DaggerAppCompatActivity {
         startActivity(intent);
     }
 
+    public void click_list_packets(View view) {
+        Intent intent = new Intent(this, ListingActivity.class);
+        startActivity(intent);
+    }
+
 
 }

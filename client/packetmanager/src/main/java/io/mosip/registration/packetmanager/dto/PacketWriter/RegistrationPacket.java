@@ -51,14 +51,16 @@ public class RegistrationPacket {
 		this.documents.put(fieldId, dto);
 	}
 
-	public void setMetaData(Map<String, String> metaInfo) {
-		metaInfo.entrySet().forEach(meta -> {
-			setFields(meta.getKey(), meta.getValue(), this.metaData);
-		});
+	public void setMetaData(String key, String value) {
+		this.metaData.putIfAbsent(key, value);
 	}
 
-	public void addMetaData(String key, String value) {
-		setFields(key, value, this.metaData);
+	public void setMetaData(String key, HashMap<String, Object> value) {
+		this.metaData.putIfAbsent(key, value);
+	}
+
+	public void setMetaData(String key, List<HashMap<String, Object>> value) {
+		this.metaData.putIfAbsent(key, value);
 	}
 
 	public void setAudits(List<Map<String, String>> audits) {
@@ -67,31 +69,5 @@ public class RegistrationPacket {
 
 	public void setAudit(Map<String, String> audit) {
 		getAudits().add(audit);
-	}
-
-	private void setFields(String fieldName, String value, Map finalMap) {
-		try {
-			if (value != null) {
-				Object json = new JSONTokener(value).nextValue();
-				if (json instanceof JSONObject) {
-					HashMap<String, Object> hashMap = new ObjectMapper().readValue(value, HashMap.class);
-					finalMap.putIfAbsent(fieldName, hashMap);
-				}
-				else if (json instanceof JSONArray) {
-					List jsonList = new ArrayList<>();
-					JSONArray jsonArray = new JSONArray(value);
-					for (int i = 0; i < jsonArray.length(); i++) {
-						Object obj = jsonArray.get(i);
-						HashMap<String, Object> hashMap = new ObjectMapper().readValue(obj.toString(), HashMap.class);
-						jsonList.add(hashMap);
-					}
-					finalMap.putIfAbsent(fieldName, jsonList);
-				} else
-					finalMap.putIfAbsent(fieldName, value);
-			} else
-				finalMap.putIfAbsent(fieldName, value);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 }

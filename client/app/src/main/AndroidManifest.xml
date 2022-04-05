@@ -49,6 +49,12 @@
         </activity>
 
         <activity
+                android:name=".activites.ListingActivity"
+                android:windowSoftInputMode="adjustResize"
+                android:exported="true">
+        </activity>
+
+        <activity
                 android:name=".activites.LoginActivity"
                 android:label="@string/action_sign_in"
                 android:exported="true">

@@ -108,13 +108,8 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     }
 
     @Override
-    public void addMetaInfo(String id, Map<String, String> metaInfo) {
-        this.initialize(id).setMetaData(metaInfo);
-    }
-
-    @Override
     public void addMetaInfo(String id, String key, String value) {
-        this.initialize(id).addMetaData(key, value);
+        this.initialize(id).setMetaData(key, value);
     }
 
     @Override
