@@ -14,6 +14,6 @@ public interface ObjectAdapterService {
 
     boolean removeContainer(String account, String container, String source, String process);
 
-    String pack(String account, String container, String source, String process);
+    String pack(String account, String container, String source, String process, String refId);
 
 }

@@ -13,20 +13,23 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.app.viewmodel.ListingViewModel;
-import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.factory.ClientWorkerFactory;
-import io.mosip.registration.clientmanager.factory.SyncRestFactory;
+import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
-import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
+import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import io.mosip.registration.keymanager.repository.KeyStoreRepository;
+import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.packetmanager.service.PacketCryptoServiceImpl;
 import io.mosip.registration.packetmanager.service.PacketWriterServiceImpl;
 import io.mosip.registration.packetmanager.service.PosixAdapterServiceImpl;
@@ -70,8 +73,15 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public IPacketCryptoService provideIPacketCryptoService(ClientCryptoManagerService clientCryptoManagerService) {
-        return new PacketCryptoServiceImpl(appContext, clientCryptoManagerService);
+    public CryptoManagerService provideCryptoManagerService(KeyStoreRepository keyStoreRepository) {
+        return new CryptoManagerServiceImpl(appContext,keyStoreRepository);
+    }
+
+    @Singleton
+    @Provides
+    public IPacketCryptoService provideIPacketCryptoService(ClientCryptoManagerService clientCryptoManagerService,
+                                                            CryptoManagerService cryptoManagerService) {
+        return new PacketCryptoServiceImpl(appContext, clientCryptoManagerService, cryptoManagerService);
     }
 
     @Singleton
@@ -102,8 +112,18 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public MasterDataService provideMasterDataService() {
-        return new MasterDataServiceImpl(appContext);
+    public MasterDataService provideMasterDataService(SyncRestService syncRestService, ClientCryptoManagerService clientCryptoManagerService,
+                                                      MachineRepository machineRepository,
+                                                      RegistrationCenterRepository registrationCenterRepository,
+                                                      DocumentTypeRepository documentTypeRepository,
+                                                      ApplicantValidDocRepository applicantValidDocRepository,
+                                                      TemplateRepository templateRepository,
+                                                      DynamicFieldRepository dynamicFieldRepository,
+                                                      KeyStoreRepository keyStoreRepository,
+                                                      LocationRepository locationRepository) {
+        return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
+                machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
+                templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository);
     }
 
     @Singleton
@@ -155,8 +175,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    SyncRestFactory provideSyncRestFactory(ClientCryptoManagerService clientCryptoManagerService) {
-        return new SyncRestFactory(clientCryptoManagerService);
+    SyncRestUtil provideSyncRestFactory(ClientCryptoManagerService clientCryptoManagerService) {
+        return new SyncRestUtil(clientCryptoManagerService);
     }
 
     @Provides
@@ -182,7 +202,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
-        return new RegistrationRepository(registrationDao);
+    PacketService providePacketService(RegistrationRepository registrationRepository,
+                                       IPacketCryptoService packetCryptoService, SyncRestService syncRestService) {
+        return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService);
     }
 }

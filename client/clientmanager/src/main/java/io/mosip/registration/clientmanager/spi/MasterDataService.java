@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface MasterDataService {
 
+    void initialSync() throws Exception;
+    void syncCertificate();
+    void syncMasterData() throws Exception;
+
     /**
      * Returns the list of supported location hierarchy levels
      * @param langCode
@@ -28,6 +32,14 @@ public interface MasterDataService {
      * @param langCode
      * @return
      */
-    List<GenericDto> findLocationByParentHierarchyCode(String parentCode, String langCode);
+    List<String> findLocationByParentHierarchyCode(String parentCode, String langCode);
+
+    /**
+     * Returns the list of immediate children for the provided hierarchy Level
+     * @param hierarchyLevel
+     * @param langCode
+     * @return
+     */
+    List<String> findLocationByHierarchyLevel(int hierarchyLevel, String langCode);
 
 }

@@ -23,5 +23,5 @@ public interface PacketWriterService {
 
     void addAudit(String id, Map<String, String> audit);
 
-    String persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode);
+    String persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId);
 }

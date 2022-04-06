@@ -2,14 +2,10 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 import android.util.Log;
-import io.mosip.registration.clientmanager.config.ClientDatabase;
-import io.mosip.registration.clientmanager.constant.PacketClientStatus;
-import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
-import io.mosip.registration.clientmanager.spi.MasterDataService;
-import io.mosip.registration.clientmanager.util.DateUtils;
+import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
@@ -60,7 +56,7 @@ public class RegistrationService {
 
         String timestamp = DateUtils.formatToISOStringWithoutMillis(LocalDateTime.now(ZoneOffset.UTC));
         timestamp = timestamp.replaceAll(":|T|Z|-", "");
-        String rid = String.format("100011007710031%s", timestamp);
+        String rid = String.format("100011000810031%s", timestamp);
 
         List<String> languages = new ArrayList<>();
         languages.add("eng"); //TODO
@@ -99,7 +95,7 @@ public class RegistrationService {
                 userInterfaceHelperService.getSchemaJsonFromResource(),
                 "REGISTRATION_CLIENT",
                 this.registrationDto.getProcess(),
-                true);
+                true, "10001_10008");
 
         Log.i(TAG, "Packet created here : " + containerPath);
 
@@ -130,7 +126,7 @@ public class RegistrationService {
     private String generateRID() {
         String timestamp = DateUtils.formatToISOStringWithoutMillis(LocalDateTime.now(ZoneOffset.UTC));
         timestamp = timestamp.replaceAll(":|T|Z|-", "");
-        return String.format("100011007710031%s", timestamp);
+        return String.format("100011000810031%s", timestamp);
     }
 
     //TODO fetch the saved audits and add them in the packet

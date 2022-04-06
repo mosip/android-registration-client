@@ -54,7 +54,7 @@ public class PacketKeeper {
 
     public PacketInfo putPacket(Packet packet) throws PacketKeeperException {
         try {
-            byte[] encryptedSubPacket = iPacketCryptoService.encrypt(packet.getPacket());
+            byte[] encryptedSubPacket = iPacketCryptoService.encrypt(packet.getPacketInfo().getRefId(), packet.getPacket());
 
             // put packet in object store
             boolean response = getAdapter().putObject(PACKET_MANAGER_ACCOUNT,
@@ -100,8 +100,8 @@ public class PacketKeeper {
         return getAdapter().removeContainer(PACKET_MANAGER_ACCOUNT, id, source, process);
     }
 
-    public String pack(String id, String source, String process) {
-        return getAdapter().pack(PACKET_MANAGER_ACCOUNT, id, source, process);
+    public String pack(String id, String source, String process, String refId) {
+        return getAdapter().pack(PACKET_MANAGER_ACCOUNT, id, source, process, refId);
     }
 
 }

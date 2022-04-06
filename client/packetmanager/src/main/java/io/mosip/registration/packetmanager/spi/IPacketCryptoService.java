@@ -7,6 +7,6 @@ public interface IPacketCryptoService {
 
     byte[] sign(byte[] packet);
 
-    byte[] encrypt(byte[] packet);
+    byte[] encrypt(String refId, byte[] packet) throws Exception;
 
 }

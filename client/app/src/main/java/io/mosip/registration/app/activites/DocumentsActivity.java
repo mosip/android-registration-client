@@ -26,6 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -147,6 +151,11 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
+            try(InputStream  iStream = getContentResolver().openInputStream(uri)) {
+                byte[] document = getBytes(iStream);
+            } catch (Exception e) {
+               Log.e(TAG, "Failed to convert URI to bytes", e);
+            }
             /*try {
 
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
@@ -155,6 +164,19 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
             } catch (IOException e) {
                 e.printStackTrace();
             }*/
+        }
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        try(ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream()) {
+            int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];
+
+            int len = 0;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+            return byteBuffer.toByteArray();
         }
     }
 }

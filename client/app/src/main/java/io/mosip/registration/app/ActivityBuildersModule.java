@@ -3,6 +3,8 @@ package io.mosip.registration.app;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import io.mosip.registration.app.activites.*;
+import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
 
 @Module
 public abstract class ActivityBuildersModule {

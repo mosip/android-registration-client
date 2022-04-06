@@ -16,7 +16,8 @@ import android.widget.Toast;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
-import io.mosip.registration.clientmanager.factory.SyncRestFactory;
+import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import retrofit2.Call;
@@ -31,7 +32,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     @Inject
-    SyncRestFactory syncRestFactory;
+    SyncRestUtil syncRestFactory;
 
     @Inject
     SyncRestService syncRestService;
@@ -107,7 +108,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
             public void onResponse(Call call, Response response) {
                 ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
                 if(response.isSuccessful()) {
-                    if((wrapper.getErrors() == null || wrapper.getErrors().isEmpty()) && wrapper.getResponse() != null) {
+                    ServiceError error = SyncRestUtil.getServiceError(wrapper);
+                    if(error == null) {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse());
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -120,7 +122,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                         }
                     }
                     else {
-                        Toast.makeText(LoginActivity.this, wrapper.getErrors().get(0).getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                     return;
                 }

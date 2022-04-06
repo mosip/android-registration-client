@@ -233,7 +233,7 @@
     "required": true,
     "bioAttributes": null,
     "requiredOn": [],
-    "subType": "Region"
+    "subType": "2"
   },
   {
     "id": "province",
@@ -270,7 +270,7 @@
     "required": true,
     "bioAttributes": null,
     "requiredOn": [],
-    "subType": "Province"
+    "subType": "3"
   },
   {
     "id": "city",
@@ -307,37 +307,7 @@
     "required": true,
     "bioAttributes": null,
     "requiredOn": [],
-    "subType": "City"
-  },
-  {
-    "id": "zone",
-    "inputRequired": true,
-    "type": "simpleType",
-    "minimum": 0,
-    "maximum": 0,
-    "description": "zone",
-    "label": {
-      "eng": "Zone"
-    },
-    "controlType": "dropdown",
-    "fieldType": "default",
-    "format": "none",
-    "validators": [],
-    "fieldCategory": "pvt",
-    "alignmentGroup": "location",
-    "visible": null,
-    "contactType": null,
-    "group": "Location",
-    "groupLabel": null,
-    "changeAction": null,
-    "transliterate": false,
-    "templateName": null,
-    "fieldLayout": null,
-    "locationHierarchy": null,
-    "required": true,
-    "bioAttributes": null,
-    "requiredOn": [],
-    "subType": "Zone"
+    "subType": "4"
   },
   {
     "id": "postalCode",
@@ -374,7 +344,7 @@
     "required": true,
     "bioAttributes": null,
     "requiredOn": [],
-    "subType": "Postal Code"
+    "subType": "5"
   },
   {
     "id": "phone",

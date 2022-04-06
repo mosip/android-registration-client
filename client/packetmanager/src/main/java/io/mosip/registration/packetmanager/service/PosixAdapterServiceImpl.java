@@ -139,7 +139,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
-    public String pack(String account, String container, String source, String process) {
+    public String pack(String account, String container, String source, String process, String refId) {
         try {
             File accountLoc = new File(BASE_LOCATION + SEPARATOR + account);
             if (!accountLoc.exists())
@@ -150,7 +150,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
                 throw new RuntimeException("Files not found in destinations");
 
             InputStream ios = new FileInputStream(containerZip);
-            byte[] encryptedPacket = iPacketCryptoService.encrypt(IOUtils.toByteArray(ios));
+            byte[] encryptedPacket = iPacketCryptoService.encrypt(refId, IOUtils.toByteArray(ios));
             FileUtils.copyInputStreamToFile(new ByteArrayInputStream(encryptedPacket), containerZip);
             return encryptedPacket != null ? containerZip.getCanonicalPath() : null;
 
@@ -164,6 +164,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private Map<String, Object> getMetaData(String account, String container, String source, String process, String objectName) {
         Map<String, Object> metaMap = null;
         try {
+            Log.i(TAG, "============ Account location >>> " + BASE_LOCATION + SEPARATOR + account);
             File accountLoc = new File(BASE_LOCATION + SEPARATOR + account);
             if (!accountLoc.exists())
                 return null;

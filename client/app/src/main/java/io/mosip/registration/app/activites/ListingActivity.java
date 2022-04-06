@@ -2,6 +2,7 @@ package io.mosip.registration.app.activites;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import io.mosip.registration.app.viewmodel.ListingViewModel;
 import io.mosip.registration.app.viewmodel.ViewModelFactory;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.spi.PacketService;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -26,6 +28,9 @@ public class ListingActivity  extends DaggerAppCompatActivity {
     @Inject
     RegistrationRepository registrationRepository;
 
+    @Inject
+    PacketService packetService;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +38,11 @@ public class ListingActivity  extends DaggerAppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressbar);
         progressBar.setVisibility(View.VISIBLE);
+
+        //to display back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Sync and Upload Packets");
+        getSupportActionBar().setSubtitle("Note : Packets are auto approved");
 
         ViewModelFactory viewModelFactory = new ViewModelFactory(new ListingViewModel(registrationRepository));
         ListingViewModel model = new ViewModelProvider(this, viewModelFactory).get(ListingViewModel.class);
@@ -71,11 +81,20 @@ public class ListingActivity  extends DaggerAppCompatActivity {
                 convertView.setTag(viewHolder);
             }
 
+            Registration registration = this.mObjects.get(position);
+
             mainViewholder = (ViewHolder) convertView.getTag();
             mainViewholder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(), "Button was clicked for list item " + position, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Starting packet sync", Toast.LENGTH_SHORT).show();
+                    try {
+                        packetService.syncRegistration(registration.getPacketId());
+                        Toast.makeText(getContext(), "Packet sync successful", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Packet sync failed", e);
+                        Toast.makeText(getContext(), "Packet sync failed", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             mainViewholder.title.setText(getItem(position).toString());

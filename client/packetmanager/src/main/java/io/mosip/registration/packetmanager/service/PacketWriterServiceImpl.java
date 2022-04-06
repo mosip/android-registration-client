@@ -123,16 +123,16 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     }
 
     @Override
-    public String persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode) {
+    public String persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) {
         try {
-            return createPacket(id, version, schemaJson, source, process, offlineMode);
+            return createPacket(id, version, schemaJson, source, process, offlineMode, refId);
         } catch (Exception e) {
             Log.e(TAG, "Persist packet failed : ", e);
         }
         return null;
     }
 
-    private String createPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode) throws Exception {
+    private String createPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) throws Exception {
         Log.i(TAG, "Started packet creation");
 
         if (this.registrationPacket == null || !registrationPacket.getRegistrationId().equalsIgnoreCase(id))
@@ -154,6 +154,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                 packetInfo.setProviderName(this.getClass().getSimpleName());
                 packetInfo.setSchemaVersion(new Double(version).toString());
                 packetInfo.setId(id);
+                packetInfo.setRefId(refId);
                 packetInfo.setSource(source);
                 packetInfo.setProcess(process);
                 packetInfo.setPacketName(id + UNDERSCORE + subPacketName);
@@ -167,7 +168,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                 Log.i(TAG, "Completed SubPacket Creation");
 
                 if (counter == identityProperties.keySet().size()) {
-                    containerPath = packetKeeper.pack(packetInfo.getId(), packetInfo.getSource(), packetInfo.getProcess());
+                    containerPath = packetKeeper.pack(packetInfo.getId(), packetInfo.getSource(), packetInfo.getProcess(), refId);
                     if (containerPath == null) {
                         packetKeeper.deletePacket(id, source, process);
                         throw new Exception("Failed to pack the created zip");

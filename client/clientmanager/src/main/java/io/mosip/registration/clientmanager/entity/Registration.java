@@ -18,37 +18,37 @@ public class Registration {
 
     @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "PACKET_ID")
+    @ColumnInfo(name = "packet_id")
     private String packetId;
 
     @ColumnInfo(name = "usr_id")
     private String usrId;
 
-    @ColumnInfo(name = "REG_TYPE")
+    @ColumnInfo(name = "reg_type")
     private String regType;
 
-    @ColumnInfo(name = "PREREG_ID")
+    @ColumnInfo(name = "prereg_id")
     private String preRegId;
 
-    @ColumnInfo(name = "ACK_FILENAME")
-    private String ackFilename;
+    @ColumnInfo(name = "file_path")
+    private String filePath;
 
-    @ColumnInfo(name = "CLIENT_STATUS")
+    @ColumnInfo(name = "client_status")
     private String clientStatus;
 
-    @ColumnInfo(name = "SERVER_STATUS")
+    @ColumnInfo(name = "server_status")
     private String serverStatus;
 
-    @ColumnInfo(name = "CLIENT_STATUS_DTIMES")
+    @ColumnInfo(name = "client_status_dtimes")
     private Long clientStatusDtimes;
 
-    @ColumnInfo(name = "SERVER_STATUS_DTIMES")
+    @ColumnInfo(name = "server_status_dtimes")
     private Long serverStatusDtimes;
 
-    @ColumnInfo(name = "CLIENT_STATUS_COMMENT")
+    @ColumnInfo(name = "client_status_comment")
     private String clientStatusComment;
 
-    @ColumnInfo(name = "SERVER_STATUS_COMMENT")
+    @ColumnInfo(name = "server_status_comment")
     private String serverStatusComment;
 
     @ColumnInfo(name = "center_id")
@@ -57,46 +57,46 @@ public class Registration {
     @ColumnInfo(name = "approved_by")
     private String approvedBy;
 
-    @ColumnInfo(name = "APPROVER_ROLE_CODE")
+    @ColumnInfo(name = "approver_role_code")
     private String approverRoleCode;
 
-    @ColumnInfo(name = "FILE_UPLOAD_STATUS")
+    @ColumnInfo(name = "file_upload_status")
     private String fileUploadStatus;
 
-    @ColumnInfo(name = "UPLOAD_COUNT")
+    @ColumnInfo(name = "upload_count")
     private Short uploadCount;
 
-    @ColumnInfo(name = "UPLOAD_DTIMES")
+    @ColumnInfo(name = "upload_dtimes")
     private Long uploadDtimes;
 
-    @ColumnInfo(name = "ADDITIONAL_INFO")
+    @ColumnInfo(name = "additional_info")
     private byte[] additionalInfo;
 
-    @ColumnInfo(name = "APP_ID")
+    @ColumnInfo(name = "app_id")
     private String appId;
 
-    @ColumnInfo(name = "ADDITIONAL_INFO_REQ_ID")
+    @ColumnInfo(name = "additional_info_req_id")
     private String additionalInfoReqId;
 
-    @ColumnInfo(name = "ACK_SIGNATURE")
+    @ColumnInfo(name = "ack_signature")
     private String ackSignature;
 
-    @ColumnInfo(name = "HAS_BWORDS")
+    @ColumnInfo(name = "has_bwords")
     private Boolean hasBwords;
 
-    @ColumnInfo(name = "IS_ACTIVE")
+    @ColumnInfo(name = "is_active")
     private Boolean isActive;
 
-    @ColumnInfo(name = "CR_BY")
+    @ColumnInfo(name = "cr_by")
     private String crBy;
 
-    @ColumnInfo(name = "CR_DTIMES")
+    @ColumnInfo(name = "cr_dtimes")
     private Long crDtime;
 
-    @ColumnInfo(name = "UPD_BY")
+    @ColumnInfo(name = "upd_by")
     private String updBy;
 
-    @ColumnInfo(name = "UPD_DTIMES")
+    @ColumnInfo(name = "upd_dtimes")
     private Long updDtimes;
 
     @Override

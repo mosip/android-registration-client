@@ -1,7 +1,6 @@
-package io.mosip.registration.clientmanager.util;
+package io.mosip.registration.packetmanager.util;
 
-import io.mosip.registration.clientmanager.constant.ClientManagerError;
-import io.mosip.registration.clientmanager.exception.ClientCheckedException;
+import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +11,7 @@ import java.util.TimeZone;
 
 public class DateUtils {
 
+    private static final String TAG = DateUtils.class.getSimpleName();
     private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
     /**
      * Default UTC ZoneId.
@@ -25,14 +25,14 @@ public class DateUtils {
     private static final String UTC_DATETIME_PATTERN_WITHOUT_MILLIS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     public static LocalDateTime parseUTCToLocalDateTime(String utcDateTime, String pattern)
-            throws ClientCheckedException {
+            throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         simpleDateFormat.setTimeZone(UTC_TIME_ZONE);
         try {
             return simpleDateFormat.parse(utcDateTime).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         } catch (ParseException e) {
-            throw new ClientCheckedException(ClientManagerError.DATE_PARSE_ERROR.getErrorCode(),
-                    ClientManagerError.DATE_PARSE_ERROR.getErrorMessage(), e);
+            Log.e(TAG, "DATE_PARSE_ERROR", e);
+            throw new Exception("DATE_PARSE_ERROR");
         }
     }
 

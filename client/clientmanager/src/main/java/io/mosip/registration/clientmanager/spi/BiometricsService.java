@@ -6,7 +6,7 @@ import io.mosip.registration.clientmanager.dto.sbi.SBIRequest;
 import io.mosip.registration.clientmanager.dto.sbi.SBIResponse;
 import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
-import io.mosip.registration.clientmanager.util.DateUtils;
+import io.mosip.registration.packetmanager.util.DateUtils;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -127,7 +127,7 @@ public abstract class BiometricsService {
                         && ts.isBefore(LocalDateTime.now().plusMinutes(allowedResponseLagMins))) {
                     return;
                 }
-            } catch (ClientCheckedException ex) {
+            } catch (Exception ex) {
                 throw new BiometricsServiceException(SBIError.SBI_CAPTURE_INVALID_TIME.getErrorCode(),
                         SBIError.SBI_CAPTURE_INVALID_TIME.getErrorMessage(), ex);
             }

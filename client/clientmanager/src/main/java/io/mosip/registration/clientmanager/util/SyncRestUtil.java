@@ -1,7 +1,12 @@
-package io.mosip.registration.clientmanager.factory;
+package io.mosip.registration.clientmanager.util;
 
+import android.util.Log;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.mosip.registration.clientmanager.dto.http.RegProcResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.RequestWrapper;
-import io.mosip.registration.clientmanager.util.DateUtils;
+import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
+import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.keymanager.dto.PublicKeyRequestDto;
 import io.mosip.registration.keymanager.dto.PublicKeyResponseDto;
 import io.mosip.registration.keymanager.dto.SignRequestDto;
@@ -9,25 +14,49 @@ import io.mosip.registration.keymanager.dto.SignResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.util.KeyManagerConstant;
+import io.mosip.registration.packetmanager.util.JsonUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Base64;
 
 
 @Singleton
-public class SyncRestFactory {
+public class SyncRestUtil {
 
-    private static final String TAG = SyncRestFactory.class.getSimpleName();
+    private static final String TAG = SyncRestUtil.class.getSimpleName();
 
     private ClientCryptoManagerService clientCryptoManagerService;
 
     @Inject
-    public SyncRestFactory(ClientCryptoManagerService clientCryptoManagerService) {
+    public SyncRestUtil(ClientCryptoManagerService clientCryptoManagerService) {
         this.clientCryptoManagerService= clientCryptoManagerService;
+    }
+
+    public static ServiceError getServiceError(ResponseWrapper wrapper) {
+        if((wrapper.getErrors() == null || wrapper.getErrors().isEmpty()) && wrapper.getResponse() != null)
+            return null;
+
+        try {
+            Log.i(TAG, JsonUtils.javaObjectToJsonString(wrapper.getErrors()));
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "error parsing service error", e);
+        }
+        return (ServiceError) wrapper.getErrors().get(0);
+    }
+
+    public static ServiceError getServiceError(RegProcResponseWrapper wrapper) {
+        if((wrapper.getErrors() == null || wrapper.getErrors().isEmpty()) && wrapper.getResponse() != null)
+            return null;
+
+        try {
+            Log.i(TAG, JsonUtils.javaObjectToJsonString(wrapper.getErrors()));
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "error parsing service error", e);
+        }
+        return (ServiceError) wrapper.getErrors().get(0);
     }
 
     public RequestWrapper<String> getAuthRequest(String username, String password) {

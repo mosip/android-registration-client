@@ -10,6 +10,9 @@ import java.util.List;
 @Dao
 public interface RegistrationDao {
 
+    @Query("SELECT * FROM registration where packet_id=:packetId")
+    Registration findOneByPacketId(String packetId);
+
     @Query("SELECT * FROM registration order by cr_dtimes desc")
     List<Registration> findAll();
 
@@ -21,6 +24,12 @@ public interface RegistrationDao {
 
     @Query("SELECT * FROM registration where client_status in (:clientStatuses) and server_status in (:serverStatuses) order by cr_dtimes desc")
     List<Registration> findAllByClientStatusAndServerStatus(List<String> clientStatuses, List<String> serverStatuses);
+
+    @Query("Update registration set server_status = :status where packet_id = :packetId")
+    void updateServerStatus(String packetId, String status);
+
+    @Query("Update registration set client_status = :status where packet_id = :packetId")
+    void updateClientStatus(String packetId, String status);
 
     @Insert
     void insert(Registration registration);

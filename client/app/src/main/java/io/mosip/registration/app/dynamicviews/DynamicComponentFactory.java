@@ -100,7 +100,7 @@ public class DynamicComponentFactory {
         return dd;
     }
 
-    public DynamicComponent getDropdownComponent(JSONObject labels, JSONArray validatorRules) {
+    public DynamicComponent getDropdownComponent(JSONObject labels, JSONArray validatorRules, String subType, String fieldId) {
 
         DynamicComponent dd = new DynamicComponent(context);
         try {
@@ -109,7 +109,7 @@ public class DynamicComponentFactory {
             while (keys.hasNext()) {
                 String langCode = keys.next();
                 DynamicDropDownBox control = new DynamicDropDownBox(context,langCode,labels.getString(langCode),
-                        getValidationRule(langCode,validatorRules), masterDataService);
+                        getValidationRule(langCode,validatorRules), masterDataService, subType, fieldId);
                 dd.addView(control);
             }
 

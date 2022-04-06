@@ -10,9 +10,9 @@ public interface PacketService {
 
     List<Registration> getSyncedRegistrations();
 
-    void syncRegistrations(List<Registration> registrations);
+    void syncRegistration(String packetId) throws Exception;
 
-    void uploadRegistrations(List<Registration> registrations);
+    void uploadRegistration(String packetId) throws Exception;
 
     List<Registration> getAllRegistrations(int page, int pageLimit);
 

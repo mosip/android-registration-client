@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class SyncRIDResponse {
 
-    private String registrationId;
     private String status;
+    private String registrationId;
 }

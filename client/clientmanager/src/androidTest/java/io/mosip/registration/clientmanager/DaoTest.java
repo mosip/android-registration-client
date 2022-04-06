@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.entity.UserToken;
-import io.mosip.registration.clientmanager.util.RestService;
 
 @RunWith(AndroidJUnit4.class)
 public class DaoTest {

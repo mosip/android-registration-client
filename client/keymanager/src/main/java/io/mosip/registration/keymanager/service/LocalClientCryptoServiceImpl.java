@@ -340,6 +340,11 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     }
 
     @Override
+    public String getClientKeyIndex() throws Exception {
+        return CryptoUtil.computeFingerPrint(getEnDecPublicKey().getEncoded(), null);
+    }
+
+    @Override
     public void printMachineDetails() {
         try {
             Log.i(TAG, "=================================================");

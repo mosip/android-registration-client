@@ -106,7 +106,9 @@ public class DemographicsActivity extends DaggerAppCompatActivity {
                             break;
 
                         case "dropdown" :
-                            DynamicView dropdownDynamicView = factory.getDropdownComponent(item.getJSONObject("label"), item.getJSONArray("validators"))
+                            DynamicView dropdownDynamicView = factory.getDropdownComponent(item.getJSONObject("label"), item.getJSONArray("validators"),
+                                            item.getString("fieldType").equalsIgnoreCase("dynamic") ? null : item.getString("subType"),
+                                            item.getString("id"))
                                     .getPrimaryView();
                             pnlPrimary.addView((View) dropdownDynamicView);
                             dynamicViews.put(item.getString("id"), dropdownDynamicView);

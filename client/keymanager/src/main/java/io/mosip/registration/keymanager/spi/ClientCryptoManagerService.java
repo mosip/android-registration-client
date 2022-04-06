@@ -2,6 +2,8 @@ package io.mosip.registration.keymanager.spi;
 
 import io.mosip.registration.keymanager.dto.*;
 
+import java.security.KeyStoreException;
+
 
 /**
  * @Author George T Abraham
@@ -20,6 +22,8 @@ public interface ClientCryptoManagerService {
     PublicKeyResponseDto getPublicKey(PublicKeyRequestDto publicKeyRequestDto);
 
     String getMachineName();
+
+    String getClientKeyIndex() throws Exception;
 
     void printMachineDetails();
 }
