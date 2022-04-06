@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.entity;
 import androidx.room.ColumnInfo;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 
@@ -19,9 +20,9 @@ public class RegistrationCommonFields {
     @ColumnInfo(name = "CR_BY")
     protected String crBy;
     @ColumnInfo(name = "CR_DTIMES")
-    protected Timestamp crDtime;
+    protected Long crDtime;
     @ColumnInfo(name = "UPD_BY")
     protected String updBy;
     @ColumnInfo(name = "UPD_DTIMES")
-    protected Timestamp updDtimes;
+    protected Long updDtimes;
 }

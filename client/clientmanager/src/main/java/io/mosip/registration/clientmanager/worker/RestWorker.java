@@ -8,23 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-import io.mosip.registration.clientmanager.dto.http.RequestDto;
-import io.mosip.registration.clientmanager.exception.RestServiceException;
-import io.mosip.registration.clientmanager.util.DateUtils;
-import io.mosip.registration.clientmanager.util.RestService;
-import io.mosip.registration.keymanager.dto.PublicKeyRequestDto;
-import io.mosip.registration.keymanager.dto.PublicKeyResponseDto;
-import io.mosip.registration.keymanager.dto.SignRequestDto;
-import io.mosip.registration.keymanager.dto.SignResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
-import io.mosip.registration.keymanager.util.KeyManagerConstant;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Base64;
-import java.util.Map;
 
 
 /**

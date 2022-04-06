@@ -49,4 +49,9 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
     implementation 'commons-codec:commons-codec:1.15'
 
+    implementation "androidx.room:room-common:2.3.0"
+
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
+
+
 }

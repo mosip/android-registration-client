@@ -1,26 +1,31 @@
 package io.mosip.registration.clientmanager.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import java.sql.Timestamp;
-
-import io.mosip.registration.clientmanager.entity.id.UserBiometricId;
 import lombok.Data;
 /**
  * The Entity Class for UserBiometric details
  * 
  * @author Anshul Vanawat
  */
-@Entity(tableName = "user_biometric")
+@Entity(primaryKeys = {"usr_id", "bmtyp_code", "bmatt_code"}, tableName = "user_biometric")
 @Data
 public class UserBiometric extends RegistrationCommonFields {
 
-	@Embedded
-	@PrimaryKey
-	private UserBiometricId userBiometricId;
+	@NonNull
+	@ColumnInfo(name = "usr_id")
+	private String usrId;
+
+	@NonNull
+	@ColumnInfo(name = "bmtyp_code")
+	private String bioTypeCode;
+
+	@NonNull
+	@ColumnInfo(name = "bmatt_code")
+	private String bioAttributeCode;
 
 	@ColumnInfo(name = "bio_template")
 	private byte[] bioTemplate;

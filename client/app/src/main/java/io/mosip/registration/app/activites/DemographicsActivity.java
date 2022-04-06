@@ -15,41 +15,31 @@ import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
-import io.mosip.registration.clientmanager.util.DateUtils;
-import io.mosip.registration.packetmanager.spi.PacketWriterService;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DemographicsActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = DemographicsActivity.class.getSimpleName();
-    private String process = "";
-    private String schemaVersion = "";
-    private String RID = "";
     private Map<String, DynamicView> dynamicViews = new HashMap<>();
     private ViewGroup pnlPrimary = null;
 
     @Inject
-    public PacketWriterService packetWriterService;
+    UserInterfaceHelperService userInterfaceHelperService;
 
     @Inject
     public MasterDataService masterDataService;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.registration_controller);
+        setContentView(R.layout.screen_activity);
 
         //Adding file permissions
         String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -59,49 +49,21 @@ public class DemographicsActivity extends DaggerAppCompatActivity {
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        process = "NEW";
-        schemaVersion = "0.1";
-        RID = generateRID();
+        getSupportActionBar().setTitle("Demographics Data");
 
         final Button submitButton = findViewById(R.id.submit);
         submitButton.setOnClickListener( v -> {
             submitButton.setEnabled(false);
             Log.i(TAG, "Clicked on Registration form submit...");
-            saveDemographics();
+            goToNextActivity();
         });
 
         pnlPrimary = findViewById(R.id.pnlPrimaryLanguagePanel);
         loadUI();
     }
 
-    //TODO replace the logic with valid RID generator
-    private String generateRID() {
-        String timestamp = DateUtils.formatToISOStringWithoutMillis(LocalDateTime.now(ZoneOffset.UTC));
-        timestamp = timestamp.replaceAll(":|T|Z|-", "");
-        return String.format("100011007710031%s", timestamp);
-    }
-
-    private void saveDemographics() {
-        for (String fieldId : dynamicViews.keySet()) {
-            switch (dynamicViews.get(fieldId).getDataType()) {
-                case "documentType" :
-                case "biometricType" :
-                    break;
-                default:
-                    packetWriterService.setField(RID, fieldId, dynamicViews.get(fieldId).getValue());
-                    break;
-            }
-        }
-
-        goToNextActivity();
-    }
-
     public void goToNextActivity() {
         Intent intent = new Intent(this, DocumentsActivity.class);
-        intent.putExtra("process", this.process);
-        intent.putExtra("schemaVersion", this.schemaVersion);
-        intent.putExtra("RID", this.RID);
         startActivity(intent);
     }
 
@@ -115,27 +77,13 @@ public class DemographicsActivity extends DaggerAppCompatActivity {
         return true;
     }
 
-
-    public String loadJSONFromResource(int resourceNumber) {
-        String json = null;
-        try(InputStream is = getApplicationContext().getResources().openRawResource(resourceNumber)) {
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            json = new String(buffer, StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            Log.e(TAG, "Failed to load ui spec json", ex);
-        }
-        return json;
-    }
-
     private void loadUI() {
         dynamicViews.clear();
         pnlPrimary.removeAllViews();
 
         DynamicComponentFactory factory = new DynamicComponentFactory(getApplicationContext(), masterDataService);
 
-        String spec = loadJSONFromResource(R.raw.ui_specification);
+        String spec = userInterfaceHelperService.loadJSONFromResource();
         try {
             JSONArray compFromJson = new JSONArray(spec);
             for (int i = 0; i < compFromJson.length(); i++) {
@@ -158,7 +106,9 @@ public class DemographicsActivity extends DaggerAppCompatActivity {
                             break;
 
                         case "dropdown" :
-                            DynamicView dropdownDynamicView = factory.getDropdownComponent(item.getJSONObject("label"), item.getJSONArray("validators"))
+                            DynamicView dropdownDynamicView = factory.getDropdownComponent(item.getJSONObject("label"), item.getJSONArray("validators"),
+                                            item.getString("fieldType").equalsIgnoreCase("dynamic") ? null : item.getString("subType"),
+                                            item.getString("id"))
                                     .getPrimaryView();
                             pnlPrimary.addView((View) dropdownDynamicView);
                             dynamicViews.put(item.getString("id"), dropdownDynamicView);

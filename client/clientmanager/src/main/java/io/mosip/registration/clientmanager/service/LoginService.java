@@ -2,15 +2,10 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 
-import android.content.SharedPreferences;
 import android.util.Log;
-import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.mosip.registration.clientmanager.factory.SyncRestFactory;
-import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;

@@ -23,16 +23,21 @@ public class DynamicDropDownBox extends LinearLayout implements DynamicView {
     String languageCode="";
     String labelText="";
     String validationRule="";
+    String subType = null;
+    String fieldId = null;
     final int layoutId = R.layout.dynamic_dropdown_box;
     private MasterDataService masterDataService;
 
-    public DynamicDropDownBox(Context context, String langCode, String label, String validation, MasterDataService masterDataService) {
+    public DynamicDropDownBox(Context context, String langCode, String label, String validation,
+                              MasterDataService masterDataService, String subType, String fieldId) {
         super(context);
 
         languageCode=langCode;
         labelText=label;
         validationRule=validation;
-        masterDataService = masterDataService;
+        this.masterDataService = masterDataService;
+        this.subType = subType;
+        this.fieldId = fieldId;
         init(context);
     }
 
@@ -59,14 +64,13 @@ public class DynamicDropDownBox extends LinearLayout implements DynamicView {
     }
 
     private void initComponents(Context context) {
-        List<String> items = new ArrayList<>();
-        items.add("Option 1");
-        items.add("Option 2");
-        items.add("Option 3");
-        items.add("Option 4");
+        List<String> items = (subType != null) ?
+                this.masterDataService.findLocationByHierarchyLevel(Integer.parseInt(subType), languageCode) :
+                this.masterDataService.getFieldValues(fieldId, languageCode);
 
         @SuppressLint("ResourceType")
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item,
+                items == null ? new ArrayList<>() : items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner sItems = (Spinner) findViewById(R.id.dropdown_input);
         sItems.setAdapter(adapter);
@@ -80,5 +84,14 @@ public class DynamicDropDownBox extends LinearLayout implements DynamicView {
     public String getValue(){
         Spinner sItems = (Spinner) findViewById(R.id.dropdown_input);
         return sItems.getSelectedItem().toString();
+    }
+
+    @Override
+    public void setValue() {
+    }
+
+    @Override
+    public boolean validValue() {
+        return true;
     }
 }
