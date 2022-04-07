@@ -6,12 +6,17 @@ import android.widget.Button;
 
 import android.os.Bundle;
 
+import android.widget.TextView;
+import android.widget.Toast;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
-import io.mosip.registration.clientmanager.service.RegistrationService;
+import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegistrationActivity extends DaggerAppCompatActivity {
 
@@ -42,9 +47,23 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
 
     private void startRegistration() {
-        registrationService.startRegistration();
-        //TODO set consent
-        goToNextActivity();
+        try {
+            List<String> selectedLanguages = new ArrayList<>();
+            selectedLanguages.add("eng");
+
+            registrationService.startRegistration(selectedLanguages);
+
+            TextView textView = findViewById(R.id.consentText);
+            registrationService.getRegistrationDto().setConsent(textView.getText().toString());
+
+            goToNextActivity();
+            return;
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to start Registration", e);
+            Toast.makeText(getApplicationContext(), "Failed to start Registration : " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+            goToHome();
+        }
     }
 
 

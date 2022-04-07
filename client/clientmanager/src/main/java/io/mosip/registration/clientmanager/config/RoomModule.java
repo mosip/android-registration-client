@@ -8,6 +8,7 @@ import io.mosip.registration.clientmanager.dao.*;
 import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 import javax.inject.Singleton;
 
@@ -91,6 +92,12 @@ public class RoomModule {
         return clientDatabase.locationDao();
     }
 
+    @Singleton
+    @Provides
+    GlobalParamDao providesGlobalParamDao(ClientDatabase clientDatabase) {
+        return clientDatabase.globalParamDao();
+    }
+
     @Provides
     @Singleton
     RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
@@ -144,6 +151,12 @@ public class RoomModule {
     @Singleton
     LocationRepository provideLocationRepository(LocationDao locationDao) {
         return new LocationRepository(locationDao);
+    }
+
+    @Provides
+    @Singleton
+    GlobalParamRepository provideGlobalParamRepository(GlobalParamDao globalParamDao) {
+        return new GlobalParamRepository(globalParamDao);
     }
 
 }

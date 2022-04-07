@@ -15,7 +15,6 @@ import io.mosip.registration.app.R;
 import io.mosip.registration.app.viewmodel.ListingViewModel;
 import io.mosip.registration.app.viewmodel.ViewModelFactory;
 import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.PacketService;
 
 import javax.inject.Inject;
@@ -24,9 +23,6 @@ import java.util.List;
 public class ListingActivity  extends DaggerAppCompatActivity {
 
     private static final String TAG = ListingActivity.class.getSimpleName();
-
-    @Inject
-    RegistrationRepository registrationRepository;
 
     @Inject
     PacketService packetService;
@@ -44,7 +40,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
         getSupportActionBar().setTitle("Sync and Upload Packets");
         getSupportActionBar().setSubtitle("Note : Packets are auto approved");
 
-        ViewModelFactory viewModelFactory = new ViewModelFactory(new ListingViewModel(registrationRepository));
+        ViewModelFactory viewModelFactory = new ViewModelFactory(new ListingViewModel(packetService));
         ListingViewModel model = new ViewModelProvider(this, viewModelFactory).get(ListingViewModel.class);
         model.getRegistrationList().observe(this, list -> {
             // update UI
@@ -90,6 +86,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
                     Toast.makeText(getContext(), "Starting packet sync", Toast.LENGTH_SHORT).show();
                     try {
                         packetService.syncRegistration(registration.getPacketId());
+                        packetService.uploadRegistration(registration.getPacketId());
                         Toast.makeText(getContext(), "Packet sync successful", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Log.e(TAG, "Packet sync failed", e);

@@ -1,7 +1,6 @@
 package io.mosip.registration.app.activites;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,15 +18,14 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
-import io.mosip.registration.clientmanager.service.RegistrationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -39,6 +37,7 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
     private static final int SCAN_REQUEST_CODE = 99;
     private Button button = null;
     private Map<String, DynamicView> dynamicViews = new HashMap<>();
+    private Map<Integer, String> requestCodeMap = new HashMap<>();
     private ViewGroup pnlPrimary = null;
 
     @Inject
@@ -97,7 +96,7 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
     }
 
     public void goToHome() {
-        Intent intent = new Intent(this, DemographicsActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
@@ -121,11 +120,14 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
                 if(item.getBoolean("inputRequired")) {
                     switch (item.getString("controlType")) {
                         case "fileupload" :
-                            DynamicView docDynamicView = factory.getDocumentComponent(item.getJSONObject("label"), item.getJSONArray("validators"))
+                            DynamicView docDynamicView = factory.getDocumentComponent(item.getJSONObject("label"), item.getJSONArray("validators"),
+                                            item.getString("subType"))
                                     .getPrimaryView();
-                            setScanButtonListener((View)docDynamicView);
                             pnlPrimary.addView((View)docDynamicView);
                             dynamicViews.put(item.getString("id"), docDynamicView);
+                            int requestCode = SCAN_REQUEST_CODE+1;
+                            requestCodeMap.put(requestCode, item.getString("id"));
+                            setScanButtonListener(requestCode, (View)docDynamicView);
                             break;
                     }
                 }
@@ -135,13 +137,14 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
         }
     }
 
-    private void setScanButtonListener(View view) {
+    private void setScanButtonListener(int requestCode, View view) {
         Button button = view.findViewById(R.id.scan_doc);
         button.setOnClickListener( v -> {
+            view.findViewById(R.id.doc_status).setVisibility(View.INVISIBLE);
             int preference = ScanConstants.OPEN_CAMERA;
             Intent intent = new Intent(this, ScanActivity.class);
             intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
-            startActivityForResult(intent, SCAN_REQUEST_CODE);
+            startActivityForResult(intent, requestCode);
         });
     }
 
@@ -149,25 +152,20 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK && requestCodeMap.containsKey(requestCode)) {
             Uri uri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
             try(InputStream  iStream = getContentResolver().openInputStream(uri)) {
-                byte[] document = getBytes(iStream);
+                String fieldId = requestCodeMap.get(requestCode);
+                this.registrationService.getRegistrationDto().addDocument(fieldId,
+                        (String) dynamicViews.get(fieldId).getValue(), getBytes(iStream));
+                ((View)dynamicViews.get(fieldId)).findViewById(R.id.doc_status).setVisibility(View.VISIBLE);
             } catch (Exception e) {
-               Log.e(TAG, "Failed to convert URI to bytes", e);
+               Log.e(TAG, "Failed to set document to registration dto", e);
             }
-            /*try {
-
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                getContentResolver().delete(uri, null, null);
-                scannedImageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
         }
     }
 
-    public byte[] getBytes(InputStream inputStream) throws IOException {
+    private byte[] getBytes(InputStream inputStream) throws IOException {
         try(ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream()) {
             int bufferSize = 1024;
             byte[] buffer = new byte[bufferSize];

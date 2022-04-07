@@ -14,7 +14,9 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
+import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +35,10 @@ public class DemographicsActivity extends DaggerAppCompatActivity {
     UserInterfaceHelperService userInterfaceHelperService;
 
     @Inject
-    public MasterDataService masterDataService;
+    MasterDataService masterDataService;
+
+    @Inject
+    RegistrationService registrationService;
 
 
     @Override
@@ -54,7 +59,7 @@ public class DemographicsActivity extends DaggerAppCompatActivity {
         final Button submitButton = findViewById(R.id.submit);
         submitButton.setOnClickListener( v -> {
             submitButton.setEnabled(false);
-            Log.i(TAG, "Clicked on Registration form submit...");
+            saveDemographics();
             goToNextActivity();
         });
 
@@ -75,6 +80,24 @@ public class DemographicsActivity extends DaggerAppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         goToHome();
         return true;
+    }
+
+    private void saveDemographics() {
+        dynamicViews.entrySet().forEach(entry -> {
+            try {
+                DynamicView dynamicView = entry.getValue();
+                if(dynamicView.getValue() instanceof String)
+                    this.registrationService.getRegistrationDto().addDemographicField(entry.getKey(),
+                            (String)dynamicView.getValue());
+
+                if(dynamicView.getValue() instanceof GenericDto)
+                    this.registrationService.getRegistrationDto().addDemographicField(entry.getKey(),
+                            (GenericDto)dynamicView.getValue());
+
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to save value : " + entry.getKey(), e);
+            }
+        });
     }
 
     private void loadUI() {

@@ -15,7 +15,7 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
-import io.mosip.registration.clientmanager.service.RegistrationService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -114,7 +114,7 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
     }
 
     public void goToHome() {
-        Intent intent = new Intent(this, DocumentsActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
@@ -156,13 +156,13 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
         this.textView.append("Started to discover " + this.currentModality + " SBI" + NEW_LINE);
         Intent intent = new Intent();
         intent.setAction("sbi.reg.device");
-        List activities = this.getPackageManager().queryIntentActivities(intent, MATCH_DEFAULT_ONLY);
-        if (activities.size() > 0) {
+        //List activities = this.getPackageManager().queryIntentActivities(intent, MATCH_DEFAULT_ONLY);
+        //if (activities.size() > 0) {
             intent.putExtra("input", "{\"type\":\""+this.currentModality+"\"}");
             this.startActivityForResult(intent, 1);
-        } else {
-            this.textView.append("Supported apps not found!" + NEW_LINE);
-        }
+        //} else {
+        //    this.textView.append("Supported apps not found!" + NEW_LINE);
+        //}
     }
 
     private void info() {
@@ -173,14 +173,14 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
         }
         Intent localIntent = new Intent();
         localIntent.setAction(this.callbackId + ".info");
-        List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
-        if (activities.size() > 0) {
+        //List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
+        //if (activities.size() > 0) {
             this.textView.append("=======================================" + NEW_LINE);
             this.textView.append("Initiating Device info request for " + this.currentModality + NEW_LINE);
             startActivityForResult(localIntent, 2);
-        } else {
-            this.textView.append("Supported apps not found!" + NEW_LINE);
-        }
+        //} else {
+        //    this.textView.append("Supported apps not found!" + NEW_LINE);
+        //}
     }
 
     private void rcapture() {
@@ -192,15 +192,15 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
 
         Intent localIntent = new Intent();
         localIntent.setAction(this.callbackId + ".rcapture");
-        List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
-        if (activities.size() > 0) {
+        //List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
+        //if (activities.size() > 0) {
             this.textView.append("=======================================" + NEW_LINE);
             this.textView.append("Initiating capture request for " + this.currentModality + NEW_LINE);
             localIntent.putExtra("input", "{\"env\":\"Developer\",\"purpose\":\"Registration\",\"specVersion\":\"0.9.5\",\"timeout\":10000,\"captureTime\":\"2021-07-21T15:00:03Z\",\"transactionId\":\"1626879603493\",\"bio\":[{\"type\":\"Face\",\"count\":1,\"exception\":[],\"requestedScore\":40,\"deviceId\":\"" + this.serialNo + "\",\"deviceSubId\":0,\"previousHash\":\"\",\"bioSubType\":[]}],\"customOpts\":null}");
             startActivityForResult(localIntent, 3);
-        } else {
-            this.textView.append("Supported apps not found!" + NEW_LINE);
-        }
+        //} else {
+        //    this.textView.append("Supported apps not found!" + NEW_LINE);
+        //}
     }
 
     private byte[] getPayloadBuffer(String jwt) {

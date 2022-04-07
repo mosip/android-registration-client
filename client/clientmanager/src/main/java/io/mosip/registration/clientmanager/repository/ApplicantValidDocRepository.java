@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class ApplicantValidDocRepository {
 
@@ -14,6 +15,11 @@ public class ApplicantValidDocRepository {
     @Inject
     public ApplicantValidDocRepository(ApplicantValidDocumentDao applicantValidDocumentDao) {
         this.applicantValidDocumentDao = applicantValidDocumentDao;
+    }
+
+    public List<String> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
+        return this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
+                categoryCode);
     }
 
     public void saveApplicantValidDocument(JSONObject jsonObject) throws JSONException {

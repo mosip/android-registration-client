@@ -1,7 +1,14 @@
 package io.mosip.registration.clientmanager.dto.registration;
 
 import android.net.Uri;
+import android.util.Log;
 import androidx.annotation.NonNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -56,8 +63,12 @@ public class RegistrationDto {
         this.demographics.remove(fieldId);
     }
 
-    public void addDocument(String fieldId, String docType, Uri uri) {
-        this.documents.put(fieldId, new DocumentDto(docType, "pdf", "", "path", new byte[0]));
+    public void setConsent(String consentText) {
+        this.consentDto = new ConsentDto(consentText, LocalDateTime.now(ZoneOffset.UTC));
+    }
+
+    public void addDocument(String fieldId, String docType, byte[] bytes) {
+        this.documents.put(fieldId, new DocumentDto(docType, "pdf", "", "path", bytes));
     }
 
     public void removeDocumentField(String fieldId) {
@@ -107,4 +118,21 @@ public class RegistrationDto {
         this.biometrics.clear();
     }
 
+    @Override
+    public String toString() {
+        JSONObject jsonObject = new JSONObject(demographics);
+        for (Map.Entry<String, DocumentDto> e : this.documents.entrySet()) {
+            try {
+                jsonObject.put(e.getKey(), e.getValue().getType());
+            } catch (JSONException ex) {
+                Log.e("", "failed to get document value", ex);
+            }
+        }
+        try {
+            return jsonObject.toString(4);
+        } catch (JSONException e) {
+            Log.e("", "toString(4) failed", e);
+        }
+       return jsonObject.toString();
+    }
 }

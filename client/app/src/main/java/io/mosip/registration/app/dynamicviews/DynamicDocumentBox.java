@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +18,17 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView  {
     String labelText="";
     String validationRule="";
     final int layoutId = R.layout.dynamic_document_box;
+    MasterDataService masterDataService;
+    String subType = "";
 
-    public DynamicDocumentBox(Context context,String langCode,String label,String validation) {
+    public DynamicDocumentBox(Context context,String langCode,String label,String validation,
+                              MasterDataService masterDataService, String subType) {
         super(context);
         languageCode=langCode;
         labelText=label;
         validationRule=validation;
+        this.masterDataService = masterDataService;
+        this.subType = subType;
         init(context);
     }
 
@@ -33,11 +39,8 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView  {
     }
 
     private void initComponents(Context context) {
-        List<String> items = new ArrayList<>();
-        items.add("Doc type 1");
-        items.add("Doc type 2");
-        items.add("Doc type 3");
-        items.add("Doc type 4");
+        //TODO derive applicant type code
+        List<String> items = this.masterDataService.getDocumentTypes(subType, "011", "eng");
 
         @SuppressLint("ResourceType")
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, items);
@@ -58,7 +61,9 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView  {
     @Override
     public Object getValue() {
         Spinner sItems = (Spinner) findViewById(R.id.doctypes_dropdown);
-        return sItems.getSelectedItem().toString();
+        if(sItems.getSelectedItem() == null)
+            return sItems.getSelectedItem().toString();
+        return null;
     }
 
     @Override

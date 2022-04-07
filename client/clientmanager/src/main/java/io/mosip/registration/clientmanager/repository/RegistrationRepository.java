@@ -28,11 +28,15 @@ public class RegistrationRepository {
         this.registrationDao.updateServerStatus(packetId, serverStatus);
     }
 
-    public Registration insertRegistration(String packetId, String containerPath) {
+    public void updateStatus(String packetId, String serverStatus, String clientStatus) {
+        this.registrationDao.updateClientStatus(packetId, clientStatus);
+    }
+
+    public Registration insertRegistration(String packetId, String containerPath, String centerId, String registrationType) {
         Registration registration = new Registration(packetId);
         registration.setFilePath(containerPath);
-        registration.setRegType("NEW");
-        registration.setCenterId("10001");
+        registration.setRegType(registrationType);
+        registration.setCenterId(centerId);
         registration.setClientStatus(PacketClientStatus.CREATED.name());
         registration.setServerStatus(null);
         registration.setCrDtime(System.currentTimeMillis());

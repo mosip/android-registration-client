@@ -6,14 +6,26 @@ import java.util.List;
 
 public interface PacketService {
 
-    List<Registration> getUnSyncedRegistrations();
-
-    List<Registration> getSyncedRegistrations();
-
+    /**
+     *
+     * @param packetId
+     * @throws Exception
+     */
     void syncRegistration(String packetId) throws Exception;
 
+    /**
+     *
+     * @param packetId
+     * @throws Exception
+     */
     void uploadRegistration(String packetId) throws Exception;
 
+    /**
+     *
+     * @param page
+     * @param pageLimit
+     * @return
+     */
     List<Registration> getAllRegistrations(int page, int pageLimit);
 
 }

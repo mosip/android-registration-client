@@ -9,13 +9,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
-import io.mosip.registration.clientmanager.service.RegistrationService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PreviewActivity extends DaggerAppCompatActivity {
 
@@ -52,6 +48,12 @@ public class PreviewActivity extends DaggerAppCompatActivity {
             Log.i(TAG, "Clicked on Registration form submit...");
             submitForm();
         });
+
+        try {
+            textView.setText(this.registrationService.getRegistrationDto().toString());
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to set the preview content", e);
+        }
     }
 
     private void submitForm() {

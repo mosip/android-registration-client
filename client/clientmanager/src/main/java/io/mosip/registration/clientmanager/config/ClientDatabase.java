@@ -14,7 +14,7 @@ import io.mosip.registration.keymanager.entity.KeyStore;
 @Database(entities = {UserToken.class, Registration.class, RegistrationCenter.class,
         MachineMaster.class, DocumentType.class, DynamicField.class,
         ApplicantValidDocument.class, Template.class, KeyStore.class,
-        Location.class}, version = 1, exportSchema = false)
+        Location.class, GlobalParam.class}, version = 1, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "regclient";
@@ -41,6 +41,7 @@ public abstract class ClientDatabase extends RoomDatabase {
     public abstract TemplateDao templateDao();
     public abstract KeyStoreDao keyStoreDao();
     public abstract LocationDao locationDao();
+    public abstract GlobalParamDao globalParamDao();
 
     public static void destroyDB(){
         INSTANCE=null;

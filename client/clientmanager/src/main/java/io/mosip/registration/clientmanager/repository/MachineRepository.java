@@ -1,7 +1,9 @@
 package io.mosip.registration.clientmanager.repository;
 
+import androidx.annotation.NonNull;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +15,11 @@ public class MachineRepository {
 
     @Inject
     public MachineRepository(MachineMasterDao machineMasterDao) {
-        this.machineMasterDao = machineMasterDao;
+        this.machineMasterDao = machineMasterDao;;
+    }
+
+    public MachineMaster getMachine(@NonNull String machineName) {
+        return this.machineMasterDao.findMachineByName(machineName);
     }
 
     public void saveMachineMaster(JSONObject machineJson) throws JSONException {
