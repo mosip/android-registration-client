@@ -22,17 +22,20 @@ tools:context=".activites.RegistrationActivity">
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2">
-        <LinearLayout
-            android:id="@+id/pnlPrimaryLanguagePanel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/backgroundColor"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:weightSum="10">
-        </LinearLayout>
+        <ScrollView android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+            <LinearLayout
+                    android:id="@+id/pnlPrimaryLanguagePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/backgroundColor"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:weightSum="10">
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </ScrollView>
 

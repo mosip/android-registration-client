@@ -78,7 +78,7 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
     public Object getValue() {
         String value = ((TextView)findViewById(R.id.text_input_edit)).getText().toString();
         if (getDataType().equalsIgnoreCase("simpleType")) {
-            return new GenericDto(value, value, "eng");
+            return new GenericDto(value, "eng");
         }
         return value;
     }

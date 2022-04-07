@@ -17,6 +17,7 @@
 
         <activity
             android:name=".activites.BiometricsActivity"
+            android:parentActivityName=".activites.MainActivity"
             android:exported="true">
         </activity>
 
@@ -40,18 +41,21 @@
         <activity
                 android:name=".activites.DocumentsActivity"
                 android:windowSoftInputMode="adjustResize"
+                android:parentActivityName=".activites.MainActivity"
                 android:exported="true">
         </activity>
 
         <activity
                 android:name=".activites.PreviewActivity"
                 android:windowSoftInputMode="adjustResize"
+                android:parentActivityName=".activites.MainActivity"
                 android:exported="true">
         </activity>
 
         <activity
                 android:name=".activites.ListingActivity"
                 android:windowSoftInputMode="adjustResize"
+                android:parentActivityName=".activites.MainActivity"
                 android:exported="true">
         </activity>
 

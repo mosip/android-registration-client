@@ -34,7 +34,7 @@ import java.util.Map;
 public class DocumentsActivity extends DaggerAppCompatActivity  {
 
     private static final String TAG = DocumentsActivity.class.getSimpleName();
-    private static final int SCAN_REQUEST_CODE = 99;
+    private int SCAN_REQUEST_CODE = 99;
     private Button button = null;
     private Map<String, DynamicView> dynamicViews = new HashMap<>();
     private Map<Integer, String> requestCodeMap = new HashMap<>();
@@ -125,9 +125,9 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
                                     .getPrimaryView();
                             pnlPrimary.addView((View)docDynamicView);
                             dynamicViews.put(item.getString("id"), docDynamicView);
-                            int requestCode = SCAN_REQUEST_CODE+1;
-                            requestCodeMap.put(requestCode, item.getString("id"));
-                            setScanButtonListener(requestCode, (View)docDynamicView);
+                            SCAN_REQUEST_CODE = SCAN_REQUEST_CODE+1;
+                            requestCodeMap.put(SCAN_REQUEST_CODE, item.getString("id"));
+                            setScanButtonListener(SCAN_REQUEST_CODE, (View)docDynamicView);
                             break;
                     }
                 }
@@ -140,7 +140,6 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
     private void setScanButtonListener(int requestCode, View view) {
         Button button = view.findViewById(R.id.scan_doc);
         button.setOnClickListener( v -> {
-            view.findViewById(R.id.doc_status).setVisibility(View.INVISIBLE);
             int preference = ScanConstants.OPEN_CAMERA;
             Intent intent = new Intent(this, ScanActivity.class);
             intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
@@ -158,7 +157,6 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
                 String fieldId = requestCodeMap.get(requestCode);
                 this.registrationService.getRegistrationDto().addDocument(fieldId,
                         (String) dynamicViews.get(fieldId).getValue(), getBytes(iStream));
-                ((View)dynamicViews.get(fieldId)).findViewById(R.id.doc_status).setVisibility(View.VISIBLE);
             } catch (Exception e) {
                Log.e(TAG, "Failed to set document to registration dto", e);
             }

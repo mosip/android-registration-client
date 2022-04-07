@@ -1,5 +1,6 @@
 package io.mosip.registration.app.viewmodel;
 
+import android.os.Handler;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -32,8 +33,8 @@ public class ListingViewModel extends ViewModel {
         // do async operation to fetch users
         /*Handler myHandler = new Handler();
         myHandler.postDelayed(() -> {
-            registrationList.setValue(this.registrationRepository.getAllRegistrations());
-        }, 5000);*/
+            registrationList.setValue(this.packetService.getAllRegistrations(0, 0));
+        }, 10000);*/
         registrationList.setValue(this.packetService.getAllRegistrations(0, 0));
     }
 }

@@ -6,21 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".activites.MainActivity"
     tools:layout_editor_absoluteX="0dp" tools:layout_editor_absoluteY="-22dp" >
-    <Button
-            android:text="New Registration"
-            android:layout_width="240dp"
-            android:textAllCaps="false"
-            android:onClick="click_new_registration"
-            android:layout_height="63dp" android:id="@+id/button13" android:textAlignment="center"
-            tools:layout_editor_absoluteY="82dp" tools:layout_editor_absoluteX="85dp"
-            tools:ignore="MissingConstraints"/>
-    <Button
-            android:text="Sync Masterdata"
-            android:layout_width="240dp"
-            android:textAllCaps="false"
-            android:onClick="click_sync_masterdata"
-            android:layout_height="63dp" android:id="@+id/button15" android:textAlignment="center"
-            tools:layout_editor_absoluteY="177dp" tools:layout_editor_absoluteX="85dp"
-            tools:ignore="MissingConstraints"/>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent">
+            <Button
+                    android:text="New Registration"
+                    android:layout_width="240dp"
+                    android:textAllCaps="false"
+                    android:onClick="click_new_registration"
+                    android:layout_height="63dp" android:id="@+id/button13" android:textAlignment="center"
+                    tools:layout_editor_absoluteY="82dp" tools:layout_editor_absoluteX="85dp"
+                    tools:ignore="MissingConstraints"/>
+            <Button
+                    android:text="Sync Masterdata"
+                    android:layout_width="240dp"
+                    android:textAllCaps="false"
+                    android:onClick="click_sync_masterdata"
+                    android:layout_height="63dp" android:id="@+id/button15" android:textAlignment="center"
+                    tools:layout_editor_absoluteY="177dp" tools:layout_editor_absoluteX="85dp"
+                    tools:ignore="MissingConstraints"/>
+        </LinearLayout>
+    </ScrollView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -265,11 +265,11 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public List<GenericDto> getAllLocationHierarchyLevels(String langCode) {
         List<GenericDto> list = new ArrayList<>();
-        list.add(new GenericDto("1", "Country", langCode));
-        list.add(new GenericDto("2", "Region", langCode));
-        list.add(new GenericDto("3", "Province", langCode));
-        list.add(new GenericDto("4", "City", langCode));
-        list.add(new GenericDto("5", "Postal Code", langCode));
+        list.add(new GenericDto("Country", langCode));
+        list.add(new GenericDto("Region", langCode));
+        list.add(new GenericDto("Province", langCode));
+        list.add(new GenericDto("City", langCode));
+        list.add(new GenericDto("Postal Code", langCode));
         return list;
     }
 

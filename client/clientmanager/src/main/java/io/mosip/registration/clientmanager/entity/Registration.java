@@ -101,9 +101,7 @@ public class Registration {
 
     @Override
     public String toString() {
-        return packetId +
-                "\nStatus : " + clientStatus +
-                "\t\t" + ( serverStatus == null ? "Not Synced" : serverStatus);
+        return packetId + "\n" + (serverStatus == null ? clientStatus : serverStatus);
     }
 
 }

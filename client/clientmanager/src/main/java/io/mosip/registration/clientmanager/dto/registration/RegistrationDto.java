@@ -3,6 +3,8 @@ package io.mosip.registration.clientmanager.dto.registration;
 import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,10 +52,14 @@ public class RegistrationDto {
     }
 
     public void addDemographicField(String fieldId, String value) {
-        this.demographics.put(fieldId, value);
+        if(value != null && !value.trim().isEmpty())
+            this.demographics.put(fieldId, value);
     }
 
     public void addDemographicField(String fieldId, GenericDto genericDto) {
+        if(genericDto == null || genericDto.getName().trim().isEmpty())
+            return;
+
         List<GenericDto> list = (List<GenericDto>) this.demographics.getOrDefault(fieldId, new ArrayList<GenericDto>());
         list.add(genericDto);
         this.demographics.put(fieldId, list);
@@ -120,19 +126,20 @@ public class RegistrationDto {
 
     @Override
     public String toString() {
-        JSONObject jsonObject = new JSONObject(demographics);
-        for (Map.Entry<String, DocumentDto> e : this.documents.entrySet()) {
-            try {
-                jsonObject.put(e.getKey(), e.getValue().getType());
-            } catch (JSONException ex) {
-                Log.e("", "failed to get document value", ex);
-            }
-        }
         try {
+           String demographicJsonString = JsonUtils.javaObjectToJsonString(demographics);
+            JSONObject jsonObject = new JSONObject(demographicJsonString);
+            for (Map.Entry<String, DocumentDto> e : this.documents.entrySet()) {
+                try {
+                    jsonObject.put(e.getKey(), e.getValue().getType());
+                } catch (JSONException ex) {
+                    Log.e("", "failed to get document value", ex);
+                }
+            }
             return jsonObject.toString(4);
-        } catch (JSONException e) {
-            Log.e("", "toString(4) failed", e);
+        } catch (Exception e) {
+            Log.e("", "toString failed", e);
         }
-       return jsonObject.toString();
+       return "{}";
     }
 }

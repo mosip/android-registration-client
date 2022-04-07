@@ -29,7 +29,7 @@ public class RegistrationRepository {
     }
 
     public void updateStatus(String packetId, String serverStatus, String clientStatus) {
-        this.registrationDao.updateClientStatus(packetId, clientStatus);
+        this.registrationDao.updateStatus(packetId, clientStatus, serverStatus);
     }
 
     public Registration insertRegistration(String packetId, String containerPath, String centerId, String registrationType) {
