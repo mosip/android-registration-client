@@ -1,13 +1,32 @@
 package io.mosip.registration.clientmanager.spi;
 
+import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
-
 import java.util.List;
 
 public interface MasterDataService {
 
-    void initialSync() throws Exception;
+    /**
+     *
+     * @return CenterMachineDto
+     */
+    CenterMachineDto getRegistrationCenterMachineDetails();
+
+    /**
+     * Triggers syncCertificate and syncMasterData
+     * @throws Exception
+     */
+    void manualSync() throws Exception;
+
+    /**
+     * Fetches policy key
+     */
     void syncCertificate();
+
+    /**
+     * Fetches all the master data
+     * @throws Exception
+     */
     void syncMasterData() throws Exception;
 
     /**
@@ -41,5 +60,15 @@ public interface MasterDataService {
      * @return
      */
     List<String> findLocationByHierarchyLevel(int hierarchyLevel, String langCode);
+
+
+    /**
+     *
+     * @param categoryCode
+     * @param applicantType
+     * @param langCode
+     * @return
+     */
+    List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode);
 
 }

@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class RegistrationCenterRepository {
 
@@ -14,6 +15,10 @@ public class RegistrationCenterRepository {
     @Inject
     public RegistrationCenterRepository(RegistrationCenterDao registrationCenterDao) {
         this.registrationCenterDao = registrationCenterDao;
+    }
+
+    public List<RegistrationCenter> getRegistrationCenter(String centerId) {
+        return this.registrationCenterDao.getAllRegistrationCentersById(centerId);
     }
 
     public void saveRegistrationCenter(JSONObject centerJson) throws JSONException {

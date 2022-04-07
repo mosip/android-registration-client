@@ -3,11 +3,11 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
-import io.mosip.registration.clientmanager.dto.http.CertificateResponse;
-import io.mosip.registration.clientmanager.dto.http.ClientSettingDto;
-import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
-import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -29,11 +29,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Singleton
 public class MasterDataServiceImpl implements MasterDataService {
 
     private static final String TAG = MasterDataServiceImpl.class.getSimpleName();
+    private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
     public static final String REG_APP_ID = "REGISTRATION";
     public static final String KERNEL_APP_ID = "KERNEL";
 
@@ -48,6 +50,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     private DynamicFieldRepository dynamicFieldRepository;
     private KeyStoreRepository keyStoreRepository;
     private LocationRepository locationRepository;
+    private GlobalParamRepository globalParamRepository;
+
 
     @Inject
     public MasterDataServiceImpl(Context context, SyncRestService syncRestService,
@@ -59,7 +63,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  TemplateRepository templateRepository,
                                  DynamicFieldRepository dynamicFieldRepository,
                                  KeyStoreRepository keyStoreRepository,
-                                 LocationRepository locationRepository) {
+                                 LocationRepository locationRepository,
+                                 GlobalParamRepository globalParamRepository) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.clientCryptoManagerService = clientCryptoManagerService;
@@ -71,13 +76,36 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.dynamicFieldRepository = dynamicFieldRepository;
         this.keyStoreRepository = keyStoreRepository;
         this.locationRepository = locationRepository;
+        this.globalParamRepository = globalParamRepository;
     }
 
     @Override
-    public void initialSync() {
+    public CenterMachineDto getRegistrationCenterMachineDetails() {
+        CenterMachineDto centerMachineDto = null;
+        MachineMaster machineMaster = this.machineRepository.getMachine(clientCryptoManagerService.getMachineName());
+        if(machineMaster == null)
+            return centerMachineDto;
+
+        List<RegistrationCenter> centers = this.registrationCenterRepository.getRegistrationCenter(machineMaster.getRegCenterId());
+        if(centers == null || centers.isEmpty())
+            return centerMachineDto;
+
+        centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setMachineId(machineMaster.getId());
+        centerMachineDto.setMachineName(machineMaster.getName());
+        centerMachineDto.setMachineStatus(machineMaster.getIsActive());
+        centerMachineDto.setCenterId(centers.get(0).getId());
+        centerMachineDto.setCenterStatus(centers.get(0).getIsActive());
+        centerMachineDto.setMachineRefId(centerMachineDto.getCenterId()+"_"+centerMachineDto.getMachineId());
+        centerMachineDto.setCenterNames(centers.stream().collect(Collectors.toMap(RegistrationCenter::getLangCode, RegistrationCenter::getName)));
+        return centerMachineDto;
+    }
+
+    @Override
+    public void manualSync() {
         try {
-            syncCertificate();
             syncMasterData();
+            syncCertificate();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
@@ -87,15 +115,19 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncCertificate() {
-        String refId = "10001_10008";
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getCertificate(REG_APP_ID, refId);
+        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
+        if(centerMachineDto == null)
+            return;
+
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getCertificate(REG_APP_ID,
+                centerMachineDto.getMachineRefId());
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
                 if(response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
-                        keyStoreRepository.saveKeyStore(refId, response.body().getResponse().getCertificate());
+                        keyStoreRepository.saveKeyStore(centerMachineDto.getMachineRefId(), response.body().getResponse().getCertificate());
                         Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
                     } else
                         Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
@@ -113,9 +145,18 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncMasterData() throws Exception {
+        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
+
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         queryParams.put("version", "0.1");
+
+        if(centerMachineDto != null)
+            queryParams.put("regcenterId", centerMachineDto.getCenterId());
+
+        /*String delta = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
+        if(delta != null)
+            queryParams.put("lastUpdated", delta);*/
 
         Call<ResponseWrapper<ClientSettingDto>> call = syncRestService.fetchMasterDate(queryParams);
 
@@ -143,7 +184,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void saveMasterData(ClientSettingDto clientSettingDto) {
-        clientSettingDto.getDataToSync().forEach( masterData -> {
+        boolean foundErrors = false;
+        for(MasterData masterData : clientSettingDto.getDataToSync()) {
             try {
                 switch(masterData.getEntityType()) {
                     case "structured" :
@@ -153,12 +195,15 @@ public class MasterDataServiceImpl implements MasterDataService {
                         saveDynamicData(masterData.getData());
                 }
             } catch (Throwable e) {
+                foundErrors = true;
                 Log.e(TAG, "Failed to parse the data", e);
-            } finally {
-                //TODO save last sync time in global params
-                Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             }
-        });
+        }
+
+        if(!foundErrors) {
+            Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
+            this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
+        }
     }
 
     private JSONArray getDecryptedDataList(String data) throws JSONException {
@@ -243,5 +288,10 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public List<String> findLocationByHierarchyLevel(int hierarchyLevel, String langCode) {
         return this.locationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
+    }
+
+    @Override
+    public List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode) {
+        return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
     }
 }

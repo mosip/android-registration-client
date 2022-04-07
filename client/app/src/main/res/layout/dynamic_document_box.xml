@@ -31,11 +31,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/scan_doc"/>
-        <Button
-                android:text="Preview"
+
+        <TextView
+                android:id="@+id/doc_status"
                 android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/preview_doc"/>
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@android:color/holo_green_light"
+                android:visibility="invisible"
+                android:text="SAVED"/>
     </LinearLayout>
 </LinearLayout>

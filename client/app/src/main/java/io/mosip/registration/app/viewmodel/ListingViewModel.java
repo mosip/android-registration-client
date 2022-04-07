@@ -1,23 +1,21 @@
 package io.mosip.registration.app.viewmodel;
 
-import android.os.Handler;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.spi.PacketService;
 
-import javax.inject.Inject;
 import java.util.List;
 
 public class ListingViewModel extends ViewModel {
 
     private static final String TAG = ListingViewModel.class.getSimpleName();
 
-    private RegistrationRepository registrationRepository;
+    private PacketService packetService;
 
-    public ListingViewModel(RegistrationRepository registrationRepository) {
-        this.registrationRepository = registrationRepository;
+    public ListingViewModel(PacketService packetService) {
+        this.packetService = packetService;
     }
 
     private MutableLiveData<List<Registration>> registrationList;
@@ -36,6 +34,6 @@ public class ListingViewModel extends ViewModel {
         myHandler.postDelayed(() -> {
             registrationList.setValue(this.registrationRepository.getAllRegistrations());
         }, 5000);*/
-        registrationList.setValue(this.registrationRepository.getAllRegistrations());
+        registrationList.setValue(this.packetService.getAllRegistrations(0, 0));
     }
 }

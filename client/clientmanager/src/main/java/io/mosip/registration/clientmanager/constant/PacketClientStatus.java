@@ -5,5 +5,6 @@ public enum PacketClientStatus {
     CREATED,
     APPROVED,
     REJECTED,
+    SYNCED,
     UPLOADED;
 }

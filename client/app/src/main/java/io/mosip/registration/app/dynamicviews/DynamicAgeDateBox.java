@@ -66,7 +66,7 @@ public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
         return "string";
     }
 
-    public String getValue(){
+    public String getValue() {
         return dateBox.getText().toString()+"/"+monthBox.getText().toString()+"/"+yearBox.getText().toString();
     }
 

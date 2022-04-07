@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.spi;
 
 import io.mosip.registration.clientmanager.dto.http.*;
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public interface SyncRestService {
 
-    @POST("v1/syncdata/authenticate/useridpwd")
+    @POST("/v1/syncdata/authenticate/useridpwd")
     Call<ResponseWrapper<String>> login(@Body RequestWrapper<String> authRequest);
 
     @GET("/v1/syncdata/v2/clientsettings")
@@ -19,13 +20,14 @@ public interface SyncRestService {
     Call<ResponseWrapper<CertificateResponse>> getCertificate(@Query("applicationId") String applicationId,
                                                              @Query("referenceId") String referenceId);
 
-    @POST("registrationprocessor/v1/registrationstatus/syncV2")
+    @POST("/registrationprocessor/v1/registrationstatus/syncV2")
     Call<RegProcResponseWrapper<List<SyncRIDResponse>>> syncRID(@Header ("timestamp") String timestamp,
                                                          @Header ("Center-Machine-RefId") String refId,
                                                          @Body String encryptedData);
 
-    //Content-Type:multipart/form-data
-    @POST("registrationprocessor/v1/packetreceiver/registrationpackets")
-    Call<ResponseWrapper<List<SyncRIDResponse>>> uploadPacket(@Body RequestWrapper<String> authRequest);
+
+    @Multipart
+    @POST("/registrationprocessor/v1/packetreceiver/registrationpackets")
+    Call<RegProcResponseWrapper<UploadResponse>> uploadPacket(@Part MultipartBody.Part filePart);
 
 }

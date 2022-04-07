@@ -14,13 +14,14 @@ import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.factory.ClientWorkerFactory;
+import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.service.PacketServiceImpl;
-import io.mosip.registration.clientmanager.service.RegistrationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -120,10 +121,12 @@ public class AppModule {
                                                       TemplateRepository templateRepository,
                                                       DynamicFieldRepository dynamicFieldRepository,
                                                       KeyStoreRepository keyStoreRepository,
-                                                      LocationRepository locationRepository) {
+                                                      LocationRepository locationRepository,
+                                                      GlobalParamRepository globalParamRepository) {
         return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
-                templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository);
+                templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
+                globalParamRepository);
     }
 
     @Singleton
@@ -189,9 +192,10 @@ public class AppModule {
     @Singleton
     RegistrationService provideRegistrationService(PacketWriterService packetWriterService,
                                                    UserInterfaceHelperService userInterfaceHelperService,
-                                                   RegistrationRepository registrationRepository) {
-        return new RegistrationService(appContext, packetWriterService, userInterfaceHelperService,
-                registrationRepository);
+                                                   RegistrationRepository registrationRepository,
+                                                   MasterDataService masterDataService) {
+        return new RegistrationServiceImpl(appContext, packetWriterService, userInterfaceHelperService,
+                registrationRepository, masterDataService);
     }
 
     @Provides
@@ -203,7 +207,9 @@ public class AppModule {
     @Provides
     @Singleton
     PacketService providePacketService(RegistrationRepository registrationRepository,
-                                       IPacketCryptoService packetCryptoService, SyncRestService syncRestService) {
-        return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService);
+                                       IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
+                                       MasterDataService masterDataService) {
+        return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService,
+                masterDataService);
     }
 }

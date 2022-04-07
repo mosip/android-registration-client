@@ -6,9 +6,10 @@
               android:orientation="vertical">
 
     <ScrollView android:layout_width="match_parent"
-                android:layout_height="577dp">
+                android:layout_height="582dp">
         <TextView
                 android:id="@+id/registration_preview"
+                android:singleLine="false"
                 android:textColor="@color/black"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
@@ -16,9 +17,10 @@
                 android:layout_margin="20dp"
         />
     </ScrollView>
+
     <Button
             android:text="Submit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/createpacket"/>
+            android:layout_height="50dp" android:id="@+id/createpacket"/>
 
 </LinearLayout>

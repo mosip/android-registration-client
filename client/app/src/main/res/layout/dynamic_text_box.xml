@@ -6,7 +6,7 @@
     android:layout_margin="40dp"
               android:measureWithLargestChild="true"
     android:background="@drawable/rounded_corner"
-    >
+              android:orientation="vertical">
 
     <TextView
             android:id="@+id/text_label"

@@ -125,7 +125,7 @@ public class DynamicComponentFactory {
         return dd;
     }
 
-    public DynamicComponent getDocumentComponent(JSONObject labels, JSONArray validatorRules) {
+    public DynamicComponent getDocumentComponent(JSONObject labels, JSONArray validatorRules, String subType) {
 
         DynamicComponent dd = new DynamicComponent(context);
         try {
@@ -133,7 +133,8 @@ public class DynamicComponentFactory {
 
             while (keys.hasNext()) {
                 String langCode = keys.next();
-                DynamicDocumentBox control = new DynamicDocumentBox(context,langCode,labels.getString(langCode),getValidationRule(langCode,validatorRules));
+                DynamicDocumentBox control = new DynamicDocumentBox(context,langCode,labels.getString(langCode),
+                        getValidationRule(langCode,validatorRules), this.masterDataService, subType);
                 dd.addView(control);
             }
 

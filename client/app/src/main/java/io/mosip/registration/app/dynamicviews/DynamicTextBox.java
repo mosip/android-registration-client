@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,9 +78,7 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
     public Object getValue() {
         String value = ((TextView)findViewById(R.id.text_input_edit)).getText().toString();
         if (getDataType().equalsIgnoreCase("simpleType")) {
-            Map<String, String> map = new HashMap<>();
-            map.put("eng", value);
-            return map;
+            return new GenericDto(value, value, "eng");
         }
         return value;
     }

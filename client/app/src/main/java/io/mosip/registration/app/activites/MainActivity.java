@@ -28,7 +28,7 @@ public class MainActivity extends DaggerAppCompatActivity {
     public void click_sync_masterdata(View view) {
         Toast.makeText(this, "Masterdata sync started", Toast.LENGTH_LONG).show();
         try {
-            masterDataService.initialSync();
+            masterDataService.manualSync();
         } catch (Exception e) {
             Log.e(TAG, "Masterdata sync failed", e);
             Toast.makeText(this, "Masterdata sync failed", Toast.LENGTH_LONG).show();
