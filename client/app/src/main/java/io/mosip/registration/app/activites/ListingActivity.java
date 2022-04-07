@@ -73,24 +73,37 @@ public class ListingActivity  extends DaggerAppCompatActivity {
 
                 ViewHolder viewHolder = new ViewHolder();
                 viewHolder.title = convertView.findViewById(R.id.list_item_text);
-                viewHolder.button = convertView.findViewById(R.id.list_item_btn);
+                viewHolder.syncButton = convertView.findViewById(R.id.list_item_btn1);
+                viewHolder.uploadButton = convertView.findViewById(R.id.list_item_btn2);
                 convertView.setTag(viewHolder);
             }
 
             Registration registration = this.mObjects.get(position);
 
             mainViewholder = (ViewHolder) convertView.getTag();
-            mainViewholder.button.setOnClickListener(new View.OnClickListener() {
+            mainViewholder.syncButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getContext(), "Starting packet sync", Toast.LENGTH_SHORT).show();
                     try {
                         packetService.syncRegistration(registration.getPacketId());
-                        packetService.uploadRegistration(registration.getPacketId());
                         Toast.makeText(getContext(), "Packet sync successful", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Log.e(TAG, "Packet sync failed", e);
                         Toast.makeText(getContext(), "Packet sync failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            mainViewholder.uploadButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "Starting packet upload", Toast.LENGTH_SHORT).show();
+                    try {
+                        packetService.uploadRegistration(registration.getPacketId());
+                        Toast.makeText(getContext(), "Packet upload successful", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Packet upload failed", e);
+                        Toast.makeText(getContext(), "Packet upload failed", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -101,6 +114,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
 
     public class ViewHolder {
         TextView title;
-        Button button;
+        Button syncButton;
+        Button uploadButton;
     }
 }

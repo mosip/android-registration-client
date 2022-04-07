@@ -91,6 +91,7 @@ public class PacketServiceImpl implements PacketService {
         syncRIDRequest.setPacketId(registration.getPacketId());
         syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
         syncRIDRequest.setSupervisorStatus(PacketClientStatus.APPROVED.name());
+        syncRIDRequest.setLangCode("eng"); // TODO save the lang is DB
 
         if (registration.getAdditionalInfo() != null) {
             String additionalInfo = new String(registration.getAdditionalInfo());
@@ -98,7 +99,6 @@ public class PacketServiceImpl implements PacketService {
             syncRIDRequest.setName(jsonObject.getString("name"));
             syncRIDRequest.setPhone(jsonObject.getString("phone"));
             syncRIDRequest.setEmail(jsonObject.getString("email"));
-            syncRIDRequest.setLangCode(jsonObject.getString("langCode"));
         }
 
         try (FileInputStream fis = new FileInputStream(registration.getFilePath())) {
@@ -121,9 +121,8 @@ public class PacketServiceImpl implements PacketService {
                                    Response<RegProcResponseWrapper<List<SyncRIDResponse>>> response) {
                 if(response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if(error == null) {
-                        registrationRepository.updateStatus(packetId, response.body().getResponse().get(0).getStatus(),
-                                PacketClientStatus.SYNCED.name());
+                    if(error == null && response.body().getResponse().get(0).getStatus().equalsIgnoreCase("SUCCESS")) {
+                        registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
                         Toast.makeText(context, "Packet synced successfully", Toast.LENGTH_LONG).show();
                     }
                     else
