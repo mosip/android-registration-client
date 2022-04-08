@@ -81,9 +81,8 @@ public class RegistrationDto {
         this.documents.remove(fieldId);
     }
 
-    public void addBiometric(String fieldId, String modality, String attribute, String bioResponse) {
-        this.biometrics.put(String.format(BIO_KEY, fieldId, attribute), new BiometricsDto(modality, attribute,
-                false, bioResponse, null, null));
+    public void addBiometric(String fieldId, String attribute, BiometricsDto biometricsDto) {
+        this.biometrics.put(String.format(BIO_KEY, fieldId, attribute), biometricsDto);
     }
 
     public void removeBiometricField(String fieldId) {

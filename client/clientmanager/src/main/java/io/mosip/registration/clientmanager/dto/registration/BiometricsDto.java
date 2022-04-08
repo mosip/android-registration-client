@@ -9,9 +9,10 @@ public class BiometricsDto {
 
     private String modality;
     private String attribute;
+    private String specVersion;
     private boolean isException;
-    private String bioResponse;
+    private String decodedBioResponse;
     private String signature;
     private String bioValue;
-
+    private String qualityScore;
 }

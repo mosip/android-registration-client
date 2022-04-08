@@ -2,6 +2,7 @@ package io.mosip.registration.app.dynamicviews;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -20,6 +21,7 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView  {
     final int layoutId = R.layout.dynamic_document_box;
     MasterDataService masterDataService;
     String subType = "";
+
 
     public DynamicDocumentBox(Context context,String langCode,String label,String validation,
                               MasterDataService masterDataService, String subType) {
