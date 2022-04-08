@@ -15,6 +15,7 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
+import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.json.JSONArray;
@@ -23,8 +24,6 @@ import org.json.JSONObject;
 
 import javax.inject.Inject;
 import java.util.*;
-
-import static android.content.pm.PackageManager.MATCH_DEFAULT_ONLY;
 
 public class BiometricsActivity extends DaggerAppCompatActivity  {
 
@@ -213,6 +212,16 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
         return null;
     }
 
+    private String getSignature(String jwt) {
+        try {
+            String[] parts = jwt.split("\\.");
+            return parts[2];
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to decode payload");
+        }
+        return null;
+    }
+
     private void parseDiscoverResponse(String response) {
         try {
             JSONObject jsonObject = new JSONArray(response).getJSONObject(0);
@@ -253,13 +262,30 @@ public class BiometricsActivity extends DaggerAppCompatActivity  {
     private void parseRCaptureResponse(String response) {
         try {
             JSONArray jsonObject = new JSONObject(response).getJSONArray("biometrics");
-            if (jsonObject.getJSONObject(0).getJSONObject("error").getInt("errorCode") == 0) {
-                byte[] payloadBuffer = this.getPayloadBuffer(jsonObject.getJSONObject(0).getString("data"));
-                JSONObject payload = new JSONObject(new String(payloadBuffer));
-                this.textView.append("Capture response : " + payload+ NEW_LINE);
+            String specVersion = jsonObject.getJSONObject(0).getString("specVersion");
+            String data = jsonObject.getJSONObject(0).getString("data");
+            if(data == null || data.isEmpty()) {
+                JSONObject error = jsonObject.getJSONObject(0).getJSONObject("error");
+                this.textView.append("Capture error response : " + error.toString(2) + NEW_LINE);
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Failed to parse rcapture response");
+            else {
+                String signature = this.getSignature(data);
+                byte[] payloadBuffer = this.getPayloadBuffer(data);
+                String decodedPayload = new String(payloadBuffer);
+                JSONObject dataDTO = new JSONObject(decodedPayload);
+                String qualityScore = dataDTO.getString("qualityScore");
+                String bioValue = dataDTO.getString("bioValue");
+                BiometricsDto biometricsDto = new BiometricsDto("face", "face", specVersion, false,
+                        decodedPayload, signature, bioValue, qualityScore);
+                this.textView.append("Capture specVersion : " + specVersion+ NEW_LINE);
+                this.textView.append("Capture qualityScore : " + qualityScore+ NEW_LINE);
+
+                //TODO handle dynamically
+                this.registrationService.getRegistrationDto().addBiometric("individualBiometrics", "face", biometricsDto);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to parse rcapture response", e);
+            this.textView.append("Failed parsing Capture response : " + e.getMessage() + NEW_LINE);
         }
     }
 

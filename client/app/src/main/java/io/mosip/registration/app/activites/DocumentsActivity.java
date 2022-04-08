@@ -157,6 +157,7 @@ public class DocumentsActivity extends DaggerAppCompatActivity  {
                 String fieldId = requestCodeMap.get(requestCode);
                 this.registrationService.getRegistrationDto().addDocument(fieldId,
                         (String) dynamicViews.get(fieldId).getValue(), getBytes(iStream));
+                ((View) dynamicViews.get(fieldId)).findViewById(R.id.doc_saved).setVisibility(View.VISIBLE);
             } catch (Exception e) {
                Log.e(TAG, "Failed to set document to registration dto", e);
             }
