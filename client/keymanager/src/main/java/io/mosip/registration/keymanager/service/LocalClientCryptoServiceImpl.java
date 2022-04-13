@@ -1,6 +1,7 @@
 package io.mosip.registration.keymanager.service;
 
 import android.content.Context;
+import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Log;
@@ -80,7 +81,6 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     public void initLocalClientCryptoService(Context appContext) {
         this.context = appContext;
         initializeClientSecurity();
-        setMachineName();
         genSignKey();
         genEnDecKey();
         Log.i(TAG, "initLocalClientCryptoService: Initialization call successful");
@@ -108,14 +108,6 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                 ConfigService.getProperty("mosip.kernel.crypto.gcm-tag-length",context));
         KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-padding-scheme",context);
         CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);
-    }
-
-    private void setMachineName() {
-        try {
-            //TODO
-        } catch (Exception e) {
-            Log.e(TAG, "genSignKey: Machine name generation failed ", e);
-        }
     }
 
     private void genSignKey() {
@@ -329,10 +321,8 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
     @Override
     public String getMachineName() {
-        try { //TODO
-            //final Key key = keyStore.getKey(NAME_ALIAS, null);
-            //return CryptoUtil.generateMD5Hash(key.getEncoded());
-            return "android-test-machine";
+        try {
+            return Build.DEVICE;
         } catch (Exception e) {
             Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         }

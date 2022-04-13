@@ -51,6 +51,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private KeyStoreRepository keyStoreRepository;
     private LocationRepository locationRepository;
     private GlobalParamRepository globalParamRepository;
+    private IdentitySchemaRepository identitySchemaRepository;
 
 
     @Inject
@@ -64,7 +65,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  DynamicFieldRepository dynamicFieldRepository,
                                  KeyStoreRepository keyStoreRepository,
                                  LocationRepository locationRepository,
-                                 GlobalParamRepository globalParamRepository) {
+                                 GlobalParamRepository globalParamRepository,
+                                 IdentitySchemaRepository identitySchemaRepository) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.clientCryptoManagerService = clientCryptoManagerService;
@@ -77,6 +79,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.keyStoreRepository = keyStoreRepository;
         this.locationRepository = locationRepository;
         this.globalParamRepository = globalParamRepository;
+        this.identitySchemaRepository = identitySchemaRepository;
     }
 
     @Override
@@ -154,6 +157,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         if(centerMachineDto != null)
             queryParams.put("regcenterId", centerMachineDto.getCenterId());
 
+        //TODO come up with an idea to know its
         /*String delta = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
         if(delta != null)
             queryParams.put("lastUpdated", delta);*/
@@ -179,6 +183,40 @@ public class MasterDataServiceImpl implements MasterDataService {
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
                 Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void syncLatestIdSchema() throws Exception {
+        Call<ResponseWrapper<IdSchemaResponse>> call = syncRestService.getLatestIdSchema();
+        call.enqueue(new Callback<ResponseWrapper<IdSchemaResponse>>() {
+
+            @Override
+            public void onResponse(Call<ResponseWrapper<IdSchemaResponse>> call,
+                                   Response<ResponseWrapper<IdSchemaResponse>> response) {
+                if(response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(response.body());
+                    if(error == null) {
+                        try {
+                            identitySchemaRepository.saveIdentitySchema(context, response.body().getResponse());
+                            Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to save IDSchema", e);
+                        }
+                    }
+                    else
+                        Toast.makeText(context, "Identity schema and UI Spec  Sync failed "
+                                + error.getMessage(), Toast.LENGTH_LONG).show();
+                }
+                else
+                    Toast.makeText(context, "Identity schema and UI Spec Sync failed with status code : " +
+                            response.code(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseWrapper<IdSchemaResponse>> call, Throwable t) {
+                Toast.makeText(context, "Identity schema and UI Spec Sync failed", Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -20,6 +20,9 @@ public interface SyncRestService {
     Call<ResponseWrapper<CertificateResponse>> getCertificate(@Query("applicationId") String applicationId,
                                                              @Query("referenceId") String referenceId);
 
+    @GET("/v1/syncdata/latestidschema")
+    Call<ResponseWrapper<IdSchemaResponse>> getLatestIdSchema();
+
     @POST("/registrationprocessor/v1/registrationstatus/syncV2")
     Call<RegProcResponseWrapper<List<SyncRIDResponse>>> syncRID(@Header ("timestamp") String timestamp,
                                                          @Header ("Center-Machine-RefId") String refId,

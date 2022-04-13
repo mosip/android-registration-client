@@ -1,10 +1,12 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
@@ -26,11 +28,13 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private static final String TAG = RegistrationServiceImpl.class.getSimpleName();
     private static final String SOURCE = "REGISTRATION_CLIENT";
+    private static final int MIN_SPACE_REQUIRED_MB = 50;
 
     private Context context;
     private RegistrationDto registrationDto;
 
     private RegistrationRepository registrationRepository;
+    private IdentitySchemaRepository identitySchemaRepository;
     private PacketWriterService packetWriterService;
     private UserInterfaceHelperService userInterfaceHelperService;
     private MasterDataService masterDataService;
@@ -39,13 +43,15 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegistrationServiceImpl(Context context, PacketWriterService packetWriterService,
                                    UserInterfaceHelperService userInterfaceHelperService,
                                    RegistrationRepository registrationRepository,
-                                   MasterDataService masterDataService) {
+                                   MasterDataService masterDataService,
+                                   IdentitySchemaRepository identitySchemaRepository) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
         this.userInterfaceHelperService = userInterfaceHelperService;
         this.registrationRepository = registrationRepository;
         this.masterDataService = masterDataService;
+        this.identitySchemaRepository = identitySchemaRepository;
     }
 
     @Override
@@ -68,15 +74,20 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new Exception("Language is mandatory to begin registration");
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
-
         if(centerMachineDto == null)
             throw new Exception("Required master data not found");
+
+        Double version = identitySchemaRepository.getLatestSchemaVersion();
+        if(version == null)
+            throw new Exception("No Schema found");
+
+        doPreChecksBeforeRegistration(centerMachineDto);
 
         String timestamp = DateUtils.formatToISOStringWithoutMillis(LocalDateTime.now(ZoneOffset.UTC));
         timestamp = timestamp.replaceAll(":|T|Z|-", "");
         String rid = String.format("%s%s10031%s", centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), timestamp);
 
-        this.registrationDto = new RegistrationDto(rid, "NEW", "1.0", languages);
+        this.registrationDto = new RegistrationDto(rid, "NEW", version, languages);
         return this.registrationDto;
     }
 
@@ -100,14 +111,14 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document.setType(entry.getValue().getType());
                 document.setFormat(entry.getValue().getFormat());
                 document.setRefNumber(entry.getValue().getRefNumber());
-                //TODO
+                document.setDocument(entry.getValue().getContent());
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 
             this.registrationDto.getAllBiometricFields().forEach( entry -> {
                 String[] parts = entry.getKey().split("_");
                 BiometricRecord biometricRecord = new BiometricRecord();
-                //TODO
+                //TODO set biometric record
             });
 
             CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
@@ -116,7 +127,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             addMetaInfoMap(centerMachineDto.getCenterId(), centerMachineDto.getMachineId());
 
             String containerPath = packetWriterService.persistPacket(this.registrationDto.getRId(),
-                    this.registrationDto.getSchemaVersion(),
+                    this.registrationDto.getSchemaVersion().toString(),
                     userInterfaceHelperService.getSchemaJsonFromResource(),
                     SOURCE,
                     this.registrationDto.getProcess(),
@@ -162,5 +173,16 @@ public class RegistrationServiceImpl implements RegistrationService {
         List<Map<String, String>> audits = new ArrayList<>();
         audits.add(auditEntry);
         return audits;
+    }
+
+    private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
+        //free space validation
+        long externalSpace = context.getExternalCacheDir().getUsableSpace();
+        if( (externalSpace / (1024*1024)) < MIN_SPACE_REQUIRED_MB )
+            throw new Exception("Minimum required space is not available");
+
+        //is machine and center active
+        if(centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
+            throw new Exception("Registrations are not allowed");
     }
 }

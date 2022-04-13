@@ -29,6 +29,9 @@ public interface MasterDataService {
      */
     void syncMasterData() throws Exception;
 
+
+    void syncLatestIdSchema() throws Exception;
+
     /**
      * Returns the list of supported location hierarchy levels
      * @param langCode

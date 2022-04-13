@@ -21,7 +21,7 @@ public class RegistrationDto {
 
     private String rId;
     private String process;
-    private String schemaVersion;
+    private Double schemaVersion;
     private LocalDateTime dateTime;
     private List<String> selectedLanguages;
     private ConsentDto consentDto;
@@ -31,7 +31,7 @@ public class RegistrationDto {
     private OperatorDto maker;
     private OperatorDto reviewer;
 
-    public RegistrationDto(@NonNull String rid, @NonNull String process, @NonNull String schemaVersion,
+    public RegistrationDto(@NonNull String rid, @NonNull String process, @NonNull Double schemaVersion,
                            @NonNull List<String> languages) {
         this.rId = rid;
         this.dateTime = LocalDateTime.now(ZoneOffset.UTC);
@@ -109,7 +109,7 @@ public class RegistrationDto {
         return process;
     }
 
-    public String getSchemaVersion() {
+    public Double getSchemaVersion() {
         return schemaVersion;
     }
 
