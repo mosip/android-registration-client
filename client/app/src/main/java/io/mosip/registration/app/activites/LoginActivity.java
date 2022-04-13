@@ -76,8 +76,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
+                String username = usernameEditText.getText().toString().trim();
+                String password = passwordEditText.getText().toString().trim();
                 //validate form
                 if(validateLogin(username, password)){
                     doLogin(username, password);
@@ -91,11 +91,15 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
     private boolean validateLogin(String username, String password){
         if(username == null || username.trim().length() == 0){
-            Toast.makeText(this, "Username is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Username is required", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(password == null || password.trim().length() == 0){
-            Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Password is required", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(loginService.isValidUserId(username)) {
+            Toast.makeText(LoginActivity.this, "Invalid username", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

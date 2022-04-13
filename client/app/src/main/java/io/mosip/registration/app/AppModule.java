@@ -122,11 +122,12 @@ public class AppModule {
                                                       DynamicFieldRepository dynamicFieldRepository,
                                                       KeyStoreRepository keyStoreRepository,
                                                       LocationRepository locationRepository,
-                                                      GlobalParamRepository globalParamRepository) {
+                                                      GlobalParamRepository globalParamRepository,
+                                                      IdentitySchemaRepository identitySchemaRepository) {
         return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
-                globalParamRepository);
+                globalParamRepository, identitySchemaRepository);
     }
 
     @Singleton
@@ -193,9 +194,10 @@ public class AppModule {
     RegistrationService provideRegistrationService(PacketWriterService packetWriterService,
                                                    UserInterfaceHelperService userInterfaceHelperService,
                                                    RegistrationRepository registrationRepository,
-                                                   MasterDataService masterDataService) {
+                                                   MasterDataService masterDataService,
+                                                   IdentitySchemaRepository identitySchemaRepository) {
         return new RegistrationServiceImpl(appContext, packetWriterService, userInterfaceHelperService,
-                registrationRepository, masterDataService);
+                registrationRepository, masterDataService, identitySchemaRepository);
     }
 
     @Provides

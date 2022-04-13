@@ -37,7 +37,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Sync and Upload Packets");
+        getSupportActionBar().setTitle("Registrations");
         getSupportActionBar().setSubtitle("Note : Packets are auto approved");
 
         ViewModelFactory viewModelFactory = new ViewModelFactory(new ListingViewModel(packetService));

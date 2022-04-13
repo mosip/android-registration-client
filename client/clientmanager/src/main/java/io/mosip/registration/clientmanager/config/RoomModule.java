@@ -98,6 +98,12 @@ public class RoomModule {
         return clientDatabase.globalParamDao();
     }
 
+    @Singleton
+    @Provides
+    IdentitySchemaDao providesIdentitySchemaDao(ClientDatabase clientDatabase) {
+        return clientDatabase.identitySchemaDao();
+    }
+
     @Provides
     @Singleton
     RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
@@ -159,4 +165,9 @@ public class RoomModule {
         return new GlobalParamRepository(globalParamDao);
     }
 
+    @Provides
+    @Singleton
+    IdentitySchemaRepository provideIdentitySchemaRepository(IdentitySchemaDao identitySchemaDao) {
+        return new IdentitySchemaRepository(identitySchemaDao);
+    }
 }

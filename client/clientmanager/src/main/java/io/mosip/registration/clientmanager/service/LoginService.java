@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 
 import android.util.Log;
+import com.auth0.android.jwt.JWT;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import org.json.JSONObject;
 
@@ -29,6 +30,12 @@ public class LoginService {
         this.sessionManager = SessionManager.getSessionManager(context);
     }
 
+    public boolean isValidUserId(String userId) {
+        //TODO sync user-details
+        // and check if the user is mapped to this center and is active
+        return true;
+    }
+
     public void saveAuthToken(String authResponse) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);
@@ -39,13 +46,9 @@ public class LoginService {
                 JSONObject jsonObject = new JSONObject(new String(decodedBytes));
                 this.sessionManager.saveAuthToken(jsonObject.getString("token"));
             } catch (Exception ex) {
-                Log.e(TAG, "Failed to parse the decrypted auth response", ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 throw ex;
             }
         }
-    }
-
-    public String fetchAuthToken() {
-        return this.sessionManager.fetchAuthToken();
     }
 }

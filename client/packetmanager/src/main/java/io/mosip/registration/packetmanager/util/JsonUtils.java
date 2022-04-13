@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class JsonUtils {
 
+    private static final String TAG = JsonUtils.class.getSimpleName();
     private static ObjectMapper objectMapper;
 
     static {
@@ -24,7 +25,16 @@ public class JsonUtils {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException ex) {
-            Log.e("KER-UTL-105", "Failed to serialize object", ex);
+            Log.e(TAG, "Failed to serialize object", ex);
+            throw ex;
+        }
+    }
+
+    public static <T> T jsonStringToJavaObject(String jsonString, Class<T> clazz) throws JsonProcessingException {
+        try {
+            return objectMapper.readValue(jsonString, clazz);
+        } catch (JsonProcessingException ex) {
+            Log.e(TAG, "Failed to deserialize object", ex);
             throw ex;
         }
     }
