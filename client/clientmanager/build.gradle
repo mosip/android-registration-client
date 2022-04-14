@@ -67,6 +67,9 @@ dependencies {
     // JWT decoding library
     implementation 'com.auth0.android:jwtdecode:2.0.1'
 
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
     // added packet-manager Android library module as a dependency
     implementation project(':packetmanager')
     implementation project(':keymanager')

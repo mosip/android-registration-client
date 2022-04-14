@@ -10,6 +10,7 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.ConfigService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 
@@ -348,9 +349,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             JSONObject jsonObject = new JSONObject();
             if(file.exists()) {
                 try (FileReader fileReader = new FileReader(file)) {
-                    char[] charArray = new char[(int) file.length()];
-                    fileReader.read(charArray);
-                    String content = new String(charArray);
+                    String content = IOUtils.toString(fileReader);
                     byte[] appConfBytes = asymmetricDecrypt(CryptoUtil.base64decoder.decode(content));
                     jsonObject = new JSONObject(new String(appConfBytes));
                 }
@@ -378,9 +377,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                 return null;
 
             try(FileReader fileReader = new FileReader(file)) {
-                char[] charArray =  new char[(int) file.length()];
-                fileReader.read(charArray);
-                String content = new String(charArray);
+                String content = IOUtils.toString(fileReader);
                 byte[] appConfBytes = asymmetricDecrypt(CryptoUtil.base64decoder.decode(content));
                 JSONObject jsonObject = new JSONObject(new String(appConfBytes));
                 return jsonObject.has(entryName) ? jsonObject.getString(entryName) : null;

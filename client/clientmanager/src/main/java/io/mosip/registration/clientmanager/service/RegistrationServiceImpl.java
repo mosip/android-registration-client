@@ -128,7 +128,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
             String containerPath = packetWriterService.persistPacket(this.registrationDto.getRId(),
                     this.registrationDto.getSchemaVersion().toString(),
-                    userInterfaceHelperService.getSchemaJsonFromResource(),
+                    identitySchemaRepository.getSchemaJson(context, this.registrationDto.getSchemaVersion()),
                     SOURCE,
                     this.registrationDto.getProcess(),
                     true, centerMachineDto.getMachineRefId());
