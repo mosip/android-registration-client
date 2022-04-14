@@ -3,6 +3,9 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
@@ -17,14 +20,18 @@ import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
+import io.mosip.registration.packetmanager.util.JsonUtils;
+import okhttp3.ResponseBody;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,6 +116,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         try {
             syncMasterData();
             syncCertificate();
+            syncLatestIdSchema();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
@@ -157,10 +165,9 @@ public class MasterDataServiceImpl implements MasterDataService {
         if(centerMachineDto != null)
             queryParams.put("regcenterId", centerMachineDto.getCenterId());
 
-        //TODO come up with an idea to know its
-        /*String delta = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
+        String delta = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
         if(delta != null)
-            queryParams.put("lastUpdated", delta);*/
+            queryParams.put("lastUpdated", delta);
 
         Call<ResponseWrapper<ClientSettingDto>> call = syncRestService.fetchMasterDate(queryParams);
 
@@ -189,25 +196,22 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncLatestIdSchema() throws Exception {
-        Call<ResponseWrapper<IdSchemaResponse>> call = syncRestService.getLatestIdSchema();
-        call.enqueue(new Callback<ResponseWrapper<IdSchemaResponse>>() {
+        Call<ResponseBody> call = syncRestService.getLatestIdSchema();
+        call.enqueue(new Callback<ResponseBody>() {
 
             @Override
-            public void onResponse(Call<ResponseWrapper<IdSchemaResponse>> call,
-                                   Response<ResponseWrapper<IdSchemaResponse>> response) {
+            public void onResponse(Call<ResponseBody> call,
+                                   Response<ResponseBody> response) {
                 if(response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if(error == null) {
-                        try {
-                            identitySchemaRepository.saveIdentitySchema(context, response.body().getResponse());
-                            Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
-                        } catch (Exception e) {
-                            Log.e(TAG, "Failed to save IDSchema", e);
-                        }
+                    try {
+                        ResponseWrapper<IdSchemaResponse> wrapper = JsonUtils.jsonStringToJavaObject(response.body().string(),
+                                new TypeReference<ResponseWrapper<IdSchemaResponse>>() {});
+                        identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
+                        Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
+
+                    } catch (Exception e) {
+                        Log.e(TAG, "Failed to save IDSchema", e);
                     }
-                    else
-                        Toast.makeText(context, "Identity schema and UI Spec  Sync failed "
-                                + error.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 else
                     Toast.makeText(context, "Identity schema and UI Spec Sync failed with status code : " +
@@ -215,7 +219,8 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
 
             @Override
-            public void onFailure(Call<ResponseWrapper<IdSchemaResponse>> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(TAG, "Failed to sync schema", t);
                 Toast.makeText(context, "Identity schema and UI Spec Sync failed", Toast.LENGTH_LONG).show();
             }
         });

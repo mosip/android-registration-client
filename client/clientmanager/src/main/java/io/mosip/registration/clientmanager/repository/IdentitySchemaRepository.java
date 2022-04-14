@@ -9,6 +9,7 @@ import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.IdentitySchema;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
 import io.mosip.registration.packetmanager.util.JsonUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -67,9 +68,7 @@ public class IdentitySchemaRepository {
             throw new Exception("Schema file is tampered");
 
         try(FileReader fileReader = new FileReader(file)) {
-            char[] charArray =  new char[(int) file.length()];
-            fileReader.read(charArray);
-            String content = new String(charArray);
+            String content = IOUtils.toString(fileReader);
             String hash = HMACUtils2.digestAsPlainText(content.getBytes(StandardCharsets.UTF_8));
             if(!hash.equalsIgnoreCase(identitySchema.getFileHash()))
                 throw new Exception("Schema file is tampered");

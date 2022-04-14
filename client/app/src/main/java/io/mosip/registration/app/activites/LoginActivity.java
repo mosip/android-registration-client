@@ -45,6 +45,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        getSupportActionBar().setTitle(R.string.app_name);
+
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
@@ -98,7 +100,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
             Toast.makeText(LoginActivity.this, "Password is required", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(loginService.isValidUserId(username)) {
+        if(!loginService.isValidUserId(username)) {
             Toast.makeText(LoginActivity.this, "Invalid username", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -106,6 +108,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
     }
 
     private void doLogin(final String username,final String password){
+        //TODO check if the machine is online, if offline check password hash locally
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
             @Override

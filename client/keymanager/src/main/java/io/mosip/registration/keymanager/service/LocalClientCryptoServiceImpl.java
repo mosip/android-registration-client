@@ -10,6 +10,9 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.ConfigService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.json.JSONObject;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
@@ -19,6 +22,10 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -220,13 +227,8 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     public CryptoResponseDto encrypt(CryptoRequestDto cryptoRequestDto) {
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
 
-        byte[] public_key = CryptoUtil.base64decoder.decode(cryptoRequestDto.getPublicKey());
-        byte[] dataToEncrypt = CryptoUtil.base64decoder.decode(cryptoRequestDto.getValue().getBytes());
-
         try {
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(public_key);
-            KeyFactory kf = KeyFactory.getInstance(KEYGEN_ASYMMETRIC_ALGORITHM);
-            PublicKey publicKey = kf.generatePublic(keySpec);
+            byte[] dataToEncrypt = CryptoUtil.base64decoder.decode(cryptoRequestDto.getValue().getBytes());
 
             KeyGenerator keyGen = KeyGenerator.getInstance(KEYGEN_SYMMETRIC_ALGORITHM);
             keyGen.init(KEYGEN_SYMMETRIC_KEY_LENGTH);
@@ -241,10 +243,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             byte[] data_encryption = cipher_symmetric.doFinal(dataToEncrypt);
 
             // asymmetric encryption of secret key--------------------------------------------------
-            final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
-            cipher_asymmetric.init(Cipher.ENCRYPT_MODE, publicKey, new OAEPParameterSpec(
-                    CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT));
-            byte[] key_encryption = cipher_asymmetric.doFinal(mosipSecretKey.getEncoded());
+            byte[] key_encryption = asymmetricEncrypt(mosipSecretKey.getEncoded());
 
             // constructing key, iv, add and encryption stream--------------------------------------
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
@@ -276,10 +275,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH+CRYPTO_SYMMETRIC_AAD_LENGTH, dataToDecrypt.length);
 
             // asymmetric decryption of secret key----------------------------------------------------
-            final Cipher cipher_asymmetric = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
-            cipher_asymmetric.init(Cipher.DECRYPT_MODE, getEnDecPrivateKey(), new OAEPParameterSpec(
-                    CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT));
-            byte[] secretKeyBytes = cipher_asymmetric.doFinal(encryptedSecretKey);
+            byte[] secretKeyBytes = asymmetricDecrypt(encryptedSecretKey);
 
             SecretKey secretKey = new SecretKeySpec(secretKeyBytes, KEYGEN_SYMMETRIC_ALGORITHM);
             // symmetric decryption of data-----------------------------------------------------
@@ -321,8 +317,71 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
     @Override
     public String getMachineName() {
+        String name = getAppConf(APP_CONF_KEY_MACHINE_NAME);
+        if(name == null) {
+            saveAppConf(APP_CONF_KEY_MACHINE_NAME, RandomStringUtils.random(12, true, true));
+        }
+        return getAppConf(APP_CONF_KEY_MACHINE_NAME);
+    }
+
+    private byte[] asymmetricEncrypt(byte[] data) throws Exception {
+        final Cipher cipher = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, getEnDecPublicKey(), new OAEPParameterSpec(
+                CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT));
+        return cipher.doFinal(data);
+    }
+
+    private byte[] asymmetricDecrypt(byte[] dataToDecrypt) throws Exception {
+        final Cipher cipher = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, getEnDecPrivateKey(), new OAEPParameterSpec(
+                CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT));
+        return cipher.doFinal(dataToDecrypt);
+    }
+
+
+    private void saveAppConf(String entryName, String entryValue) {
         try {
-            return Build.DEVICE;
+            File dir = new File(context.getDataDir(), APP_CONF_DIR);
+            if (!dir.exists())
+                dir.mkdir();
+
+            File file = new File(dir, APP_CONF);
+            JSONObject jsonObject = new JSONObject();
+            if(file.exists()) {
+                try (FileReader fileReader = new FileReader(file)) {
+                    String content = IOUtils.toString(fileReader);
+                    byte[] appConfBytes = asymmetricDecrypt(CryptoUtil.base64decoder.decode(content));
+                    jsonObject = new JSONObject(new String(appConfBytes));
+                }
+            }
+
+            jsonObject.put(entryName, entryValue);
+            String appConf = jsonObject.toString();
+            byte[] encrypted = asymmetricEncrypt(appConf.getBytes(StandardCharsets.UTF_8));
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                fileWriter.write(CryptoUtil.base64encoder.encodeToString(encrypted));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
+        }
+    }
+
+    private String getAppConf(String entryName) {
+        try {
+            File dir = new File(context.getDataDir(), APP_CONF_DIR);
+            if(!dir.exists())
+                return null;
+
+            File file = new File(dir, APP_CONF);
+            if(!file.exists())
+                return null;
+
+            try(FileReader fileReader = new FileReader(file)) {
+                String content = IOUtils.toString(fileReader);
+                byte[] appConfBytes = asymmetricDecrypt(CryptoUtil.base64decoder.decode(content));
+                JSONObject jsonObject = new JSONObject(new String(appConfBytes));
+                return jsonObject.has(entryName) ? jsonObject.getString(entryName) : null;
+            }
         } catch (Exception e) {
             Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         }

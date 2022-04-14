@@ -50,8 +50,8 @@ dependencies {
     implementation 'commons-codec:commons-codec:1.15'
 
     implementation "androidx.room:room-common:2.3.0"
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
     implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
-
-
 }
