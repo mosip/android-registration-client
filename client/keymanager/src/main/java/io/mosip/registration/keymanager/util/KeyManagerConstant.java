@@ -14,5 +14,8 @@ public class KeyManagerConstant {
 
     public static final String ENCDEC_ALIAS = "ENDEC";
     public static final String SIGNV_ALIAS = "SIGN";
-    public static final String NAME_ALIAS = "MACHINEID";
+
+    public static final String APP_CONF_DIR = ".mosipkeys";
+    public static final String APP_CONF = "client.conf";
+    public static final String APP_CONF_KEY_MACHINE_NAME = "machineName";
 }
