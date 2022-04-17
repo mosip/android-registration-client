@@ -1,46 +1,42 @@
 package io.mosip.registration.app.dynamicviews;
 
 import android.content.Context;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import io.mosip.registration.app.R;
-import io.mosip.registration.app.dynamicviews.DynamicView;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
-    String languageCode="";
-    String labelText="";
-    String validationRule="";
-    long identifier;
+    List<String> languages = null;
+    FieldSpecDto fieldSpecDto = null;
     final int layoutId = R.layout.dynamic_biometrics_box;
 
-    public DynamicBiometricsBox(Context context,String langCode,String label,String validation) {
+    public DynamicBiometricsBox(Context context, FieldSpecDto fieldSpecDto, List<String> languages) {
         super(context);
-
-        languageCode=langCode;
-        labelText=label;
-        validationRule=validation;
-        identifier=System.nanoTime();
-        init(context);
+        this.fieldSpecDto = fieldSpecDto;
+        this.languages = languages;
+        initializeView(context);
     }
 
-    private void init(Context context) {
+    private void initializeView(Context context) {
         inflate(context, layoutId, this);
-        //((TextView)findViewById(R.id.biometrics_label)).setText(labelText);
-        initComponents();
-    }
+        this.setTag(fieldSpecDto.getId());
 
-    private void initComponents() {
-
-    }
-
-    public DynamicBiometricsBox(Context context) {
-        super(context);
+        List<String> labels = new ArrayList<>();
+        for(String language : languages) {
+            labels.add(fieldSpecDto.getLabel().get(language));
+        }
+        ((TextView)findViewById(R.id.biometric_label)).setText(String.join("/", labels));
     }
 
     @Override
     public String getDataType() {
-        return "biometricsType";
+        return fieldSpecDto.getType();
     }
 
     @Override
@@ -53,7 +49,17 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
     }
 
     @Override
-    public boolean validValue() {
-        return true;
+    public boolean isValidValue() {
+        return false;
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void unHide() {
+
     }
 }

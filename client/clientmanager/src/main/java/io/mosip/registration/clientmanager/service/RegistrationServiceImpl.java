@@ -101,6 +101,10 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public void submitRegistrationDto() throws Exception {
+        if(this.registrationDto == null) {
+            throw new Exception("Registration not started !");
+        }
+
         try {
             this.registrationDto.getAllDemographicFields().forEach( entry -> {
                 packetWriterService.setField(this.registrationDto.getRId(), entry.getKey(), entry.getValue());
@@ -143,6 +147,14 @@ public class RegistrationServiceImpl implements RegistrationService {
                     centerMachineDto.getCenterId(), "NEW");
 
         } finally {
+            this.registrationDto.cleanup();
+            this.registrationDto = null;
+        }
+    }
+
+    @Override
+    public void clearRegistration() {
+        if(this.registrationDto != null) {
             this.registrationDto.cleanup();
             this.registrationDto = null;
         }

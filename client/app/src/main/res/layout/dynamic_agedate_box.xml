@@ -2,85 +2,98 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_margin="40dp"
-    android:orientation="vertical">
+              android:layout_margin="10dp"
+              android:orientation="vertical">
 
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/rounded_corner"
-    android:weightSum="3">
-    <TextView
-            android:id="@+id/dob_label"
-            android:layout_width="150dp"
+    <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DOB"
-            android:layout_margin="8dp"/>
-
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal">
-
-        <EditText
-                android:id="@+id/dob_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Date"
-                android:layout_margin="5dp"/>
-
+            android:orientation="vertical"
+            android:background="@drawable/rounded_corner"
+            android:weightSum="3">
         <TextView
-                android:id="@+id/dob_date_slash"
-                android:layout_width="wrap_content"
+                android:id="@+id/dob_label"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:inputType="none"
-                android:text="/"
-                android:layout_margin="5dp"/>
-
-        <EditText
-                android:id="@+id/dob_month"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Month"
-                android:layout_margin="5dp"/>
-
-        <TextView
-                android:id="@+id/dob_date_slash_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:text="/"
-                android:layout_margin="5dp"/>
-
-        <EditText
-                android:id="@+id/dob_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Year"
+                android:text="DOB"
                 android:layout_margin="8dp"/>
 
-        <TextView
-                android:id="@+id/dob_or"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:text="OR"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:gravity="center"
+                      android:orientation="horizontal">
 
-        <EditText
-                android:id="@+id/dob_age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Age"
-                android:layout_margin="8dp"/>
+            <EditText
+                    android:id="@+id/dob_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:inputType="number"
+                    android:hint="DD"
+                    android:maxLength="2"
+                    android:layout_margin="5dp"/>
+
+            <TextView
+                    android:id="@+id/dob_date_slash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="/"
+                    android:layout_margin="5dp"/>
+
+            <EditText
+                    android:id="@+id/dob_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:hint="MM"
+                    android:maxLength="2"
+                    android:layout_margin="5dp"/>
+
+            <TextView
+                    android:id="@+id/dob_date_slash_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="/"
+                    android:layout_margin="5dp"/>
+
+            <EditText
+                    android:id="@+id/dob_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:hint="YYYY"
+                    android:maxLength="4"
+                    android:layout_margin="8dp"/>
+
+            <TextView
+                    android:id="@+id/dob_or"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="OR"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+
+            <EditText
+                    android:id="@+id/dob_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:hint="Age"
+                    android:maxLength="3"
+                    android:layout_margin="8dp"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
 </LinearLayout>

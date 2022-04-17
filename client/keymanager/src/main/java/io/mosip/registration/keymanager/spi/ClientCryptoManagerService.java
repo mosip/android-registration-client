@@ -3,6 +3,7 @@ package io.mosip.registration.keymanager.spi;
 import io.mosip.registration.keymanager.dto.*;
 
 import java.security.KeyStoreException;
+import java.util.Map;
 
 
 /**
@@ -25,5 +26,5 @@ public interface ClientCryptoManagerService {
 
     String getClientKeyIndex() throws Exception;
 
-    void printMachineDetails();
+    Map<String, String> getMachineDetails();
 }

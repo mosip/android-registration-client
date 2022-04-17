@@ -1,5 +1,7 @@
 package io.mosip.registration.app.activites;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -7,10 +9,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.*;
 
 
 import dagger.android.support.DaggerAppCompatActivity;
@@ -70,6 +69,15 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 loginButton.setEnabled(validateLogin(username, password));
             }
         };
+
+        findViewById(R.id.info_logo).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, AboutActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
 
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);

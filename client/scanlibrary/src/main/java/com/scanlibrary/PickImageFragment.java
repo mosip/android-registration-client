@@ -70,7 +70,7 @@ public class PickImageFragment extends Fragment {
 
     private void clearTempImages() {
         try {
-            File tempFolder = new File(ScanConstants.IMAGE_PATH);
+            File tempFolder = new File(getActivity().getExternalCacheDir().getAbsolutePath());
             for (File f : tempFolder.listFiles())
                 f.delete();
         } catch (Exception e) {
@@ -145,7 +145,7 @@ public class PickImageFragment extends Fragment {
         clearTempImages();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new
                 Date());
-        File file = new File(ScanConstants.IMAGE_PATH, "IMG_" + timeStamp +
+        File file = new File(getActivity().getExternalCacheDir().getAbsolutePath(), "IMG_" + timeStamp +
                 ".jpg");
         fileUri = Uri.fromFile(file);
         return file;

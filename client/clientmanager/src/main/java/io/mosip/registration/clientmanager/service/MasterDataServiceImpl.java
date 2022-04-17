@@ -32,10 +32,7 @@ import retrofit2.Response;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -226,6 +223,11 @@ public class MasterDataServiceImpl implements MasterDataService {
         });
     }
 
+    @Override
+    public Integer getHierarchyLevel(String hierarchyLevelName) {
+        return locationRepository.getHierarchyLevel(hierarchyLevelName);
+    }
+
     private void saveMasterData(ClientSettingDto clientSettingDto) {
         boolean foundErrors = false;
         for(MasterData masterData : clientSettingDto.getDataToSync()) {
@@ -292,6 +294,12 @@ public class MasterDataServiceImpl implements MasterDataService {
                     locationRepository.saveLocationData(locations.getJSONObject(i));
                 }
                 break;
+            case "LocationHierarchy":
+                JSONArray locationHierarchies = getDecryptedDataList(data);
+                for(int i =0 ;i < locationHierarchies.length(); i++) {
+                    locationRepository.saveLocationHierarchyData(locationHierarchies.getJSONObject(i));
+                }
+                break;
         }
     }
 
@@ -329,8 +337,11 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public List<String> findLocationByHierarchyLevel(int hierarchyLevel, String langCode) {
-        return this.locationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
+    public List<String> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode) {
+        Integer level = getHierarchyLevel(hierarchyLevelName);
+        if(level == null)
+            return Collections.EMPTY_LIST;
+        return this.locationRepository.getLocationsBasedOnHierarchyLevel(level, langCode);
     }
 
     @Override

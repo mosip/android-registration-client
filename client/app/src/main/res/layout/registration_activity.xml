@@ -22,24 +22,15 @@
                     android:gravity="start|top"
                     android:ems="10"
                     android:textSize="15sp"
-                    android:text="I understand that the data collected about me during registration by the said authority includes \n * Demographics\n * Documents\n * Biometrics\n I also understand that this information will be stored and processed for the purpose of verifying my identity in order to access various services, or to comply with a legal obligation. I give my consent for the collection of this data for this purpose"
-                    android:id="@+id/consentText"
+                    android:text="Please select any {0} languages for data entry. {1} is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data."
+                    android:id="@+id/languageInfoText"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
-            <TextView
-                    android:text="Select Data Collection language"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:textSize="16sp"
-                    android:layout_margin="5dp"/>
-            <CheckBox
-                    android:text="English"
-                    android:defaultFocusHighlightEnabled="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/eng"
-                    android:layout_margin="20dp"/>
+
+            <ListView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/languageList">
+            </ListView>
 
         </LinearLayout>
 
@@ -58,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/rounded_corner"
-                android:text="Accept and Start Registration"
+                android:text="Next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>

@@ -2,7 +2,6 @@ package io.mosip.registration.clientmanager.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import com.auth0.android.jwt.JWT;
 import io.mosip.registration.clientmanager.R;
@@ -19,30 +18,25 @@ public class SessionManager {
     public static final String USER_NAME = "user_name";
     public static final String USER_TOKEN = "user_token";
 
-    private SessionManager manager = null;
+    private static SessionManager manager = null;
     private static final String REALM_ACCESS = "realm_access";
     private static final String USERNAME = "name";
 
     private Context context;
-    private SharedPreferences sharedPreferences;
 
     private SessionManager(Context context) {
-        if(manager == null) {
-            synchronized (this) {
-                this.context = context;
-                this.sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
-                        Context.MODE_PRIVATE);
-            }
-        }
+        this.context = context;
     }
 
     public static SessionManager getSessionManager(Context context) {
-        return new SessionManager(context);
+        if(manager == null)
+            manager = new SessionManager(context);
+        return manager;
     }
 
     public void saveAuthToken(@NonNull String token) throws Exception {
         final JWT jwt = new JWT(token);
-        if(jwt.isExpired(0))
+        if(jwt.isExpired(15))
             throw new Exception("Expired token found : " + jwt.getExpiresAt());
 
         Map<String,Object> realmAccess = jwt.getClaim(REALM_ACCESS).asObject(Map.class);
@@ -54,7 +48,8 @@ public class SessionManager {
         if(!roles.contains("REGISTRATION_SUPERVISOR") && !roles.contains("REGISTRATION_OFFICER"))
             throw new Exception("Unauthorized access, Required roles not found");
 
-        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE).edit();
         editor.putString(USER_TOKEN, token);
         editor.putString(USER_NAME, jwt.getClaim(USERNAME).asString());
         editor.putBoolean(IS_SUPERVISOR, roles.contains("REGISTRATION_SUPERVISOR"));
@@ -64,6 +59,7 @@ public class SessionManager {
     }
 
     public String fetchAuthToken() {
-        return this.sharedPreferences.getString(USER_TOKEN, null);
+        return this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE).getString(USER_TOKEN, null);
     }
 }

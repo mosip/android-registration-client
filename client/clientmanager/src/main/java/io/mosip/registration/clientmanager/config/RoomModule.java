@@ -104,6 +104,12 @@ public class RoomModule {
         return clientDatabase.identitySchemaDao();
     }
 
+    @Singleton
+    @Provides
+    LocationHierarchyDao providesLocationHierarchyDao(ClientDatabase clientDatabase) {
+        return clientDatabase.locationHierarchyDao();
+    }
+
     @Provides
     @Singleton
     RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
@@ -155,8 +161,8 @@ public class RoomModule {
 
     @Provides
     @Singleton
-    LocationRepository provideLocationRepository(LocationDao locationDao) {
-        return new LocationRepository(locationDao);
+    LocationRepository provideLocationRepository(LocationDao locationDao, LocationHierarchyDao locationHierarchyDao) {
+        return new LocationRepository(locationDao, locationHierarchyDao);
     }
 
     @Provides

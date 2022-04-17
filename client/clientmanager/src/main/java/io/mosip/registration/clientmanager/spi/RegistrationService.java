@@ -16,4 +16,6 @@ public interface RegistrationService {
     RegistrationDto getRegistrationDto() throws Exception;
 
     void submitRegistrationDto() throws Exception;
+
+    void clearRegistration();
 }

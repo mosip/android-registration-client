@@ -5,5 +5,7 @@ public interface DynamicView {
      String getDataType();
      Object getValue();
      void setValue();
-     boolean validValue();
+     boolean isValidValue();
+     void hide();
+     void unHide();
 }

@@ -30,6 +30,8 @@ import java.security.*;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.mosip.registration.keymanager.util.KeyManagerConstant.*;
 
@@ -79,7 +81,6 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             initLocalClientCryptoService(appContext);
-            printMachineDetails();
         } catch (Exception e) {
             Log.e(TAG, "LocalClientCryptoServiceImpl: Failed Initialization", e);
         }
@@ -394,16 +395,16 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     }
 
     @Override
-    public void printMachineDetails() {
+    public Map<String, String> getMachineDetails() {
+        Map<String, String> map = new HashMap<>();
         try {
-            Log.i(TAG, "=================================================");
-            Log.i(TAG, "Machine name : "+ getMachineName());
-            Log.i(TAG, "Sign public key : "+ CryptoUtil.base64encoder.encodeToString(getSignPublicKey().getEncoded()));
-            Log.i(TAG, "public key : "+ CryptoUtil.base64encoder.encodeToString(getEnDecPublicKey().getEncoded()));
-            Log.i(TAG, "=================================================");
+            map.put("name", getMachineName());
+            map.put("publicKey", CryptoUtil.base64encoder.encodeToString(getEnDecPublicKey().getEncoded()));
+            map.put("signPublicKey", CryptoUtil.base64encoder.encodeToString(getSignPublicKey().getEncoded()));
         } catch (Exception e) {
             Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         }
+        return map;
     }
 
     private PrivateKey getEnDecPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableEntryException {

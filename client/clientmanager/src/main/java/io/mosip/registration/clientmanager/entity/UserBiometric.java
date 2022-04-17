@@ -6,6 +6,8 @@ import androidx.room.Entity;
 
 import java.sql.Timestamp;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * The Entity Class for UserBiometric details
  * 
@@ -13,6 +15,7 @@ import lombok.Data;
  */
 @Entity(primaryKeys = {"usr_id", "bmtyp_code", "bmatt_code"}, tableName = "user_biometric")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class UserBiometric extends RegistrationCommonFields {
 
 	@NonNull

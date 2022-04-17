@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * This Entity Class contains list of locations that are being used in Registration with respect to language code.
@@ -18,6 +19,7 @@ import lombok.Data;
  */
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Entity(primaryKeys = {"code", "lang_code"}, tableName = "location")
 public class Location extends RegistrationCommonFields implements Serializable {
 
