@@ -32,6 +32,14 @@ public interface MasterDataService {
 
     void syncLatestIdSchema() throws Exception;
 
+
+    /**
+     *
+     * @param hierarchyLevelName
+     * @return
+     */
+    Integer getHierarchyLevel(String hierarchyLevelName);
+
     /**
      * Returns the list of supported location hierarchy levels
      * @param langCode
@@ -62,7 +70,7 @@ public interface MasterDataService {
      * @param langCode
      * @return
      */
-    List<String> findLocationByHierarchyLevel(int hierarchyLevel, String langCode);
+    List<String> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode);
 
 
     /**

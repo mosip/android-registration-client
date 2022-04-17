@@ -6,12 +6,20 @@
               android:layout_margin="20dp"
               android:orientation="vertical">
 
+    <TextView
+            android:id="@+id/biometric_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Label"
+            android:layout_margin="8dp"
+    />
+
     <Button
-            android:text="Capture Modality"
+            android:text="Capture Face"
             android:layout_width="match_parent"
             android:layout_margin="20dp"
             android:layout_height="wrap_content"
-            android:id="@+id/rcapture" />
+            android:id="@+id/rcapture_face" />
 
     <ScrollView
             android:id="@+id/sbi_result_scroll"

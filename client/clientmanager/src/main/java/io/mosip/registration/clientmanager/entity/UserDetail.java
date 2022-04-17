@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * The Entity Class for User Detail details
  * 
@@ -17,6 +19,7 @@ import lombok.Data;
  */
 @Entity(tableName = "user_detail")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class UserDetail extends RegistrationCommonFields implements Serializable {
 	private static final long serialVersionUID = 1L;
 

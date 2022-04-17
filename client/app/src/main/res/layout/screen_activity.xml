@@ -25,7 +25,7 @@ tools:context=".activites.RegistrationActivity">
         <ScrollView android:layout_width="match_parent"
                     android:layout_height="wrap_content">
             <LinearLayout
-                    android:id="@+id/pnlPrimaryLanguagePanel"
+                    android:id="@+id/fieldPanel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
@@ -48,7 +48,7 @@ tools:context=".activites.RegistrationActivity">
 
 
     <Button
-        android:id="@+id/submit"
+        android:id="@+id/next"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/rounded_corner"

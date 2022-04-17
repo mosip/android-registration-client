@@ -1,21 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="40dp"
-              android:measureWithLargestChild="true"
-    android:background="@drawable/rounded_corner"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_margin="10dp"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="@drawable/rounded_corner"
               android:orientation="vertical">
 
     <TextView
             android:id="@+id/text_label"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Label"
             android:layout_margin="8dp"
     />
+
     <com.google.android.material.textfield.TextInputLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+
+            android:theme="@style/Theme.registration_client"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeColor="@color/white"
+            app:boxStrokeWidthFocused="0dp"
+            android:id="@+id/text_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+        <EditText
+                android:id="@+id/custom_edit_text"
+                android:inputType="text"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        </EditText>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--<com.google.android.material.textfield.TextInputLayout
+            android:theme="@style/Theme.registration_client"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeColor="@color/white"
+            app:boxStrokeWidthFocused="0dp"
+            android:id="@+id/text_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+    </com.google.android.material.textfield.TextInputLayout>-->
+    <!--<com.google.android.material.textfield.TextInputLayout
             android:theme="@style/Theme.registration_client"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -29,5 +66,5 @@
                 android:layout_height="match_parent"
                 android:background="@color/white"
                />
-    </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>-->
 </LinearLayout>

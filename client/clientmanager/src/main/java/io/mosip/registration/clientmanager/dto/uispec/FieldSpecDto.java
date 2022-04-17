@@ -13,6 +13,7 @@ public class FieldSpecDto {
     private String id;
     private Boolean inputRequired;
     private String type;
+    private String fieldType;
     private Integer minimum;
     private Integer maximum;
     private Map<String, String> label;

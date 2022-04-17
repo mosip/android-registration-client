@@ -15,12 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.registration_client">
 
-        <activity
-            android:name=".activites.BiometricsActivity"
-            android:parentActivityName=".activites.MainActivity"
-            android:exported="true">
-        </activity>
-
         <activity android:name=".activites.MainActivity"
                   android:label="@string/app_name" />
 
@@ -31,18 +25,10 @@
                 android:exported="true">
         </activity>
 
-        <activity
-                android:name=".activites.DemographicsActivity"
-                android:parentActivityName=".activites.MainActivity"
-                android:windowSoftInputMode="adjustResize"
-                android:exported="true">
-        </activity>
-
-        <activity
-                android:name=".activites.DocumentsActivity"
-                android:windowSoftInputMode="adjustResize"
-                android:parentActivityName=".activites.MainActivity"
-                android:exported="true">
+        <activity android:name=".activites.ScreenActivity"
+                  android:windowSoftInputMode="adjustResize"
+                  android:parentActivityName=".activites.MainActivity"
+                  android:exported="true">
         </activity>
 
         <activity
@@ -57,6 +43,12 @@
                 android:windowSoftInputMode="adjustResize"
                 android:parentActivityName=".activites.MainActivity"
                 android:exported="true">
+        </activity>
+
+        <activity android:name=".activites.AboutActivity"
+                  android:windowSoftInputMode="adjustResize"
+                  android:parentActivityName=".activites.MainActivity"
+                  android:exported="true">
         </activity>
 
         <activity

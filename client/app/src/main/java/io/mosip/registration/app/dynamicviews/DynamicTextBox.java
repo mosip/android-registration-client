@@ -1,82 +1,84 @@
 package io.mosip.registration.app.dynamicviews;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.AttributeSet;
+import android.graphics.Color;
+import android.text.InputFilter;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import android.widget.TextView;
-import androidx.annotation.Nullable;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import io.mosip.registration.app.R;
+import io.mosip.registration.app.activites.ScreenActivity;
+import io.mosip.registration.app.util.InputTextRegexFilter;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldValidatorDto;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DynamicTextBox extends LinearLayout implements DynamicView {
 
-    String languageCode="";
-    String labelText="";
-    String validationRule="";
-    String fieldType = "";
+    List<String> languages = null;
+    FieldSpecDto fieldSpecDto = null;
     final int layoutId=R.layout.dynamic_text_box;
 
-    public DynamicTextBox(Context context,String langCode,String label,String validation, String type) {
+    public DynamicTextBox(Context context, FieldSpecDto fieldSpecDto, List<String> languages) {
         super(context);
-        languageCode=langCode;
-        labelText=label;
-        validationRule=validation;
-        fieldType = type;
-        init(context);
+        this.fieldSpecDto = fieldSpecDto;
+        this.languages = languages;
+        initializeView(context);
     }
 
-    public DynamicTextBox(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public DynamicTextBox(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    public DynamicTextBox(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
-
-    private void init(Context context) {
+    private void initializeView(Context context) {
         inflate(context, layoutId , this);
-        ((TextView)findViewById(R.id.text_label)).setText(labelText);
-        initComponents();
-   }
+        this.setTag(fieldSpecDto.getId());
 
-    private void initComponents() {
-        ((TextView)findViewById(R.id.text_input_edit)).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+        //TODO need to filter based on language
+        Optional<FieldValidatorDto> result = (fieldSpecDto.getValidators() != null) ? fieldSpecDto.getValidators()
+                .stream()
+                .filter(v -> v.getType().equalsIgnoreCase("regex"))
+                .findFirst() : Optional.empty();
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+        List<String> labels = new ArrayList<>();
+        for(String language : languages) {
+            labels.add(fieldSpecDto.getLabel().get(language));
+        }
+        ((TextView)findViewById(R.id.text_label)).setText(String.join("/", labels));
 
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        EditText editText = findViewById(R.id.custom_edit_text);
+        editText.setTag(languages.get(0));
+
+        if(result.isPresent()) {
+            editText.setFilters(new InputFilter[] { new InputTextRegexFilter(
+                    (TextInputLayout) findViewById(R.id.text_input_layout), result.get().getValidator())});
+        }
+
+        setVisibility();
+    }
+
+
+    private void setVisibility() {
+        if(fieldSpecDto.getVisible() != null && fieldSpecDto.getVisible().getEngine().equalsIgnoreCase("jexl")) {
+            //TODO
+            boolean isVisible = true;
+            setVisibility(isVisible ? VISIBLE : GONE);
+        }
     }
 
     @Override
     public String getDataType() {
-        return fieldType;
+        return fieldSpecDto.getType();
     }
 
     public Object getValue() {
-        String value = ((TextView)findViewById(R.id.text_input_edit)).getText().toString();
+        String value = ((TextView)findViewWithTag(languages.get(0))).getText().toString();
+        //TODO consider all languages
         if (getDataType().equalsIgnoreCase("simpleType")) {
             return new GenericDto(value, "eng");
         }
@@ -88,8 +90,17 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
     }
 
     @Override
-    public boolean validValue() {
-        return true;
+    public boolean isValidValue() {
+        return false;
     }
 
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void unHide() {
+
+    }
 }

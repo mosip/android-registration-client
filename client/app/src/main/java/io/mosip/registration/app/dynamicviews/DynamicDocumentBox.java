@@ -1,48 +1,54 @@
 package io.mosip.registration.app.dynamicviews;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.*;
+import com.scanlibrary.ScanActivity;
+import com.scanlibrary.ScanConstants;
 import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DynamicDocumentBox extends LinearLayout implements DynamicView  {
 
-    String languageCode="";
-    String labelText="";
-    String validationRule="";
-    final int layoutId = R.layout.dynamic_document_box;
+    List<String> languages = null;
+    FieldSpecDto fieldSpecDto = null;
     MasterDataService masterDataService;
-    String subType = "";
+    final int layoutId = R.layout.dynamic_document_box;
 
-
-    public DynamicDocumentBox(Context context,String langCode,String label,String validation,
-                              MasterDataService masterDataService, String subType) {
+    public DynamicDocumentBox(Context context, FieldSpecDto fieldSpecDto, List<String> languages,
+                              MasterDataService masterDataService) {
         super(context);
-        languageCode=langCode;
-        labelText=label;
-        validationRule=validation;
+        this.fieldSpecDto = fieldSpecDto;
+        this.languages = languages;
         this.masterDataService = masterDataService;
-        this.subType = subType;
-        init(context);
+        initializeView(context);
     }
 
-    private void init(Context context) {
+
+    private void initializeView(Context context) {
+        List<String> labels = new ArrayList<>();
+        for(String language : languages) {
+            labels.add(fieldSpecDto.getLabel().get(language));
+        }
         inflate(context, layoutId, this);
-        ((TextView)findViewById(R.id.document_label)).setText(labelText);
-        initComponents(context);
-    }
+        this.setTag(fieldSpecDto.getId());
 
-    private void initComponents(Context context) {
+        ((TextView)findViewById(R.id.document_label)).setText(String.join("/", labels));
+
         //TODO derive applicant type code
-        List<String> items = this.masterDataService.getDocumentTypes(subType, "011", "eng");
+        List<String> items = this.masterDataService.getDocumentTypes(fieldSpecDto.getSubType(),
+                "011", languages.get(0));
 
         @SuppressLint("ResourceType")
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, items);
@@ -51,19 +57,15 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView  {
         sItems.setAdapter(adapter);
     }
 
-    public DynamicDocumentBox(Context context) {
-        super(context);
-    }
-
     @Override
     public String getDataType() {
-        return "documentType";
+        return fieldSpecDto.getType();
     }
 
     @Override
     public Object getValue() {
         Spinner sItems = (Spinner) findViewById(R.id.doctypes_dropdown);
-        if(sItems.getSelectedItem() == null)
+        if(sItems.getSelectedItem() != null)
             return sItems.getSelectedItem().toString();
         return null;
     }
@@ -73,7 +75,17 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView  {
     }
 
     @Override
-    public boolean validValue() {
-        return true;
+    public boolean isValidValue() {
+        return false;
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void unHide() {
+
     }
 }

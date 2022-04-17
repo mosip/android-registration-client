@@ -1,72 +1,68 @@
 package io.mosip.registration.app.dynamicviews;
 
 import android.content.Context;
-import android.util.AttributeSet;
+import android.text.InputFilter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
-
 import io.mosip.registration.app.R;
-import io.mosip.registration.app.dynamicviews.DynamicView;
+import io.mosip.registration.app.util.InputTextRegexFilter;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
-    TextView dateBox;
-    TextView monthBox;
-    TextView yearBox;
-    TextView ageBox;
+    EditText dateBox;
+    EditText monthBox;
+    EditText yearBox;
+    EditText ageBox;
 
-    String languageCode="";
-    String labelText="";
-    String validationRule="";
-    final int layoutId =R.layout.dynamic_agedate_box;
+    List<String> languages = null;
+    FieldSpecDto fieldSpecDto = null;
+    MasterDataService masterDataService;
+    final int layoutId = R.layout.dynamic_agedate_box;
 
-    public DynamicAgeDateBox(Context context,String langCode,String label,String validation) {
+    public DynamicAgeDateBox(Context context, FieldSpecDto fieldSpecDto, List<String> languages,
+                              MasterDataService masterDataService) {
         super(context);
-
-        languageCode=langCode;
-        labelText=label;
-        validationRule=validation;
-        init(context);
+        this.fieldSpecDto = fieldSpecDto;
+        this.languages = languages;
+        this.masterDataService = masterDataService;
+        initializeView(context);
     }
 
-    public DynamicAgeDateBox(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public DynamicAgeDateBox(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    public DynamicAgeDateBox(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
-
-    private void init(Context context) {
+    private void initializeView(Context context) {
         inflate(context, layoutId, this);
-        ((TextView)findViewById(R.id.dob_label)).setText(labelText);
-        initComponents();
-    }
+        this.setTag(fieldSpecDto.getId());
 
-    private void initComponents() {
-         dateBox= findViewById(R.id.dob_date);
-         monthBox= findViewById(R.id.dob_month);
-         yearBox= findViewById(R.id.dob_year);
-         ageBox= findViewById(R.id.dob_age);
+        List<String> labels = new ArrayList<>();
+        for(String language : languages) {
+            labels.add(fieldSpecDto.getLabel().get(language));
+        }
+        ((TextView)findViewById(R.id.dob_label)).setText(String.join("/", labels));
+
+        //TODO re-arrange / build it based on date format from UI spec
+        dateBox = findViewById(R.id.dob_date);
+        dateBox.setFilters(new InputFilter[] { new InputTextRegexFilter(dateBox, "^(0[1-9]|1[0-9]|2[0-9]|3[01])$")});
+
+        monthBox= findViewById(R.id.dob_month);
+        monthBox.setFilters(new InputFilter[] { new InputTextRegexFilter(monthBox, "^(0[1-9]|1[012])$")});
+
+        yearBox= findViewById(R.id.dob_year);
+        ageBox= findViewById(R.id.dob_age);
+        ageBox.setFilters(new InputFilter[] { new InputTextRegexFilter(monthBox, "^(0[1-9]|1[012])$")});
     }
 
     @Override
     public String getDataType() {
-        return "string";
+        return fieldSpecDto.getType();
     }
 
     public String getValue() {
+        //TODO construct based on date format
         return dateBox.getText().toString()+"/"+monthBox.getText().toString()+"/"+yearBox.getText().toString();
     }
 
@@ -75,8 +71,18 @@ public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
     }
 
     @Override
-    public boolean validValue() {
-        return true;
+    public boolean isValidValue() {
+        return false;
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void unHide() {
+
     }
 
 }

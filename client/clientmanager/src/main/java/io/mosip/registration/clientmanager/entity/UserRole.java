@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * The Entity Class for User Role details
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 @Entity(primaryKeys = {"usr_id", "role_code"}, tableName = "user_role")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class UserRole extends RegistrationCommonFields {
 
 	@NonNull

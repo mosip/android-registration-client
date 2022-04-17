@@ -26,20 +26,4 @@
 
     <string name="back">Back</string>
     <string name="reset">Reset</string>
-    <string name="fullName">Full Name</string>
-    <string name="dataOfBirth">Date Of Birth</string>
-    <string name="date">Date</string>
-    <string name="month">Month</string>
-    <string name="year">Year</string>
-    <string name="male">Male</string>
-    <string name="female">Female</string>
-    <string name="ethiopian">Ethiopian</string>
-    <string name="foreigner">Foreigner</string>
-    <string name="gender">Gender</string>
-    <string name="nationality">Nationality</string>
-    <string name="email">Email</string>
-    <string name="mobile">Mobile</string>
-    <string name="parentId">Parent ID</string>
-    <string name="introducerID">Introducer ID</string>
-    <string name="introducerRelation">Introducer Relation</string>
 </resources>
