@@ -32,11 +32,12 @@ public interface SyncRestService {
                                                          @Header ("Center-Machine-RefId") String refId,
                                                          @Body String encryptedData);
 
-
     @Multipart
     @POST("/registrationprocessor/v1/packetreceiver/registrationpackets")
     Call<RegProcResponseWrapper<UploadResponse>> uploadPacket(@Part MultipartBody.Part filePart);
 
+    //https://dev.mosip.net/v1/admin/packetstatusupdate?rid=asdf&langCode=eng
 
-
+    @GET("/v1/admin/packetstatusupdate")
+    Call<ResponseWrapper<PacketStatusUpdateResponseDto>> getPacketStatus(@Query("rid") String rid, @Query("langCode") String langCode);
 }

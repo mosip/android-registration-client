@@ -28,4 +28,11 @@ public interface PacketService {
      */
     List<Registration> getAllRegistrations(int page, int pageLimit);
 
+    /**
+     *
+     * @param page
+     * @param pageLimit
+     * @return
+     */
+    void syncAllPacketStatus();
 }

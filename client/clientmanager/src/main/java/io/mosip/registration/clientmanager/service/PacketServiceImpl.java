@@ -184,4 +184,40 @@ public class PacketServiceImpl implements PacketService {
     public List<Registration> getAllRegistrations(int page, int pageLimit) {
         return this.registrationRepository.getAllRegistrations();
     }
+
+    @Override
+    public void syncAllPacketStatus() {
+        List<Registration> registrations = this.registrationRepository.getAllRegistrations();
+
+        for (Registration reg : registrations) {
+            Call<ResponseWrapper<PacketStatusUpdateResponseDto>> call  = this.syncRestService.getPacketStatus(reg.getPacketId(), "eng");
+            call.enqueue(new Callback<ResponseWrapper<PacketStatusUpdateResponseDto>>() {
+
+                @Override
+                public void onResponse(Call<ResponseWrapper<PacketStatusUpdateResponseDto>> call, Response<ResponseWrapper<PacketStatusUpdateResponseDto>> response) {
+                    if(response.isSuccessful()) {
+                        ServiceError error = SyncRestUtil.getServiceError(response.body());
+                        if(error == null) {
+                            PacketStatusUpdateDto updateDto = response.body().getResponse().getPacketStatusUpdateList().get(response.body().getResponse().getPacketStatusUpdateList().size() - 1);
+
+                            registrationRepository.updateStatus(reg.getPacketId(), updateDto.getStatusCode(),
+                                    PacketClientStatus.UPLOADED.name());
+                            Toast.makeText(context, "Packet status sync completed", Toast.LENGTH_LONG).show();
+                        }
+                        else
+                            Toast.makeText(context, "Packet status sync failed : " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                    else
+                        Toast.makeText(context, "Packet status sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseWrapper<PacketStatusUpdateResponseDto>> call, Throwable t) {
+                    Log.e(TAG, "Packet status sync failed", t);
+                    Toast.makeText(context, "Packet status sync failed", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
 }
