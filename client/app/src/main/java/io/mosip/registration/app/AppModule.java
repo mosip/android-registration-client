@@ -123,11 +123,13 @@ public class AppModule {
                                                       KeyStoreRepository keyStoreRepository,
                                                       LocationRepository locationRepository,
                                                       GlobalParamRepository globalParamRepository,
-                                                      IdentitySchemaRepository identitySchemaRepository) {
+                                                      IdentitySchemaRepository identitySchemaRepository,
+                                                      BlocklistedWordRepository blocklistedWordRepository,
+                                                      UserDetailRepository userDetailRepository) {
         return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
-                globalParamRepository, identitySchemaRepository);
+                globalParamRepository, identitySchemaRepository, blocklistedWordRepository, userDetailRepository);
     }
 
     @Singleton
@@ -166,7 +168,7 @@ public class AppModule {
     Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl("https://dev.mosip.net/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(okHttpClient)
                 .build();
     }
@@ -195,9 +197,10 @@ public class AppModule {
                                                    UserInterfaceHelperService userInterfaceHelperService,
                                                    RegistrationRepository registrationRepository,
                                                    MasterDataService masterDataService,
-                                                   IdentitySchemaRepository identitySchemaRepository) {
+                                                   IdentitySchemaRepository identitySchemaRepository,
+                                                   ClientCryptoManagerService clientCryptoManagerService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, userInterfaceHelperService,
-                registrationRepository, masterDataService, identitySchemaRepository);
+                registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService);
     }
 
     @Provides

@@ -15,14 +15,16 @@ ext {
     compileSdkVersion = 31
     buildToolsVersion = "31.0.0"
 
-    minSdkVersion=26
+    minSdkVersion=28
     targetSdkVersion=31
 
     junitVersion = "4.+"
 
     // clientmanager Library Info
     clientmanagerLibVersionCode = 1
-    clientmanagerLibVersionName = '1.0.0'
+    clientmanagerLibVersionName = "\"1.0.0\""
+
+    serverBaseURL = "\"https://dev.mosip.net/\""
 }
 
 task cleanOutputDir(type: Delete) {

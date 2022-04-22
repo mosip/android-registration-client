@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
@@ -56,7 +57,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LocationRepository locationRepository;
     private GlobalParamRepository globalParamRepository;
     private IdentitySchemaRepository identitySchemaRepository;
-
+    private BlocklistedWordRepository blocklistedWordRepository;
+    private UserDetailRepository userDetailRepository;
 
     @Inject
     public MasterDataServiceImpl(Context context, SyncRestService syncRestService,
@@ -70,7 +72,9 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  KeyStoreRepository keyStoreRepository,
                                  LocationRepository locationRepository,
                                  GlobalParamRepository globalParamRepository,
-                                 IdentitySchemaRepository identitySchemaRepository) {
+                                 IdentitySchemaRepository identitySchemaRepository,
+                                 BlocklistedWordRepository blocklistedWordRepository,
+                                 UserDetailRepository userDetailRepository) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.clientCryptoManagerService = clientCryptoManagerService;
@@ -84,6 +88,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.locationRepository = locationRepository;
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaRepository = identitySchemaRepository;
+        this.blocklistedWordRepository = blocklistedWordRepository;
+        this.userDetailRepository = userDetailRepository;
     }
 
     @Override
@@ -114,6 +120,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             syncMasterData();
             syncCertificate();
             syncLatestIdSchema();
+            //syncUserDetails();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
@@ -157,7 +164,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
-        queryParams.put("version", "0.1");
+        queryParams.put("version", BuildConfig.CLIENT_VERSION);
 
         if(centerMachineDto != null)
             queryParams.put("regcenterId", centerMachineDto.getCenterId());
@@ -221,6 +228,40 @@ public class MasterDataServiceImpl implements MasterDataService {
                 Toast.makeText(context, "Identity schema and UI Spec Sync failed", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void syncUserDetails() throws Exception {
+        Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(this.clientCryptoManagerService.getClientKeyIndex());
+        call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
+            @Override
+            public void onResponse(Call<ResponseWrapper<UserDetailResponse>> call, Response<ResponseWrapper<UserDetailResponse>> response) {
+                if(response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(response.body());
+                    if(error == null) {
+                        saveUserDetails(response.body().getResponse().getUserDetails());
+                        Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+                    }
+                    else
+                        Toast.makeText(context, "User Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                }
+                else
+                    Toast.makeText(context, "User Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseWrapper<UserDetailResponse>> call, Throwable t) {
+                Toast.makeText(context, "User Sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void saveUserDetails(String encData) {
+        try {
+            userDetailRepository.saveUserDetail(getDecryptedDataList(encData));
+        } catch (Throwable t) {
+            Log.e(TAG, "Failed to save synced user details", t);
+        }
     }
 
     @Override
@@ -300,6 +341,12 @@ public class MasterDataServiceImpl implements MasterDataService {
                     locationRepository.saveLocationHierarchyData(locationHierarchies.getJSONObject(i));
                 }
                 break;
+            case "BlocklistedWords" :
+                JSONArray words = getDecryptedDataList(data);
+                for(int i =0 ;i < words.length(); i++) {
+                    blocklistedWordRepository.saveBlocklistedWord(words.getJSONObject(i));
+                }
+                break;
         }
     }
 
@@ -347,5 +394,10 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode) {
         return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
+    }
+
+    @Override
+    public String getTemplateContent(String templateName, String langCode) {
+        return templateRepository.getTemplate(templateName, langCode);
     }
 }

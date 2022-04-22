@@ -23,6 +23,9 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = RegistrationActivity.class.getSimpleName();
 
+    //TODO need to take this from configuration
+    private List<String> mandatoryLanguages = Arrays.asList("eng");
+    private List<String> optionalLanguages = Arrays.asList();
     List<String> selectedLanguages = new ArrayList<>();
 
     @Inject
@@ -42,9 +45,16 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Language selection");
 
-        //TODO need to take this from configuration
         List<String> configuredLanguages = new ArrayList<>();
-        configuredLanguages.add("eng");
+        for(String langCode : mandatoryLanguages) {
+            configuredLanguages.add(getLangFullForm(langCode));
+        }
+        for(String langCode : optionalLanguages) {
+            configuredLanguages.add(getLangFullForm(langCode));
+        }
+
+        ((TextView)findViewById(R.id.languageInfoText)).setText(getString(R.string.lang_info_text,
+                String.join(",", configuredLanguages), String.join(",", mandatoryLanguages)));
 
         ListView listView = findViewById(R.id.languageList);
         listView.clearChoices();
@@ -57,9 +67,9 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AppCompatCheckedTextView checkBox = (AppCompatCheckedTextView) view;
                 if (checkBox.isChecked())
-                    selectedLanguages.add(checkBox.getText().toString());
+                    selectedLanguages.add(getLangCode(checkBox.getText().toString()));
                 else
-                    selectedLanguages.remove(checkBox.getText().toString());
+                    selectedLanguages.remove(getLangCode(checkBox.getText().toString()));
             }
         });
 
@@ -68,6 +78,24 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
             startRegistration.setEnabled(false);
             startRegistration();
         });
+    }
+
+    //TODO need to read from language table
+    private String getLangCode(String fullForm) {
+        switch (fullForm.toLowerCase()) {
+            case "English" : return "eng";
+        }
+        return "eng";
+    }
+
+    //TODO need to read from language table
+    private String getLangFullForm(String langCode) {
+        switch (langCode) {
+            case "eng" : return getString(R.string.eng);
+            case "fra" : return getString(R.string.fra);
+            case "ara" : return getString(R.string.ara);
+        }
+        return "English";
     }
 
 
@@ -95,13 +123,6 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
             goToHome();
         }
     }
-
-
-    public void goToNextActivity() {
-        Intent intent = new Intent(this, ScreenActivity.class);
-        startActivity(intent);
-    }
-
 
     public void goToHome() {
         Intent intent = new Intent(this, MainActivity.class);

@@ -30,7 +30,17 @@ public interface MasterDataService {
     void syncMasterData() throws Exception;
 
 
+    /**
+     * Fetches latest Id schema and UI specs
+     * @throws Exception
+     */
     void syncLatestIdSchema() throws Exception;
+
+    /**
+     * Fetches all the user mapped to the center mapped to this machine
+     * @throws Exception
+     */
+    void syncUserDetails() throws Exception;
 
 
     /**
@@ -66,7 +76,7 @@ public interface MasterDataService {
 
     /**
      * Returns the list of immediate children for the provided hierarchy Level
-     * @param hierarchyLevel
+     * @param hierarchyLevelName
      * @param langCode
      * @return
      */
@@ -81,5 +91,13 @@ public interface MasterDataService {
      * @return
      */
     List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode);
+
+    /**
+     *
+     * @param templateName
+     * @param language
+     * @return
+     */
+    String getTemplateContent(String templateName, String language);
 
 }

@@ -11,6 +11,7 @@ import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
+import org.mvel2.MVEL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,7 +34,7 @@ public class LoginService {
     public boolean isValidUserId(String userId) {
         //TODO sync user-details
         // and check if the user is mapped to this center and is active
-        return true;
+        return  (Boolean) MVEL.eval("1==1");
     }
 
     public void saveAuthToken(String authResponse) throws Exception {
