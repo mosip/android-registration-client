@@ -71,21 +71,6 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner sItems = (Spinner) findViewById(R.id.doctypes_dropdown);
         sItems.setAdapter(adapter);
-
-        sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected = items.get(position);
-                registrationDto.addDocument(fieldSpecDto.getId(), selected, null);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selected = null;
-                registrationDto.removeDocumentField(fieldSpecDto.getId());
-            }
-        });
-
         this.setVisibility((UserInterfaceHelperService.isFieldVisible(fieldSpecDto, registrationDto.getMVELDataContext())) ?
                 VISIBLE : GONE);
     }
@@ -102,8 +87,7 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView {
 
     @Override
     public boolean isValidValue() {
-        //TODO
-        return true;
+        return registrationDto.hasDocument(fieldSpecDto.getId());
     }
 
     @Override

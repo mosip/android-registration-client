@@ -98,18 +98,18 @@ public class RegistrationDto extends Observable {
     public void addDemographicField(String fieldId, String value, String language) {
         List<GenericDto> list = (List<GenericDto>) this.demographics.getOrDefault(fieldId, new ArrayList<GenericDto>());
 
-        GenericDto genericDto = list.stream()
+        Optional<GenericDto> result = list.stream()
                 .filter( g -> g.getLangCode().equalsIgnoreCase(language) )
-                .findFirst().orElse(new GenericDto(value, language));
+                .findFirst();
 
-        if(!isValidValue(genericDto.getName())) {
-            list.remove(genericDto);
-        }
-        else {
-            list.add(genericDto);
-            this.demographics.put(fieldId, list);
+        if(result.isPresent()) {
+            list.remove(result.get());
         }
 
+        if(isValidValue(value)) {
+            ((List<GenericDto>)this.demographics.getOrDefault(fieldId, new ArrayList<GenericDto>()))
+                    .add(new GenericDto(value, language));
+        }
         clearAndNotifyAllObservers();
     }
 
@@ -122,10 +122,13 @@ public class RegistrationDto extends Observable {
     }
 
     public void addDocument(String fieldId, String docType, byte[] bytes) {
-        DocumentDto documentDto = this.documents.getOrDefault(fieldId,
-                new DocumentDto(docType, "pdf", "", "path", null));
-        documentDto.setContent(bytes);
-        this.documents.put(fieldId, documentDto);
+        if( docType != null && bytes != null ) {
+            this.documents.put(fieldId, new DocumentDto(docType, "pdf", "", "path", bytes));
+        }
+    }
+
+    public boolean hasDocument(String fieldId) {
+        return this.documents.containsKey(fieldId);
     }
 
     public void removeDocumentField(String fieldId) {

@@ -114,10 +114,12 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
             @Override
             public void afterTextChanged(Editable s) {
                 if(getDataType().equalsIgnoreCase("simpleType")) {
-                    registrationDto.addDemographicField(fieldSpecDto.getId(), s.toString(), "eng");
+                    registrationDto.addDemographicField(fieldSpecDto.getId(),
+                            ((EditText)findViewById(R.id.custom_edit_text)).getText().toString(), "eng");
                 }
                 else {
-                    registrationDto.addDemographicField(fieldSpecDto.getId(), s.toString());
+                    registrationDto.addDemographicField(fieldSpecDto.getId(),
+                            ((EditText)findViewById(R.id.custom_edit_text)).getText().toString());
                 }
             }
         };
