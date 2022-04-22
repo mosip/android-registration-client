@@ -61,8 +61,7 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
     @Override
     public boolean isValidValue() {
-        //TODO this is not correct, temporary solution
-        return ((TextView)findViewById(R.id.sbi_result)).getText().toString().contains("Quality");
+        return registrationDto.hasBiometric(fieldSpecDto.getId(), "face");
     }
 
     @Override

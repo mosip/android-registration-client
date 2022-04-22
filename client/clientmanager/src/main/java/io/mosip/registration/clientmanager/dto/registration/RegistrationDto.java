@@ -131,6 +131,10 @@ public class RegistrationDto extends Observable {
         return this.documents.containsKey(fieldId);
     }
 
+    public boolean hasBiometric(String fieldId, String bioAttribute) {
+        return this.biometrics.containsKey(String.format(BIO_KEY, fieldId, bioAttribute));
+    }
+
     public void removeDocumentField(String fieldId) {
         this.documents.remove(fieldId);
     }
