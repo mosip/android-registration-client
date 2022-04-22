@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
@@ -101,7 +102,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
 
                 Optional<DynamicView> view = currentDynamicViews.values()
                         .stream()
-                        .filter( d -> (d.isRequired() && !d.isValidValue()) || !d.isValidValue())
+                        .filter( d -> (d.isRequired() && !d.isValidValue()))
                         .findFirst();
 
                 if(view.isPresent()) {
@@ -156,9 +157,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                         break;
                     case "biometrics":
                         dynamicView = factory.getBiometricsComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
-                        BIO_SCAN_REQUEST_CODE = BIO_SCAN_REQUEST_CODE + 1;
-                        requestCodeMap.put(BIO_SCAN_REQUEST_CODE, fieldSpecDto.getId());
-                        setRCaptureButtonListener(BIO_SCAN_REQUEST_CODE, (View) dynamicView);
+                        setRCaptureButtonListener((View) dynamicView);
                         break;
                 }
 
@@ -176,53 +175,43 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         startActivity(intent);
     }
 
-    /*private void deleteCurrentObservers() {
-        try {
-            Log.i(TAG, "On destroy, deleting all observers");
-            this.registrationService.getRegistrationDto().deleteObservers();
-        } catch (Exception e) {
-            Log.i(TAG, "On destroy, failed to delete all observers", e);
-        }
-    }*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String fieldId = requestCodeMap.get(requestCode);
         if(resultCode == Activity.RESULT_OK) {
-
-            if (requestCodeMap.containsKey(requestCode)) {
-                Uri uri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
-                try(InputStream iStream = getContentResolver().openInputStream(uri)) {
-                    this.registrationService.getRegistrationDto().addDocument(fieldId, null, getBytes(iStream));
-                    ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_saved).setVisibility(View.VISIBLE);
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to set document to registration dto", e);
-                }
-            }
-            else {
-                switch (requestCode) {
-                    case 1 :
-                        parseDiscoverResponse(fieldId, data.getStringExtra("Response"));
-                        break;
-                    case 2:
-                        parseDeviceInfoResponse(fieldId, data.getStringExtra("Response"));
-                        break;
-                    case 3:
-                        parseRCaptureResponse(fieldId, data.getStringExtra("Response"));
-                        break;
-                    default:
+            switch (requestCode) {
+                case 1 :
+                    parseDiscoverResponse(data.getStringExtra("Response"));
+                    break;
+                case 2:
+                    parseDeviceInfoResponse(data.getStringExtra("Response"));
+                    break;
+                case 3:
+                    parseRCaptureResponse(data.getStringExtra("Response"));
+                    break;
+                default:
+                    if (requestCodeMap.containsKey(requestCode)) {
+                        Uri uri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
+                        try(InputStream iStream = getContentResolver().openInputStream(uri)) {
+                            Spinner sItems = ((Spinner) ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doctypes_dropdown));
+                            this.registrationService.getRegistrationDto().addDocument(fieldId, sItems.getSelectedItem().toString(), getBytes(iStream));
+                            ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_saved).setVisibility(View.VISIBLE);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to set document to registration dto", e);
+                        }
+                    }
+                    else
                         Toast.makeText(this, "Scan failed", Toast.LENGTH_LONG).show();
-                        break;
-                }
+                    break;
             }
         }
     }
 
-    private void setRCaptureButtonListener(int requestCode, View view) {
+    private void setRCaptureButtonListener(View view) {
         Button faceButton = view.findViewById(R.id.rcapture_face);
         faceButton.setOnClickListener( v -> {
-            discoverSBI(requestCode, "face");
+            discoverSBI("face");
         });
     }
 
@@ -249,20 +238,20 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private void discoverSBI(int requestCode, String currentModality) {
+    private void discoverSBI(String currentModality) {
         Toast.makeText(this, "Started to discover " + currentModality + " SBI", Toast.LENGTH_LONG).show();
         Intent intent = new Intent();
         intent.setAction("sbi.reg.device");
         List activities = this.getPackageManager().queryIntentActivities(intent, MATCH_DEFAULT_ONLY);
         if (activities.size() > 0) {
             intent.putExtra("input", "{\"type\":\""+currentModality+"\"}");
-            this.startActivityForResult(intent, requestCode);
+            this.startActivityForResult(intent, 1);
         } else {
-            Toast.makeText(this, "Supported apps not found!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void info(String fieldId, String callbackId) {
+    private void info(String callbackId) {
         if (callbackId == null)
         {
             Toast.makeText(this, "No SBI found!", Toast.LENGTH_LONG).show();
@@ -272,16 +261,14 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         localIntent.setAction(callbackId + ".info");
         List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
         if (activities.size() > 0) {
-            Toast.makeText(this, "Initiating Device info request : " + callbackId, Toast.LENGTH_LONG).show();
-            BIO_SCAN_REQUEST_CODE = BIO_SCAN_REQUEST_CODE + 1;
-            requestCodeMap.put(BIO_SCAN_REQUEST_CODE, fieldId);
-            startActivityForResult(localIntent, BIO_SCAN_REQUEST_CODE);
+            Toast.makeText(getApplicationContext(), "Initiating Device info request : " + callbackId, Toast.LENGTH_LONG).show();
+            startActivityForResult(localIntent, 2);
         } else {
-            Toast.makeText(this, "Supported apps not found!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void rcapture(String fieldId, String callbackId, String deviceId) {
+    private void rcapture(String callbackId, String deviceId) {
         if (deviceId == null || callbackId == null)
         {
             Toast.makeText(this, "No SBI found!", Toast.LENGTH_LONG).show();
@@ -289,16 +276,17 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         }
 
         Intent localIntent = new Intent();
+        //TODO in SBI - callback is wrong in deviceInfo response
+        callbackId = callbackId.replace(".info", "");
+
         localIntent.setAction(callbackId + ".rcapture");
         List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
         if (activities.size() > 0) {
-            Toast.makeText(this, "Initiating capture request : " + callbackId, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Initiating capture request : " + callbackId, Toast.LENGTH_LONG).show();
             localIntent.putExtra("input", "{\"env\":\"Developer\",\"purpose\":\"Registration\",\"specVersion\":\"0.9.5\",\"timeout\":10000,\"captureTime\":\"2021-07-21T15:00:03Z\",\"transactionId\":\"1626879603493\",\"bio\":[{\"type\":\"Face\",\"count\":1,\"exception\":[],\"requestedScore\":40,\"deviceId\":\"" + deviceId + "\",\"deviceSubId\":0,\"previousHash\":\"\",\"bioSubType\":[]}],\"customOpts\":null}");
-            BIO_SCAN_REQUEST_CODE = BIO_SCAN_REQUEST_CODE + 1;
-            requestCodeMap.put(BIO_SCAN_REQUEST_CODE, fieldId);
-            startActivityForResult(localIntent, BIO_SCAN_REQUEST_CODE);
+            startActivityForResult(localIntent, 3);
         } else {
-            Toast.makeText(this, "Supported apps not found!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -322,7 +310,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         return null;
     }
 
-    private void parseDiscoverResponse(String fieldId, String response) {
+    private void parseDiscoverResponse(String response) {
         String callbackId = null;
         try {
             JSONObject jsonObject = new JSONArray(response).getJSONObject(0);
@@ -330,17 +318,17 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                 callbackId = jsonObject.getString("callbackId");
                 String deviceStatus = jsonObject.getString("deviceStatus");
                 if (!callbackId.isEmpty()) {
-                    Toast.makeText(this, "Discovered : " + callbackId + " With status : " +
+                    Toast.makeText(getApplicationContext(), "Discovered : " + callbackId + " With status : " +
                             deviceStatus, Toast.LENGTH_LONG).show();
                 }
             }
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse discover response");
         }
-        info(fieldId, callbackId);
+        info(callbackId);
     }
 
-    private void parseDeviceInfoResponse(String fieldId, String response) {
+    private void parseDeviceInfoResponse(String response) {
         String callbackId = null;
         String serialNo = null;
         try {
@@ -356,17 +344,17 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse device info response");
         }
-        rcapture(fieldId, callbackId, serialNo);
+        rcapture(callbackId, serialNo);
     }
 
-    private void parseRCaptureResponse(String fieldId, String response) {
+    private void parseRCaptureResponse(String response) {
         try {
             JSONArray jsonObject = new JSONObject(response).getJSONArray("biometrics");
             String specVersion = jsonObject.getJSONObject(0).getString("specVersion");
             String data = jsonObject.getJSONObject(0).getString("data");
             if(data == null || data.isEmpty()) {
                 JSONObject error = jsonObject.getJSONObject(0).getJSONObject("error");
-                Toast.makeText(this, "Biometric Capture failed : " + error.toString(2),
+                Toast.makeText(getApplicationContext(), "Biometric Capture failed : " + error.toString(2),
                         Toast.LENGTH_LONG).show();
             }
             else {
@@ -380,11 +368,11 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                 //TODO - better way to handle all modalities
                 BiometricsDto biometricsDto = new BiometricsDto("face", "face", specVersion, false,
                         decodedPayload, signature, bioValue, qualityScore);
-                ((TextView)((View) currentDynamicViews.get(fieldId)).findViewById(R.id.sbi_result))
+                ((TextView)((View) currentDynamicViews.get("individualBiometrics")).findViewById(R.id.sbi_result))
                         .setText(String.format("\nSpecVersion : %s \nQualityScore : %s", specVersion, qualityScore));
                 this.registrationService.getRegistrationDto().addBiometric("individualBiometrics",
                         "face", biometricsDto);
-                Toast.makeText(this, "Successfully captured face", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Successfully captured face", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             Log.e(TAG, "Failed to parse rcapture response", e);

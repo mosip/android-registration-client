@@ -130,8 +130,12 @@ public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
 
             @Override
             public void afterTextChanged(Editable s) {
-                registrationDto.setDateField(fieldSpecDto.getId(), fieldSpecDto.getSubType(), dateBox.getText().toString(),
-                        monthBox.getText().toString(), yearBox.getText().toString());
+                try {
+                    registrationDto.setDateField(fieldSpecDto.getId(), fieldSpecDto.getSubType(), dateBox.getText().toString(),
+                            monthBox.getText().toString(), yearBox.getText().toString());
+                } catch (Exception e) {
+                    Log.i(TAG, "Failed to set date", e);
+                }
             }
         };
     }
