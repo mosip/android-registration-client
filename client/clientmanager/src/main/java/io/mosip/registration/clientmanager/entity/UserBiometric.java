@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 @Entity(primaryKeys = {"usr_id", "bmtyp_code", "bmatt_code"}, tableName = "user_biometric")
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class UserBiometric extends RegistrationCommonFields {
+public class UserBiometric {
 
 	@NonNull
 	@ColumnInfo(name = "usr_id")

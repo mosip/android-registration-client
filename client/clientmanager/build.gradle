@@ -10,9 +10,12 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        versionCode 1
+        versionName "1.0"
+        buildConfigField("String", "CLIENT_VERSION", rootProject.ext.clientmanagerLibVersionName)
+        buildConfigField("String", "BASE_URL", rootProject.ext.serverBaseURL)
     }
 
     buildTypes {
@@ -69,6 +72,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
+
+    implementation 'org.mvel:mvel2:2.4.14.Final'
 
     // added packet-manager Android library module as a dependency
     implementation project(':packetmanager')

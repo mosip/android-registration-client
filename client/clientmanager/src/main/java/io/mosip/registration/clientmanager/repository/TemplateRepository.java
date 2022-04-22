@@ -1,12 +1,12 @@
 package io.mosip.registration.clientmanager.repository;
 
-import android.util.Log;
 import io.mosip.registration.clientmanager.dao.TemplateDao;
 import io.mosip.registration.clientmanager.entity.Template;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class TemplateRepository {
 
@@ -15,6 +15,15 @@ public class TemplateRepository {
     @Inject
     public TemplateRepository(TemplateDao templateDao) {
         this.templateDao = templateDao;
+    }
+
+    public String getTemplate(String templateName, String langCode) {
+        List<String> templateTexts = templateDao.findAllTemplateText(templateName+"%", langCode);
+        StringBuilder templateBuilder = new StringBuilder();
+        for(String txt : templateTexts) {
+            templateBuilder.append(txt);
+        }
+        return templateBuilder.toString();
     }
 
     public void saveTemplate(JSONObject templateJson) throws JSONException {

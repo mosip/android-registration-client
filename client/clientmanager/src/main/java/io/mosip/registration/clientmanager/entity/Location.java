@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @Entity(primaryKeys = {"code", "lang_code"}, tableName = "location")
-public class Location extends RegistrationCommonFields implements Serializable {
+public class Location implements Serializable {
 
     private static final long serialVersionUID = -5585825705521742941L;
 

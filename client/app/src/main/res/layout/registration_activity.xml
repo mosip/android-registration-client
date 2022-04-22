@@ -21,8 +21,7 @@
                     android:inputType="textMultiLine"
                     android:gravity="start|top"
                     android:ems="10"
-                    android:textSize="15sp"
-                    android:text="Please select any {0} languages for data entry. {1} is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data."
+                    android:textSize="20sp"
                     android:id="@+id/languageInfoText"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>

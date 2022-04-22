@@ -110,6 +110,18 @@ public class RoomModule {
         return clientDatabase.locationHierarchyDao();
     }
 
+    @Singleton
+    @Provides
+    BlocklistedWordDao providesBlocklistedWordDao(ClientDatabase clientDatabase) {
+        return clientDatabase.blocklistedWordDao();
+    }
+
+    @Singleton
+    @Provides
+    UserDetailDao providesUserDetailDao(ClientDatabase clientDatabase) {
+        return clientDatabase.userDetailDao();
+    }
+
     @Provides
     @Singleton
     RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
@@ -175,5 +187,17 @@ public class RoomModule {
     @Singleton
     IdentitySchemaRepository provideIdentitySchemaRepository(IdentitySchemaDao identitySchemaDao) {
         return new IdentitySchemaRepository(identitySchemaDao);
+    }
+
+    @Provides
+    @Singleton
+    BlocklistedWordRepository provideBlocklistedWordRepository(BlocklistedWordDao blocklistedWordDao) {
+        return new BlocklistedWordRepository(blocklistedWordDao);
+    }
+
+    @Provides
+    @Singleton
+    UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao) {
+        return new UserDetailRepository(userDetailDao, userTokenDao);
     }
 }

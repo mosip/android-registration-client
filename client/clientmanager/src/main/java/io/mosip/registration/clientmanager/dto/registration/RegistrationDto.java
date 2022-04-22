@@ -1,25 +1,26 @@
 package io.mosip.registration.clientmanager.dto.registration;
 
-import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ValueRange;
 import java.util.*;
 
-public class RegistrationDto {
+public class RegistrationDto extends Observable {
 
+    private static final String TAG = RegistrationDto.class.getSimpleName();
+    private static final String APPLICANT_DOB_SUBTYPE = "dateOfBirth";
     private static final String BIO_KEY = "%s_%s";
+    public static final String dateFormatConfig = "dd/MM/yyyy";
+    public static final String ageGroupConfig = "{'INFANT':'0-5','MINOR':'6-17','ADULT':'18-200'}";
 
     private String rId;
+    private String flowType;
     private String process;
     private Double schemaVersion;
     private LocalDateTime dateTime;
@@ -28,13 +29,15 @@ public class RegistrationDto {
     private Map<String, Object> demographics;
     private Map<String, DocumentDto> documents;
     private Map<String, BiometricsDto> biometrics;
+    public Map<String, Object> AGE_GROUPS = new HashMap<>();
     private OperatorDto maker;
     private OperatorDto reviewer;
 
-    public RegistrationDto(@NonNull String rid, @NonNull String process, @NonNull Double schemaVersion,
-                           @NonNull List<String> languages) {
+    public RegistrationDto(@NonNull String rid, @NonNull String flowType, @NonNull String process,
+                           @NonNull Double schemaVersion, @NonNull List<String> languages) {
         this.rId = rid;
         this.dateTime = LocalDateTime.now(ZoneOffset.UTC);
+        this.flowType = flowType;
         this.process = process;
         this.schemaVersion = schemaVersion;
         this.selectedLanguages = languages;
@@ -51,18 +54,63 @@ public class RegistrationDto {
 
     }
 
-    public void addDemographicField(String fieldId, String value) {
-        if(value != null && !value.trim().isEmpty())
-            this.demographics.put(fieldId, value);
+    public void setDateField(String fieldId, String subType, String day, String month, String year) {
+        if(isValidValue(day) && isValidValue(month) && isValidValue(year)) {
+            LocalDate date = LocalDate.of(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(day));
+            this.demographics.put(fieldId, date.format(DateTimeFormatter.ofPattern(dateFormatConfig)));
+            try {
+                JSONObject configJson = new JSONObject(ageGroupConfig);
+                Iterator<String> itr = configJson.keys();
+                while(itr.hasNext()) {
+                    String group = itr.next();
+                    String[] range = configJson.getString(group).split("-");
+                    int ageInYears = Period.between(date, LocalDate.now(ZoneId.of("UTC"))).getYears();
+                    if(ValueRange.of(Long.valueOf(range[0]), Long.valueOf(range[1])).isValidIntValue(ageInYears)) {
+                        AGE_GROUPS.put(String.format("%s_%s", fieldId, "ageGroup"), group);
+                        AGE_GROUPS.put(String.format("%s_%s", fieldId, "age"), ageInYears);
+
+                        if(APPLICANT_DOB_SUBTYPE.equals(subType)) {
+                            AGE_GROUPS.put("ageGroup", group);
+                            AGE_GROUPS.put("age", ageInYears);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to deduce age group", e);
+            }
+        }
+        else {
+            this.demographics.remove(fieldId);
+        }
+
+        clearAndNotifyAllObservers();
     }
 
-    public void addDemographicField(String fieldId, GenericDto genericDto) {
-        if(genericDto == null || genericDto.getName().trim().isEmpty())
-            return;
+    public void addDemographicField(String fieldId, String value) {
+        if(isValidValue(value))
+            this.demographics.put(fieldId, value);
+        else
+            this.demographics.remove(fieldId);
 
+        clearAndNotifyAllObservers();
+    }
+
+    public void addDemographicField(String fieldId, String value, String language) {
         List<GenericDto> list = (List<GenericDto>) this.demographics.getOrDefault(fieldId, new ArrayList<GenericDto>());
-        list.add(genericDto);
-        this.demographics.put(fieldId, list);
+
+        GenericDto genericDto = list.stream()
+                .filter( g -> g.getLangCode().equalsIgnoreCase(language) )
+                .findFirst().orElse(new GenericDto(value, language));
+
+        if(!isValidValue(genericDto.getName())) {
+            list.remove(genericDto);
+        }
+        else {
+            list.add(genericDto);
+            this.demographics.put(fieldId, list);
+        }
+
+        clearAndNotifyAllObservers();
     }
 
     public void removeDemographicField(String fieldId) {
@@ -74,7 +122,10 @@ public class RegistrationDto {
     }
 
     public void addDocument(String fieldId, String docType, byte[] bytes) {
-        this.documents.put(fieldId, new DocumentDto(docType, "pdf", "", "path", bytes));
+        DocumentDto documentDto = this.documents.getOrDefault(fieldId,
+                new DocumentDto(docType, "pdf", "", "path", null));
+        documentDto.setContent(bytes);
+        this.documents.put(fieldId, documentDto);
     }
 
     public void removeDocumentField(String fieldId) {
@@ -121,6 +172,9 @@ public class RegistrationDto {
         this.demographics.clear();
         this.documents.clear();
         this.biometrics.clear();
+        this.AGE_GROUPS.clear();
+        this.selectedLanguages.clear();
+        deleteObservers();
     }
 
     @Override
@@ -140,5 +194,29 @@ public class RegistrationDto {
             Log.e("", "toString failed", e);
         }
        return "{}";
+    }
+
+    public Map<String, Object> getMVELDataContext() {
+        Map<String, Object> allIdentityDetails = new LinkedHashMap<String, Object>();
+        allIdentityDetails.put("IDSchemaVersion", this.schemaVersion);
+        allIdentityDetails.put("_flow", this.flowType);
+        allIdentityDetails.put("_process", this.process);
+        allIdentityDetails.put("langCodes", this.selectedLanguages);
+        allIdentityDetails.putAll(this.demographics);
+        allIdentityDetails.putAll(this.documents);
+        allIdentityDetails.putAll(this.biometrics);
+        allIdentityDetails.putAll(this.AGE_GROUPS);
+        return allIdentityDetails;
+    }
+
+    private boolean isValidValue(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    private void clearAndNotifyAllObservers() {
+        Log.i(TAG, "clearAndNotifyAllObservers invoked");
+        if(hasChanged()) { clearChanged(); }
+        setChanged();
+        notifyObservers(getMVELDataContext());
     }
 }

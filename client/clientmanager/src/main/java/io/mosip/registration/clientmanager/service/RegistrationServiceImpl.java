@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.entity.Registration;
@@ -10,6 +11,7 @@ import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
@@ -38,13 +40,15 @@ public class RegistrationServiceImpl implements RegistrationService {
     private PacketWriterService packetWriterService;
     private UserInterfaceHelperService userInterfaceHelperService;
     private MasterDataService masterDataService;
+    private ClientCryptoManagerService clientCryptoManagerService;
 
     @Inject
     public RegistrationServiceImpl(Context context, PacketWriterService packetWriterService,
                                    UserInterfaceHelperService userInterfaceHelperService,
                                    RegistrationRepository registrationRepository,
                                    MasterDataService masterDataService,
-                                   IdentitySchemaRepository identitySchemaRepository) {
+                                   IdentitySchemaRepository identitySchemaRepository,
+                                   ClientCryptoManagerService clientCryptoManagerService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -52,6 +56,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.registrationRepository = registrationRepository;
         this.masterDataService = masterDataService;
         this.identitySchemaRepository = identitySchemaRepository;
+        this.clientCryptoManagerService = clientCryptoManagerService;
     }
 
     @Override
@@ -87,7 +92,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         timestamp = timestamp.replaceAll(":|T|Z|-", "");
         String rid = String.format("%s%s10031%s", centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), timestamp);
 
-        this.registrationDto = new RegistrationDto(rid, "NEW", version, languages);
+        this.registrationDto = new RegistrationDto(rid, "NEW", "NEW", version, languages);
         return this.registrationDto;
     }
 
@@ -160,17 +165,18 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
     }
 
-    private Map<String, String> addMetaInfoMap(String centerId, String machineId) {
+    private Map<String, String> addMetaInfoMap(String centerId, String machineId) throws Exception {
         String rid = this.registrationDto.getRId();
         Map<String, String> metaData = new LinkedHashMap<>();
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_MACHINE_ID, machineId);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CENTER_ID, centerId);
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_KEYINDEX, "");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_KEYINDEX,
+                this.clientCryptoManagerService.getClientKeyIndex());
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_REGISTRATION_ID, this.registrationDto.getRId());
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_APPLICATION_ID, this.registrationDto.getRId());
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CREATION_DATE,
                 DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CLIENT_VERSION, "1.0");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CLIENT_VERSION, BuildConfig.CLIENT_VERSION);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_REGISTRATION_TYPE, this.registrationDto.getProcess().toUpperCase());
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_PRE_REGISTRATION_ID, null);
         return metaData;

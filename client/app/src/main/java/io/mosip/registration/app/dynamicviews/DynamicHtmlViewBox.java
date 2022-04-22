@@ -2,35 +2,34 @@ package io.mosip.registration.app.dynamicviews;
 
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 
 import static io.mosip.registration.app.util.ClientConstants.FIELD_LABEL_TEMPLATE;
 import static io.mosip.registration.app.util.ClientConstants.REQUIRED_FIELD_LABEL_TEMPLATE;
 
-public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
-
-    private static final String TAG = DynamicBiometricsBox.class.getSimpleName();
+public class DynamicHtmlViewBox extends LinearLayout implements DynamicView {
 
     RegistrationDto registrationDto = null;
     FieldSpecDto fieldSpecDto = null;
-    final int layoutId = R.layout.dynamic_biometrics_box;
+    MasterDataService masterDataService;
+    final int layoutId = R.layout.dynamic_html_box;
 
-    public DynamicBiometricsBox(Context context, FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+    public DynamicHtmlViewBox(Context context, FieldSpecDto fieldSpecDto, RegistrationDto registrationDto,
+                              MasterDataService masterDataService) {
         super(context);
         this.fieldSpecDto = fieldSpecDto;
         this.registrationDto = registrationDto;
+        this.masterDataService = masterDataService;
         initializeView(context);
     }
 
@@ -38,16 +37,17 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
         inflate(context, layoutId, this);
         this.setTag(fieldSpecDto.getId());
 
-        List<String> labels = new ArrayList<>();
+        /*List<String> labels = new ArrayList<>();
         for(String language : registrationDto.getSelectedLanguages()) {
             labels.add(fieldSpecDto.getLabel().get(language));
         }
-        ((TextView)findViewById(R.id.biometric_label)).setText(Html.fromHtml(isRequired() ?
-                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
-                String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));
 
-        this.setVisibility((UserInterfaceHelperService.isFieldVisible(fieldSpecDto, registrationDto.getMVELDataContext())) ?
-                VISIBLE : GONE);
+        ((TextView)findViewById(R.id.html_label)).setText(Html.fromHtml(isRequired() ?
+                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
+                String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));*/
+
+        ((TextView)findViewById(R.id.html_content)).setText(Html.fromHtml(masterDataService.getTemplateContent(fieldSpecDto.getTemplateName(),
+                registrationDto.getSelectedLanguages().get(0)), 1));
     }
 
     @Override
@@ -57,12 +57,12 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
     @Override
     public void setValue() {
+
     }
 
     @Override
     public boolean isValidValue() {
-        //TODO this is not correct, temporary solution
-        return ((TextView)findViewById(R.id.sbi_result)).getText().toString().contains("Quality");
+        return true;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
             this.setVisibility(VISIBLE);
         }
         else {
-            registrationDto.removeBiometricField(fieldSpecDto.getId());
+            registrationDto.removeDocumentField(fieldSpecDto.getId());
             this.setVisibility(GONE);
         }
     }

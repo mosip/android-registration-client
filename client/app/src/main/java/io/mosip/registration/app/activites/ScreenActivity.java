@@ -42,6 +42,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = ScreenActivity.class.getSimpleName();
     private ViewGroup fieldPanel = null;
+    private int BIO_SCAN_REQUEST_CODE = 1;
     private int SCAN_REQUEST_CODE = 99;
     private Map<Integer, String> requestCodeMap = new HashMap<>();
     private Map<String, DynamicView> currentDynamicViews = new HashMap<>();
@@ -98,14 +99,24 @@ public class ScreenActivity extends DaggerAppCompatActivity {
             final Button nextButton = findViewById(R.id.next);
             nextButton.setOnClickListener( v -> {
 
-                //iterate through currentViews and check required field and valid value check only for date
+                Optional<DynamicView> view = currentDynamicViews.values()
+                        .stream()
+                        .filter( d -> (d.isRequired() && !d.isValidValue()) || !d.isValidValue())
+                        .findFirst();
 
-                //start activity to render next screen
-                Intent intent = new Intent(this, ScreenActivity.class);
-                intent.putExtra("screens", screens);
-                intent.putExtra("nextScreenIndex", currentScreenIndex+1);
-                startActivity(intent);
-                finish();
+                if(view.isPresent()) {
+                    ((View)view.get()).requestFocus();
+                    nextButton.setError("Invalid value found");
+                }
+                else {
+                    nextButton.setError(null);
+                    //start activity to render next screen
+                    Intent intent = new Intent(this, ScreenActivity.class);
+                    intent.putExtra("screens", screens);
+                    intent.putExtra("nextScreenIndex", currentScreenIndex+1);
+                    startActivity(intent);
+                    finish();
+                }
             });
 
         } catch (Throwable t) {
@@ -114,7 +125,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private void loadScreenFields(ScreenSpecDto screenSpecDto, List<String> languages) {
+    private void loadScreenFields(ScreenSpecDto screenSpecDto, List<String> languages) throws Exception {
         fieldPanel.removeAllViews();
         DynamicComponentFactory factory = new DynamicComponentFactory(getApplicationContext(), masterDataService);
 
@@ -123,32 +134,38 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                 DynamicView dynamicView = null;
                 switch (fieldSpecDto.getControlType().toLowerCase()) {
                     case "textbox":
-                        dynamicView = factory.getTextComponent(fieldSpecDto, languages);
+                        dynamicView = factory.getTextComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
                     case "agedate":
-                        dynamicView = factory.getAgeDateComponent(fieldSpecDto, languages);
+                        dynamicView = factory.getAgeDateComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
                     case "dropdown":
-                        dynamicView = factory.getDropdownComponent(fieldSpecDto, languages);
+                        dynamicView = factory.getDropdownComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
                     case "button":
-                        dynamicView = factory.getSwitchComponent(fieldSpecDto, languages);
+                        dynamicView = factory.getSwitchComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
+                        break;
+                    case "html":
+                        dynamicView = factory.getHtmlComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
                     case "fileupload":
-                        dynamicView = factory.getDocumentComponent(fieldSpecDto, languages);
+                        dynamicView = factory.getDocumentComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         SCAN_REQUEST_CODE = SCAN_REQUEST_CODE + 1;
                         requestCodeMap.put(SCAN_REQUEST_CODE, fieldSpecDto.getId());
                         setScanButtonListener(SCAN_REQUEST_CODE, (View) dynamicView);
                         break;
                     case "biometrics":
-                        dynamicView = factory.getBiometricsComponent(fieldSpecDto, languages);
-                        setRCaptureButtonListener((View) dynamicView);
+                        dynamicView = factory.getBiometricsComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
+                        BIO_SCAN_REQUEST_CODE = BIO_SCAN_REQUEST_CODE + 1;
+                        requestCodeMap.put(BIO_SCAN_REQUEST_CODE, fieldSpecDto.getId());
+                        setRCaptureButtonListener(BIO_SCAN_REQUEST_CODE, (View) dynamicView);
                         break;
                 }
 
                 if(dynamicView != null) {
                     fieldPanel.addView((View)dynamicView);
                     currentDynamicViews.put(fieldSpecDto.getId(), dynamicView);
+                    this.registrationService.getRegistrationDto().addObserver((Observer) dynamicView);
                 }
             }
         }
@@ -159,6 +176,15 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         startActivity(intent);
     }
 
+    /*private void deleteCurrentObservers() {
+        try {
+            Log.i(TAG, "On destroy, deleting all observers");
+            this.registrationService.getRegistrationDto().deleteObservers();
+        } catch (Exception e) {
+            Log.i(TAG, "On destroy, failed to delete all observers", e);
+        }
+    }*/
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -168,8 +194,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
             if (requestCodeMap.containsKey(requestCode)) {
                 Uri uri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
                 try(InputStream iStream = getContentResolver().openInputStream(uri)) {
-                    this.registrationService.getRegistrationDto().addDocument(fieldId,
-                            (String) currentDynamicViews.get(fieldId).getValue(), getBytes(iStream));
+                    this.registrationService.getRegistrationDto().addDocument(fieldId, null, getBytes(iStream));
                     ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_saved).setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to set document to registration dto", e);
@@ -178,13 +203,13 @@ public class ScreenActivity extends DaggerAppCompatActivity {
             else {
                 switch (requestCode) {
                     case 1 :
-                        parseDiscoverResponse(data.getStringExtra("Response"));
+                        parseDiscoverResponse(fieldId, data.getStringExtra("Response"));
                         break;
                     case 2:
-                        parseDeviceInfoResponse(data.getStringExtra("Response"));
+                        parseDeviceInfoResponse(fieldId, data.getStringExtra("Response"));
                         break;
                     case 3:
-                        parseRCaptureResponse(data.getStringExtra("Response"));
+                        parseRCaptureResponse(fieldId, data.getStringExtra("Response"));
                         break;
                     default:
                         Toast.makeText(this, "Scan failed", Toast.LENGTH_LONG).show();
@@ -194,10 +219,10 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private void setRCaptureButtonListener(View view) {
+    private void setRCaptureButtonListener(int requestCode, View view) {
         Button faceButton = view.findViewById(R.id.rcapture_face);
         faceButton.setOnClickListener( v -> {
-            discoverSBI("face");
+            discoverSBI(requestCode, "face");
         });
     }
 
@@ -224,20 +249,20 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private void discoverSBI(String currentModality) {
+    private void discoverSBI(int requestCode, String currentModality) {
         Toast.makeText(this, "Started to discover " + currentModality + " SBI", Toast.LENGTH_LONG).show();
         Intent intent = new Intent();
         intent.setAction("sbi.reg.device");
         List activities = this.getPackageManager().queryIntentActivities(intent, MATCH_DEFAULT_ONLY);
         if (activities.size() > 0) {
             intent.putExtra("input", "{\"type\":\""+currentModality+"\"}");
-            this.startActivityForResult(intent, 1);
+            this.startActivityForResult(intent, requestCode);
         } else {
             Toast.makeText(this, "Supported apps not found!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void info(String callbackId) {
+    private void info(String fieldId, String callbackId) {
         if (callbackId == null)
         {
             Toast.makeText(this, "No SBI found!", Toast.LENGTH_LONG).show();
@@ -248,13 +273,15 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
         if (activities.size() > 0) {
             Toast.makeText(this, "Initiating Device info request : " + callbackId, Toast.LENGTH_LONG).show();
-            startActivityForResult(localIntent, 2);
+            BIO_SCAN_REQUEST_CODE = BIO_SCAN_REQUEST_CODE + 1;
+            requestCodeMap.put(BIO_SCAN_REQUEST_CODE, fieldId);
+            startActivityForResult(localIntent, BIO_SCAN_REQUEST_CODE);
         } else {
             Toast.makeText(this, "Supported apps not found!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void rcapture(String callbackId, String deviceId) {
+    private void rcapture(String fieldId, String callbackId, String deviceId) {
         if (deviceId == null || callbackId == null)
         {
             Toast.makeText(this, "No SBI found!", Toast.LENGTH_LONG).show();
@@ -267,7 +294,9 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         if (activities.size() > 0) {
             Toast.makeText(this, "Initiating capture request : " + callbackId, Toast.LENGTH_LONG).show();
             localIntent.putExtra("input", "{\"env\":\"Developer\",\"purpose\":\"Registration\",\"specVersion\":\"0.9.5\",\"timeout\":10000,\"captureTime\":\"2021-07-21T15:00:03Z\",\"transactionId\":\"1626879603493\",\"bio\":[{\"type\":\"Face\",\"count\":1,\"exception\":[],\"requestedScore\":40,\"deviceId\":\"" + deviceId + "\",\"deviceSubId\":0,\"previousHash\":\"\",\"bioSubType\":[]}],\"customOpts\":null}");
-            startActivityForResult(localIntent, 3);
+            BIO_SCAN_REQUEST_CODE = BIO_SCAN_REQUEST_CODE + 1;
+            requestCodeMap.put(BIO_SCAN_REQUEST_CODE, fieldId);
+            startActivityForResult(localIntent, BIO_SCAN_REQUEST_CODE);
         } else {
             Toast.makeText(this, "Supported apps not found!", Toast.LENGTH_LONG).show();
         }
@@ -293,7 +322,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         return null;
     }
 
-    private void parseDiscoverResponse(String response) {
+    private void parseDiscoverResponse(String fieldId, String response) {
         String callbackId = null;
         try {
             JSONObject jsonObject = new JSONArray(response).getJSONObject(0);
@@ -308,10 +337,10 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse discover response");
         }
-        info(callbackId);
+        info(fieldId, callbackId);
     }
 
-    private void parseDeviceInfoResponse(String response) {
+    private void parseDeviceInfoResponse(String fieldId, String response) {
         String callbackId = null;
         String serialNo = null;
         try {
@@ -327,10 +356,10 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse device info response");
         }
-        rcapture(callbackId, serialNo);
+        rcapture(fieldId, callbackId, serialNo);
     }
 
-    private void parseRCaptureResponse(String response) {
+    private void parseRCaptureResponse(String fieldId, String response) {
         try {
             JSONArray jsonObject = new JSONObject(response).getJSONArray("biometrics");
             String specVersion = jsonObject.getJSONObject(0).getString("specVersion");
@@ -347,9 +376,12 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                 JSONObject dataDTO = new JSONObject(decodedPayload);
                 String qualityScore = dataDTO.getString("qualityScore");
                 String bioValue = dataDTO.getString("bioValue");
+
+                //TODO - better way to handle all modalities
                 BiometricsDto biometricsDto = new BiometricsDto("face", "face", specVersion, false,
                         decodedPayload, signature, bioValue, qualityScore);
-                //TODO handle dynamically
+                ((TextView)((View) currentDynamicViews.get(fieldId)).findViewById(R.id.sbi_result))
+                        .setText(String.format("\nSpecVersion : %s \nQualityScore : %s", specVersion, qualityScore));
                 this.registrationService.getRegistrationDto().addBiometric("individualBiometrics",
                         "face", biometricsDto);
                 Toast.makeText(this, "Successfully captured face", Toast.LENGTH_LONG).show();

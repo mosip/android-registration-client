@@ -24,6 +24,20 @@
                       android:gravity="center"
                       android:orientation="horizontal">
 
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_dd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="2"
+                    android:orientation="horizontal">
             <EditText
                     android:id="@+id/dob_date"
                     android:layout_width="wrap_content"
@@ -31,9 +45,9 @@
                     android:focusableInTouchMode="true"
                     android:focusable="true"
                     android:inputType="number"
-                    android:hint="DD"
                     android:maxLength="2"
                     android:layout_margin="5dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                     android:id="@+id/dob_date_slash"
@@ -43,6 +57,20 @@
                     android:text="/"
                     android:layout_margin="5dp"/>
 
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_mm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="2"
+                    android:orientation="horizontal">
             <EditText
                     android:id="@+id/dob_month"
                     android:layout_width="wrap_content"
@@ -50,9 +78,9 @@
                     android:inputType="number"
                     android:focusableInTouchMode="true"
                     android:focusable="true"
-                    android:hint="MM"
                     android:maxLength="2"
                     android:layout_margin="5dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                     android:id="@+id/dob_date_slash_2"
@@ -62,6 +90,20 @@
                     android:text="/"
                     android:layout_margin="5dp"/>
 
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_yy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="4"
+                    android:orientation="horizontal">
             <EditText
                     android:id="@+id/dob_year"
                     android:layout_width="wrap_content"
@@ -69,21 +111,32 @@
                     android:inputType="number"
                     android:focusableInTouchMode="true"
                     android:focusable="true"
-                    android:hint="YYYY"
                     android:maxLength="4"
                     android:layout_margin="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
-                    android:id="@+id/dob_or"
+                    android:id="@+id/dob_date_or"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="none"
                     android:text="OR"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_margin="5dp"/>
 
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="3"
+                    android:orientation="horizontal">
             <EditText
                     android:id="@+id/dob_age"
                     android:layout_width="wrap_content"
@@ -91,9 +144,9 @@
                     android:inputType="number"
                     android:focusableInTouchMode="true"
                     android:focusable="true"
-                    android:hint="Age"
                     android:maxLength="3"
                     android:layout_margin="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

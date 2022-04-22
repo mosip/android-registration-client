@@ -1,10 +1,8 @@
 package io.mosip.registration.clientmanager.spi;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.mosip.registration.clientmanager.dto.http.*;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
-import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -25,6 +23,9 @@ public interface SyncRestService {
 
     @GET("/v1/syncdata/latestidschema")
     Call<ResponseBody> getLatestIdSchema();
+
+    @GET("/v1/syncdata/v2/userdetails")
+    Call<ResponseWrapper<UserDetailResponse>> fetchCenterUserDetails(@Query("keyindex") String keyIndex);
 
     @POST("/registrationprocessor/v1/registrationstatus/syncV2")
     Call<RegProcResponseWrapper<List<SyncRIDResponse>>> syncRID(@Header ("timestamp") String timestamp,
