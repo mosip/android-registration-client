@@ -29,6 +29,7 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
 
     private static final String TAG = DynamicTextBox.class.getSimpleName();
 
+    EditText editText;
     RegistrationDto registrationDto = null;
     FieldSpecDto fieldSpecDto = null;
     final int layoutId=R.layout.dynamic_text_box;
@@ -58,7 +59,7 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
                 String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
                 String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));
 
-        EditText editText = findViewById(R.id.custom_edit_text);
+        editText = findViewById(R.id.custom_edit_text);
         editText.setTag(registrationDto.getSelectedLanguages().get(0));
         editText.addTextChangedListener(getTextWatcher());
 
@@ -82,7 +83,9 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
 
     @Override
     public boolean isValidValue() {
-        return !((TextInputLayout) findViewById(R.id.text_input_layout)).isErrorEnabled();
+        String value = editText.getText().toString();
+        return value != null && !value.trim().isEmpty() &&
+                !((TextInputLayout) findViewById(R.id.text_input_layout)).isErrorEnabled();
     }
 
     @Override
