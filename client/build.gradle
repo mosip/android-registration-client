@@ -15,7 +15,7 @@ ext {
     compileSdkVersion = 31
     buildToolsVersion = "31.0.0"
 
-    minSdkVersion=27
+    minSdkVersion=28
     targetSdkVersion=31
 
     junitVersion = "4.+"
