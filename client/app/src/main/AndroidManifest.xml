@@ -53,6 +53,12 @@
                   android:exported="true">
         </activity>
 
+        <activity android:name=".activites.JobServiceActivity"
+                  android:exported="true"
+                  android:parentActivityName=".activites.MainActivity"
+                  android:windowSoftInputMode="adjustResize">
+        </activity>
+
         <activity android:name=".activites.PreviewDocumentActivity"
                   android:windowSoftInputMode="adjustResize"
                   android:parentActivityName=".activites.ScreenActivity"

@@ -4,19 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-public class ViewModelFactory implements ViewModelProvider.Factory {
+public class ViewModelFactory<T> implements ViewModelProvider.Factory {
 
-    private ListingViewModel listingViewModel;
+    private T viewModel;
 
-    public ViewModelFactory(ListingViewModel listingViewModel) {
-        this.listingViewModel = listingViewModel;
+    public ViewModelFactory(T viewModel) {
+        this.viewModel = viewModel;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if(modelClass == ListingViewModel.class){
-            return (T) this.listingViewModel;
+        if(IListingViewModel.class.isAssignableFrom(modelClass)){
+            return (T) this.viewModel;
         }else{
             throw new IllegalStateException("Unknown entity");
         }

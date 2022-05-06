@@ -52,5 +52,8 @@ public class MainActivity extends DaggerAppCompatActivity {
         startActivity(intent);
     }
 
-
+    public void click_list_JobService(View view) {
+        Intent intent = new Intent(this, JobServiceActivity.class);
+        startActivity(intent);
+    }
 }
