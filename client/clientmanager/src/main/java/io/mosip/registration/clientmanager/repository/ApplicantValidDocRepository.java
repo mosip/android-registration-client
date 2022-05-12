@@ -18,6 +18,9 @@ public class ApplicantValidDocRepository {
     }
 
     public List<String> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
+        if(applicantType == null)
+            return this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
+
         return this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
                 categoryCode);
     }

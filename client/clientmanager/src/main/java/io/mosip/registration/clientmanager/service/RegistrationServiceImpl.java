@@ -120,7 +120,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document.setType(entry.getValue().getType());
                 document.setFormat(entry.getValue().getFormat());
                 document.setRefNumber(entry.getValue().getRefNumber());
-                document.setDocument(entry.getValue().getContent());
+                //TODO convert scanned pages to PDF bytes
+                document.setDocument(new byte[0]);
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 

@@ -12,6 +12,7 @@ import android.widget.*;
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
 import io.mosip.registration.app.R;
+import io.mosip.registration.app.activites.PreviewDocumentActivity;
 import io.mosip.registration.app.util.ClientConstants;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
@@ -64,7 +65,7 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView {
 
         //TODO derive applicant type code
         List<String> items = this.masterDataService.getDocumentTypes(fieldSpecDto.getSubType(),
-                "011", registrationDto.getSelectedLanguages().get(0));
+                null, registrationDto.getSelectedLanguages().get(0));
 
         @SuppressLint("ResourceType")
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, items);

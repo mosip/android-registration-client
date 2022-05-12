@@ -8,12 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
 import dagger.android.support.DaggerAppCompatActivity;
@@ -153,7 +152,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                         dynamicView = factory.getDocumentComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         SCAN_REQUEST_CODE = SCAN_REQUEST_CODE + 1;
                         requestCodeMap.put(SCAN_REQUEST_CODE, fieldSpecDto.getId());
-                        setScanButtonListener(SCAN_REQUEST_CODE, (View) dynamicView);
+                        setScanButtonListener(SCAN_REQUEST_CODE, (View) dynamicView, fieldSpecDto);
                         break;
                     case "biometrics":
                         dynamicView = factory.getBiometricsComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
@@ -196,7 +195,12 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                         try(InputStream iStream = getContentResolver().openInputStream(uri)) {
                             Spinner sItems = ((Spinner) ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doctypes_dropdown));
                             this.registrationService.getRegistrationDto().addDocument(fieldId, sItems.getSelectedItem().toString(), getBytes(iStream));
-                            ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_saved).setVisibility(View.VISIBLE);
+                            View view = ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_saved);
+                            view.setVisibility(View.VISIBLE);
+                            BadgeDrawable badgeDrawable =  BadgeDrawable.create(this);
+                            badgeDrawable.setNumber(this.registrationService.getRegistrationDto().getScannedPages(fieldId).size());
+                            badgeDrawable.setVisible(true);
+                            BadgeUtils.attachBadgeDrawable(badgeDrawable, view);
                         } catch (Exception e) {
                             Log.e(TAG, "Failed to set document to registration dto", e);
                         }
@@ -215,13 +219,22 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         });
     }
 
-    private void setScanButtonListener(int requestCode, View view) {
+    private void setScanButtonListener(int requestCode, View view, FieldSpecDto fieldSpecDto) {
         Button button = view.findViewById(R.id.scan_doc);
         button.setOnClickListener( v -> {
             int preference = ScanConstants.OPEN_CAMERA;
             Intent intent = new Intent(this, ScanActivity.class);
             intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
             startActivityForResult(intent, requestCode);
+        });
+
+        ImageButton previewButton = view.findViewById(R.id.doc_saved);
+        previewButton.setOnClickListener( v -> {
+            Intent intent = new Intent(this, PreviewDocumentActivity.class);
+            intent.putExtra("fieldId", fieldSpecDto.getId());
+            //TODO get label based on logged in language
+            intent.putExtra("fieldLabel", fieldSpecDto.getLabel().get("eng"));
+            startActivity(intent);
         });
     }
 
