@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.viewmodel.CustomPagerAdapter;
@@ -31,17 +32,20 @@ public class PreviewDocumentActivity extends DaggerAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        fieldId = intent.getStringExtra("fieldId");
+        fieldLabel = intent.getStringExtra("fieldLabel");
         startActivity();
     }
 
     private void startActivity() {
         setContentView(R.layout.doc_preview_activity);
 
-        //to display back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //to hide home back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setTitle(fieldLabel);
 
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        ViewPager viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(new CustomPagerAdapter(this, this.registrationService, this.fieldId));
     }
 }
