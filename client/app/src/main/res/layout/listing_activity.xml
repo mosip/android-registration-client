@@ -10,30 +10,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sync Pkt Status"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
-            android:id="@+id/listing_pkt_status_sync"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Schedule Job"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
-            android:id="@+id/listing_job_schedule"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel Job"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
-            android:id="@+id/listing_job_cancel"
-            />
         <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

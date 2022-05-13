@@ -17,6 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.registration_client">
 
+        <service
+            android:name="io.mosip.registration.clientmanager.jobservice.PacketSyncStatusJob"
+            android:label="Packet Sync Status Job"
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+        </service>
+
         <activity android:name=".activites.MainActivity"
                   android:label="@string/app_name" />
 
@@ -87,8 +93,5 @@
                     tools:node="remove" />
         </provider>
 
-        <service
-            android:name=".jobservice.PacketStatusSyncJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

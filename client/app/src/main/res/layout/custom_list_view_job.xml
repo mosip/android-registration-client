@@ -18,20 +18,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:gravity="bottom|left"
             android:text="Job Name"
+            android:textAlignment="center"
+            android:layout_margin="@dimen/activity_horizontal_margin"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            tools:ignore="RtlHardcoded" />
-        <TextView
-            android:id="@+id/jobDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|left"
-            android:text="JobDesc"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
             tools:ignore="RtlHardcoded" />
 
         <LinearLayout
@@ -48,12 +40,13 @@
                 android:layout_margin="5dp"
                 android:text="Trigger" />
 
-            <ToggleButton
+            <Switch
                 android:id="@+id/toggleActive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="ToggleButton" />
+                android:layout_margin="@dimen/bottom_bar_padding"
+                android:layout_weight="1" />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
