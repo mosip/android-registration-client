@@ -51,6 +51,12 @@
                   android:exported="true">
         </activity>
 
+        <activity android:name=".activites.PreviewDocumentActivity"
+                  android:windowSoftInputMode="adjustResize"
+                  android:parentActivityName=".activites.ScreenActivity"
+                  android:exported="true">
+        </activity>
+
         <activity
                 android:name=".activites.LoginActivity"
                 android:label="@string/action_sign_in"

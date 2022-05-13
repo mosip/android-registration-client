@@ -14,6 +14,9 @@ public interface ApplicantValidDocumentDao {
     @Query("select doc_type_code from applicant_valid_doc where app_type_code=:applicantTypeCode and doc_cat_code=:docCategoryCode")
     List<String> findAllDocTypesByDocCategoryAndApplicantType(String applicantTypeCode, String docCategoryCode);
 
+    @Query("select distinct doc_type_code from applicant_valid_doc where doc_cat_code=:docCategoryCode")
+    List<String> findAllDocTypesByDocCategory(String docCategoryCode);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ApplicantValidDocument applicantValidDocument);
 }

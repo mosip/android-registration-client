@@ -1,8 +1,12 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
-import android.os.Environment;
+import android.media.ImageWriter;
 import android.util.Log;
+import com.tom_roush.pdfbox.pdmodel.PDDocument;
+import com.tom_roush.pdfbox.pdmodel.PDPage;
+import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
+import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
@@ -21,6 +25,8 @@ import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -120,7 +126,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document.setType(entry.getValue().getType());
                 document.setFormat(entry.getValue().getFormat());
                 document.setRefNumber(entry.getValue().getRefNumber());
-                document.setDocument(entry.getValue().getContent());
+                document.setDocument(convertImageToPDF(entry.getValue().getContent()));
+                Log.i(TAG, entry.getKey() + " >> PDF document size :" + document.getDocument().length);
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 
@@ -202,5 +209,58 @@ public class RegistrationServiceImpl implements RegistrationService {
         //is machine and center active
         if(centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
             throw new Exception("Registrations are not allowed");
+    }
+
+    private byte[] convertImageToPDF(List<byte[]> images) {
+        try (PDDocument pdDocument = new PDDocument();
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            for(byte[] image : images) {
+                PDPage pdPage = new PDPage();
+                Log.i(TAG, "image size after compression :" + image.length);
+                PDImageXObject pdImageXObject = PDImageXObject.createFromByteArray(pdDocument, image, "");
+                int[] scaledDimension = getScaledDimension(pdImageXObject.getWidth(), pdImageXObject.getHeight(),
+                        (int)pdPage.getMediaBox().getWidth(), (int)pdPage.getMediaBox().getHeight());
+                try (PDPageContentStream contentStream = new PDPageContentStream(pdDocument, pdPage)) {
+                    float startx = (pdPage.getMediaBox().getWidth() - scaledDimension[0])/2;
+                    float starty = (pdPage.getMediaBox().getHeight() - scaledDimension[1])/2;
+                    contentStream.drawImage(pdImageXObject, startx, starty, scaledDimension[0], scaledDimension[1]);
+                }
+                pdDocument.addPage(pdPage);
+            }
+            pdDocument.save(byteArrayOutputStream);
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            Log.e(TAG,"Failed to convert bufferedImages to PDF", e);
+        }
+        return null;
+    }
+
+    private byte[] getCompressedImage(byte[] image, Float compressionQuality) {
+        //TODO compress image
+        return image;
+    }
+
+    private static int[] getScaledDimension(int originalWidth, int originalHeight, int boundWidth,
+                                                int boundHeight) {
+        int new_width = originalWidth;
+        int new_height = originalHeight;
+
+        // first check if we need to scale width
+        if (originalWidth > boundWidth) {
+            //scale width to fit
+            new_width = boundWidth;
+            //scale height to maintain aspect ratio
+            new_height = (new_width * originalHeight) / originalWidth;
+        }
+
+        // then check if we need to scale even with the new height
+        if (new_height > boundHeight) {
+            //scale height to fit instead
+            new_height = boundHeight;
+            //scale width to maintain aspect ratio
+            new_width = (new_height * originalWidth) / originalHeight;
+        }
+
+        return new int[] { new_width, new_height };
     }
 }

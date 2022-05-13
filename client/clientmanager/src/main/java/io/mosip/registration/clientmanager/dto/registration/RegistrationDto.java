@@ -123,8 +123,28 @@ public class RegistrationDto extends Observable {
 
     public void addDocument(String fieldId, String docType, byte[] bytes) {
         if( docType != null && bytes != null ) {
-            this.documents.put(fieldId, new DocumentDto(docType, "pdf", "", "path", bytes));
+            DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
+            documentDto.setType(docType);
+            documentDto.setFormat("pdf");
+            documentDto.setRefNumber(null);
+            documentDto.getContent().add(bytes);
+            this.documents.put(fieldId, documentDto);
         }
+    }
+
+    public void removeDocument(String fieldId, int pageIndex) {
+        DocumentDto documentDto = this.documents.get(fieldId);
+        if( documentDto != null ) {
+            this.documents.get(fieldId).getContent().remove(pageIndex);
+        }
+    }
+
+    public List<byte[]> getScannedPages(String fieldId) {
+        DocumentDto documentDto = this.documents.get(fieldId);
+        if( documentDto != null ) {
+            return this.documents.get(fieldId).getContent();
+        }
+        return Collections.EMPTY_LIST;
     }
 
     public boolean hasDocument(String fieldId) {

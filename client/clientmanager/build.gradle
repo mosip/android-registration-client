@@ -75,6 +75,10 @@ dependencies {
 
     implementation 'org.mvel:mvel2:2.4.14.Final'
 
+    implementation('com.tom-roush:pdfbox-android:2.0.20.0') {
+        exclude group: 'org.bouncycastle'
+    }
+
     // added packet-manager Android library module as a dependency
     implementation project(':packetmanager')
     implementation project(':keymanager')
