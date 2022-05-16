@@ -5,7 +5,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 
-import io.mosip.registration.clientmanager.jobservice.PacketSyncStatusJob;
+import io.mosip.registration.clientmanager.jobservice.PacketStatusSyncJob;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import kotlin.NotImplementedError;
 
@@ -71,7 +71,7 @@ public class JobServiceHelper {
     public Class<?> getJobServiceImplClass(String jobAPIName) {
         switch (jobAPIName) {
             case "packetSyncStatusJob":
-                return PacketSyncStatusJob.class;
+                return PacketStatusSyncJob.class;
             default:
                 return null;
         }

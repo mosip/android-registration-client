@@ -112,15 +112,15 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
             mainViewHolder = (ViewHolder) convertView.getTag();
 
             mainViewHolder.triggerJobButton.setOnClickListener(v -> {
-                Toast.makeText(JobServiceActivity.this, "Starting packet status sync", Toast.LENGTH_SHORT).show();
+                Toast.makeText(JobServiceActivity.this, "Starting Job " + jobServiceModel.getName(), Toast.LENGTH_SHORT).show();
                 try {
                     boolean triggered = jobServiceHelper.triggerJobService(jobServiceModel.getId());
                     if(!triggered)
-                        Toast.makeText(JobServiceActivity.this, "Packet status sync failed. Cannot trigger disabled job.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(JobServiceActivity.this, jobServiceModel.getName() + " job failed. Cannot trigger disabled job.", Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
-                    Log.e(TAG, "packet status sync failed", e);
-                    Toast.makeText(JobServiceActivity.this, "packet status sync failed", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, jobServiceModel.getApiName() + " job failed", e);
+                    Toast.makeText(JobServiceActivity.this, jobServiceModel.getName() + " job failed", Toast.LENGTH_SHORT).show();
                 }
             });
 
