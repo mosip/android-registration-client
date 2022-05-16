@@ -43,4 +43,8 @@ public class DynamicComponentFactory {
     public DynamicView getHtmlComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
         return new DynamicHtmlViewBox(context, fieldSpecDto, registrationDto, masterDataService);
     }
+
+    public DynamicView getCheckboxComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicCheckBox(context, fieldSpecDto, registrationDto);
+    }
 }

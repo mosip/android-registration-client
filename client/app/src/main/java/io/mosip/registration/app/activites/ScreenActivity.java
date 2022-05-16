@@ -1,8 +1,10 @@
 package io.mosip.registration.app.activites;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -152,6 +154,9 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                     case "html":
                         dynamicView = factory.getHtmlComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
+                    case "checkbox" :
+                        dynamicView = factory.getCheckboxComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
+                        break;
                     case "fileupload":
                         dynamicView = factory.getDocumentComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         SCAN_REQUEST_CODE = SCAN_REQUEST_CODE + 1;
@@ -205,6 +210,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                             BadgeDrawable badgeDrawable = BadgeDrawable.create(this);
                             badgeDrawable.setNumber(this.registrationService.getRegistrationDto().getScannedPages(fieldId).size());
                             badgeDrawable.setVisible(true);
+                            badgeDrawable.setBackgroundColor(Color.GREEN);
                             BadgeUtils.attachBadgeDrawable(badgeDrawable, view);
                         } catch (Exception e) {
                             Log.e(TAG, "Failed to set document to registration dto", e);
