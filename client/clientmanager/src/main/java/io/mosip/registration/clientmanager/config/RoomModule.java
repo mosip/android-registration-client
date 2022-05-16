@@ -118,6 +118,12 @@ public class RoomModule {
 
     @Singleton
     @Provides
+    SyncJobDefDao providesSyncJobDefDao(ClientDatabase clientDatabase) {
+        return clientDatabase.syncJobDefDao();
+    }
+
+    @Singleton
+    @Provides
     UserDetailDao providesUserDetailDao(ClientDatabase clientDatabase) {
         return clientDatabase.userDetailDao();
     }
@@ -193,6 +199,12 @@ public class RoomModule {
     @Singleton
     BlocklistedWordRepository provideBlocklistedWordRepository(BlocklistedWordDao blocklistedWordDao) {
         return new BlocklistedWordRepository(blocklistedWordDao);
+    }
+
+    @Provides
+    @Singleton
+    SyncJobDefRepository provideSyncJobDefRepository(SyncJobDefDao syncJobDefDao) {
+        return new SyncJobDefRepository(syncJobDefDao);
     }
 
     @Provides

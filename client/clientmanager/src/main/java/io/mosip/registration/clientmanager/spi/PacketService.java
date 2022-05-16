@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.spi;
 
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.entity.SyncJobDef;
 
 import java.util.List;
 
@@ -28,4 +29,15 @@ public interface PacketService {
      */
     List<Registration> getAllRegistrations(int page, int pageLimit);
 
+    /**
+     *
+     * @return
+     */
+    List<SyncJobDef> getAllSyncJobDefList();
+
+    /**
+     *
+     * @return
+     */
+    void syncAllPacketStatus();
 }

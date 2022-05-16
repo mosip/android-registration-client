@@ -125,11 +125,12 @@ public class AppModule {
                                                       GlobalParamRepository globalParamRepository,
                                                       IdentitySchemaRepository identitySchemaRepository,
                                                       BlocklistedWordRepository blocklistedWordRepository,
+                                                      SyncJobDefRepository syncJobDefRepository,
                                                       UserDetailRepository userDetailRepository) {
         return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
-                globalParamRepository, identitySchemaRepository, blocklistedWordRepository, userDetailRepository);
+                globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository);
     }
 
     @Singleton
@@ -211,10 +212,10 @@ public class AppModule {
 
     @Provides
     @Singleton
-    PacketService providePacketService(RegistrationRepository registrationRepository,
+    PacketService providePacketService(RegistrationRepository registrationRepository, SyncJobDefRepository syncJobDefRepository,
                                        IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
                                        MasterDataService masterDataService) {
-        return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService,
+        return new PacketServiceImpl(appContext, registrationRepository, syncJobDefRepository, packetCryptoService, syncRestService,
                 masterDataService);
     }
 }

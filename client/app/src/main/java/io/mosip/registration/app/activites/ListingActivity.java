@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
-import io.mosip.registration.app.viewmodel.ListingViewModel;
+import io.mosip.registration.app.viewmodel.RegistrationPacketViewModel;
 import io.mosip.registration.app.viewmodel.ViewModelFactory;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.spi.PacketService;
@@ -40,9 +40,9 @@ public class ListingActivity  extends DaggerAppCompatActivity {
         getSupportActionBar().setTitle("Registrations");
         getSupportActionBar().setSubtitle("Note : Packets are auto approved");
 
-        ViewModelFactory viewModelFactory = new ViewModelFactory(new ListingViewModel(packetService));
-        ListingViewModel model = new ViewModelProvider(this, viewModelFactory).get(ListingViewModel.class);
-        model.getRegistrationList().observe(this, list -> {
+        ViewModelFactory viewModelFactory = new ViewModelFactory(new RegistrationPacketViewModel(packetService));
+        RegistrationPacketViewModel model = new ViewModelProvider(this, viewModelFactory).get(RegistrationPacketViewModel.class);
+        model.getList().observe(this, list -> {
             // update UI
             ArrayAdapter<Registration> adapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text2, list);
@@ -118,3 +118,4 @@ public class ListingActivity  extends DaggerAppCompatActivity {
         Button uploadButton;
     }
 }
+

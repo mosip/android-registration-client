@@ -1,5 +1,11 @@
 package io.mosip.registration.clientmanager.spi;
 
+import org.json.JSONObject;
+
+import io.mosip.registration.clientmanager.dto.PacketIdDto;
+import io.mosip.registration.clientmanager.dto.PacketStatusDto;
+import io.mosip.registration.clientmanager.dto.PacketStatusRequest;
+import io.mosip.registration.clientmanager.dto.PacketStatusResponse;
 import io.mosip.registration.clientmanager.dto.http.*;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -19,7 +25,7 @@ public interface SyncRestService {
 
     @GET("/v1/syncdata/getCertificate")
     Call<ResponseWrapper<CertificateResponse>> getCertificate(@Query("applicationId") String applicationId,
-                                                             @Query("referenceId") String referenceId);
+                                                              @Query("referenceId") String referenceId);
 
     @GET("/v1/syncdata/latestidschema")
     Call<ResponseBody> getLatestIdSchema();
@@ -28,15 +34,16 @@ public interface SyncRestService {
     Call<ResponseWrapper<UserDetailResponse>> fetchCenterUserDetails(@Query("keyindex") String keyIndex);
 
     @POST("/registrationprocessor/v1/registrationstatus/syncV2")
-    Call<RegProcResponseWrapper<List<SyncRIDResponse>>> syncRID(@Header ("timestamp") String timestamp,
-                                                         @Header ("Center-Machine-RefId") String refId,
-                                                         @Body String encryptedData);
-
+    Call<RegProcResponseWrapper<List<SyncRIDResponse>>> syncRID(@Header("timestamp") String timestamp,
+                                                                @Header("Center-Machine-RefId") String refId,
+                                                                @Body String encryptedData);
 
     @Multipart
     @POST("/registrationprocessor/v1/packetreceiver/registrationpackets")
     Call<RegProcResponseWrapper<UploadResponse>> uploadPacket(@Part MultipartBody.Part filePart);
 
+    //https://dev.mosip.net/v1/admin/packetstatusupdate?rid=asdf&langCode=eng
 
-
+    @POST("/registrationprocessor/v1/registrationstatus/packetexternalstatus")
+    Call<PacketStatusResponse> getPacketStatus(@Body PacketStatusRequest packetStatusRequestDto);
 }

@@ -30,6 +30,14 @@
                     android:layout_height="wrap_content"
                     android:onClick="click_list_packets"
                     android:id="@+id/button15" />
+
+            <Button
+                android:text="Job Services"
+                android:layout_width="match_parent"
+                android:layout_margin="20dp"
+                android:layout_height="wrap_content"
+                android:onClick="click_list_JobService"
+                android:id="@+id/main_jobservice_btn" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

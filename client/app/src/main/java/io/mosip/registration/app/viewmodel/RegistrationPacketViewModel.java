@@ -1,6 +1,5 @@
 package io.mosip.registration.app.viewmodel;
 
-import android.os.Handler;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -9,19 +8,20 @@ import io.mosip.registration.clientmanager.spi.PacketService;
 
 import java.util.List;
 
-public class ListingViewModel extends ViewModel {
+public class RegistrationPacketViewModel extends ViewModel implements IListingViewModel {
 
-    private static final String TAG = ListingViewModel.class.getSimpleName();
+    private static final String TAG = RegistrationPacketViewModel.class.getSimpleName();
 
     private PacketService packetService;
 
-    public ListingViewModel(PacketService packetService) {
+    public RegistrationPacketViewModel(PacketService packetService) {
         this.packetService = packetService;
     }
 
     private MutableLiveData<List<Registration>> registrationList;
 
-    public LiveData<List<Registration>> getRegistrationList() {
+    @Override
+    public LiveData<List<Registration>> getList() {
         if (registrationList == null) {
             registrationList = new MutableLiveData<>();
             loadRegistrations();

@@ -3,9 +3,11 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
@@ -23,15 +25,18 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import okhttp3.ResponseBody;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,6 +63,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private GlobalParamRepository globalParamRepository;
     private IdentitySchemaRepository identitySchemaRepository;
     private BlocklistedWordRepository blocklistedWordRepository;
+    private SyncJobDefRepository syncJobDefRepository;
     private UserDetailRepository userDetailRepository;
 
     @Inject
@@ -74,6 +80,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  GlobalParamRepository globalParamRepository,
                                  IdentitySchemaRepository identitySchemaRepository,
                                  BlocklistedWordRepository blocklistedWordRepository,
+                                 SyncJobDefRepository syncJobDefRepository,
                                  UserDetailRepository userDetailRepository) {
         this.context = context;
         this.syncRestService = syncRestService;
@@ -89,6 +96,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaRepository = identitySchemaRepository;
         this.blocklistedWordRepository = blocklistedWordRepository;
+        this.syncJobDefRepository = syncJobDefRepository;
         this.userDetailRepository = userDetailRepository;
     }
 
@@ -96,11 +104,11 @@ public class MasterDataServiceImpl implements MasterDataService {
     public CenterMachineDto getRegistrationCenterMachineDetails() {
         CenterMachineDto centerMachineDto = null;
         MachineMaster machineMaster = this.machineRepository.getMachine(clientCryptoManagerService.getMachineName());
-        if(machineMaster == null)
+        if (machineMaster == null)
             return centerMachineDto;
 
         List<RegistrationCenter> centers = this.registrationCenterRepository.getRegistrationCenter(machineMaster.getRegCenterId());
-        if(centers == null || centers.isEmpty())
+        if (centers == null || centers.isEmpty())
             return centerMachineDto;
 
         centerMachineDto = new CenterMachineDto();
@@ -109,7 +117,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         centerMachineDto.setMachineStatus(machineMaster.getIsActive());
         centerMachineDto.setCenterId(centers.get(0).getId());
         centerMachineDto.setCenterStatus(centers.get(0).getIsActive());
-        centerMachineDto.setMachineRefId(centerMachineDto.getCenterId()+"_"+centerMachineDto.getMachineId());
+        centerMachineDto.setMachineRefId(centerMachineDto.getCenterId() + "_" + centerMachineDto.getMachineId());
         centerMachineDto.setCenterNames(centers.stream().collect(Collectors.toMap(RegistrationCenter::getLangCode, RegistrationCenter::getName)));
         return centerMachineDto;
     }
@@ -131,7 +139,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void syncCertificate() {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if(centerMachineDto == null)
+        if (centerMachineDto == null)
             return;
 
         Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getCertificate(REG_APP_ID,
@@ -139,15 +147,14 @@ public class MasterDataServiceImpl implements MasterDataService {
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         keyStoreRepository.saveKeyStore(centerMachineDto.getMachineRefId(), response.body().getResponse().getCertificate());
                         Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
                     } else
                         Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                else
+                } else
                     Toast.makeText(context, "Policy key Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
             }
 
@@ -166,11 +173,11 @@ public class MasterDataServiceImpl implements MasterDataService {
         queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         queryParams.put("version", BuildConfig.CLIENT_VERSION);
 
-        if(centerMachineDto != null)
+        if (centerMachineDto != null)
             queryParams.put("regcenterId", centerMachineDto.getCenterId());
 
         String delta = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
-        if(delta != null)
+        if (delta != null)
             queryParams.put("lastUpdated", delta);
 
         Call<ResponseWrapper<ClientSettingDto>> call = syncRestService.fetchMasterDate(queryParams);
@@ -178,16 +185,14 @@ public class MasterDataServiceImpl implements MasterDataService {
         call.enqueue(new Callback<ResponseWrapper<ClientSettingDto>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<ClientSettingDto>> call, Response<ResponseWrapper<ClientSettingDto>> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if(error == null) {
+                    if (error == null) {
                         saveMasterData(response.body().getResponse());
                         Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
-                    }
-                    else
+                    } else
                         Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                else
+                } else
                     Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
             }
 
@@ -206,18 +211,18 @@ public class MasterDataServiceImpl implements MasterDataService {
             @Override
             public void onResponse(Call<ResponseBody> call,
                                    Response<ResponseBody> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     try {
                         ResponseWrapper<IdSchemaResponse> wrapper = JsonUtils.jsonStringToJavaObject(response.body().string(),
-                                new TypeReference<ResponseWrapper<IdSchemaResponse>>() {});
+                                new TypeReference<ResponseWrapper<IdSchemaResponse>>() {
+                                });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
                         Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
 
                     } catch (Exception e) {
                         Log.e(TAG, "Failed to save IDSchema", e);
                     }
-                }
-                else
+                } else
                     Toast.makeText(context, "Identity schema and UI Spec Sync failed with status code : " +
                             response.code(), Toast.LENGTH_LONG).show();
             }
@@ -236,16 +241,14 @@ public class MasterDataServiceImpl implements MasterDataService {
         call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<UserDetailResponse>> call, Response<ResponseWrapper<UserDetailResponse>> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if(error == null) {
+                    if (error == null) {
                         saveUserDetails(response.body().getResponse().getUserDetails());
                         Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
-                    }
-                    else
+                    } else
                         Toast.makeText(context, "User Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                else
+                } else
                     Toast.makeText(context, "User Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
             }
 
@@ -271,13 +274,13 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void saveMasterData(ClientSettingDto clientSettingDto) {
         boolean foundErrors = false;
-        for(MasterData masterData : clientSettingDto.getDataToSync()) {
+        for (MasterData masterData : clientSettingDto.getDataToSync()) {
             try {
-                switch(masterData.getEntityType()) {
-                    case "structured" :
+                switch (masterData.getEntityType()) {
+                    case "structured":
                         saveStructuredData(masterData.getEntityName(), masterData.getData());
                         break;
-                    case "dynamic" :
+                    case "dynamic":
                         saveDynamicData(masterData.getData());
                 }
             } catch (Throwable e) {
@@ -286,7 +289,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
         }
 
-        if(!foundErrors) {
+        if (!foundErrors) {
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
         }
@@ -307,44 +310,50 @@ public class MasterDataServiceImpl implements MasterDataService {
                 break;
             case "RegistrationCenter":
                 JSONArray centers = getDecryptedDataList(data);
-                for(int i =0 ;i < centers.length(); i++) {
+                for (int i = 0; i < centers.length(); i++) {
                     registrationCenterRepository.saveRegistrationCenter(centers.getJSONObject(i));
                 }
                 break;
             case "DocumentType":
                 JSONArray doctypes = getDecryptedDataList(data);
-                for(int i =0 ;i < doctypes.length(); i++) {
+                for (int i = 0; i < doctypes.length(); i++) {
                     documentTypeRepository.saveDocumentType(doctypes.getJSONObject(i));
                 }
                 break;
             case "ApplicantValidDocument":
                 JSONArray appValidDocs = getDecryptedDataList(data);
-                for(int i =0 ;i < appValidDocs.length(); i++) {
+                for (int i = 0; i < appValidDocs.length(); i++) {
                     applicantValidDocRepository.saveApplicantValidDocument(appValidDocs.getJSONObject(i));
                 }
                 break;
             case "Template":
                 JSONArray templates = getDecryptedDataList(data);
-                for(int i =0 ;i < templates.length(); i++) {
+                for (int i = 0; i < templates.length(); i++) {
                     templateRepository.saveTemplate(templates.getJSONObject(i));
                 }
                 break;
             case "Location":
                 JSONArray locations = getDecryptedDataList(data);
-                for(int i =0 ;i < locations.length(); i++) {
+                for (int i = 0; i < locations.length(); i++) {
                     locationRepository.saveLocationData(locations.getJSONObject(i));
                 }
                 break;
             case "LocationHierarchy":
                 JSONArray locationHierarchies = getDecryptedDataList(data);
-                for(int i =0 ;i < locationHierarchies.length(); i++) {
+                for (int i = 0; i < locationHierarchies.length(); i++) {
                     locationRepository.saveLocationHierarchyData(locationHierarchies.getJSONObject(i));
                 }
                 break;
-            case "BlocklistedWords" :
+            case "BlocklistedWords":
                 JSONArray words = getDecryptedDataList(data);
-                for(int i =0 ;i < words.length(); i++) {
+                for (int i = 0; i < words.length(); i++) {
                     blocklistedWordRepository.saveBlocklistedWord(words.getJSONObject(i));
+                }
+                break;
+            case "SyncJobDef":
+                JSONArray syncJobDefsJsonArray = getDecryptedDataList(data);
+                for (int i = 0; i < syncJobDefsJsonArray.length(); i++) {
+                    syncJobDefRepository.saveSyncJobDef(syncJobDefsJsonArray.getJSONObject(i));
                 }
                 break;
         }
@@ -352,7 +361,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void saveDynamicData(String data) throws JSONException {
         JSONArray list = getDecryptedDataList(data);
-        for(int i =0 ;i < list.length(); i++) {
+        for (int i = 0; i < list.length(); i++) {
             dynamicFieldRepository.saveDynamicField(list.getJSONObject(i));
         }
     }
@@ -386,7 +395,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public List<String> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode) {
         Integer level = getHierarchyLevel(hierarchyLevelName);
-        if(level == null)
+        if (level == null)
             return Collections.EMPTY_LIST;
         return this.locationRepository.getLocationsBasedOnHierarchyLevel(level, langCode);
     }
