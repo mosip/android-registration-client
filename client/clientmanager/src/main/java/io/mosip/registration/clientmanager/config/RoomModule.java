@@ -132,9 +132,16 @@ public class RoomModule {
 
     @Singleton
     @Provides
+    SyncJobTransactionDao providesSyncJobTransactionDao(ClientDatabase clientDatabase) {
+        return clientDatabase.syncJobTransactionDao();
+    }
+
+    @Singleton
+    @Provides
     CACertificateStoreDao providesCACertificateStoreDao(ClientDatabase clientDatabase) {
         return clientDatabase.caCertificateStoreDao();
     }
+
 
     @Provides
     @Singleton
@@ -219,6 +226,12 @@ public class RoomModule {
     @Singleton
     UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao) {
         return new UserDetailRepository(userDetailDao, userTokenDao);
+    }
+
+    @Provides
+    @Singleton
+    SyncJobTransactionRepository provideSyncJobTransactionRepository(SyncJobTransactionDao syncJobTransactionDao) {
+        return new SyncJobTransactionRepository(syncJobTransactionDao);
     }
 
     @Provides

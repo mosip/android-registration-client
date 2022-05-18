@@ -3,6 +3,8 @@ package io.mosip.registration.clientmanager.repository;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 public class GlobalParamRepository {
@@ -24,5 +26,9 @@ public class GlobalParamRepository {
         globalParam.setValue(value);
         globalParam.setStatus(true);
         this.globalParamDao.insertGlobalParam(globalParam);
+    }
+
+    public List<GlobalParam> getGlobalParams() {
+        return this.globalParamDao.getGlobalParams();
     }
 }
