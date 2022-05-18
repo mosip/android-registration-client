@@ -77,6 +77,12 @@ public enum KeyManagerErrorCode {
 
     ILLEGAL_BLOCKSIZE_EXCEPTION("KER-CRY-022"," Input Data length processed by cipher is not multiple of block size"),
     CRYPTO_EXCEPTION("KER-CRY-023","Crypto operation failed"),
+    CERTIFICATE_PARSING_ERROR("KER-KMS-013", "Certificate Parsing Error."),
+    INVALID_CERTIFICATE("KER-PCM-001", "Invalid Certificate uploaded."),
+    INVALID_PARTNER_DOMAIN("KER-PCM-011", "Invalid Partner Domain."),
+    CERTIFICATE_EXIST_ERROR("KER-PCM-003", "Certificate already exists in store."),
+    CERTIFICATE_DATES_NOT_VALID("KER-PCM-004", "Certificate Dates are not valid."),
+    ROOT_CA_NOT_FOUND("KER-PCM-005", "Root CA Certificate not found."),
 
     INTERNAL_SERVER_ERROR("KER-CRY-500", "Internal server error");
 

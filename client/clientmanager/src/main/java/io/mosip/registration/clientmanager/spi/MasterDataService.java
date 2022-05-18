@@ -42,6 +42,8 @@ public interface MasterDataService {
      */
     void syncUserDetails() throws Exception;
 
+    void syncCACertificates();
+
 
     /**
      *

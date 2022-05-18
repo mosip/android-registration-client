@@ -42,8 +42,9 @@ public interface SyncRestService {
     @POST("/registrationprocessor/v1/packetreceiver/registrationpackets")
     Call<RegProcResponseWrapper<UploadResponse>> uploadPacket(@Part MultipartBody.Part filePart);
 
-    //https://dev.mosip.net/v1/admin/packetstatusupdate?rid=asdf&langCode=eng
-
     @POST("/registrationprocessor/v1/registrationstatus/packetexternalstatus")
     Call<PacketStatusResponse> getPacketStatus(@Body PacketStatusRequest packetStatusRequestDto);
+
+    @GET("/v1/syncdata/getcacertificates")
+    Call<ResponseWrapper<CACertificateResponseDto>> getCACertificates(@Query("lastupdated") String lastupdated);
 }

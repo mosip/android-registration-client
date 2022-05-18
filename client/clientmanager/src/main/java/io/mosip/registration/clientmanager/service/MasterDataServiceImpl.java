@@ -4,9 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
@@ -18,17 +16,20 @@ import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
+import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
+import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
+import io.mosip.registration.keymanager.spi.CACertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
+import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import okhttp3.ResponseBody;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,7 +38,8 @@ import retrofit2.Response;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private BlocklistedWordRepository blocklistedWordRepository;
     private SyncJobDefRepository syncJobDefRepository;
     private UserDetailRepository userDetailRepository;
+    private CACertificateManagerService caCertificateManagerService;
 
     @Inject
     public MasterDataServiceImpl(Context context, SyncRestService syncRestService,
@@ -81,7 +84,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  IdentitySchemaRepository identitySchemaRepository,
                                  BlocklistedWordRepository blocklistedWordRepository,
                                  SyncJobDefRepository syncJobDefRepository,
-                                 UserDetailRepository userDetailRepository) {
+                                 UserDetailRepository userDetailRepository,
+                                 CACertificateManagerService caCertificateManagerService) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.clientCryptoManagerService = clientCryptoManagerService;
@@ -98,6 +102,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.blocklistedWordRepository = blocklistedWordRepository;
         this.syncJobDefRepository = syncJobDefRepository;
         this.userDetailRepository = userDetailRepository;
+        this.caCertificateManagerService = caCertificateManagerService;
     }
 
     @Override
@@ -129,6 +134,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             syncCertificate();
             syncLatestIdSchema();
             //syncUserDetails();
+            syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
@@ -264,6 +270,67 @@ public class MasterDataServiceImpl implements MasterDataService {
             userDetailRepository.saveUserDetail(getDecryptedDataList(encData));
         } catch (Throwable t) {
             Log.e(TAG, "Failed to save synced user details", t);
+        }
+    }
+
+    @Override
+    public void syncCACertificates() {
+
+        Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null);
+        call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
+            @Override
+            public void onResponse(Call<ResponseWrapper<CACertificateResponseDto>> call, Response<ResponseWrapper<CACertificateResponseDto>> response) {
+                if (response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(response.body());
+                    String errorMessage = error != null ? error.getMessage() : null;
+                    if (errorMessage == null) {
+                        try {
+                            saveCACertificate(response.body().getResponse().getCertificateDTOList());
+                            Toast.makeText(context, "CA Certificate Sync Completed", Toast.LENGTH_LONG).show();
+                            return;
+                        } catch (Throwable t) {
+                            Log.e(TAG, "Failed to sync CA certificates", t);
+                            errorMessage = t.getMessage();
+                        }
+                    }
+                    Toast.makeText(context, "CA Certificate Sync failed " + errorMessage, Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(context, "CA Certificate Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseWrapper<CACertificateResponseDto>> call, Throwable t) {
+                Toast.makeText(context, "CA Certificate Sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
+        if(caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
+            //Data Fix : As createdDateTime is null sometimes
+            caCertificateDtos.forEach(c -> {
+                if(c.getCreatedtimes() == null)
+                    c.setCreatedtimes(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
+            });
+            caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
+
+            for(CACertificateDto cert : caCertificateDtos) {
+                String errorCode = null;
+                try {
+                    if(cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
+                        CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
+                        caCertificateRequestDto.setCertificateData(cert.getCertData());
+                        caCertificateRequestDto.setPartnerDomain(cert.getPartnerDomain());
+                        io.mosip.registration.keymanager.dto.CACertificateResponseDto caCertificateResponseDto = caCertificateManagerService.uploadCACertificate(caCertificateRequestDto);
+                        Log.i(TAG, caCertificateResponseDto.getStatus());
+                    }
+                } catch (KeymanagerServiceException ex) {
+                    errorCode = ex.getErrorCode();
+                }
+
+                if(errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
+                    throw new KeymanagerServiceException(errorCode, errorCode);
+            }
         }
     }
 

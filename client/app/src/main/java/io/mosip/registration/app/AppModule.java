@@ -13,7 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.clientmanager.factory.ClientWorkerFactory;
+import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
+import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -26,9 +27,13 @@ import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
+import io.mosip.registration.keymanager.service.CACertificateManagerServiceImpl;
+import io.mosip.registration.keymanager.service.CertificateDBHelper;
 import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
+import io.mosip.registration.keymanager.spi.CACertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.packetmanager.service.PacketCryptoServiceImpl;
@@ -43,6 +48,8 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.time.LocalDateTime;
 
 @Module
 public class AppModule {
@@ -126,17 +133,13 @@ public class AppModule {
                                                       IdentitySchemaRepository identitySchemaRepository,
                                                       BlocklistedWordRepository blocklistedWordRepository,
                                                       SyncJobDefRepository syncJobDefRepository,
-                                                      UserDetailRepository userDetailRepository) {
+                                                      UserDetailRepository userDetailRepository,
+                                                      CACertificateManagerService caCertificateManagerService) {
         return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
-                globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository);
-    }
-
-    @Singleton
-    @Provides
-    public ClientWorkerFactory provideClientWorkerFactory(ClientCryptoManagerService clientCryptoManagerService) {
-        return new ClientWorkerFactory(clientCryptoManagerService);
+                globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
+                caCertificateManagerService);
     }
 
     @Provides
@@ -152,6 +155,8 @@ public class AppModule {
     Gson provideGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer());
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializer());
         return gsonBuilder.create();
     }
 
@@ -217,5 +222,17 @@ public class AppModule {
                                        MasterDataService masterDataService) {
         return new PacketServiceImpl(appContext, registrationRepository, syncJobDefRepository, packetCryptoService, syncRestService,
                 masterDataService);
+    }
+
+    @Provides
+    @Singleton
+    CACertificateManagerService provideCACertificateManagerService(CertificateDBHelper certificateDBHelper) {
+        return new CACertificateManagerServiceImpl(appContext, certificateDBHelper);
+    }
+
+    @Provides
+    @Singleton
+    CertificateDBHelper provideCertificateDBHelper(CACertificateStoreRepository caCertificateStoreRepository) {
+        return new CertificateDBHelper(caCertificateStoreRepository);
     }
 }
