@@ -6,7 +6,9 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.*;
 import io.mosip.registration.clientmanager.repository.*;
+import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
+import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
@@ -128,6 +130,12 @@ public class RoomModule {
         return clientDatabase.userDetailDao();
     }
 
+    @Singleton
+    @Provides
+    CACertificateStoreDao providesCACertificateStoreDao(ClientDatabase clientDatabase) {
+        return clientDatabase.caCertificateStoreDao();
+    }
+
     @Provides
     @Singleton
     RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
@@ -211,5 +219,11 @@ public class RoomModule {
     @Singleton
     UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao) {
         return new UserDetailRepository(userDetailDao, userTokenDao);
+    }
+
+    @Provides
+    @Singleton
+    CACertificateStoreRepository provideCACertificateStoreRepository(CACertificateStoreDao caCertificateStoreDao) {
+        return new CACertificateStoreRepository(caCertificateStoreDao);
     }
 }

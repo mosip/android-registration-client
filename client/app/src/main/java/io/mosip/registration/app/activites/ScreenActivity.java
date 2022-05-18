@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,8 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.core.app.ActivityCompat;
 
+import androidx.documentfile.provider.DocumentFile;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
 
@@ -184,7 +191,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
     }
 
     @Override
-    @OptIn(markerClass = com.google.android.material.badge.ExperimentalBadgeUtils.class)
+    @OptIn(markerClass = ExperimentalBadgeUtils.class)
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String fieldId = requestCodeMap.get(requestCode);
@@ -210,10 +217,12 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                             BadgeDrawable badgeDrawable = BadgeDrawable.create(this);
                             badgeDrawable.setNumber(this.registrationService.getRegistrationDto().getScannedPages(fieldId).size());
                             badgeDrawable.setVisible(true);
-                            badgeDrawable.setBackgroundColor(Color.GREEN);
+                            badgeDrawable.setBackgroundColor(Color.BLUE);
                             BadgeUtils.attachBadgeDrawable(badgeDrawable, view);
                         } catch (Exception e) {
                             Log.e(TAG, "Failed to set document to registration dto", e);
+                        } finally {
+                            getContentResolver().delete(uri, null, null);
                         }
                     } else
                         Toast.makeText(this, "Scan failed", Toast.LENGTH_LONG).show();
@@ -267,7 +276,9 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         intent.setAction("sbi.reg.device");
         List activities = this.getPackageManager().queryIntentActivities(intent, MATCH_DEFAULT_ONLY);
         if (activities.size() > 0) {
-            intent.putExtra("input", "{\"type\":\"" + currentModality + "\"}");
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("type", currentModality);
+            intent.putExtra("input", new GsonBuilder().create().toJson(jsonObject));
             this.startActivityForResult(intent, 1);
         } else {
             Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();

@@ -55,7 +55,7 @@ public class DynamicCheckBox extends LinearLayout implements DynamicView {
         checkBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                selected = checkBox.isSelected() ? "Y" : "N";
+                selected = checkBox.isChecked() ? "Y" : "N";
                 registrationDto.addDemographicField(fieldSpecDto.getId(), selected);
             }
         });
