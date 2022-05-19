@@ -22,7 +22,7 @@ public interface SyncJobDefDao {
      *
      * @return list of sync jobs
      */
-    @Query("SELECT * FROM sync_job_def order by id desc")
+    @Query("SELECT * FROM sync_job_def where is_deleted != 1 order by id desc")
     List<SyncJobDef> findAll();
 
     /**
@@ -30,7 +30,7 @@ public interface SyncJobDefDao {
      *
      * @return sync job
      */
-    @Query("select * from sync_job_def where id=:jobId")
+    @Query("select * from sync_job_def where is_deleted != 1 and id=:jobId")
     SyncJobDef findOneById(String jobId);
 
     /**
@@ -38,7 +38,7 @@ public interface SyncJobDefDao {
      *
      * @return list active sync jobs
      */
-    @Query("select * from sync_job_def where is_active=:isActive")
+    @Query("select * from sync_job_def where is_deleted != 1 and is_active=:isActive")
     List<SyncJobDef> findAllByActiveStatus(Boolean isActive);
 
     /**

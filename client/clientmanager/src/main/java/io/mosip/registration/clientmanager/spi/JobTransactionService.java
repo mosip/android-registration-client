@@ -6,8 +6,10 @@ import java.sql.Timestamp;
  * @author Anshul vanawat
  * @since 1.0.0
  */
-public interface SyncJobTransactionService {
+public interface JobTransactionService {
 
-	void LogJobSyncTransaction(String JobId, Timestamp syncTime);
+	void LogJobTransaction(int jobId, long syncTime);
+
+	long getLastSyncTime(int jobId);
 
 }

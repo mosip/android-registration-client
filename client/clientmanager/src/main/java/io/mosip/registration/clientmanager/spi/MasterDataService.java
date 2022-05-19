@@ -29,6 +29,11 @@ public interface MasterDataService {
      */
     void syncMasterData() throws Exception;
 
+    /**
+     * Fetches all the global params from the server and sync locally.
+     * @throws Exception
+     */
+    void syncGlobalParamsData() throws Exception;
 
     /**
      * Fetches latest Id schema and UI specs
