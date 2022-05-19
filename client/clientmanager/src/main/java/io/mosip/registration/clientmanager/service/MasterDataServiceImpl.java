@@ -5,11 +5,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.repository.*;
@@ -50,6 +52,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
     public static final String REG_APP_ID = "REGISTRATION";
     public static final String KERNEL_APP_ID = "KERNEL";
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private Context context;
     private SyncRestService syncRestService;
@@ -210,6 +214,98 @@ public class MasterDataServiceImpl implements MasterDataService {
                 Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void syncGlobalParamsData() throws Exception {
+
+        Log.i(TAG, "config data sync is started");
+
+        Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(clientCryptoManagerService.getClientKeyIndex());
+
+        call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
+            @Override
+            public void onResponse(Call<ResponseWrapper<Map<String, Object>>> call, Response<ResponseWrapper<Map<String, Object>>> response) {
+                if (response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(response.body());
+                    if (error == null) {
+                        saveGlobalParams(response.body().getResponse());
+                        Toast.makeText(context, "Global config sync Completed", Toast.LENGTH_LONG).show();
+                    } else
+                        Toast.makeText(context, "Global config sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(context, "Global config sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
+                Toast.makeText(context, "Global config sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void saveGlobalParams(Map<String, Object> responseMap) {
+
+        try {
+
+            Map<String, String> globalParamMap = new HashMap<>();
+
+            if (responseMap.get("configDetail") != null) {
+                Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
+
+//                if (configDetailJsonMap.get("globalConfiguration") != null) {
+//                    parseToMap(getParams(
+//                            (String) configDetailJsonMap.get("globalConfiguration")),
+//                            globalParamMap);
+//                }
+
+                if (configDetailJsonMap.get("registrationConfiguration") != null) {
+                    parseToMap(getParams(configDetailJsonMap.get("registrationConfiguration").toString().trim()),
+                            globalParamMap);
+                }
+            }
+
+            List<GlobalParam> globalParamList = globalParamRepository.getGlobalParams();
+
+            /* Save all Global Params */
+            for (GlobalParam globalParam : globalParamList) {
+                globalParamRepository.saveGlobalParam(globalParam.getId(), globalParam.getValue());
+            }
+
+        } catch (Exception exception) {
+            Log.e(TAG, exception.getMessage(), exception);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void parseToMap(Map<String, Object> map, Map<String, String> globalParamMap) {
+        if (map != null) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String key = entry.getKey();
+
+                if (entry.getValue() instanceof HashMap) {
+                    parseToMap((HashMap<String, Object>) entry.getValue(), globalParamMap);
+                } else {
+                    globalParamMap.put(key, String.valueOf(entry.getValue()));
+                }
+            }
+        }
+    }
+
+    private Map<String, Object> getParams(String encodedCipher) {
+        try {
+            //TODO implementation pending
+            CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
+            cryptoRequestDto.setValue(new String(CryptoUtil.base64decoder.decode(encodedCipher)));
+            CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
+
+            byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
+            Map<String, Object> paramMap = objectMapper.readValue(data, HashMap.class);
+            return paramMap;
+        } catch (IOException e) {
+            Log.e(TAG,"Failed to decrypt and parse config response >> ", e);
+        }
+        return null;
     }
 
     @Override

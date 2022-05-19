@@ -6,7 +6,11 @@ import android.util.Log;
 
 import androidx.work.Configuration;
 
+import javax.inject.Inject;
+
 import dagger.android.AndroidInjection;
+import io.mosip.registration.clientmanager.spi.JobTransactionService;
+
 
 /**
  * Class for implementing PacketStatusSyncJob service
@@ -20,6 +24,9 @@ public abstract class SyncJobServiceBase extends JobService {
     private static final String TAG = SyncJobServiceBase.class.getSimpleName();
     private Thread jobThread;
 
+    @Inject
+    JobTransactionService jobTransactionService;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -31,15 +38,13 @@ public abstract class SyncJobServiceBase extends JobService {
         Log.d(TAG, "Job started");
 
         jobThread = new Thread(() -> {
-            if (triggerJob())
+            if (triggerJob(params.getJobId()))
                 Log.d(TAG, "Job succeeded");
             else
                 Log.d(TAG, "Job failed");
             jobFinished(params, false);
         });
-
         jobThread.start();
-
         return true;
     }
 
@@ -51,10 +56,18 @@ public abstract class SyncJobServiceBase extends JobService {
         return true;
     }
 
-    public abstract boolean triggerJob();
+    public abstract boolean triggerJob(int jobId);
 
     protected void configureBuilder() {
         Configuration.Builder builder = new Configuration.Builder();
         builder.setJobSchedulerJobIdRange(0, 1000);
+    }
+
+    protected void logJobTransaction(int jobId, long timeStampInSeconds) {
+        try {
+            jobTransactionService.LogJobTransaction(jobId, timeStampInSeconds);
+        } catch (Exception exception) {
+            Log.e(TAG, "Job transaction logging failed");
+        }
     }
 }

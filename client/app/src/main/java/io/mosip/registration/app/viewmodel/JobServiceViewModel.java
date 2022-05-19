@@ -12,7 +12,6 @@ import java.util.List;
 import io.mosip.registration.app.util.JobServiceHelper;
 import io.mosip.registration.app.viewmodel.model.JobServiceModel;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
-import io.mosip.registration.clientmanager.spi.PacketService;
 
 public class JobServiceViewModel extends ViewModel implements IListingViewModel {
 
@@ -20,11 +19,9 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
     private static final int numLengthLimit = 5;
 
     JobServiceHelper jobServiceHelper;
-    PacketService packetService;
 
-    public JobServiceViewModel(JobServiceHelper jobServiceHelper, PacketService packetService) {
+    public JobServiceViewModel(JobServiceHelper jobServiceHelper) {
         this.jobServiceHelper = jobServiceHelper;
-        this.packetService = packetService;
     }
 
     private MutableLiveData<List<JobServiceModel>> jobServiceList;
@@ -41,24 +38,27 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
     private void loadServices() {
         List<JobServiceModel> jobServices = new ArrayList<>();
 
-        List<SyncJobDef> syncJobDefList = packetService.getAllSyncJobDefList();
+        List<SyncJobDef> syncJobDefList = jobServiceHelper.getAllSyncJobDefList();
+
         for (SyncJobDef jobDef : syncJobDefList) {
+            int jobId = getId(jobDef.getId());
 
             boolean isImplemented = jobServiceHelper.isJobImplemented(jobDef.getApiName());
-            boolean isEnabled = jobServiceHelper.isJobEnabled(getId(jobDef.getId()));
+            boolean isEnabled = jobServiceHelper.isJobEnabled(jobId);
+
+            String lastSyncTime = jobServiceHelper.getLastSyncTime(jobId);
+            String nextSyncTime = jobServiceHelper.getNextSyncTime(jobId);
+
 
             jobServices.add(new JobServiceModel(
-                    getId(jobDef.getId()),
+                    jobId,
                     jobDef.getName(),
                     jobDef.getApiName(),
-                    jobDef.getParentSyncJobId(),
-                    jobDef.getSyncFreq(),
-                    jobDef.getLockDuration(),
-                    jobDef.getLangCode(),
-                    jobDef.getIsDeleted(),
                     jobDef.getIsActive(),
                     isImplemented,
-                    isEnabled
+                    isEnabled,
+                    lastSyncTime,
+                    nextSyncTime
             ));
         }
 

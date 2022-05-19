@@ -11,11 +11,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.factory.ClientWorkerFactory;
+import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
 import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
@@ -82,7 +86,7 @@ public class AppModule {
     @Singleton
     @Provides
     public CryptoManagerService provideCryptoManagerService(KeyStoreRepository keyStoreRepository) {
-        return new CryptoManagerServiceImpl(appContext,keyStoreRepository);
+        return new CryptoManagerServiceImpl(appContext, keyStoreRepository);
     }
 
     @Singleton
@@ -114,7 +118,7 @@ public class AppModule {
     @Singleton
     @Provides
     public PacketWriterService providePacketWriterService(PacketManagerHelper packetManagerHelper,
-                                                          PacketKeeper packetKeeper){
+                                                          PacketKeeper packetKeeper) {
         return new PacketWriterServiceImpl(appContext, packetManagerHelper, packetKeeper);
     }
 
@@ -223,6 +227,12 @@ public class AppModule {
                                        MasterDataService masterDataService) {
         return new PacketServiceImpl(appContext, registrationRepository, syncJobDefRepository, packetCryptoService, syncRestService,
                 masterDataService);
+    }
+
+    @Provides
+    @Singleton
+    JobTransactionService provideJobTransactionService(JobTransactionRepository jobTransactionRepository) {
+        return new JobTransactionServiceImpl(jobTransactionRepository);
     }
 
     @Provides

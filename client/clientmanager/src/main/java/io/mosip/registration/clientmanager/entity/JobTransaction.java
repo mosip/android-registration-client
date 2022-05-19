@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -13,15 +14,15 @@ import lombok.Data;
  * @author Anshul vanawat
  */
 
-@Entity(tableName = "sync_job_transaction")
+@Entity(tableName = "job_transaction")
 @Data
-public class SyncJobTransaction {
+@AllArgsConstructor
+public class JobTransaction {
+
     @NonNull
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private String id;
+    @PrimaryKey
     @ColumnInfo(name = "job_id")
-    private String jobId;
+    private int jobId;
     @ColumnInfo(name = "last_sync_time")
-    private Long syncTime;
+    private Long lastSyncTime;
 }

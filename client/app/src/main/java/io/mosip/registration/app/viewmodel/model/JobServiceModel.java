@@ -1,32 +1,28 @@
 package io.mosip.registration.app.viewmodel.model;
 
 
+import java.util.Date;
+
 public class JobServiceModel {
 
     private int id;
     private String name;
     private String apiName;
-    private String parentSyncJobId;
-    private String syncFreq;
-    private String lockDuration;
-    private String langCode;
-    private Boolean isDeleted;
     private Boolean isActive;
     private Boolean isImplemented;
     private Boolean isEnabled;
+    private String lastSyncTime;
+    private String nextSyncTime;
 
-    public JobServiceModel(int id, String name, String apiName, String parentSyncJobId, String syncFreq, String lockDuration, String langCode, Boolean isDeleted, Boolean isActive, Boolean isImplemented, Boolean isEnabled) {
+    public JobServiceModel(int id, String name, String apiName, Boolean isActive, Boolean isImplemented, Boolean isEnabled, String lastSyncTime, String nextSyncTime) {
         this.id = id;
         this.name = name;
         this.apiName = apiName;
-        this.parentSyncJobId = parentSyncJobId;
-        this.syncFreq = syncFreq;
-        this.lockDuration = lockDuration;
-        this.langCode = langCode;
-        this.isDeleted = isDeleted;
         this.isActive = isActive;
         this.isImplemented = isImplemented;
         this.isEnabled = isEnabled;
+        this.lastSyncTime = lastSyncTime;
+        this.nextSyncTime = nextSyncTime;
     }
 
     public int getId() {
@@ -53,46 +49,6 @@ public class JobServiceModel {
         this.apiName = apiName;
     }
 
-    public String getParentSyncJobId() {
-        return parentSyncJobId;
-    }
-
-    public void setParentSyncJobId(String parentSyncJobId) {
-        this.parentSyncJobId = parentSyncJobId;
-    }
-
-    public String getSyncFreq() {
-        return syncFreq;
-    }
-
-    public void setSyncFreq(String syncFreq) {
-        this.syncFreq = syncFreq;
-    }
-
-    public String getLockDuration() {
-        return lockDuration;
-    }
-
-    public void setLockDuration(String lockDuration) {
-        this.lockDuration = lockDuration;
-    }
-
-    public String getLangCode() {
-        return langCode;
-    }
-
-    public void setLangCode(String langCode) {
-        this.langCode = langCode;
-    }
-
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
-
     public Boolean getActive() {
         return isActive;
     }
@@ -115,5 +71,21 @@ public class JobServiceModel {
 
     public void setEnabled(Boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public String getLastSyncTime() {
+        return lastSyncTime;
+    }
+
+    public void setLastSyncTime(String lastSyncTime) {
+        this.lastSyncTime = lastSyncTime;
+    }
+
+    public String getNextSyncTime() {
+        return nextSyncTime;
+    }
+
+    public void setNextSyncTime(String nextSyncTime) {
+        this.nextSyncTime = nextSyncTime;
     }
 }
