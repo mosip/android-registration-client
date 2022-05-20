@@ -14,7 +14,6 @@ import com.google.gson.GsonBuilder;
 
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.clientmanager.factory.ClientWorkerFactory;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
 import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
