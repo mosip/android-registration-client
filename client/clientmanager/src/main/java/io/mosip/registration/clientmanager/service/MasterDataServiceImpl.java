@@ -250,12 +250,6 @@ public class MasterDataServiceImpl implements MasterDataService {
             if (responseMap.get("configDetail") != null) {
                 Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
 
-//                if (configDetailJsonMap.get("globalConfiguration") != null) {
-//                    parseToMap(getParams(
-//                            (String) configDetailJsonMap.get("globalConfiguration")),
-//                            globalParamMap);
-//                }
-
                 if (configDetailJsonMap.get("registrationConfiguration") != null) {
                     parseToMap(getParams(configDetailJsonMap.get("registrationConfiguration").toString().trim()),
                             globalParamMap);
@@ -264,10 +258,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
             List<GlobalParam> globalParamList = globalParamRepository.getGlobalParams();
 
-            /* Save all Global Params */
-            for (GlobalParam globalParam : globalParamList) {
-                globalParamRepository.saveGlobalParam(globalParam.getId(), globalParam.getValue());
-            }
+            globalParamRepository.saveGlobalParams(globalParamList);
 
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);

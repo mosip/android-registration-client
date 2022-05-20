@@ -20,4 +20,8 @@ public interface GlobalParamDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertGlobalParam(GlobalParam globalParam);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<GlobalParam> globalParams);
+
 }
