@@ -1,0 +1,32 @@
+name: Android Registration-Client Build
+
+
+on:
+  push:
+    branches:
+      - '!release-branch'
+      - release-1*
+      - master
+      - 1.*
+      - develop
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install npm dependencies
+        run: |
+          npm install
+      - name: Build Android Registration-Client
+        run: |
+          cd client
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: apk-output
+          path: app\build\outputs\apk\debug\
+          retention-days: 5
