@@ -5,7 +5,7 @@
     "android:ph": "expo run:android --variant assembleDebug",
     "ios": "expo run:ios",
     "eject": "expo eject --npm",
-    "build:android:ph": "cd android && ./gradlew :assembleDebug && cd ..",
+    "build:android:ph": "cd android && ./gradlew :assembleDebug && cd .."
    
   },
   "dependencies": {
