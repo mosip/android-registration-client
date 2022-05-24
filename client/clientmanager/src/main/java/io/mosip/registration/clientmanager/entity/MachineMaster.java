@@ -6,7 +6,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import lombok.Data;
 
@@ -20,7 +19,7 @@ import lombok.Data;
 
 @Entity(tableName = "machine_master")
 @Data
-public class MachineMaster extends RegistrationCommonFields implements Serializable {
+public class MachineMaster implements Serializable {
 
     private static final long serialVersionUID = -5585825705521742941L;
 
@@ -35,9 +34,12 @@ public class MachineMaster extends RegistrationCommonFields implements Serializa
     @ColumnInfo(name = "name")
     private String name;
 
-    @ColumnInfo(name = "validity_end_dtimes")
-    private LocalDateTime validityDateTime;
+    @ColumnInfo(name = "validity_date_time")
+    private Long validityDateTime;
 
-    @ColumnInfo(name = "reg_cntr_id")
+    @ColumnInfo(name = "reg_center_id")
     private String regCenterId;
+
+    @ColumnInfo(name = "is_active")
+    private Boolean isActive;
 }

@@ -2,87 +2,151 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_margin="40dp"
-    android:orientation="vertical">
+              android:layout_margin="10dp"
+              android:orientation="vertical">
 
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@drawable/rounded_corner"
-    android:weightSum="3">
-    <TextView
-            android:id="@+id/dob_label"
-            android:layout_width="150dp"
+    <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DOB"
-            android:layout_margin="8dp"/>
-
-    <LinearLayout
-    android:layout_width="0dp"
-    android:layout_weight="2"
-    android:weightSum="3"
-    android:orientation="horizontal"
-    android:layout_height="wrap_content">
-    <EditText
-        android:id="@+id/dob_date"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_marginLeft="32dp"
-        android:layout_height="wrap_content"
-        android:hint="DD"/>
-
-    <TextView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="/"
-        android:layout_margin="8dp"
-        android:layout_marginBottom="8dp"/>
-    <EditText
-        android:id="@+id/dob_month"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-
-        android:layout_height="wrap_content"
-        android:hint="MM"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="/"
-        android:layout_margin="8dp"
-        android:layout_marginBottom="8dp"/>
-    <EditText
-        android:id="@+id/dob_year"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="YYYY"/>
-
-</LinearLayout>
-    <LinearLayout
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content">
+            android:orientation="vertical"
+            android:background="@drawable/rounded_corner"
+            android:weightSum="3">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="OR"
-            android:layout_margin="8dp"
-            android:layout_marginBottom="8dp"/>
-        <EditText
-            android:id="@+id/dob_age"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Age"/>
+                android:id="@+id/dob_label"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="DOB"
+                android:layout_margin="8dp"/>
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:gravity="center"
+                      android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_dd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="2"
+                    android:orientation="horizontal">
+            <EditText
+                    android:id="@+id/dob_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:layout_margin="5dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                    android:id="@+id/dob_date_slash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="/"
+                    android:layout_margin="5dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_mm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="2"
+                    android:orientation="horizontal">
+            <EditText
+                    android:id="@+id/dob_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:maxLength="2"
+                    android:layout_margin="5dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                    android:id="@+id/dob_date_slash_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="/"
+                    android:layout_margin="5dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_yy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="4"
+                    android:orientation="horizontal">
+            <EditText
+                    android:id="@+id/dob_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:maxLength="4"
+                    android:layout_margin="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                    android:id="@+id/dob_date_or"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="OR"
+                    android:layout_margin="5dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:theme="@style/Theme.registration_client"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeColor="@color/white"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:id="@+id/text_input_layout_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:counterMaxLength="3"
+                    android:orientation="horizontal">
+            <EditText
+                    android:id="@+id/dob_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true"
+                    android:maxLength="3"
+                    android:layout_margin="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
     </LinearLayout>
-
-
-</LinearLayout>
 </LinearLayout>

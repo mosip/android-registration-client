@@ -1,7 +1,11 @@
 package io.mosip.registration.app.dynamicviews;
 
-public interface DynamicView {
+import java.util.Observer;
+
+public interface DynamicView extends Observer {
 
      String getDataType();
-     Object getValue();
+     void setValue();
+     boolean isValidValue();
+     boolean isRequired();
 }

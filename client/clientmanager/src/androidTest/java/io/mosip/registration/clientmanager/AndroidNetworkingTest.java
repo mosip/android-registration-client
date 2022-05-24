@@ -20,7 +20,6 @@ import org.junit.runner.RunWith;
 import java.util.Map;
 
 import io.mosip.registration.clientmanager.dto.http.RequestDto;
-import io.mosip.registration.clientmanager.util.RestService;
 
 @RunWith(AndroidJUnit4.class)
 public class AndroidNetworkingTest {

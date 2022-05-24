@@ -5,27 +5,39 @@
               android:layout_margin="50dp"
               android:orientation="vertical">
 
-    <Button
-            android:text="Sync Masterdata"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:onClick="click_sync_masterdata"
-            android:id="@+id/button12"/>
-    <Button
-            android:text="New Registration"
-            android:layout_width="match_parent"
-            android:layout_margin="20dp"
-            android:layout_height="wrap_content"
-            android:onClick="click_new_registration"
-            android:id="@+id/button14" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                      android:orientation="vertical">
+            <Button
+                    android:text="Sync Masterdata"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:onClick="click_sync_masterdata"
+                    android:id="@+id/button12"/>
+            <Button
+                    android:text="New Registration"
+                    android:layout_width="match_parent"
+                    android:layout_margin="20dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="click_new_registration"
+                    android:id="@+id/button14" />
 
-    <Button
-            android:text="Upload Packet"
-            android:layout_width="match_parent"
-            android:layout_margin="20dp"
-            android:layout_height="wrap_content"
-            android:onClick="click_upload_packet"
-            android:id="@+id/button15" />
+            <Button
+                    android:text="List Registrations"
+                    android:layout_width="match_parent"
+                    android:layout_margin="20dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="click_list_packets"
+                    android:id="@+id/button15" />
 
+            <Button
+                android:text="Job Services"
+                android:layout_width="match_parent"
+                android:layout_margin="20dp"
+                android:layout_height="wrap_content"
+                android:onClick="click_list_JobService"
+                android:id="@+id/main_jobservice_btn" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

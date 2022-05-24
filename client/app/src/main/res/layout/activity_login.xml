@@ -15,6 +15,7 @@
     tools:context="io.">
 
     <androidx.cardview.widget.CardView
+            android:id="@+id/login_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -32,11 +33,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
+                <ImageView android:id="@+id/info_logo"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_launcher_background" />
+                    android:src="@drawable/mosip_logo" />
             </androidx.cardview.widget.CardView>
 
             <EditText

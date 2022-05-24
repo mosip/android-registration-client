@@ -2,16 +2,9 @@ package io.mosip.registration.app.dynamicviews;
 
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
-
-
-import android.util.Log;
+import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.Iterator;
 
 public class DynamicComponentFactory {
 
@@ -23,167 +16,35 @@ public class DynamicComponentFactory {
         this.masterDataService = masterDataService;
     }
 
-    private String getValidationRule(String languageCode, JSONArray validatorRules){
-        //Todo Iterate and find validation rule using languagecode
-        return "";
+    public DynamicView getTextComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicTextBox(context, fieldSpecDto, registrationDto);
     }
 
-    public DynamicComponent getTextComponent(JSONObject labels, JSONArray validatorRules, String type) {
-
-        DynamicComponent dd = new DynamicComponent(context);
-        try {
-            Iterator<String> keys = labels.keys();//Keys are Language codes
-
-            while (keys.hasNext()) {
-                String langCode = keys.next();
-                DynamicTextBox control = new DynamicTextBox(context,langCode,labels.getString(langCode),
-                        getValidationRule(langCode,validatorRules), type);
-                dd.addView(control);
-            }
-
-
-
-
-            //This should be set by Iterating through all added objects
-            //setTextWatcher(object1, object2);
-            //setTextWatcher(object2,object1);
-        }catch (Exception ex){
-            Log.e("", "Failed to build text box", ex);
-        }
-        return dd;
+    public DynamicView getAgeDateComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicAgeDateBox(context, fieldSpecDto, registrationDto, masterDataService);
     }
 
-
-
-    private void setTextWatcher(DynamicTextBox mainObject, DynamicTextBox secondObject){
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
-        mainObject.setTextChangeListener(textWatcher);
+    public DynamicView getSwitchComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicSwitchBox(context, fieldSpecDto, registrationDto, masterDataService);
     }
 
-
-
-    public DynamicComponent getAgeDateComponent(JSONObject labels, JSONArray validatorRules) {
-
-        DynamicComponent dd = new DynamicComponent(context);
-        try {
-            Iterator<String> keys = labels.keys();//Keys are Language codes
-
-            while (keys.hasNext()) {
-                String langCode = keys.next();
-                DynamicAgeDateBox control = new DynamicAgeDateBox(context,langCode,labels.getString(langCode),getValidationRule(langCode,validatorRules));
-                dd.addView(control);
-            }
-
-
-
-
-            //This should be set by Iterating through all added objects
-            //setTextWatcher(object1, object2);
-            //setTextWatcher(object2,object1);
-        }catch (Exception ex){
-            Log.e("", "Failed to build AgeDateComponent", ex);
-        }
-        return dd;
+    public DynamicView getDropdownComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicDropDownBox(context, fieldSpecDto, registrationDto, masterDataService);
     }
 
-
-    public DynamicComponent getSwitchComponent(String fieldId, JSONObject labels, JSONArray validatorRules) {
-
-        DynamicComponent dd = new DynamicComponent(context);
-        try {
-            Iterator<String> keys = labels.keys();//Keys are Language codes
-
-            while (keys.hasNext()) {
-                String langCode = keys.next();
-                DynamicSwitchBox control = new DynamicSwitchBox(context, langCode, labels.getString(langCode),
-                        getValidationRule(langCode,validatorRules), fieldId, masterDataService);
-                dd.addView(control);
-            }
-
-
-
-
-            //This should be set by Iterating through all added objects
-            //setTextWatcher(object1, object2);
-            //setTextWatcher(object2,object1);
-        }catch (Exception ex){
-            Log.e("", "Failed to build SwitchComponent", ex);
-        }
-        return dd;
+    public DynamicView getDocumentComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicDocumentBox(context, fieldSpecDto, registrationDto, masterDataService);
     }
 
-    public DynamicComponent getDropdownComponent(JSONObject labels, JSONArray validatorRules) {
-
-        DynamicComponent dd = new DynamicComponent(context);
-        try {
-            Iterator<String> keys = labels.keys();//Keys are Language codes
-
-            while (keys.hasNext()) {
-                String langCode = keys.next();
-                DynamicDropDownBox control = new DynamicDropDownBox(context,langCode,labels.getString(langCode),
-                        getValidationRule(langCode,validatorRules), masterDataService);
-                dd.addView(control);
-            }
-
-
-
-
-            //This should be set by Iterating through all added objects
-            //setTextWatcher(object1, object2);
-            //setTextWatcher(object2,object1);
-        }catch (Exception ex){
-            Log.e("", "Failed to build DropdownComponent", ex);
-        }
-        return dd;
+    public DynamicView getBiometricsComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicBiometricsBox(context, fieldSpecDto, registrationDto);
     }
 
-    public DynamicComponent getDocumentComponent(JSONObject labels, JSONArray validatorRules) {
-
-        DynamicComponent dd = new DynamicComponent(context);
-        try {
-            Iterator<String> keys = labels.keys();//Keys are Language codes
-
-            while (keys.hasNext()) {
-                String langCode = keys.next();
-                DynamicDocumentBox control = new DynamicDocumentBox(context,langCode,labels.getString(langCode),getValidationRule(langCode,validatorRules));
-                dd.addView(control);
-            }
-
-        }catch (Exception ex){
-            Log.e("", "Failed to build DocumentComponent", ex);
-        }
-        return dd;
+    public DynamicView getHtmlComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicHtmlViewBox(context, fieldSpecDto, registrationDto, masterDataService);
     }
 
-    public DynamicComponent getBiometricsComponent(JSONObject labels, JSONArray validatorRules) {
-
-        DynamicComponent dd = new DynamicComponent(context);
-        try {
-            Iterator<String> keys = labels.keys();//Keys are Language codes
-
-            while (keys.hasNext()) {
-                String langCode = keys.next();
-                DynamicBiometricsBox control = new DynamicBiometricsBox(context,langCode,labels.getString(langCode),getValidationRule(langCode,validatorRules));
-                dd.addView(control);
-            }
-
-        }catch (Exception ex){
-            Log.e("", "Failed to build BiometricsComponent", ex);
-        }
-        return dd;
+    public DynamicView getCheckboxComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+        return new DynamicCheckBox(context, fieldSpecDto, registrationDto);
     }
 }

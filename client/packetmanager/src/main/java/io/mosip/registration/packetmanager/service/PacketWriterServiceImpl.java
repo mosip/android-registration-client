@@ -46,14 +46,13 @@ import io.mosip.registration.packetmanager.util.PacketManagerHelper;
 @Singleton
 public class PacketWriterServiceImpl implements PacketWriterService {
 
-    private static final String id = "110111101120191111121111";
-
     private static final String TAG = PacketWriterServiceImpl.class.getSimpleName();
     private static final String UNDERSCORE = "_";
-    private RegistrationPacket registrationPacket = null;
-    private static Map<String, String> categorySubpacketMapping = new HashMap<>();
     private static final String HASHSEQUENCE1 = "hashSequence1";
     private static final String HASHSEQUENCE2 = "hashSequence2";
+
+    private RegistrationPacket registrationPacket = null;
+    private static Map<String, String> categorySubpacketMapping = new HashMap<>();
 
     static {
         categorySubpacketMapping.put("pvt", "id");
@@ -77,7 +76,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         this.context = appContext;
         this.packetKeeper = packetKeeper;
         this.packetManagerHelper = packetManagerHelper;
-        initialize(id);
     }
 
     public RegistrationPacket initialize(String id) {
@@ -95,33 +93,23 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     }
 
     @Override
-    public void setField(String id, String fieldName, Object value) {
-        this.initialize(id).setField(fieldName, value);
+    public void setField(String id, String fieldId, Object value) {
+        this.initialize(id).setField(fieldId, value);
     }
 
     @Override
-    public void setFields(String id, Map<String, String> fields) {
-        this.initialize(id).setFields(fields);
+    public void setBiometric(String id, String fieldId, BiometricRecord biometricRecord) {
+        this.initialize(id).setBiometricField(fieldId, biometricRecord);
     }
 
     @Override
-    public void setBiometric(String id, String fieldName, BiometricRecord biometricRecord) {
-        this.initialize(id).setBiometricField(fieldName, biometricRecord);
-    }
-
-    @Override
-    public void setDocument(String id, String documentName, Document document) {
-        this.initialize(id).setDocumentField(documentName, document);
-    }
-
-    @Override
-    public void addMetaInfo(String id, Map<String, String> metaInfo) {
-        this.initialize(id).setMetaData(metaInfo);
+    public void setDocument(String id, String fieldId, Document document) {
+        this.initialize(id).setDocumentField(fieldId, document);
     }
 
     @Override
     public void addMetaInfo(String id, String key, String value) {
-        this.initialize(id).addMetaData(key, value);
+        this.initialize(id).setMetaData(key, value);
     }
 
     @Override
@@ -135,23 +123,22 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     }
 
     @Override
-    public List<PacketInfo> persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode) {
+    public String persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) {
         try {
-            return createPacket(id, version, schemaJson, source, process, offlineMode);
+            return createPacket(id, version, schemaJson, source, process, offlineMode, refId);
         } catch (Exception e) {
             Log.e(TAG, "Persist packet failed : ", e);
         }
         return null;
     }
 
-    private List<PacketInfo> createPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode) throws Exception {
+    private String createPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) throws Exception {
         Log.i(TAG, "Started packet creation");
 
         if (this.registrationPacket == null || !registrationPacket.getRegistrationId().equalsIgnoreCase(id))
             throw new Exception("Registration packet is null or registration id does not exists");
 
-        List<PacketInfo> packetInfos = new ArrayList<>();
-
+        String containerPath = null;
         Map<String, List<Object>> identityProperties = loadSchemaFields(schemaJson);
 
         try {
@@ -167,24 +154,22 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                 packetInfo.setProviderName(this.getClass().getSimpleName());
                 packetInfo.setSchemaVersion(new Double(version).toString());
                 packetInfo.setId(id);
+                packetInfo.setRefId(refId);
                 packetInfo.setSource(source);
                 packetInfo.setProcess(process);
                 packetInfo.setPacketName(id + UNDERSCORE + subPacketName);
                 packetInfo.setCreationDate(OffsetDateTime.now().toInstant().toString());
-
                 packetInfo.setProviderVersion(defaultProviderVersion);
+
                 Packet packet = new Packet();
                 packet.setPacketInfo(packetInfo);
                 packet.setPacket(subpacketBytes);
-
                 packetKeeper.putPacket(packet);
-
-                packetInfos.add(packetInfo);
                 Log.i(TAG, "Completed SubPacket Creation");
 
                 if (counter == identityProperties.keySet().size()) {
-                    boolean res = packetKeeper.pack(packetInfo.getId(), packetInfo.getSource(), packetInfo.getProcess());
-                    if (!res) {
+                    containerPath = packetKeeper.pack(packetInfo.getId(), packetInfo.getSource(), packetInfo.getProcess(), refId);
+                    if (containerPath == null) {
                         packetKeeper.deletePacket(id, source, process);
                         throw new Exception("Failed to pack the created zip");
                     }
@@ -193,15 +178,14 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "Exception occurred. Deleting the packet.");
+            Log.e(TAG, "Exception occurred. Deleting the packet.", e);
             packetKeeper.deletePacket(id, source, process);
             throw new Exception("Exception occurred in createPacket " + e.getStackTrace());
         } finally {
             this.registrationPacket = null;
         }
-
         Log.i(TAG, "Exiting packet creation");
-        return packetInfos;
+        return containerPath;
     }
 
     private byte[] createSubpacket(double version, List<Object> schemaFields, boolean isDefault, String id, boolean offlineMode)

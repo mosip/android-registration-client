@@ -5,8 +5,6 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.sql.Timestamp;
-
 import lombok.Data;
 
 /**
@@ -14,137 +12,96 @@ import lombok.Data;
  *
  * @author Anshul Vanawat
  */
-@Entity(tableName = "REGISTRATION")
+@Entity(tableName = "registration")
 @Data
-public class Registration extends RegistrationCommonFields {
+public class Registration {
 
     @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "PACKET_ID")
+    @ColumnInfo(name = "packet_id")
     private String packetId;
-
-    @ColumnInfo(name = "ID")
-    private String id;
 
     @ColumnInfo(name = "usr_id")
     private String usrId;
 
-    @ColumnInfo(name = "REG_TYPE")
+    @ColumnInfo(name = "reg_type")
     private String regType;
 
-    @ColumnInfo(name = "REF_REG_ID")
-    private String refRegId;
-
-    @ColumnInfo(name = "PREREG_ID")
+    @ColumnInfo(name = "prereg_id")
     private String preRegId;
 
-    @ColumnInfo(name = "STATUS_CODE")
-    private String statusCode;
+    @ColumnInfo(name = "file_path")
+    private String filePath;
 
-    @ColumnInfo(name = "LANG_CODE")
-    private String langCode;
+    @ColumnInfo(name = "client_status")
+    private String clientStatus;
 
-    @ColumnInfo(name = "STATUS_COMMENT")
-    private String statusComment;
+    @ColumnInfo(name = "server_status")
+    private String serverStatus;
 
-    @ColumnInfo(name = "STATUS_DTIMES")
-    private Timestamp statusTimestamp;
+    @ColumnInfo(name = "client_status_dtimes")
+    private Long clientStatusDtimes;
 
-    @ColumnInfo(name = "ACK_FILENAME")
-    private String ackFilename;
+    @ColumnInfo(name = "server_status_dtimes")
+    private Long serverStatusDtimes;
 
-    @ColumnInfo(name = "CLIENT_STATUS_CODE")
-    private String clientStatusCode;
+    @ColumnInfo(name = "client_status_comment")
+    private String clientStatusComment;
 
-    @ColumnInfo(name = "SERVER_STATUS_CODE")
-    private String serverStatusCode;
+    @ColumnInfo(name = "server_status_comment")
+    private String serverStatusComment;
 
-    @ColumnInfo(name = "CLIENT_STATUS_DTIME")
-    private Timestamp clientStatusTimestamp;
+    @ColumnInfo(name = "center_id")
+    private String centerId;
 
-    @ColumnInfo(name = "SERVER_STATUS_DTIME")
-    private Timestamp serverStatusTimestamp;
+    @ColumnInfo(name = "approved_by")
+    private String approvedBy;
 
-    @ColumnInfo(name = "CLIENT_STATUS_COMMENT")
-    private String clientStatusComments;
-
-    @ColumnInfo(name = "SERVER_STATUS_COMMENT")
-    private String serverStatusComments;
-
-    @ColumnInfo(name = "REG_USR_ID")
-    private String regUsrId;
-
-    @ColumnInfo(name = "REGCNTR_ID")
-    private String regCntrId;
-
-    @ColumnInfo(name = "APPROVER_USR_ID")
-    private String approverUsrId;
-
-    @ColumnInfo(name = "APPROVER_ROLE_CODE")
+    @ColumnInfo(name = "approver_role_code")
     private String approverRoleCode;
 
-    @ColumnInfo(name = "FILE_UPLOAD_STATUS")
+    @ColumnInfo(name = "file_upload_status")
     private String fileUploadStatus;
 
-    @ColumnInfo(name = "UPLOAD_COUNT")
+    @ColumnInfo(name = "upload_count")
     private Short uploadCount;
 
-    @ColumnInfo(name = "UPLOAD_DTIMES")
-    private Timestamp uploadTimestamp;
+    @ColumnInfo(name = "upload_dtimes")
+    private Long uploadDtimes;
 
-    @ColumnInfo(name = "LATEST_REGTRN_ID")
-    private String latestRegTrnId;
-
-    @ColumnInfo(name = "LATEST_TRN_TYPE_CODE")
-    private String latestTrnTypeCode;
-
-    @ColumnInfo(name = "LATEST_TRN_STATUS_CODE")
-    private String latestTrnStatusCode;
-
-    @ColumnInfo(name = "LATEST_TRN_LANG_CODE")
-    private String latestTrnLangCode;
-
-    @ColumnInfo(name = "LATEST_REGTRN_DTIMES")
-    private Timestamp latestRegTrnTimestamp;
-
-    @ColumnInfo(name = "ADDITIONAL_INFO")
+    @ColumnInfo(name = "additional_info")
     private byte[] additionalInfo;
 
-    @ColumnInfo(name = "APP_ID")
+    @ColumnInfo(name = "app_id")
     private String appId;
 
-    @ColumnInfo(name = "ADDITIONAL_INFO_REQ_ID")
+    @ColumnInfo(name = "additional_info_req_id")
     private String additionalInfoReqId;
 
-    @ColumnInfo(name = "ACK_SIGNATURE")
+    @ColumnInfo(name = "ack_signature")
     private String ackSignature;
 
-    @ColumnInfo(name = "HAS_BWORDS")
+    @ColumnInfo(name = "has_bwords")
     private Boolean hasBwords;
 
+    @ColumnInfo(name = "is_active")
+    private Boolean isActive;
 
-//	@ManyToOne
-//	@JoinColumn(name = "CR_BY", referencedColumnName = "id", insertable = false, updatable = false)
-//	private UserDetail userdetail;
+    @ColumnInfo(name = "cr_by")
+    private String crBy;
 
-//	public void setStatusTimestamp(Timestamp statusTimestamp) {
-//		this.statusTimestamp = Timestamp.valueOf(DateUtils.getUTCCurrentDateTime());
-//	}
+    @ColumnInfo(name = "cr_dtimes")
+    private Long crDtime;
 
-//	public void setClientStatusTimestamp(Timestamp clientStatusTimestamp) {
-//		this.clientStatusTimestamp = Timestamp.valueOf(DateUtils.getUTCCurrentDateTime());
-//	}
+    @ColumnInfo(name = "upd_by")
+    private String updBy;
 
-//	public void setServerStatusTimestamp(Timestamp serverStatusTimestamp) {
-//		this.serverStatusTimestamp = Timestamp.valueOf(DateUtils.getUTCCurrentDateTime());
-//	}
+    @ColumnInfo(name = "upd_dtimes")
+    private Long updDtimes;
 
-//	public void setUploadTimestamp(Timestamp uploadTimestamp) {
-//		this.uploadTimestamp = Timestamp.valueOf(DateUtils.getUTCCurrentDateTime());
-//	}
+    @Override
+    public String toString() {
+        return packetId + "\n" + (serverStatus == null ? clientStatus : serverStatus);
+    }
 
-
-//	public void setLatestRegTrnTimestamp(Timestamp latestRegTrnTimestamp) {
-//		this.latestRegTrnTimestamp = Timestamp.valueOf(DateUtils.getUTCCurrentDateTime());
-//	}
 }

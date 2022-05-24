@@ -5,55 +5,70 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <queries android:name="android.permission.QUERY_ALL_PACKAGES" />
     <!--        android:allowBackup="true"-->
+
     <application
         android:name=".BaseApplication"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/mosip_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.registration_client">
 
-        <activity
-            android:name=".activites.PosixAdapterActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".activites.PacketWriterActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".activites.BiometricsActivity"
-            android:exported="true">
-        </activity>
+        <service
+            android:name="io.mosip.registration.clientmanager.jobservice.PacketStatusSyncJob"
+            android:label="Packet Sync Status Job"
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+        </service>
 
         <activity android:name=".activites.MainActivity"
                   android:label="@string/app_name" />
 
         <activity
-                android:name=".activites.RegistrationController"
+                android:name=".activites.RegistrationActivity"
                 android:parentActivityName=".activites.MainActivity"
                 android:windowSoftInputMode="adjustResize"
                 android:exported="true">
         </activity>
 
-        <activity
-                android:name=".activites.DemographicsActivity"
-                android:parentActivityName=".activites.MainActivity"
-                android:windowSoftInputMode="adjustResize"
-                android:exported="true">
-        </activity>
-
-        <activity
-                android:name=".activites.DocumentsActivity"
-                android:windowSoftInputMode="adjustResize"
-                android:exported="true">
+        <activity android:name=".activites.ScreenActivity"
+                  android:windowSoftInputMode="adjustResize"
+                  android:parentActivityName=".activites.MainActivity"
+                  android:exported="true">
         </activity>
 
         <activity
                 android:name=".activites.PreviewActivity"
                 android:windowSoftInputMode="adjustResize"
+                android:parentActivityName=".activites.MainActivity"
                 android:exported="true">
+        </activity>
+
+        <activity
+                android:name=".activites.ListingActivity"
+                android:windowSoftInputMode="adjustResize"
+                android:parentActivityName=".activites.MainActivity"
+                android:exported="true">
+        </activity>
+
+        <activity android:name=".activites.AboutActivity"
+                  android:windowSoftInputMode="adjustResize"
+                  android:parentActivityName=".activites.MainActivity"
+                  android:exported="true">
+        </activity>
+
+        <activity android:name=".activites.JobServiceActivity"
+                  android:exported="true"
+                  android:parentActivityName=".activites.MainActivity"
+                  android:windowSoftInputMode="adjustResize">
+        </activity>
+
+        <activity android:name=".activites.PreviewDocumentActivity"
+                  android:windowSoftInputMode="adjustResize"
+                  android:parentActivityName=".activites.ScreenActivity"
+                  android:exported="true">
         </activity>
 
         <activity

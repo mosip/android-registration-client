@@ -29,9 +29,6 @@ public class DynamicField {
 	@ColumnInfo(name="name")
 	private String name;
 
-	@ColumnInfo(name="description")
-	private String description;
-	
 	@ColumnInfo(name="lang_code")
 	private String langCode;
 	
@@ -42,6 +39,9 @@ public class DynamicField {
 	private String valueJson;
 	
 	@ColumnInfo(name="is_active")
-	private boolean isActive;
+	private Boolean isActive;
+
+	@ColumnInfo(name="is_deleted")
+	private Boolean isDeleted;
 }
 

@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.constant;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1980,4 +1981,9 @@ public class RegistrationConstants {
 	public static final String JPG_COMPRESSION_QUALITY = "mosip.registration.doc.jpg.compression";
 	public static final String APPLICANT_TYPE_MVEL_SCRIPT = "mosip.kernel.applicantType.mvel.file";
 	public static final String FIELDS_TO_RETAIN_ON_PRID_FETCH = "mosip.registration.fields.to.retain.post.prid.fetch";
+=======
+public class RegistrationConstants {
+    public static final String PACKET_EXTERNAL_STATUS_READER_ID = "mosip.registration.packet.external.status";
+    public static final String PACKET_SYNC_VERSION = "1.0";
+>>>>>>> 0215c59c15997774d37ddb562670565fae6ea61d
 }

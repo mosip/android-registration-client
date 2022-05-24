@@ -1,5 +1,7 @@
 package io.mosip.registration.app.activites;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -7,16 +9,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.*;
 
 
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
-import io.mosip.registration.clientmanager.factory.SyncRestFactory;
+import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import retrofit2.Call;
@@ -31,7 +31,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     @Inject
-    SyncRestFactory syncRestFactory;
+    SyncRestUtil syncRestFactory;
 
     @Inject
     SyncRestService syncRestService;
@@ -43,6 +43,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        getSupportActionBar().setTitle(R.string.app_name);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -68,6 +70,15 @@ public class LoginActivity extends DaggerAppCompatActivity {
             }
         };
 
+        findViewById(R.id.info_logo).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, AboutActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
 
@@ -75,8 +86,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
+                String username = usernameEditText.getText().toString().trim();
+                String password = passwordEditText.getText().toString().trim();
                 //validate form
                 if(validateLogin(username, password)){
                     doLogin(username, password);
@@ -90,24 +101,30 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
     private boolean validateLogin(String username, String password){
         if(username == null || username.trim().length() == 0){
-            Toast.makeText(this, "Username is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Username is required", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(password == null || password.trim().length() == 0){
-            Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Password is required", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!loginService.isValidUserId(username)) {
+            Toast.makeText(LoginActivity.this, "Invalid username", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
     private void doLogin(final String username,final String password){
+        //TODO check if the machine is online, if offline check password hash locally
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
             @Override
             public void onResponse(Call call, Response response) {
                 ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
                 if(response.isSuccessful()) {
-                    if((wrapper.getErrors() == null || wrapper.getErrors().isEmpty()) && wrapper.getResponse() != null) {
+                    ServiceError error = SyncRestUtil.getServiceError(wrapper);
+                    if(error == null) {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse());
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -120,7 +137,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                         }
                     }
                     else {
-                        Toast.makeText(LoginActivity.this, wrapper.getErrors().get(0).getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                     return;
                 }

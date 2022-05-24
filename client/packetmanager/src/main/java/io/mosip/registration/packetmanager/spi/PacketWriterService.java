@@ -11,15 +11,11 @@ import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
  * @Author Anshul Vanawat
  */
 public interface PacketWriterService {
-    void setField(String id, String fieldName, Object value);
+    void setField(String id, String fieldId, Object value);
 
-    void setFields(String id, Map<String, String> fields);
+    void setBiometric(String id, String fieldId, BiometricRecord biometricRecord);
 
-    void setBiometric(String id, String fieldName, BiometricRecord biometricRecord);
-
-    void setDocument(String id, String documentName, Document document);
-
-    void addMetaInfo(String id, Map<String, String> metaInfo);
+    void setDocument(String id, String fieldId, Document document);
 
     void addMetaInfo(String id, String key, String value);
 
@@ -27,5 +23,5 @@ public interface PacketWriterService {
 
     void addAudit(String id, Map<String, String> audit);
 
-    List<PacketInfo> persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode);
+    String persistPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId);
 }

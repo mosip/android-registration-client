@@ -3,35 +3,39 @@ package io.mosip.registration.app;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import io.mosip.registration.app.activites.*;
+import io.mosip.registration.clientmanager.jobservice.PacketStatusSyncJob;
 
 @Module
 public abstract class ActivityBuildersModule {
 
     @ContributesAndroidInjector
-    abstract MainActivity contributeMainActivity();
-
-    @ContributesAndroidInjector
-    abstract PacketWriterActivity contributePacketWriterActivity();
-
-    @ContributesAndroidInjector
-    abstract PosixAdapterActivity contributePosixAdapterActivity();
-
-    @ContributesAndroidInjector
     abstract LoginActivity contributeLoginActivity();
 
     @ContributesAndroidInjector
-    abstract RegistrationController contributeDemographicRegistrationController();
+    abstract MainActivity contributeMainActivity();
 
     @ContributesAndroidInjector
-    abstract BiometricsActivity contributeBiometricsActivity();
-
-    @ContributesAndroidInjector
-    abstract DocumentsActivity contributeDocumentsActivity();
-
-    @ContributesAndroidInjector
-    abstract DemographicsActivity contributeDemographicsActivity();
+    abstract RegistrationActivity contributeRegistrationActivity();
 
     @ContributesAndroidInjector
     abstract PreviewActivity contributePreviewActivity();
+
+    @ContributesAndroidInjector
+    abstract ListingActivity contributeListingActivity();
+
+    @ContributesAndroidInjector
+    abstract ScreenActivity contributeScreenActivity();
+
+    @ContributesAndroidInjector
+    abstract AboutActivity contributeAboutActivity();
+
+    @ContributesAndroidInjector
+    abstract JobServiceActivity jobServiceActivity();
+
+    @ContributesAndroidInjector
+    abstract PacketStatusSyncJob providePacketStatusSyncJob();
+
+    @ContributesAndroidInjector
+    abstract PreviewDocumentActivity contributePreviewDocumentActivity();
 
 }
