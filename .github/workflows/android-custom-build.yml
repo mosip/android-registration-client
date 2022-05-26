@@ -28,5 +28,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: apk-output
-          path: app\build\outputs\apk\debug\
+          path: ~/android-registration-client/client/app/build/outputs/apk/debug/
           retention-days: 5
