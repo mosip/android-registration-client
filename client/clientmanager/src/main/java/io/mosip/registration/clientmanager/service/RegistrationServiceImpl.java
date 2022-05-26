@@ -1,16 +1,18 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
-import android.media.ImageWriter;
 import android.util.Log;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import io.mosip.registration.clientmanager.BuildConfig;
+import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -22,6 +24,8 @@ import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
+import lombok.NonNull;
+import org.json.JSONObject;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -76,21 +80,22 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationDto startRegistration(List<String> languages) throws Exception {
+    public RegistrationDto startRegistration(@NonNull List<String> languages) throws Exception {
         if(registrationDto !=  null) {
             registrationDto.cleanup();
         }
 
+        languages.removeIf( item -> item == null || RegistrationConstants.EMPTY_STRING.equals(item) );
         if(languages.isEmpty())
-            throw new Exception("Language is mandatory to begin registration");
+            throw new ClientCheckedException(context, R.string.err_000);
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         if(centerMachineDto == null)
-            throw new Exception("Required master data not found");
+            throw new ClientCheckedException(context, R.string.err_001);
 
         Double version = identitySchemaRepository.getLatestSchemaVersion();
         if(version == null)
-            throw new Exception("No Schema found");
+            throw new ClientCheckedException(context, R.string.err_002);
 
         doPreChecksBeforeRegistration(centerMachineDto);
 
@@ -105,7 +110,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public RegistrationDto getRegistrationDto() throws Exception {
         if(this.registrationDto == null) {
-            throw new Exception("Registration not started !");
+            throw new ClientCheckedException(context, R.string.err_004);
         }
         return this.registrationDto;
     }
@@ -113,7 +118,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void submitRegistrationDto() throws Exception {
         if(this.registrationDto == null) {
-            throw new Exception("Registration not started !");
+            throw new ClientCheckedException(context, R.string.err_004);
         }
 
         try {
@@ -152,11 +157,15 @@ public class RegistrationServiceImpl implements RegistrationService {
             Log.i(TAG, "Packet created here : " + containerPath);
 
             if(containerPath == null || containerPath.trim().isEmpty()) {
-                throw new Exception("Failed to create registration packet");
+                throw new ClientCheckedException(context, R.string.err_005);
             }
 
+            JSONObject additionalInfo = new JSONObject();
+            additionalInfo.put("langCode", this.registrationDto.getSelectedLanguages().get(0));
+            //TODO add name, phone and email in additional info
+
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
-                    centerMachineDto.getCenterId(), "NEW");
+                    centerMachineDto.getCenterId(), "NEW", additionalInfo);
 
         } finally {
             this.registrationDto.cleanup();
@@ -204,11 +213,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         //free space validation
         long externalSpace = context.getExternalCacheDir().getUsableSpace();
         if( (externalSpace / (1024*1024)) < MIN_SPACE_REQUIRED_MB )
-            throw new Exception("Minimum required space is not available");
+            throw new ClientCheckedException(context, R.string.err_006);
 
         //is machine and center active
         if(centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
-            throw new Exception("Registrations are not allowed");
+            throw new ClientCheckedException(context, R.string.err_007);
     }
 
     private byte[] convertImageToPDF(List<byte[]> images) {

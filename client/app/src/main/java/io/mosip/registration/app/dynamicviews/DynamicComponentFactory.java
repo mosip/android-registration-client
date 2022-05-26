@@ -4,6 +4,7 @@ package io.mosip.registration.app.dynamicviews;
 import android.content.Context;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.repository.LanguageRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 
 public class DynamicComponentFactory {
@@ -16,8 +17,9 @@ public class DynamicComponentFactory {
         this.masterDataService = masterDataService;
     }
 
-    public DynamicView getTextComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
-        return new DynamicTextBox(context, fieldSpecDto, registrationDto);
+    public DynamicView getTextComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto,
+                                        LanguageRepository languageRepository) {
+        return new DynamicTextBox(context, fieldSpecDto, registrationDto, languageRepository);
     }
 
     public DynamicView getAgeDateComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {

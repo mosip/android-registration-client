@@ -1,7 +1,5 @@
 package io.mosip.registration.app.activites;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,7 +8,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
-
 
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
@@ -90,10 +87,11 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 String password = passwordEditText.getText().toString().trim();
                 //validate form
                 if(validateLogin(username, password)){
-                    doLogin(username, password);
+                    //doLogin(username, password, loadingProgressBar);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
                 }
-
-                loadingProgressBar.setVisibility(View.INVISIBLE);
                 loginButton.setEnabled(false);
             }
         });
@@ -101,26 +99,27 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
     private boolean validateLogin(String username, String password){
         if(username == null || username.trim().length() == 0){
-            Toast.makeText(LoginActivity.this, "Username is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, R.string.username_required, Toast.LENGTH_SHORT).show();
             return false;
         }
         if(password == null || password.trim().length() == 0){
-            Toast.makeText(LoginActivity.this, "Password is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, R.string.password_required, Toast.LENGTH_SHORT).show();
             return false;
         }
         if(!loginService.isValidUserId(username)) {
-            Toast.makeText(LoginActivity.this, "Invalid username", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, R.string.invalid_username, Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
-    private void doLogin(final String username,final String password){
+    private void doLogin(final String username,final String password, final ProgressBar loadingProgressBar){
         //TODO check if the machine is online, if offline check password hash locally
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
             @Override
             public void onResponse(Call call, Response response) {
+                loadingProgressBar.setVisibility(View.INVISIBLE);
                 ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
                 if(response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(wrapper);
@@ -130,23 +129,21 @@ public class LoginActivity extends DaggerAppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("username", username);
                             startActivity(intent);
-
+                            return;
                         } catch (Exception e) {
-                            Toast.makeText(LoginActivity.this, "Failed to save auth token, Kindly try again",
-                                    Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "Failed to save wuth token", e);
                         }
                     }
-                    else {
-                        Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                    Log.e(TAG, response.raw().toString());
+                    Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                     return;
                 }
-                Log.e(TAG, response.raw().toString());
-                Toast.makeText(LoginActivity.this, "Failed to login, Kindly try again", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, R.string.login_failed, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
+                loadingProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

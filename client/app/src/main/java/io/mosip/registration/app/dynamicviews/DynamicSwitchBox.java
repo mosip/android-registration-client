@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Observable;
 
 import io.mosip.registration.app.R;
+import io.mosip.registration.app.util.ClientConstants;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -52,8 +53,8 @@ public class DynamicSwitchBox extends LinearLayout implements DynamicView {
             labels.add(fieldSpecDto.getLabel().get(language));
         }
         ((TextView)findViewById(R.id.switch_label)).setText(Html.fromHtml(isRequired() ?
-                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
-                String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));
+                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)) :
+                String.format(FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)), 1));
 
         ViewGroup viewGroup = findViewById(R.id.option_holder_panel);
         List<String> options = masterDataService.getFieldValues(fieldSpecDto.getId(), registrationDto.getSelectedLanguages().get(0));

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketServerStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
@@ -55,8 +56,6 @@ import java.util.List;
 public class PacketServiceImpl implements PacketService {
 
     private static final String TAG = PacketServiceImpl.class.getSimpleName();
-    public static final String PACKET_SYNC_ID = "mosip.registration.sync";
-    public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
             PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
@@ -96,8 +95,8 @@ public class PacketServiceImpl implements PacketService {
 
         RegProcRequestWrapper<List<SyncRIDRequest>> wrapper = new RegProcRequestWrapper<>();
         wrapper.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
-        wrapper.setId(PACKET_SYNC_ID);
-        wrapper.setVersion(PACKET_SYNC_VERSION);
+        wrapper.setId(String.valueOf(R.string.packet_sync_id));
+        wrapper.setVersion(String.valueOf(R.string.packet_sync_version));
         wrapper.setRequest(new ArrayList<SyncRIDRequest>());
         SyncRIDRequest syncRIDRequest = new SyncRIDRequest();
         syncRIDRequest.setRegistrationId(registration.getPacketId());
@@ -105,7 +104,6 @@ public class PacketServiceImpl implements PacketService {
         syncRIDRequest.setPacketId(registration.getPacketId());
         syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
         syncRIDRequest.setSupervisorStatus(PacketClientStatus.APPROVED.name());
-        syncRIDRequest.setLangCode("eng"); // TODO save the lang is DB
 
         if (registration.getAdditionalInfo() != null) {
             String additionalInfo = new String(registration.getAdditionalInfo());
@@ -113,6 +111,7 @@ public class PacketServiceImpl implements PacketService {
             syncRIDRequest.setName(jsonObject.getString("name"));
             syncRIDRequest.setPhone(jsonObject.getString("phone"));
             syncRIDRequest.setEmail(jsonObject.getString("email"));
+            syncRIDRequest.setLangCode(jsonObject.getString("langCode"));
         }
 
         try (FileInputStream fis = new FileInputStream(registration.getFilePath())) {
@@ -129,6 +128,7 @@ public class PacketServiceImpl implements PacketService {
         Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call = this.syncRestService.syncRID(
                 DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)),
                 centerMachineDto.getMachineRefId(), CryptoUtil.base64encoder.encodeToString(cipher));
+
         call.enqueue(new Callback<RegProcResponseWrapper<List<SyncRIDResponse>>>() {
             @Override
             public void onResponse(Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call,
@@ -208,8 +208,8 @@ public class PacketServiceImpl implements PacketService {
             return;
 
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId(RegistrationConstants.PACKET_EXTERNAL_STATUS_READER_ID);
-        packetStatusRequest.setVersion(RegistrationConstants.PACKET_SYNC_VERSION);
+        packetStatusRequest.setId(String.valueOf(R.string.packet_external_status_id));
+        packetStatusRequest.setVersion(String.valueOf(R.string.packet_sync_version));
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
 
         List<PacketIdDto> packets = new ArrayList<>();

@@ -12,7 +12,10 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
+import io.mosip.registration.clientmanager.exception.ClientCheckedException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.LanguageRepository;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 import javax.inject.Inject;
@@ -22,17 +25,20 @@ import java.util.stream.Collectors;
 public class RegistrationActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = RegistrationActivity.class.getSimpleName();
-
-    //TODO need to take this from configuration
-    private List<String> mandatoryLanguages = Arrays.asList("eng");
-    private List<String> optionalLanguages = Arrays.asList();
-    List<String> selectedLanguages = new ArrayList<>();
+    private Map<String, String> configuredLanguages = new LinkedHashMap<>();
+    private List<String> selectedLanguages = new ArrayList<>();
 
     @Inject
     RegistrationService registrationService;
 
     @Inject
     IdentitySchemaRepository identitySchemaRepository;
+
+    @Inject
+    GlobalParamRepository globalParamRepository;
+
+    @Inject
+    LanguageRepository languageRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,23 +49,31 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Language selection");
+        getSupportActionBar().setTitle(R.string.data_entry_lang_title);
 
-        List<String> configuredLanguages = new ArrayList<>();
+        configuredLanguages.clear();
+        selectedLanguages.clear();
+        String mandatoryLangString = null;
+        List<String> mandatoryLanguages = globalParamRepository.getMandatoryLanguageCodes();
         for(String langCode : mandatoryLanguages) {
-            configuredLanguages.add(getLangFullForm(langCode));
+            configuredLanguages.put(langCode, getLangFullForm(langCode));
         }
+        mandatoryLangString = String.join(",", configuredLanguages.values());
+
+        List<String> optionalLanguages = globalParamRepository.getOptionalLanguageCodes();
         for(String langCode : optionalLanguages) {
-            configuredLanguages.add(getLangFullForm(langCode));
+            configuredLanguages.put(langCode, getLangFullForm(langCode));
         }
 
         ((TextView)findViewById(R.id.languageInfoText)).setText(getString(R.string.lang_info_text,
-                String.join(",", configuredLanguages), String.join(",", mandatoryLanguages)));
+                String.join(",", configuredLanguages.values()),
+                String.join(",", mandatoryLangString)));
 
         ListView listView = findViewById(R.id.languageList);
         listView.clearChoices();
         listView.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_multiple_choice, configuredLanguages));
+                android.R.layout.simple_list_item_multiple_choice,
+                configuredLanguages.values().toArray(new String[0])));
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -80,26 +94,24 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
         });
     }
 
-    //TODO need to read from language table
-    private String getLangCode(String fullForm) {
-        switch (fullForm.toLowerCase()) {
-            case "English" : return "eng";
-        }
-        return "eng";
+    private String getLangCode(String nativeName) {
+        Optional<Map.Entry<String, String>> resultEntry = configuredLanguages
+                .entrySet()
+                .stream()
+                .filter( e -> e.getValue().equals(nativeName) )
+                .findFirst();
+
+        return (resultEntry.isPresent()) ? resultEntry.get().getKey() : null;
     }
 
-    //TODO need to read from language table
     private String getLangFullForm(String langCode) {
-        switch (langCode) {
-            case "eng" : return getString(R.string.eng);
-            case "fra" : return getString(R.string.fra);
-            case "ara" : return getString(R.string.ara);
-        }
-        return "English";
+        String nativeName = languageRepository.getNativeName(langCode);
+        return nativeName == null ? langCode : nativeName;
     }
 
 
     private void startRegistration() {
+        String errorMessage = null;
         try {
             registrationService.startRegistration(selectedLanguages);
 
@@ -115,13 +127,15 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
             intent.putExtra("nextScreenIndex", 0);
             startActivity(intent);
             finish();
+            return;
 
         } catch (Exception e) {
             Log.e(TAG, "Failed to start Registration", e);
-            Toast.makeText(getApplicationContext(), "Failed to start Registration : " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-            goToHome();
+            errorMessage =  e.getMessage();
         }
+        Toast.makeText(getApplicationContext(), getString(R.string.start_registration_fail, errorMessage),
+                Toast.LENGTH_LONG).show();
+        goToHome();
     }
 
     public void goToHome() {

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 import io.mosip.registration.app.R;
+import io.mosip.registration.app.util.ClientConstants;
 import io.mosip.registration.app.util.InputTextRegexFilter;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
@@ -59,8 +60,8 @@ public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
             labels.add(fieldSpecDto.getLabel().get(language));
         }
         ((TextView)findViewById(R.id.dob_label)).setText(Html.fromHtml(isRequired() ?
-                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
-                String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));
+                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)) :
+                String.format(FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)), 1));
 
         //TODO re-arrange / build it based on date format from UI spec
         dateBox = findViewById(R.id.dob_date);
