@@ -87,10 +87,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 String password = passwordEditText.getText().toString().trim();
                 //validate form
                 if(validateLogin(username, password)){
-                    //doLogin(username, password, loadingProgressBar);
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("username", username);
-                    startActivity(intent);
+                    doLogin(username, password, loadingProgressBar);
                 }
                 loginButton.setEnabled(false);
             }
