@@ -38,4 +38,15 @@
     <string name="age_label">Âge</string>
     <string name="page_label">%d Page(s)</string>
     <string name="ref_id">Pièce d\'identité</string>
+    <string name="starting_job">Emploi de départ %s</string>
+    <string name="last_sync_time">Heure de la dernière synchronisation: %s</string>
+    <string name="next_sync_time">Heure de la prochaine synchronisation : %s</string>
+    <string name="NA">N / A</string>
+    <string name="setting_up_job">Mise en place du travail</string>
+    <string name="cancelling_job">Annulation du travail</string>
+    <string name="job_scheduling_failed">Échec de la planification de la tâche</string>
+    <string name="job_triggering_failed">Échec du déclenchement de la tâche %s</string>
+    <string name="cancelling_job_failed">Échec de l\'annulation de la tâche</string>
+    <string name="job_scheduled">Tâche planifiée</string>
+    <string name="job_cancelled">Tâche annulée</string>
 </resources>

@@ -78,12 +78,6 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public ObjectMapper provideObjectMapper() {
-        return new ObjectMapper();
-    }
-
-    @Singleton
-    @Provides
     public ClientCryptoManagerService provideClientCryptoManagerService() {
         return new LocalClientCryptoServiceImpl(appContext);
     }
@@ -103,8 +97,8 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public ObjectAdapterService provideObjectAdapterService(IPacketCryptoService iPacketCryptoService) {
-        return new PosixAdapterServiceImpl(appContext, iPacketCryptoService, new ObjectMapper());
+    public ObjectAdapterService provideObjectAdapterService(IPacketCryptoService iPacketCryptoService, ObjectMapper objectMapper) {
+        return new PosixAdapterServiceImpl(appContext, iPacketCryptoService, objectMapper);
     }
 
     @Singleton

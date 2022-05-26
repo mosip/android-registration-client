@@ -36,4 +36,15 @@
     <string name="age_label">سن</string>
     <string name="page_label">الصفحة (الصفحات) %d</string>
     <string name="ref_id">الرقم المرجعي</string>
+    <string name="starting_job">بدء العمل %s</string>
+    <string name="last_sync_time">وقت آخر مزامنة: %s</string>
+    <string name="next_sync_time">وقت المزامنة التالي: %s</string>
+    <string name="NA">غير متوفر</string>
+    <string name="setting_up_job">إنشاء الوظيفة</string>
+    <string name="cancelling_job">إلغاء الوظيفة</string>
+    <string name="job_scheduling_failed">فشل جدولة العمل</string>
+    <string name="job_triggering_failed">فشل تشغيل مهمة %s</string>
+    <string name="cancelling_job_failed">فشل إلغاء المهمة</string>
+    <string name="job_scheduled">وظيفة مجدولة</string>
+    <string name="job_cancelled">تم إلغاء الوظيفة</string>
 </resources>

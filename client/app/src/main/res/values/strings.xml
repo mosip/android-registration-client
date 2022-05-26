@@ -22,8 +22,8 @@
     <string name="packet_sync_fail">Packet sync failed</string>
     <string name="masterdata_sync_start">Master data sync initiated</string>
     <string name="masterdata_sync_fail">Master data sync failed</string>
-    <string name="last_sync_time">Last sync time : %s</string>
-    <string name="next_sync_time">Next sync time : %s</string>
+    <string name="last_sync_time">Last sync time: %s</string>
+    <string name="next_sync_time">Next sync time: %s</string>
     <string name="NA">NA</string>
 
     <!-- Registration -->
