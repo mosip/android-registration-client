@@ -99,8 +99,8 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
             mainViewHolder = (ViewHolder) convertView.getTag();
 
             mainViewHolder.jobName.setText(jobServiceModel.getName());
-            mainViewHolder.jobLastSyncTime.setText("Last Sync Time:" + jobServiceModel.getLastSyncTime());
-            mainViewHolder.jobNextSyncTime.setText("Next Sync Time:" + jobServiceModel.getNextSyncTime());
+            mainViewHolder.jobLastSyncTime.setText(getString(R.string.last_sync_time, jobServiceModel.getLastSyncTime()));
+            mainViewHolder.jobNextSyncTime.setText(getString(R.string.next_sync_time, jobServiceModel.getNextSyncTime()));
             mainViewHolder.toggleActiveButton.setEnabled(jobServiceModel.getActive() && jobServiceModel.getImplemented());
             mainViewHolder.triggerJobButton.setEnabled(jobServiceModel.getActive() && jobServiceModel.getImplemented());
 
@@ -108,55 +108,49 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
             mainViewHolder.toggleActiveButton.setChecked(jobServiceModel.getEnabled());
 
             mainViewHolder.triggerJobButton.setOnClickListener(v -> {
-                Toast.makeText(JobServiceActivity.this, "Starting Job " + jobServiceModel.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(JobServiceActivity.this, getString(R.string.starting_job, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
                 try {
-                    boolean triggered = jobServiceHelper.triggerJobService(jobServiceModel.getId());
-                    if(!triggered)
-                        Toast.makeText(JobServiceActivity.this, jobServiceModel.getName() + " job failed. Cannot trigger disabled job.", Toast.LENGTH_SHORT).show();
+                    boolean triggered = jobServiceHelper.triggerJobService(jobServiceModel.getId(), jobServiceModel.getApiName());
+                    if (!triggered)
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_triggering_failed, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
-                    Log.e(TAG, jobServiceModel.getApiName() + " job failed", e);
-                    Toast.makeText(JobServiceActivity.this, jobServiceModel.getName() + " job failed", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, getString(R.string.starting_job, jobServiceModel.getName()), e);
+                    Toast.makeText(JobServiceActivity.this, getString(R.string.job_triggering_failed, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
                 }
             });
 
             mainViewHolder.toggleActiveButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-                Toast.makeText(JobServiceActivity.this, "Setting up job", Toast.LENGTH_SHORT).show();
+                Toast.makeText(JobServiceActivity.this, getString(R.string.setting_up_job), Toast.LENGTH_SHORT).show();
                 if (isChecked) {
                     try {
-                        int resultCode = jobServiceHelper.scheduleJob(jobServiceModel.getId(), jobServiceModel.getApiName());
+                        int resultCode = jobServiceHelper.scheduleJob(jobServiceModel.getId(), jobServiceModel.getApiName(), jobServiceModel.getSyncFreq());
                         if (resultCode == JobScheduler.RESULT_SUCCESS) {
-                            Log.d(TAG, "Job scheduled");
+                            Log.d(TAG, getString(R.string.job_scheduled));
                             jobServiceModel.setEnabled(true);
                             jobServiceModel.setLastSyncTime(jobServiceHelper.getLastSyncTime(jobServiceModel.getId()));
-                            Toast.makeText(JobServiceActivity.this, "Job scheduled", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduled), Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d(TAG, "Job scheduling failed");
-                            Toast.makeText(JobServiceActivity.this, "Job scheduling failed", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, getString(R.string.job_scheduling_failed));
+                            Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduling_failed), Toast.LENGTH_SHORT).show();
                             jobServiceModel.setEnabled(false);
                             compoundButton.setChecked(false);
                         }
-                    } catch (ClassNotFoundException e) {
-                        Log.e(TAG, "Job scheduling failed : service " + jobServiceModel.getApiName() + " not implemented", e);
-                        Toast.makeText(JobServiceActivity.this, "Job scheduling failed : service " + jobServiceModel.getApiName() + " not implemented", Toast.LENGTH_SHORT).show();
-                        jobServiceModel.setEnabled(false);
-                        compoundButton.setChecked(false);
                     } catch (Exception e) {
-                        Log.e(TAG, "Job scheduling failed", e);
-                        Toast.makeText(JobServiceActivity.this, "Job scheduling failed : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        jobServiceModel.setEnabled(false);
+                        Log.e(TAG, getString(R.string.job_scheduling_failed), e);
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduling_failed), Toast.LENGTH_SHORT).show();
                         compoundButton.setChecked(false);
                     }
                 } else {
-                    Toast.makeText(JobServiceActivity.this, "Cancelling Job", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(JobServiceActivity.this, getString(R.string.cancelling_job), Toast.LENGTH_SHORT).show();
                     try {
                         jobServiceHelper.cancelJob(jobServiceModel.getId());
                         jobServiceModel.setEnabled(false);
-                        Log.d(TAG, "Job cancelled");
-                        Toast.makeText(JobServiceActivity.this, "Job cancelled", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, getString(R.string.job_cancelled));
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_cancelled), Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
-                        Log.e(TAG, "Cancelling Job failed", e);
-                        Toast.makeText(JobServiceActivity.this, "Cancelling Job failed", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, getString(R.string.cancelling_job_failed), e);
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.cancelling_job_failed), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

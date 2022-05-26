@@ -57,6 +57,7 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
                     jobDef.getIsActive(),
                     isImplemented,
                     isEnabled,
+                    jobDef.getSyncFreq(),
                     lastSyncTime,
                     nextSyncTime
             ));

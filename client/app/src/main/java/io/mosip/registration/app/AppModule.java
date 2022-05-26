@@ -78,6 +78,12 @@ public class AppModule {
 
     @Singleton
     @Provides
+    public ObjectMapper provideObjectMapper() {
+        return new ObjectMapper();
+    }
+
+    @Singleton
+    @Provides
     public ClientCryptoManagerService provideClientCryptoManagerService() {
         return new LocalClientCryptoServiceImpl(appContext);
     }
@@ -123,7 +129,7 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public MasterDataService provideMasterDataService(SyncRestService syncRestService, ClientCryptoManagerService clientCryptoManagerService,
+    public MasterDataService provideMasterDataService(ObjectMapper objectMapper, SyncRestService syncRestService, ClientCryptoManagerService clientCryptoManagerService,
                                                       MachineRepository machineRepository,
                                                       RegistrationCenterRepository registrationCenterRepository,
                                                       DocumentTypeRepository documentTypeRepository,
@@ -139,7 +145,7 @@ public class AppModule {
                                                       UserDetailRepository userDetailRepository,
                                                       CACertificateManagerService caCertificateManagerService,
                                                       LanguageRepository languageRepository) {
-        return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
+        return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
@@ -150,8 +156,7 @@ public class AppModule {
     @Singleton
     Cache provideHttpCache() {
         int cacheSize = 10 * 1024 * 1024;
-        Cache cache = new Cache(application.getCacheDir(), cacheSize);
-        return cache;
+        return new Cache(application.getCacheDir(), cacheSize);
     }
 
     @Provides

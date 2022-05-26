@@ -11,16 +11,18 @@ public class JobServiceModel {
     private Boolean isActive;
     private Boolean isImplemented;
     private Boolean isEnabled;
+    private String syncFreq;
     private String lastSyncTime;
     private String nextSyncTime;
 
-    public JobServiceModel(int id, String name, String apiName, Boolean isActive, Boolean isImplemented, Boolean isEnabled, String lastSyncTime, String nextSyncTime) {
+    public JobServiceModel(int id, String name, String apiName, Boolean isActive, Boolean isImplemented, Boolean isEnabled, String syncFreq, String lastSyncTime, String nextSyncTime) {
         this.id = id;
         this.name = name;
         this.apiName = apiName;
         this.isActive = isActive;
         this.isImplemented = isImplemented;
         this.isEnabled = isEnabled;
+        this.syncFreq = syncFreq;
         this.lastSyncTime = lastSyncTime;
         this.nextSyncTime = nextSyncTime;
     }
@@ -71,6 +73,14 @@ public class JobServiceModel {
 
     public void setEnabled(Boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public String getSyncFreq() {
+        return syncFreq;
+    }
+
+    public void setSyncFreq(String syncFreq) {
+        this.syncFreq = syncFreq;
     }
 
     public String getLastSyncTime() {

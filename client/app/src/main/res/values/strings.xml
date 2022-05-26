@@ -22,6 +22,9 @@
     <string name="packet_sync_fail">Packet sync failed</string>
     <string name="masterdata_sync_start">Master data sync initiated</string>
     <string name="masterdata_sync_fail">Master data sync failed</string>
+    <string name="last_sync_time">Last sync time : %s</string>
+    <string name="next_sync_time">Next sync time : %s</string>
+    <string name="NA">NA</string>
 
     <!-- Registration -->
     <string name="registrations_title">Registrations</string>
@@ -43,5 +46,13 @@
     <string name="age_label">Age</string>
     <string name="page_label">%d Page(s)</string>
     <string name="ref_id">Reference Id</string>
+    <string name="starting_job">Starting job %s</string>
+    <string name="setting_up_job">Setting up job</string>
+    <string name="cancelling_job">Cancelling Job</string>
+    <string name="job_scheduling_failed">Job scheduling failed</string>
+    <string name="job_triggering_failed">%s job triggering failed</string>
+    <string name="cancelling_job_failed">Cancelling job failed</string>
+    <string name="job_scheduled">Job scheduled</string>
+    <string name="job_cancelled">Job cancelled</string>
 
 </resources>

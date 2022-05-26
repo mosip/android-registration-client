@@ -14,14 +14,12 @@ import java.util.List;
 public class GlobalParamRepository {
 
     private static final String TAG = GlobalParamRepository.class.getSimpleName();
-
-    private static Map<String, String> globalParamList;
-
-    private static GlobalParamDao globalParamDao;
+    private static Map<String, String> globalParamMap = new HashMap<>();
+    private GlobalParamDao globalParamDao;
 
     @Inject
     public GlobalParamRepository(GlobalParamDao globalParamDao) {
-        GlobalParamRepository.globalParamDao = globalParamDao;
+        this.globalParamDao = globalParamDao;
     }
 
     public String getGlobalParamValue(String id) {
@@ -54,7 +52,7 @@ public class GlobalParamRepository {
         globalParam.setValue(value);
         globalParam.setStatus(true);
         globalParamDao.insertGlobalParam(globalParam);
-        refreshGlobalParams();
+        globalParamMap.put(id, value);
     }
 
     public void saveGlobalParams(List<GlobalParam> globalParam) {
@@ -66,29 +64,24 @@ public class GlobalParamRepository {
         return globalParamDao.getGlobalParams();
     }
 
-    private static void refreshGlobalParams() {
-        globalParamList = new HashMap<>();
-        List<GlobalParam> globalParams =  globalParamDao.getGlobalParams();;
+    private void refreshGlobalParams() {
+        List<GlobalParam> globalParams = globalParamDao.getGlobalParams();
         for (GlobalParam globalParam : globalParams) {
-            globalParamList.put(globalParam.getId(), globalParam.getValue());
+            globalParamMap.put(globalParam.getId(), globalParam.getValue());
         }
     }
 
     public static Boolean getCachedBooleanGlobalParam(String key) {
-        String value = getCachedGlobalParamValue(key);
-        return Boolean.parseBoolean(value);
+        String value = getCachedStringGlobalParam(key);
+        return value == null ? null : Boolean.parseBoolean(value);
     }
 
     public static int getCachedIntegerGlobalParam(String key) {
-        String value = getCachedGlobalParamValue(key);
-        return Integer.parseInt(value);
+        String value = getCachedStringGlobalParam(key);
+        return value == null ? 0 : Integer.parseInt(value);
     }
 
     public static String getCachedStringGlobalParam(String key) {
-        return getCachedGlobalParamValue(key);
-    }
-
-    private static String getCachedGlobalParamValue(String key) {
-        return globalParamList.get(key);
+        return globalParamMap.get(key);
     }
 }
