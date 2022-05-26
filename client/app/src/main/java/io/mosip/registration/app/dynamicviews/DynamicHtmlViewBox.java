@@ -37,15 +37,6 @@ public class DynamicHtmlViewBox extends LinearLayout implements DynamicView {
         inflate(context, layoutId, this);
         this.setTag(fieldSpecDto.getId());
 
-        /*List<String> labels = new ArrayList<>();
-        for(String language : registrationDto.getSelectedLanguages()) {
-            labels.add(fieldSpecDto.getLabel().get(language));
-        }
-
-        ((TextView)findViewById(R.id.html_label)).setText(Html.fromHtml(isRequired() ?
-                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
-                String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));*/
-
         ((TextView)findViewById(R.id.html_content)).setText(Html.fromHtml(masterDataService.getTemplateContent(fieldSpecDto.getTemplateName(),
                 registrationDto.getSelectedLanguages().get(0)), 1));
     }

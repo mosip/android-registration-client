@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Client d\'enregistrement</string>
+    <string name="about_client">À propos du client</string>
+    <string name="initialization_error">Échec de l\'initialisation de la machine</string>
+    <string name="next">Suivante</string>
+    <string name="scheduled_jobs">Tâches planifiées</string>
+    <string name="registrations_title">Inscriptions</string>
+    <string name="registrations_subtitle">Remarque : les paquets sont automatiquement approuvés</string>
+    <string name="packet_sync_start">La synchronisation des paquets a démarré</string>
+    <string name="packet_sync_fail">La synchronisation des paquets a échoué</string>
+    <string name="login_failed">La connexion a échoué, veuillez réessayer</string>
+    <string name="username_required">Nom d\'utilisateur est nécessaire</string>
+    <string name="password_required">Mot de passe requis</string>
+    <string name="sign_in_label">Connexion</string>
+    <string name="invalid_username">Nom d\'utilisateur invalide</string>
+    <string name="prompt_username">Nom d\'utilisateur</string>
+    <string name="prompt_password">Mot de passe</string>
+    <string name="lang_info_text">Veuillez sélectionner une langue parmi %s pour la saisie des données. %s doit
+        obligatoirement être sélectionné par le résident conformément aux directives gouvernementales. L\'ordre de
+        sélection conduira à la page vue pour les données démographiques.
+    </string>
+    <string name="auth_token_save_failed">Échec de l\'enregistrement du jeton d\'authentification, veuillez réessayer
+    </string>
+    <string name="home_title">Domicile</string>
+    <string name="masterdata_sync_start">Synchronisation des données de base lancée</string>
+    <string name="masterdata_sync_fail">La synchronisation des données de base a échoué</string>
+    <string name="preview_title">Aperçu de l\'inscription</string>
+    <string name="registration_success">Inscription enregistrée avec succès</string>
+    <string name="registration_fail">Échec de la sauvegarde de l\'inscription</string>
+    <string name="doc_scan_fail">Échec de la numérisation de documents</string>
+    <string name="data_entry_lang_title">Langue de saisie des données</string>
+    <string name="start_registration_fail">Impossible de démarrer l\'enregistrement : %s</string>
+    <string name="invalid_value">Valeur invalide</string>
+    <string name="mm_label">MM</string>
+    <string name="dd_label">DD</string>
+    <string name="yyyy_label">YYYY</string>
+    <string name="age_label">Âge</string>
+    <string name="page_label">%d Page(s)</string>
+    <string name="ref_id">Pièce d\'identité</string>
+</resources>

@@ -1,12 +1,9 @@
 package io.mosip.registration.app.activites;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,16 +11,9 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.OptIn;
 import androidx.core.app.ActivityCompat;
 
-import androidx.documentfile.provider.DocumentFile;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
-import com.google.android.material.badge.ExperimentalBadgeUtils;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
@@ -37,6 +27,7 @@ import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.LanguageRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
@@ -71,6 +62,9 @@ public class ScreenActivity extends DaggerAppCompatActivity {
     @Inject
     MasterDataService masterDataService;
 
+    @Inject
+    LanguageRepository languageRepository;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +97,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                 getSupportActionBar().setTitle(screen.get().getLabel().get(languages.get(0)));
                 getSupportActionBar().setSubtitle(processSpecDto.getFlow());
 
-                loadScreenFields(screen.get(), languages);
+                loadScreenFields(screen.get());
             } else {
                 //No more screens start loading preview screen
                 Intent intent = new Intent(this, PreviewActivity.class);
@@ -120,7 +114,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
 
                 if (view.isPresent()) {
                     ((View) view.get()).requestFocus();
-                    nextButton.setError("Invalid value found");
+                    nextButton.setError(getString(R.string.invalid_value));
                 } else {
                     nextButton.setError(null);
                     //start activity to render next screen
@@ -138,7 +132,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private void loadScreenFields(ScreenSpecDto screenSpecDto, List<String> languages) throws Exception {
+    private void loadScreenFields(ScreenSpecDto screenSpecDto) throws Exception {
         fieldPanel.removeAllViews();
         DynamicComponentFactory factory = new DynamicComponentFactory(getApplicationContext(), masterDataService);
 
@@ -147,7 +141,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                 DynamicView dynamicView = null;
                 switch (fieldSpecDto.getControlType().toLowerCase()) {
                     case "textbox":
-                        dynamicView = factory.getTextComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
+                        dynamicView = factory.getTextComponent(fieldSpecDto, this.registrationService.getRegistrationDto(), languageRepository);
                         break;
                     case "agedate":
                         dynamicView = factory.getAgeDateComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
@@ -186,12 +180,12 @@ public class ScreenActivity extends DaggerAppCompatActivity {
     }
 
     public void goToHome() {
+        this.registrationService.clearRegistration();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     @Override
-    @OptIn(markerClass = ExperimentalBadgeUtils.class)
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String fieldId = requestCodeMap.get(requestCode);
@@ -212,20 +206,15 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                         try (InputStream iStream = getContentResolver().openInputStream(uri)) {
                             Spinner sItems = ((Spinner) ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doctypes_dropdown));
                             this.registrationService.getRegistrationDto().addDocument(fieldId, sItems.getSelectedItem().toString(), getBytes(iStream));
-                            View view = ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_saved);
-                            view.setVisibility(View.VISIBLE);
-                            BadgeDrawable badgeDrawable = BadgeDrawable.create(this);
-                            badgeDrawable.setNumber(this.registrationService.getRegistrationDto().getScannedPages(fieldId).size());
-                            badgeDrawable.setVisible(true);
-                            badgeDrawable.setBackgroundColor(Color.BLUE);
-                            BadgeUtils.attachBadgeDrawable(badgeDrawable, view);
+                            TextView textView = ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_preview);
+                            textView.setText(getString(R.string.page_label, this.registrationService.getRegistrationDto().getScannedPages(fieldId).size()));
                         } catch (Exception e) {
                             Log.e(TAG, "Failed to set document to registration dto", e);
                         } finally {
                             getContentResolver().delete(uri, null, null);
                         }
                     } else
-                        Toast.makeText(this, "Scan failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.doc_scan_fail, Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -247,8 +236,8 @@ public class ScreenActivity extends DaggerAppCompatActivity {
             startActivityForResult(intent, requestCode);
         });
 
-        ImageButton previewButton = view.findViewById(R.id.doc_saved);
-        previewButton.setOnClickListener(v -> {
+        TextView textView = view.findViewById(R.id.doc_preview);
+        textView.setOnClickListener(v -> {
             Intent intent = new Intent(this, PreviewDocumentActivity.class);
             intent.putExtra("fieldId", fieldSpecDto.getId());
             //TODO get label based on logged in language

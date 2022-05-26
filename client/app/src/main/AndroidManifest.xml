@@ -73,7 +73,7 @@
 
         <activity
                 android:name=".activites.LoginActivity"
-                android:label="@string/action_sign_in"
+                android:label="@string/sign_in_label"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

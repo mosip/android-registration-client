@@ -1,7 +1,9 @@
 package io.mosip.registration.clientmanager.config;
 
 import android.app.Application;
+import androidx.annotation.NonNull;
 import androidx.room.Room;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.*;
@@ -26,6 +28,12 @@ public class RoomModule {
         clientDatabase = Room.databaseBuilder(application, ClientDatabase.class, DATABASE_NAME)
                 .allowMainThreadQueries()
                 .build();
+    }
+
+    @Provides
+    @NonNull
+    public ObjectMapper provideObjectMapper() {
+        return new ObjectMapper();
     }
 
     @Singleton
@@ -136,10 +144,16 @@ public class RoomModule {
         return clientDatabase.caCertificateStoreDao();
     }
 
+    @Singleton
+    @Provides
+    LanguageDao providesLanguageDao(ClientDatabase clientDatabase) {
+        return clientDatabase.languageDao();
+    }
+
     @Provides
     @Singleton
-    RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao) {
-        return new RegistrationRepository(registrationDao);
+    RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao, ObjectMapper objectMapper) {
+        return new RegistrationRepository(registrationDao, objectMapper);
     }
 
     @Provides
@@ -225,5 +239,11 @@ public class RoomModule {
     @Singleton
     CACertificateStoreRepository provideCACertificateStoreRepository(CACertificateStoreDao caCertificateStoreDao) {
         return new CACertificateStoreRepository(caCertificateStoreDao);
+    }
+
+    @Provides
+    @Singleton
+    LanguageRepository provideLanguageRepository(LanguageDao languageDao) {
+        return new LanguageRepository(languageDao);
     }
 }

@@ -60,8 +60,8 @@ public class DynamicDocumentBox extends LinearLayout implements DynamicView {
         }
 
         ((TextView)findViewById(R.id.document_label)).setText(Html.fromHtml(isRequired() ?
-                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
-                String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));
+                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)) :
+                String.format(FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)), 1));
 
         //TODO derive applicant type code
         List<String> items = this.masterDataService.getDocumentTypes(fieldSpecDto.getSubType(),

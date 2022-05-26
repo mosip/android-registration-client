@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.*;
 
 import io.mosip.registration.app.R;
+import io.mosip.registration.app.util.ClientConstants;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -49,8 +50,8 @@ public class DynamicDropDownBox extends LinearLayout implements DynamicView {
             labels.add(fieldSpecDto.getLabel().get(language));
         }
         ((TextView)findViewById(R.id.dropdown_label)).setText(Html.fromHtml(isRequired() ?
-                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join("/", labels)) :
-                String.format(FIELD_LABEL_TEMPLATE, String.join("/", labels)), 1));
+                String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)) :
+                String.format(FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)), 1));
 
         List<String> items = (fieldSpecDto.getFieldType().equalsIgnoreCase("dynamic")) ?
                 this.masterDataService.getFieldValues(fieldSpecDto.getSubType(),

@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.exception;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,10 @@ public class ClientCheckedException extends Exception {
      */
     public ClientCheckedException(String errorMessage) {
         super(errorMessage);
+    }
+
+    public ClientCheckedException(Context context, int errorResId) {
+        super(context.getString(errorResId));
     }
 
     /**

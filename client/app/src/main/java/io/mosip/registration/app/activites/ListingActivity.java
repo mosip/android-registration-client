@@ -37,8 +37,8 @@ public class ListingActivity  extends DaggerAppCompatActivity {
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Registrations");
-        getSupportActionBar().setSubtitle("Note : Packets are auto approved");
+        getSupportActionBar().setTitle(R.string.registrations_title);
+        getSupportActionBar().setSubtitle(R.string.registrations_subtitle);
 
         ViewModelFactory viewModelFactory = new ViewModelFactory(new RegistrationPacketViewModel(packetService));
         RegistrationPacketViewModel model = new ViewModelProvider(this, viewModelFactory).get(RegistrationPacketViewModel.class);
@@ -84,13 +84,12 @@ public class ListingActivity  extends DaggerAppCompatActivity {
             mainViewholder.syncButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(), "Starting packet sync", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.packet_sync_start, Toast.LENGTH_SHORT).show();
                     try {
                         packetService.syncRegistration(registration.getPacketId());
-                        Toast.makeText(getContext(), "Packet sync successful", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Log.e(TAG, "Packet sync failed", e);
-                        Toast.makeText(getContext(), "Packet sync failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.packet_sync_fail, Toast.LENGTH_SHORT).show();
                     }
                 }
             });

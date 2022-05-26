@@ -68,6 +68,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private SyncJobDefRepository syncJobDefRepository;
     private UserDetailRepository userDetailRepository;
     private CACertificateManagerService caCertificateManagerService;
+    private LanguageRepository languageRepository;
 
     @Inject
     public MasterDataServiceImpl(Context context, SyncRestService syncRestService,
@@ -85,7 +86,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  BlocklistedWordRepository blocklistedWordRepository,
                                  SyncJobDefRepository syncJobDefRepository,
                                  UserDetailRepository userDetailRepository,
-                                 CACertificateManagerService caCertificateManagerService) {
+                                 CACertificateManagerService caCertificateManagerService,
+                                 LanguageRepository languageRepository) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.clientCryptoManagerService = clientCryptoManagerService;
@@ -103,6 +105,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.syncJobDefRepository = syncJobDefRepository;
         this.userDetailRepository = userDetailRepository;
         this.caCertificateManagerService = caCertificateManagerService;
+        this.languageRepository = languageRepository;
     }
 
     @Override
@@ -133,7 +136,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             syncMasterData();
             syncCertificate();
             syncLatestIdSchema();
-            //syncUserDetails();
+            syncUserDetails();
             syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
@@ -421,6 +424,12 @@ public class MasterDataServiceImpl implements MasterDataService {
                 JSONArray syncJobDefsJsonArray = getDecryptedDataList(data);
                 for (int i = 0; i < syncJobDefsJsonArray.length(); i++) {
                     syncJobDefRepository.saveSyncJobDef(syncJobDefsJsonArray.getJSONObject(i));
+                }
+                break;
+            case "Language":
+                JSONArray languageJsonArray = getDecryptedDataList(data);
+                for (int i = 0; i < languageJsonArray.length(); i++) {
+                    languageRepository.saveLanguage(languageJsonArray.getJSONObject(i));
                 }
                 break;
         }

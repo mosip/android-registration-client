@@ -134,12 +134,13 @@ public class AppModule {
                                                       BlocklistedWordRepository blocklistedWordRepository,
                                                       SyncJobDefRepository syncJobDefRepository,
                                                       UserDetailRepository userDetailRepository,
-                                                      CACertificateManagerService caCertificateManagerService) {
+                                                      CACertificateManagerService caCertificateManagerService,
+                                                      LanguageRepository languageRepository) {
         return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                caCertificateManagerService);
+                caCertificateManagerService, languageRepository);
     }
 
     @Provides

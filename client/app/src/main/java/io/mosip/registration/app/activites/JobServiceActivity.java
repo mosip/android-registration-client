@@ -52,7 +52,7 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Job Service");
+        getSupportActionBar().setTitle(R.string.scheduled_jobs);
 
         ViewModelFactory viewModelFactory = new ViewModelFactory(new JobServiceViewModel(jobServiceHelper, packetService));
         JobServiceViewModel model = new ViewModelProvider(this, viewModelFactory).get(JobServiceViewModel.class);

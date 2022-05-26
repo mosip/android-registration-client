@@ -2,7 +2,6 @@ package io.mosip.registration.app.activites;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.TextView;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
@@ -25,7 +24,7 @@ public class AboutActivity extends DaggerAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        getSupportActionBar().setTitle("About Client");
+        getSupportActionBar().setTitle(R.string.about_client);
 
         final TextView editText = findViewById(R.id.about);
         editText.setTextIsSelectable(true);
@@ -36,7 +35,7 @@ public class AboutActivity extends DaggerAppCompatActivity {
             editText.setText(jsonObject.toString(4));
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
-            editText.setText("Failed to initialize device");
+            editText.setText(R.string.initialization_error);
         }
     }
 }

@@ -40,7 +40,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Preview Resident Data");
+        getSupportActionBar().setTitle(R.string.preview_title);
 
         final Button button = findViewById(R.id.createpacket);
         button.setOnClickListener( v -> {
@@ -59,10 +59,10 @@ public class PreviewActivity extends DaggerAppCompatActivity {
     private void submitForm() {
         try {
             registrationService.submitRegistrationDto();
-            Toast.makeText(this, "Registration packet created successfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.registration_success, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, "Failed on registration submission", e);
-            Toast.makeText(this, "Packet creation failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.registration_fail, Toast.LENGTH_LONG).show();
         }
         goToHome();
     }

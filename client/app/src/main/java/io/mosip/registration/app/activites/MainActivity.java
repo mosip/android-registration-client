@@ -28,16 +28,16 @@ public class MainActivity extends DaggerAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         registrationService.clearRegistration();
-        getSupportActionBar().setTitle("Home");
+        getSupportActionBar().setTitle(R.string.home_title);
     }
 
     public void click_sync_masterdata(View view) {
-        Toast.makeText(this, "Masterdata sync started", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.masterdata_sync_start, Toast.LENGTH_LONG).show();
         try {
             masterDataService.manualSync();
         } catch (Exception e) {
             Log.e(TAG, "Masterdata sync failed", e);
-            Toast.makeText(this, "Masterdata sync failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.masterdata_sync_fail, Toast.LENGTH_LONG).show();
         }
     }
 

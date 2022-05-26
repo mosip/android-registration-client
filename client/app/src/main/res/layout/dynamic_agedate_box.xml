@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_margin="10dp"
               android:orientation="vertical">
@@ -10,8 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/rounded_corner"
-            android:weightSum="3">
+            android:background="@drawable/rounded_corner">
         <TextView
                 android:id="@+id/dob_label"
                 android:layout_width="150dp"
@@ -25,8 +24,6 @@
                       android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
 
                     android:theme="@style/Theme.registration_client"
                     app:boxStrokeWidth="0dp"
@@ -34,19 +31,22 @@
                     app:boxStrokeWidthFocused="0dp"
                     android:id="@+id/text_input_layout_dd"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_margin="5dp"
-                    app:counterMaxLength="2"
                     android:orientation="horizontal">
-            <EditText
-                    android:id="@+id/dob_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:focusableInTouchMode="true"
-                    android:focusable="true"
-                    android:inputType="number"
-                    android:maxLength="2"
-                    android:layout_margin="5dp"/>
+                <EditText
+                        android:id="@+id/dob_date"
+                        app:autoSizeTextType="uniform"
+                        android:hint="@string/dd_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:focusableInTouchMode="true"
+                        android:focusable="true"
+                        android:inputType="number"
+                        android:ems="3"
+                        android:maxLength="2"
+                        android:gravity="center_horizontal"
+                        android:layout_margin="5dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -58,8 +58,6 @@
                     android:layout_margin="5dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
 
                     android:theme="@style/Theme.registration_client"
                     app:boxStrokeWidth="0dp"
@@ -67,19 +65,22 @@
                     app:boxStrokeWidthFocused="0dp"
                     android:id="@+id/text_input_layout_mm"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_margin="5dp"
-                    app:counterMaxLength="2"
                     android:orientation="horizontal">
-            <EditText
-                    android:id="@+id/dob_month"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:focusableInTouchMode="true"
-                    android:focusable="true"
-                    android:maxLength="2"
-                    android:layout_margin="5dp"/>
+                <EditText
+                        android:id="@+id/dob_month"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="number"
+                        android:focusableInTouchMode="true"
+                        android:focusable="true"
+                        android:maxLength="2"
+                        android:layout_margin="5dp"
+                        android:ems="3"
+                        android:gravity="center_horizontal"
+                        app:autoSizeTextType="uniform"
+                        android:hint="@string/mm_label"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -102,7 +103,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    app:counterMaxLength="4"
                     android:orientation="horizontal">
             <EditText
                     android:id="@+id/dob_year"
@@ -112,7 +112,11 @@
                     android:focusableInTouchMode="true"
                     android:focusable="true"
                     android:maxLength="4"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="8dp"
+                    android:ems="4"
+                    android:gravity="center_horizontal"
+                    app:autoSizeTextType="uniform"
+                    android:hint="@string/yyyy_label"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -135,7 +139,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    app:counterMaxLength="3"
                     android:orientation="horizontal">
             <EditText
                     android:id="@+id/dob_age"
@@ -145,7 +148,11 @@
                     android:focusableInTouchMode="true"
                     android:focusable="true"
                     android:maxLength="3"
-                    android:layout_margin="8dp"/>
+                    android:ems="4"
+                    android:layout_margin="8dp"
+                    android:gravity="center_horizontal"
+                    app:autoSizeTextType="uniform"
+                    android:hint="@string/age_label"/>
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </LinearLayout>
