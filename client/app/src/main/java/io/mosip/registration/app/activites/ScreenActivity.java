@@ -274,15 +274,15 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         Toast.makeText(this, "Started to discover " + currentModality + " SBI", Toast.LENGTH_LONG).show();
         Intent intent = new Intent();
         intent.setAction("sbi.reg.device");
-        List activities = this.getPackageManager().queryIntentActivities(intent, MATCH_DEFAULT_ONLY);
-        if (activities.size() > 0) {
+        //List activities = this.getPackageManager().queryIntentActivities(intent, MATCH_DEFAULT_ONLY);
+        //if (activities.size() > 0) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("type", currentModality);
             intent.putExtra("input", new GsonBuilder().create().toJson(jsonObject));
             this.startActivityForResult(intent, 1);
-        } else {
-            Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
-        }
+        //} else {
+        //    Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
+        //}
     }
 
     private void info(String callbackId) {
@@ -292,13 +292,13 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         }
         Intent localIntent = new Intent();
         localIntent.setAction(callbackId + ".info");
-        List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
-        if (activities.size() > 0) {
+        //List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
+        //if (activities.size() > 0) {
             Toast.makeText(getApplicationContext(), "Initiating Device info request : " + callbackId, Toast.LENGTH_LONG).show();
             startActivityForResult(localIntent, 2);
-        } else {
-            Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
-        }
+        //} else {
+        //    Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
+        //}
     }
 
     private void rcapture(String callbackId, String deviceId) {
@@ -312,14 +312,14 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         callbackId = callbackId.replace(".info", "");
 
         localIntent.setAction(callbackId + ".rcapture");
-        List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
-        if (activities.size() > 0) {
+        //List activities = getPackageManager().queryIntentActivities(localIntent, MATCH_DEFAULT_ONLY);
+        //if (activities.size() > 0) {
             Toast.makeText(getApplicationContext(), "Initiating capture request : " + callbackId, Toast.LENGTH_LONG).show();
             localIntent.putExtra("input", "{\"env\":\"Developer\",\"purpose\":\"Registration\",\"specVersion\":\"0.9.5\",\"timeout\":10000,\"captureTime\":\"2021-07-21T15:00:03Z\",\"transactionId\":\"1626879603493\",\"bio\":[{\"type\":\"Face\",\"count\":1,\"exception\":[],\"requestedScore\":40,\"deviceId\":\"" + deviceId + "\",\"deviceSubId\":0,\"previousHash\":\"\",\"bioSubType\":[]}],\"customOpts\":null}");
             startActivityForResult(localIntent, 3);
-        } else {
-            Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
-        }
+        //} else {
+        //    Toast.makeText(getApplicationContext(), "Supported apps not found!", Toast.LENGTH_LONG).show();
+        //}
     }
 
     private byte[] getPayloadBuffer(String jwt) {
