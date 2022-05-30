@@ -9,6 +9,7 @@ on:
       - master
       - 1.*
       - develop
+      - demo
 
 jobs:
   build-android:
