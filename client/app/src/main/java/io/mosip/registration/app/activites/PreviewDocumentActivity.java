@@ -2,15 +2,20 @@ package io.mosip.registration.app.activites;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.viewmodel.CustomPagerAdapter;
+import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class PreviewDocumentActivity extends DaggerAppCompatActivity {
 

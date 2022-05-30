@@ -22,6 +22,7 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
+import io.mosip.registration.app.util.ClientConstants;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
@@ -162,7 +163,8 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                         dynamicView = factory.getDocumentComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         SCAN_REQUEST_CODE = SCAN_REQUEST_CODE + 1;
                         requestCodeMap.put(SCAN_REQUEST_CODE, fieldSpecDto.getId());
-                        setScanButtonListener(SCAN_REQUEST_CODE, (View) dynamicView, fieldSpecDto);
+                        setScanButtonListener(SCAN_REQUEST_CODE, (View) dynamicView, fieldSpecDto,
+                                this.registrationService.getRegistrationDto().getSelectedLanguages());
                         break;
                     case "biometrics":
                         dynamicView = factory.getBiometricsComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
@@ -205,7 +207,9 @@ public class ScreenActivity extends DaggerAppCompatActivity {
                         Uri uri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
                         try (InputStream iStream = getContentResolver().openInputStream(uri)) {
                             Spinner sItems = ((Spinner) ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doctypes_dropdown));
-                            this.registrationService.getRegistrationDto().addDocument(fieldId, sItems.getSelectedItem().toString(), getBytes(iStream));
+                            EditText editText = ((EditText) ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_refid));
+                            this.registrationService.getRegistrationDto().addDocument(fieldId, sItems.getSelectedItem().toString(),
+                                    editText == null ? null : editText.getText().toString(), getBytes(iStream));
                             TextView textView = ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_preview);
                             textView.setText(getString(R.string.page_label, this.registrationService.getRegistrationDto().getScannedPages(fieldId).size()));
                         } catch (Exception e) {
@@ -227,7 +231,7 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         });
     }
 
-    private void setScanButtonListener(int requestCode, View view, FieldSpecDto fieldSpecDto) {
+    private void setScanButtonListener(int requestCode, View view, FieldSpecDto fieldSpecDto, List<String> selectedLanguages) {
         Button button = view.findViewById(R.id.scan_doc);
         button.setOnClickListener(v -> {
             int preference = ScanConstants.OPEN_CAMERA;
@@ -239,9 +243,12 @@ public class ScreenActivity extends DaggerAppCompatActivity {
         TextView textView = view.findViewById(R.id.doc_preview);
         textView.setOnClickListener(v -> {
             Intent intent = new Intent(this, PreviewDocumentActivity.class);
+            List<String> labels = new ArrayList<>();
+            for(String language : selectedLanguages) {
+                labels.add(fieldSpecDto.getLabel().get(language));
+            }
             intent.putExtra("fieldId", fieldSpecDto.getId());
-            //TODO get label based on logged in language
-            intent.putExtra("fieldLabel", fieldSpecDto.getLabel().get("eng"));
+            intent.putExtra("fieldLabel", String.join(ClientConstants.LABEL_SEPARATOR, labels));
             startActivity(intent);
         });
     }
