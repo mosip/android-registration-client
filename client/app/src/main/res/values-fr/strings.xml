@@ -38,4 +38,9 @@
     <string name="age_label">Âge</string>
     <string name="page_label">%d Page(s)</string>
     <string name="ref_id">Pièce d\'identité</string>
+    <string name="left_slab">Left Slab</string>
+    <string name="right_slab">Right Slab</string>
+    <string name="thumbs">Thumbs</string>
+    <string name="double_iris">Iris</string>
+    <string name="face">Face</string>
 </resources>

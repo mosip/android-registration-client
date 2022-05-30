@@ -14,33 +14,45 @@
             android:layout_margin="8dp"
     />
 
-    <Button
-            android:text="Capture Face"
-            android:layout_width="match_parent"
-            android:layout_margin="20dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/rcapture_face" />
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:gravity="center"
+                  android:orientation="horizontal">
 
-    <ScrollView
-            android:id="@+id/sbi_result_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:orientation="vertical">
-            <TextView
-                    android:id="@+id/sbi_result"
-                    android:textColor="@color/black"
-                    android:textSize="18dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-            />
-            <!--<ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="176dp"
-                    tools:srcCompat="@tools:sample/avatars"
-                    android:id="@+id/captured_image"/>-->
-        </LinearLayout>
-    </ScrollView>
+        <ImageButton
+                android:text="@string/left_slab"
+                android:layout_width="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/rcapture_left_slab" />
+
+        <ImageButton
+                android:text="@string/right_slab"
+                android:layout_width="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/rcapture_right_slab" />
+
+        <ImageButton
+                android:text="@string/thumbs"
+                android:layout_width="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/rcapture_thumbs" />
+
+        <ImageButton
+                android:text="@string/double_iris"
+                android:layout_width="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/rcapture_iris" />
+
+        <ImageButton
+                android:text="@string/face"
+                android:layout_width="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/rcapture_face" />
+
+    </LinearLayout>
 </LinearLayout>

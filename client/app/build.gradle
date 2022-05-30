@@ -82,6 +82,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
 
+    implementation 'com.github.Tgo1014:JP2ForAndroid:1.0.4'
+
     // added client-manager Android library module as a dependency
     implementation project(path: ':keymanager')
     implementation project(':clientmanager')

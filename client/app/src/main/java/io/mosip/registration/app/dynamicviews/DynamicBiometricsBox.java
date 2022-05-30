@@ -8,14 +8,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.util.ClientConstants;
+import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 import static io.mosip.registration.app.util.ClientConstants.FIELD_LABEL_TEMPLATE;
 import static io.mosip.registration.app.util.ClientConstants.REQUIRED_FIELD_LABEL_TEMPLATE;
@@ -26,6 +24,7 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
     RegistrationDto registrationDto = null;
     FieldSpecDto fieldSpecDto = null;
+    List<String> bioAttributes = Collections.emptyList();
     final int layoutId = R.layout.dynamic_biometrics_box;
 
     public DynamicBiometricsBox(Context context, FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
@@ -47,6 +46,9 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
                 String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)) :
                 String.format(FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)), 1));
 
+        bioAttributes = UserInterfaceHelperService.getRequiredBioAttributes(fieldSpecDto,
+                registrationDto.getMVELDataContext());
+
         this.setVisibility((UserInterfaceHelperService.isFieldVisible(fieldSpecDto, registrationDto.getMVELDataContext())) ?
                 VISIBLE : GONE);
     }
@@ -67,7 +69,7 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
     @Override
     public boolean isRequired() {
-        return UserInterfaceHelperService.isRequiredField(fieldSpecDto, registrationDto.getMVELDataContext());
+        return !bioAttributes.isEmpty();
     }
 
     @Override
@@ -79,5 +81,9 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
             registrationDto.removeBiometricField(fieldSpecDto.getId());
             this.setVisibility(GONE);
         }
+    }
+
+    private void checkModality(List<String> configuredBioAttributes, Modality modality) {
+
     }
 }
