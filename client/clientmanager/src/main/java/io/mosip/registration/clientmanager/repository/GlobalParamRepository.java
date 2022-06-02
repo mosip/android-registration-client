@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,10 +48,7 @@ public class GlobalParamRepository {
     }
 
     public void saveGlobalParam(String id, String value) {
-        GlobalParam globalParam = new GlobalParam(id);
-        globalParam.setName(id);
-        globalParam.setValue(value);
-        globalParam.setStatus(true);
+        GlobalParam globalParam = new GlobalParam(id, id, value, true);
         globalParamDao.insertGlobalParam(globalParam);
         globalParamMap.put(id, value);
     }

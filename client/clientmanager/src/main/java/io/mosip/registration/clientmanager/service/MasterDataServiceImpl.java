@@ -260,10 +260,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
             List<GlobalParam> globalParamList = new ArrayList<>();
             for (Map.Entry<String, String> entry: globalParamMap.entrySet()) {
-                GlobalParam globalParam = new GlobalParam(entry.getKey());
-                globalParam.setName(entry.getKey());
-                globalParam.setValue(entry.getValue());
-                globalParam.setStatus(true);
+                GlobalParam globalParam = new GlobalParam(entry.getKey(), entry.getKey(), entry.getValue(), true);
                 globalParamList.add(globalParam);
             }
 
