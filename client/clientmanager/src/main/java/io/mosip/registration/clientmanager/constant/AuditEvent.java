@@ -4,13 +4,6 @@ package io.mosip.registration.clientmanager.constant;
 import static io.mosip.registration.clientmanager.constant.AuditEventType.USER_EVENT;
 import static io.mosip.registration.clientmanager.constant.AuditEventType.SYSTEM_EVENT;
 
-/**
- * Enum for Audit Events
- *
- * @author Balaji Sridharan
- * @since 1.0.0
- *
- */
 public enum AuditEvent {
 
     // Login

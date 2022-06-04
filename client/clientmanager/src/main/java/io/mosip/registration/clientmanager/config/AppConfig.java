@@ -6,17 +6,8 @@ import javax.sql.DataSource;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
- import io.mosip.registration.clientmanager.config.AuditConfig;
-
-//import io.mosip.kernel.core.templatemanager.spi.TemplateManagerBuilder;
-//import io.mosip.kernel.dataaccess.hibernate.repository.impl.HibernateRepositoryImpl;
-//import io.mosip.kernel.logger.logback.appender.RollingFileAppender;
-//import io.mosip.kernel.logger.logback.factory.Logfactory;
-//import io.mosip.kernel.templatemanager.velocity.builder.TemplateManagerBuilderImpl;
 
 /**
  * Spring Configuration class for Registration-Service Module

@@ -8,9 +8,7 @@ package io.mosip.registration.clientmanager.config;
  * @since 1.0.0
  *
  */
-//@Configuration
-//@EntityScan("io.mosip.kernel.auditmanager.entity")
-//@ComponentScan("io.mosip.kernel.auditmanager")
+
 public class AuditConfig {
 
 	/**
@@ -18,8 +16,7 @@ public class AuditConfig {
 	 *
 	 * @return The {@link ModelMapper}
 	 */
-	//@Bean
-	public ModelMapper modelMapper() {
+ 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
 

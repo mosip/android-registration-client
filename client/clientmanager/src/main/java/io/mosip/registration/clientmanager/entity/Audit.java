@@ -82,26 +82,6 @@ public class Audit {
     @ColumnInfo(name = "module_id")
     private String moduleId;
 
-    public Audit(@NonNull String uuid, LocalDateTime createdAt, String eventId, String eventName, String eventType, LocalDateTime actionTimeStamp, String hostName, String hostIp, String applicationId, String applicationName, String sessionUserId, String sessionUserName, String refId, String refIdType, String createdBy, String moduleName, String moduleId, String description) {
-        this.uuid = uuid;
-        this.createdAt = createdAt;
-        this.eventId = eventId;
-        this.eventName = eventName;
-        this.eventType = eventType;
-        this.actionTimeStamp = actionTimeStamp;
-        this.hostName = hostName;
-        this.hostIp = hostIp;
-        this.applicationId = applicationId;
-        this.applicationName = applicationName;
-        this.sessionUserId = sessionUserId;
-        this.sessionUserName = sessionUserName;
-        this.refId = refId;
-        this.refIdType = refIdType;
-        this.createdBy = createdBy;
-        this.moduleName = moduleName;
-        this.moduleId = moduleId;
-        this.description = description;
-    }
 
     @ColumnInfo(name = "log_desc")
     private String description;
