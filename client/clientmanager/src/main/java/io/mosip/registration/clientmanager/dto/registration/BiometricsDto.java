@@ -14,5 +14,5 @@ public class BiometricsDto {
     private String decodedBioResponse;
     private String signature;
     private String bioValue;
-    private String qualityScore;
+    private float qualityScore;
 }

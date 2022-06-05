@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_margin="20dp"
               android:orientation="vertical">
 
@@ -11,48 +10,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Label"
+            android:gravity="center"
             android:layout_margin="8dp"
     />
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:gravity="center"
-                  android:orientation="horizontal">
+    <com.google.android.material.tabs.TabLayout
+            android:layout_margin="5dp"
+            android:theme="@style/Theme.AppCompat"
+            android:id="@+id/bio_tablayout"
+            android:layout_width="match_parent"
+            app:tabTextColor="@color/black"
+            android:layout_height="40dp">
+    </com.google.android.material.tabs.TabLayout>
 
-        <ImageButton
-                android:text="@string/left_slab"
-                android:layout_width="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/rcapture_left_slab" />
-
-        <ImageButton
-                android:text="@string/right_slab"
-                android:layout_width="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/rcapture_right_slab" />
-
-        <ImageButton
-                android:text="@string/thumbs"
-                android:layout_width="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/rcapture_thumbs" />
-
-        <ImageButton
-                android:text="@string/double_iris"
-                android:layout_width="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/rcapture_iris" />
-
-        <ImageButton
-                android:text="@string/face"
-                android:layout_width="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/rcapture_face" />
-
-    </LinearLayout>
+    <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/bio_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
 </LinearLayout>

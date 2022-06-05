@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.dto.registration;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.json.JSONException;
@@ -162,6 +163,16 @@ public class RegistrationDto extends Observable {
 
     public void addBiometric(String fieldId, String attribute, BiometricsDto biometricsDto) {
         this.biometrics.put(String.format(BIO_KEY, fieldId, attribute), biometricsDto);
+    }
+
+    public List<BiometricsDto> getBiometrics(String fieldId, Modality modality) {
+        List<BiometricsDto> list = new ArrayList<>();
+        for(String attribute : modality.getAttributes()) {
+            String key = String.format(BIO_KEY, fieldId, attribute);
+            if(this.biometrics.containsKey(key))
+                list.add(this.biometrics.get(key));
+        }
+        return list;
     }
 
     public void removeBiometricField(String fieldId) {

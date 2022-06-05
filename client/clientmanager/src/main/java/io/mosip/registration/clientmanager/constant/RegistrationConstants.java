@@ -15,6 +15,12 @@ public class RegistrationConstants {
     public static final List<String> LEFT_SLAB_ATTR = Arrays.asList("leftIndex","leftMiddle","leftRing","leftLittle");
     public static final List<String> THUMBS_ATTR = Arrays.asList("leftThumb", "rightThumb");
     public static final List<String> DOUBLE_IRIS_ATTR = Arrays.asList("leftEye", "rightEye");
-    public static final List<String> FACE_ATTR = Arrays.asList("face");
+    public static final List<String> FACE_ATTR = Arrays.asList("");
     public static final List<String> EXCEPTION_PHOTO_ATTR = Arrays.asList("unknown");
+
+    public static final String DISCOVERY_INTENT_ACTION = "io.sbi.device";
+    public static final String D_INFO_INTENT_ACTION = ".Info";
+    public static final String R_CAPTURE_INTENT_ACTION = ".rCapture";
+    public static final String SBI_INTENT_REQUEST_KEY = "input";
+    public static final String SBI_INTENT_RESPONSE_KEY = "response";
 }
