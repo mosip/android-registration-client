@@ -2,6 +2,8 @@ package io.mosip.registration.clientmanager.dto.registration;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,12 +68,12 @@ public class RegistrationDto extends Observable {
                     String[] range = configJson.getString(group).split("-");
                     int ageInYears = Period.between(date, LocalDate.now(ZoneId.of("UTC"))).getYears();
                     if(ValueRange.of(Long.valueOf(range[0]), Long.valueOf(range[1])).isValidIntValue(ageInYears)) {
-                        AGE_GROUPS.put(String.format("%s_%s", fieldId, "ageGroup"), group);
-                        AGE_GROUPS.put(String.format("%s_%s", fieldId, "age"), ageInYears);
+                        AGE_GROUPS.put(String.format("%s_%s", fieldId, RegistrationConstants.AGE_GROUP), group);
+                        AGE_GROUPS.put(String.format("%s_%s", fieldId, RegistrationConstants.AGE), ageInYears);
 
                         if(APPLICANT_DOB_SUBTYPE.equals(subType)) {
-                            AGE_GROUPS.put("ageGroup", group);
-                            AGE_GROUPS.put("age", ageInYears);
+                            AGE_GROUPS.put(RegistrationConstants.AGE_GROUP, group);
+                            AGE_GROUPS.put(RegistrationConstants.AGE, ageInYears);
                         }
                     }
                 }
@@ -121,12 +123,12 @@ public class RegistrationDto extends Observable {
         this.consentDto = new ConsentDto(consentText, LocalDateTime.now(ZoneOffset.UTC));
     }
 
-    public void addDocument(String fieldId, String docType, byte[] bytes) {
+    public void addDocument(String fieldId, String docType, String reference, byte[] bytes) {
         if( docType != null && bytes != null ) {
             DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
             documentDto.setType(docType);
             documentDto.setFormat("pdf");
-            documentDto.setRefNumber(null);
+            documentDto.setRefNumber(reference);
             documentDto.getContent().add(bytes);
             this.documents.put(fieldId, documentDto);
         }
@@ -161,6 +163,16 @@ public class RegistrationDto extends Observable {
 
     public void addBiometric(String fieldId, String attribute, BiometricsDto biometricsDto) {
         this.biometrics.put(String.format(BIO_KEY, fieldId, attribute), biometricsDto);
+    }
+
+    public List<BiometricsDto> getBiometrics(String fieldId, Modality modality) {
+        List<BiometricsDto> list = new ArrayList<>();
+        for(String attribute : modality.getAttributes()) {
+            String key = String.format(BIO_KEY, fieldId, attribute);
+            if(this.biometrics.containsKey(key))
+                list.add(this.biometrics.get(key));
+        }
+        return list;
     }
 
     public void removeBiometricField(String fieldId) {
@@ -225,9 +237,9 @@ public class RegistrationDto extends Observable {
 
     public Map<String, Object> getMVELDataContext() {
         Map<String, Object> allIdentityDetails = new LinkedHashMap<String, Object>();
-        allIdentityDetails.put("IDSchemaVersion", this.schemaVersion);
-        allIdentityDetails.put("_flow", this.flowType);
-        allIdentityDetails.put("_process", this.process);
+        allIdentityDetails.put(RegistrationConstants.ID_SCHEMA_VERSION, this.schemaVersion);
+        allIdentityDetails.put(RegistrationConstants.FLOW_KEY, this.flowType);
+        allIdentityDetails.put(RegistrationConstants.PROCESS_KEY, this.process);
         allIdentityDetails.put("langCodes", this.selectedLanguages);
         allIdentityDetails.putAll(this.demographics);
         allIdentityDetails.putAll(this.documents);

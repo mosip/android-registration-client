@@ -36,4 +36,10 @@
     <string name="age_label">سن</string>
     <string name="page_label">الصفحة (الصفحات) %d</string>
     <string name="ref_id">الرقم المرجعي</string>
+    <string name="left_slab">اليد اليسرى</string>
+    <string name="right_slab">اليد اليمنى</string>
+    <string name="thumbs">الإبهام</string>
+    <string name="double_iris">قزحية</string>
+    <string name="face">وجه</string>
+    <string name="exception_photo">استثناء الصورة</string>
 </resources>

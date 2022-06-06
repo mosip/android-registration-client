@@ -108,9 +108,9 @@ public class PacketServiceImpl implements PacketService {
         if (registration.getAdditionalInfo() != null) {
             String additionalInfo = new String(registration.getAdditionalInfo());
             JSONObject jsonObject = new JSONObject(additionalInfo);
-            syncRIDRequest.setName(jsonObject.getString("name"));
-            syncRIDRequest.setPhone(jsonObject.getString("phone"));
-            syncRIDRequest.setEmail(jsonObject.getString("email"));
+            if(jsonObject.has("name")) { syncRIDRequest.setName(jsonObject.getString("name")); }
+            if(jsonObject.has("phone")) { syncRIDRequest.setPhone(jsonObject.getString("phone")); }
+            if(jsonObject.has("email")) { syncRIDRequest.setEmail(jsonObject.getString("email")); }
             syncRIDRequest.setLangCode(jsonObject.getString("langCode"));
         }
 
