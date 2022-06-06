@@ -133,7 +133,7 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
             Log.e(TAG, "Failed to start Registration", e);
             errorMessage =  e.getMessage();
         }
-        Toast.makeText(getApplicationContext(), getString(R.string.start_registration_fail, errorMessage),
+        Toast.makeText(this, getString(R.string.start_registration_fail, errorMessage),
                 Toast.LENGTH_LONG).show();
         goToHome();
     }

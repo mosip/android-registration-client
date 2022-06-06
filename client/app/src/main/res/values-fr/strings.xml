@@ -38,4 +38,10 @@
     <string name="age_label">Âge</string>
     <string name="page_label">%d Page(s)</string>
     <string name="ref_id">Pièce d\'identité</string>
+    <string name="left_slab">Main gauche</string>
+    <string name="right_slab">Main droite</string>
+    <string name="thumbs">Pouces</string>
+    <string name="double_iris">Iris</string>
+    <string name="face">Visage</string>
+    <string name="exception_photo">Photo d\'exception</string>
 </resources>
