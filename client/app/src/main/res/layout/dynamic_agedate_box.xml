@@ -24,11 +24,6 @@
                       android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
-
-                    android:theme="@style/Theme.registration_client"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeColor="@color/white"
-                    app:boxStrokeWidthFocused="0dp"
                     android:id="@+id/text_input_layout_dd"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -43,6 +38,7 @@
                         android:focusableInTouchMode="true"
                         android:focusable="true"
                         android:inputType="number"
+                        android:textColor="@color/black"
                         android:ems="3"
                         android:maxLength="2"
                         android:gravity="center_horizontal"
@@ -58,11 +54,6 @@
                     android:layout_margin="5dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
-
-                    android:theme="@style/Theme.registration_client"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeColor="@color/white"
-                    app:boxStrokeWidthFocused="0dp"
                     android:id="@+id/text_input_layout_mm"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -74,6 +65,7 @@
                         android:layout_height="match_parent"
                         android:inputType="number"
                         android:focusableInTouchMode="true"
+                        android:textColor="@color/black"
                         android:focusable="true"
                         android:maxLength="2"
                         android:layout_margin="5dp"
@@ -94,11 +86,6 @@
             <com.google.android.material.textfield.TextInputLayout
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-                    android:theme="@style/Theme.registration_client"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeColor="@color/white"
-                    app:boxStrokeWidthFocused="0dp"
                     android:id="@+id/text_input_layout_yy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -111,6 +98,7 @@
                     android:inputType="number"
                     android:focusableInTouchMode="true"
                     android:focusable="true"
+                    android:textColor="@color/black"
                     android:maxLength="4"
                     android:layout_margin="8dp"
                     android:ems="4"
@@ -130,11 +118,6 @@
             <com.google.android.material.textfield.TextInputLayout
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-                    android:theme="@style/Theme.registration_client"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeColor="@color/white"
-                    app:boxStrokeWidthFocused="0dp"
                     android:id="@+id/text_input_layout_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -146,6 +129,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:focusableInTouchMode="true"
+                    android:textColor="@color/black"
                     android:focusable="true"
                     android:maxLength="3"
                     android:ems="4"
