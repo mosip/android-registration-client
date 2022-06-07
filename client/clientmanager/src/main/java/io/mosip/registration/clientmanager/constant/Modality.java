@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.constant;
 
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
+import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,22 @@ public enum Modality {
             case "Face":return "";
         }
         return bioSubType;
+    }
+
+    public static long getFormatType(SingleType singleType) {
+        long format = 0;
+        switch (singleType) {
+            case FINGER:
+                format = PacketManagerConstant.FORMAT_TYPE_FINGER;
+                break;
+            case FACE:
+                format = PacketManagerConstant.FORMAT_TYPE_FACE;
+                break;
+            case IRIS:
+                format = PacketManagerConstant.FORMAT_TYPE_IRIS;
+                break;
+        }
+        return format;
     }
 
 }

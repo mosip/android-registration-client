@@ -17,4 +17,9 @@ public class ServiceError {
      * The error message.
      */
     private String message;
+
+    public String toString() {
+        return "errorCode : " + errorCode +
+                " message : " + message;
+    }
 }
