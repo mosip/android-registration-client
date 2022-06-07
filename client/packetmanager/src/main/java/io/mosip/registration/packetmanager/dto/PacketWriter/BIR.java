@@ -10,6 +10,7 @@ package io.mosip.registration.packetmanager.dto.PacketWriter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,26 +33,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BIR implements Serializable {
 
-	//@XmlElement(name = "Version")
 	private VersionType version;
-	//@XmlElement(name = "CBEFFVersion")
 	private VersionType cbeffversion;
-	//@XmlElement(name = "BIRInfo", required = true)
 	private BIRInfo birInfo;
-	//@XmlElement(name = "BDBInfo")
 	private BDBInfo bdbInfo;
-	//@XmlElement(name = "BDB")
-	//@XmlJavaTypeAdapter(Base64Adapter.class)
 	private byte[] bdb;
-	//@XmlElement(name = "SB")
-	//@XmlJavaTypeAdapter(Base64Adapter.class)
 	private byte[] sb;
-	//@XmlElement(name = "BIR")
 	protected List<BIR> birs;
-	//@XmlElement(name = "SBInfo")
 	private SBInfo sbInfo;
-	//@XmlElement(name = "Others")
-	private List<Entry> others;
+	private HashMap<String, String> others;
 
 	public BIR(BIRBuilder birBuilder) {
 		this.version = birBuilder.version;
@@ -72,23 +62,20 @@ public class BIR implements Serializable {
 		private byte[] bdb;
 		private byte[] sb;
 		private SBInfo sbInfo;
-		private List<Entry> others;
+		private HashMap<String, String> others = new HashMap<>();
 
-		public BIRBuilder withOthers(List<Entry> others) {
-			if(Objects.isNull(others))
-				this.others = new ArrayList<>();
-			else
-				this.others = others;
+		public BIRBuilder withOthers(HashMap<String, String> others) {
+			this.others = others;
 			return this;
 		}
-		
-		/*public BIRBuilder withOthers(Map<String, String> others) {
+
+		public BIRBuilder withOthers(String key, String value) {
 			if(Objects.isNull(this.others))
 				this.others = new HashMap<>();
-			if(!Objects.isNull(others))
-				this.others.putAll(others);
+			else
+				this.others.put(key, value);
 			return this;
-		}*/
+		}
 
 		public BIRBuilder withVersion(VersionType version) {
 			this.version = version;
