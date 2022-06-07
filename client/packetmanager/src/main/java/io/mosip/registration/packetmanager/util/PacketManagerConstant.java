@@ -20,6 +20,12 @@ public class PacketManagerConstant {
     public static final String CBEFF_FILENAME_WITH_EXT = CBEFF_FILENAME.concat(".xml");
     public static final String CBEFF_EXT = ".xml";
 
+    public static final long FORMAT_TYPE_IRIS = 9;
+
+    public static final long FORMAT_TYPE_FACE = 8;
+
+    public static final long FORMAT_TYPE_FINGER = 7;
+
     public static final String DEMOGRAPHIC_SEQ = "demographicSequence";
     public static final String BIOMETRIC_SEQ = "biometricSequence";
     public static final String OPERATIONS_SEQ = "otherFiles";
@@ -113,4 +119,14 @@ public class PacketManagerConstant {
     public static final String PROVIDER_NAME = "providername";
     public static final String PROVIDER_VERSION = "providerversion";
     public static final String CREATION_DATE = "creationdate";
+    public static final String  BIOVALUE_KEY  = "bioValue";
+    public static final String BIOVALUE_PLACEHOLDER = "\"<bioValue>\"";
+
+    public static final java.lang.String OTHER_KEY_EXCEPTION = "EXCEPTION";
+    public static final java.lang.String OTHER_KEY_RETRIES = "RETRIES";
+    public static final java.lang.String OTHER_KEY_FORCE_CAPTURED = "FORCE_CAPTURED";
+    public static final java.lang.String OTHER_KEY_SDK_SCORE = "SDK_SCORE";
+    public static final java.lang.String OTHER_KEY_CONFIGURED = "CONFIGURED";
+    public static final java.lang.String OTHER_KEY_PAYLOAD = "PAYLOAD";
+    public static final java.lang.String OTHER_KEY_SPEC_VERSION = "SPEC_VERSION";
 }

@@ -8,8 +8,10 @@ import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
@@ -18,10 +20,12 @@ import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.util.CryptoUtil;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleAnySubtypeType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
+import io.mosip.registration.packetmanager.dto.PacketWriter.*;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
-import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 import lombok.NonNull;
@@ -31,9 +35,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
+
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.*;
 
 @Singleton
 public class RegistrationServiceImpl implements RegistrationService {
@@ -136,10 +145,17 @@ public class RegistrationServiceImpl implements RegistrationService {
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 
+            Map<String, BiometricRecord> capturedData = new HashMap<>();
             this.registrationDto.getAllBiometricFields().forEach( entry -> {
                 String[] parts = entry.getKey().split("_");
-                BiometricRecord biometricRecord = new BiometricRecord();
-                //TODO set biometric record
+                BiometricRecord biometricRecord = capturedData.get(parts[0]);
+                if( biometricRecord == null) {
+                    biometricRecord = new BiometricRecord();
+                    biometricRecord.setSegments(new ArrayList<>());
+                    packetWriterService.setBiometric(this.registrationDto.getRId(), entry.getKey(), biometricRecord);
+                    capturedData.put(parts[0], biometricRecord);
+                }
+                biometricRecord.getSegments().add(buildBIR(entry.getValue()));
             });
 
             CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
@@ -271,5 +287,49 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         return new int[] { new_width, new_height };
+    }
+
+    public BIR buildBIR(BiometricsDto biometricsDto) {
+        SingleType singleType = SingleType.valueOf(biometricsDto.getModality());
+        byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
+        // Format
+        RegistryIDType birFormat = new RegistryIDType(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG,
+                String.valueOf(Modality.getFormatType(singleType)));
+        BiometricType biometricType = BiometricType.fromValue(singleType.name());
+        // Algorithm
+        RegistryIDType birAlgorithm = new RegistryIDType(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG,
+                PacketManagerConstant.CBEFF_DEFAULT_ALG_TYPE);
+        // Quality Type
+        QualityType qualityType = new QualityType();
+        qualityType.setAlgorithm(birAlgorithm);
+        qualityType.setScore((long) biometricsDto.getQualityScore());
+        VersionType versionType = new VersionType(1, 1);
+
+        String payLoad = null;
+        if(iso!=null) {
+            int bioValueKeyIndex = biometricsDto.getDecodedBioResponse().indexOf(PacketManagerConstant.BIOVALUE_KEY) + (PacketManagerConstant.BIOVALUE_KEY.length() + 1);
+            int bioValueStartIndex = biometricsDto.getDecodedBioResponse().indexOf('"', bioValueKeyIndex);
+            int bioValueEndIndex = biometricsDto.getDecodedBioResponse().indexOf('"', (bioValueStartIndex + 1));
+            String bioValue = biometricsDto.getDecodedBioResponse().substring(bioValueStartIndex, (bioValueEndIndex + 1));
+            payLoad = biometricsDto.getDecodedBioResponse().replace(bioValue, PacketManagerConstant.BIOVALUE_PLACEHOLDER);
+        }
+
+        return new BIR.BIRBuilder().withBdb(iso == null ? new byte[0] : iso)
+                .withVersion(versionType)
+                .withCbeffversion(versionType)
+                .withBirInfo(new BIRInfo.BIRInfoBuilder().withIntegrity(false).build())
+                .withBdbInfo(new BDBInfo.BDBInfoBuilder().withFormat(birFormat).withQuality(qualityType)
+                        .withType(Arrays.asList(biometricType)).withSubtype(Collections.singletonList(biometricsDto.getBioSubType()))
+                        .withPurpose(PurposeType.ENROLL).withLevel(ProcessedLevelType.RAW)
+                        .withCreationDate(LocalDateTime.now(ZoneId.of("UTC"))).withIndex(UUID.randomUUID().toString())
+                        .build())
+                .withSb(biometricsDto.getSignature() == null ? new byte[0] : biometricsDto.getSignature().getBytes(StandardCharsets.UTF_8))
+                .withOthers(OTHER_KEY_EXCEPTION, iso==null ? "true" : "false")
+                .withOthers(OTHER_KEY_RETRIES, biometricsDto.getNumOfRetries()+EMPTY)
+                .withOthers(OTHER_KEY_SDK_SCORE, biometricsDto.getSdkScore()+EMPTY)
+                .withOthers(OTHER_KEY_FORCE_CAPTURED, biometricsDto.isForceCaptured()+EMPTY)
+                .withOthers(OTHER_KEY_PAYLOAD, payLoad == null ? EMPTY : payLoad)
+                .withOthers(OTHER_KEY_SPEC_VERSION, biometricsDto.getSpecVersion() == null ? EMPTY : biometricsDto.getSpecVersion())
+                .build();
     }
 }

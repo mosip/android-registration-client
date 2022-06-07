@@ -454,8 +454,8 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                 byte[] payloadBuffer = this.getPayloadBuffer(bio.getData());
                 CaptureDto captureDto = objectMapper.readValue(payloadBuffer, new TypeReference<CaptureDto>() {});
                 if(captureDto.getQualityScore() > 0 && captureDto.getBioValue() != null || !captureDto.getBioValue().equals("")) {
-                    BiometricsDto biometricsDto = new BiometricsDto(captureDto.getBioType(), captureDto.getBioSubType(),
-                            bio.getSpecVersion(), false, new String(payloadBuffer), signature, captureDto.getBioValue(),
+                    BiometricsDto biometricsDto = new BiometricsDto(captureDto.getBioType(), captureDto.getBioSubType(), captureDto.getBioValue(),
+                            bio.getSpecVersion(), false, new String(payloadBuffer), signature, false, 1, 0,
                             captureDto.getQualityScore());
                     this.registrationService.getRegistrationDto().addBiometric("individualBiometrics",
                             Modality.getBioAttribute(captureDto.getBioSubType()), biometricsDto);
@@ -515,7 +515,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
     }
 
     private Bitmap getFingerBitMap(List<BiometricsDto> list, String attribute) throws IOException {
-        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getAttribute())).findFirst();
+        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getBioSubType())).findFirst();
         if(!result.isPresent())
             return null;
 
@@ -528,7 +528,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
     }
 
     private Bitmap getIrisBitMap(List<BiometricsDto> list, String attribute) {
-        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getAttribute())).findFirst();
+        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getBioSubType())).findFirst();
         if(!result.isPresent())
             return null;
 
