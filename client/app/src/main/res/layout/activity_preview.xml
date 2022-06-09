@@ -23,17 +23,13 @@
                 android:weightSum="2">
             <ScrollView android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                <TextView
-                        android:id="@+id/registration_preview"
-                        android:singleLine="false"
-                        android:textColor="@color/black"
-                        android:inputType="textMultiLine"
-                        android:textSize="18dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="20dp"
-                />
+
+                <WebView
+                    android:id="@+id/registration_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </ScrollView>
+
         </LinearLayout>
     </ScrollView>
 
