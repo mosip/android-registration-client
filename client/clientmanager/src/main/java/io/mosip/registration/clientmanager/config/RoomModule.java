@@ -150,6 +150,12 @@ public class RoomModule {
         return clientDatabase.languageDao();
     }
 
+    @Singleton
+    @Provides
+    AuditDao providesAuditDao(ClientDatabase clientDatabase) {
+        return clientDatabase.auditDao();
+    }
+
     @Provides
     @Singleton
     RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao, ObjectMapper objectMapper) {
@@ -245,5 +251,12 @@ public class RoomModule {
     @Singleton
     LanguageRepository provideLanguageRepository(LanguageDao languageDao) {
         return new LanguageRepository(languageDao);
+    }
+
+
+    @Provides
+    @Singleton
+    AuditRepository provideAuditRepository(AuditDao auditDao) {
+        return new AuditRepository(auditDao);
     }
 }

@@ -15,7 +15,9 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
+import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
@@ -235,5 +237,11 @@ public class AppModule {
     @Singleton
     CertificateDBHelper provideCertificateDBHelper(CACertificateStoreRepository caCertificateStoreRepository) {
         return new CertificateDBHelper(caCertificateStoreRepository);
+    }
+
+    @Provides
+    @Singleton
+    AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository) {
+        return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
     }
 }
