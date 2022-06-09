@@ -64,4 +64,5 @@
     <string name="right_hand_palm">Paume de la main droite</string>
     <string name="thumbs_label">Pouces</string>
     <string name="fingers">Des doigts</string>
+    <string name="ack_slip">Acknowledgement</string>
 </resources>

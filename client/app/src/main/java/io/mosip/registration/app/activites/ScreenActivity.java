@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,14 +18,10 @@ import androidx.core.app.ActivityCompat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gemalto.jp2.JP2Decoder;
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
 
 import dagger.android.support.DaggerAppCompatActivity;
-import io.mosip.biometrics.util.face.FaceBDIR;
-import io.mosip.biometrics.util.finger.FingerBDIR;
-import io.mosip.biometrics.util.iris.IrisBDIR;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
@@ -45,7 +40,7 @@ import io.mosip.registration.clientmanager.repository.LanguageRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
-import io.mosip.registration.keymanager.util.CryptoUtil;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 
 import javax.inject.Inject;
 
@@ -477,98 +472,39 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             return;
         }
 
+        Bitmap missingImage = BitmapFactory.decodeResource(getResources(), R.drawable.wrong);
         ImageView imageView = ((View) currentDynamicViews.get(fieldId)).findViewWithTag(currentModality.name());
 
         switch (currentModality) {
             case FACE:
-                try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(list.get(0).getBioValue()));
-                    DataInputStream inputStream = new DataInputStream(bais);) {
-                    FaceBDIR faceBDIR = new FaceBDIR(inputStream);
-                    byte[] bytes = faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
-                    Bitmap bitmap = new JP2Decoder(bytes).decode();
-                    imageView.setImageBitmap(bitmap);
-                }
+                imageView.setImageBitmap(UserInterfaceHelperService.getFaceBitMap(list.get(0)));
                  break;
             case FINGERPRINT_SLAB_LEFT:
-                imageView.setImageBitmap(combineBitmaps(Arrays.asList(getFingerBitMap(list, "Left LittleFinger"),
-                        getFingerBitMap(list, "Left RingFinger"),
-                        getFingerBitMap(list, "Left MiddleFinger"),
-                        getFingerBitMap(list, "Left IndexFinger"))));
+                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                        UserInterfaceHelperService.getFingerBitMap(list, "Left LittleFinger"),
+                        UserInterfaceHelperService.getFingerBitMap(list, "Left RingFinger"),
+                        UserInterfaceHelperService.getFingerBitMap(list, "Left MiddleFinger"),
+                        UserInterfaceHelperService.getFingerBitMap(list, "Left IndexFinger")), missingImage));
                 break;
             case FINGERPRINT_SLAB_RIGHT:
-                imageView.setImageBitmap(combineBitmaps(Arrays.asList(getFingerBitMap(list, "Right IndexFinger"),
-                        getFingerBitMap(list, "Right MiddleFinger"),
-                        getFingerBitMap(list, "Right RingFinger"),
-                        getFingerBitMap(list, "Right LittleFinger"))));
+                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                        UserInterfaceHelperService.getFingerBitMap(list, "Right IndexFinger"),
+                        UserInterfaceHelperService.getFingerBitMap(list, "Right MiddleFinger"),
+                        UserInterfaceHelperService.getFingerBitMap(list, "Right RingFinger"),
+                        UserInterfaceHelperService.getFingerBitMap(list, "Right LittleFinger")), missingImage));
                 break;
             case FINGERPRINT_SLAB_THUMBS:
-                imageView.setImageBitmap(combineBitmaps(Arrays.asList(getFingerBitMap(list, "Left Thumb"),
-                        getFingerBitMap(list, "Right Thumb"))));
+                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                        UserInterfaceHelperService.getFingerBitMap(list, "Left Thumb"),
+                        UserInterfaceHelperService.getFingerBitMap(list, "Right Thumb")), missingImage));
                 break;
             case IRIS_DOUBLE:
-                imageView.setImageBitmap(combineBitmaps(Arrays.asList(getIrisBitMap(list, "Left"),
-                        getIrisBitMap(list, "Right"))));
+                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                        UserInterfaceHelperService.getIrisBitMap(list, "Left"),
+                        UserInterfaceHelperService.getIrisBitMap(list, "Right")), missingImage));
                 break;
         }
 
         Toast.makeText(getApplicationContext(), "Registration Capture completed", Toast.LENGTH_LONG).show();
-    }
-
-    private Bitmap getFingerBitMap(List<BiometricsDto> list, String attribute) throws IOException {
-        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getBioSubType())).findFirst();
-        if(!result.isPresent())
-            return null;
-
-        try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(result.get().getBioValue()));
-            DataInputStream inputStream = new DataInputStream(bais);) {
-            FingerBDIR fingerBDIR = new FingerBDIR(inputStream);
-            byte[] bytes = fingerBDIR.getRepresentation().getRepresentationBody().getImageData().getImage();
-            return new JP2Decoder(bytes).decode();
-        }
-    }
-
-    private Bitmap getIrisBitMap(List<BiometricsDto> list, String attribute) {
-        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getBioSubType())).findFirst();
-        if(!result.isPresent())
-            return null;
-
-        try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(result.get().getBioValue()));
-            DataInputStream inputStream = new DataInputStream(bais);) {
-            IrisBDIR irisBDIR = new IrisBDIR(inputStream);
-            byte[] bytes = irisBDIR.getRepresentation()
-                    .getRepresentationData().getImageData().getImage();
-            return new JP2Decoder(bytes).decode();
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage(), ex);
-        }
-        return null;
-    }
-
-    private Bitmap combineBitmaps(List<Bitmap> images) {
-        // Get the size of the images combined side by side.
-        int width = 0;
-        int height = 0;
-        for(Bitmap image : images) {
-            if(image == null)
-                image = BitmapFactory.decodeResource(getResources(), R.drawable.wrong);
-            width = width + image.getWidth();
-            height = image.getHeight() > height ? image.getHeight() : height;
-        }
-
-        // Create a Bitmap large enough to hold both input images and a canvas to draw to this
-        // combined bitmap.
-        Bitmap combined = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(combined);
-
-        // Render both input images into the combined bitmap and return it.
-        float left = 0f;
-        float top = 0f;
-        for(Bitmap image : images) {
-            if(image == null)
-                image = BitmapFactory.decodeResource(getResources(), R.drawable.wrong);
-            canvas.drawBitmap(image, left, top, null);
-            left = left + image.getWidth();
-        }
-        return combined;
     }
 }

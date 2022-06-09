@@ -3,23 +3,27 @@ package io.mosip.registration.app.activites;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.gemalto.jp2.JP2Decoder;
-
+import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
+import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.util.SyncRestUtil;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -30,7 +34,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +42,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import dagger.android.support.DaggerAppCompatActivity;
-import io.mosip.biometrics.util.face.FaceBDIR;
-import io.mosip.biometrics.util.finger.FingerBDIR;
-import io.mosip.biometrics.util.iris.IrisBDIR;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
@@ -50,8 +50,9 @@ import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.packetmanager.constants.Biometric;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import javax.inject.Inject;
 
@@ -71,6 +72,14 @@ public class PreviewActivity extends DaggerAppCompatActivity {
     @Inject
     MasterDataService masterDataService;
 
+    @Inject
+    SyncRestUtil syncRestFactory;
+
+    @Inject
+    SyncRestService syncRestService;
+
+    private String webViewContent;
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -79,33 +88,41 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        webViewContent = null;
         super.onCreate(savedInstanceState);
         startActivity();
     }
 
     private void startActivity() {
+        webViewContent = null;
         setContentView(R.layout.activity_preview);
-        webView = (WebView) findViewById(R.id.registration_preview);
+        webView = findViewById(R.id.registration_preview);
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.preview_title);
 
-        final Button button = findViewById(R.id.createpacket);
-        button.setOnClickListener( v -> {
-            button.setEnabled(false);
-            Log.i(TAG, "Clicked on Registration form submit...");
-            submitForm();
-        });
-
         try {
             RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
-            String val = getTemplate(registrationDto, "reg-preview-template-part", true);
-            String base64 = Base64.encodeToString(val.getBytes("UTF-8"), Base64.DEFAULT);
-            webView.loadData(base64, "text/html; charset=utf-8", "base64");
+            webViewContent = getTemplate(registrationDto, "reg-preview-template-part", true);
         } catch (Exception e) {
             Log.e(TAG, "Failed to set the preview content", e);
         }
+
+        final EditText usernameEditText = findViewById(R.id.packet_auth_username);
+        final EditText passwordEditText = findViewById(R.id.packet_auth_pwd);
+        final ProgressBar loadingProgressBar = findViewById(R.id.auth_loading);
+        final Button button = findViewById(R.id.createpacket);
+        button.setOnClickListener( v -> {
+            String username = usernameEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            if(validateLogin(username, password)) {
+                loadingProgressBar.setVisibility(View.VISIBLE);
+                doPacketAuth(username, password, loadingProgressBar);
+            }
+        });
+
+        webView.loadDataWithBaseURL(null, webViewContent, "text/HTML", "UTF-8", null);
     }
 
     public String getTemplate(RegistrationDto registrationDto, String templateTypeCode, boolean isPreview) throws Exception {
@@ -162,7 +179,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
         List<BiometricsDto> capturedList = new ArrayList<>();
         for (String attribute : field.getBioAttributes()) {
-            String key = String.format("%s_%s", field.getId(), attribute.equalsIgnoreCase("face") ? "" : attribute);
+            String key = String.format("%s_%s", field.getId(), attribute);
             if (registrationDto.getBiometrics().containsKey(key))
                 capturedList.add(registrationDto.getBiometrics().get(key));
         }
@@ -184,118 +201,62 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         bioData.put("subType", field.getSubType());
         bioData.put("label", getFieldLabel(field, registrationDto));
 
-//        Optional<BiometricsDto> result = capturedIris.stream()
-//                .filter(b -> b.getBioSubType().equalsIgnoreCase("Left")).findFirst();
-//        if (result.isPresent()) {
-//            BiometricsDto biometricsDto = result.get();
-//            bioData.put("LeftEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
-//            setBiometricImage(bioData, "CapturedLeftEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
-//                    isPreview ? getIrisBitMap(biometricsDto) : null);
-//        }
-//
-//        result = capturedIris.stream()
-//                .filter(b -> b.getBioSubType().equalsIgnoreCase("Right")).findFirst();
-//        if (result.isPresent()) {
-//            BiometricsDto biometricsDto = result.get();
-//            bioData.put("RightEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
-//            setBiometricImage(bioData, "CapturedRightEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
-//                    isPreview ? getIrisBitMap(biometricsDto) : null);
-//        }
-//
-//        if(!capturedFingers.isEmpty()) {
-//            setFingerRankings(capturedFingers, Biometric.getDefaultAttributes("FINGERPRINT_SLAB_LEFT"), bioData);
-//            Bitmap leftHandBitmaps = combineBitmaps(Arrays.asList(getFingerBitMap(capturedFingers, "Left LittleFinger"),
-//                    getFingerBitMap(capturedFingers, "Left RingFinger"),
-//                    getFingerBitMap(capturedFingers, "Left MiddleFinger"),
-//                    getFingerBitMap(capturedFingers, "Left IndexFinger")));
-//            setBiometricImage(bioData, "CapturedLeftSlap", isPreview ? 0 : R.drawable.left_palm,
-//                    isPreview ? leftHandBitmaps : null);
-//
-//            setFingerRankings(capturedFingers, Biometric.getDefaultAttributes("FINGERPRINT_SLAB_RIGHT"), bioData);
-//            Bitmap rightHandBitmaps = combineBitmaps(Arrays.asList(getFingerBitMap(capturedFingers, "Right IndexFinger"),
-//                    getFingerBitMap(capturedFingers, "Right MiddleFinger"),
-//                    getFingerBitMap(capturedFingers, "Right RingFinger"),
-//                    getFingerBitMap(capturedFingers, "Right LittleFinger")));
-//            setBiometricImage(bioData, "CapturedRightSlap", isPreview ? 0 : R.drawable.right_palm,
-//                    isPreview ? rightHandBitmaps : null);
-//
-//            setFingerRankings(capturedFingers, Biometric.getDefaultAttributes("FINGERPRINT_SLAB_THUMBS"), bioData);
-//            Bitmap thumbsBitmap = combineBitmaps(Arrays.asList(getFingerBitMap(capturedFingers, "Left Thumb"),
-//                    getFingerBitMap(capturedFingers, "Right Thumb")));
-//            setBiometricImage(bioData, "CapturedThumbs", isPreview ? 0 : R.drawable.thumbs,
-//                    isPreview ? thumbsBitmap : null);
-//        }
-//
-//        if(!capturedFace.isEmpty()) {
-//            Bitmap faceBitmap;
-//            try (ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(capturedFace.get(0).getBioValue()));
-//                DataInputStream inputStream = new DataInputStream(bais);) {
-//                FaceBDIR faceBDIR = new FaceBDIR(inputStream);
-//                byte[] bytes = faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
-//                faceBitmap = new JP2Decoder(bytes).decode();
-//            }
-//            setBiometricImage(bioData, "FaceImageSource", isPreview ? 0 : R.drawable.face,
-//                    isPreview ? faceBitmap : null);
-//
-//            if("applicant".equalsIgnoreCase(field.getSubType())) {
-//                setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap);
-//            }
-//        }
+        /*Bitmap missingImage = BitmapFactory.decodeResource(getResources(), R.drawable.wrong);
+        Optional<BiometricsDto> result = capturedIris.stream()
+                .filter(b -> b.getBioSubType().equalsIgnoreCase("Left")).findFirst();
+        if (result.isPresent()) {
+            BiometricsDto biometricsDto = result.get();
+            bioData.put("LeftEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
+            setBiometricImage(bioData, "CapturedLeftEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
+                    isPreview ?  UserInterfaceHelperService.getIrisBitMap(biometricsDto) : null);
+        }
+
+        result = capturedIris.stream()
+                .filter(b -> b.getBioSubType().equalsIgnoreCase("Right")).findFirst();
+        if (result.isPresent()) {
+            BiometricsDto biometricsDto = result.get();
+            bioData.put("RightEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
+            setBiometricImage(bioData, "CapturedRightEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
+                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : null);
+        }
+
+        if(!capturedFingers.isEmpty()) {
+            setFingerRankings(capturedFingers, Modality.FINGERPRINT_SLAB_LEFT.getAttributes(), bioData);
+            Bitmap leftHandBitmaps = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Left LittleFinger"),
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Left RingFinger"),
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Left MiddleFinger"),
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Left IndexFinger")), missingImage);
+            setBiometricImage(bioData, "CapturedLeftSlap", isPreview ? 0 : R.drawable.left_palm,
+                    isPreview ? leftHandBitmaps : null);
+
+            setFingerRankings(capturedFingers, Modality.FINGERPRINT_SLAB_RIGHT.getAttributes(), bioData);
+            Bitmap rightHandBitmaps = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Right IndexFinger"),
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Right MiddleFinger"),
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Right RingFinger"),
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Right LittleFinger")), missingImage);
+            setBiometricImage(bioData, "CapturedRightSlap", isPreview ? 0 : R.drawable.right_palm,
+                    isPreview ? rightHandBitmaps : null);
+
+            setFingerRankings(capturedFingers, Modality.FINGERPRINT_SLAB_THUMBS.getAttributes(), bioData);
+            Bitmap thumbsBitmap = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Left Thumb"),
+                    UserInterfaceHelperService.getFingerBitMap(capturedFingers, "Right Thumb")), missingImage);
+            setBiometricImage(bioData, "CapturedThumbs", isPreview ? 0 : R.drawable.thumbs,
+                    isPreview ? thumbsBitmap : null);
+        }*/
+
+        if(!capturedFace.isEmpty()) {
+            Bitmap faceBitmap = UserInterfaceHelperService.getFaceBitMap(capturedFace.get(0));
+            setBiometricImage(bioData, "FaceImageSource", isPreview ? 0 : R.drawable.face,
+                    isPreview ? faceBitmap : null);
+
+            if("applicant".equalsIgnoreCase(field.getSubType())) {
+                setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap);
+            }
+        }
         return bioData;
-    }
-
-    private Bitmap getFingerBitMap(List<BiometricsDto> list, String attribute) throws IOException {
-        Optional<BiometricsDto> result = list.stream().filter(dto -> attribute.equals(dto.getBioSubType())).findFirst();
-        if(!result.isPresent())
-            return null;
-
-        try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(result.get().getBioValue()));
-            DataInputStream inputStream = new DataInputStream(bais);) {
-            FingerBDIR fingerBDIR = new FingerBDIR(inputStream);
-            byte[] bytes = fingerBDIR.getRepresentation().getRepresentationBody().getImageData().getImage();
-            return new JP2Decoder(bytes).decode();
-        }
-    }
-
-    private Bitmap combineBitmaps(List<Bitmap> images) {
-        // Get the size of the images combined side by side.
-        int width = 0;
-        int height = 0;
-        for(Bitmap image : images) {
-            if(image == null)
-                image = BitmapFactory.decodeResource(getResources(), R.drawable.wrong);
-            width = width + image.getWidth();
-            height = image.getHeight() > height ? image.getHeight() : height;
-        }
-
-        // Create a Bitmap large enough to hold both input images and a canvas to draw to this
-        // combined bitmap.
-        Bitmap combined = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(combined);
-
-        // Render both input images into the combined bitmap and return it.
-        float left = 0f;
-        float top = 0f;
-        for(Bitmap image : images) {
-            if(image == null)
-                image = BitmapFactory.decodeResource(getResources(), R.drawable.wrong);
-            canvas.drawBitmap(image, left, top, null);
-            left = left + image.getWidth();
-        }
-        return combined;
-    }
-
-    private Bitmap getIrisBitMap(BiometricsDto biometricsDto) {
-        try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(biometricsDto.getBioValue()));
-            DataInputStream inputStream = new DataInputStream(bais);) {
-            IrisBDIR irisBDIR = new IrisBDIR(inputStream);
-            byte[] bytes = irisBDIR.getRepresentation()
-                    .getRepresentationData().getImageData().getImage();
-            return new JP2Decoder(bytes).decode();
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage(), ex);
-        }
-        return null;
     }
 
     private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap) {
@@ -353,10 +314,10 @@ public class PreviewActivity extends DaggerAppCompatActivity {
     private String getImage(int imagePath) {
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imagePath);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream);
             byte[] byteArray = byteStream.toByteArray();
             String imageEncodedBytes = Base64.encodeToString(byteArray,Base64.DEFAULT);
-            return "data:image/png;base64," + imageEncodedBytes;
+            return "data:image/jpeg;base64," + imageEncodedBytes;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
         }
@@ -472,19 +433,58 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         return data;
     }
 
-    private void submitForm() {
+    private boolean validateLogin(String username, String password){
+        if(username == null || username.trim().length() == 0){
+            Toast.makeText(this, R.string.username_required, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(password == null || password.trim().length() == 0){
+            Toast.makeText(this, R.string.password_required, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        //TODO check if the username is logged-in user and mapped to correct registration center
+        return true;
+    }
+
+    private void doPacketAuth(final String username,final String password, final ProgressBar loadingProgressBar){
+        //TODO check if the machine is online, if offline check password hash locally
+        Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
+        call.enqueue(new Callback<ResponseWrapper<String>>() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                loadingProgressBar.setVisibility(View.INVISIBLE);
+                ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
+                if(response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(wrapper);
+                    if(error == null) {
+                        submitForm(username);
+                        return;
+                    }
+                    Log.e(TAG, response.raw().toString());
+                    Toast.makeText(PreviewActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(PreviewActivity.this, R.string.login_failed, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                loadingProgressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(PreviewActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void submitForm(String makerName) {
         try {
-            registrationService.submitRegistrationDto();
+            registrationService.submitRegistrationDto(makerName);
+            Intent intent = new Intent(PreviewActivity.this, AcknowledgementActivity.class);
+            intent.putExtra("content", webViewContent);
+            startActivity(intent);
             Toast.makeText(this, R.string.registration_success, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, "Failed on registration submission", e);
             Toast.makeText(this, R.string.registration_fail, Toast.LENGTH_LONG).show();
         }
-        goToHome();
-    }
-
-    public void goToHome() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 }
