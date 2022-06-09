@@ -8,9 +8,11 @@ import android.print.PrintDocumentAdapter;
 import android.print.PrintJob;
 import android.print.PrintManager;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 
@@ -39,27 +41,15 @@ public class AcknowledgementActivity extends DaggerAppCompatActivity {
     private void startActivity() {
         setContentView(R.layout.activity_ack);
         webView = findViewById(R.id.registration_ack);
-        webView.setWebViewClient(new WebViewClient() {
-
-            public boolean shouldOverrideUrlLoading(WebView view,
-                                                    WebResourceRequest request)
-            {
-                return false;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url)
-            {
-                createWebPrintJob(view);
-                webView = null;
-            }
-        });
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.ack_slip);
 
-        Log.i(TAG, "Starting activity was successfull");
+        final Button printButton = findViewById(R.id.printslip);
+        printButton.setOnClickListener( v -> {
+            createWebPrintJob(webView);
+        });
 
         try {
             String htmlDocument = getIntent().getStringExtra("content");
