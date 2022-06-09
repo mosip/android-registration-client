@@ -69,5 +69,6 @@
     <string name="right_hand_palm">Right Hand Palm</string>
     <string name="thumbs_label">Thumbs</string>
     <string name="fingers">Fingers</string>
+    <string name="ack_slip">Acknowledgement</string>
 
 </resources>

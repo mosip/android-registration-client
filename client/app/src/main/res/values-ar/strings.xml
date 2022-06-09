@@ -62,4 +62,5 @@
     <string name="right_hand_palm">كف اليد اليمنى</string>
     <string name="thumbs_label">الإبهام</string>
     <string name="fingers">أصابع</string>
+    <string name="ack_slip">Acknowledgement</string>
 </resources>

@@ -151,7 +151,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
             InputStream ios = new FileInputStream(containerZip);
             byte[] encryptedPacket = iPacketCryptoService.encrypt(refId, IOUtils.toByteArray(ios));
-            FileUtils.copyInputStreamToFile(new ByteArrayInputStream(encryptedPacket), containerZip);
+            FileUtils.copyToFile(new ByteArrayInputStream(encryptedPacket), containerZip);
             return encryptedPacket != null ? containerZip.getCanonicalPath() : null;
 
         } catch (Exception e) {
@@ -224,25 +224,20 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
         }
 
         File containerFolder = new File(BASE_LOCATION, account);
-        containerFolder.mkdirs();
+        if(!containerFolder.exists())
+            containerFolder.mkdirs();
         File containerZip = new File(BASE_LOCATION + SEPARATOR + account, container + ZIP);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             if (!containerZip.exists()) {
-
-                try (ByteArrayOutputStream byteArrayOutStream = new ByteArrayOutputStream();
-                     ZipOutputStream packetZip = new ZipOutputStream(new BufferedOutputStream(out))) {
-                    byteArrayOutStream.write(data.read());
-                    addEntryToZip(String.format(objectName),
-                            byteArrayOutStream.toByteArray(), packetZip, source, process);
+                try (ZipOutputStream packetZip = new ZipOutputStream(new BufferedOutputStream(out))) {
+                    addEntryToZip(String.format(objectName), IOUtils.toByteArray(data), packetZip, source, process);
                 }
 
             } else {
                 InputStream ios = new FileInputStream(containerZip);
                 Map<ZipEntry, ByteArrayOutputStream> entries = getAllExistingEntries(ios);
-
-                try (ByteArrayOutputStream byteArrayOutStream = new ByteArrayOutputStream();
-                     ZipOutputStream packetZip = new ZipOutputStream(out)) {
+                try (ZipOutputStream packetZip = new ZipOutputStream(out)) {
                     entries.entrySet().forEach(e -> {
                         try {
                             packetZip.putNextEntry(e.getKey());
@@ -251,20 +246,11 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
                             Log.e(TAG, "exception occurred. Create a new zip. :::", e1);
                         }
                     });
-
-                    byteArrayOutStream.write(data.read());
                     addEntryToZip(String.format(objectName),
-                            byteArrayOutStream.toByteArray(), packetZip, source, process);
+                            IOUtils.toByteArray(data), packetZip, source, process);
                 }
             }
-
-            containerZip.createNewFile();
-            try (FileOutputStream fileOutputStream = new FileOutputStream(containerZip)) {
-                fileOutputStream.write(out.toByteArray());
-            } catch (Exception ex) {
-                Log.e(TAG, "createContainerZipWithSubPacket : Exception while writing a file", ex);
-            }
-        }
+        FileUtils.copyToFile(new ByteArrayInputStream(out.toByteArray()), containerZip);
     }
 
     private void addEntryToZip(String fileName, byte[] data, ZipOutputStream zipOutputStream, String source, String process) {

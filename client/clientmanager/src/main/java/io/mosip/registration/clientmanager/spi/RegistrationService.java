@@ -15,7 +15,7 @@ public interface RegistrationService {
 
     RegistrationDto getRegistrationDto() throws Exception;
 
-    void submitRegistrationDto() throws Exception;
+    void submitRegistrationDto(String makerName) throws Exception;
 
     void clearRegistration();
 }

@@ -1,39 +1,53 @@
-/**
- * 
- */
 package io.mosip.registration.packetmanager.cbeffutil.jaxbclasses;
+
+import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-/**
- * @author Ramadurai Pandian
- *
- */
-@Data
-@NoArgsConstructor
 public class BDBInfo {
 
+	@Element(name = "ChallengeResponse", required = false)
 	private byte[] challengeResponse;
+	@Element(name = "Index", required = false)
 	private String index;
-	private Boolean encryption;
-	private LocalDateTime creationDate;
-	private LocalDateTime notValidBefore;
-	private LocalDateTime notValidAfter;
-	private List<SingleType> type;
-	private List<String> subtype;
-	private ProcessedLevelType level;
-	private RegistryIDType product;
-	private PurposeType purpose;
-	private QualityType quality;
+	@Element(name = "Format", required = false)
 	private RegistryIDType format;
+	@Element(name = "Encryption", required = false)
+	private Boolean encryption;
+	@Element(name = "CreationDate", required = false)
+	private LocalDateTime creationDate;
+	@Element(name = "NotValidBefore", required = false)
+	private LocalDateTime notValidBefore;
+	@Element(name = "NotValidAfter", required = false)
+	private LocalDateTime notValidAfter;
+	@ElementList(name = "Type", required = false)
+	private List<BiometricType> type;
+
+	@ElementList(name = "Subtype", required = false)
+	private List<String> subtype;
+	@Element(name = "Level", required = false)
+	private ProcessedLevelType level;
+	@Element(name = "Product", required = false)
+	private RegistryIDType product;
+	@Element(name = "CaptureDevice", required = false)
 	private RegistryIDType captureDevice;
+	@Element(name = "FeatureExtractionAlgorithm", required = false)
 	private RegistryIDType featureExtractionAlgorithm;
+	@Element(name = "ComparisonAlgorithm", required = false)
 	private RegistryIDType comparisonAlgorithm;
+	@Element(name = "CompressionAlgorithm", required = false)
 	private RegistryIDType compressionAlgorithm;
+	@Element(name = "Purpose", required = false)
+	private PurposeType purpose;
+	@Element(name = "Quality", required = false)
+	private QualityType quality;
+
+
+
+
 
 	public BDBInfo(BDBInfoBuilder bDBInfoBuilder) {
 		this.challengeResponse = bDBInfoBuilder.challengeResponse;
@@ -55,85 +69,6 @@ public class BDBInfo {
 		this.compressionAlgorithm = bDBInfoBuilder.compressionAlgorithm;
 	}
 
-	public byte[] getChallengeResponse() {
-		return challengeResponse;
-	}
-
-	public String getIndex() {
-		return index;
-	}
-
-	public RegistryIDType getFormat() {
-		return format;
-	}
-
-	public Boolean getEncryption() {
-		return encryption;
-	}
-
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
-
-	public LocalDateTime getNotValidBefore() {
-		return notValidBefore;
-	}
-
-	public LocalDateTime getNotValidAfter() {
-		return notValidAfter;
-	}
-
-	public List<SingleType> getType() {
-		return type;
-	}
-
-	public List<String> getSubtype() {
-		return subtype;
-	}
-
-	public ProcessedLevelType getLevel() {
-		return level;
-	}
-
-	public RegistryIDType getProduct() {
-		return product;
-	}
-
-	public PurposeType getPurpose() {
-		return purpose;
-	}
-
-	public QualityType getQuality() {
-		return quality;
-	}
-
-	/**
-	 * @return the captureDevice
-	 */
-	public RegistryIDType getCaptureDevice() {
-		return captureDevice;
-	}
-
-	/**
-	 * @return the featureExtractionAlgorithm
-	 */
-	public RegistryIDType getFeatureExtractionAlgorithm() {
-		return featureExtractionAlgorithm;
-	}
-
-	/**
-	 * @return the comparisonAlgorithm
-	 */
-	public RegistryIDType getComparisonAlgorithm() {
-		return comparisonAlgorithm;
-	}
-
-	/**
-	 * @return the compressionAlgorithm
-	 */
-	public RegistryIDType getCompressionAlgorithm() {
-		return compressionAlgorithm;
-	}
 
 	public static class BDBInfoBuilder {
 		private byte[] challengeResponse;
@@ -143,7 +78,7 @@ public class BDBInfo {
 		private LocalDateTime creationDate;
 		private LocalDateTime notValidBefore;
 		private LocalDateTime notValidAfter;
-		private List<SingleType> type;
+		private List<BiometricType> type;
 		private List<String> subtype;
 		private ProcessedLevelType level;
 		private RegistryIDType product;
@@ -189,7 +124,7 @@ public class BDBInfo {
 			return this;
 		}
 
-		public BDBInfoBuilder withType(List<SingleType> type) {
+		public BDBInfoBuilder withType(List<BiometricType> type) {
 			this.type = type;
 			return this;
 		}
@@ -220,6 +155,7 @@ public class BDBInfo {
 		}
 
 		public BDBInfo build() {
+			//TODO
 			return new BDBInfo(this);
 		}
 
@@ -242,78 +178,6 @@ public class BDBInfo {
 			this.compressionAlgorithm = compressionAlgorithm;
 			return this;
 		}
-
 	}
 
-	public BDBInfoType toBDBInfo() {
-		BDBInfoType bDBInfoType = new BDBInfoType();
-		challengeIndexFormatPopolation(bDBInfoType);
-		bdbTimePopolation(bDBInfoType);
-		typeSubTypeLevelPopolation(bDBInfoType);
-		featureExtractionComparissionAlgoPopolation(bDBInfoType);
-		if (getEncryption() != null) {
-			bDBInfoType.setEncryption(getEncryption());
-		}
-		if (getProduct() != null) {
-			bDBInfoType.setProduct(getProduct());
-		}
-		if (getFormat() != null) {
-			bDBInfoType.setFormat(getFormat());
-		}
-		if (getPurpose() != null) {
-			bDBInfoType.setPurpose(getPurpose());
-		}
-		if (getQuality() != null) {
-			bDBInfoType.setQuality(getQuality());
-		}
-		if (getCaptureDevice() != null) {
-			bDBInfoType.setCaptureDevice(getCaptureDevice());
-		}
-		return bDBInfoType;
-	}
-
-	private void featureExtractionComparissionAlgoPopolation(BDBInfoType bDBInfoType) {
-		if (getFeatureExtractionAlgorithm() != null) {
-			bDBInfoType.setFeatureExtractionAlgorithm(getFeatureExtractionAlgorithm());
-		}
-		if (getComparisonAlgorithm() != null) {
-			bDBInfoType.setComparisonAlgorithm(getComparisonAlgorithm());
-		}
-	}
-
-	private void typeSubTypeLevelPopolation(BDBInfoType bDBInfoType) {
-		if (getType() != null) {
-			bDBInfoType.setType(getType());
-		}
-		if (getSubtype() != null) {
-			bDBInfoType.setSubtype(getSubtype());
-		}
-		if (getLevel() != null) {
-			bDBInfoType.setLevel(getLevel());
-		}
-	}
-
-	private void challengeIndexFormatPopolation(BDBInfoType bDBInfoType) {
-		if (getChallengeResponse() != null && getChallengeResponse().length > 0) {
-			bDBInfoType.setChallengeResponse(getChallengeResponse());
-		}
-		if (getIndex() != null && getIndex().length() > 0) {
-			bDBInfoType.setIndex(getIndex());
-		}
-		if (getFormat() != null) {
-			bDBInfoType.setFormat(getFormat());
-		}
-	}
-
-	private void bdbTimePopolation(BDBInfoType bDBInfoType) {
-		if (getCreationDate() != null) {
-			bDBInfoType.setCreationDate(getCreationDate());
-		}
-		if (getNotValidBefore() != null) {
-			bDBInfoType.setNotValidBefore(getNotValidBefore());
-		}
-		if (getNotValidAfter() != null) {
-			bDBInfoType.setNotValidAfter(getNotValidAfter());
-		}
-	}
 }

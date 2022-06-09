@@ -137,7 +137,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             syncCertificate();
             syncLatestIdSchema();
             syncUserDetails();
-            syncCACertificates();
+           // syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();

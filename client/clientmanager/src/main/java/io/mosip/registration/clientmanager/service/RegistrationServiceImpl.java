@@ -1,41 +1,11 @@
 package io.mosip.registration.clientmanager.service;
 
-import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_EXCEPTION;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_FORCE_CAPTURED;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_PAYLOAD;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_RETRIES;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_SDK_SCORE;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_SPEC_VERSION;
-
 import android.content.Context;
 import android.util.Log;
-
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
-
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.Modality;
@@ -49,25 +19,29 @@ import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BDBInfo;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BIR;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BIRInfo;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
-import io.mosip.registration.packetmanager.dto.PacketWriter.ProcessedLevelType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.PurposeType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.QualityType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.RegistryIDType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.VersionType;
-import io.mosip.registration.packetmanager.spi.PacketWriterService;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
+import io.mosip.registration.packetmanager.dto.PacketWriter.*;
 import io.mosip.registration.packetmanager.util.DateUtils;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 import lombok.NonNull;
+import org.json.JSONObject;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.*;
+
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.*;
 
 @Singleton
 public class RegistrationServiceImpl implements RegistrationService {
@@ -115,20 +89,20 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public RegistrationDto startRegistration(@NonNull List<String> languages) throws Exception {
-        if (registrationDto != null) {
+        if(registrationDto !=  null) {
             registrationDto.cleanup();
         }
 
-        languages.removeIf(item -> item == null || RegistrationConstants.EMPTY_STRING.equals(item));
-        if (languages.isEmpty())
+        languages.removeIf( item -> item == null || RegistrationConstants.EMPTY_STRING.equals(item) );
+        if(languages.isEmpty())
             throw new ClientCheckedException(context, R.string.err_000);
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null)
+        if(centerMachineDto == null)
             throw new ClientCheckedException(context, R.string.err_001);
 
         Double version = identitySchemaRepository.getLatestSchemaVersion();
-        if (version == null)
+        if(version == null)
             throw new ClientCheckedException(context, R.string.err_002);
 
         doPreChecksBeforeRegistration(centerMachineDto);
@@ -143,20 +117,20 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public RegistrationDto getRegistrationDto() throws Exception {
-        if (this.registrationDto == null) {
+        if(this.registrationDto == null) {
             throw new ClientCheckedException(context, R.string.err_004);
         }
         return this.registrationDto;
     }
 
     @Override
-    public void submitRegistrationDto() throws Exception {
-        if (this.registrationDto == null) {
+    public void submitRegistrationDto(String makerName) throws Exception {
+        if(this.registrationDto == null) {
             throw new ClientCheckedException(context, R.string.err_004);
         }
 
         try {
-            this.registrationDto.getAllDemographicFields().forEach(entry -> {
+            this.registrationDto.getAllDemographicFields().forEach( entry -> {
                 packetWriterService.setField(this.registrationDto.getRId(), entry.getKey(), entry.getValue());
             });
 
@@ -171,22 +145,22 @@ public class RegistrationServiceImpl implements RegistrationService {
             });
 
             Map<String, BiometricRecord> capturedData = new HashMap<>();
-            this.registrationDto.getAllBiometricFields().forEach(entry -> {
+            this.registrationDto.getAllBiometricFields().forEach( entry -> {
                 String[] parts = entry.getKey().split("_");
                 BiometricRecord biometricRecord = capturedData.get(parts[0]);
-                if (biometricRecord == null) {
+                if( biometricRecord == null) {
                     biometricRecord = new BiometricRecord();
                     biometricRecord.setSegments(new ArrayList<>());
-                    packetWriterService.setBiometric(this.registrationDto.getRId(), entry.getKey(), biometricRecord);
                     capturedData.put(parts[0], biometricRecord);
                 }
                 biometricRecord.getSegments().add(buildBIR(entry.getValue()));
+                packetWriterService.setBiometric(this.registrationDto.getRId(), parts[0], biometricRecord);
             });
 
             CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
 
             packetWriterService.addAudits(this.registrationDto.getRId(), getAudits());
-            addMetaInfoMap(centerMachineDto.getCenterId(), centerMachineDto.getMachineId());
+            addMetaInfoMap(centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), makerName);
 
             String containerPath = packetWriterService.persistPacket(this.registrationDto.getRId(),
                     this.registrationDto.getSchemaVersion().toString(),
@@ -197,7 +171,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
             Log.i(TAG, "Packet created here : " + containerPath);
 
-            if (containerPath == null || containerPath.trim().isEmpty()) {
+            if(containerPath == null || containerPath.trim().isEmpty()) {
                 throw new ClientCheckedException(context, R.string.err_005);
             }
 
@@ -216,15 +190,16 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public void clearRegistration() {
-        if (this.registrationDto != null) {
+        if(this.registrationDto != null) {
             this.registrationDto.cleanup();
             this.registrationDto = null;
         }
     }
 
-    private Map<String, String> addMetaInfoMap(String centerId, String machineId) throws Exception {
+    private Map<String, String> addMetaInfoMap(String centerId, String machineId, String makerId) throws Exception {
         String rid = this.registrationDto.getRId();
         Map<String, String> metaData = new LinkedHashMap<>();
+        packetWriterService.addMetaInfo(rid, META_OFFICER_ID, makerId);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_MACHINE_ID, machineId);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CENTER_ID, centerId);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_KEYINDEX,
@@ -253,26 +228,26 @@ public class RegistrationServiceImpl implements RegistrationService {
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
         //free space validation
         long externalSpace = context.getExternalCacheDir().getUsableSpace();
-        if ((externalSpace / (1024 * 1024)) < MIN_SPACE_REQUIRED_MB)
+        if( (externalSpace / (1024*1024)) < MIN_SPACE_REQUIRED_MB )
             throw new ClientCheckedException(context, R.string.err_006);
 
         //is machine and center active
-        if (centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
+        if(centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
             throw new ClientCheckedException(context, R.string.err_007);
     }
 
     private byte[] convertImageToPDF(List<byte[]> images) {
         try (PDDocument pdDocument = new PDDocument();
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            for (byte[] image : images) {
+            for(byte[] image : images) {
                 PDPage pdPage = new PDPage();
                 Log.i(TAG, "image size after compression :" + image.length);
                 PDImageXObject pdImageXObject = PDImageXObject.createFromByteArray(pdDocument, image, "");
                 int[] scaledDimension = getScaledDimension(pdImageXObject.getWidth(), pdImageXObject.getHeight(),
-                        (int) pdPage.getMediaBox().getWidth(), (int) pdPage.getMediaBox().getHeight());
+                        (int)pdPage.getMediaBox().getWidth(), (int)pdPage.getMediaBox().getHeight());
                 try (PDPageContentStream contentStream = new PDPageContentStream(pdDocument, pdPage)) {
-                    float startx = (pdPage.getMediaBox().getWidth() - scaledDimension[0]) / 2;
-                    float starty = (pdPage.getMediaBox().getHeight() - scaledDimension[1]) / 2;
+                    float startx = (pdPage.getMediaBox().getWidth() - scaledDimension[0])/2;
+                    float starty = (pdPage.getMediaBox().getHeight() - scaledDimension[1])/2;
                     contentStream.drawImage(pdImageXObject, startx, starty, scaledDimension[0], scaledDimension[1]);
                 }
                 pdDocument.addPage(pdPage);
@@ -280,7 +255,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             pdDocument.save(byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            Log.e(TAG, "Failed to convert bufferedImages to PDF", e);
+            Log.e(TAG,"Failed to convert bufferedImages to PDF", e);
         }
         return null;
     }
@@ -291,7 +266,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     private static int[] getScaledDimension(int originalWidth, int originalHeight, int boundWidth,
-                                            int boundHeight) {
+                                                int boundHeight) {
         int new_width = originalWidth;
         int new_height = originalHeight;
 
@@ -311,19 +286,23 @@ public class RegistrationServiceImpl implements RegistrationService {
             new_width = (new_height * originalWidth) / originalHeight;
         }
 
-        return new int[]{new_width, new_height};
+        return new int[] { new_width, new_height };
     }
 
     public BIR buildBIR(BiometricsDto biometricsDto) {
         SingleType singleType = SingleType.valueOf(biometricsDto.getModality());
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
-        RegistryIDType birFormat = new RegistryIDType(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG,
-                String.valueOf(Modality.getFormatType(singleType)));
+        RegistryIDType birFormat = new RegistryIDType();
+        birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG);
+        birFormat.setType(String.valueOf(Modality.getFormatType(singleType)));
+
         BiometricType biometricType = BiometricType.fromValue(singleType.name());
         // Algorithm
-        RegistryIDType birAlgorithm = new RegistryIDType(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG,
-                PacketManagerConstant.CBEFF_DEFAULT_ALG_TYPE);
+        RegistryIDType birAlgorithm = new RegistryIDType();
+        birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG);
+        birFormat.setType(PacketManagerConstant.CBEFF_DEFAULT_ALG_TYPE);
+
         // Quality Type
         QualityType qualityType = new QualityType();
         qualityType.setAlgorithm(birAlgorithm);
@@ -331,7 +310,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         VersionType versionType = new VersionType(1, 1);
 
         String payLoad = null;
-        if (iso != null) {
+        if(iso!=null) {
             int bioValueKeyIndex = biometricsDto.getDecodedBioResponse().indexOf(PacketManagerConstant.BIOVALUE_KEY) + (PacketManagerConstant.BIOVALUE_KEY.length() + 1);
             int bioValueStartIndex = biometricsDto.getDecodedBioResponse().indexOf('"', bioValueKeyIndex);
             int bioValueEndIndex = biometricsDto.getDecodedBioResponse().indexOf('"', (bioValueStartIndex + 1));
@@ -349,10 +328,10 @@ public class RegistrationServiceImpl implements RegistrationService {
                         .withCreationDate(LocalDateTime.now(ZoneId.of("UTC"))).withIndex(UUID.randomUUID().toString())
                         .build())
                 .withSb(biometricsDto.getSignature() == null ? new byte[0] : biometricsDto.getSignature().getBytes(StandardCharsets.UTF_8))
-                .withOthers(OTHER_KEY_EXCEPTION, iso == null ? "true" : "false")
-                .withOthers(OTHER_KEY_RETRIES, biometricsDto.getNumOfRetries() + EMPTY)
-                .withOthers(OTHER_KEY_SDK_SCORE, biometricsDto.getSdkScore() + EMPTY)
-                .withOthers(OTHER_KEY_FORCE_CAPTURED, biometricsDto.isForceCaptured() + EMPTY)
+                .withOthers(OTHER_KEY_EXCEPTION, iso==null ? "true" : "false")
+                .withOthers(OTHER_KEY_RETRIES, biometricsDto.getNumOfRetries()+EMPTY)
+                .withOthers(OTHER_KEY_SDK_SCORE, biometricsDto.getSdkScore()+EMPTY)
+                .withOthers(OTHER_KEY_FORCE_CAPTURED, biometricsDto.isForceCaptured()+EMPTY)
                 .withOthers(OTHER_KEY_PAYLOAD, payLoad == null ? EMPTY : payLoad)
                 .withOthers(OTHER_KEY_SPEC_VERSION, biometricsDto.getSpecVersion() == null ? EMPTY : biometricsDto.getSpecVersion())
                 .build();
