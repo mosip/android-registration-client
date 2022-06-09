@@ -1,56 +1,27 @@
-/**
- * 
- */
 package io.mosip.registration.packetmanager.cbeffutil.jaxbclasses;
+
+import org.simpleframework.xml.Element;
 
 import java.time.LocalDateTime;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-/**
- * @author Ramadurai Pandian
- *
- */
-@Data
-@NoArgsConstructor
 public class BIRInfo {
 
+	private static final long serialVersionUID = -2466414332099574792L;
+	@Element(name = "Creator", required = false)
 	private String creator;
+	@Element(name = "Index", required = false)
 	private String index;
+	@Element(name = "Payload", required = false)
 	private byte[] payload;
+	@Element(name = "Integrity", required = false)
 	private Boolean integrity;
+	@Element(name = "CreationDate", required = false)
 	private LocalDateTime creationDate;
+	@Element(name = "NotValidBefore", required = false)
 	private LocalDateTime notValidBefore;
+	@Element(name = "NotValidAfter", required = false)
 	private LocalDateTime notValidAfter;
 
-	public String getCreator() {
-		return creator;
-	}
-
-	public String getIndex() {
-		return index;
-	}
-
-	public byte[] getPayload() {
-		return payload;
-	}
-
-	public Boolean isIntegrity() {
-		return integrity;
-	}
-
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
-
-	public LocalDateTime getNotValidBefore() {
-		return notValidBefore;
-	}
-
-	public LocalDateTime getNotValidAfter() {
-		return notValidAfter;
-	}
 
 	public BIRInfo(BIRInfoBuilder bIRInfoBuilder) {
 		this.creator = bIRInfoBuilder.creator;
@@ -111,34 +82,4 @@ public class BIRInfo {
 		}
 
 	}
-
-	public BIRInfoType toBIRInfo() {
-		BIRInfoType bIRInfoType = new BIRInfoType();
-		createrPopolation(bIRInfoType);
-		if (isIntegrity() != null) {
-			bIRInfoType.setIntegrity(isIntegrity());
-		}
-
-		if (getPayload() != null && getPayload().length > 0) {
-			bIRInfoType.setPayload(getPayload());
-		}
-		if (getCreationDate() != null) {
-			bIRInfoType.setCreationDate(getCreationDate());
-		}
-		if (getNotValidAfter() != null) {
-			bIRInfoType.setNotValidAfter(getNotValidAfter());
-		}
-		if (getNotValidBefore() != null) {
-			bIRInfoType.setNotValidBefore(getNotValidBefore());
-		}
-
-		return bIRInfoType;
-	}
-
-	private void createrPopolation(BIRInfoType bIRInfoType) {
-		if (getCreator() != null && getCreator().length() > 0) {
-			bIRInfoType.setCreator(getCreator());
-		}
-	}
-
 }

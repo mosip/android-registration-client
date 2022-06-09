@@ -1,27 +1,18 @@
 package io.mosip.registration.app.viewmodel;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.util.BiometricService;
 import io.mosip.registration.clientmanager.constant.Modality;
-import io.mosip.registration.packetmanager.dto.PacketWriter.Entry;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import static android.content.pm.PackageManager.MATCH_DEFAULT_ONLY;
 
 public class CustomViewPager2Adapter extends RecyclerView.Adapter<CustomViewPager2Adapter.ViewHolder>{
 
