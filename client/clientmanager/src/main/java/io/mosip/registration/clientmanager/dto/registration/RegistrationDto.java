@@ -109,7 +109,7 @@ public class RegistrationDto extends Observable {
         }
 
         if(isValidValue(value)) {
-            ((List<GenericDto>)this.demographics.getOrDefault(fieldId, new ArrayList<GenericDto>()))
+            ((List<GenericDto>)this.demographics.computeIfAbsent(fieldId, demo -> new ArrayList<GenericDto>()))
                     .add(new GenericDto(value, language));
         }
         clearAndNotifyAllObservers();
@@ -183,9 +183,17 @@ public class RegistrationDto extends Observable {
         return this.demographics.entrySet();
     }
 
+    public Map<String, Object> getDemographics() {
+        return this.demographics;
+    }
+
+    public Map<String, BiometricsDto> getBiometrics() { return this.biometrics; }
+
     public Set<Map.Entry<String, DocumentDto>> getAllDocumentFields() {
         return this.documents.entrySet();
     }
+
+    public Map<String, DocumentDto> getDocuments() { return this.documents; }
 
     public Set<Map.Entry<String, BiometricsDto>> getAllBiometricFields() {
         return this.biometrics.entrySet();
@@ -206,6 +214,8 @@ public class RegistrationDto extends Observable {
     public List<String> getSelectedLanguages() {
         return selectedLanguages;
     }
+
+    public OperatorDto getMaker() { return maker; }
 
     public void cleanup() {
         this.demographics.clear();

@@ -21,8 +21,7 @@ import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleAnySubtypeType;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
 import io.mosip.registration.packetmanager.dto.PacketWriter.*;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -125,7 +124,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public void submitRegistrationDto() throws Exception {
+    public void submitRegistrationDto(String makerName) throws Exception {
         if(this.registrationDto == null) {
             throw new ClientCheckedException(context, R.string.err_004);
         }
@@ -152,16 +151,16 @@ public class RegistrationServiceImpl implements RegistrationService {
                 if( biometricRecord == null) {
                     biometricRecord = new BiometricRecord();
                     biometricRecord.setSegments(new ArrayList<>());
-                    packetWriterService.setBiometric(this.registrationDto.getRId(), entry.getKey(), biometricRecord);
                     capturedData.put(parts[0], biometricRecord);
                 }
                 biometricRecord.getSegments().add(buildBIR(entry.getValue()));
+                packetWriterService.setBiometric(this.registrationDto.getRId(), parts[0], biometricRecord);
             });
 
             CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
 
             packetWriterService.addAudits(this.registrationDto.getRId(), getAudits());
-            addMetaInfoMap(centerMachineDto.getCenterId(), centerMachineDto.getMachineId());
+            addMetaInfoMap(centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), makerName);
 
             String containerPath = packetWriterService.persistPacket(this.registrationDto.getRId(),
                     this.registrationDto.getSchemaVersion().toString(),
@@ -197,9 +196,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
     }
 
-    private Map<String, String> addMetaInfoMap(String centerId, String machineId) throws Exception {
+    private Map<String, String> addMetaInfoMap(String centerId, String machineId, String makerId) throws Exception {
         String rid = this.registrationDto.getRId();
         Map<String, String> metaData = new LinkedHashMap<>();
+        packetWriterService.addMetaInfo(rid, META_OFFICER_ID, makerId);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_MACHINE_ID, machineId);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CENTER_ID, centerId);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_KEYINDEX,
@@ -293,12 +293,16 @@ public class RegistrationServiceImpl implements RegistrationService {
         SingleType singleType = SingleType.valueOf(biometricsDto.getModality());
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
-        RegistryIDType birFormat = new RegistryIDType(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG,
-                String.valueOf(Modality.getFormatType(singleType)));
+        RegistryIDType birFormat = new RegistryIDType();
+        birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG);
+        birFormat.setType(String.valueOf(Modality.getFormatType(singleType)));
+
         BiometricType biometricType = BiometricType.fromValue(singleType.name());
         // Algorithm
-        RegistryIDType birAlgorithm = new RegistryIDType(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG,
-                PacketManagerConstant.CBEFF_DEFAULT_ALG_TYPE);
+        RegistryIDType birAlgorithm = new RegistryIDType();
+        birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG);
+        birFormat.setType(PacketManagerConstant.CBEFF_DEFAULT_ALG_TYPE);
+
         // Quality Type
         QualityType qualityType = new QualityType();
         qualityType.setAlgorithm(birAlgorithm);

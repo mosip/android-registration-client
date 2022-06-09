@@ -14,9 +14,10 @@ import static io.mosip.registration.packetmanager.util.PacketManagerConstant.SOU
 import android.content.Context;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,17 +25,13 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.mosip.registration.packetmanager.cbeffutil.CbeffContainerImpl;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRVersion;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.QualityType;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.RegistryIDType;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BIR;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
-import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
-import io.mosip.registration.packetmanager.dto.PacketWriter.ProcessedLevelType;
-import io.mosip.registration.packetmanager.dto.PacketWriter.PurposeType;
+import org.apache.commons.io.FileUtils;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.transform.RegistryMatcher;
 
 /**
  * @Author Anshul Vanawat
@@ -55,13 +52,22 @@ public class PacketManagerHelper {
 
 
     public byte[] getXMLData(BiometricRecord biometricRecord, boolean offlineMode) throws Exception {
-        //Reading of xsd file from CBEFF_SCHEMA_FILE_PATH and validation of xml skipped
-        CbeffContainerImpl cbeffContainer = new CbeffContainerImpl();
-        List<io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR> birList = new ArrayList<>();
-        biometricRecord.getSegments().forEach(s -> birList.add(convertToBIR(s)));
-        io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRType bir = cbeffContainer.createBIRType(birList);
-        byte[] xmlBytes = cbeffContainer.createXMLBytes(bir);
-        return xmlBytes;
+        //TODO validation of xml with XSD skipped
+        BIR bir = new BIR();
+        BIRInfo.BIRInfoBuilder infoBuilder = new BIRInfo.BIRInfoBuilder().withIntegrity(false);
+        BIRInfo birInfo = new BIRInfo(infoBuilder);
+        bir.setBirInfo(birInfo);
+        bir.setBirs(biometricRecord.getSegments());
+
+        RegistryMatcher matcher = new RegistryMatcher();
+        matcher.bind(byte[].class, new ByteArrayTransformer());
+        matcher.bind(LocalDateTime.class, new LocalDateTimeTransformer());
+        Serializer serializer = new Persister(matcher);
+        try(ByteArrayOutputStream baos = new ByteArrayOutputStream())
+        {
+            serializer.write(bir, baos);
+            return baos.toByteArray();
+        }
     }
 
     public static byte[] generateHash(List<String> order, Map<String, byte[]> data) throws IOException, NoSuchAlgorithmException {
@@ -103,57 +109,5 @@ public class PacketManagerHelper {
         packetInfo.setProviderVersion((String) metaMap.get(PROVIDER_VERSION));
         packetInfo.setCreationDate((String) metaMap.get(CREATION_DATE));
         return packetInfo;
-    }
-
-    public static io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR convertToBIR(BIR bir) {
-        List<SingleType> bioTypes = new ArrayList<>();
-        for(BiometricType type : bir.getBdbInfo().getType()) {
-            bioTypes.add(SingleType.fromValue(type.value()));
-        }
-
-        RegistryIDType format = null;
-        if (bir.getBdbInfo() != null && bir.getBdbInfo().getFormat() != null) {
-            format = new RegistryIDType();
-            format.setOrganization(bir.getBdbInfo().getFormat().getOrganization());
-            format.setType(bir.getBdbInfo().getFormat().getType());
-        }
-
-        RegistryIDType birAlgorithm = null;
-        if (bir.getBdbInfo() != null
-                && bir.getBdbInfo().getQuality() != null && bir.getBdbInfo().getQuality().getAlgorithm() != null) {
-            birAlgorithm = new RegistryIDType();
-            birAlgorithm.setOrganization(bir.getBdbInfo().getQuality().getAlgorithm().getOrganization());
-            birAlgorithm.setType(bir.getBdbInfo().getQuality().getAlgorithm().getType());
-        }
-
-
-        QualityType qualityType = null;
-        if (bir.getBdbInfo() != null && bir.getBdbInfo().getQuality() != null) {
-            qualityType = new QualityType();
-            qualityType.setAlgorithm(birAlgorithm);
-            qualityType.setQualityCalculationFailed(bir.getBdbInfo().getQuality().getQualityCalculationFailed());
-            qualityType.setScore(bir.getBdbInfo().getQuality().getScore());
-        }
-
-        return new io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR.BIRBuilder()
-                .withBdb(bir.getBdb())
-                .withVersion(bir.getVersion() == null ? null : new BIRVersion.BIRVersionBuilder()
-                        .withMinor(bir.getVersion().getMinor())
-                        .withMajor(bir.getVersion().getMajor()).build())
-                .withCbeffversion(bir.getCbeffversion() == null ? null : new BIRVersion.BIRVersionBuilder()
-                        .withMinor(bir.getCbeffversion().getMinor())
-                        .withMajor(bir.getCbeffversion().getMajor()).build())
-                .withBirInfo(new io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRInfo.BIRInfoBuilder().withIntegrity(true).build())
-                .withBdbInfo(bir.getBdbInfo() == null ? null : new io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BDBInfo.BDBInfoBuilder()
-                        .withFormat(format)
-                        .withType(bioTypes)
-                        .withQuality(qualityType)
-                        .withCreationDate(bir.getBdbInfo().getCreationDate())
-                        .withIndex(bir.getBdbInfo().getIndex())
-                        .withPurpose(bir.getBdbInfo().getPurpose() == null ? null :
-                                io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.PurposeType.fromValue(PurposeType.fromValue(bir.getBdbInfo().getPurpose().name()).value()))
-                        .withLevel(bir.getBdbInfo().getLevel() == null ? null :
-                                io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.ProcessedLevelType.fromValue(ProcessedLevelType.fromValue(bir.getBdbInfo().getLevel().name()).value()))
-                        .withSubtype(bir.getBdbInfo().getSubtype()).build()).build();
     }
 }

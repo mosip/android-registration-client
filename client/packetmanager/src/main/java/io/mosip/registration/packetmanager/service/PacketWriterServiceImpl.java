@@ -209,7 +209,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
 
                 switch ((String) field.get(PacketManagerConstant.SCHEMA_TYPE)) {
                     case PacketManagerConstant.BIOMETRICS_TYPE:
-                        if (this.registrationPacket.getBiometrics().get(fieldName) != null)
+                        //if (this.registrationPacket.getBiometrics().get(fieldName) != null)
                             addBiometricDetailsToZip(fieldName, identity, subpacketZip, hashSequences, offlineMode);
                         break;
                     case PacketManagerConstant.DOCUMENTS_TYPE:
@@ -297,7 +297,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             try {
                 xmlBytes = packetManagerHelper.getXMLData(birType, offlineMode);
             } catch (Exception e) {
-                Log.e(TAG, "Get XML Data failed" + e.getStackTrace());
+                Log.e(TAG, "Get XML Data failed", e);
             }
 
             addEntryToZip(String.format(PacketManagerConstant.CBEFF_FILENAME_WITH_EXT, fieldName), xmlBytes, zipOutputStream);

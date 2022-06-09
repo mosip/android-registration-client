@@ -4,14 +4,13 @@
                                                    xmlns:tools="http://schemas.android.com/tools"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
-                                                   tools:context=".activites.PreviewActivity">
+                                                   tools:context=".activites.AcknowledgementActivity">
 
     <ScrollView
             android:id="@+id/scrollView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/backgroundColor"
-            app:layout_constraintBottom_toTopOf="@+id/pnlBottomCommands"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -25,7 +24,7 @@
                         android:layout_height="match_parent">
 
                 <WebView
-                    android:id="@+id/registration_preview"
+                    android:id="@+id/registration_ack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </ScrollView>
@@ -36,43 +35,21 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/pnlBottomCommands"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:background="@color/backgroundColor"
             app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
+
+        <Button
+                android:id="@+id/printslip"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_margin="5dp"
-                android:weightSum="3">
+                android:background="@drawable/rounded_corner"
+                android:text="Print"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText android:layout_width="wrap_content"
-                      android:layout_height="match_parent"
-                      android:id="@+id/packet_auth_username"
-                      android:hint="@string/prompt_username"
-                      android:layout_weight="1">
-            </EditText>
-            <EditText android:layout_width="wrap_content"
-                      android:layout_height="match_parent"
-                      android:id="@+id/packet_auth_pwd"
-                      android:inputType="textPassword"
-                      android:layout_weight="1"
-                      android:hint="@string/prompt_password">
-            </EditText>
-            <Button
-                    android:id="@+id/createpacket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/rounded_corner"
-                    android:text="Authenticate"
-                    android:layout_weight="1"/>
-            <ProgressBar
-                    android:id="@+id/auth_loading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="gone"/>
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

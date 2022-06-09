@@ -42,4 +42,25 @@
     <string name="double_iris">قزحية</string>
     <string name="face">وجه</string>
     <string name="exception_photo">استثناء الصورة</string>
+
+    <!-- Template -->
+    <string name="app_id">رقم الاستمارة</string>
+    <string name="uin">UIN</string>
+    <string name="date">تاريخ</string>
+    <string name="demographic_info">المعلومات الديموغرافية</string>
+    <string name="photo">صورة</string>
+    <string name="documents">وثائق</string>
+    <string name="biometrics">القياسات الحيوية</string>
+    <string name="face_label">وجه</string>
+    <string name="exception_photo_label">استثناء الصورة</string>
+    <string name="ro_label">ضابط التسجيل</string>
+    <string name="reg_center">مركز التسجيل</string>
+    <string name="imp_guidelines">إرشادات مهمة</string>
+    <string name="left_iris">اليسار ايريس</string>
+    <string name="right_iris">حق ايريس</string>
+    <string name="left_hand_palm">كف اليد اليسرى</string>
+    <string name="right_hand_palm">كف اليد اليمنى</string>
+    <string name="thumbs_label">الإبهام</string>
+    <string name="fingers">أصابع</string>
+    <string name="ack_slip">Acknowledgement</string>
 </resources>
