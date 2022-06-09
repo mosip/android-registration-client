@@ -93,6 +93,8 @@ dependencies {
         exclude group: 'org.projectlombok'
     }
 
+    implementation 'org.apache.velocity:velocity:1.7'
+
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha7'
 
