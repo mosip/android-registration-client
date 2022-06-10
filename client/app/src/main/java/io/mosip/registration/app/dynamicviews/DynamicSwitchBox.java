@@ -77,6 +77,9 @@ public class DynamicSwitchBox extends LinearLayout implements DynamicView {
                         btn.setBackground(getResources().getDrawable(
                                 (btn.getText().toString().equalsIgnoreCase(button.getText().toString()) ?
                                         R.drawable.button_option_selected : R.drawable.button_option_default)));
+                        btn.setTextColor(getResources().getColor(
+                                (btn.getText().toString().equalsIgnoreCase(button.getText().toString()) ?
+                                        R.color.switchbox_text_primary_theme1 : R.color.switchbox_text_secondary_theme1)));
                     }
                     registrationDto.addDemographicField(fieldSpecDto.getId(), button.getText().toString());
                     selected = button.getText().toString();

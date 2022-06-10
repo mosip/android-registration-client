@@ -4,7 +4,7 @@
         android:width="1dp"
         android:color="@color/primaryLightColor" />
 
-    <solid android:color="@color/primaryLightColor" />
+    <solid android:color="@color/switchbox_primary_theme1" />
 
 
     <padding

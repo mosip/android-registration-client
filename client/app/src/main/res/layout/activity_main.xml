@@ -1,43 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_margin="50dp"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:orientation="vertical">
 
-    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                      android:orientation="vertical">
-            <Button
-                    android:text="Sync Masterdata"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:onClick="click_sync_masterdata"
-                    android:id="@+id/button12"/>
-            <Button
-                    android:text="New Registration"
-                    android:layout_width="match_parent"
-                    android:layout_margin="20dp"
-                    android:layout_height="wrap_content"
-                    android:onClick="click_new_registration"
-                    android:id="@+id/button14" />
+    <TableLayout
+        android:weightSum="5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:weightSum="11"
+            >
 
             <Button
-                    android:text="List Registrations"
-                    android:layout_width="match_parent"
-                    android:layout_margin="20dp"
-                    android:layout_height="wrap_content"
-                    android:onClick="click_list_packets"
-                    android:id="@+id/button15" />
-
-            <Button
-                android:text="Job Services"
+                android:id="@+id/button12"
+                android:onClick="click_sync_masterdata"
+                android:text="Sync Masterdata"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_margin="20dp"
-                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corner_btn"
+                android:padding="10dp"
+                android:textColor="@color/btn_text_primary_theme1" />
+
+            <Button
+                android:id="@+id/button14"
+                android:onClick="click_new_registration"
+                android:text="New Registration"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:background="@drawable/rounded_corner_btn"
+                android:padding="10dp"
+                android:textColor="@color/btn_text_primary_theme1"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:weightSum="11"
+            >
+
+            <Button
+                android:id="@+id/button15"
+                android:onClick="click_list_packets"
+                android:text="List Registrations"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:background="@drawable/rounded_corner_btn"
+                android:padding="10dp"
+                android:textColor="@color/btn_text_primary_theme1" />
+
+            <Button
+                android:id="@+id/main_jobservice_btn"
                 android:onClick="click_list_JobService"
-                android:id="@+id/main_jobservice_btn" />
-        </LinearLayout>
-    </ScrollView>
+                android:text="Job Services"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:background="@drawable/rounded_corner_btn"
+                android:padding="10dp"
+                android:textColor="@color/btn_text_primary_theme1" />
+
+        </TableRow>
+
+    </TableLayout>
+
 </LinearLayout>
