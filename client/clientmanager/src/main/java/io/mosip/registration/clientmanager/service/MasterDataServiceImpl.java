@@ -10,6 +10,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.repository.*;
@@ -458,8 +459,13 @@ public class MasterDataServiceImpl implements MasterDataService {
 
 
     @Override
-    public List<String> getFieldValues(String fieldName, String langCode) {
+    public List<GenericValueDto> getFieldValues(String fieldName, String langCode) {
         return dynamicFieldRepository.getDynamicValues(fieldName, langCode);
+    }
+
+    @Override
+    public List<GenericValueDto> getFieldValuesByCode(String fieldName, String code) {
+        return dynamicFieldRepository.getDynamicValuesByCode(fieldName, code);
     }
 
 
@@ -469,7 +475,12 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public List<String> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode) {
+    public List<GenericValueDto> findLocationByCode(String code) {
+        return this.locationRepository.getLocationsByCode(code);
+    }
+
+    @Override
+    public List<GenericValueDto> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode) {
         Integer level = getHierarchyLevel(hierarchyLevelName);
         if (level == null)
             return Collections.EMPTY_LIST;
@@ -484,5 +495,10 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public String getTemplateContent(String templateName, String langCode) {
         return templateRepository.getTemplate(templateName, langCode);
+    }
+
+    @Override
+    public String getPreviewTemplateContent(String templateName, String templateTypeCode, String langCode) {
+        return templateRepository.getPreviewTemplate(templateName, templateTypeCode, langCode);
     }
 }

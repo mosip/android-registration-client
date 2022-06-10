@@ -32,6 +32,8 @@
                 android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:background="@drawable/rounded_corner_btn"
+                android:textColor="@color/btn_text_primary_theme1"
                 android:id="@+id/scan_doc"/>
 
         <TextView
