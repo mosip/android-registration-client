@@ -15,10 +15,10 @@ import android.widget.Toast;
 
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
-import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import io.mosip.registration.packetmanager.dto.SimpleType;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
-import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
@@ -376,8 +375,8 @@ public class PreviewActivity extends DaggerAppCompatActivity {
             value = String.valueOf(fieldValue);
         } else {
             if (null != fieldValue) {
-                List<GenericDto> valueList = (List<GenericDto>) fieldValue;
-                value = valueList.get(0).getName();
+                List<SimpleType> valueList = (List<SimpleType>) fieldValue;
+                value = valueList.get(0).getValue();
             }
         }
         return value;
@@ -387,11 +386,11 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         String value = "";
 
         if (fieldValue instanceof List<?>) {
-            Optional<GenericDto> demoValueInRequiredLang = ((List<GenericDto>) fieldValue).stream()
-                    .filter(valueDTO -> valueDTO.getLangCode().equals(lang)).findFirst();
+            Optional<SimpleType> demoValueInRequiredLang = ((List<SimpleType>) fieldValue).stream()
+                    .filter(valueDTO -> valueDTO.getLanguage().equals(lang)).findFirst();
 
-            if (demoValueInRequiredLang.isPresent() && demoValueInRequiredLang.get().getName() != null) {
-                value = demoValueInRequiredLang.get().getName();
+            if (demoValueInRequiredLang.isPresent() && demoValueInRequiredLang.get().getValue() != null) {
+                value = demoValueInRequiredLang.get().getValue();
             }
         } else if (fieldValue instanceof String || fieldValue instanceof Integer || fieldValue instanceof BigInteger
                 || fieldValue instanceof Double) {

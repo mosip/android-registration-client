@@ -31,7 +31,7 @@ public class BIR implements Serializable {
 	protected List<BIR> birs;
 	@Element(name = "SBInfo", required = false)
 	private SBInfo sbInfo;
-	@ElementMap(required = false)
+	@ElementMap(name = "others", key="key", attribute=true, required = false)
 	private HashMap<String, String> others;
 
 	public BIR(BIRBuilder birBuilder) {

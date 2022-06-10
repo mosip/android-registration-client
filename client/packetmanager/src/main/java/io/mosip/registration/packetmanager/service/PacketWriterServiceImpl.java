@@ -205,7 +205,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             for (Object obj : schemaFields) {
                 Map<String, Object> field = (Map<String, Object>) obj;
                 String fieldName = (String) field.get(PacketManagerConstant.SCHEMA_ID);
-                Log.i(TAG, "Adding field : " + fieldName);
 
                 switch ((String) field.get(PacketManagerConstant.SCHEMA_TYPE)) {
                     case PacketManagerConstant.BIOMETRICS_TYPE:
@@ -217,13 +216,16 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                             addDocumentDetailsToZip(fieldName, identity, subpacketZip, hashSequences, offlineMode);
                         break;
                     default:
-                        if (this.registrationPacket.getDemographics().get(fieldName) != null)
+                        if (this.registrationPacket.getDemographics().get(fieldName) != null) {
+                            Log.d(TAG, "Adding field : " + fieldName);
                             identity.put(fieldName, this.registrationPacket.getDemographics().get(fieldName));
+                        }
                         break;
                 }
             }
 
             byte[] identityBytes = getIdentity(identity).getBytes();
+            Log.i(TAG, "getIdentity(identity) >>>>" + new String(identityBytes));
             addEntryToZip(PacketManagerConstant.IDENTITY_FILENAME_WITH_EXT, identityBytes, subpacketZip);
             addHashSequenceWithSource(PacketManagerConstant.DEMOGRAPHIC_SEQ, PacketManagerConstant.IDENTITY_FILENAME, identityBytes,
                     hashSequences);
@@ -277,6 +279,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
 
     private void addDocumentDetailsToZip(String fieldName, Map<String, Object> identity,
                                          ZipOutputStream zipOutputStream, Map<String, HashSequenceMetaInfo> hashSequences, boolean offlineMode) throws Exception {
+        Log.d(TAG, "Adding field : " + fieldName);
         Document document = this.registrationPacket.getDocuments().get(fieldName);
         //filename without extension must be set as value in ID.json
         identity.put(fieldName, new DocumentType(fieldName, document.getType(), document.getFormat()));
@@ -292,7 +295,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                                           ZipOutputStream zipOutputStream, Map<String, HashSequenceMetaInfo> hashSequences, boolean offlineMode) throws Exception {
         BiometricRecord birType = this.registrationPacket.getBiometrics().get(fieldName);
         if (birType != null && birType.getSegments() != null && !birType.getSegments().isEmpty()) {
-
+            Log.d(TAG, "Adding field : " + fieldName);
             byte[] xmlBytes = null;
             try {
                 xmlBytes = packetManagerHelper.getXMLData(birType, offlineMode);

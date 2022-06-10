@@ -4,6 +4,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +19,9 @@ public class RegistrationDto extends Observable {
     private static final String TAG = RegistrationDto.class.getSimpleName();
     private static final String APPLICANT_DOB_SUBTYPE = "dateOfBirth";
     private static final String BIO_KEY = "%s_%s";
-    public static final String dateFormatConfig = "dd/MM/yyyy";
+
+    //TODO take it from config
+    public static final String dateFormatConfig = "yyyy/MM/dd";
     public static final String ageGroupConfig = "{'INFANT':'0-5','MINOR':'6-17','ADULT':'18-200'}";
 
     private String rId;
@@ -98,20 +101,13 @@ public class RegistrationDto extends Observable {
     }
 
     public void addDemographicField(String fieldId, String value, String language) {
-        List<GenericDto> list = (List<GenericDto>) this.demographics.getOrDefault(fieldId, new ArrayList<GenericDto>());
-
-        Optional<GenericDto> result = list.stream()
-                .filter( g -> g.getLangCode().equalsIgnoreCase(language) )
-                .findFirst();
-
-        if(result.isPresent()) {
-            list.remove(result.get());
-        }
-
-        if(isValidValue(value)) {
-            ((List<GenericDto>)this.demographics.computeIfAbsent(fieldId, demo -> new ArrayList<GenericDto>()))
-                    .add(new GenericDto(value, language));
-        }
+        this.demographics.compute(fieldId, (k, v) -> {
+            v = v != null ? v : new ArrayList<SimpleType>();
+            ((List<SimpleType>)v).removeIf( e -> e.getLanguage().equalsIgnoreCase(language));
+            if(isValidValue(value))
+                ((List<SimpleType>)v).add(new SimpleType(language, value));
+            return v;
+        });
         clearAndNotifyAllObservers();
     }
 
