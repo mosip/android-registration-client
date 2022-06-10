@@ -104,7 +104,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
         try {
             RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
-            webViewContent = getTemplate(registrationDto, "reg-preview-template-part", true);
+            webViewContent = getTemplate(registrationDto, "Android", "reg-preview-template-part", true);
         } catch (Exception e) {
             Log.e(TAG, "Failed to set the preview content", e);
         }
@@ -125,12 +125,12 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         webView.loadDataWithBaseURL(null, webViewContent, "text/HTML", "UTF-8", null);
     }
 
-    public String getTemplate(RegistrationDto registrationDto, String templateTypeCode, boolean isPreview) throws Exception {
+    public String getTemplate(RegistrationDto registrationDto, String templateName, String templateTypeCode, boolean isPreview) throws Exception {
         StringWriter writer = new StringWriter();
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.init();
 
-        String templateText = this.masterDataService.getTemplateContent(templateTypeCode, "eng");
+        String templateText = this.masterDataService.getPreviewTemplateContent(templateName, templateTypeCode, "eng");
         InputStream is = new ByteArrayInputStream(templateText.getBytes(StandardCharsets.UTF_8));
 
         VelocityContext velocityContext = new VelocityContext();

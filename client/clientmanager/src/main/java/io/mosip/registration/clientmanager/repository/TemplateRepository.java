@@ -26,6 +26,15 @@ public class TemplateRepository {
         return templateBuilder.toString();
     }
 
+    public String getPreviewTemplate(String templateName, String templateTypeCode, String langCode) {
+        List<String> templateTexts = templateDao.findPreviewTemplateText(templateName+"%",templateTypeCode+"%", langCode);
+        StringBuilder templateBuilder = new StringBuilder();
+        for(String txt : templateTexts) {
+            templateBuilder.append(txt);
+        }
+        return templateBuilder.toString();
+    }
+
     public void saveTemplate(JSONObject templateJson) throws JSONException {
         Template template = new Template(templateJson.getString("id"),
                 templateJson.getString("langCode"));

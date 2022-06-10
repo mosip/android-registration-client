@@ -102,4 +102,13 @@ public interface MasterDataService {
      */
     String getTemplateContent(String templateName, String language);
 
+    /**
+     *
+     * @param templateName
+     * @param templateTypeCode
+     * @param language
+     * @return
+     */
+    String getPreviewTemplateContent(String templateName, String templateTypeCode, String language);
+
 }
