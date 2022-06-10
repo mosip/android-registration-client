@@ -2,6 +2,8 @@ package io.mosip.registration.clientmanager.spi;
 
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+
 import java.util.List;
 
 public interface MasterDataService {
@@ -66,7 +68,9 @@ public interface MasterDataService {
      * @param langCode
      * @return
      */
-    List<String> getFieldValues(String fieldName, String langCode);
+    List<GenericValueDto> getFieldValues(String fieldName, String langCode);
+
+    List<GenericValueDto> getFieldValuesByCode(String fieldName, String code);
 
     /**
      * Returns the list of immediate children for the provided parent location code
@@ -82,7 +86,15 @@ public interface MasterDataService {
      * @param langCode
      * @return
      */
-    List<String> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode);
+    List<GenericValueDto> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode);
+
+    /**
+     * Returns the element for the provided code and language code
+     * @param code
+     * @param langCode
+     * @return
+     */
+    List<GenericValueDto> findLocationByCode(String code);
 
 
     /**
@@ -101,5 +113,14 @@ public interface MasterDataService {
      * @return
      */
     String getTemplateContent(String templateName, String language);
+
+    /**
+     *
+     * @param templateName
+     * @param templateTypeCode
+     * @param language
+     * @return
+     */
+    String getPreviewTemplateContent(String templateName, String templateTypeCode, String language);
 
 }
