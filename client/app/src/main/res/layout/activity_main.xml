@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <TableLayout
-        android:weightSum="5"
+        android:weightSum="9"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,6 +20,8 @@
             >
 
             <Button
+                android:drawableTop="@drawable/sync"
+                android:drawableTint="@color/btn_text_primary_theme1"
                 android:id="@+id/button12"
                 android:onClick="click_sync_masterdata"
                 android:text="Sync Masterdata"
@@ -28,10 +30,14 @@
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
                 android:background="@drawable/rounded_corner_btn"
-                android:padding="10dp"
+                android:paddingTop="25dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:textColor="@color/btn_text_primary_theme1" />
 
             <Button
+                android:drawableTop="@drawable/new_reg"
+                android:drawableTint="@color/btn_text_primary_theme1"
                 android:id="@+id/button14"
                 android:onClick="click_new_registration"
                 android:text="New Registration"
@@ -40,7 +46,9 @@
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
                 android:background="@drawable/rounded_corner_btn"
-                android:padding="10dp"
+                android:paddingTop="25dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:textColor="@color/btn_text_primary_theme1"/>
         </TableRow>
 
@@ -53,6 +61,8 @@
             >
 
             <Button
+                android:drawableTop="@drawable/active_upload_document"
+                android:drawableTint="@color/btn_text_primary_theme1"
                 android:id="@+id/button15"
                 android:onClick="click_list_packets"
                 android:text="List Registrations"
@@ -61,10 +71,14 @@
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
                 android:background="@drawable/rounded_corner_btn"
-                android:padding="10dp"
+                android:paddingTop="25dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:textColor="@color/btn_text_primary_theme1" />
 
             <Button
+                android:drawableTop="@drawable/sync"
+                android:drawableTint="@color/btn_text_primary_theme1"
                 android:id="@+id/main_jobservice_btn"
                 android:onClick="click_list_JobService"
                 android:text="Job Services"
@@ -73,7 +87,9 @@
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
                 android:background="@drawable/rounded_corner_btn"
-                android:padding="10dp"
+                android:paddingTop="25dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:textColor="@color/btn_text_primary_theme1" />
 
         </TableRow>
