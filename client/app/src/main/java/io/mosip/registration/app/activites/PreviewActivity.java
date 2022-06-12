@@ -196,7 +196,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
         bioData.put("FingerCount", capturedFingers.stream().filter( b -> b.getBioValue() != null).count());
         bioData.put("IrisCount", capturedIris.stream().filter( b -> b.getBioValue() != null).count());
-        bioData.put("FaceCount", capturedFace.size());
+        bioData.put("FaceCount", 1); //TODO check this
         bioData.put("subType", field.getSubType());
         bioData.put("label", getFieldLabel(field, registrationDto));
 
