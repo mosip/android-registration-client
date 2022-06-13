@@ -12,7 +12,6 @@ import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
-import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 import javax.inject.Singleton;
 
@@ -140,6 +139,12 @@ public class RoomModule {
 
     @Singleton
     @Provides
+    JobTransactionDao providesJobTransactionDao(ClientDatabase clientDatabase) {
+        return clientDatabase.jobTransactionDao();
+    }
+
+    @Singleton
+    @Provides
     CACertificateStoreDao providesCACertificateStoreDao(ClientDatabase clientDatabase) {
         return clientDatabase.caCertificateStoreDao();
     }
@@ -149,6 +154,7 @@ public class RoomModule {
     LanguageDao providesLanguageDao(ClientDatabase clientDatabase) {
         return clientDatabase.languageDao();
     }
+
 
     @Provides
     @Singleton
@@ -233,6 +239,12 @@ public class RoomModule {
     @Singleton
     UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao) {
         return new UserDetailRepository(userDetailDao, userTokenDao);
+    }
+
+    @Provides
+    @Singleton
+    JobTransactionRepository provideJobTransactionRepository(JobTransactionDao jobTransactionDao) {
+        return new JobTransactionRepository(jobTransactionDao);
     }
 
     @Provides
