@@ -18,7 +18,7 @@ import io.mosip.registration.keymanager.entity.KeyStore;
         ApplicantValidDocument.class, Template.class, KeyStore.class,
         Location.class, GlobalParam.class, IdentitySchema.class, LocationHierarchy.class,
         BlocklistedWord.class, SyncJobDef.class, UserDetail.class, JobTransaction.class,
-        CACertificateStore.class, Language.class},
+        CACertificateStore.class, Language.class, Audit.class},
         version = 1, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
 
@@ -55,6 +55,7 @@ public abstract class ClientDatabase extends RoomDatabase {
     public abstract JobTransactionDao jobTransactionDao();
     public abstract CACertificateStoreDao caCertificateStoreDao();
     public abstract LanguageDao languageDao();
+    public abstract AuditDao auditDao();
 
     public static void destroyDB(){
         INSTANCE=null;

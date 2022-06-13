@@ -1,41 +1,30 @@
 package io.mosip.registration.clientmanager.entity;
 
-import static androidx.room.ColumnInfo.TEXT;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.time.LocalDateTime;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
  * The Audit Entity class with required fields to be captured and recorded
  *
  * @author Anshul Vanawat
- *
  */
 @Entity(tableName = "app_audit_log")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Audit {
 
     @NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "log_id")
-    private String uuid;
+    private int uuid;
 
     @ColumnInfo(name = "log_dtimes")
-    private LocalDateTime createdAt;
+    private Long createdAt;
 
     @ColumnInfo(name = "event_id")
     private String eventId;
@@ -47,7 +36,7 @@ public class Audit {
     private String eventType;
 
     @ColumnInfo(name = "action_dtimes")
-    private LocalDateTime actionTimeStamp;
+    private Long actionTimeStamp;
 
     @ColumnInfo(name = "host_name")
     private String hostName;
@@ -84,4 +73,24 @@ public class Audit {
 
     @ColumnInfo(name = "log_desc")
     private String description;
+
+    public Audit(Long createdAt, String eventId, String eventName, String eventType, Long actionTimeStamp, String hostName, String hostIp, String applicationId, String applicationName, String sessionUserId, String sessionUserName, String refId, String refIdType, String createdBy, String moduleName, String moduleId, String description) {
+        this.createdAt = createdAt;
+        this.eventId = eventId;
+        this.eventName = eventName;
+        this.eventType = eventType;
+        this.actionTimeStamp = actionTimeStamp;
+        this.hostName = hostName;
+        this.hostIp = hostIp;
+        this.applicationId = applicationId;
+        this.applicationName = applicationName;
+        this.sessionUserId = sessionUserId;
+        this.sessionUserName = sessionUserName;
+        this.refId = refId;
+        this.refIdType = refIdType;
+        this.createdBy = createdBy;
+        this.moduleName = moduleName;
+        this.moduleId = moduleId;
+        this.description = description;
+    }
 }
