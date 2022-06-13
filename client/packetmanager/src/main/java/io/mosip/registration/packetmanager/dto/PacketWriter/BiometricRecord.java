@@ -1,6 +1,3 @@
-/**
- * 
- */
 package io.mosip.registration.packetmanager.dto.PacketWriter;
 
 import java.io.Serializable;
@@ -9,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRInfo;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.VersionType;
 import lombok.Data;
 
 

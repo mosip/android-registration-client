@@ -1,19 +1,12 @@
-/**
- * 
- */
 package io.mosip.registration.packetmanager.cbeffutil.jaxbclasses;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
-/**
- * @author Ramadurai Pandian
- *
- */
-@Data
-@NoArgsConstructor
+@Root
 public class SBInfo {
 
+	@Element(name = "Format")
 	private RegistryIDType format;
 
 	public SBInfo(SBInfoBuilder sBInfoBuilder) {
@@ -35,14 +28,6 @@ public class SBInfo {
 		public SBInfo build() {
 			return new SBInfo(this);
 		}
-	}
-
-	public SBInfoType toSBInfoType() {
-		SBInfoType sBInfoType = new SBInfoType();
-		if (getFormat() != null) {
-			sBInfoType.setFormat(getFormat());
-		}
-		return sBInfoType;
 	}
 
 }

@@ -48,7 +48,7 @@ public class PacketCryptoServiceImpl implements IPacketCryptoService {
     @Override
     public byte[] encrypt(String refId, byte[] packet) throws Exception {
         CryptoManagerRequestDto cryptomanagerRequestDto = new CryptoManagerRequestDto();
-        cryptomanagerRequestDto.setApplicationId("KERNEL");
+        cryptomanagerRequestDto.setApplicationId("REGISTRATION");
         cryptomanagerRequestDto.setData(CryptoUtil.base64encoder.encodeToString(packet));
         cryptomanagerRequestDto.setReferenceId(refId);
         SecureRandom sRandom = new SecureRandom();

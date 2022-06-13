@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.repository;
 
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
+import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.LocationHierarchy;
 import org.json.JSONException;
@@ -33,8 +34,13 @@ public class LocationRepository {
         return this.locationDao.findAllLocationByParentLocCode(parentLocCode, langCode);
     }
 
-    public List<String> getLocationsBasedOnHierarchyLevel(int level, String langCode) {
+    public List<GenericValueDto> getLocationsBasedOnHierarchyLevel(int level, String langCode) {
         return this.locationDao.findAllLocationByHierarchyLevel(level, langCode);
+    }
+
+
+    public List<GenericValueDto> getLocationsByCode(String code) {
+        return this.locationDao.findAllLocationByCode(code);
     }
 
     public void saveLocationData(JSONObject locationJson) throws JSONException {
