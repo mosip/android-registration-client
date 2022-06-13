@@ -12,6 +12,10 @@ import org.json.JSONObject;
 import javax.inject.Inject;
 import java.util.Map;
 
+
+/**
+ * @author anusha
+ */
 public class AboutActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = AboutActivity.class.getSimpleName();

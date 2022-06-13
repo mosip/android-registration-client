@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
 import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.IdentitySchema;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
@@ -15,6 +16,8 @@ import org.json.JSONObject;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class IdentitySchemaRepository {
 
@@ -60,6 +63,19 @@ public class IdentitySchemaRepository {
             throw new Exception("Identity schema not found for version : " + version);
 
         return getIdSchemaResponse(context, identitySchema).getNewProcess();
+    }
+
+    public List<FieldSpecDto> getAllFieldSpec(Context context, Double version) throws Exception {
+        List<FieldSpecDto> schemaFields = new ArrayList<>();
+        ProcessSpecDto processSpec = getNewProcessSpec(context, version);
+
+        if (processSpec == null)
+            throw new Exception("Process spec not found for version : " + version);
+
+        processSpec.getScreens().forEach(screen -> {
+            schemaFields.addAll(screen.getFields());
+        });
+        return schemaFields;
     }
 
     private IdSchemaResponse getIdSchemaResponse(Context context, IdentitySchema identitySchema) throws Exception {

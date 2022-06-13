@@ -15,6 +15,8 @@
                     android:textAllCaps="false"
                     android:onClick="click_new_registration"
                     android:layout_height="63dp" android:id="@+id/button13" android:textAlignment="center"
+                    android:background="@drawable/rounded_corner_btn"
+                    android:textColor="@color/btn_text_primary_theme1"
                     tools:layout_editor_absoluteY="82dp" tools:layout_editor_absoluteX="85dp"
                     tools:ignore="MissingConstraints"/>
             <Button
@@ -23,6 +25,8 @@
                     android:textAllCaps="false"
                     android:onClick="click_sync_masterdata"
                     android:layout_height="63dp" android:id="@+id/button15" android:textAlignment="center"
+                    android:background="@drawable/rounded_corner_btn"
+                    android:textColor="@color/btn_text_primary_theme1"
                     tools:layout_editor_absoluteY="177dp" tools:layout_editor_absoluteX="85dp"
                     tools:ignore="MissingConstraints"/>
         </LinearLayout>

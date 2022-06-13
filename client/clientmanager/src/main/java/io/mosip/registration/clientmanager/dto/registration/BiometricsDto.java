@@ -8,11 +8,14 @@ import lombok.Data;
 public class BiometricsDto {
 
     private String modality;
-    private String attribute;
+    private String bioSubType;
+    private String bioValue;
     private String specVersion;
     private boolean isException;
     private String decodedBioResponse;
     private String signature;
-    private String bioValue;
-    private String qualityScore;
+    private boolean isForceCaptured;
+    private int numOfRetries;
+    private double sdkScore;
+    private float qualityScore;
 }

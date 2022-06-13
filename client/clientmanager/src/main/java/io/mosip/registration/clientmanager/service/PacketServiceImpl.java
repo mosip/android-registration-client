@@ -56,6 +56,9 @@ import java.util.List;
 public class PacketServiceImpl implements PacketService {
 
     private static final String TAG = PacketServiceImpl.class.getSimpleName();
+    public static final String PACKET_EXTERNAL_STATUS_READER_ID = "mosip.registration.packet.external.status";
+    public static final String PACKET_SYNC_ID = "mosip.registration.sync";
+    public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
             PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
@@ -95,8 +98,8 @@ public class PacketServiceImpl implements PacketService {
 
         RegProcRequestWrapper<List<SyncRIDRequest>> wrapper = new RegProcRequestWrapper<>();
         wrapper.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
-        wrapper.setId(String.valueOf(R.string.packet_sync_id));
-        wrapper.setVersion(String.valueOf(R.string.packet_sync_version));
+        wrapper.setId(PACKET_SYNC_ID);
+        wrapper.setVersion(PACKET_SYNC_VERSION);
         wrapper.setRequest(new ArrayList<SyncRIDRequest>());
         SyncRIDRequest syncRIDRequest = new SyncRIDRequest();
         syncRIDRequest.setRegistrationId(registration.getPacketId());
@@ -108,9 +111,9 @@ public class PacketServiceImpl implements PacketService {
         if (registration.getAdditionalInfo() != null) {
             String additionalInfo = new String(registration.getAdditionalInfo());
             JSONObject jsonObject = new JSONObject(additionalInfo);
-            syncRIDRequest.setName(jsonObject.getString("name"));
-            syncRIDRequest.setPhone(jsonObject.getString("phone"));
-            syncRIDRequest.setEmail(jsonObject.getString("email"));
+            syncRIDRequest.setName(jsonObject.has("name") ? jsonObject.getString("name") : null);
+            syncRIDRequest.setPhone(jsonObject.has("phone") ? jsonObject.getString("phone") : null);
+            syncRIDRequest.setEmail(jsonObject.has("email") ? jsonObject.getString("email") : null);
             syncRIDRequest.setLangCode(jsonObject.getString("langCode"));
         }
 
@@ -139,7 +142,7 @@ public class PacketServiceImpl implements PacketService {
                         registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
                         Toast.makeText(context, "Packet synced successfully", Toast.LENGTH_LONG).show();
                     } else
-                        Toast.makeText(context, "Packet sync failed : " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Packet sync failed : " + error, Toast.LENGTH_LONG).show();
                 } else
                     Toast.makeText(context, "Packet sync failed with Status Code : " + response.code(), Toast.LENGTH_LONG).show();
             }
@@ -208,8 +211,8 @@ public class PacketServiceImpl implements PacketService {
             return;
 
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId(String.valueOf(R.string.packet_external_status_id));
-        packetStatusRequest.setVersion(String.valueOf(R.string.packet_sync_version));
+        packetStatusRequest.setId(PACKET_EXTERNAL_STATUS_READER_ID);
+        packetStatusRequest.setVersion(PACKET_SYNC_VERSION);
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
 
         List<PacketIdDto> packets = new ArrayList<>();

@@ -49,4 +49,31 @@
     <string name="cancelling_job_failed">Échec de l\'annulation de la tâche</string>
     <string name="job_scheduled">Tâche planifiée</string>
     <string name="job_cancelled">Tâche annulée</string>
+    <string name="left_slab">Main gauche</string>
+    <string name="right_slab">Main droite</string>
+    <string name="thumbs">Pouces</string>
+    <string name="double_iris">Iris</string>
+    <string name="face">Visage</string>
+    <string name="exception_photo">Photo d\'exception</string>
+
+    <!-- Template -->
+    <string name="app_id">ID d\'application</string>
+    <string name="uin">UIN</string>
+    <string name="date">Date</string>
+    <string name="demographic_info">Informations démographiques</string>
+    <string name="photo">Photo</string>
+    <string name="documents">Documents</string>
+    <string name="biometrics">Biométrie</string>
+    <string name="face_label">Visage</string>
+    <string name="exception_photo_label">Photo d\'exception</string>
+    <string name="ro_label">Agent d\'inscription</string>
+    <string name="reg_center">Centre d\'inscription</string>
+    <string name="imp_guidelines">Directives importantes</string>
+    <string name="left_iris">Diaphragme gauche</string>
+    <string name="right_iris">Diaphragme droit</string>
+    <string name="left_hand_palm">Paume de la main gauche</string>
+    <string name="right_hand_palm">Paume de la main droite</string>
+    <string name="thumbs_label">Pouces</string>
+    <string name="fingers">Des doigts</string>
+    <string name="ack_slip">Acknowledgement</string>
 </resources>

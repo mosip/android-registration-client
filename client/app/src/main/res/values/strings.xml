@@ -45,7 +45,6 @@
     <string name="yyyy_label">YYYY</string>
     <string name="age_label">Age</string>
     <string name="page_label">%d Page(s)</string>
-    <string name="ref_id">Reference Id</string>
     <string name="starting_job">Starting job %s</string>
     <string name="setting_up_job">Setting up job</string>
     <string name="cancelling_job">Cancelling Job</string>
@@ -54,5 +53,33 @@
     <string name="cancelling_job_failed">Cancelling job failed</string>
     <string name="job_scheduled">Job scheduled</string>
     <string name="job_cancelled">Job cancelled</string>
+    <string name="ref_id">Ref Id</string>
+    <string name="left_slab">Left Slab</string>
+    <string name="right_slab">Right Slab</string>
+    <string name="thumbs">Thumbs</string>
+    <string name="double_iris">Iris</string>
+    <string name="face">Face</string>
+    <string name="exception_photo">Exception Photo</string>
+
+    <!-- Template -->
+    <string name="app_id">Application ID</string>
+    <string name="uin">UIN</string>
+    <string name="date">Date</string>
+    <string name="demographic_info">Demographic Information</string>
+    <string name="photo">Photo</string>
+    <string name="documents">Documents</string>
+    <string name="biometrics">Biometrics</string>
+    <string name="face_label">Face</string>
+    <string name="exception_photo_label">Exception Photo</string>
+    <string name="ro_label">Registration Officer</string>
+    <string name="reg_center">Registration Center</string>
+    <string name="imp_guidelines">Important Guidelines</string>
+    <string name="left_iris">Left Iris</string>
+    <string name="right_iris">Right Iris</string>
+    <string name="left_hand_palm">Left Hand Palm</string>
+    <string name="right_hand_palm">Right Hand Palm</string>
+    <string name="thumbs_label">Thumbs</string>
+    <string name="fingers">Fingers</string>
+    <string name="ack_slip">Acknowledgement</string>
 
 </resources>

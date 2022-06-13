@@ -1,16 +1,10 @@
 package io.mosip.registration.clientmanager.spi;
 
 import io.mosip.registration.clientmanager.constant.SBIError;
-import io.mosip.registration.clientmanager.dto.sbi.SBIDevice;
-import io.mosip.registration.clientmanager.dto.sbi.SBIRequest;
-import io.mosip.registration.clientmanager.dto.sbi.SBIResponse;
 import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
-import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.packetmanager.util.DateUtils;
 
-import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,46 +29,6 @@ public abstract class BiometricsService {
     private int allowedResponseLagMins = 5;
     public static final String BIOMETRIC_SEPARATOR = "(?<=\\.)(.*)(?=\\.)";
     private static final String DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-
-    /**
-     * Returns implemented SPEC version
-     * Eg : "1.0"
-     * @return
-     */
-    public abstract String getSpecVersion();
-
-    /**
-     * Discovers the available Ready status devices
-     * Below validations should be handled in the implementation
-     * JWT validation
-     * Trust validation
-     * timestamp validation
-     * timeouts
-     * @return
-     */
-    public abstract List<SBIDevice> getDeviceInfo();
-
-    /**
-     * Check if the device is Ready and raise stream intent
-     * for the provided modality
-     * @param sbiDevice Device Details as returned by getDeviceInfo
-     * @param modality Face / Finger / Iris
-     * @return
-     */
-    public abstract InputStream getStream(SBIDevice sbiDevice, String modality);
-
-    /**
-     * Check if the device is Ready and raise rcapture intent
-     * Below validations should be handled in the implementation
-     * JWT validation
-     * Trust validation
-     * timestamp validation
-     * qualityScore validation
-     * @param sbiDevice Device Details as returned by getDeviceInfo
-     * @param sbiRequestDto rcapture request details
-     * @return
-     */
-    public abstract SBIResponse captureModality(SBIDevice sbiDevice, SBIRequest sbiRequestDto);
 
     /**
      * Validates JWT response from DeviceInfo and Rcapture responses.

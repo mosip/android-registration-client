@@ -82,6 +82,12 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
 
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
+    implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+
+    implementation 'org.apache.velocity:velocity:1.7'
+
     // added client-manager Android library module as a dependency
     implementation project(path: ':keymanager')
     implementation project(':clientmanager')

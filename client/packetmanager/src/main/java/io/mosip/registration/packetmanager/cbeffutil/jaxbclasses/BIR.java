@@ -1,34 +1,38 @@
-/**
- * 
- */
 package io.mosip.registration.packetmanager.cbeffutil.jaxbclasses;
-
-import java.util.List;
-
-import javax.xml.bind.JAXBElement;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.simpleframework.xml.*;
 
-/**
- * 
- * BIR class with Builder to create data
- * 
- * @author Ramadurai Pandian
- *
- */
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
+@Namespace(reference = "http://standards.iso.org/iso-iec/19785/-3/ed-2/")
+@Root(name = "BIR")
 @Data
 @NoArgsConstructor
-public class BIR {
+public class BIR implements Serializable {
 
-	private BIRVersion version;
-	private BIRVersion cbeffversion;
+	@Element(name = "Version", required = false)
+	private VersionType version;
+	@Element(name = "CBEFFVersion", required = false)
+	private VersionType cbeffversion;
+	@Element(name = "BIRInfo", required = false)
 	private BIRInfo birInfo;
+	@Element(name = "BDBInfo", required = false)
 	private BDBInfo bdbInfo;
+	@Element(name = "BDB", required = false)
 	private byte[] bdb;
+	@Element(name = "SB", required = false)
 	private byte[] sb;
+	@ElementList(name = "BIR", required = false)
+	protected List<BIR> birs;
+	@Element(name = "SBInfo", required = false)
 	private SBInfo sbInfo;
-	private List<JAXBElement<String>> element;
+	@ElementMap(name = "others", key="key", attribute=true, required = false)
+	private HashMap<String, String> others;
 
 	public BIR(BIRBuilder birBuilder) {
 		this.version = birBuilder.version;
@@ -38,86 +42,38 @@ public class BIR {
 		this.bdb = birBuilder.bdb;
 		this.sb = birBuilder.sb;
 		this.sbInfo = birBuilder.sbInfo;
-		this.element = birBuilder.element;
-	}
-
-	/**
-	 * @return the element
-	 */
-	public List<JAXBElement<String>> getElement() {
-		return element;
-	}
-
-	/**
-	 * @return the version
-	 */
-	public BIRVersion getVersion() {
-		return version;
-	}
-
-	/**
-	 * @return the cbeffversion
-	 */
-	public BIRVersion getCbeffversion() {
-		return cbeffversion;
-	}
-
-	/**
-	 * @return the birInfo
-	 */
-	public BIRInfo getBirInfo() {
-		return birInfo;
-	}
-
-	/**
-	 * @return the bdbInfo
-	 */
-	public BDBInfo getBdbInfo() {
-		return bdbInfo;
-	}
-
-	/**
-	 * @return the bdb
-	 */
-	public byte[] getBdb() {
-		return bdb;
-	}
-
-	/**
-	 * @return the sb
-	 */
-	public byte[] getSb() {
-		return sb;
-	}
-
-	/**
-	 * @return the sbInfo
-	 */
-	public SBInfo getSbInfo() {
-		return sbInfo;
+		this.others = birBuilder.others;
 	}
 
 	public static class BIRBuilder {
-		private BIRVersion version;
-		private BIRVersion cbeffversion;
+		private VersionType version;
+		private VersionType cbeffversion;
 		private BIRInfo birInfo;
 		private BDBInfo bdbInfo;
 		private byte[] bdb;
 		private byte[] sb;
 		private SBInfo sbInfo;
-		private List<JAXBElement<String>> element;
+		private HashMap<String, String> others = new HashMap<>();
 
-		public BIRBuilder withElement(List<JAXBElement<String>> list) {
-			this.element = list;
+		public BIRBuilder withOthers(HashMap<String, String> others) {
+			this.others = others;
 			return this;
 		}
 
-		public BIRBuilder withVersion(BIRVersion version) {
+		public BIRBuilder withOthers(String key, String value) {
+			if(Objects.isNull(this.others))
+				this.others = new HashMap<>();
+			else
+				this.others.put(key, value);
+			return this;
+		}
+
+		public BIRBuilder withVersion(VersionType version) {
 			this.version = version;
 			return this;
 		}
 
-		public BIRBuilder withCbeffversion(BIRVersion cbeffversion) {
+		public BIRBuilder withCbeffversion(VersionType cbeffversion) {
 			this.cbeffversion = cbeffversion;
 			return this;
 		}
@@ -138,7 +94,7 @@ public class BIR {
 		}
 
 		public BIRBuilder withSb(byte[] sb) {
-			this.sb = sb;
+			this.sb = sb == null ? new byte[0] : sb;
 			return this;
 		}
 
@@ -151,25 +107,6 @@ public class BIR {
 			return new BIR(this);
 		}
 
-	}
-
-	public BIRType toBIRType(BIR bir) {
-		BIRType bIRType = new BIRType();
-		if (bir.getVersion() != null)
-			bIRType.setVersion(bir.getVersion().toVersion());
-		if (bir.getCbeffversion() != null)
-			bIRType.setCBEFFVersion(bir.getCbeffversion().toVersion());
-		bIRType.setBDB(getBdb());
-		bIRType.setSB(getSb());
-		if (bir.getBirInfo() != null)
-			bIRType.setBIRInfo(bir.getBirInfo().toBIRInfo());
-		if (bir.getBdbInfo() != null)
-			bIRType.setBDBInfo(bir.getBdbInfo().toBDBInfo());
-		if (bir.getSbInfo() != null)
-			bIRType.setSBInfo(bir.getSbInfo().toSBInfoType());
-		if (bir.getElement() != null)
-			bIRType.setAny(getElement());
-		return bIRType;
 	}
 
 }
