@@ -80,7 +80,6 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
         fieldPanel = findViewById(R.id.fieldPanel);
 
         try {
-
             //Adding file permissions
             String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -90,27 +89,6 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             List<String> languages = registrationService.getRegistrationDto().getSelectedLanguages();
             String[] screens = getIntent().getExtras().getStringArray("screens");
             int currentScreenIndex = getIntent().getExtras().getInt("nextScreenIndex");
-
-            if (currentScreenIndex < screens.length) {
-                ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(getApplicationContext(),
-                        registrationService.getRegistrationDto().getSchemaVersion());
-                Optional<ScreenSpecDto> screen = processSpecDto.getScreens().stream()
-                        .filter(s -> s.getName().equals(screens[currentScreenIndex]))
-                        .findFirst();
-
-                //this can't happen at this stage
-                if (!screen.isPresent())
-                    throw new Exception("Invalid screen name found");
-
-                getSupportActionBar().setTitle(screen.get().getLabel().get(languages.get(0)));
-                getSupportActionBar().setSubtitle(processSpecDto.getFlow());
-
-                loadScreenFields(screen.get());
-            } else {
-                //No more screens start loading preview screen
-                Intent intent = new Intent(this, PreviewActivity.class);
-                startActivity(intent);
-            }
 
             final Button nextButton = findViewById(R.id.next);
             nextButton.setOnClickListener(v -> {
@@ -134,16 +112,43 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                 }
             });
 
+            if (currentScreenIndex < screens.length) {
+                ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(getApplicationContext(),
+                        registrationService.getRegistrationDto().getSchemaVersion());
+                Optional<ScreenSpecDto> screen = processSpecDto.getScreens().stream()
+                        .filter(s -> s.getName().equals(screens[currentScreenIndex]))
+                        .findFirst();
+
+                //this can't happen at this stage
+                if (!screen.isPresent())
+                    throw new Exception("Invalid screen name found");
+
+                getSupportActionBar().setTitle(screen.get().getLabel().get(languages.get(0)));
+                getSupportActionBar().setSubtitle(processSpecDto.getFlow());
+
+                if(!loadScreenFields(screen.get())) {
+                    //start activity to render next screen
+                    ((Button)findViewById(R.id.next)).performClick();
+                }
+
+            } else {
+                //No more screens start loading preview screen
+                Intent intent = new Intent(this, PreviewActivity.class);
+                startActivity(intent);
+            }
+
         } catch (Throwable t) {
             Log.e(TAG, "Failed to launch registration screen", t);
             goToHome();
         }
     }
 
-    private void loadScreenFields(ScreenSpecDto screenSpecDto) throws Exception {
+    private boolean loadScreenFields(ScreenSpecDto screenSpecDto) throws Exception {
         fieldPanel.removeAllViews();
         DynamicComponentFactory factory = new DynamicComponentFactory(this, masterDataService);
 
+        Map<String, Object> mvelContext = this.registrationService.getRegistrationDto().getMVELDataContext();
+        int visibleFields = 0;
         for (FieldSpecDto fieldSpecDto : screenSpecDto.getFields()) {
             if (fieldSpecDto.getInputRequired()) {
                 DynamicView dynamicView = null;
@@ -182,9 +187,13 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                     fieldPanel.addView((View) dynamicView);
                     currentDynamicViews.put(fieldSpecDto.getId(), dynamicView);
                     this.registrationService.getRegistrationDto().addObserver((Observer) dynamicView);
+                    visibleFields =  visibleFields + (UserInterfaceHelperService.
+                            isFieldVisible(fieldSpecDto, mvelContext) ? 1 : 0);
                 }
             }
         }
+        Log.i(TAG, "Fields visible : " + visibleFields);
+        return visibleFields > 0 ? true : false;
     }
 
     public void goToHome() {
