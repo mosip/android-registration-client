@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,9 +30,11 @@ import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
+import io.mosip.registration.clientmanager.dao.TemplateDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
@@ -71,6 +74,7 @@ public class MasterDataServiceImplTest {
     SyncRestService syncRestService;
     ClientCryptoManagerService clientCryptoManagerService;
     GlobalParamRepository globalParamRepository;
+    TemplateRepository templateRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -80,6 +84,9 @@ public class MasterDataServiceImplTest {
 
         GlobalParamDao globalParamDao = clientDatabase.globalParamDao();
         globalParamRepository = new GlobalParamRepository(globalParamDao);
+
+        TemplateDao templateDao = clientDatabase.templateDao();
+        templateRepository = new TemplateRepository(templateDao);
 
         server = new MockWebServer();
         server.start();
@@ -252,5 +259,19 @@ public class MasterDataServiceImplTest {
 
         List<GlobalParam> globalParams = globalParamRepository.getGlobalParams();
         assertTrue(globalParams.isEmpty());
+    }
+
+    @Test
+    public void getPreviewTemplateContentTest() {
+        MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
+                , objectMapper, syncRestService, clientCryptoManagerService, null
+                , null, null, null
+                , templateRepository, null, null
+                , null, globalParamRepository, null
+                , null, null, null
+                , null, null);
+
+        assertNotNull(masterDataService.getPreviewTemplateContent("Android",
+                "reg-preview-template", "eng"));
     }
 }
