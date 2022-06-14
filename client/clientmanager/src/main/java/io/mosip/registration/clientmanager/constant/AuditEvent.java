@@ -7,25 +7,41 @@ import static io.mosip.registration.clientmanager.constant.AuditEventType.USER_E
 /**
  * Enum for Audit Events
  *
- * @author Balaji Sridharan
+ * @author Anshul Vanawat
  * @since 1.0.0
  */
 
 public enum AuditEvent {
 
-    // Login
-    LOGIN_AUTHENTICATE_USER_ID("REG-AUTH-001", USER_EVENT.getCode(), "LOGIN_AUTHENTICATE_USER_ID",
-            "Login authenticating user id: Click of Submit"),
-    LOGIN_WITH_PASSWORD("REG-AUTH-002", USER_EVENT.getCode(), "LOGIN_WITH_PASSWORD",
+    //Loaded
+    LOADED_LOGIN("REG-LOAD-001", USER_EVENT.getCode(), "LOADED_LOGIN", "Login activity loaded"),
+    LOADED_ABOUT("REG-LOAD-002", USER_EVENT.getCode(), "LOADED_ABOUT", "About activity loaded"),
+    LOADED_HOME("REG-LOAD-003", USER_EVENT.getCode(), "LOADED_HOME", "Home activity loaded"),
+    LOADED_REG_LISTING("REG-LOAD-004", USER_EVENT.getCode(), "LOADED_REG_LISTING", "Registration List activity loaded"),
+    LOADED_JOB_SERVICE("REG-LOAD-005", USER_EVENT.getCode(), "LOADED_JOB_SERVICE", "Job service list activity loaded"),
+
+    //Login
+    LOGIN_WITH_PASSWORD("REG-AUTH-001", USER_EVENT.getCode(), "LOGIN_WITH_PASSWORD",
             "Login with password: Click of Submit"),
-    LOGIN_GET_OTP("REG-AUTH-003", USER_EVENT.getCode(), "LOGIN_GET_OTP", "Login with OTP: Get OTP"),
-    LOGIN_SUBMIT_OTP("REG-AUTH-004", USER_EVENT.getCode(), "LOGIN_SUBMIT_OTP", "Login with OTP: Submit OTP"),
-    LOGIN_RESEND_OTP("REG-AUTH-005", USER_EVENT.getCode(), "LOGIN_RESEND_OTP", "Login with OTP: Resend OTP"),
-    LOGIN_WITH_FINGERPRINT("REG-AUTH-006", USER_EVENT.getCode(), "LOGIN_WITH_FINGERPRINT",
-            "Login with fingerprint: Capture and submit"),
-    LOGIN_WITH_IRIS("REG-AUTH-007", USER_EVENT.getCode(), "LOGIN_WITH_IRIS", "Login with iris: Capture and submit"),
-    LOGIN_WITH_FACE("REG-AUTH-008", USER_EVENT.getCode(), "LOGIN_WITH_FACE", "Login with face: Capture and submit"),
-    LOGOUT_USER("REG-AUTH-009", USER_EVENT.getCode(), "LOGOUT_USER", "Logout"),
+    ABOUT_CLIENT("REG-AUTH-002", USER_EVENT.getCode(), "ABOUT_CLIENT", "Press and hold on logo to navigate: About activity"),
+    LOGOUT_USER("REG-AUTH-003", USER_EVENT.getCode(), "LOGOUT_USER", "Logout"),
+
+    //Home
+    MASTER_DATA_SYNC("REG-HOME-001", USER_EVENT.getCode(), "MASTER_DATA_SYNC", "Master data sync clicked"),
+    NEW_REGISTRATION("REG-HOME-002", USER_EVENT.getCode(), "NEW_REGISTRATION", "New registration clicked"),
+    LIST_REGISTRATION("REG-HOME-003", USER_EVENT.getCode(), "LIST_REGISTRATION", "List registration clicked"),
+    LIST_JOB_SERVICE("REG-HOME-004", USER_EVENT.getCode(), "LIST_JOB_SERVICE", "List job service clicked"),
+
+    //REG_PACKET_LIST
+    SYNC_PACKET("REG-PKT-001", USER_EVENT.getCode(), "SYNC_PACKET", "Packet sync clicked"),
+    UPLOAD_PACKET("REG-PKT-002", USER_EVENT.getCode(), "UPLOAD_PACKET", "Upload packet clicked"),
+
+    //JOB_SERVICE
+    TRIGGER_JOB("REG-JOB-001", USER_EVENT.getCode(), "TRIGGER_JOB", "Trigger job service clicked"),
+    SCHEDULE_JOB("REG-JOB-002", USER_EVENT.getCode(), "SCHEDULE_JOB", "Schedule job service clicked"),
+    CANCEL_JOB("REG-JOB-003", USER_EVENT.getCode(), "CANCEL_JOB", "Cancel scheduled job service clicked"),
+
+    //REGISTRATION
 
     // Navigation
     NAV_LOST_UIN("REG-EVT-001", USER_EVENT.getCode(), "NAV_LOST_UIN", "Click of navigation link: Lost UIN"),
@@ -156,9 +172,6 @@ public enum AuditEvent {
 
     // Sync Packet Ids
     SYNC_PACKET_IDS("REG-SYNC-PKTS-001", SYSTEM_EVENT.getCode(), "SYNC_PACKET_IDS", "Send Packet IDs to server"),
-
-    // Upload Packets
-    UPLOAD_PACKET("REG-UPL-PKT-001", SYSTEM_EVENT.getCode(), "UPLOAD_PACKET", "Upload packets"),
 
     // Virus Scan
     VIRUS_SCAN_REG_CLIENT("REG-VIRUS-SCN-001", USER_EVENT.getCode(), "VIRUS_SCAN_REG_CLIENT",

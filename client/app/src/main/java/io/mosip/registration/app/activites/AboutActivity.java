@@ -3,14 +3,20 @@ package io.mosip.registration.app.activites;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import dagger.android.support.DaggerAppCompatActivity;
-import io.mosip.registration.app.R;
-import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.inject.Inject;
 import java.util.Map;
+
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerAppCompatActivity;
+import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 
 /**
@@ -23,6 +29,9 @@ public class AboutActivity extends DaggerAppCompatActivity {
     @Inject
     ClientCryptoManagerService clientCryptoManagerService;
 
+    @Inject
+    AuditManagerService auditManagerService;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +41,7 @@ public class AboutActivity extends DaggerAppCompatActivity {
 
         final TextView editText = findViewById(R.id.about);
         editText.setTextIsSelectable(true);
-        Map<String,String> details = clientCryptoManagerService.getMachineDetails();
+        Map<String, String> details = clientCryptoManagerService.getMachineDetails();
         JSONObject jsonObject = new JSONObject(details);
         try {
             jsonObject.put("version", "Alpha");
@@ -41,5 +50,7 @@ public class AboutActivity extends DaggerAppCompatActivity {
             Log.e(TAG, e.getMessage(), e);
             editText.setText(R.string.initialization_error);
         }
+
+        auditManagerService.audit(AuditEvent.LOADED_ABOUT, Components.LOGIN);
     }
 }

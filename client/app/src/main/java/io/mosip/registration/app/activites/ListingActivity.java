@@ -14,7 +14,11 @@ import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.viewmodel.RegistrationPacketViewModel;
 import io.mosip.registration.app.viewmodel.ViewModelFactory;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 
 import javax.inject.Inject;
@@ -26,6 +30,9 @@ public class ListingActivity  extends DaggerAppCompatActivity {
 
     @Inject
     PacketService packetService;
+
+    @Inject
+    AuditManagerService auditManagerService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,8 @@ public class ListingActivity  extends DaggerAppCompatActivity {
             listView.setAdapter(new CustomListViewAdapter(this, R.layout.custom_list_view, list));
             progressBar.setVisibility(View.GONE);
         });
+
+        auditManagerService.audit(AuditEvent.LOADED_REG_LISTING, Components.REG_PACKET_LIST);
     }
 
     private class CustomListViewAdapter extends ArrayAdapter<Registration> {
@@ -86,6 +95,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
                 public void onClick(View v) {
                     Toast.makeText(getContext(), R.string.packet_sync_start, Toast.LENGTH_SHORT).show();
                     try {
+                        auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST, registration.getPacketId(), AuditReferenceIdTypes.PACKET_ID.name());
                         packetService.syncRegistration(registration.getPacketId());
                     } catch (Exception e) {
                         Log.e(TAG, "Packet sync failed", e);
@@ -98,6 +108,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
                 public void onClick(View v) {
                     Toast.makeText(getContext(), "Starting packet upload", Toast.LENGTH_SHORT).show();
                     try {
+                        auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST, registration.getPacketId(), AuditReferenceIdTypes.PACKET_ID.name());
                         packetService.uploadRegistration(registration.getPacketId());
                         Toast.makeText(getContext(), "Packet upload successful", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {

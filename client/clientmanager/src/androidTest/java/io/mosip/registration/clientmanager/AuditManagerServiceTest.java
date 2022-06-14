@@ -25,7 +25,9 @@ import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
+import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 /**
  * @author Anshul Vanawat
@@ -43,6 +45,7 @@ public class AuditManagerServiceTest {
     private AuditRepository auditRepository;
     private GlobalParamRepository globalParamRepository;
     private AuditManagerService auditManagerService;
+    private RegistrationService registrationService;
 
     @Before
     public void init() {
@@ -65,7 +68,7 @@ public class AuditManagerServiceTest {
 
     @Test
     public void audit_test() {
-        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
+        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, null);
         auditManagerService.audit(AuditEvent.PACKET_AUDIT_JSON_CREATED, Components.REGISTRATION, PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
 
         List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
@@ -88,7 +91,7 @@ public class AuditManagerServiceTest {
 
     @Test
     public void auditDelete_test() {
-        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
+        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, null);
         auditManagerService.audit(AuditEvent.PACKET_AUDIT_JSON_CREATED, Components.REGISTRATION, PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
 
         List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
