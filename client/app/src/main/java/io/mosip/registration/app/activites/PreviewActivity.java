@@ -13,8 +13,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -77,6 +80,9 @@ public class PreviewActivity extends DaggerAppCompatActivity {
     @Inject
     SyncRestService syncRestService;
 
+    @Inject
+    AuditManagerService auditManagerService;
+
     private String webViewContent;
 
     @Override
@@ -113,6 +119,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         final ProgressBar loadingProgressBar = findViewById(R.id.auth_loading);
         final Button button = findViewById(R.id.createpacket);
         button.setOnClickListener( v -> {
+            auditManagerService.audit(AuditEvent.CREATE_PACKET_AUTH, Components.REGISTRATION);
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             if(validateLogin(username, password)) {
@@ -122,6 +129,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         });
 
         webView.loadDataWithBaseURL(null, webViewContent, "text/HTML", "UTF-8", null);
+        auditManagerService.audit(AuditEvent.LOADED_REGISTRATION_PREVIEW, Components.REGISTRATION);
     }
 
     public String getTemplate(RegistrationDto registrationDto, String templateName, String templateTypeCode, boolean isPreview) throws Exception {

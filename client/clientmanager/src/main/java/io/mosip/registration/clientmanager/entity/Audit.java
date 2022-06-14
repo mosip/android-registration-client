@@ -93,4 +93,28 @@ public class Audit {
         this.moduleId = moduleId;
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "Audit{" +
+                "uuid=" + uuid +
+                ", createdAt=" + createdAt +
+                ", eventId='" + eventId + '\'' +
+                ", eventName='" + eventName + '\'' +
+                ", eventType='" + eventType + '\'' +
+                ", actionTimeStamp=" + actionTimeStamp +
+                ", hostName='" + hostName + '\'' +
+                ", hostIp='" + hostIp + '\'' +
+                ", applicationId='" + applicationId + '\'' +
+                ", applicationName='" + applicationName + '\'' +
+                ", sessionUserId='" + sessionUserId + '\'' +
+                ", sessionUserName='" + sessionUserName + '\'' +
+                ", refId='" + refId + '\'' +
+                ", refIdType='" + refIdType + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", moduleName='" + moduleName + '\'' +
+                ", moduleId='" + moduleId + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -77,7 +79,7 @@ public class AuditManagerServiceImpl implements AuditManagerService {
                 sessionUserId,
                 appModuleEnum.getName(),
                 appModuleEnum.getId(),
-                "");
+                auditEventEnum.getDescription());
 
         auditRepository.insertAudit(audit);
 
@@ -114,6 +116,60 @@ public class AuditManagerServiceImpl implements AuditManagerService {
     }
 
     @Override
+    public void audit(AuditEvent auditEventEnum, String appModuleString) {
+        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
+
+        String hostName = BuildConfig.BASE_URL;
+        String hostIP = BuildConfig.BASE_URL;
+        String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
+        String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
+        String applicationId = this.context.getString(R.string.app_name);
+        String applicationName = this.context.getString(R.string.app_name);
+
+        RegistrationDto registrationDto = null;
+        try {
+            registrationDto = registrationService.getRegistrationDto();
+        } catch (Exception ignored) {
+        }
+
+        String refId, refIdType;
+        if (auditEventEnum.getId().contains(REGISTRATION_EVENTS)
+                && registrationDto != null
+                && registrationDto.getRId() != null) {
+            refId = registrationDto.getRId();
+            refIdType = AuditReferenceIdTypes.REGISTRATION_ID.getReferenceTypeId();
+        } else if (sessionUserId != null) {
+            refId = sessionUserId;
+            refIdType = AuditReferenceIdTypes.USER_ID.name();
+        } else {
+            refId = this.context.getString(R.string.app_name);
+            refIdType = AuditReferenceIdTypes.APPLICATION_ID.name();
+        }
+
+        Audit audit = new Audit(
+                System.currentTimeMillis(),
+                auditEventEnum.getId(),
+                auditEventEnum.getName(),
+                auditEventEnum.getType(),
+                System.currentTimeMillis(),
+                hostName,
+                hostIP,
+                applicationId,
+                applicationName,
+                sessionUserId,
+                sessionUserName,
+                refId,
+                refIdType,
+                sessionUserId,
+                appModuleString,
+                appModuleString,
+                auditEventEnum.getDescription());
+
+        auditRepository.insertAudit(audit);
+    }
+
+    @Override
     public boolean deleteAuditLogs() {
         Log.i(TAG, "Deletion of Audit Logs Started");
 
@@ -134,5 +190,11 @@ public class AuditManagerServiceImpl implements AuditManagerService {
             Log.e(TAG, "deleteAuditLogs: Deletion of Audit Logs failed, tillDate missing");
             return false;
         }
+    }
+
+    @Override
+    public List<Audit> getAuditLogs(long fromDateTime) {
+        Log.i(TAG, "Deletion of Audit Logs Started");
+        return auditRepository.getAuditsFromDate(fromDateTime);
     }
 }

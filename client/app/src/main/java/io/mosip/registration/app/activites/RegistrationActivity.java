@@ -10,12 +10,15 @@ import android.os.Bundle;
 import androidx.appcompat.widget.AppCompatCheckedTextView;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 import javax.inject.Inject;
@@ -39,6 +42,9 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
     @Inject
     LanguageRepository languageRepository;
+
+    @Inject
+    AuditManagerService auditManagerService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +95,12 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
         final Button startRegistration = findViewById(R.id.start_registration);
         startRegistration.setOnClickListener( v -> {
+            auditManagerService.audit(AuditEvent.REGISTRATION_START, Components.REGISTRATION);
             startRegistration.setEnabled(false);
             startRegistration();
         });
+
+        auditManagerService.audit(AuditEvent.LOADED_DATA_ENTRY_LANG, Components.REGISTRATION);
     }
 
     private String getLangCode(String nativeName) {

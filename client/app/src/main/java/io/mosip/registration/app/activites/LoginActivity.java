@@ -95,8 +95,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 String username = usernameEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN, username, AuditReferenceIdTypes.USER_ID.name());
-
+                auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
                 //validate form
                 if(validateLogin(username, password)){
                     doLogin(username, password, loadingProgressBar);
