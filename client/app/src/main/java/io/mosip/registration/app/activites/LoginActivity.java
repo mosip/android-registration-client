@@ -128,11 +128,12 @@ public class LoginActivity extends DaggerAppCompatActivity {
                             startActivity(intent);
                             return;
                         } catch (Exception e) {
-                            Log.e(TAG, "Failed to save wuth token", e);
+                            Log.e(TAG, "Failed to save auth token", e);
                         }
                     }
                     Log.e(TAG, response.raw().toString());
-                    Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, error == null ? getString(R.string.login_failed) : error.getMessage(),
+                            Toast.LENGTH_LONG).show();
                     return;
                 }
                 Toast.makeText(LoginActivity.this, R.string.login_failed, Toast.LENGTH_LONG).show();
