@@ -27,7 +27,8 @@ public class BIR implements Serializable {
 	private byte[] bdb;
 	@Element(name = "SB", required = false)
 	private byte[] sb;
-	@ElementList(name = "BIR", required = false)
+
+	@ElementList(required = false, inline = true)
 	protected List<BIR> birs;
 	@Element(name = "SBInfo", required = false)
 	private SBInfo sbInfo;

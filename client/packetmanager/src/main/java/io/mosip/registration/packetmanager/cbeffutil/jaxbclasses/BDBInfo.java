@@ -23,11 +23,11 @@ public class BDBInfo {
 	private LocalDateTime notValidBefore;
 	@Element(name = "NotValidAfter", required = false)
 	private LocalDateTime notValidAfter;
-	@ElementList(name = "Type", required = false)
-	private List<BiometricType> type;
+	@Element(name = "Type", required = false)
+	private BiometricType type;
 
-	@ElementList(name = "Subtype", required = false)
-	private List<String> subtype;
+	@Element(name = "Subtype", required = false)
+	private String subtype;
 	@Element(name = "Level", required = false)
 	private ProcessedLevelType level;
 	@Element(name = "Product", required = false)
@@ -78,8 +78,8 @@ public class BDBInfo {
 		private LocalDateTime creationDate;
 		private LocalDateTime notValidBefore;
 		private LocalDateTime notValidAfter;
-		private List<BiometricType> type;
-		private List<String> subtype;
+		private BiometricType type;
+		private String subtype;
 		private ProcessedLevelType level;
 		private RegistryIDType product;
 		private PurposeType purpose;
@@ -124,12 +124,12 @@ public class BDBInfo {
 			return this;
 		}
 
-		public BDBInfoBuilder withType(List<BiometricType> type) {
+		public BDBInfoBuilder withType(BiometricType type) {
 			this.type = type;
 			return this;
 		}
 
-		public BDBInfoBuilder withSubtype(List<String> subtype) {
+		public BDBInfoBuilder withSubtype(String subtype) {
 			this.subtype = subtype;
 			return this;
 		}

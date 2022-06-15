@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
+import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import org.apache.commons.io.FileUtils;
 import org.simpleframework.xml.Serializer;
@@ -62,6 +63,9 @@ public class PacketManagerHelper {
         RegistryMatcher matcher = new RegistryMatcher();
         matcher.bind(byte[].class, new ByteArrayTransformer());
         matcher.bind(LocalDateTime.class, new LocalDateTimeTransformer());
+        matcher.bind(BiometricType.class, new BiometricTypeTransformer());
+        matcher.bind(ProcessedLevelType.class, new ProcessedLevelTypeTransformer());
+        matcher.bind(PurposeType.class, new PurposeTypeTransformer());
         Serializer serializer = new Persister(matcher);
         try(ByteArrayOutputStream baos = new ByteArrayOutputStream())
         {
