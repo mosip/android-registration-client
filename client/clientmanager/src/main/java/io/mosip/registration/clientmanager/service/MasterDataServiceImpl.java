@@ -5,11 +5,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
+import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
@@ -39,6 +42,7 @@ import retrofit2.Response;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -51,6 +55,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
     public static final String REG_APP_ID = "REGISTRATION";
     public static final String KERNEL_APP_ID = "KERNEL";
+
+    private ObjectMapper objectMapper;
 
     private Context context;
     private SyncRestService syncRestService;
@@ -72,7 +78,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LanguageRepository languageRepository;
 
     @Inject
-    public MasterDataServiceImpl(Context context, SyncRestService syncRestService,
+    public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
                                  ClientCryptoManagerService clientCryptoManagerService,
                                  MachineRepository machineRepository,
                                  RegistrationCenterRepository registrationCenterRepository,
@@ -90,6 +96,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  CACertificateManagerService caCertificateManagerService,
                                  LanguageRepository languageRepository) {
         this.context = context;
+        this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
@@ -214,6 +221,87 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    public void syncGlobalParamsData() throws Exception {
+        Log.i(TAG, "config data sync is started");
+
+        Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(clientCryptoManagerService.getClientKeyIndex());
+        call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
+            @Override
+            public void onResponse(Call<ResponseWrapper<Map<String, Object>>> call, Response<ResponseWrapper<Map<String, Object>>> response) {
+                if (response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(response.body());
+                    if (error == null) {
+                        saveGlobalParams(response.body().getResponse());
+                        Toast.makeText(context, context.getString(R.string.global_config_sync_completed), Toast.LENGTH_LONG).show();
+                    } else
+                        Toast.makeText(context, String.format("%s %s", context.getString(R.string.global_config_sync_failed), error.getMessage()), Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(context, String.format("%s. %s:%s", context.getString(R.string.global_config_sync_failed), context.getString(R.string.status_code), String.valueOf(response.code())), Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
+                Toast.makeText(context, context.getString(R.string.global_config_sync_failed), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void saveGlobalParams(Map<String, Object> responseMap) {
+        try {
+            Map<String, String> globalParamMap = new HashMap<>();
+
+            if (responseMap.get("configDetail") != null) {
+                Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
+
+                if (configDetailJsonMap != null && configDetailJsonMap.get("registrationConfiguration") != null) {
+                    String encryptedConfigs = configDetailJsonMap.get("registrationConfiguration").toString();
+                    parseToMap(getParams(encryptedConfigs), globalParamMap);
+                }
+            }
+
+            List<GlobalParam> globalParamList = new ArrayList<>();
+            for (Map.Entry<String, String> entry: globalParamMap.entrySet()) {
+                GlobalParam globalParam = new GlobalParam(entry.getKey(), entry.getKey(), entry.getValue(), true);
+                globalParamList.add(globalParam);
+            }
+
+            globalParamRepository.saveGlobalParams(globalParamList);
+        } catch (Exception exception) {
+            Log.e(TAG, exception.getMessage(), exception);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void parseToMap(Map<String, Object> map, Map<String, String> globalParamMap) {
+        if (map != null) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String key = entry.getKey();
+
+                if (entry.getValue() instanceof HashMap) {
+                    parseToMap((HashMap<String, Object>) entry.getValue(), globalParamMap);
+                } else {
+                    globalParamMap.put(key, String.valueOf(entry.getValue()));
+                }
+            }
+        }
+    }
+
+    private Map<String, Object> getParams(String encodedCipher) {
+        try {
+            CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
+            cryptoRequestDto.setValue(encodedCipher);
+            CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
+
+            byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
+            Map<String, Object> paramMap = objectMapper.readValue(data, HashMap.class);
+            return paramMap;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to decrypt and parse config response >> ", e);
+        }
+        return null;
+    }
+
+    @Override
     public void syncLatestIdSchema() throws Exception {
         Call<ResponseBody> call = syncRestService.getLatestIdSchema();
         call.enqueue(new Callback<ResponseBody>() {
@@ -310,18 +398,18 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
-        if(caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
+        if (caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
             //Data Fix : As createdDateTime is null sometimes
             caCertificateDtos.forEach(c -> {
-                if(c.getCreatedtimes() == null)
+                if (c.getCreatedtimes() == null)
                     c.setCreatedtimes(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
             });
             caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
 
-            for(CACertificateDto cert : caCertificateDtos) {
+            for (CACertificateDto cert : caCertificateDtos) {
                 String errorCode = null;
                 try {
-                    if(cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
+                    if (cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
                         CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
                         caCertificateRequestDto.setCertificateData(cert.getCertData());
                         caCertificateRequestDto.setPartnerDomain(cert.getPartnerDomain());
@@ -332,7 +420,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                     errorCode = ex.getErrorCode();
                 }
 
-                if(errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
+                if (errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
                     throw new KeymanagerServiceException(errorCode, errorCode);
             }
         }

@@ -29,14 +29,16 @@ import io.mosip.registration.app.util.JobServiceHelper;
 import io.mosip.registration.app.viewmodel.JobServiceViewModel;
 import io.mosip.registration.app.viewmodel.ViewModelFactory;
 import io.mosip.registration.app.viewmodel.model.JobServiceModel;
+import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 
 public class JobServiceActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = JobServiceActivity.class.getSimpleName();
-
     @Inject
     PacketService packetService;
+    @Inject
+    JobTransactionService jobTransactionService;
 
     JobServiceHelper jobServiceHelper;
 
@@ -44,22 +46,19 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_service);
-        ListView listView = (ListView) findViewById(R.id.jobList);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        ListView listView = findViewById(R.id.jobList);
+        ProgressBar progressBar = findViewById(R.id.progressbar);
         progressBar.setVisibility(View.VISIBLE);
 
-        jobServiceHelper = new JobServiceHelper(this, (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE), packetService);
+        jobServiceHelper = new JobServiceHelper(this, (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE), packetService, jobTransactionService);
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.scheduled_jobs);
 
-        ViewModelFactory viewModelFactory = new ViewModelFactory(new JobServiceViewModel(jobServiceHelper, packetService));
+        ViewModelFactory viewModelFactory = new ViewModelFactory(new JobServiceViewModel(jobServiceHelper));
         JobServiceViewModel model = new ViewModelProvider(this, viewModelFactory).get(JobServiceViewModel.class);
         model.getList().observe(this, list -> {
-            // update UI
-            ArrayAdapter<JobServiceModel> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text2, list);
             // Assign adapter to ListView
             listView.setAdapter(new CustomListViewAdapter(this, R.layout.custom_list_view_job, list));
             progressBar.setVisibility(View.GONE);
@@ -81,7 +80,6 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-            JobServiceModel jobServiceModel = this.mObjects.get(position);
             ViewHolder mainViewHolder = null;
             if (convertView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());
@@ -89,82 +87,81 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
 
                 ViewHolder viewHolder = new ViewHolder();
                 viewHolder.jobName = convertView.findViewById(R.id.jobName);
+                viewHolder.jobLastSyncTime = convertView.findViewById(R.id.last_sync_time_text);
+                viewHolder.jobNextSyncTime = convertView.findViewById(R.id.next_sync_time_text);
                 viewHolder.triggerJobButton = convertView.findViewById(R.id.triggerJob);
                 viewHolder.toggleActiveButton = convertView.findViewById(R.id.toggleActive);
-                viewHolder.toggleActiveButton.setChecked(jobServiceModel.getEnabled());
-
-                if (jobServiceModel.getActive() && jobServiceModel.getImplemented())
-                    viewHolder.jobName.setText(jobServiceModel.getName());
-                else {
-                    String name = "";
-                    if (!jobServiceModel.getActive())
-                        name = jobServiceModel.getName() + " (Not Active)";
-                    else
-                        name = jobServiceModel.getName() + " (Not implemented)";
-                    viewHolder.jobName.setText(name);
-                    viewHolder.toggleActiveButton.setEnabled(false);
-                    viewHolder.triggerJobButton.setEnabled(false);
-                }
 
                 convertView.setTag(viewHolder);
             }
+            JobServiceModel jobServiceModel = this.mObjects.get(position);
 
             mainViewHolder = (ViewHolder) convertView.getTag();
 
+            mainViewHolder.jobName.setText(jobServiceModel.getName());
+            mainViewHolder.jobLastSyncTime.setText(getString(R.string.last_sync_time, jobServiceModel.getLastSyncTime()));
+            mainViewHolder.jobNextSyncTime.setText(getString(R.string.next_sync_time, jobServiceModel.getNextSyncTime()));
+            mainViewHolder.toggleActiveButton.setEnabled(jobServiceModel.getActive() && jobServiceModel.getImplemented());
+            mainViewHolder.triggerJobButton.setEnabled(jobServiceModel.getActive() && jobServiceModel.getImplemented());
+
+            mainViewHolder.toggleActiveButton.setOnCheckedChangeListener(null);
+            mainViewHolder.toggleActiveButton.setChecked(jobServiceModel.getEnabled());
+
             mainViewHolder.triggerJobButton.setOnClickListener(v -> {
-                Toast.makeText(JobServiceActivity.this, "Starting Job " + jobServiceModel.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(JobServiceActivity.this, getString(R.string.starting_job, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
                 try {
-                    boolean triggered = jobServiceHelper.triggerJobService(jobServiceModel.getId());
-                    if(!triggered)
-                        Toast.makeText(JobServiceActivity.this, jobServiceModel.getName() + " job failed. Cannot trigger disabled job.", Toast.LENGTH_SHORT).show();
+                    boolean triggered = jobServiceHelper.triggerJobService(jobServiceModel.getId(), jobServiceModel.getApiName());
+                    if (!triggered)
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_triggering_failed, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
-                    Log.e(TAG, jobServiceModel.getApiName() + " job failed", e);
-                    Toast.makeText(JobServiceActivity.this, jobServiceModel.getName() + " job failed", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, getString(R.string.starting_job, jobServiceModel.getName()), e);
+                    Toast.makeText(JobServiceActivity.this, getString(R.string.job_triggering_failed, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
                 }
             });
 
             mainViewHolder.toggleActiveButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-                Toast.makeText(JobServiceActivity.this, "Setting up job", Toast.LENGTH_SHORT).show();
+                Toast.makeText(JobServiceActivity.this, getString(R.string.setting_up_job), Toast.LENGTH_SHORT).show();
                 if (isChecked) {
                     try {
-                        int resultCode = jobServiceHelper.scheduleJob(jobServiceModel.getId(), jobServiceModel.getApiName());
-
+                        int resultCode = jobServiceHelper.scheduleJob(jobServiceModel.getId(), jobServiceModel.getApiName(), jobServiceModel.getSyncFreq());
                         if (resultCode == JobScheduler.RESULT_SUCCESS) {
-                            Log.d(TAG, "Job scheduled");
-                            Toast.makeText(JobServiceActivity.this, "Job scheduled", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, getString(R.string.job_scheduled));
+                            jobServiceModel.setEnabled(true);
+                            jobServiceModel.setLastSyncTime(jobServiceHelper.getLastSyncTime(jobServiceModel.getId()));
+                            Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduled), Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d(TAG, "Job scheduling failed");
-                            Toast.makeText(JobServiceActivity.this, "Job scheduling failed", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, getString(R.string.job_scheduling_failed));
+                            Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduling_failed), Toast.LENGTH_SHORT).show();
+                            jobServiceModel.setEnabled(false);
+                            compoundButton.setChecked(false);
                         }
-                    } catch (ClassNotFoundException e) {
-                        Log.e(TAG, "Job scheduling failed : service " + jobServiceModel.getApiName() + " not implemented", e);
-                        Toast.makeText(JobServiceActivity.this, "Job scheduling failed : service " + jobServiceModel.getApiName() + " not implemented", Toast.LENGTH_SHORT).show();
-                        compoundButton.setChecked(false);
                     } catch (Exception e) {
-                        Log.e(TAG, "Job scheduling failed", e);
-                        Toast.makeText(JobServiceActivity.this, "Job scheduling failed : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, getString(R.string.job_scheduling_failed), e);
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduling_failed), Toast.LENGTH_SHORT).show();
                         compoundButton.setChecked(false);
                     }
                 } else {
-                    Toast.makeText(JobServiceActivity.this, "Cancelling Job", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(JobServiceActivity.this, getString(R.string.cancelling_job), Toast.LENGTH_SHORT).show();
                     try {
                         jobServiceHelper.cancelJob(jobServiceModel.getId());
-                        Log.d(TAG, "Job cancelled");
-                        Toast.makeText(JobServiceActivity.this, "Job cancelled", Toast.LENGTH_SHORT).show();
+                        jobServiceModel.setEnabled(false);
+                        Log.d(TAG, getString(R.string.job_cancelled));
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_cancelled), Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
-                        Log.e(TAG, "Cancelling Job failed", e);
-                        Toast.makeText(JobServiceActivity.this, "Cancelling Job failed", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, getString(R.string.cancelling_job_failed), e);
+                        Toast.makeText(JobServiceActivity.this, getString(R.string.cancelling_job_failed), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-
             return convertView;
         }
     }
 
     public class ViewHolder {
         TextView jobName;
+        TextView jobLastSyncTime;
+        TextView jobNextSyncTime;
         Button triggerJobButton;
         Switch toggleActiveButton;
     }

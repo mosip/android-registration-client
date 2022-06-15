@@ -6,7 +6,9 @@ import android.util.Log;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import io.mosip.registration.clientmanager.spi.PacketService;
+
+import dagger.android.AndroidInjection;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
 
 /**
  * Class for implementing PacketStatusSyncJob service
@@ -16,22 +18,28 @@ import io.mosip.registration.clientmanager.spi.PacketService;
  */
 
 @SuppressLint("SpecifyJobSchedulerIdRange")
-public class PacketStatusSyncJob extends SyncJobServiceBase {
+public class ConfigDataSyncJob extends SyncJobServiceBase {
 
-    private static final String TAG = PacketStatusSyncJob.class.getSimpleName();
+    private static final String TAG = ConfigDataSyncJob.class.getSimpleName();
 
     @Inject
-    PacketService packetService;
+    public MasterDataService masterDataService;
 
-    public PacketStatusSyncJob() {
+    public ConfigDataSyncJob() {
         configureBuilder();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        AndroidInjection.inject(this);
     }
 
     @Override
     public boolean triggerJob(int jobId) {
         Log.d(TAG, TAG + " Started");
         try {
-            packetService.syncAllPacketStatus();
+            masterDataService.syncGlobalParamsData();
             long timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             logJobTransaction(jobId, timeStampInSeconds);
             return true;

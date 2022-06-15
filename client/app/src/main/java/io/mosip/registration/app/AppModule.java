@@ -11,11 +11,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
 import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
+import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
@@ -82,7 +87,7 @@ public class AppModule {
     @Singleton
     @Provides
     public CryptoManagerService provideCryptoManagerService(KeyStoreRepository keyStoreRepository) {
-        return new CryptoManagerServiceImpl(appContext,keyStoreRepository);
+        return new CryptoManagerServiceImpl(appContext, keyStoreRepository);
     }
 
     @Singleton
@@ -94,8 +99,8 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public ObjectAdapterService provideObjectAdapterService(IPacketCryptoService iPacketCryptoService) {
-        return new PosixAdapterServiceImpl(appContext, iPacketCryptoService, new ObjectMapper());
+    public ObjectAdapterService provideObjectAdapterService(IPacketCryptoService iPacketCryptoService, ObjectMapper objectMapper) {
+        return new PosixAdapterServiceImpl(appContext, iPacketCryptoService, objectMapper);
     }
 
     @Singleton
@@ -114,13 +119,13 @@ public class AppModule {
     @Singleton
     @Provides
     public PacketWriterService providePacketWriterService(PacketManagerHelper packetManagerHelper,
-                                                          PacketKeeper packetKeeper){
+                                                          PacketKeeper packetKeeper) {
         return new PacketWriterServiceImpl(appContext, packetManagerHelper, packetKeeper);
     }
 
     @Singleton
     @Provides
-    public MasterDataService provideMasterDataService(SyncRestService syncRestService, ClientCryptoManagerService clientCryptoManagerService,
+    public MasterDataService provideMasterDataService(ObjectMapper objectMapper, SyncRestService syncRestService, ClientCryptoManagerService clientCryptoManagerService,
                                                       MachineRepository machineRepository,
                                                       RegistrationCenterRepository registrationCenterRepository,
                                                       DocumentTypeRepository documentTypeRepository,
@@ -136,7 +141,7 @@ public class AppModule {
                                                       UserDetailRepository userDetailRepository,
                                                       CACertificateManagerService caCertificateManagerService,
                                                       LanguageRepository languageRepository) {
-        return new MasterDataServiceImpl(appContext, syncRestService, clientCryptoManagerService,
+        return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
@@ -147,8 +152,7 @@ public class AppModule {
     @Singleton
     Cache provideHttpCache() {
         int cacheSize = 10 * 1024 * 1024;
-        Cache cache = new Cache(application.getCacheDir(), cacheSize);
-        return cache;
+        return new Cache(application.getCacheDir(), cacheSize);
     }
 
     @Provides
@@ -227,6 +231,12 @@ public class AppModule {
 
     @Provides
     @Singleton
+    JobTransactionService provideJobTransactionService(JobTransactionRepository jobTransactionRepository) {
+        return new JobTransactionServiceImpl(jobTransactionRepository);
+    }
+
+    @Provides
+    @Singleton
     CACertificateManagerService provideCACertificateManagerService(CertificateDBHelper certificateDBHelper) {
         return new CACertificateManagerServiceImpl(appContext, certificateDBHelper);
     }
@@ -235,5 +245,11 @@ public class AppModule {
     @Singleton
     CertificateDBHelper provideCertificateDBHelper(CACertificateStoreRepository caCertificateStoreRepository) {
         return new CertificateDBHelper(caCertificateStoreRepository);
+    }
+
+    @Provides
+    @Singleton
+    AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository) {
+        return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
     }
 }

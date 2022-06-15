@@ -1,9 +1,5 @@
 package io.mosip.registration.clientmanager.spi;
 
-import org.json.JSONObject;
-
-import io.mosip.registration.clientmanager.dto.PacketIdDto;
-import io.mosip.registration.clientmanager.dto.PacketStatusDto;
 import io.mosip.registration.clientmanager.dto.PacketStatusRequest;
 import io.mosip.registration.clientmanager.dto.PacketStatusResponse;
 import io.mosip.registration.clientmanager.dto.http.*;
@@ -42,8 +38,13 @@ public interface SyncRestService {
     @POST("/registrationprocessor/v1/packetreceiver/registrationpackets")
     Call<RegProcResponseWrapper<UploadResponse>> uploadPacket(@Part MultipartBody.Part filePart);
 
+
     @POST("/registrationprocessor/v1/registrationstatus/packetexternalstatus")
     Call<PacketStatusResponse> getPacketStatus(@Body PacketStatusRequest packetStatusRequestDto);
+
+
+    @GET("/v1/syncdata/configs/{key_index}")
+    Call<ResponseWrapper<Map<String, Object>>> getGlobalConfigs(@Path("key_index") String key_index);
 
     @GET("/v1/syncdata/getcacertificates")
     Call<ResponseWrapper<CACertificateResponseDto>> getCACertificates(@Query("lastupdated") String lastupdated);

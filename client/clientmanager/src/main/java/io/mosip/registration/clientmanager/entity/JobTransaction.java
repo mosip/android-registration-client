@@ -8,19 +8,21 @@ import androidx.room.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * The Entity class for sync job transactions
+ *
+ * @author Anshul vanawat
+ */
+
+@Entity(tableName = "job_transaction")
 @Data
 @AllArgsConstructor
-@Entity(tableName = "global_param")
-public class GlobalParam {
+public class JobTransaction {
 
     @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "id")
-    String id;
-    @ColumnInfo(name = "name")
-    String name;
-    @ColumnInfo(name = "value")
-    String value;
-    @ColumnInfo(name = "status")
-    Boolean status;
+    @ColumnInfo(name = "job_id")
+    private int jobId;
+    @ColumnInfo(name = "last_sync_time")
+    private Long lastSyncTime;
 }
