@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity(tableName = "app_audit_log")
 @Data
-@NoArgsConstructor
 public class Audit {
 
     @NonNull
