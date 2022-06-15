@@ -4,6 +4,7 @@
     <string name="packet_sync_id">mosip.registration.sync</string>
     <string name="packet_external_status_id">mosip.registration.packet.external.status</string>
     <string name="packet_sync_version">1.0</string>
+    <string name="status_code">Status code</string>
 
     <!--Error codes used in exceptions-->
     <string name="err_000">Language is mandatory to begin registration</string>
@@ -13,4 +14,13 @@
     <string name="err_005">Failed to create registration packet</string>
     <string name="err_006">Minimum required space is not available</string>
     <string name="err_007">Registrations are not allowed</string>
+
+    <!-- Errors -->
+    <string name="global_config_sync_failed">Global config sync failed</string>
+    <string name="packet_status_sync_failed">Packet status sync failed : %s</string>
+    <string name="packet_status_sync_failed_with_status_code">Packet status sync failed with status code : %s</string>
+
+    <!-- Success -->
+    <string name="global_config_sync_completed">Global config sync Completed</string>
+    <string name="packet_status_sync_completed">Packet status sync completed"</string>
 </resources>

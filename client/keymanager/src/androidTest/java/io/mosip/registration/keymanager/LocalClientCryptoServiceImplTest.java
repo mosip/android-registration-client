@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_ENDEC;
-import static io.mosip.registration.keymanager.util.KeyManagerConstant.KEY_SIGN;
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.ENCDEC_ALIAS;
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.SIGNV_ALIAS;
 import static org.junit.Assert.*;
 
 /**
@@ -44,12 +44,12 @@ public class LocalClientCryptoServiceImplTest {
 
 //        creating keys for encryption and decryption testing
         publicKeyRequestDto_encdec= new PublicKeyRequestDto();
-        publicKeyRequestDto_encdec.setAlias(KEY_ENDEC);
+        publicKeyRequestDto_encdec.setAlias(ENCDEC_ALIAS);
         publicKeyResponseDto_encdec = localClientCryptoService.getPublicKey(publicKeyRequestDto_encdec);
 
 //        creating keys for sign and verify
         publicKeyRequestDto_sign= new PublicKeyRequestDto();
-        publicKeyRequestDto_sign.setAlias(KEY_SIGN);
+        publicKeyRequestDto_sign.setAlias(SIGNV_ALIAS);
         publicKeyResponseDto_sign = localClientCryptoService.getPublicKey(publicKeyRequestDto_sign);
 
     }
@@ -73,13 +73,13 @@ public class LocalClientCryptoServiceImplTest {
     public void getPublicKey_test(){
 //        checking public key for valid types such as endec
         PublicKeyRequestDto pub_RequestDto = new PublicKeyRequestDto();
-        pub_RequestDto.setAlias(KEY_ENDEC);
+        pub_RequestDto.setAlias(ENCDEC_ALIAS);
         PublicKeyResponseDto pub_ResponseDto = localClientCryptoService.getPublicKey(pub_RequestDto);
         assertNotNull(pub_ResponseDto);
 
 //        checking for sign
         PublicKeyRequestDto pub_RequestDto_sign = new PublicKeyRequestDto();
-        pub_RequestDto_sign.setAlias(KEY_SIGN);
+        pub_RequestDto_sign.setAlias(SIGNV_ALIAS);
         PublicKeyResponseDto pub_ResponseDto_sign = localClientCryptoService.getPublicKey(pub_RequestDto_sign);
         assertNotNull(pub_ResponseDto_sign);
 

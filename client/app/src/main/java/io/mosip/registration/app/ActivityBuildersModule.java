@@ -3,6 +3,7 @@ package io.mosip.registration.app;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import io.mosip.registration.app.activites.*;
+import io.mosip.registration.clientmanager.jobservice.ConfigDataSyncJob;
 import io.mosip.registration.clientmanager.jobservice.PacketStatusSyncJob;
 
 @Module
@@ -34,6 +35,9 @@ public abstract class ActivityBuildersModule {
 
     @ContributesAndroidInjector
     abstract PacketStatusSyncJob providePacketStatusSyncJob();
+
+    @ContributesAndroidInjector
+    abstract ConfigDataSyncJob provideConfigDataSyncJob();
 
     @ContributesAndroidInjector
     abstract PreviewDocumentActivity contributePreviewDocumentActivity();

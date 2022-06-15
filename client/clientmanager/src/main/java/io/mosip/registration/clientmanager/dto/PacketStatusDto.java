@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -13,6 +14,7 @@ import lombok.Data;
  */
 
 @Data
+@AllArgsConstructor
 public class PacketStatusDto {
 
 	@SerializedName("packetId")
