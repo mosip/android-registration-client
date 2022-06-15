@@ -28,6 +28,8 @@ public class DynamicFieldRepository {
         List<GenericValueDto> values = new ArrayList<>();
         try {
             DynamicField dynamicField = this.dynamicFieldDao.findDynamicFieldByName(fieldName, langCode);
+            if(dynamicField == null)
+                return values;
             JSONArray list = new JSONArray(dynamicField.getValueJson());
             for(int i =0; i< list.length(); i++) {
                 values.add(new GenericValueDto(list.getJSONObject(i).getString("value"),

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Client d\'enregistrement</string>
-    <string name="about_client">À propos du client</string>
+    <string name="home_title">Domicile</string>
     <string name="initialization_error">Échec de l\'initialisation de la machine</string>
-    <string name="next">Suivante</string>
-    <string name="scheduled_jobs">Tâches planifiées</string>
-    <string name="registrations_title">Inscriptions</string>
-    <string name="registrations_subtitle">Remarque : les paquets sont automatiquement approuvés</string>
-    <string name="packet_sync_start">La synchronisation des paquets a démarré</string>
-    <string name="packet_sync_fail">La synchronisation des paquets a échoué</string>
+
+    <!-- Login -->
+    <string name="about_client">À propos du client</string>
     <string name="login_failed">La connexion a échoué, veuillez réessayer</string>
     <string name="username_required">Nom d\'utilisateur est nécessaire</string>
     <string name="password_required">Mot de passe requis</string>
@@ -16,15 +13,25 @@
     <string name="invalid_username">Nom d\'utilisateur invalide</string>
     <string name="prompt_username">Nom d\'utilisateur</string>
     <string name="prompt_password">Mot de passe</string>
+    <string name="auth_token_save_failed">Échec de l\'enregistrement du jeton d\'authentification, veuillez réessayer
+    </string>
+
+    <!-- Navigation -->
+    <string name="next">Suivante</string>
+
+    <!-- Sync -->
+    <string name="packet_sync_start">La synchronisation des paquets a démarré</string>
+    <string name="packet_sync_fail">La synchronisation des paquets a échoué</string>
+    <string name="masterdata_sync_start">Synchronisation des données de base lancée</string>
+    <string name="masterdata_sync_fail">La synchronisation des données de base a échoué</string>
+
+    <!-- Registration -->
+    <string name="registrations_title">Inscriptions</string>
+    <string name="registrations_subtitle">Remarque : les paquets sont automatiquement approuvés</string>
     <string name="lang_info_text">Veuillez sélectionner une langue parmi %s pour la saisie des données. %s doit
         obligatoirement être sélectionné par le résident conformément aux directives gouvernementales. L\'ordre de
         sélection conduira à la page vue pour les données démographiques.
     </string>
-    <string name="auth_token_save_failed">Échec de l\'enregistrement du jeton d\'authentification, veuillez réessayer
-    </string>
-    <string name="home_title">Domicile</string>
-    <string name="masterdata_sync_start">Synchronisation des données de base lancée</string>
-    <string name="masterdata_sync_fail">La synchronisation des données de base a échoué</string>
     <string name="preview_title">Aperçu de l\'inscription</string>
     <string name="registration_success">Inscription enregistrée avec succès</string>
     <string name="registration_fail">Échec de la sauvegarde de l\'inscription</string>
@@ -38,12 +45,20 @@
     <string name="age_label">Âge</string>
     <string name="page_label">%d Page(s)</string>
     <string name="ref_id">Pièce d\'identité</string>
-    <string name="left_slab">Main gauche</string>
-    <string name="right_slab">Main droite</string>
-    <string name="thumbs">Pouces</string>
-    <string name="double_iris">Iris</string>
-    <string name="face">Visage</string>
-    <string name="exception_photo">Photo d\'exception</string>
+
+    <!-- Jobs -->
+    <string name="scheduled_jobs">Tâches planifiées</string>
+    <string name="starting_job">Emploi de départ %s</string>
+    <string name="last_sync_time">Heure de la dernière synchronisation: %s</string>
+    <string name="next_sync_time">Heure de la prochaine synchronisation : %s</string>
+    <string name="NA">N / A</string>
+    <string name="setting_up_job">Mise en place du travail</string>
+    <string name="cancelling_job">Annulation du travail</string>
+    <string name="job_scheduling_failed">Échec de la planification de la tâche</string>
+    <string name="job_triggering_failed">Échec du déclenchement de la tâche %s</string>
+    <string name="cancelling_job_failed">Échec de l\'annulation de la tâche</string>
+    <string name="job_scheduled">Tâche planifiée</string>
+    <string name="job_cancelled">Tâche annulée</string>
 
     <!-- Template -->
     <string name="app_id">ID d\'application</string>
@@ -53,16 +68,19 @@
     <string name="photo">Photo</string>
     <string name="documents">Documents</string>
     <string name="biometrics">Biométrie</string>
-    <string name="face_label">Visage</string>
-    <string name="exception_photo_label">Photo d\'exception</string>
     <string name="ro_label">Agent d\'inscription</string>
     <string name="reg_center">Centre d\'inscription</string>
     <string name="imp_guidelines">Directives importantes</string>
+
+    <!-- biometrics -->
+    <string name="face_label">Visage</string>
+    <string name="exception_photo_label">Photo d\'exception</string>
+    <string name="left_slap">Claque gauche</string>
+    <string name="right_slap">Coup droit</string>
+    <string name="double_iris">Iris</string>
     <string name="left_iris">Diaphragme gauche</string>
     <string name="right_iris">Diaphragme droit</string>
-    <string name="left_hand_palm">Paume de la main gauche</string>
-    <string name="right_hand_palm">Paume de la main droite</string>
     <string name="thumbs_label">Pouces</string>
     <string name="fingers">Des doigts</string>
-    <string name="ack_slip">Acknowledgement</string>
+    <string name="ack_slip">Reconnaissance</string>
 </resources>

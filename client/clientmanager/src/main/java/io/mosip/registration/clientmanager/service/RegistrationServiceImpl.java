@@ -300,8 +300,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         BiometricType biometricType = BiometricType.fromValue(singleType.name());
         // Algorithm
         RegistryIDType birAlgorithm = new RegistryIDType();
-        birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG);
-        birFormat.setType(PacketManagerConstant.CBEFF_DEFAULT_ALG_TYPE);
+        birAlgorithm.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG);
+        birAlgorithm.setType(PacketManagerConstant.CBEFF_DEFAULT_ALG_TYPE);
 
         // Quality Type
         QualityType qualityType = new QualityType();
@@ -323,7 +323,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .withCbeffversion(versionType)
                 .withBirInfo(new BIRInfo.BIRInfoBuilder().withIntegrity(false).build())
                 .withBdbInfo(new BDBInfo.BDBInfoBuilder().withFormat(birFormat).withQuality(qualityType)
-                        .withType(Arrays.asList(biometricType)).withSubtype(Collections.singletonList(biometricsDto.getBioSubType()))
+                        .withType(biometricType).withSubtype(biometricsDto.getBioSubType())
                         .withPurpose(PurposeType.ENROLL).withLevel(ProcessedLevelType.RAW)
                         .withCreationDate(LocalDateTime.now(ZoneId.of("UTC"))).withIndex(UUID.randomUUID().toString())
                         .build())

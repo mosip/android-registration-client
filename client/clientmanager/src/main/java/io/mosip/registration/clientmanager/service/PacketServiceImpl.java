@@ -239,13 +239,12 @@ public class PacketServiceImpl implements PacketService {
                             registrationRepository.updateStatus(updateDto.getRegistrationId(), updateDto.getStatusCode(),
                                     PacketClientStatus.UPLOADED.name());
                         }
-
-                        Toast.makeText(context, "Packet status sync completed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, context.getString(R.string.packet_status_sync_completed), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(context, "Packet status sync failed : " + error.get(0).getErrorMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, context.getString(R.string.packet_status_sync_failed, error.get(0).getErrorMessage()), Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(context, "Packet status sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())) , Toast.LENGTH_LONG).show();
                 }
             }
 

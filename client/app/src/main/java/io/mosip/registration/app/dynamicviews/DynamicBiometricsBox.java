@@ -119,13 +119,13 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
                     @Override
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                         switch (modalities.get(position)) {
-                            case FACE: tab.setText(R.string.face);
+                            case FACE: tab.setText(R.string.face_label);
                                 break;
-                            case FINGERPRINT_SLAB_LEFT: tab.setText(R.string.left_slab);
+                            case FINGERPRINT_SLAB_LEFT: tab.setText(R.string.left_slap);
                                 break;
-                            case FINGERPRINT_SLAB_RIGHT: tab.setText(R.string.right_slab);
+                            case FINGERPRINT_SLAB_RIGHT: tab.setText(R.string.right_slap);
                                 break;
-                            case FINGERPRINT_SLAB_THUMBS: tab.setText(R.string.thumbs);
+                            case FINGERPRINT_SLAB_THUMBS: tab.setText(R.string.thumbs_label);
                                 break;
                             case IRIS_DOUBLE: tab.setText(R.string.double_iris);
                                 break;

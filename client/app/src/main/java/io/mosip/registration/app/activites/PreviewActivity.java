@@ -174,7 +174,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
     private Map<String, Object> getBiometricData(FieldSpecDto field, RegistrationDto registrationDto, boolean isPreview, VelocityContext velocityContext) throws Exception {
         velocityContext.put("Fingers", getString(R.string.fingers));
         velocityContext.put("Iris", getString(R.string.double_iris));
-        velocityContext.put("Face", getString(R.string.face));
+        velocityContext.put("Face", getString(R.string.face_label));
 
         List<BiometricsDto> capturedList = new ArrayList<>();
         for (String attribute : field.getBioAttributes()) {
@@ -196,7 +196,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
         bioData.put("FingerCount", capturedFingers.stream().filter( b -> b.getBioValue() != null).count());
         bioData.put("IrisCount", capturedIris.stream().filter( b -> b.getBioValue() != null).count());
-        bioData.put("FaceCount", capturedFace.size());
+        bioData.put("FaceCount", 1); //TODO check this
         bioData.put("subType", field.getSubType());
         bioData.put("label", getFieldLabel(field, registrationDto));
 
@@ -348,8 +348,8 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
         velocityContext.put("LeftEyeLabel", getString(R.string.left_iris));
         velocityContext.put("RightEyeLabel", getString(R.string.right_iris));
-        velocityContext.put("LeftPalmLabel", getString(R.string.left_hand_palm));
-        velocityContext.put("RightPalmLabel", getString(R.string.right_hand_palm));
+        velocityContext.put("LeftPalmLabel", getString(R.string.left_slap));
+        velocityContext.put("RightPalmLabel", getString(R.string.right_slap));
         velocityContext.put("ThumbsLabel", getString(R.string.thumbs_label));
     }
 
