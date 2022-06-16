@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.repository;
 
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
 
@@ -28,23 +30,33 @@ public class GlobalParamRepository {
     }
 
     public List<String> getMandatoryLanguageCodes() {
-        //TODO remove hardcoded value and read from global param
-        return Arrays.asList("eng");
+        String value = globalParamMap.getOrDefault(RegistrationConstants.MANDATORY_LANGUAGES_KEY, "eng");
+        return Arrays.asList(value.split(RegistrationConstants.COMMA)).stream()
+                .map(String::trim)
+                .filter(item-> !item.isEmpty())
+                .map(String::toLowerCase)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public List<String> getOptionalLanguageCodes() {
-        //TODO remove hardcoded value and read from global param
-        return Arrays.asList("ara", "fra");
+        String value = globalParamMap.getOrDefault(RegistrationConstants.OPTIONAL_LANGUAGES_KEY, "");
+        return Arrays.asList(value.split(RegistrationConstants.COMMA)).stream()
+                .map(String::trim)
+                .filter(item-> !item.isEmpty())
+                .map(String::toLowerCase)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public int getMaxLanguageCount() {
-        //TODO remove hardcoded value and read from global param
-        return 3;
+        int maxCount = getCachedIntegerGlobalParam(RegistrationConstants.MAX_LANGUAGES_COUNT_KEY);
+        return maxCount > 0 ? maxCount : 1 ;
     }
 
     public int getMinLanguageCount() {
-        //TODO remove hardcoded value and read from global param
-        return 1;
+        int minCount = getCachedIntegerGlobalParam(RegistrationConstants.MIN_LANGUAGES_COUNT_KEY);
+        return minCount > 0 ? minCount : 1 ;
     }
 
     public void saveGlobalParam(String id, String value) {

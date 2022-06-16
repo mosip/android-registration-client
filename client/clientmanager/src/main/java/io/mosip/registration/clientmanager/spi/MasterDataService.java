@@ -96,7 +96,6 @@ public interface MasterDataService {
     /**
      * Returns the element for the provided code and language code
      * @param code
-     * @param langCode
      * @return
      */
     List<GenericValueDto> findLocationByCode(String code);
