@@ -15,9 +15,15 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.entity.Audit;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class AcknowledgementActivity extends DaggerAppCompatActivity {
 
@@ -25,6 +31,9 @@ public class AcknowledgementActivity extends DaggerAppCompatActivity {
 
     private WebView webView;
     private List<PrintJob> printJobs = new ArrayList<>();
+
+    @Inject
+    AuditManagerService auditManagerService;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -48,7 +57,16 @@ public class AcknowledgementActivity extends DaggerAppCompatActivity {
 
         final Button printButton = findViewById(R.id.printslip);
         printButton.setOnClickListener( v -> {
+            auditManagerService.audit(AuditEvent.PRINT_ACKNOWLEDGEMENT, Components.REGISTRATION);
             createWebPrintJob(webView);
+
+            long fromDate = System.currentTimeMillis() - 3600000;
+            List<Audit> audits = auditManagerService.getAuditLogs(fromDate);
+
+            for (Audit audit : audits) {
+                Log.i("Audit", audit.toString());
+            }
+
         });
 
         try {
@@ -58,6 +76,7 @@ public class AcknowledgementActivity extends DaggerAppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "Failed to set the acknowledgement content", e);
         }
+        auditManagerService.audit(AuditEvent.LOADED_ACKNOWLEDGEMENT_SCREEN, Components.REGISTRATION);
     }
 
     private void createWebPrintJob(WebView webView) {

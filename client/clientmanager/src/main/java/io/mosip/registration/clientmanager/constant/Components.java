@@ -10,10 +10,10 @@ package io.mosip.registration.clientmanager.constant;
 public enum Components {
 
     LOGIN("REG-MOD-101", "Login"),
-    REG_HOME("REG-MOD-102", "Home"),
+    HOME("REG-MOD-102", "Home"),
     REGISTRATION("REG-MOD-103", "Registration"),
-    REG_PACKET_SYNC("REG-MOD-104", "PacketSync"),
-    REG_DATA_SYNC("REG-MOD-105", "DataSync");
+    REG_PACKET_LIST("REG-MOD-104", "PacketSync"),
+    JOB_SERVICE("REG-MOD-105", "DataSync");
 
     Components(String id, String name) {
         this.id = id;

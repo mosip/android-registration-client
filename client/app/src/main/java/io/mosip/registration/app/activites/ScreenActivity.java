@@ -27,6 +27,8 @@ import io.mosip.registration.app.dynamicviews.DynamicComponentFactory;
 import io.mosip.registration.app.dynamicviews.DynamicView;
 import io.mosip.registration.app.util.BiometricService;
 import io.mosip.registration.app.util.ClientConstants;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
@@ -37,6 +39,7 @@ import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
@@ -73,6 +76,9 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    AuditManagerService auditManagerService;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +97,9 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             int currentScreenIndex = getIntent().getExtras().getInt("nextScreenIndex");
 
             final Button nextButton = findViewById(R.id.next);
+
             nextButton.setOnClickListener(v -> {
+                auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, Components.REGISTRATION);
 
                 Optional<DynamicView> view = currentDynamicViews.values()
                         .stream()
@@ -102,6 +110,8 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                     ((View) view.get()).requestFocus();
                     nextButton.setError(getString(R.string.invalid_value));
                 } else {
+                    auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, String.format(RegistrationConstants.REGISTRATION_SCREEN, screens[currentScreenIndex]));
+
                     nextButton.setError(null);
                     //start activity to render next screen
                     Intent intent = new Intent(this, ScreenActivity.class);
@@ -137,6 +147,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                 startActivity(intent);
             }
 
+            auditManagerService.audit(AuditEvent.LOADED_REGISTRATION_SCREEN, Components.REGISTRATION);
         } catch (Throwable t) {
             Log.e(TAG, "Failed to launch registration screen", t);
             goToHome();
@@ -247,6 +258,8 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
     private void setScanButtonListener(int requestCode, View view, FieldSpecDto fieldSpecDto, List<String> selectedLanguages) {
         Button button = view.findViewById(R.id.scan_doc);
         button.setOnClickListener(v -> {
+            auditManagerService.audit(AuditEvent.DOCUMENT_SCAN, Components.REGISTRATION);
+
             int preference = ScanConstants.OPEN_CAMERA;
             Intent intent = new Intent(this, ScanActivity.class);
             intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
@@ -255,6 +268,8 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
 
         TextView textView = view.findViewById(R.id.doc_preview);
         textView.setOnClickListener(v -> {
+            auditManagerService.audit(AuditEvent.DOCUMENT_PREVIEW, Components.REGISTRATION);
+
             Intent intent = new Intent(this, PreviewDocumentActivity.class);
             List<String> labels = new ArrayList<>();
             for(String language : selectedLanguages) {
@@ -281,6 +296,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
 
     @Override
     public void startBiometricCapture(Modality modality) {
+        auditManagerService.audit(AuditEvent.BIOMETRIC_CAPTURE, modality.name());
         currentModality = modality;
         discoverSBI();
     }

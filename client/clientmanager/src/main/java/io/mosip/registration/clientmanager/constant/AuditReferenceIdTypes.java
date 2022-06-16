@@ -9,6 +9,7 @@ package io.mosip.registration.clientmanager.constant;
 public enum AuditReferenceIdTypes {
     USER_ID("USER_ID"),
     REGISTRATION_ID("REGISTRATION_ID"),
+    PACKET_ID("PACKET_ID"),
     APPLICATION_ID("APPLICATION_ID");
 
     /**

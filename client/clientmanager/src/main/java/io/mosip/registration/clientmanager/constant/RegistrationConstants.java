@@ -23,4 +23,6 @@ public class RegistrationConstants {
     public static final String R_CAPTURE_INTENT_ACTION = ".rCapture";
     public static final String SBI_INTENT_REQUEST_KEY = "input";
     public static final String SBI_INTENT_RESPONSE_KEY = "response";
+
+    public static final String REGISTRATION_SCREEN = "Registration: %s";
 }

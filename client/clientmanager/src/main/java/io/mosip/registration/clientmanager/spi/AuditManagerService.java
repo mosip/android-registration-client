@@ -1,7 +1,10 @@
 package io.mosip.registration.clientmanager.spi;
 
+import java.util.List;
+
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.entity.Audit;
 
 /**
  * The wrapper interface to log the audits
@@ -26,10 +29,30 @@ public interface AuditManagerService {
                String refIdType);
 
     /**
+     * Audits the events across Registration-Client Module.
+     *
+     * @param auditEventEnum this {@code Enum} contains the event details namely eventId,
+     *                       eventType and eventName
+     * @param appModuleEnum  this {@code Enum} contains the application module details namely
+     *                       moduleId and moduleName
+     */
+    void audit(AuditEvent auditEventEnum, Components appModuleEnum);
+
+
+    void audit(AuditEvent auditEventEnum, String appModuleEnum);
+
+    /**
      * Delete Audit Logs
      *
      * @return true if deleted
      */
     boolean deleteAuditLogs();
+
+    /**
+     * Delete Audit Logs
+     *
+     * @return true if deleted
+     */
+    List<Audit> getAuditLogs(long fromDateTime);
 
 }

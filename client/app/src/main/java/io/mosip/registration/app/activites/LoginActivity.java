@@ -11,8 +11,12 @@ import android.widget.*;
 
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -35,6 +39,9 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
     @Inject
     LoginService loginService;
+
+    @Inject
+    AuditManagerService auditManagerService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
         findViewById(R.id.info_logo).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                auditManagerService.audit(AuditEvent.ABOUT_CLIENT, Components.LOGIN);
+
                 Intent intent = new Intent(LoginActivity.this, AboutActivity.class);
                 startActivity(intent);
                 return true;
@@ -85,6 +94,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 String username = usernameEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
+
+                auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
                 //validate form
                 if(validateLogin(username, password)){
                     doLogin(username, password, loadingProgressBar);
@@ -92,6 +103,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 loginButton.setEnabled(false);
             }
         });
+        auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.LOGIN);
     }
 
     private boolean validateLogin(String username, String password){

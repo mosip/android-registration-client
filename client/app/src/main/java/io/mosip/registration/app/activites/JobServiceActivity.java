@@ -30,6 +30,9 @@ import io.mosip.registration.app.viewmodel.JobServiceViewModel;
 import io.mosip.registration.app.viewmodel.ViewModelFactory;
 import io.mosip.registration.app.viewmodel.model.JobServiceModel;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 
 public class JobServiceActivity extends DaggerAppCompatActivity {
@@ -37,8 +40,12 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
     private static final String TAG = JobServiceActivity.class.getSimpleName();
     @Inject
     PacketService packetService;
+
     @Inject
     JobTransactionService jobTransactionService;
+
+    @Inject
+    AuditManagerService auditManagerService;
 
     JobServiceHelper jobServiceHelper;
 
@@ -63,6 +70,8 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
             listView.setAdapter(new CustomListViewAdapter(this, R.layout.custom_list_view_job, list));
             progressBar.setVisibility(View.GONE);
         });
+
+        auditManagerService.audit(AuditEvent.LOADED_JOB_SERVICE, Components.JOB_SERVICE);
     }
 
     private class CustomListViewAdapter extends ArrayAdapter<JobServiceModel> {
@@ -110,6 +119,8 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
             mainViewHolder.triggerJobButton.setOnClickListener(v -> {
                 Toast.makeText(JobServiceActivity.this, getString(R.string.starting_job, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
                 try {
+                    auditManagerService.audit(AuditEvent.TRIGGER_JOB, Components.JOB_SERVICE);
+
                     boolean triggered = jobServiceHelper.triggerJobService(jobServiceModel.getId(), jobServiceModel.getApiName());
                     if (!triggered)
                         Toast.makeText(JobServiceActivity.this, getString(R.string.job_triggering_failed, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
@@ -124,6 +135,8 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
                 Toast.makeText(JobServiceActivity.this, getString(R.string.setting_up_job), Toast.LENGTH_SHORT).show();
                 if (isChecked) {
                     try {
+                        auditManagerService.audit(AuditEvent.SCHEDULE_JOB, Components.JOB_SERVICE);
+
                         int resultCode = jobServiceHelper.scheduleJob(jobServiceModel.getId(), jobServiceModel.getApiName(), jobServiceModel.getSyncFreq());
                         if (resultCode == JobScheduler.RESULT_SUCCESS) {
                             Log.d(TAG, getString(R.string.job_scheduled));
@@ -142,6 +155,8 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
                         compoundButton.setChecked(false);
                     }
                 } else {
+                    auditManagerService.audit(AuditEvent.CANCEL_JOB, Components.JOB_SERVICE);
+
                     Toast.makeText(JobServiceActivity.this, getString(R.string.cancelling_job), Toast.LENGTH_SHORT).show();
                     try {
                         jobServiceHelper.cancelJob(jobServiceModel.getId());

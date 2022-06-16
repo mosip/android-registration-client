@@ -21,6 +21,7 @@ import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
@@ -249,7 +250,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository) {
-        return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
+    AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository, RegistrationService registrationService) {
+        return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, registrationService);
     }
 }
