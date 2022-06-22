@@ -13,7 +13,6 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
-import io.mosip.registration.clientmanager.constant.AuditEventType;
 import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
@@ -36,6 +35,7 @@ public class AuditManagerServiceImpl implements AuditManagerService {
     private String TAG = AuditManagerServiceImpl.class.getSimpleName();
     public static final String AUDIT_EXPORTED_TILL = "AuditExportedTill";
     public static final String REGISTRATION_EVENTS = "REG-EVT";
+    private static final String COLON_SEPARATED_DESCRIPTION = "%s: %s";
 
     private Context context;
     private AuditRepository auditRepository;
@@ -51,81 +51,26 @@ public class AuditManagerServiceImpl implements AuditManagerService {
     }
 
     @Override
-    public void audit(AuditEvent auditEventEnum, Components appModuleEnum, String refId, String refIdType) {
-        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
-                Context.MODE_PRIVATE);
-
-        String hostName = BuildConfig.BASE_URL;
-        String hostIP = BuildConfig.BASE_URL;
-        String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
-        String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
-        String applicationId = this.context.getString(R.string.app_name);
-        String applicationName = this.context.getString(R.string.app_name);
-
-        Audit audit = new Audit(
-                System.currentTimeMillis(),
-                auditEventEnum.getId(),
-                auditEventEnum.getName(),
-                auditEventEnum.getType(),
-                System.currentTimeMillis(),
-                hostName,
-                hostIP,
-                applicationId,
-                applicationName,
-                sessionUserId,
-                sessionUserName,
-                refId,
-                refIdType,
-                sessionUserId,
-                appModuleEnum.getName(),
-                appModuleEnum.getId(),
-                auditEventEnum.getDescription());
-
-        auditRepository.insertAudit(audit);
-
-    }
-
-    @Override
     public void audit(AuditEvent auditEventEnum, Components appModuleEnum) {
-        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
-                Context.MODE_PRIVATE);
-
-        String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
-
-        RegistrationDto registrationDto = null;
-        try {
-            registrationDto = registrationService.getRegistrationDto();
-        } catch (Exception ignored) {
-        }
-
-        String refId, refIdType;
-        if (auditEventEnum.getId().contains(REGISTRATION_EVENTS)
-                && registrationDto != null
-                && registrationDto.getRId() != null) {
-            refId = registrationDto.getRId();
-            refIdType = AuditReferenceIdTypes.REGISTRATION_ID.getReferenceTypeId();
-        } else if (sessionUserId != null) {
-            refId = sessionUserId;
-            refIdType = AuditReferenceIdTypes.USER_ID.name();
-        } else {
-            refId = this.context.getString(R.string.app_name);
-            refIdType = AuditReferenceIdTypes.APPLICATION_ID.name();
-        }
-
-        audit(auditEventEnum, appModuleEnum, refId, refIdType);
+        audit(auditEventEnum, appModuleEnum.getId(), appModuleEnum.getName(), null);
     }
 
     @Override
-    public void audit(AuditEvent auditEventEnum, String appModuleString) {
+    public void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName) {
+        audit(auditEventEnum, appModuleId, appModuleName, null);
+    }
+
+    @Override
+    public void audit(AuditEvent auditEventEnum, Components appModuleEnum, String errorMsg) {
+        audit(auditEventEnum, appModuleEnum.getId(), appModuleEnum.getName(), errorMsg);
+    }
+
+    @Override
+    public void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String errorMsg) {
         SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
 
-        String hostName = BuildConfig.BASE_URL;
-        String hostIP = BuildConfig.BASE_URL;
         String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
-        String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
-        String applicationId = this.context.getString(R.string.app_name);
-        String applicationName = this.context.getString(R.string.app_name);
 
         RegistrationDto registrationDto = null;
         try {
@@ -147,26 +92,12 @@ public class AuditManagerServiceImpl implements AuditManagerService {
             refIdType = AuditReferenceIdTypes.APPLICATION_ID.name();
         }
 
-        Audit audit = new Audit(
-                System.currentTimeMillis(),
-                auditEventEnum.getId(),
-                auditEventEnum.getName(),
-                auditEventEnum.getType(),
-                System.currentTimeMillis(),
-                hostName,
-                hostIP,
-                applicationId,
-                applicationName,
-                sessionUserId,
-                sessionUserName,
-                refId,
-                refIdType,
-                sessionUserId,
-                appModuleString,
-                appModuleString,
-                auditEventEnum.getDescription());
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null);
+    }
 
-        auditRepository.insertAudit(audit);
+    @Override
+    public void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType) {
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null);
     }
 
     @Override
@@ -196,5 +127,40 @@ public class AuditManagerServiceImpl implements AuditManagerService {
     public List<Audit> getAuditLogs(long fromDateTime) {
         Log.i(TAG, "Deletion of Audit Logs Started");
         return auditRepository.getAuditsFromDate(fromDateTime);
+    }
+
+    private void addAudit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType, String errorMsg) {
+        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
+
+        String hostName = BuildConfig.BASE_URL;
+        String hostIP = BuildConfig.BASE_URL;
+        String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
+        String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
+        String applicationId = this.context.getString(R.string.app_name);
+        String applicationName = this.context.getString(R.string.app_name);
+        String description = errorMsg == null ? auditEventEnum.getDescription()
+                : String.format(COLON_SEPARATED_DESCRIPTION, auditEventEnum.getDescription(), errorMsg);
+
+        Audit audit = new Audit(
+                System.currentTimeMillis(),
+                auditEventEnum.getId(),
+                auditEventEnum.getName(),
+                auditEventEnum.getType(),
+                System.currentTimeMillis(),
+                hostName,
+                hostIP,
+                applicationId,
+                applicationName,
+                sessionUserId,
+                sessionUserName,
+                refId,
+                refIdType,
+                sessionUserId,
+                appModuleName,
+                appModuleId,
+                description);
+
+        auditRepository.insertAudit(audit);
     }
 }

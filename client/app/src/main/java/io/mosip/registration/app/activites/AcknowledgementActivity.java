@@ -59,14 +59,6 @@ public class AcknowledgementActivity extends DaggerAppCompatActivity {
         printButton.setOnClickListener( v -> {
             auditManagerService.audit(AuditEvent.PRINT_ACKNOWLEDGEMENT, Components.REGISTRATION);
             createWebPrintJob(webView);
-
-            long fromDate = System.currentTimeMillis() - 3600000;
-            List<Audit> audits = auditManagerService.getAuditLogs(fromDate);
-
-            for (Audit audit : audits) {
-                Log.i("Audit", audit.toString());
-            }
-
         });
 
         try {

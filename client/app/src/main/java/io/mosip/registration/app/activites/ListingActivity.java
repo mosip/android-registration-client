@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.viewmodel.RegistrationPacketViewModel;
@@ -22,9 +24,10 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 
 import javax.inject.Inject;
+
 import java.util.List;
 
-public class ListingActivity  extends DaggerAppCompatActivity {
+public class ListingActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = ListingActivity.class.getSimpleName();
 
@@ -76,7 +79,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             ViewHolder mainViewholder = null;
-            if(convertView == null) {
+            if (convertView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());
                 convertView = layoutInflater.inflate(layout, parent, false);
 
@@ -95,7 +98,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
                 public void onClick(View v) {
                     Toast.makeText(getContext(), R.string.packet_sync_start, Toast.LENGTH_SHORT).show();
                     try {
-                        auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST, registration.getPacketId(), AuditReferenceIdTypes.PACKET_ID.name());
+                        auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST.getId(), Components.REG_PACKET_LIST.getName(), registration.getPacketId(), AuditReferenceIdTypes.PACKET_ID.name());
                         packetService.syncRegistration(registration.getPacketId());
                     } catch (Exception e) {
                         Log.e(TAG, "Packet sync failed", e);
@@ -108,7 +111,7 @@ public class ListingActivity  extends DaggerAppCompatActivity {
                 public void onClick(View v) {
                     Toast.makeText(getContext(), "Starting packet upload", Toast.LENGTH_SHORT).show();
                     try {
-                        auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST, registration.getPacketId(), AuditReferenceIdTypes.PACKET_ID.name());
+                        auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST.getId(), Components.REG_PACKET_LIST.getName(), registration.getPacketId(), AuditReferenceIdTypes.PACKET_ID.name());
                         packetService.uploadRegistration(registration.getPacketId());
                         Toast.makeText(getContext(), "Packet upload successful", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
