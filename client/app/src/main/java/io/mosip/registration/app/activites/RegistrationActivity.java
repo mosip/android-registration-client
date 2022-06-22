@@ -1,5 +1,6 @@
 package io.mosip.registration.app.activites;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
@@ -46,12 +47,15 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
     @Inject
     AuditManagerService auditManagerService;
 
+    @SuppressLint("StringFormatInvalid")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity);
-
         registrationService.clearRegistration();
+
+        final Button startRegistration = findViewById(R.id.start_registration);
+        startRegistration.setEnabled(false);
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -59,6 +63,8 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
         configuredLanguages.clear();
         selectedLanguages.clear();
+        int minCount = globalParamRepository.getMinLanguageCount();
+        int maxCount = globalParamRepository.getMaxLanguageCount();
         String mandatoryLangString = null;
         List<String> mandatoryLanguages = globalParamRepository.getMandatoryLanguageCodes();
         for(String langCode : mandatoryLanguages) {
@@ -73,7 +79,7 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
         ((TextView)findViewById(R.id.languageInfoText)).setText(getString(R.string.lang_info_text,
                 String.join(",", configuredLanguages.values()),
-                String.join(",", mandatoryLangString)));
+                String.join(",", mandatoryLangString),minCount,maxCount));
 
         ListView listView = findViewById(R.id.languageList);
         listView.clearChoices();
@@ -90,10 +96,14 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
                     selectedLanguages.add(getLangCode(checkBox.getText().toString()));
                 else
                     selectedLanguages.remove(getLangCode(checkBox.getText().toString()));
+
+                if(selectedLanguages.size() >= minCount && selectedLanguages.size() <= maxCount) {
+                    startRegistration.setEnabled(true);
+                }
             }
         });
 
-        final Button startRegistration = findViewById(R.id.start_registration);
+
         startRegistration.setOnClickListener( v -> {
             auditManagerService.audit(AuditEvent.REGISTRATION_START, Components.REGISTRATION);
             startRegistration.setEnabled(false);

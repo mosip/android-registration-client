@@ -62,6 +62,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = PreviewActivity.class.getSimpleName();
     private static final String SLASH = "/";
+    private static final String TEMPLATE_TYPE_CODE = "reg-android-preview-template-part";
 
     private WebView webView;
 
@@ -109,9 +110,10 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
         try {
             RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
-            webViewContent = getTemplate(registrationDto, "Android", "reg-preview-template-part", true);
+            webViewContent = getTemplate(registrationDto, TEMPLATE_TYPE_CODE, true);
         } catch (Exception e) {
             Log.e(TAG, "Failed to set the preview content", e);
+            //TODO go to home on exception
         }
 
         final EditText usernameEditText = findViewById(R.id.packet_auth_username);
@@ -132,12 +134,12 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         auditManagerService.audit(AuditEvent.LOADED_REGISTRATION_PREVIEW, Components.REGISTRATION);
     }
 
-    public String getTemplate(RegistrationDto registrationDto, String templateName, String templateTypeCode, boolean isPreview) throws Exception {
+    public String getTemplate(RegistrationDto registrationDto, String templateTypeCode, boolean isPreview) throws Exception {
         StringWriter writer = new StringWriter();
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.init();
 
-        String templateText = this.masterDataService.getPreviewTemplateContent(templateName, templateTypeCode, "eng");
+        String templateText = this.masterDataService.getPreviewTemplateContent(templateTypeCode, "eng");
         InputStream is = new ByteArrayInputStream(templateText.getBytes(StandardCharsets.UTF_8));
 
         VelocityContext velocityContext = new VelocityContext();

@@ -120,11 +120,10 @@ public interface MasterDataService {
 
     /**
      *
-     * @param templateName
      * @param templateTypeCode
      * @param language
      * @return
      */
-    String getPreviewTemplateContent(String templateName, String templateTypeCode, String language);
+    String getPreviewTemplateContent(String templateTypeCode, String language);
 
 }

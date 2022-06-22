@@ -585,7 +585,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public String getPreviewTemplateContent(String templateName, String templateTypeCode, String langCode) {
-        return templateRepository.getPreviewTemplate(templateName, templateTypeCode, langCode);
+    public String getPreviewTemplateContent(String templateTypeCode, String langCode) {
+        return templateRepository.getPreviewTemplate(templateTypeCode, langCode);
     }
 }
