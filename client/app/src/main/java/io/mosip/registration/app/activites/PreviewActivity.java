@@ -139,7 +139,8 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.init();
 
-        String templateText = this.masterDataService.getPreviewTemplateContent(templateTypeCode, "eng");
+        String templateText = this.masterDataService.getPreviewTemplateContent(templateTypeCode,
+                registrationDto.getSelectedLanguages().get(0));
         InputStream is = new ByteArrayInputStream(templateText.getBytes(StandardCharsets.UTF_8));
 
         VelocityContext velocityContext = new VelocityContext();
