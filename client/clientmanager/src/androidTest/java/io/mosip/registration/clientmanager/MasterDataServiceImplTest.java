@@ -271,7 +271,6 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , null, null);
 
-        assertNotNull(masterDataService.getPreviewTemplateContent("Android",
-                "reg-preview-template", "eng"));
+        assertNotNull(masterDataService.getPreviewTemplateContent("reg-android-preview-template", "eng"));
     }
 }

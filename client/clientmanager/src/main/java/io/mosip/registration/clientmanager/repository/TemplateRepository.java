@@ -26,8 +26,8 @@ public class TemplateRepository {
         return templateBuilder.toString();
     }
 
-    public String getPreviewTemplate(String templateName, String templateTypeCode, String langCode) {
-        List<String> templateTexts = templateDao.findPreviewTemplateText(templateName+"%",templateTypeCode+"%", langCode);
+    public String getPreviewTemplate(String templateTypeCode, String langCode) {
+        List<String> templateTexts = templateDao.findPreviewTemplateText(templateTypeCode+"%", langCode);
         StringBuilder templateBuilder = new StringBuilder();
         for(String txt : templateTexts) {
             templateBuilder.append(txt);

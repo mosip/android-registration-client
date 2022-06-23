@@ -145,7 +145,8 @@ public class MasterDataServiceImpl implements MasterDataService {
             syncCertificate();
             syncLatestIdSchema();
             syncUserDetails();
-           // syncCACertificates();
+            syncGlobalParamsData();
+            //syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
@@ -273,15 +274,13 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @SuppressWarnings("unchecked")
     private void parseToMap(Map<String, Object> map, Map<String, String> globalParamMap) {
-        if (map != null) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                String key = entry.getKey();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = entry.getKey();
 
-                if (entry.getValue() instanceof HashMap) {
-                    parseToMap((HashMap<String, Object>) entry.getValue(), globalParamMap);
-                } else {
-                    globalParamMap.put(key, String.valueOf(entry.getValue()));
-                }
+            if (entry.getValue() instanceof HashMap) {
+                parseToMap((HashMap<String, Object>) entry.getValue(), globalParamMap);
+            } else {
+                globalParamMap.put(key, String.valueOf(entry.getValue()));
             }
         }
     }
@@ -298,7 +297,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         } catch (IOException e) {
             Log.e(TAG, "Failed to decrypt and parse config response >> ", e);
         }
-        return null;
+        return Collections.EMPTY_MAP;
     }
 
     @Override
@@ -586,7 +585,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public String getPreviewTemplateContent(String templateName, String templateTypeCode, String langCode) {
-        return templateRepository.getPreviewTemplate(templateName, templateTypeCode, langCode);
+    public String getPreviewTemplateContent(String templateTypeCode, String langCode) {
+        return templateRepository.getPreviewTemplate(templateTypeCode, langCode);
     }
 }

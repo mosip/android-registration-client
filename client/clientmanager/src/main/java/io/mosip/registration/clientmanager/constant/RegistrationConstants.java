@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RegistrationConstants {
+
+    public static final String COMMA = ",";
     public static final String EMPTY_STRING = "";
     public static final String AGE_GROUP = "ageGroup";
     public static final String AGE = "age";
@@ -18,11 +20,20 @@ public class RegistrationConstants {
     public static final List<String> FACE_ATTR = Arrays.asList("");
     public static final List<String> EXCEPTION_PHOTO_ATTR = Arrays.asList("unknown");
 
+
+    //SBI intents
     public static final String DISCOVERY_INTENT_ACTION = "io.sbi.device";
     public static final String D_INFO_INTENT_ACTION = ".Info";
     public static final String R_CAPTURE_INTENT_ACTION = ".rCapture";
     public static final String SBI_INTENT_REQUEST_KEY = "input";
     public static final String SBI_INTENT_RESPONSE_KEY = "response";
 
+    //Global param keys
+    public static final String MANDATORY_LANGUAGES_KEY = "mosip.mandatory-languages";
+    public static final String OPTIONAL_LANGUAGES_KEY = "mosip.optional-languages";
+    public static final String MAX_LANGUAGES_COUNT_KEY = "mosip.max-languages.count";
+    public static final String MIN_LANGUAGES_COUNT_KEY = "mosip.min-languages.count";
+
+    //Audits
     public static final String REGISTRATION_SCREEN = "Registration: %s";
 }

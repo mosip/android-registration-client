@@ -96,7 +96,6 @@ public interface MasterDataService {
     /**
      * Returns the element for the provided code and language code
      * @param code
-     * @param langCode
      * @return
      */
     List<GenericValueDto> findLocationByCode(String code);
@@ -121,11 +120,10 @@ public interface MasterDataService {
 
     /**
      *
-     * @param templateName
      * @param templateTypeCode
      * @param language
      * @return
      */
-    String getPreviewTemplateContent(String templateName, String templateTypeCode, String language);
+    String getPreviewTemplateContent(String templateTypeCode, String language);
 
 }

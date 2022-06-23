@@ -30,7 +30,8 @@
     <string name="registrations_title">Registrations</string>
     <string name="registrations_subtitle">Note: Packets are auto-approved</string>
     <string name="data_entry_lang_title">Data Entry Language</string>
-    <string name="lang_info_text">Please select any languages among %s for data entry. %s is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.</string>
+    <string name="start_registration">Start Registration</string>
+    <string name="lang_info_text">Please select any languages among %s for data entry. %s is mandatory for the resident to select as per government guidelines. Minimum %d language(s) must be selected with maximum limit set to %d. The order of selection will lead to page view for demographic data.</string>
     <string name="preview_title">Preview Registration</string>
     <string name="registration_success">Registration saved successfully</string>
     <string name="registration_fail">Failed to save registration</string>
