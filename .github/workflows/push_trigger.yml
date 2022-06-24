@@ -32,9 +32,6 @@ jobs:
           path: ./client/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 5
       - name: Run sonar analysis
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-          sonar.projectKey: mosip_${{ github.event.repository.name }}
-          sonar.organization: ${{ secrets.ORG_KEY }}
+        run: |
+          cd android-registration-client
+          mvn -B -Dgpg.skip verify sonar:sonar -Dsonar.projectKey=mosip_android-registration-client -Dsonar.organization=${{ secrets.ORG_KEY }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
