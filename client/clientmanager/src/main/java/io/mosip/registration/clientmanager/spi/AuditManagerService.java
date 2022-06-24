@@ -22,24 +22,28 @@ public interface AuditManagerService {
      *                       eventType and eventName
      * @param appModuleEnum  this {@code Enum} contains the application module details namely
      *                       moduleId and moduleName
-     * @param refId          the ref id of the audit event
-     * @param refIdType      the ref id type of the audit event
      */
-    void audit(AuditEvent auditEventEnum, Components appModuleEnum, String refId,
-               String refIdType);
+    void audit(AuditEvent auditEventEnum, Components appModuleEnum);
+
+    void audit(AuditEvent auditEventEnum, Components appModuleEnum, String errorMsg);
 
     /**
      * Audits the events across Registration-Client Module.
      *
      * @param auditEventEnum this {@code Enum} contains the event details namely eventId,
      *                       eventType and eventName
-     * @param appModuleEnum  this {@code Enum} contains the application module details namely
-     *                       moduleId and moduleName
+     * @param appModuleId    this contains appModuleId
+     * @param appModuleName  this contains appModuleName
+     * @param refId          the ref id of the audit event
+     * @param refIdType      the ref id type of the audit event
      */
-    void audit(AuditEvent auditEventEnum, Components appModuleEnum);
+    void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId,
+               String refIdType);
 
+    void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName);
 
-    void audit(AuditEvent auditEventEnum, String appModuleEnum);
+    void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String errorMsg);
+
 
     /**
      * Delete Audit Logs

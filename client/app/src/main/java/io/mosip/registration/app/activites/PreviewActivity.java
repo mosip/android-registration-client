@@ -17,11 +17,13 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.packetmanager.dto.SimpleType;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
@@ -120,11 +122,11 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         final EditText passwordEditText = findViewById(R.id.packet_auth_pwd);
         final ProgressBar loadingProgressBar = findViewById(R.id.auth_loading);
         final Button button = findViewById(R.id.createpacket);
-        button.setOnClickListener( v -> {
+        button.setOnClickListener(v -> {
             auditManagerService.audit(AuditEvent.CREATE_PACKET_AUTH, Components.REGISTRATION);
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
-            if(validateLogin(username, password)) {
+            if (validateLogin(username, password)) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 doPacketAuth(username, password, loadingProgressBar);
             }
@@ -146,7 +148,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         VelocityContext velocityContext = new VelocityContext();
 
         Double version = identitySchemaRepository.getLatestSchemaVersion();
-        if(version == null)
+        if (version == null)
             throw new Exception("No Schema found");
         List<FieldSpecDto> schemaFields = identitySchemaRepository.getAllFieldSpec(getApplicationContext(), version);
 
@@ -160,17 +162,23 @@ public class PreviewActivity extends DaggerAppCompatActivity {
             switch (field.getType()) {
                 case "documentType":
                     Map<String, Object> docData = getDocumentData(field, registrationDto, velocityContext);
-                    if(docData != null) { documentsData.put(field.getId(), docData); }
+                    if (docData != null) {
+                        documentsData.put(field.getId(), docData);
+                    }
                     break;
 
                 case "biometricsType":
                     Map<String, Object> bioData = getBiometricData(field, registrationDto, isPreview, velocityContext);
-                    if(bioData != null) { biometricsData.put(field.getId(), bioData); }
+                    if (bioData != null) {
+                        biometricsData.put(field.getId(), bioData);
+                    }
                     break;
 
                 default:
                     Map<String, Object> demoData = getDemographicData(field, registrationDto);
-                    if(demoData != null) { demographicsData.put(field.getId(), demoData); }
+                    if (demoData != null) {
+                        demographicsData.put(field.getId(), demoData);
+                    }
                     break;
             }
         }
@@ -194,7 +202,9 @@ public class PreviewActivity extends DaggerAppCompatActivity {
                 capturedList.add(registrationDto.getBiometrics().get(key));
         }
 
-        if(capturedList.isEmpty()) { return null; }
+        if (capturedList.isEmpty()) {
+            return null;
+        }
 
         Map<String, Object> bioData = new HashMap<>();
 
@@ -205,8 +215,8 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         List<BiometricsDto> capturedFace = capturedList.stream()
                 .filter(d -> d.getModality().toLowerCase().contains("face")).collect(Collectors.toList());
 
-        bioData.put("FingerCount", capturedFingers.stream().filter( b -> b.getBioValue() != null).count());
-        bioData.put("IrisCount", capturedIris.stream().filter( b -> b.getBioValue() != null).count());
+        bioData.put("FingerCount", capturedFingers.stream().filter(b -> b.getBioValue() != null).count());
+        bioData.put("IrisCount", capturedIris.stream().filter(b -> b.getBioValue() != null).count());
         bioData.put("FaceCount", 1); //TODO check this
         bioData.put("subType", field.getSubType());
         bioData.put("label", getFieldLabel(field, registrationDto));
@@ -257,12 +267,12 @@ public class PreviewActivity extends DaggerAppCompatActivity {
                     isPreview ? thumbsBitmap : null);
         }*/
 
-        if(!capturedFace.isEmpty()) {
+        if (!capturedFace.isEmpty()) {
             Bitmap faceBitmap = UserInterfaceHelperService.getFaceBitMap(capturedFace.get(0));
             setBiometricImage(bioData, "FaceImageSource", isPreview ? 0 : R.drawable.face,
                     isPreview ? faceBitmap : null);
 
-            if("applicant".equalsIgnoreCase(field.getSubType())) {
+            if ("applicant".equalsIgnoreCase(field.getSubType())) {
                 setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap);
             }
         }
@@ -271,7 +281,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
     private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap) {
         if (bitmap != null) {
-            try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
@@ -286,7 +296,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
     private void setBiometricImage(VelocityContext velocityContext, String key, Bitmap bitmap) {
         if (bitmap != null) {
-            try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
@@ -297,7 +307,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private void setFingerRankings(List<BiometricsDto> capturedFingers,	List<String> fingers, Map<String, Object> data) {
+    private void setFingerRankings(List<BiometricsDto> capturedFingers, List<String> fingers, Map<String, Object> data) {
         Map<String, Float> sortedValues = capturedFingers.stream()
                 .filter(b -> fingers.contains(b.getBioSubType().replaceAll("\\s+", "")) && b.getBioValue() != null)
                 .sorted(Comparator.comparing(BiometricsDto::getQualityScore))
@@ -326,7 +336,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imagePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream);
             byte[] byteArray = byteStream.toByteArray();
-            String imageEncodedBytes = Base64.encodeToString(byteArray,Base64.DEFAULT);
+            String imageEncodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
             return "data:image/jpeg;base64," + imageEncodedBytes;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
@@ -366,7 +376,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
     private Map<String, Object> getDemographicData(FieldSpecDto field, RegistrationDto registrationDto) {
         Map<String, Object> data = null;
-        if("UIN".equalsIgnoreCase(field.getId()) || "IDSchemaVersion".equalsIgnoreCase(field.getId()))
+        if ("UIN".equalsIgnoreCase(field.getId()) || "IDSchemaVersion".equalsIgnoreCase(field.getId()))
             return null;
 
         String value = getValue(registrationDto.getDemographics().get(field.getId()));
@@ -435,7 +445,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
     private Map<String, Object> getDocumentData(FieldSpecDto field, RegistrationDto registrationDto, VelocityContext velocityContext) {
         Map<String, Object> data = null;
-        if(registrationDto.getDocuments().get(field.getId()) != null) {
+        if (registrationDto.getDocuments().get(field.getId()) != null) {
             data = new HashMap<>();
             data.put("label", getFieldLabel(field, registrationDto));
             data.put("value", registrationDto.getDocuments().get(field.getId()).getType());
@@ -443,12 +453,12 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         return data;
     }
 
-    private boolean validateLogin(String username, String password){
-        if(username == null || username.trim().length() == 0){
+    private boolean validateLogin(String username, String password) {
+        if (username == null || username.trim().length() == 0) {
             Toast.makeText(this, R.string.username_required, Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(password == null || password.trim().length() == 0){
+        if (password == null || password.trim().length() == 0) {
             Toast.makeText(this, R.string.password_required, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -456,7 +466,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
         return true;
     }
 
-    private void doPacketAuth(final String username,final String password, final ProgressBar loadingProgressBar){
+    private void doPacketAuth(final String username, final String password, final ProgressBar loadingProgressBar) {
         //TODO check if the machine is online, if offline check password hash locally
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
@@ -464,9 +474,9 @@ public class PreviewActivity extends DaggerAppCompatActivity {
             public void onResponse(Call call, Response response) {
                 loadingProgressBar.setVisibility(View.INVISIBLE);
                 ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(wrapper);
-                    if(error == null) {
+                    if (error == null) {
                         submitForm(username);
                         return;
                     }
@@ -479,6 +489,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
 
             @Override
             public void onFailure(Call call, Throwable t) {
+                auditManagerService.audit(AuditEvent.CREATE_PACKET_AUTH_FAILED, Components.REGISTRATION);
                 loadingProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(PreviewActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -493,6 +504,7 @@ public class PreviewActivity extends DaggerAppCompatActivity {
             startActivity(intent);
             Toast.makeText(this, R.string.registration_success, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
+            auditManagerService.audit(AuditEvent.CREATE_PACKET_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed on registration submission", e);
             Toast.makeText(this, R.string.registration_fail, Toast.LENGTH_LONG).show();
         }

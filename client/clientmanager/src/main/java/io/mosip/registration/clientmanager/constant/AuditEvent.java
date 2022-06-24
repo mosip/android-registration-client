@@ -42,17 +42,28 @@ public enum AuditEvent {
     SCHEDULE_JOB("REG-JOB-002", USER_EVENT.getCode(), "SCHEDULE_JOB", "Schedule job service clicked"),
     CANCEL_JOB("REG-JOB-003", USER_EVENT.getCode(), "CANCEL_JOB", "Cancel scheduled job service clicked"),
 
-    //REGISTRATION
+    //REGISTRATION USER EVENT
     REGISTRATION_START("REG-EVT-001", USER_EVENT.getCode(), "REGISTRATION_START", "Registration start event initiated"),
     LOADED_REGISTRATION_SCREEN("REG-EVT-002", USER_EVENT.getCode(), "LOADED_REGISTRATION_SCREEN", "Registration screen activity loaded"),
     NEXT_BUTTON_CLICKED("REG-EVT-003", USER_EVENT.getCode(), "NEXT_BUTTON_CLICKED", "Next button clicked"),
     DOCUMENT_SCAN("REG-EVT-004", USER_EVENT.getCode(), "DOCUMENT_SCAN", "Scan document button clicked"),
-    DOCUMENT_PREVIEW("REG-EVT-005", USER_EVENT.getCode(), "DOCUMENT_PREVIEW", "Document preview button clicked"),
-    BIOMETRIC_CAPTURE("REG-EVT-006", USER_EVENT.getCode(), "BIOMETRIC_CAPTURE_INITIATED", "Biometric capture initiated"),
-    LOADED_REGISTRATION_PREVIEW("REG-EVT-007", USER_EVENT.getCode(), "LOADED_REGISTRATION_PREVIEW", "Registration preview loaded"),
-    CREATE_PACKET_AUTH("REG-EVT-008", USER_EVENT.getCode(), "CREATE_PACKET_AUTH", "Packet create authentication clicked"),
-    LOADED_ACKNOWLEDGEMENT_SCREEN("REG-EVT-009", USER_EVENT.getCode(), "LOADED_ACKNOWLEDGEMENT_SCREEN", "Acknowledgement Activity loaded"),
-    PRINT_ACKNOWLEDGEMENT("REG-EVT-0010", USER_EVENT.getCode(), "PRINT_ACKNOWLEDGEMENT", "Print acknowledgement");
+    DOCUMENT_SCAN_FAILED("REG-EVT-005", USER_EVENT.getCode(), "DOCUMENT_SCAN_FAILED", "Document scan failed"),
+    DOCUMENT_PREVIEW("REG-EVT-006", USER_EVENT.getCode(), "DOCUMENT_PREVIEW", "Document preview button clicked"),
+    BIOMETRIC_CAPTURE("REG-EVT-007", USER_EVENT.getCode(), "BIOMETRIC_CAPTURE_INITIATED", "Biometric capture initiated"),
+    LOADED_REGISTRATION_PREVIEW("REG-EVT-008", USER_EVENT.getCode(), "LOADED_REGISTRATION_PREVIEW", "Registration preview loaded"),
+    CREATE_PACKET_AUTH("REG-EVT-009", USER_EVENT.getCode(), "CREATE_PACKET_AUTH", "Packet create authentication clicked"),
+    CREATE_PACKET_AUTH_FAILED("REG-EVT-010", USER_EVENT.getCode(), "CREATE_PACKET_AUTH_FAILED", "Packet create authentication failed"),
+    LOADED_ACKNOWLEDGEMENT_SCREEN("REG-EVT-011", USER_EVENT.getCode(), "LOADED_ACKNOWLEDGEMENT_SCREEN", "Acknowledgement Activity loaded"),
+    PRINT_ACKNOWLEDGEMENT("REG-EVT-0012", USER_EVENT.getCode(), "PRINT_ACKNOWLEDGEMENT", "Print acknowledgement"),
+
+    //REGISTRATION SYSTEM EVENT
+    DISCOVER_SBI_FAILED("REG-EVT-013", SYSTEM_EVENT.getCode(), "DISCOVER_SBI_FAILED", "SBI discovery failed"),
+    DEVICE_INFO_FAILED("REG-EVT-014", SYSTEM_EVENT.getCode(), "DEVICE_INFO_FAILED", "Device info failed"),
+    R_CAPTURE_FAILED("REG-EVT-015", SYSTEM_EVENT.getCode(), "R_CAPTURE_FAILED", "R_capture failed"),
+    DISCOVER_SBI_PARSE_FAILED("REG-EVT-016", SYSTEM_EVENT.getCode(), "DISCOVER_SBI_PARSE_FAILED", "SBI discovery response parsing failed"),
+    DEVICE_INFO_PARSE_FAILED("REG-EVT-017", SYSTEM_EVENT.getCode(), "DEVICE_INFO_PARSE_FAILED", "Device info response parsing failed"),
+    R_CAPTURE_PARSE_FAILED("REG-EVT-018", SYSTEM_EVENT.getCode(), "R_CAPTURE_PARSE_FAILED", "R_capture response parsing failed"),
+    CREATE_PACKET_FAILED("REG-EVT-019", USER_EVENT.getCode(), "CREATE_PACKET_FAILED", "Packet creation failed");
 
     AuditEvent(String id, String type, String name, String description) {
         this.id = id;

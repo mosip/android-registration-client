@@ -51,9 +51,11 @@ import java.io.*;
 import java.util.*;
 
 
-public class ScreenActivity extends DaggerAppCompatActivity  implements BiometricService {
+public class ScreenActivity extends DaggerAppCompatActivity implements BiometricService {
 
     private static final String TAG = ScreenActivity.class.getSimpleName();
+    private static final String COLON_SEPARATED_MODULE_NAME = "%s: %s";
+
     private ViewGroup fieldPanel = null;
     private int BIO_SCAN_REQUEST_CODE = 1;
     private int SCAN_REQUEST_CODE = 99;
@@ -61,6 +63,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
     private Map<String, DynamicView> currentDynamicViews = new HashMap<>();
     private Modality currentModality;
     private String callbackId;
+
     @Inject
     RegistrationService registrationService;
 
@@ -99,7 +102,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             final Button nextButton = findViewById(R.id.next);
 
             nextButton.setOnClickListener(v -> {
-                auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, Components.REGISTRATION);
+                auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, Components.REGISTRATION.getId(), String.format(COLON_SEPARATED_MODULE_NAME, Components.REGISTRATION.getName(), screens[currentScreenIndex]));
 
                 Optional<DynamicView> view = currentDynamicViews.values()
                         .stream()
@@ -110,8 +113,6 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                     ((View) view.get()).requestFocus();
                     nextButton.setError(getString(R.string.invalid_value));
                 } else {
-                    auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, String.format(RegistrationConstants.REGISTRATION_SCREEN, screens[currentScreenIndex]));
-
                     nextButton.setError(null);
                     //start activity to render next screen
                     Intent intent = new Intent(this, ScreenActivity.class);
@@ -136,9 +137,9 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                 getSupportActionBar().setTitle(screen.get().getLabel().get(languages.get(0)));
                 getSupportActionBar().setSubtitle(processSpecDto.getFlow());
 
-                if(!loadScreenFields(screen.get())) {
+                if (!loadScreenFields(screen.get())) {
                     //start activity to render next screen
-                    ((Button)findViewById(R.id.next)).performClick();
+                    ((Button) findViewById(R.id.next)).performClick();
                 }
 
             } else {
@@ -146,7 +147,6 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                 Intent intent = new Intent(this, PreviewActivity.class);
                 startActivity(intent);
             }
-
             auditManagerService.audit(AuditEvent.LOADED_REGISTRATION_SCREEN, Components.REGISTRATION);
         } catch (Throwable t) {
             Log.e(TAG, "Failed to launch registration screen", t);
@@ -179,7 +179,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                     case "html":
                         dynamicView = factory.getHtmlComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
-                    case "checkbox" :
+                    case "checkbox":
                         dynamicView = factory.getCheckboxComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
                     case "fileupload":
@@ -198,13 +198,13 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                     fieldPanel.addView((View) dynamicView);
                     currentDynamicViews.put(fieldSpecDto.getId(), dynamicView);
                     this.registrationService.getRegistrationDto().addObserver((Observer) dynamicView);
-                    visibleFields =  visibleFields + (UserInterfaceHelperService.
+                    visibleFields = visibleFields + (UserInterfaceHelperService.
                             isFieldVisible(fieldSpecDto, mvelContext) ? 1 : 0);
                 }
             }
         }
         Log.i(TAG, "Fields visible : " + visibleFields);
-        return visibleFields > 0 ? true : false;
+        return visibleFields > 0;
     }
 
     public void goToHome() {
@@ -239,12 +239,15 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                             TextView textView = ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_preview);
                             textView.setText(getString(R.string.page_label, this.registrationService.getRegistrationDto().getScannedPages(fieldId).size()));
                         } catch (Exception e) {
+                            auditManagerService.audit(AuditEvent.DOCUMENT_SCAN_FAILED, Components.REGISTRATION, e.getMessage());
                             Log.e(TAG, "Failed to set document to registration dto", e);
                         } finally {
                             getContentResolver().delete(uri, null, null);
                         }
-                    } else
+                    } else {
+                        auditManagerService.audit(AuditEvent.DOCUMENT_SCAN_FAILED, Components.REGISTRATION, "Invalid requestCode " + requestCode);
                         Toast.makeText(this, R.string.doc_scan_fail, Toast.LENGTH_LONG).show();
+                    }
                     break;
             }
         }
@@ -272,7 +275,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
 
             Intent intent = new Intent(this, PreviewDocumentActivity.class);
             List<String> labels = new ArrayList<>();
-            for(String language : selectedLanguages) {
+            for (String language : selectedLanguages) {
                 labels.add(fieldSpecDto.getLabel().get(language));
             }
             intent.putExtra("fieldId", fieldSpecDto.getId());
@@ -296,7 +299,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
 
     @Override
     public void startBiometricCapture(Modality modality) {
-        auditManagerService.audit(AuditEvent.BIOMETRIC_CAPTURE, modality.name());
+        auditManagerService.audit(AuditEvent.BIOMETRIC_CAPTURE, Components.REGISTRATION.getId(), String.format(COLON_SEPARATED_MODULE_NAME, Components.REGISTRATION.getName(), modality.name()));
         currentModality = modality;
         discoverSBI();
     }
@@ -318,6 +321,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             intent.putExtra(RegistrationConstants.SBI_INTENT_REQUEST_KEY, objectMapper.writeValueAsBytes(discoverRequest));
             this.startActivityForResult(intent, 1);
         } catch (Exception ex) {
+            auditManagerService.audit(AuditEvent.DISCOVER_SBI_FAILED, Components.REGISTRATION, ex.getMessage());
             Log.e(TAG, ex.getMessage(), ex);
             Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -337,6 +341,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                     Toast.LENGTH_LONG).show();
             startActivityForResult(intent, 2);
         } catch (ClientCheckedException ex) {
+            auditManagerService.audit(AuditEvent.DEVICE_INFO_FAILED, Components.REGISTRATION, ex.getMessage());
             Log.e(TAG, ex.getMessage(), ex);
             Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -365,12 +370,13 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             intent.putExtra("input", objectMapper.writeValueAsBytes(captureRequest));
             startActivityForResult(intent, 3);
         } catch (Exception ex) {
+            auditManagerService.audit(AuditEvent.R_CAPTURE_FAILED, Components.REGISTRATION, ex.getMessage());
             Log.e(TAG, ex.getMessage(), ex);
             Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private CaptureBioDetail getBioObject(String deviceId){
+    private CaptureBioDetail getBioObject(String deviceId) {
         CaptureBioDetail detail = new CaptureBioDetail();
         detail.setType(currentModality.getSingleType().name());
         detail.setBioSubType(Modality.getSpecBioSubType(currentModality.getAttributes()).toArray(new String[0]));
@@ -406,14 +412,15 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
     private void parseDiscoverResponse(Bundle bundle) {
         try {
             byte[] bytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
-            List<DeviceDto> list = objectMapper.readValue(bytes, new TypeReference<List<DeviceDto>>() {});
-            if(list.isEmpty()) {
+            List<DeviceDto> list = objectMapper.readValue(bytes, new TypeReference<List<DeviceDto>>() {
+            });
+            if (list.isEmpty()) {
                 Toast.makeText(this, "No SBI discovered!", Toast.LENGTH_LONG).show();
                 return;
             }
 
             DeviceDto deviceDto = list.get(0);
-            if(deviceDto.getError() != null && !"0".equals(deviceDto.getError().getErrorCode())) {
+            if (deviceDto.getError() != null && !"0".equals(deviceDto.getError().getErrorCode())) {
                 Log.e(TAG, deviceDto.getError().getErrorCode() + " --> " + deviceDto.getError().getErrorInfo());
                 Toast.makeText(this, deviceDto.getError().getErrorInfo(), Toast.LENGTH_LONG).show();
                 return;
@@ -422,6 +429,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             String deviceStatus = deviceDto.getDeviceStatus();
             Log.i(TAG, callbackId + " --> " + deviceStatus);
         } catch (Exception e) {
+            auditManagerService.audit(AuditEvent.DISCOVER_SBI_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse discover response", e);
         }
         info(callbackId);
@@ -432,14 +440,16 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
         String serialNo = null;
         try {
             byte[] bytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
-            List<InfoResponse> list = objectMapper.readValue(bytes, new TypeReference<List<InfoResponse>>() {});
-            if(list.isEmpty()) {
+            List<InfoResponse> list = objectMapper.readValue(bytes, new TypeReference<List<InfoResponse>>() {
+            });
+
+            if (list.isEmpty()) {
                 Toast.makeText(this, "No SBI discovered!", Toast.LENGTH_LONG).show();
                 return;
             }
 
             InfoResponse response = list.get(0);
-            if(response.getError() != null && !"0".equals(response.getError().getErrorCode())) {
+            if (response.getError() != null && !"0".equals(response.getError().getErrorCode())) {
                 Log.e(TAG, response.getError().getErrorCode() + " --> " + response.getError().getErrorInfo());
                 Toast.makeText(this, response.getError().getErrorInfo(), Toast.LENGTH_LONG).show();
                 return;
@@ -452,8 +462,8 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
             DigitalId digitalId = objectMapper.readValue(digitalIdBuffer, DigitalId.class);
             serialNo = digitalId.getSerialNo();
             Log.i(TAG, callbackId + " --> " + serialNo);
-
         } catch (Exception e) {
+            auditManagerService.audit(AuditEvent.DEVICE_INFO_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse device info response", e);
         }
         rcapture(callbackId, serialNo);
@@ -463,17 +473,19 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
         try {
             Uri uri = bundle.getParcelable(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
             InputStream respData = getContentResolver().openInputStream(uri);
-            CaptureResponse captureResponse = objectMapper.readValue(respData, new TypeReference<CaptureResponse>() {});
+            CaptureResponse captureResponse = objectMapper.readValue(respData, new TypeReference<CaptureResponse>() {
+            });
             List<CaptureRespDetail> list = captureResponse.getBiometrics();
-            for(CaptureRespDetail bio : list) {
-                if(bio.getError() != null && !"0".equals(bio.getError().getErrorCode())) {
+            for (CaptureRespDetail bio : list) {
+                if (bio.getError() != null && !"0".equals(bio.getError().getErrorCode())) {
                     Log.e(TAG, bio.getError().getErrorCode() + " --> " + bio.getError().getErrorInfo());
                     continue;
                 }
                 String signature = this.getSignature(bio.getData());
                 byte[] payloadBuffer = this.getPayloadBuffer(bio.getData());
-                CaptureDto captureDto = objectMapper.readValue(payloadBuffer, new TypeReference<CaptureDto>() {});
-                if(captureDto.getQualityScore() > 0 && captureDto.getBioValue() != null || !captureDto.getBioValue().equals("")) {
+                CaptureDto captureDto = objectMapper.readValue(payloadBuffer, new TypeReference<CaptureDto>() {
+                });
+                if (captureDto.getQualityScore() > 0 && captureDto.getBioValue() != null || !captureDto.getBioValue().equals("")) {
                     BiometricsDto biometricsDto = new BiometricsDto(captureDto.getBioType(), captureDto.getBioSubType(), captureDto.getBioValue(),
                             bio.getSpecVersion(), false, new String(payloadBuffer), signature, false, 1, 0,
                             captureDto.getQualityScore());
@@ -481,10 +493,9 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
                             Modality.getBioAttribute(captureDto.getBioSubType()), biometricsDto);
                 }
             }
-
             displayCapturedImage("individualBiometrics");
-
         } catch (Exception e) {
+            auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse rcapture response", e);
             Toast.makeText(this, "Failed parsing Capture response : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -492,7 +503,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
 
     private void displayCapturedImage(String fieldId) throws Exception {
         List<BiometricsDto> list = this.registrationService.getRegistrationDto().getBiometrics(fieldId, currentModality);
-        if(list.isEmpty()) {
+        if (list.isEmpty()) {
             Toast.makeText(this, "No biometric data saved!", Toast.LENGTH_LONG).show();
             return;
         }
@@ -503,7 +514,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  implements Biometri
         switch (currentModality) {
             case FACE:
                 imageView.setImageBitmap(UserInterfaceHelperService.getFaceBitMap(list.get(0)));
-                 break;
+                break;
             case FINGERPRINT_SLAB_LEFT:
                 imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
                         UserInterfaceHelperService.getFingerBitMap(list, "Left LittleFinger"),
