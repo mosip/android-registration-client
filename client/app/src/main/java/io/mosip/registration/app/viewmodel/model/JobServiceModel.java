@@ -1,27 +1,22 @@
 package io.mosip.registration.app.viewmodel.model;
 
-
-import java.util.Date;
-
 public class JobServiceModel {
 
     private int id;
     private String name;
     private String apiName;
-    private Boolean isActive;
-    private Boolean isImplemented;
-    private Boolean isEnabled;
+    private Boolean isActiveAndImplemented;
+    private Boolean isScheduled;
     private String syncFreq;
     private String lastSyncTime;
     private String nextSyncTime;
 
-    public JobServiceModel(int id, String name, String apiName, Boolean isActive, Boolean isImplemented, Boolean isEnabled, String syncFreq, String lastSyncTime, String nextSyncTime) {
+    public JobServiceModel(int id, String name, String apiName, Boolean isActiveAndImplemented, Boolean isScheduled, String syncFreq, String lastSyncTime, String nextSyncTime) {
         this.id = id;
         this.name = name;
         this.apiName = apiName;
-        this.isActive = isActive;
-        this.isImplemented = isImplemented;
-        this.isEnabled = isEnabled;
+        this.isActiveAndImplemented = isActiveAndImplemented;
+        this.isScheduled = isScheduled;
         this.syncFreq = syncFreq;
         this.lastSyncTime = lastSyncTime;
         this.nextSyncTime = nextSyncTime;
@@ -51,28 +46,20 @@ public class JobServiceModel {
         this.apiName = apiName;
     }
 
-    public Boolean getActive() {
-        return isActive;
+    public Boolean getIsActiveAndImplemented() {
+        return isActiveAndImplemented;
     }
 
-    public void setActive(Boolean active) {
-        isActive = active;
+    public void setIsActiveAndImplemented(Boolean active) {
+        isActiveAndImplemented = active;
     }
 
-    public Boolean getImplemented() {
-        return isImplemented;
+    public Boolean getScheduled() {
+        return isScheduled;
     }
 
-    public void setImplemented(Boolean implemented) {
-        isImplemented = implemented;
-    }
-
-    public Boolean getEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        isEnabled = enabled;
+    public void setScheduled(Boolean scheduled) {
+        isScheduled = scheduled;
     }
 
     public String getSyncFreq() {

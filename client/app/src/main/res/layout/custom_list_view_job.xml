@@ -61,15 +61,6 @@
                 android:background="@drawable/rounded_corner_btn"
                 android:textColor="@color/btn_text_primary_theme1"
                 android:text="Trigger" />
-
-            <Switch
-                android:id="@+id/toggleActive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@color/btn_primary_theme1"
-                android:layout_margin="@dimen/bottom_bar_padding"
-                android:layout_weight="1" />
-
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

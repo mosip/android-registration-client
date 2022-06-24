@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +37,7 @@ import io.mosip.registration.clientmanager.spi.PacketService;
 public class JobServiceActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = JobServiceActivity.class.getSimpleName();
+
     @Inject
     PacketService packetService;
 
@@ -99,7 +99,6 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
                 viewHolder.jobLastSyncTime = convertView.findViewById(R.id.last_sync_time_text);
                 viewHolder.jobNextSyncTime = convertView.findViewById(R.id.next_sync_time_text);
                 viewHolder.triggerJobButton = convertView.findViewById(R.id.triggerJob);
-                viewHolder.toggleActiveButton = convertView.findViewById(R.id.toggleActive);
 
                 convertView.setTag(viewHolder);
             }
@@ -110,11 +109,7 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
             mainViewHolder.jobName.setText(jobServiceModel.getName());
             mainViewHolder.jobLastSyncTime.setText(getString(R.string.last_sync_time, jobServiceModel.getLastSyncTime()));
             mainViewHolder.jobNextSyncTime.setText(getString(R.string.next_sync_time, jobServiceModel.getNextSyncTime()));
-            mainViewHolder.toggleActiveButton.setEnabled(jobServiceModel.getActive() && jobServiceModel.getImplemented());
-            mainViewHolder.triggerJobButton.setEnabled(jobServiceModel.getActive() && jobServiceModel.getImplemented());
-
-            mainViewHolder.toggleActiveButton.setOnCheckedChangeListener(null);
-            mainViewHolder.toggleActiveButton.setChecked(jobServiceModel.getEnabled());
+            mainViewHolder.triggerJobButton.setEnabled(jobServiceModel.getIsActiveAndImplemented() && jobServiceModel.getScheduled());
 
             mainViewHolder.triggerJobButton.setOnClickListener(v -> {
                 Toast.makeText(JobServiceActivity.this, getString(R.string.starting_job, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
@@ -130,45 +125,6 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
                     Toast.makeText(JobServiceActivity.this, getString(R.string.job_triggering_failed, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
                 }
             });
-
-            mainViewHolder.toggleActiveButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-                Toast.makeText(JobServiceActivity.this, getString(R.string.setting_up_job), Toast.LENGTH_SHORT).show();
-                if (isChecked) {
-                    try {
-                        auditManagerService.audit(AuditEvent.SCHEDULE_JOB, Components.JOB_SERVICE);
-
-                        int resultCode = jobServiceHelper.scheduleJob(jobServiceModel.getId(), jobServiceModel.getApiName(), jobServiceModel.getSyncFreq());
-                        if (resultCode == JobScheduler.RESULT_SUCCESS) {
-                            Log.d(TAG, getString(R.string.job_scheduled));
-                            jobServiceModel.setEnabled(true);
-                            jobServiceModel.setLastSyncTime(jobServiceHelper.getLastSyncTime(jobServiceModel.getId()));
-                            Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduled), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d(TAG, getString(R.string.job_scheduling_failed));
-                            Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduling_failed), Toast.LENGTH_SHORT).show();
-                            jobServiceModel.setEnabled(false);
-                            compoundButton.setChecked(false);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, getString(R.string.job_scheduling_failed), e);
-                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_scheduling_failed), Toast.LENGTH_SHORT).show();
-                        compoundButton.setChecked(false);
-                    }
-                } else {
-                    auditManagerService.audit(AuditEvent.CANCEL_JOB, Components.JOB_SERVICE);
-
-                    Toast.makeText(JobServiceActivity.this, getString(R.string.cancelling_job), Toast.LENGTH_SHORT).show();
-                    try {
-                        jobServiceHelper.cancelJob(jobServiceModel.getId());
-                        jobServiceModel.setEnabled(false);
-                        Log.d(TAG, getString(R.string.job_cancelled));
-                        Toast.makeText(JobServiceActivity.this, getString(R.string.job_cancelled), Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        Log.e(TAG, getString(R.string.cancelling_job_failed), e);
-                        Toast.makeText(JobServiceActivity.this, getString(R.string.cancelling_job_failed), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
             return convertView;
         }
     }
@@ -178,6 +134,5 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
         TextView jobLastSyncTime;
         TextView jobNextSyncTime;
         Button triggerJobButton;
-        Switch toggleActiveButton;
     }
 }
