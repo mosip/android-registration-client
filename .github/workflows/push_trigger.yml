@@ -33,5 +33,4 @@ jobs:
           retention-days: 5
       - name: Run sonar analysis
         run: |
-          ls
-          mvn -B -Dgpg.skip verify sonar:sonar -Dsonar.projectKey=mosip_android-registration-client -Dsonar.organization=${{ secrets.ORG_KEY }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          gradle sonarqube -Dsonar.projectKey=mosip_android-registration-client -Dsonar.organization=${{ secrets.ORG_KEY }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
