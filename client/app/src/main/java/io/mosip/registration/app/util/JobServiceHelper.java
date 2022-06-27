@@ -4,6 +4,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -21,6 +22,9 @@ import kotlin.NotImplementedError;
 public class JobServiceHelper {
 
     private static final String TAG = JobServiceHelper.class.getSimpleName();
+    private static final int JOB_PERIODIC_SECONDS = 15 * 60;
+    private static final int numLengthLimit = 5;
+
     Context context;
     JobScheduler jobScheduler;
     PacketService packetService;
@@ -39,9 +43,30 @@ public class JobServiceHelper {
     }
 
     /**
-     *
-     * @param jobId : Id of the job to be scheduled.
-     * @param apiName : name of the service to be scheduled.
+     * Fetches all the SyncJobDef from localDB and schedules or cancels scheduled jobs
+     * as per the sync job def.
+     */
+    public void syncJobServices() {
+        List<SyncJobDef> syncJobDefList = getAllSyncJobDefList();
+
+        for (SyncJobDef jobDef : syncJobDefList) {
+            int jobId = getId(jobDef.getId());
+
+            boolean isActiveAndImplemented = jobDef.getIsActive() != null && jobDef.getIsActive() && isJobImplementedOnRegClient(jobDef.getApiName());
+            boolean isScheduled = isJobScheduled(jobId);
+
+            if (isActiveAndImplemented
+                    && !isScheduled) {
+                scheduleJob(jobId, jobDef.getApiName(), jobDef.getSyncFreq());
+            } else {
+                cancelJob(jobId);
+            }
+        }
+    }
+
+    /**
+     * @param jobId    : Id of the job to be scheduled.
+     * @param apiName  : name of the service to be scheduled.
      * @param syncFreq : syncFreq (Optional). Null or empty to schedule only once
      * @return 1 for success and 0 for failure
      */
@@ -54,16 +79,19 @@ public class JobServiceHelper {
         ComponentName componentName = new ComponentName(context, clientJobService);
         JobInfo info;
         if (syncFreq == null || syncFreq.trim().isEmpty()) {
+            //To schedule only once
             info = new JobInfo.Builder(jobId, componentName)
                     .setRequiresCharging(false)
                     .setPersisted(false)
                     .build();
 
         } else {
+            //To schedule periodically
+            //TODO set cron wise
             info = new JobInfo.Builder(jobId, componentName)
                     .setRequiresCharging(false)
                     .setPersisted(true)
-                    .setPeriodic(15 * 60 * 1000)//TODO set cron
+                    .setPeriodic(JOB_PERIODIC_SECONDS * 1000)
                     .build();
         }
         return jobScheduler.schedule(info);
@@ -84,7 +112,7 @@ public class JobServiceHelper {
         jobScheduler.cancel(jobId);
     }
 
-    public boolean isJobEnabled(int jobId) {
+    public boolean isJobScheduled(int jobId) {
         JobInfo jobinfo = jobScheduler.getPendingJob(jobId);
         if (jobinfo == null) {
             return false;
@@ -92,7 +120,7 @@ public class JobServiceHelper {
         return true;
     }
 
-    public boolean isJobImplemented(String jobAPIName) {
+    public boolean isJobImplementedOnRegClient(String jobAPIName) {
         if (getJobServiceImplClass(jobAPIName) == null) {
             return false;
         }
@@ -128,16 +156,27 @@ public class JobServiceHelper {
     }
 
     public String getNextSyncTime(int jobId) {
-        //TODO implementation
-        long nextSyncTimeSeconds = 0;
+        //TODO implementation using CRON job
+        long lastSyncTimeSeconds = jobTransactionService.getLastSyncTime(jobId);
         String nextSync = context.getString(R.string.NA);
 
-        if (nextSyncTimeSeconds > 0) {
+        if (lastSyncTimeSeconds > 0) {
+            long nextSyncTimeSeconds = lastSyncTimeSeconds + JOB_PERIODIC_SECONDS;
             Date nextSyncTime = new Date(TimeUnit.SECONDS.toMillis(nextSyncTimeSeconds));
             String date = dateFormat.format(nextSyncTime);
             String time = timeFormat.format(nextSyncTime);
             nextSync = String.format("%s %s", date, time);
         }
         return nextSync;
+    }
+
+    public int getId(String jobId) {
+        try {
+            String lastCharsWithNumLengthLimit = jobId.substring(jobId.length() - numLengthLimit);
+            return Integer.parseInt(lastCharsWithNumLengthLimit);
+        } catch (Exception ex) {
+            Log.e(TAG, "Conversion of jobId : " + jobId + "to int failed for length " + numLengthLimit + ex.getMessage());
+            throw ex;
+        }
     }
 }

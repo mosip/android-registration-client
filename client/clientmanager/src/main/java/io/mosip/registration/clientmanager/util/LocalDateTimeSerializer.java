@@ -1,4 +1,4 @@
-package io.mosip.registration.clientmanager.config;
+package io.mosip.registration.clientmanager.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;

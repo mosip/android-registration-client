@@ -1,4 +1,4 @@
-package io.mosip.registration.app;
+package io.mosip.registration.clientmanager.config;
 
 import android.app.Application;
 import android.content.Context;
@@ -14,14 +14,14 @@ import com.google.gson.GsonBuilder;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
-import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
-import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
+import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
+import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
-import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;

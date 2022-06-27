@@ -27,8 +27,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
-import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
-import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
+import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
+import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.TemplateDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;

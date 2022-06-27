@@ -1,7 +1,5 @@
 package io.mosip.registration.app.viewmodel;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -16,7 +14,6 @@ import io.mosip.registration.clientmanager.entity.SyncJobDef;
 public class JobServiceViewModel extends ViewModel implements IListingViewModel {
 
     private static final String TAG = JobServiceViewModel.class.getSimpleName();
-    private static final int numLengthLimit = 5;
 
     JobServiceHelper jobServiceHelper;
 
@@ -28,10 +25,9 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
 
     @Override
     public LiveData<List<JobServiceModel>> getList() {
-        if (jobServiceList == null) {
-            jobServiceList = new MutableLiveData<>();
-            loadServices();
-        }
+
+        jobServiceList = new MutableLiveData<>();
+        loadServices();
         return jobServiceList;
     }
 
@@ -41,10 +37,10 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
         List<SyncJobDef> syncJobDefList = jobServiceHelper.getAllSyncJobDefList();
 
         for (SyncJobDef jobDef : syncJobDefList) {
-            int jobId = getId(jobDef.getId());
+            int jobId = jobServiceHelper.getId(jobDef.getId());
 
-            boolean isImplemented = jobServiceHelper.isJobImplemented(jobDef.getApiName());
-            boolean isEnabled = jobServiceHelper.isJobEnabled(jobId);
+            boolean isActiveAndImplemented = jobDef.getIsActive() && jobServiceHelper.isJobImplementedOnRegClient(jobDef.getApiName());
+            boolean isScheduled = jobServiceHelper.isJobScheduled(jobId);
 
             String lastSyncTime = jobServiceHelper.getLastSyncTime(jobId);
             String nextSyncTime = jobServiceHelper.getNextSyncTime(jobId);
@@ -54,9 +50,8 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
                     jobId,
                     jobDef.getName(),
                     jobDef.getApiName(),
-                    jobDef.getIsActive(),
-                    isImplemented,
-                    isEnabled,
+                    isActiveAndImplemented,
+                    isScheduled,
                     jobDef.getSyncFreq(),
                     lastSyncTime,
                     nextSyncTime
@@ -64,15 +59,5 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
         }
 
         jobServiceList.setValue(jobServices);
-    }
-
-    private int getId(String jobId) {
-        try {
-            String lastCharsWithNumLengthLimit = jobId.substring(jobId.length() - numLengthLimit);
-            return Integer.parseInt(lastCharsWithNumLengthLimit);
-        } catch (Exception ex) {
-            Log.e(TAG, "Conversion of jobId : " + jobId + "to int failed for length " + numLengthLimit + ex.getMessage());
-            throw ex;
-        }
     }
 }
