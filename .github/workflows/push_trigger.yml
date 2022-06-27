@@ -32,17 +32,8 @@ jobs:
           path: ./client/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 5
 
-name: Build
-on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
-jobs:
   build:
-    name: Build
+    name: sonar-analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
