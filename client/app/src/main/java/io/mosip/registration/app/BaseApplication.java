@@ -2,6 +2,7 @@ package io.mosip.registration.app;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
+import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
 
 public class BaseApplication extends DaggerApplication {

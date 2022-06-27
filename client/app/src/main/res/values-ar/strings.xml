@@ -33,8 +33,8 @@
     <string name="registration_fail">فشل حفظ التسجيل</string>
     <string name="doc_scan_fail">فشل مسح المستند</string>
     <string name="data_entry_lang_title">لغة إدخال البيانات</string>
-    <string name="start_registration_fail">فشل بدء التسجيل: s%</string>
-    <string name="lang_info_text">الرجاء تحديد أية لغات من بين s% لإدخال البيانات. s% إلزامي للمقيم للاختيار وفقًا لإرشادات الحكومة. يجب تحديد الحد الأدنى d% لغة (لغات) مع تعيين الحد الأقصى على d%. سيؤدي ترتيب الاختيار إلى عرض صفحة للبيانات الديموغرافية.</string>
+    <string name="start_registration_fail">فشل بدء التسجيل: %s </string>
+    <string name="lang_info_text">الرجاء تحديد أية لغات من بين %s لإدخال البيانات. %s إلزامي للمقيم للاختيار وفقًا لإرشادات الحكومة. يجب تحديد الحد الأدنى %d لغة (لغات) مع تعيين الحد الأقصى على %d. سيؤدي ترتيب الاختيار إلى عرض صفحة للبيانات الديموغرافية.</string>
     <string name="invalid_value">قيمة غير صالحة</string>
     <string name="mm_label">يوم</string>
     <string name="dd_label">شهر</string>

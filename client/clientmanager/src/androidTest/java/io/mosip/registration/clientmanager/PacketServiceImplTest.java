@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
-import io.mosip.registration.clientmanager.config.LocalDateTimeDeserializer;
-import io.mosip.registration.clientmanager.config.LocalDateTimeSerializer;
+import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
+import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
