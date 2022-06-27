@@ -1,6 +1,5 @@
 package io.mosip.registration.app.activites;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +14,6 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
-import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
@@ -47,7 +45,6 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
     @Inject
     AuditManagerService auditManagerService;
 
-    @SuppressLint("StringFormatInvalid")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

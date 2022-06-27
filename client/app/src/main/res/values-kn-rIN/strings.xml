@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ನೋಂದಣಿ ಗ್ರಾಹಕ</string>
+    <string name="home_title">ಮನೆ</string>
+    <string name="initialization_error">ಯಂತ್ರವನ್ನು ಪ್ರಾರಂಭಿಸಲು ವಿಫಲವಾಗಿದೆ</string>
+
+    <!-- Login -->
+    <string name="about_client">ಕ್ಲೈಂಟ್ ಬಗ್ಗೆ</string>
+    <string name="sign_in_label">ಲಾಗಿನ್ ಮಾಡಿ</string>
+    <string name="prompt_password">ಗುಪ್ತಪದ</string>
+    <string name="prompt_username">ಬಳಕೆದಾರ ಹೆಸರು</string>
+    <string name="username_required">ಬಳಕೆದಾರಹೆಸರು ಅಗತ್ಯವಿದೆ</string>
+    <string name="password_required">ಗುಪ್ತಪದದ ಅಗತ್ಯವಿದೆ</string>
+    <string name="invalid_username">ಅಮಾನ್ಯ ಬಳಕೆದಾರ ಹೆಸರು</string>
+    <string name="login_failed">ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ, ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</string>
+    <string name="auth_token_save_failed">ದೃಢೀಕರಣ ಟೋಕನ್ ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ, ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</string>
+
+    <!-- Navigation -->
+    <string name="next">ಮುಂದೆ</string>
+
+    <!-- Sync -->
+    <string name="packet_sync_start">ಪ್ಯಾಕೆಟ್ ಸಿಂಕ್ ಪ್ರಾರಂಭವಾಗಿದೆ</string>
+    <string name="packet_sync_fail">ಪ್ಯಾಕೆಟ್ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="masterdata_sync_start">ಮಾಸ್ಟರ್ ಡೇಟಾ ಸಿಂಕ್ ಅನ್ನು ಪ್ರಾರಂಭಿಸಲಾಗಿದೆ</string>
+    <string name="masterdata_sync_fail">ಮಾಸ್ಟರ್ ಡೇಟಾ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="last_sync_time">ಕೊನೆಯ ಸಿಂಕ್ ಸಮಯ: %s</string>
+    <string name="next_sync_time">ಮುಂದಿನ ಸಿಂಕ್ ಸಮಯ: %s</string>
+    <string name="NA">ಎನ್ / ಎ</string>
+
+    <!-- Registration -->
+    <string name="registrations_title">ನೋಂದಣಿಗಳು</string>
+    <string name="registrations_subtitle">ಸೂಚನೆ: ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಸ್ವಯಂ-ಅನುಮೋದಿಸಲಾಗಿದೆ</string>
+    <string name="data_entry_lang_title">ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ</string>
+    <string name="start_registration">ನೋಂದಣಿ ಪ್ರಾರಂಭಿಸಿ</string>
+    <string name="lang_info_text">ಡೇಟಾ ನಮೂದುಗಾಗಿ ದಯವಿಟ್ಟು %s ನಲ್ಲಿ ಯಾವುದೇ ಭಾಷೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಸರ್ಕಾರಿ ಮಾರ್ಗಸೂಚಿಗಳ ಪ್ರಕಾರ ಆಯ್ಕೆ ಮಾಡಲು ನಿವಾಸಿಗೆ %s ಕಡ್ಡಾಯವಾಗಿದೆ. ಗರಿಷ್ಠ ಮಿತಿಯನ್ನು %d ಗೆ ಹೊಂದಿಸುವುದರೊಂದಿಗೆ ಕನಿಷ್ಠ %d ಭಾಷೆ(ಗಳನ್ನು) ಆಯ್ಕೆ ಮಾಡಬೇಕು. ಆಯ್ಕೆಯ ಕ್ರಮವು ಜನಸಂಖ್ಯಾ ಡೇಟಾಕ್ಕಾಗಿ ಪುಟ ವೀಕ್ಷಣೆಗೆ ಕಾರಣವಾಗುತ್ತದೆ.</string>
+    <string name="preview_title">ಪೂರ್ವವೀಕ್ಷಣೆ ನೋಂದಣಿ</string>
+    <string name="registration_success">ನೋಂದಣಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ</string>
+    <string name="registration_fail">ನೋಂದಣಿಯನ್ನು ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ</string>
+    <string name="doc_scan_fail">ಡಾಕ್ಯುಮೆಂಟ್ ಸ್ಕ್ಯಾನ್ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="start_registration_fail">ನೋಂದಣಿ ಪ್ರಾರಂಭಿಸಲು ವಿಫಲವಾಗಿದೆ : %s</string>
+    <string name="invalid_value">ಅಮಾನ್ಯ ಮೌಲ್ಯ</string>
+    <string name="ref_id">ರೆಫ್ ಐಡಿ</string>
+    <string name="mm_label">ಎಂಎಂ</string>
+    <string name="dd_label">ಡಿಡಿ</string>
+    <string name="yyyy_label">YYYY</string>
+    <string name="age_label">ವಯಸ್ಸು</string>
+    <string name="page_label">%d ಪುಟ(s)</string>
+
+    <!-- Jobs -->
+    <string name="scheduled_jobs">ನಿಗದಿತ ಉದ್ಯೋಗಗಳು</string>
+    <string name="starting_job">ಕೆಲಸವನ್ನು ಪ್ರಾರಂಭಿಸಲಾಗುತ್ತಿದೆ %s</string>
+    <string name="setting_up_job">ಕೆಲಸವನ್ನು ಹೊಂದಿಸಲಾಗುತ್ತಿದೆ</string>
+    <string name="cancelling_job">ಕೆಲಸವನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗುತ್ತಿದೆ</string>
+    <string name="job_scheduling_failed">ಕೆಲಸದ ವೇಳಾಪಟ್ಟಿ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="job_triggering_failed">%s ಕೆಲಸ ಪ್ರಚೋದನೆ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="cancelling_job_failed">ಕೆಲಸ ರದ್ದುಗೊಳಿಸುವಿಕೆ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="job_scheduled">ಕೆಲಸವನ್ನು ನಿಗದಿಪಡಿಸಲಾಗಿದೆ</string>
+    <string name="job_cancelled">ಕೆಲಸವನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ</string>
+
+    <!-- Template -->
+    <string name="app_id">ಅಪ್ಲಿಕೇಶನ್ ID</string>
+    <string name="uin">UIN</string>
+    <string name="date">ದಿನಾಂಕ</string>
+    <string name="demographic_info">ಜನಸಂಖ್ಯಾ ಮಾಹಿತಿ</string>
+    <string name="photo">ಫೋಟೋ</string>
+    <string name="documents">ದಾಖಲೆಗಳು</string>
+    <string name="biometrics">ಬಯೋಮೆಟ್ರಿಕ್ಸ್</string>
+    <string name="ro_label">ನೋಂದಣಿ ಅಧಿಕಾರಿ</string>
+    <string name="reg_center">ನೋಂದಣಿ ಕೇಂದ್ರ</string>
+    <string name="imp_guidelines">ಪ್ರಮುಖ ಮಾರ್ಗಸೂಚಿಗಳು</string>
+    <string name="ack_slip">ಸ್ವೀಕೃತಿ</string>
+
+    <!-- biometrics -->
+    <string name="face_label">ಮುಖ</string>
+    <string name="exception_photo_label">ವಿನಾಯಿತಿ ಫೋಟೋ</string>
+    <string name="left_iris">ಎಡ ಐರಿಸ್</string>
+    <string name="right_iris">ಬಲ ಐರಿಸ್</string>
+    <string name="double_iris">ಐರಿಸ್</string>
+    <string name="left_slap">ಎಡ ಸ್ಲ್ಯಾಪ್</string>
+    <string name="right_slap">ಬಲ ಸ್ಲ್ಯಾಪ್</string>
+    <string name="thumbs_label">ಥಂಬ್ಸ್</string>
+    <string name="fingers">ಕೈಬೆರಳುಗಳು</string>
+
+</resources>
