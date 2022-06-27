@@ -17,6 +17,7 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
@@ -256,6 +257,12 @@ public class AppModule {
     @Singleton
     AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository, RegistrationService registrationService) {
         return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, registrationService);
+    }
+
+    @Provides
+    @Singleton
+    DateUtil provideDateUtil() {
+        return new DateUtil(appContext);
     }
 
     @Provides
