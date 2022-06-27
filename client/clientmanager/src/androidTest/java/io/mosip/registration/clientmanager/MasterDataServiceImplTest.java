@@ -63,7 +63,6 @@ public class MasterDataServiceImplTest {
     private static final String KEY_INDEX = "10:13:4a:ce:61:9b:bf:0d:e1:46:18:0a:5a:b9:d7:fb:7b:c0:51:09:74:7a:c1:32:00:8b:a1:3c:cb:37:cb:ed";
 
     private static final String GET_GLOBAL_CONFIGS_STATUS_200 = "getGlobalConfigs_200.json";
-    private static final String GET_PACKET_STATUS_404 = "status_404.json";
 
     Context appContext;
     ClientDatabase clientDatabase;
@@ -179,7 +178,7 @@ public class MasterDataServiceImplTest {
         //Preparing mock response
         server.enqueue(new MockResponse()
                 .setResponseCode(404)
-                .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_404)));
+                .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
 
         masterDataService.syncGlobalParamsData();
 
@@ -213,7 +212,7 @@ public class MasterDataServiceImplTest {
         //Preparing mock response
         server.enqueue(new MockResponse()
                 .setResponseCode(404)
-                .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_404)));
+                .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
 
         masterDataService.syncGlobalParamsData();
 
@@ -247,7 +246,7 @@ public class MasterDataServiceImplTest {
         //Preparing mock response
         server.enqueue(new MockResponse()
                 .setResponseCode(404)
-                .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_404)));
+                .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
 
         masterDataService.syncGlobalParamsData();
 

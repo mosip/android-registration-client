@@ -12,6 +12,13 @@ import java.io.InputStreamReader;
  */
 public class RestServiceTestHelper {
 
+    public static final String GET_PACKET_STATUS_404 = "{\n" +
+            "  \"error\": {\n" +
+            "    \"code\": 404,\n" +
+            "    \"message\": \"Not found\"\n" +
+            "  }\n" +
+            "}";
+
     public static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
