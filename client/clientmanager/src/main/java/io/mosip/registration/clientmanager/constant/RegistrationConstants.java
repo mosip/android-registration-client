@@ -48,4 +48,10 @@ public class RegistrationConstants {
 
     //Audits
     public static final String REGISTRATION_SCREEN = "Registration: %s";
+
+    //PacketTaskStatus
+    public static final int PACKET_SYNC_STATUS_SUCCESS = 0;
+    public static final int PACKET_SYNC_STATUS_FAILURE = 1;
+    public static final int PACKET_UPLOAD_STATUS_SUCCESS = 0;
+    public static final int PACKET_UPLOAD_STATUS_FAILURE = 1;
 }

@@ -12,6 +12,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.service.*;
+import io.mosip.registration.clientmanager.BuildConfig;
+import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
+import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
@@ -200,6 +204,12 @@ public class AppModule {
     @Singleton
     AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository) {
         return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
+    }
+
+    @Provides
+    @Singleton
+    DateUtil provideDateUtil() {
+        return new DateUtil(appContext);
     }
 
     @Provides

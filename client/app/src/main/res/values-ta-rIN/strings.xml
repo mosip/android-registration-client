@@ -80,6 +80,7 @@
     <string name="right_slap">வலது அறை</string>
     <string name="thumbs_label">கட்டைவிரல்</string>
     <string name="fingers">விரல்கள்</string>
+    <string name="packets_upload_scheduled">தொகுப்புகள் பதிவேற்றம் திட்டமிடப்பட்டது</string>
     <string name="quality_score">தரமான மதிப்பெண்: %d</string>
     <string name="threshold_score">வரம்பு மதிப்பெண்: %d</string>
     <string name="attempt_number">முயற்சி: %d</string>

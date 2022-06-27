@@ -37,6 +37,8 @@ import io.mosip.registration.clientmanager.dto.http.SyncRIDResponse;
 import io.mosip.registration.clientmanager.dto.http.UploadResponse;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -86,6 +88,21 @@ public class PacketServiceImpl implements PacketService {
 
     @Override
     public void syncRegistration(@NonNull String packetId) throws Exception {
+        syncRegistration(packetId, new AsyncPacketTaskCallBack() {
+            @Override
+            public void inProgress(String RID) {
+                //Do nothing
+            }
+
+            @Override
+            public void onComplete(String RID, int status) {
+                //Do nothing
+            }
+        });
+    }
+
+    @Override
+    public void syncRegistration(@NonNull String packetId, AsyncPacketTaskCallBack callBack) throws Exception {
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
 
         Registration registration = registrationRepository.getRegistration(packetId);
@@ -140,6 +157,7 @@ public class PacketServiceImpl implements PacketService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null && response.body().getResponse().get(0).getStatus().equalsIgnoreCase("SUCCESS")) {
                         registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
+                        callBack.onComplete(packetId, RegistrationConstants.PACKET_SYNC_STATUS_SUCCESS);
                         Toast.makeText(context, "Packet synced successfully", Toast.LENGTH_LONG).show();
                     } else
                         Toast.makeText(context, "Packet sync failed : " + error, Toast.LENGTH_LONG).show();
@@ -150,13 +168,30 @@ public class PacketServiceImpl implements PacketService {
             @Override
             public void onFailure(Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call, Throwable t) {
                 Log.e(TAG, "Packet sync failed", t);
+                callBack.onComplete(packetId, RegistrationConstants.PACKET_SYNC_STATUS_FAILURE);
                 Toast.makeText(context, "Packet sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+        callBack.inProgress(packetId);
+    }
+
+    @Override
+    public void uploadRegistration(String packetId) {
+        uploadRegistration(packetId, new AsyncPacketTaskCallBack() {
+            @Override
+            public void inProgress(String RID) {
+                //Do nothing
+            }
+
+            @Override
+            public void onComplete(String RID, int status) {
+                //Do nothing
             }
         });
     }
 
     @Override
-    public void uploadRegistration(String packetId) {
+    public void uploadRegistration(String packetId, AsyncPacketTaskCallBack callBack) {
         Registration registration = registrationRepository.getRegistration(packetId);
 
         if (registration.getServerStatus() != null && !PACKET_UPLOAD_STATUS.contains(registration.getServerStatus())) {
@@ -178,6 +213,7 @@ public class PacketServiceImpl implements PacketService {
                     if (error == null) {
                         registrationRepository.updateStatus(packetId, response.body().getResponse().getStatus(),
                                 PacketClientStatus.UPLOADED.name());
+                        callBack.onComplete(packetId, RegistrationConstants.PACKET_UPLOAD_STATUS_SUCCESS);
                         Toast.makeText(context, "Packet uploaded successfully", Toast.LENGTH_LONG).show();
                     } else
                         Toast.makeText(context, "Packet uploaded failed : " + error.getMessage(), Toast.LENGTH_LONG).show();
@@ -188,9 +224,11 @@ public class PacketServiceImpl implements PacketService {
             @Override
             public void onFailure(Call<RegProcResponseWrapper<UploadResponse>> call, Throwable t) {
                 Log.e(TAG, "Packet uploaded failed", t);
+                callBack.onComplete(packetId, RegistrationConstants.PACKET_UPLOAD_STATUS_FAILURE);
                 Toast.makeText(context, "Packet uploaded failed", Toast.LENGTH_LONG).show();
             }
         });
+        callBack.inProgress(packetId);
     }
 
     @Override

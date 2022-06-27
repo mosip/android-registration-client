@@ -6,6 +6,10 @@ plugins {
 apply from: '../jacoco.gradle'
 
 android {
+    dataBinding {
+        enabled = true
+    }
+
     compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
@@ -92,6 +96,9 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 
     implementation 'org.apache.velocity:velocity:1.7'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.balysv:material-ripple:1.0.2'
 
     // added client-manager Android library module as a dependency
     implementation project(path: ':keymanager')

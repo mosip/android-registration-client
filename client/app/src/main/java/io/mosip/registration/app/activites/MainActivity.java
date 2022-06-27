@@ -71,7 +71,7 @@ public class MainActivity extends DaggerAppCompatActivity {
     public void click_list_packets(View view) {
         auditManagerService.audit(AuditEvent.LIST_REGISTRATION, Components.HOME);
 
-        Intent intent = new Intent(this, ListingActivity.class);
+        Intent intent = new Intent(this, PacketListActivity.class);
         startActivity(intent);
     }
 
