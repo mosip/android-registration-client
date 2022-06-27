@@ -14,6 +14,14 @@ plugins {
     id "org.sonarqube" version "3.4.0.2513"
 }
 
+sonarqube {
+    properties {
+        property "sonar.projectKey", "mosip_android-registration-client"
+        property "sonar.organization", "mosip"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
 ext {
     compileSdkVersion = 31
     buildToolsVersion = "31.0.0"
