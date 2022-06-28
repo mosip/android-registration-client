@@ -82,4 +82,6 @@
     <string name="fingers">Des doigts</string>
     <string name="ack_slip">Reconnaissance</string>
     <string name="packets_upload_scheduled">Téléchargement de paquets programmé</string>
+    <string name="select_all">Tout sélectionner</string>
+    <string name="upload">télécharger</string>
 </resources>

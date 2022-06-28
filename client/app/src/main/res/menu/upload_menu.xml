@@ -4,9 +4,17 @@
 
     <item
         android:id="@+id/upload"
+        android:icon="@drawable/ic_upload"
+        android:orderInCategory="100"
+        android:title="@string/upload"
+        app:showAsAction="always">
+    </item>
+
+    <item
+        android:id="@+id/select_all"
         android:iconTint="@color/btn_primary_theme1"
         android:orderInCategory="100"
-        android:title="Upload"
+        android:title="@string/select_all"
         app:showAsAction="always">
     </item>
 </menu>

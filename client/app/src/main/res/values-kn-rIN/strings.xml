@@ -81,5 +81,7 @@
     <string name="thumbs_label">ಥಂಬ್ಸ್</string>
     <string name="fingers">ಕೈಬೆರಳುಗಳು</string>
     <string name="packets_upload_scheduled">ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ನಿಗದಿಪಡಿಸಲಾಗಿದೆ</string>
+    <string name="select_all">ಎಲ್ಲವನ್ನು ಆರಿಸು</string>
+    <string name="upload">ಅಪ್ಲೋಡ್</string>
 
 </resources>

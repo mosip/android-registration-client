@@ -26,6 +26,7 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
@@ -37,10 +38,15 @@ public class PacketListActivity extends DaggerAppCompatActivity {
 
     @Inject
     PacketService packetService;
+
     @Inject
     DateUtil dateUtil;
+
     @Inject
     AuditManagerService auditManagerService;
+
+    @Inject
+    RegistrationRepository registrationRepository;
 
     RegistrationPacketViewModel registrationPacketViewModel2;
 
@@ -86,7 +92,7 @@ public class PacketListActivity extends DaggerAppCompatActivity {
 
             @Override
             public void onItemBtnPress(View view, RegistrationPacketModel registrationPacketModel, int position) {
-                syncAndUploadPacket(adapter.getItem(position).getPacketId());
+                syncAndUploadPacket(position);
             }
         });
     }
@@ -118,11 +124,12 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     private void syncAndUploadSelectedPacket() {
         List<Integer> selectedItemPositions = adapter.getSelectedItems();
         for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-            syncAndUploadPacket(adapter.getItem(i).getPacketId());
+            syncAndUploadPacket(i);
         }
     }
 
-    private void syncAndUploadPacket(String packetId) {
+    private void syncAndUploadPacket(int position) {
+        String packetId = adapter.getItem(position).getPacketId();
         try {
             auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST.getName(), packetId, AuditReferenceIdTypes.PACKET_ID.name());
             packetService.syncRegistration(packetId, new AsyncPacketTaskCallBack() {
@@ -133,6 +140,8 @@ public class PacketListActivity extends DaggerAppCompatActivity {
 
                 @Override
                 public void onComplete(String RID, int status) {
+                    list.get(position).setPacketStatus(registrationRepository.getRegistration(RID).getClientStatus());
+                    adapter.notifyDataSetChanged();
                     //TODO upload Progress Bar
 
                     if (status == RegistrationConstants.PACKET_SYNC_STATUS_SUCCESS) {
@@ -145,6 +154,8 @@ public class PacketListActivity extends DaggerAppCompatActivity {
 
                                 @Override
                                 public void onComplete(String RID, int status) {
+                                    list.get(position).setPacketStatus(registrationRepository.getRegistration(RID).getServerStatus());
+                                    adapter.notifyDataSetChanged();
                                     //TODO upload Progress Bar
                                 }
                             });
@@ -158,8 +169,6 @@ public class PacketListActivity extends DaggerAppCompatActivity {
             Log.e(TAG, "Packet sync failed", e);
             Toast.makeText(getApplicationContext(), R.string.packet_sync_fail, Toast.LENGTH_SHORT).show();
         }
-        //TODO move it under onCompleted method
-        adapter.notifyDataSetChanged();
     }
 
     private class ActionCallback implements ActionMode.Callback {
@@ -182,6 +191,12 @@ public class PacketListActivity extends DaggerAppCompatActivity {
                     syncAndUploadSelectedPacket();
                     mode.finish();
                     Toast.makeText(getApplicationContext(), R.string.packets_upload_scheduled, Toast.LENGTH_SHORT).show();
+                    return true;
+                case R.id.select_all:
+                    adapter.clearSelection();
+                    for (int position = 0; position < adapter.getItemCount(); position++) {
+                        toggleSelection(position);
+                    }
                     return true;
             }
             return false;
