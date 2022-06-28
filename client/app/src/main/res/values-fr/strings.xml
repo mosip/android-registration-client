@@ -82,6 +82,8 @@
     <string name="fingers">Des doigts</string>
     <string name="ack_slip">Reconnaissance</string>
     <string name="packets_upload_scheduled">Téléchargement de paquets programmé</string>
+    <string name="select_all">Tout sélectionner</string>
+    <string name="upload">télécharger</string>
     <string name="quality_score">Niveau de qualité: %d</string>
     <string name="threshold_score">Score seuil : %d</string>
     <string name="attempt_number">Tentative : %d</string>

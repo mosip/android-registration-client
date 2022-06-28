@@ -81,6 +81,8 @@
     <string name="face_label">وجه</string>
     <string name="exception_photo_label">استثناء الصورة</string>
     <string name="packets_upload_scheduled">جدولة تحميل الحزم</string>
+    <string name="select_all">اختر الكل</string>
+    <string name="upload">تحميل</string>
     <string name="quality_score">نقاط الجودة: %d</string>
     <string name="threshold_score">درجة العتبة: %d</string>
     <string name="attempt_number">المحاولة: %d</string>

@@ -81,6 +81,8 @@
     <string name="fingers">Fingers</string>
     <string name="lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet</string>
     <string name="packets_upload_scheduled">Packets upload scheduled</string>
+    <string name="select_all">Select All</string>
+    <string name="upload">Upload</string>
 
     <string name="quality_score">Quality Score: %d</string>
     <string name="threshold_score">Threshold Score: %d</string>

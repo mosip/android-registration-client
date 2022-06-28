@@ -81,6 +81,8 @@
     <string name="thumbs_label">ಥಂಬ್ಸ್</string>
     <string name="fingers">ಕೈಬೆರಳುಗಳು</string>
     <string name="packets_upload_scheduled">ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ನಿಗದಿಪಡಿಸಲಾಗಿದೆ</string>
+    <string name="select_all">ಎಲ್ಲವನ್ನು ಆರಿಸು</string>
+    <string name="upload">ಅಪ್ಲೋಡ್</string>
     <string name="quality_score">ಗುಣಮಟ್ಟದ ಸ್ಕೋರ್: %d</string>
     <string name="threshold_score">ಥ್ರೆಶೋಲ್ಡ್ ಸ್ಕೋರ್: %d</string>
     <string name="attempt_number">ಪ್ರಯತ್ನ: %d</string>
