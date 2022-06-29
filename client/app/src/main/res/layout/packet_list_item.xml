@@ -57,10 +57,10 @@
                     android:id="@+id/btn_upload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="3dp"
                     android:layout_below="@id/date"
                     android:layout_alignParentEnd="true"
                     android:background="@color/btn_primary_theme1"
+                    android:padding="3dp"
                     android:src="@drawable/sync"
                     app:tint="@color/white">
 
@@ -75,6 +75,15 @@
                     android:text="31 Oct 2019"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textStyle="bold" />
+                <ProgressBar
+                    android:visibility="gone"
+                    android:id="@+id/pkt_upload_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_below="@+id/btn_upload"
+                    android:layout_width="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_height="wrap_content">
+                </ProgressBar>
 
             </RelativeLayout>
         </LinearLayout>

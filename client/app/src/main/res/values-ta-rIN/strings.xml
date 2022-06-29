@@ -83,6 +83,7 @@
     <string name="packets_upload_scheduled">தொகுப்புகள் பதிவேற்றம் திட்டமிடப்பட்டது</string>
     <string name="select_all">அனைத்தையும் தெரிவுசெய்</string>
     <string name="upload">பதிவேற்றம்</string>
+    <string name="packet_upload_min_bw">பலவீனமான நெட்வொர்க். குறைந்தபட்ச அலைவரிசை தேவை %s, தற்போதைய அலைவரிசை %s</string>
     <string name="quality_score">தரமான மதிப்பெண்: %d</string>
     <string name="threshold_score">வரம்பு மதிப்பெண்: %d</string>
     <string name="attempt_number">முயற்சி: %d</string>

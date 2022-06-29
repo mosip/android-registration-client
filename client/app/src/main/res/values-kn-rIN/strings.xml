@@ -83,6 +83,7 @@
     <string name="packets_upload_scheduled">ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ನಿಗದಿಪಡಿಸಲಾಗಿದೆ</string>
     <string name="select_all">ಎಲ್ಲವನ್ನು ಆರಿಸು</string>
     <string name="upload">ಅಪ್ಲೋಡ್</string>
+    <string name="packet_upload_min_bw">ದುರ್ಬಲ ನೆಟ್ವರ್ಕ್. ಕನಿಷ್ಠ ಬ್ಯಾಂಡ್‌ವಿಡ್ತ್ %s ಅಗತ್ಯವಿದೆ, ಪ್ರಸ್ತುತ ಅಪ್ ಬ್ಯಾಂಡ್‌ವಿಡ್ತ್ %s</string>
     <string name="quality_score">ಗುಣಮಟ್ಟದ ಸ್ಕೋರ್: %d</string>
     <string name="threshold_score">ಥ್ರೆಶೋಲ್ಡ್ ಸ್ಕೋರ್: %d</string>
     <string name="attempt_number">ಪ್ರಯತ್ನ: %d</string>

@@ -83,6 +83,7 @@
     <string name="packets_upload_scheduled">पैकेट अपलोड शेड्यूल किया गया</string>
     <string name="select_all">सभी का चयन करे</string>
     <string name="upload">अपलोड</string>
+    <string name="packet_upload_min_bw">कमजोर नेटवर्क। न्यूनतम बैंडविड्थ आवश्यक %s, वर्तमान बैंडविड्थ %s</string>
     <string name="quality_score">गुणवत्ता स्कोर: %d</string>
     <string name="threshold_score">थ्रेसहोल्ड स्कोर: %d</string>
     <string name="attempt_number">प्रयास: %d</string>

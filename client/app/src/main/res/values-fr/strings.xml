@@ -84,6 +84,7 @@
     <string name="packets_upload_scheduled">Téléchargement de paquets programmé</string>
     <string name="select_all">Tout sélectionner</string>
     <string name="upload">télécharger</string>
+    <string name="packet_upload_min_bw">Réseau faible. Bande passante minimale requise %s, bande passante actuelle %s</string>
     <string name="quality_score">Niveau de qualité: %d</string>
     <string name="threshold_score">Score seuil : %d</string>
     <string name="attempt_number">Tentative : %d</string>
