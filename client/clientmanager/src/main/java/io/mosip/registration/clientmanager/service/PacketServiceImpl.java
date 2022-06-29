@@ -110,6 +110,7 @@ public class PacketServiceImpl implements PacketService {
         if (registration.getClientStatus() != null && !PACKET_UNSYNCED_STATUS.contains(registration.getClientStatus())) {
             Log.i(TAG, "Packet already synced >> " + registration.getClientStatus());
             Toast.makeText(context, "Packet already synced", Toast.LENGTH_LONG).show();
+            callBack.onComplete(packetId, RegistrationConstants.PACKET_SYNC_STATUS_ALREADY_SYNCED);
             return;
         }
 
@@ -197,6 +198,7 @@ public class PacketServiceImpl implements PacketService {
         if (registration.getServerStatus() != null && !PACKET_UPLOAD_STATUS.contains(registration.getServerStatus())) {
             Log.i(TAG, "Packet already uploaded >> " + registration.getClientStatus());
             Toast.makeText(context, "Packet already uploaded", Toast.LENGTH_LONG).show();
+            callBack.onComplete(packetId, RegistrationConstants.PACKET_UPLOAD_STATUS_ALREADY_UPLOADED);
             return;
         }
 

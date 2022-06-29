@@ -1,5 +1,7 @@
 package io.mosip.registration.app.activites;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +28,7 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -35,6 +38,12 @@ import io.mosip.registration.clientmanager.util.DateUtil;
 public class PacketListActivity extends DaggerAppCompatActivity {
 
     private static final String TAG = PacketListActivity.class.getSimpleName();
+
+    private static final int PROGRESS_PACKET_RESET = 0;
+    private static final int PROGRESS_PACKET_SYNC_STARTED = 20;
+    private static final int PROGRESS_PACKET_SYNC_COMPLETED = 40;
+    private static final int PROGRESS_PACKET_UPLOAD_STARTED = 60;
+    private static final int PROGRESS_PACKET_UPLOAD_COMPLETED = 100;
 
     @Inject
     PacketService packetService;
@@ -60,7 +69,6 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bi = DataBindingUtil.setContentView(this, R.layout.packet_list_activity);
-
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.registrations_title);
@@ -129,40 +137,69 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     }
 
     private void syncAndUploadPacket(int position) {
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+        NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
+        int upstreamBandwidthKbps = nc.getLinkUpstreamBandwidthKbps();
+
+        int minUpstreamBandwidthKbps = GlobalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.PACKET_UPLOAD_MIN_UPSTREAM_BANDWIDTH_KBPS);
+
+        if (upstreamBandwidthKbps < minUpstreamBandwidthKbps) {
+            String msg = getApplicationContext().getString(R.string.packet_upload_min_bw, String.valueOf(minUpstreamBandwidthKbps), String.valueOf(upstreamBandwidthKbps));
+            Log.e(TAG, msg);
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String packetId = adapter.getItem(position).getPacketId();
         try {
             auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST.getName(), packetId, AuditReferenceIdTypes.PACKET_ID.name());
             packetService.syncRegistration(packetId, new AsyncPacketTaskCallBack() {
                 @Override
                 public void inProgress(String RID) {
-                    //TODO upload Progress Bar
+                    list.get(position).ProgressBarVisible(true);
+                    list.get(position).setProgress(PROGRESS_PACKET_SYNC_STARTED);
+                    adapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onComplete(String RID, int status) {
                     list.get(position).setPacketStatus(registrationRepository.getRegistration(RID).getClientStatus());
-                    adapter.notifyDataSetChanged();
-                    //TODO upload Progress Bar
 
-                    if (status == RegistrationConstants.PACKET_SYNC_STATUS_SUCCESS) {
+                    list.get(position).setProgress(PROGRESS_PACKET_SYNC_COMPLETED);
+                    list.get(position).ProgressBarVisible(true);
+
+                    if (status != RegistrationConstants.PACKET_SYNC_STATUS_FAILURE) {
                         try {
                             packetService.uploadRegistration(RID, new AsyncPacketTaskCallBack() {
                                 @Override
                                 public void inProgress(String RID) {
-                                    //TODO upload Progress Bar
+                                    list.get(position).setProgress(PROGRESS_PACKET_UPLOAD_STARTED);
+                                    list.get(position).ProgressBarVisible(true);
+                                    adapter.notifyDataSetChanged();
                                 }
 
                                 @Override
                                 public void onComplete(String RID, int status) {
-                                    list.get(position).setPacketStatus(registrationRepository.getRegistration(RID).getServerStatus());
+                                    if (status == RegistrationConstants.PACKET_UPLOAD_STATUS_FAILURE) {
+                                        list.get(position).setPacketStatus(registrationRepository.getRegistration(RID).getServerStatus());
+                                        list.get(position).setProgress(PROGRESS_PACKET_UPLOAD_COMPLETED);
+                                        list.get(position).ProgressBarVisible(true);
+                                    } else {
+                                        list.get(position).setPacketStatus(registrationRepository.getRegistration(RID).getServerStatus());
+                                        list.get(position).setProgress(PROGRESS_PACKET_RESET);
+                                        list.get(position).ProgressBarVisible(false);
+                                    }
                                     adapter.notifyDataSetChanged();
-                                    //TODO upload Progress Bar
                                 }
                             });
                         } catch (Exception e) {
                             Log.e(TAG, "Packet upload failed", e);
                         }
+                    } else {
+                        list.get(position).setProgress(PROGRESS_PACKET_RESET);
+                        list.get(position).ProgressBarVisible(false);
                     }
+                    adapter.notifyDataSetChanged();
                 }
             });
         } catch (Exception e) {

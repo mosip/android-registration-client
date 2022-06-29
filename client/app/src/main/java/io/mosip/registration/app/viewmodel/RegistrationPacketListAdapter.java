@@ -45,13 +45,13 @@ public class RegistrationPacketListAdapter extends RecyclerView.Adapter<Registra
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
-
         holder.bi.packetIdTxt.setText(list.get(position).getPacketId());
         holder.bi.statusTxt.setText(list.get(position).getPacketStatus());
         holder.bi.date.setText(list.get(position).getPacketCreatedDate());
-
         //Changes the activated state of this view.
         holder.bi.lytParent.setActivated(selectedItems.get(position, false));
+        holder.bi.pktUploadProgress.setProgress(list.get(position).getProgress());
+        holder.bi.pktUploadProgress.setVisibility(list.get(position).ProgressBarVisible() ? View.VISIBLE : View.GONE);
 
         holder.bi.lytParent.setOnClickListener(view -> {
             if (itemClick == null) return;
@@ -138,6 +138,7 @@ public class RegistrationPacketListAdapter extends RecyclerView.Adapter<Registra
 
     class ViewHolder extends RecyclerView.ViewHolder {
         PacketListItemBinding bi;
+
         public ViewHolder(@NonNull PacketListItemBinding itemView) {
             super(itemView.getRoot());
             bi = itemView;
@@ -146,7 +147,9 @@ public class RegistrationPacketListAdapter extends RecyclerView.Adapter<Registra
 
     public interface OnItemClick {
         void onItemClick(View view, RegistrationPacketModel registrationPacketModel, int position);
+
         void onLongPress(View view, RegistrationPacketModel registrationPacketModel, int position);
+
         void onItemBtnPress(View view, RegistrationPacketModel registrationPacketModel, int position);
     }
 }
