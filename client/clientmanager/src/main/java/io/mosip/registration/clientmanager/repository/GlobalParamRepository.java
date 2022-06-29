@@ -23,6 +23,7 @@ public class GlobalParamRepository {
     @Inject
     public GlobalParamRepository(GlobalParamDao globalParamDao) {
         this.globalParamDao = globalParamDao;
+        refreshGlobalParams();
     }
 
     public String getGlobalParamValue(String id) {
