@@ -1,0 +1,39 @@
+name: Android Registration-Client Build
+
+env:
+  defaultServerBaseURL: https://api-internal.sandbox.xyz.net/
+
+on:
+  workflow_dispatch:
+    inputs:
+      defaultServerBaseURL:
+        description: 'Server Base URL'
+        required: true
+        default: 'api-internal.sandbox.xyz.net'
+        type: string
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install npm dependencies
+        run: |
+          npm install
+      - name: Updating libs-snapshot-local to libs-release local for artifactory URL's.
+        run: find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
+
+      - name: Build Android Registration-Client
+        run: |
+          cd client
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          ls app/build/outputs/apk/debug
+          find -name '*.apk'
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: apk-output
+          path: ./client/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
