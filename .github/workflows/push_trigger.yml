@@ -1,5 +1,7 @@
 name: Android Registration-Client Build
 
+env:
+  backendServiceDefaultUrl: https://api-internal.sandbox.xyz.net/regclient
 
 on:
   push:
@@ -10,6 +12,13 @@ on:
       - 1.*
       - develop
       - sprint-*
+  workflow_dispatch:
+    inputs:
+      backendServiceUrl:
+        description: 'Backend service URL'
+        required: true
+        default: 'https://api-internal.sandbox.xyz.net/regclient'
+        type: string
 
 jobs:
   build-android:
@@ -26,6 +35,8 @@ jobs:
           ./gradlew assembleDebug
           ls app/build/outputs/apk/debug
           find -name '*.apk'
+        env:
+          BACKEND_SERVICE_URL: ${{ github.event.inputs.backendServiceUrl }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
