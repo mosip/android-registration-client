@@ -36,7 +36,7 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-    serverBaseURL = "\"https://api-internal.qa4.mosip.net/\""
+    serverBaseURL = "\"https://api-internal.sandbox.xyz.net/\""
 }
 
 task cleanOutputDir(type: Delete) {
