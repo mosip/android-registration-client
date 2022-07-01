@@ -1,7 +1,6 @@
 package io.mosip.registration.app.activites;
 
 
-import android.app.job.JobScheduler;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +11,6 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
-import io.mosip.registration.app.util.JobServiceHelper;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -40,22 +38,18 @@ public class MainActivity extends DaggerAppCompatActivity {
     @Inject
     JobTransactionService jobTransactionService;
 
-    JobServiceHelper jobServiceHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         registrationService.clearRegistration();
         getSupportActionBar().setTitle(R.string.home_title);
-        jobServiceHelper = new JobServiceHelper(this, (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE), packetService, jobTransactionService);
 
         auditManagerService.audit(AuditEvent.LOADED_HOME, Components.HOME);
     }
 
     public void click_sync_masterdata(View view) {
         auditManagerService.audit(AuditEvent.MASTER_DATA_SYNC, Components.HOME);
-        jobServiceHelper.syncJobServices();
 
         Toast.makeText(this, R.string.masterdata_sync_start, Toast.LENGTH_LONG).show();
         try {

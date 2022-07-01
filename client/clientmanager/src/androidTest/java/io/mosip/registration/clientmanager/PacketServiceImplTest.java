@@ -121,19 +121,6 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void getAllSyncJobDefList() throws JSONException {
-        //Dummy syncJobDef data
-        JSONObject jsonObject = new JSONObject("{\"id\":\"MDS_J00001\",\"name\":\"Master Data Sync\",\"apiName\":\"masterSyncJob\",\"parentSyncJobId\":null,\"syncFreq\":\"0 0 11 * * ?\",\"lockDuration\":null,\"isActive\":true,\"isDeleted\":false,\"langCode\":\"eng\"}");
-        syncJobDefRepository.saveSyncJobDef(jsonObject);
-
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, null, syncJobDefRepository, null, null, null);
-
-        List<SyncJobDef> syncJobDefs = packetServiceImpl.getAllSyncJobDefList();
-        assertTrue(syncJobDefs != null && syncJobDefs.size() == 1);
-        assertEquals("masterSyncJob", syncJobDefs.get(0).getApiName());
-    }
-
-    @Test
     public void syncAllPacketStatusSuccessResponse() throws Exception {
         //Dummy registration data
         Registration registrationDummyData = new Registration(PACKET_ID);
@@ -152,7 +139,7 @@ public class PacketServiceImplTest {
                 .setResponseCode(200)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_200)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, null, syncRestService, null);
+        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for sync to completed
@@ -169,7 +156,7 @@ public class PacketServiceImplTest {
                 .setResponseCode(200)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_200)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, null, syncRestService, null);
+        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for sync to completed
@@ -198,7 +185,7 @@ public class PacketServiceImplTest {
                 .setResponseCode(404)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_404)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, null, syncRestService, null);
+        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for packetServiceSync to complete

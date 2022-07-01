@@ -1,4 +1,6 @@
-package io.mosip.registration.app.util;
+package io.mosip.registration.clientmanager.service;
+
+import static android.content.Context.JOB_SCHEDULER_SERVICE;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -6,36 +8,43 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.util.Log;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.mosip.registration.app.R;
+import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
-import io.mosip.registration.clientmanager.jobservice.ConfigDataSyncJob;
-import io.mosip.registration.clientmanager.jobservice.PacketStatusSyncJob;
+import io.mosip.registration.clientmanager.jobs.ConfigDataSyncJob;
+import io.mosip.registration.clientmanager.jobs.PacketStatusSyncJob;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
-import io.mosip.registration.clientmanager.spi.PacketService;
-import kotlin.NotImplementedError;
 
-public class JobServiceHelper {
+/**
+ * @author Anshul vanawat
+ * @since 1.0.0
+ */
 
-    private static final String TAG = JobServiceHelper.class.getSimpleName();
+public class JobManagerServiceImpl implements JobManagerService {
+
+    private static final String TAG = JobManagerServiceImpl.class.getSimpleName();
     private static final int JOB_PERIODIC_SECONDS = 15 * 60;
     private static final int numLengthLimit = 5;
 
     Context context;
     JobScheduler jobScheduler;
-    PacketService packetService;
     JobTransactionService jobTransactionService;
+    SyncJobDefRepository syncJobDefRepository;
     DateFormat dateFormat;
     DateFormat timeFormat;
 
-    public JobServiceHelper(Context context, JobScheduler jobScheduler, PacketService packetService, JobTransactionService jobTransactionService) {
+    public JobManagerServiceImpl(Context context, SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService) {
         this.context = context;
-        this.jobScheduler = jobScheduler;
-        this.packetService = packetService;
+        this.jobScheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE);
+        this.syncJobDefRepository = syncJobDefRepository;
         this.jobTransactionService = jobTransactionService;
 
         dateFormat = android.text.format.DateFormat.getMediumDateFormat(context);
@@ -46,21 +55,19 @@ public class JobServiceHelper {
      * Fetches all the SyncJobDef from localDB and schedules or cancels scheduled jobs
      * as per the sync job def.
      */
-    public void syncJobServices() {
-        List<SyncJobDef> syncJobDefList = getAllSyncJobDefList();
+    @Override
+    public void refreshJobStatus(SyncJobDef jobDef) {
+        int jobId = generateJobServiceId(jobDef.getId());
 
-        for (SyncJobDef jobDef : syncJobDefList) {
-            int jobId = getId(jobDef.getId());
+        boolean isActiveAndImplemented = jobDef.getIsActive() != null && jobDef.getIsActive()
+                && isJobImplementedOnRegClient(jobDef.getApiName());
+        boolean isScheduled = isJobScheduled(jobId);
 
-            boolean isActiveAndImplemented = jobDef.getIsActive() != null && jobDef.getIsActive() && isJobImplementedOnRegClient(jobDef.getApiName());
-            boolean isScheduled = isJobScheduled(jobId);
-
-            if (isActiveAndImplemented
-                    && !isScheduled) {
+        if (isActiveAndImplemented) {
+            if (!isScheduled)
                 scheduleJob(jobId, jobDef.getApiName(), jobDef.getSyncFreq());
-            } else {
-                cancelJob(jobId);
-            }
+        } else {
+            cancelJob(jobId);
         }
     }
 
@@ -70,10 +77,11 @@ public class JobServiceHelper {
      * @param syncFreq : syncFreq (Optional). Null or empty to schedule only once
      * @return 1 for success and 0 for failure
      */
+    @Override
     public int scheduleJob(int jobId, String apiName, String syncFreq) {
         Class<?> clientJobService = getJobServiceImplClass(apiName);
         if (clientJobService == null) {
-            throw new NotImplementedError("Job service : " + apiName + " not implemented");
+            throw new NotImplementedException("Job service : " + apiName + " not implemented");
         }
 
         ComponentName componentName = new ComponentName(context, clientJobService);
@@ -97,6 +105,7 @@ public class JobServiceHelper {
         return jobScheduler.schedule(info);
     }
 
+    @Override
     public boolean triggerJobService(int jobId, String apiName) {
         JobInfo info = jobScheduler.getPendingJob(jobId);
         if (info == null) {
@@ -108,10 +117,12 @@ public class JobServiceHelper {
         }
     }
 
+    @Override
     public void cancelJob(int jobId) {
         jobScheduler.cancel(jobId);
     }
 
+    @Override
     public boolean isJobScheduled(int jobId) {
         JobInfo jobinfo = jobScheduler.getPendingJob(jobId);
         if (jobinfo == null) {
@@ -120,6 +131,7 @@ public class JobServiceHelper {
         return true;
     }
 
+    @Override
     public boolean isJobImplementedOnRegClient(String jobAPIName) {
         if (getJobServiceImplClass(jobAPIName) == null) {
             return false;
@@ -127,21 +139,12 @@ public class JobServiceHelper {
         return true;
     }
 
-    public Class<?> getJobServiceImplClass(String jobAPIName) {
-        switch (jobAPIName) {
-            case "packetSyncStatusJob":
-                return PacketStatusSyncJob.class;
-            case "synchConfigDataJob":
-                return ConfigDataSyncJob.class;
-            default:
-                return null;
-        }
-    }
-
+    @Override
     public List<SyncJobDef> getAllSyncJobDefList() {
-        return packetService.getAllSyncJobDefList();
+        return syncJobDefRepository.getAllSyncJobDefList();
     }
 
+    @Override
     public String getLastSyncTime(int jobId) {
         long lastSyncTimeSeconds = jobTransactionService.getLastSyncTime(jobId);
         String lastSync = context.getString(R.string.NA);
@@ -155,6 +158,7 @@ public class JobServiceHelper {
         return lastSync;
     }
 
+    @Override
     public String getNextSyncTime(int jobId) {
         //TODO implementation using CRON job
         long lastSyncTimeSeconds = jobTransactionService.getLastSyncTime(jobId);
@@ -170,13 +174,26 @@ public class JobServiceHelper {
         return nextSync;
     }
 
-    public int getId(String jobId) {
+    @Override
+    public int generateJobServiceId(String syncJobDefId) {
         try {
-            String lastCharsWithNumLengthLimit = jobId.substring(jobId.length() - numLengthLimit);
+            String lastCharsWithNumLengthLimit = syncJobDefId.substring(syncJobDefId.length() - numLengthLimit);
             return Integer.parseInt(lastCharsWithNumLengthLimit);
         } catch (Exception ex) {
-            Log.e(TAG, "Conversion of jobId : " + jobId + "to int failed for length " + numLengthLimit + ex.getMessage());
+            Log.e(TAG, "Conversion of jobId : " + syncJobDefId + "to int failed for length " + numLengthLimit + ex.getMessage());
             throw ex;
+        }
+    }
+
+
+    private Class<?> getJobServiceImplClass(String jobAPIName) {
+        switch (jobAPIName) {
+            case "packetSyncStatusJob":
+                return PacketStatusSyncJob.class;
+            case "synchConfigDataJob":
+                return ConfigDataSyncJob.class;
+            default:
+                return null;
         }
     }
 }

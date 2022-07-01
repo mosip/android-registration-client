@@ -1,8 +1,5 @@
 package io.mosip.registration.clientmanager.repository;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,28 +15,18 @@ import io.mosip.registration.clientmanager.entity.SyncJobDef;
 
 public class SyncJobDefRepository {
 
-    private SyncJobDefDao syncJobDefDao;
+    private final SyncJobDefDao syncJobDefDao;
 
     @Inject
     public SyncJobDefRepository(SyncJobDefDao syncJobDefDao) {
         this.syncJobDefDao = syncJobDefDao;
     }
 
-    public void saveSyncJobDef(JSONObject jsonObject) throws JSONException {
-        SyncJobDef syncJobDef = new SyncJobDef(jsonObject.getString("id"));
-        syncJobDef.setName(jsonObject.getString("name"));
-        syncJobDef.setApiName(jsonObject.getString("apiName"));
-        syncJobDef.setParentSyncJobId(jsonObject.getString("parentSyncJobId"));
-        syncJobDef.setSyncFreq(jsonObject.getString("syncFreq"));
-        syncJobDef.setLockDuration(jsonObject.getString("lockDuration"));
-        syncJobDef.setLangCode(jsonObject.getString("langCode"));
-        syncJobDef.setIsDeleted(jsonObject.getBoolean("isDeleted"));
-        syncJobDef.setIsActive(jsonObject.getBoolean("isActive"));
+    public void saveSyncJobDef(SyncJobDef syncJobDef) {
         syncJobDefDao.insert(syncJobDef);
     }
 
     public List<SyncJobDef> getAllSyncJobDefList() {
         return this.syncJobDefDao.findAll();
     }
-
 }

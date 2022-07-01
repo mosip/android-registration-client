@@ -16,7 +16,9 @@ import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
+import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.*;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -34,6 +36,7 @@ import okhttp3.ResponseBody;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,6 +79,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private UserDetailRepository userDetailRepository;
     private CACertificateManagerService caCertificateManagerService;
     private LanguageRepository languageRepository;
+    private JobManagerService jobManagerService;
 
     @Inject
     public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
@@ -94,7 +98,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  SyncJobDefRepository syncJobDefRepository,
                                  UserDetailRepository userDetailRepository,
                                  CACertificateManagerService caCertificateManagerService,
-                                 LanguageRepository languageRepository) {
+                                 LanguageRepository languageRepository,
+                                 JobManagerService jobManagerService) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -114,6 +119,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.userDetailRepository = userDetailRepository;
         this.caCertificateManagerService = caCertificateManagerService;
         this.languageRepository = languageRepository;
+        this.jobManagerService = jobManagerService;
     }
 
     @Override
@@ -511,7 +517,20 @@ public class MasterDataServiceImpl implements MasterDataService {
             case "SyncJobDef":
                 JSONArray syncJobDefsJsonArray = getDecryptedDataList(data);
                 for (int i = 0; i < syncJobDefsJsonArray.length(); i++) {
-                    syncJobDefRepository.saveSyncJobDef(syncJobDefsJsonArray.getJSONObject(i));
+                    JSONObject jsonObject = syncJobDefsJsonArray.getJSONObject(i);
+
+                    SyncJobDef syncJobDef = new SyncJobDef(jsonObject.getString("id"));
+                    syncJobDef.setName(jsonObject.getString("name"));
+                    syncJobDef.setApiName(jsonObject.getString("apiName"));
+                    syncJobDef.setParentSyncJobId(jsonObject.getString("parentSyncJobId"));
+                    syncJobDef.setSyncFreq(jsonObject.getString("syncFreq"));
+                    syncJobDef.setLockDuration(jsonObject.getString("lockDuration"));
+                    syncJobDef.setLangCode(jsonObject.getString("langCode"));
+                    syncJobDef.setIsDeleted(jsonObject.getBoolean("isDeleted"));
+                    syncJobDef.setIsActive(jsonObject.getBoolean("isActive"));
+
+                    syncJobDefRepository.saveSyncJobDef(syncJobDef);
+                    jobManagerService.refreshJobStatus(syncJobDef);
                 }
                 break;
             case "Language":

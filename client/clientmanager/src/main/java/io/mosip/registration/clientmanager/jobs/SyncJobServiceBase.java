@@ -1,4 +1,4 @@
-package io.mosip.registration.clientmanager.jobservice;
+package io.mosip.registration.clientmanager.jobs;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;

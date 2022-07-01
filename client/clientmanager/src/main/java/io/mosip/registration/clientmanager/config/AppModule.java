@@ -15,7 +15,9 @@ import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
+import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
@@ -141,12 +143,13 @@ public class AppModule {
                                                       SyncJobDefRepository syncJobDefRepository,
                                                       UserDetailRepository userDetailRepository,
                                                       CACertificateManagerService caCertificateManagerService,
-                                                      LanguageRepository languageRepository) {
+                                                      LanguageRepository languageRepository,
+                                                      JobManagerService jobManagerService) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                caCertificateManagerService, languageRepository);
+                caCertificateManagerService, languageRepository, jobManagerService);
     }
 
     @Provides
@@ -223,10 +226,10 @@ public class AppModule {
 
     @Provides
     @Singleton
-    PacketService providePacketService(RegistrationRepository registrationRepository, SyncJobDefRepository syncJobDefRepository,
+    PacketService providePacketService(RegistrationRepository registrationRepository,
                                        IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
                                        MasterDataService masterDataService) {
-        return new PacketServiceImpl(appContext, registrationRepository, syncJobDefRepository, packetCryptoService, syncRestService,
+        return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService,
                 masterDataService);
     }
 
@@ -252,5 +255,11 @@ public class AppModule {
     @Singleton
     AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository, RegistrationService registrationService) {
         return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, registrationService);
+    }
+
+    @Provides
+    @Singleton
+    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService) {
+        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService);
     }
 }

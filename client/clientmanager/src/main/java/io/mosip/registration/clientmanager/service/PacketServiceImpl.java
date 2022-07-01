@@ -4,21 +4,39 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketServerStatus;
-import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.Error;
 import io.mosip.registration.clientmanager.dto.PacketIdDto;
 import io.mosip.registration.clientmanager.dto.PacketStatusDto;
 import io.mosip.registration.clientmanager.dto.PacketStatusRequest;
 import io.mosip.registration.clientmanager.dto.PacketStatusResponse;
-import io.mosip.registration.clientmanager.dto.http.*;
+import io.mosip.registration.clientmanager.dto.http.PacketStatusUpdateDto;
+import io.mosip.registration.clientmanager.dto.http.RegProcRequestWrapper;
+import io.mosip.registration.clientmanager.dto.http.RegProcResponseWrapper;
+import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.dto.http.SyncRIDRequest;
+import io.mosip.registration.clientmanager.dto.http.SyncRIDResponse;
+import io.mosip.registration.clientmanager.dto.http.UploadResponse;
 import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
-import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -32,25 +50,9 @@ import lombok.NonNull;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-
-import org.json.JSONObject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Singleton
 public class PacketServiceImpl implements PacketService {
@@ -67,18 +69,16 @@ public class PacketServiceImpl implements PacketService {
 
     private Context context;
     private RegistrationRepository registrationRepository;
-    private SyncJobDefRepository syncJobDefRepository;
     private IPacketCryptoService packetCryptoService;
     private SyncRestService syncRestService;
     private MasterDataService masterDataService;
 
     @Inject
-    public PacketServiceImpl(Context context, RegistrationRepository registrationRepository, SyncJobDefRepository syncJobDefRepository,
+    public PacketServiceImpl(Context context, RegistrationRepository registrationRepository,
                              IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
                              MasterDataService masterDataService) {
         this.context = context;
         this.registrationRepository = registrationRepository;
-        this.syncJobDefRepository = syncJobDefRepository;
         this.packetCryptoService = packetCryptoService;
         this.syncRestService = syncRestService;
         this.masterDataService = masterDataService;
@@ -196,11 +196,6 @@ public class PacketServiceImpl implements PacketService {
     @Override
     public List<Registration> getAllRegistrations(int page, int pageLimit) {
         return this.registrationRepository.getAllRegistrations();
-    }
-
-    @Override
-    public List<SyncJobDef> getAllSyncJobDefList() {
-        return this.syncJobDefRepository.getAllSyncJobDefList();
     }
 
     @Override

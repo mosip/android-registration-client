@@ -1,4 +1,4 @@
-package io.mosip.registration.clientmanager.jobservice;
+package io.mosip.registration.clientmanager.jobs;
 
 import android.annotation.SuppressLint;
 import android.util.Log;

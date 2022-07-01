@@ -7,18 +7,18 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.mosip.registration.app.util.JobServiceHelper;
 import io.mosip.registration.app.viewmodel.model.JobServiceModel;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
 
 public class JobServiceViewModel extends ViewModel implements IListingViewModel {
 
     private static final String TAG = JobServiceViewModel.class.getSimpleName();
 
-    JobServiceHelper jobServiceHelper;
+    JobManagerService jobManagerService;
 
-    public JobServiceViewModel(JobServiceHelper jobServiceHelper) {
-        this.jobServiceHelper = jobServiceHelper;
+    public JobServiceViewModel(JobManagerService jobManagerService) {
+        this.jobManagerService = jobManagerService;
     }
 
     private MutableLiveData<List<JobServiceModel>> jobServiceList;
@@ -34,16 +34,16 @@ public class JobServiceViewModel extends ViewModel implements IListingViewModel 
     private void loadServices() {
         List<JobServiceModel> jobServices = new ArrayList<>();
 
-        List<SyncJobDef> syncJobDefList = jobServiceHelper.getAllSyncJobDefList();
+        List<SyncJobDef> syncJobDefList = jobManagerService.getAllSyncJobDefList();
 
         for (SyncJobDef jobDef : syncJobDefList) {
-            int jobId = jobServiceHelper.getId(jobDef.getId());
+            int jobId = jobManagerService.generateJobServiceId(jobDef.getId());
 
-            boolean isActiveAndImplemented = jobDef.getIsActive() && jobServiceHelper.isJobImplementedOnRegClient(jobDef.getApiName());
-            boolean isScheduled = jobServiceHelper.isJobScheduled(jobId);
+            boolean isActiveAndImplemented = jobDef.getIsActive() && jobManagerService.isJobImplementedOnRegClient(jobDef.getApiName());
+            boolean isScheduled = jobManagerService.isJobScheduled(jobId);
 
-            String lastSyncTime = jobServiceHelper.getLastSyncTime(jobId);
-            String nextSyncTime = jobServiceHelper.getNextSyncTime(jobId);
+            String lastSyncTime = jobManagerService.getLastSyncTime(jobId);
+            String nextSyncTime = jobManagerService.getNextSyncTime(jobId);
 
 
             jobServices.add(new JobServiceModel(

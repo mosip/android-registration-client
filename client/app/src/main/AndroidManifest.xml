@@ -18,13 +18,13 @@
         android:theme="@style/Theme.AppCompat.Light">
 
         <service
-            android:name="io.mosip.registration.clientmanager.jobservice.PacketStatusSyncJob"
+            android:name="io.mosip.registration.clientmanager.jobs.PacketStatusSyncJob"
             android:label="Packet Sync Status Job"
             android:permission="android.permission.BIND_JOB_SERVICE" >
         </service>
 
         <service
-            android:name="io.mosip.registration.clientmanager.jobservice.ConfigDataSyncJob"
+            android:name="io.mosip.registration.clientmanager.jobs.ConfigDataSyncJob"
             android:label="Packet Sync Status Job"
             android:permission="android.permission.BIND_JOB_SERVICE" >
         </service>

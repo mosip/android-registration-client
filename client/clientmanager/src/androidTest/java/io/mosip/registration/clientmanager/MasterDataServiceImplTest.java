@@ -114,7 +114,7 @@ public class MasterDataServiceImplTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         clientDatabase.clearAllTables();
     }
 
@@ -135,7 +135,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , null, globalParamRepository, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -173,7 +173,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , null, globalParamRepository, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -207,7 +207,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , null, globalParamRepository, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -228,9 +228,6 @@ public class MasterDataServiceImplTest {
 
     @Test
     public void syncGlobalParamsDataDecryptionFailed() throws Exception {
-        //Mocking clientCrypto
-        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto(DECRYPTED_RESPONSE);
-
         clientCryptoManagerService = mock(LocalClientCryptoServiceImpl.class);
         when(clientCryptoManagerService.getClientKeyIndex())
                 .thenReturn(KEY_INDEX);
@@ -241,7 +238,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , null, globalParamRepository, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -268,7 +265,7 @@ public class MasterDataServiceImplTest {
                 , templateRepository, null, null
                 , null, globalParamRepository, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         assertNotNull(masterDataService.getPreviewTemplateContent("reg-android-preview-template", "eng"));
     }

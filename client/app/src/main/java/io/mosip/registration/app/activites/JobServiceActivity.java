@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.app.job.JobScheduler;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +23,10 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
-import io.mosip.registration.app.util.JobServiceHelper;
 import io.mosip.registration.app.viewmodel.JobServiceViewModel;
 import io.mosip.registration.app.viewmodel.ViewModelFactory;
 import io.mosip.registration.app.viewmodel.model.JobServiceModel;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
@@ -47,7 +46,8 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
     @Inject
     AuditManagerService auditManagerService;
 
-    JobServiceHelper jobServiceHelper;
+    @Inject
+    JobManagerService jobManagerService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,13 +57,11 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
         ProgressBar progressBar = findViewById(R.id.progressbar);
         progressBar.setVisibility(View.VISIBLE);
 
-        jobServiceHelper = new JobServiceHelper(this, (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE), packetService, jobTransactionService);
-
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.scheduled_jobs);
 
-        ViewModelFactory viewModelFactory = new ViewModelFactory(new JobServiceViewModel(jobServiceHelper));
+        ViewModelFactory viewModelFactory = new ViewModelFactory(new JobServiceViewModel(jobManagerService));
         JobServiceViewModel model = new ViewModelProvider(this, viewModelFactory).get(JobServiceViewModel.class);
         model.getList().observe(this, list -> {
             // Assign adapter to ListView
@@ -116,7 +114,7 @@ public class JobServiceActivity extends DaggerAppCompatActivity {
                 try {
                     auditManagerService.audit(AuditEvent.TRIGGER_JOB, Components.JOB_SERVICE);
 
-                    boolean triggered = jobServiceHelper.triggerJobService(jobServiceModel.getId(), jobServiceModel.getApiName());
+                    boolean triggered = jobManagerService.triggerJobService(jobServiceModel.getId(), jobServiceModel.getApiName());
                     if (!triggered)
                         Toast.makeText(JobServiceActivity.this, getString(R.string.job_triggering_failed, jobServiceModel.getName()), Toast.LENGTH_SHORT).show();
 
