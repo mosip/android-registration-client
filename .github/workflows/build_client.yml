@@ -1,4 +1,4 @@
-name: Android Registration-Client Build
+name: Customized Build Android Registration-Client
 
 env:
   defaultServerBaseURL: https://api-internal.sandbox.xyz.net/
