@@ -56,6 +56,18 @@ public class JobManagerServiceImpl implements JobManagerService {
      * as per the sync job def.
      */
     @Override
+    public void refreshAllJobs() {
+        List<SyncJobDef> syncJobDefList = getAllSyncJobDefList();
+
+        for (SyncJobDef jobDef : syncJobDefList) {
+            refreshJobStatus(jobDef);
+        }
+    }
+
+    /**
+     * refreshes the passed jobDef
+     */
+    @Override
     public void refreshJobStatus(SyncJobDef jobDef) {
         int jobId = generateJobServiceId(jobDef.getId());
 

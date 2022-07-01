@@ -23,5 +23,6 @@
     <!-- Success -->
     <string name="global_config_sync_completed">Global config sync Completed</string>
     <string name="packet_status_sync_completed">Packet status sync completed"</string>
+    <string name="packet_status_sync">%d packet/s status synced"</string>
     <string name="NA">NA</string>
 </resources>

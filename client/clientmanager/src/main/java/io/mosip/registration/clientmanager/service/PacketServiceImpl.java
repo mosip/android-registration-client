@@ -223,21 +223,19 @@ public class PacketServiceImpl implements PacketService {
             @Override
             public void onResponse(Call<PacketStatusResponse> call, Response<PacketStatusResponse> response) {
                 if (response.isSuccessful()) {
-                    List<Error> error = response.body().getErrors();
+                    List<PacketStatusDto> packetStatusList = response.body().getResponse();
+                    int packetSyncSuccess = 0;
 
-                    if (error == null || error.size() == 0 || error.get(0).getErrorCode() == null) {
-                        List<PacketStatusDto> packetStatusList = response.body().getResponse();
-
+                    if (packetStatusList != null || packetStatusList.size() > 0) {
                         for (PacketStatusDto packetStatus : packetStatusList) {
                             PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getPacketId(), packetStatus.getStatusCode());
-
                             registrationRepository.updateStatus(updateDto.getRegistrationId(), updateDto.getStatusCode(),
                                     PacketClientStatus.UPLOADED.name());
+                            packetSyncSuccess++;
                         }
-                        Toast.makeText(context, context.getString(R.string.packet_status_sync_completed), Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.packet_status_sync_failed, error.get(0).getErrorMessage()), Toast.LENGTH_LONG).show();
                     }
+
+                    Toast.makeText(context, context.getString(R.string.packet_status_sync, packetSyncSuccess), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())) , Toast.LENGTH_LONG).show();
                 }

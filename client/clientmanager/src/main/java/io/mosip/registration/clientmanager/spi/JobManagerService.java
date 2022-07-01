@@ -11,6 +11,8 @@ import io.mosip.registration.clientmanager.entity.SyncJobDef;
 
 public interface JobManagerService {
 
+    void refreshAllJobs();
+
     void refreshJobStatus(SyncJobDef jobDef);
 
     int scheduleJob(int jobId, String apiName, String syncFreq);
