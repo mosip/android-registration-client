@@ -141,11 +141,29 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void manualSync() {
         try {
-            syncMasterData();
-            syncCertificate();
-            syncLatestIdSchema();
-            syncUserDetails();
-            syncGlobalParamsData();
+            syncMasterData(() -> {
+                Log.i(TAG, "manualSync: MasterData sync completed");
+                syncLatestIdSchema(() -> {
+                    Log.i(TAG, "manualSync: LatestIdSchema sync completed");
+                    try {
+                        syncUserDetails(() -> {
+                            Log.i(TAG, "manualSync: UserDetails sync completed");
+                            try {
+                                syncGlobalParamsData(() -> {
+                                    Log.i(TAG, "manualSync: GlobalParamsData sync completed");
+                                    syncCertificate(() -> {
+                                        Log.i(TAG, "manualSync: Certificate sync completed");
+                                    });
+                                });
+                            } catch (Exception e) {
+                                Log.e(TAG, "manualSync: Global params data sync failed", e);
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.e(TAG, "manualSync: User Details sync failed", e);
+                    }
+                });
+            });
             //syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
@@ -153,9 +171,13 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
     }
 
-
     @Override
     public void syncCertificate() {
+        syncCertificate(() -> {
+        });
+    }
+
+    private void syncCertificate(Runnable onFinish) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null)
             return;
@@ -170,6 +192,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                     if (error == null) {
                         keyStoreRepository.saveKeyStore(centerMachineDto.getMachineRefId(), response.body().getResponse().getCertificate());
                         Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
+                        onFinish.run();
                     } else
                         Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
                 } else
@@ -184,11 +207,25 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncMasterData() throws Exception {
+    public void syncMasterData() {
+        syncMasterData(() -> {
+        });
+    }
+
+    private void syncMasterData(Runnable onFinish) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
 
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
+
+        try {
+            queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
+        } catch (Exception e) {
+            Log.e(TAG, "MasterData : not able to get client key index", e);
+            Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+            onFinish.run();
+            return;
+        }
+
         queryParams.put("version", BuildConfig.CLIENT_VERSION);
 
         if (centerMachineDto != null)
@@ -207,7 +244,13 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveMasterData(response.body().getResponse());
-                        Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
+                        if (centerMachineDto == null) {
+                            //rerunning master data to sync completed master data
+                            syncMasterData(onFinish);
+                        } else {
+                            Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
+                            onFinish.run();
+                        }
                     } else
                         Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
                 } else
@@ -223,6 +266,11 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncGlobalParamsData() throws Exception {
+        syncGlobalParamsData(() -> {
+        });
+    }
+
+    private void syncGlobalParamsData(Runnable onFinish) throws Exception {
         Log.i(TAG, "config data sync is started");
 
         Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(clientCryptoManagerService.getClientKeyIndex());
@@ -234,11 +282,13 @@ public class MasterDataServiceImpl implements MasterDataService {
                     if (error == null) {
                         saveGlobalParams(response.body().getResponse());
                         Toast.makeText(context, context.getString(R.string.global_config_sync_completed), Toast.LENGTH_LONG).show();
+                        onFinish.run();
                     } else
                         Toast.makeText(context, String.format("%s %s", context.getString(R.string.global_config_sync_failed), error.getMessage()), Toast.LENGTH_LONG).show();
                 } else
                     Toast.makeText(context, String.format("%s. %s:%s", context.getString(R.string.global_config_sync_failed), context.getString(R.string.status_code), String.valueOf(response.code())), Toast.LENGTH_LONG).show();
             }
+
             @Override
             public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
                 Toast.makeText(context, context.getString(R.string.global_config_sync_failed), Toast.LENGTH_LONG).show();
@@ -261,7 +311,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
 
             List<GlobalParam> globalParamList = new ArrayList<>();
-            for (Map.Entry<String, String> entry: globalParamMap.entrySet()) {
+            for (Map.Entry<String, String> entry : globalParamMap.entrySet()) {
                 GlobalParam globalParam = new GlobalParam(entry.getKey(), entry.getKey(), entry.getValue(), true);
                 globalParamList.add(globalParam);
             }
@@ -301,7 +351,12 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncLatestIdSchema() throws Exception {
+    public void syncLatestIdSchema() {
+        syncLatestIdSchema(() -> {
+        });
+    }
+
+    private void syncLatestIdSchema(Runnable onFinish) {
         Call<ResponseBody> call = syncRestService.getLatestIdSchema();
         call.enqueue(new Callback<ResponseBody>() {
 
@@ -315,7 +370,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                                 });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
                         Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
-
+                        onFinish.run();
                     } catch (Exception e) {
                         Log.e(TAG, "Failed to save IDSchema", e);
                     }
@@ -333,7 +388,12 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncUserDetails() throws Exception {
+    public void syncUserDetails() {
+        syncLatestIdSchema(() -> {
+        });
+    }
+
+    private void syncUserDetails(Runnable onFinish) throws Exception {
         Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(this.clientCryptoManagerService.getClientKeyIndex());
         call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
             @Override
@@ -343,6 +403,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                     if (error == null) {
                         saveUserDetails(response.body().getResponse().getUserDetails());
                         Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+                        onFinish.run();
                     } else
                         Toast.makeText(context, "User Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
                 } else

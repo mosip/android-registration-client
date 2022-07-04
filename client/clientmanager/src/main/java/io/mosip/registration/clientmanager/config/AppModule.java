@@ -210,9 +210,10 @@ public class AppModule {
                                                    RegistrationRepository registrationRepository,
                                                    MasterDataService masterDataService,
                                                    IdentitySchemaRepository identitySchemaRepository,
-                                                   ClientCryptoManagerService clientCryptoManagerService) {
+                                                   ClientCryptoManagerService clientCryptoManagerService,
+                                                   KeyStoreRepository keyStoreRepository) {
         return new RegistrationServiceImpl(appContext, packetWriterService, userInterfaceHelperService,
-                registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService);
+                registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService, keyStoreRepository);
     }
 
     @Provides

@@ -14,6 +14,7 @@
     <string name="err_005">Failed to create registration packet</string>
     <string name="err_006">Minimum required space is not available</string>
     <string name="err_007">Registrations are not allowed</string>
+    <string name="err_008">Policy Certificate Data not allowed</string>
 
     <!-- Errors -->
     <string name="global_config_sync_failed">Global config sync failed</string>
