@@ -73,14 +73,14 @@ public class JobManagerServiceImpl implements JobManagerService {
 
         boolean isActiveAndImplemented = jobDef.getIsActive() != null && jobDef.getIsActive()
                 && isJobImplementedOnRegClient(jobDef.getApiName());
-        boolean isScheduled = isJobScheduled(jobId);
 
-        if (isActiveAndImplemented) {
-            if (!isScheduled)
-                scheduleJob(jobId, jobDef.getApiName(), jobDef.getSyncFreq());
-        } else {
+        if (!isActiveAndImplemented) {
             cancelJob(jobId);
+            return;
         }
+
+        if (!isJobScheduled(jobId))
+            scheduleJob(jobId, jobDef.getApiName(), jobDef.getSyncFreq());
     }
 
     /**
