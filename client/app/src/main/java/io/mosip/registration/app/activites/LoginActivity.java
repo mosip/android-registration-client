@@ -12,11 +12,11 @@ import android.widget.*;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
-import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -42,6 +42,9 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
     @Inject
     AuditManagerService auditManagerService;
+
+    @Inject
+    JobManagerService jobManagerService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +106,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                 loginButton.setEnabled(false);
             }
         });
+        jobManagerService.refreshAllJobs();
         auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.LOGIN);
     }
 

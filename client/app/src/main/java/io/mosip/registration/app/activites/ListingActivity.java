@@ -113,7 +113,6 @@ public class ListingActivity extends DaggerAppCompatActivity {
                     try {
                         auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST.getId(), Components.REG_PACKET_LIST.getName(), registration.getPacketId(), AuditReferenceIdTypes.PACKET_ID.name());
                         packetService.uploadRegistration(registration.getPacketId());
-                        Toast.makeText(getContext(), "Packet upload successful", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Log.e(TAG, "Packet upload failed", e);
                         Toast.makeText(getContext(), "Packet upload failed", Toast.LENGTH_SHORT).show();

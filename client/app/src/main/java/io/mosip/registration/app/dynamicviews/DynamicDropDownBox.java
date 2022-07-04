@@ -84,7 +84,7 @@ public class DynamicDropDownBox extends LinearLayout implements DynamicView {
 
     private void setLanguageSpecificValues(String code) {
         List<GenericValueDto> list = (fieldSpecDto.getFieldType().equalsIgnoreCase("dynamic")) ?
-                this.masterDataService.getFieldValues(fieldSpecDto.getSubType(), code):
+                this.masterDataService.getFieldValuesByCode(fieldSpecDto.getSubType(), code):
                 this.masterDataService.findLocationByCode(code);
         registrationDto.getSelectedLanguages().forEach(lang -> {
             Optional<GenericValueDto> result = list.stream().filter(f -> f.getLangCode().equals(lang)).findFirst();
