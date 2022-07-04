@@ -17,6 +17,8 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.service.PacketUploadServiceImpl;
+import io.mosip.registration.clientmanager.spi.PacketUploadService;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
@@ -263,6 +265,12 @@ public class AppModule {
     @Singleton
     DateUtil provideDateUtil() {
         return new DateUtil(appContext);
+    }
+
+    @Provides
+    @Singleton
+    PacketUploadService providePacketUploadService(PacketService packetService) {
+        return new PacketUploadServiceImpl(packetService);
     }
 
     @Provides
