@@ -2,8 +2,11 @@ package io.mosip.registration.app.activites;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.view.ActionMode;
 import androidx.databinding.DataBindingUtil;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -69,12 +73,16 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     Boolean uploadOverWifiOnly;
     ConnectivityManager connectivityManager;
+    SharedPreferences sharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bi = DataBindingUtil.setContentView(this, R.layout.packet_list_activity);
         connectivityManager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        uploadOverWifiOnly = sharedPreferences.getBoolean("wifi_only", false);
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -125,6 +133,7 @@ public class PacketListActivity extends DaggerAppCompatActivity {
        toggling action bar that will change the color and option
      */
     private void toggleActionBar(int position) {
+
         if (actionMode == null) {
             actionMode = startSupportActionMode(actionCallback);
         }
@@ -146,6 +155,10 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     }
 
     private void syncAndUploadSelectedPacket() {
+        if (!checkNetwork()) {
+            return;
+        }
+
         List<Integer> selectedItemPositions = adapter.getSelectedItems();
         for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
             syncAndUploadPacket(i);
@@ -154,6 +167,9 @@ public class PacketListActivity extends DaggerAppCompatActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void syncAndUploadPacket(int position) {
+        if (!checkNetwork()) {
+            return;
+        }
 
         NetworkCapabilities nc = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
         int upstreamBandwidthKbps = nc.getLinkUpstreamBandwidthKbps();
@@ -260,6 +276,24 @@ public class PacketListActivity extends DaggerAppCompatActivity {
             startActivity(i);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean checkNetwork() {
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        Network currentNetwork = connectivityManager.getActiveNetwork();
+        NetworkCapabilities caps = connectivityManager.getNetworkCapabilities(currentNetwork);
+
+        if (info == null || !info.isConnected()) {
+            Toast.makeText(getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (uploadOverWifiOnly && !caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            Toast.makeText(getApplicationContext(), R.string.change_connection_settings, Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 

@@ -10,6 +10,10 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.settings);
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settings_container, new PacketUploadSettingsFragment())
