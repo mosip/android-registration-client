@@ -58,11 +58,11 @@
 
                 <ImageButton
                     android:id="@+id/btn_upload"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="53dp"
                     android:layout_below="@id/date"
                     android:layout_alignParentEnd="true"
-                    android:background="@color/btn_primary_theme1"
+                    android:background="@drawable/rounded_corner_btn"
                     android:padding="3dp"
                     android:src="@drawable/ic_baseline_cloud_upload_24"
                     app:tint="@color/white">
