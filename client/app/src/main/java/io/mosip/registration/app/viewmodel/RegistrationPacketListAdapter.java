@@ -82,7 +82,7 @@ public class RegistrationPacketListAdapter extends RecyclerView.Adapter<Registra
         if (selectedItems.get(position, false)) {
             bi.statusTxt.setTextColor(mContext.getColor(R.color.text_primary_theme2));
             bi.date.setTextColor(mContext.getColor(R.color.text_primary_theme2));
-            bi.getRoot().setBackgroundColor(mContext.getColor(R.color.bg_primary_theme1));
+            bi.getRoot().setBackgroundColor(mContext.getColor(R.color.bg_secondary_theme1));
             if (selectedIndex == position) selectedIndex = -1;
         } else {
             bi.statusTxt.setTextColor(mContext.getColor(R.color.text_primary_theme1));
