@@ -164,7 +164,7 @@ public class ScreenActivity extends DaggerAppCompatActivity implements Biometric
             if (fieldSpecDto.getInputRequired()) {
                 DynamicView dynamicView = null;
                 switch (fieldSpecDto.getControlType().toLowerCase()) {
-                    case "textbox":
+                    /*case "textbox":
                         dynamicView = factory.getTextComponent(fieldSpecDto, this.registrationService.getRegistrationDto(), languageRepository);
                         break;
                     case "agedate":
@@ -188,7 +188,7 @@ public class ScreenActivity extends DaggerAppCompatActivity implements Biometric
                         requestCodeMap.put(SCAN_REQUEST_CODE, fieldSpecDto.getId());
                         setScanButtonListener(SCAN_REQUEST_CODE, (View) dynamicView, fieldSpecDto,
                                 this.registrationService.getRegistrationDto().getSelectedLanguages());
-                        break;
+                        break;*/
                     case "biometrics":
                         dynamicView = factory.getBiometricsComponent(fieldSpecDto, this.registrationService.getRegistrationDto());
                         break;
