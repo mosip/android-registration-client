@@ -49,14 +49,6 @@ public class RegistrationConstants {
     //Audits
     public static final String REGISTRATION_SCREEN = "Registration: %s";
 
-    //PacketTaskStatus
-    public static final int PACKET_SYNC_STATUS_SUCCESS = 0;
-    public static final int PACKET_SYNC_STATUS_FAILURE = 1;
-    public static final int PACKET_SYNC_STATUS_ALREADY_SYNCED = 2;
-    public static final int PACKET_UPLOAD_STATUS_SUCCESS = 3;
-    public static final int PACKET_UPLOAD_STATUS_FAILURE = 4;
-    public static final int PACKET_UPLOAD_STATUS_ALREADY_UPLOADED = 5;
-
     //Global Params.
     public static final String PACKET_UPLOAD_MIN_UPSTREAM_BANDWIDTH_KBPS = "PacketUploadMinUpstreamBandwidthKbps";
 

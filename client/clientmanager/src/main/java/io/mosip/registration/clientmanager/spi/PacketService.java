@@ -50,4 +50,11 @@ public interface PacketService {
      * @return
      */
     void syncAllPacketStatus();
+
+    /**
+     *
+     * @param
+     * @return Packet Status
+     */
+    String getPacketStatus(String packetId);
 }

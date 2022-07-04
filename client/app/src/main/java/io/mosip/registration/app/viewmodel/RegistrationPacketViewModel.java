@@ -1,9 +1,5 @@
 package io.mosip.registration.app.viewmodel;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +8,7 @@ import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.util.DateUtil;
 
-public class RegistrationPacketViewModel extends ViewModel implements IListingViewModel {
+public class RegistrationPacketViewModel {
 
     private static final String TAG = RegistrationPacketViewModel.class.getSimpleName();
 
@@ -24,19 +20,18 @@ public class RegistrationPacketViewModel extends ViewModel implements IListingVi
         this.dateUtil = dateUtil;
     }
 
-    private MutableLiveData<List<RegistrationPacketModel>> registrationList;
+    private List<RegistrationPacketModel> registrationList;
 
-    @Override
-    public LiveData<List<RegistrationPacketModel>> getList() {
+    public List<RegistrationPacketModel> getList() {
         if (registrationList == null) {
-            registrationList = new MutableLiveData<>();
+            registrationList = new ArrayList<>();
             loadRegistrations();
         }
         return registrationList;
     }
 
     private void loadRegistrations() {
-        List<Registration> registrations =  this.packetService.getAllRegistrations(0, 0);
+        List<Registration> registrations = this.packetService.getAllRegistrations(0, 0);
 
         List<RegistrationPacketModel> registrationPacketModels = new ArrayList<>();
 
@@ -50,6 +45,12 @@ public class RegistrationPacketViewModel extends ViewModel implements IListingVi
             ));
         }
 
-        registrationList.setValue(registrationPacketModels);
+        registrationList = registrationPacketModels;
+    }
+
+    public void refreshPacketStatus() {
+        for (RegistrationPacketModel packet : registrationList) {
+            packet.setPacketStatus(packetService.getPacketStatus(packet.getPacketId()));
+        }
     }
 }
