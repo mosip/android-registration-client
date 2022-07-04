@@ -45,4 +45,7 @@ public abstract class ActivityBuildersModule {
     @ContributesAndroidInjector
     abstract AcknowledgementActivity contributeAcknowledgementActivity();
 
+    @ContributesAndroidInjector
+    abstract ModalityActivity contributeModalityActivity();
+
 }

@@ -13,6 +13,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ValueRange;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RegistrationDto extends Observable {
 
@@ -35,6 +36,8 @@ public class RegistrationDto extends Observable {
     private Map<String, DocumentDto> documents;
     private Map<String, BiometricsDto> biometrics;
     public Map<String, Object> AGE_GROUPS = new HashMap<>();
+    public Map<Modality, AtomicInteger> ATTEMPTS;
+    public Map<Modality, Set<String>> EXCEPTIONS;
     private OperatorDto maker;
     private OperatorDto reviewer;
 
@@ -49,6 +52,18 @@ public class RegistrationDto extends Observable {
         this.demographics = new HashMap<>();
         this.documents = new HashMap<>();
         this.biometrics = new HashMap<>();
+        ATTEMPTS = new HashMap<>();
+        ATTEMPTS.put(Modality.FACE, new AtomicInteger(0));
+        ATTEMPTS.put(Modality.FINGERPRINT_SLAB_LEFT, new AtomicInteger(0));
+        ATTEMPTS.put(Modality.FINGERPRINT_SLAB_RIGHT, new AtomicInteger(0));
+        ATTEMPTS.put(Modality.FINGERPRINT_SLAB_THUMBS, new AtomicInteger(0));
+        ATTEMPTS.put(Modality.IRIS_DOUBLE, new AtomicInteger(0));
+        EXCEPTIONS = new HashMap<>();
+        EXCEPTIONS.put(Modality.FACE, new HashSet<>());
+        EXCEPTIONS.put(Modality.FINGERPRINT_SLAB_LEFT, new HashSet<>());
+        EXCEPTIONS.put(Modality.FINGERPRINT_SLAB_RIGHT, new HashSet<>());
+        EXCEPTIONS.put(Modality.FINGERPRINT_SLAB_THUMBS, new HashSet<>());
+        EXCEPTIONS.put(Modality.IRIS_DOUBLE, new HashSet<>());
     }
 
     public void setMakerDetails() {
@@ -173,6 +188,33 @@ public class RegistrationDto extends Observable {
 
     public void removeBiometricField(String fieldId) {
         this.biometrics.remove(fieldId);
+    }
+
+    public int incrementBioAttempt(Modality modality) {
+        return ATTEMPTS.get(modality).incrementAndGet();
+    }
+
+    public void resetBioAttempt(Modality modality) {
+        ATTEMPTS.get(modality).set(0);
+    }
+
+    public void addBioException(Modality modality, String attribute) {
+        EXCEPTIONS.get(modality).add(attribute);
+        resetBioAttempt(modality);
+    }
+
+    public void removeBioException(Modality modality, String attribute) {
+        EXCEPTIONS.get(modality).remove(attribute);
+        resetBioAttempt(modality);
+    }
+
+    public void resetBioException(Modality modality) {
+        EXCEPTIONS.get(modality).clear();
+        resetBioAttempt(modality);
+    }
+
+    public boolean isBioException(Modality modality, String attribute) {
+       return EXCEPTIONS.get(modality).contains(attribute);
     }
 
     public Set<Map.Entry<String, Object>> getAllDemographicFields() {

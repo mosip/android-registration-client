@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/bio_score_frame">
+        <ProgressBar
+                android:id="@+id/bio_score_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:layout_margin="5dp"
+                android:layout_marginStart="10dp"
+                android:max="@integer/max_threshold"
+                android:min="@integer/min_threshold"
+                android:progress="0"
+                android:progressTint="#18B61F"
+                android:layout_weight="1"/>
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_margin="5dp"
+                  android:id="@+id/current_score"
+                  android:text="0%">
+        </TextView>
+    </FrameLayout>
+
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_margin="30dp"
+                 android:gravity="center">
+        <ImageView
+                android:id="@+id/current_modality_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/right_palm"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"/>
+
+        <LinearLayout android:id="@+id/exceptionImages"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="horizontal">
+        </LinearLayout>
+
+    </FrameLayout>
+    <!-- Need to add attempts threshold and score details -->
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/bio_action_buttons"
+                  android:orientation="vertical"
+                  android:layout_margin="16dp"
+                  android:layout_alignParentRight="true"
+                  android:layout_alignParentBottom="true">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
+                                                                               android:layout_height="wrap_content"
+                                                                               android:layout_margin="10dp"
+                                                                               android:src="@drawable/button_option_selected"
+                                                                               android:tooltipText="@string/scan"
+                                                                               android:tint="@android:color/white"
+                                                                               android:onClick="scan_modality">
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+    </LinearLayout>
+</RelativeLayout>

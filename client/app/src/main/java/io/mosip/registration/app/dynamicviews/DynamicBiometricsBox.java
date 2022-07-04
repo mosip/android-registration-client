@@ -7,12 +7,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.util.ClientConstants;
 import io.mosip.registration.app.viewmodel.CustomViewPager2Adapter;
+import io.mosip.registration.app.viewmodel.ModalityAdapter;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
@@ -31,10 +35,13 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
     RegistrationDto registrationDto = null;
     FieldSpecDto fieldSpecDto = null;
     List<String> bioAttributes = null;
-    final int layoutId = R.layout.dynamic_biometrics_box;
+    final int layoutId = R.layout.biometrics_box;
     LinkedHashMap<Modality, List<String>> identifiedModalities = new LinkedHashMap<>();
     ViewPager2 viewPager2;
     TabLayout tabLayout;
+
+    private RecyclerView mRecyclerView;
+    private ModalityAdapter modalityAdapter;
 
     public DynamicBiometricsBox(Context context, FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
         super(context);
@@ -62,9 +69,9 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
         setupConfiguredBioAttributes();
 
-        setupBiometricViewPager2(context);
+        setModalityRecycleView(context);//setupBiometricViewPager2(context);
 
-        ((TextView)findViewById(R.id.biometric_label)).setText(Html.fromHtml(isRequired() ?
+        ((TextView)findViewById(R.id.biometrics_label)).setText(Html.fromHtml(isRequired() ?
                 String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)) :
                 String.format(FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)), 1));
 
@@ -100,6 +107,28 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
             registrationDto.removeBiometricField(fieldSpecDto.getId());
             this.setVisibility(GONE);
         }
+    }
+
+    private void setModalityRecycleView(Context context) {
+        // Initialize the RecyclerView.
+        mRecyclerView = findViewById(R.id.biometricRecyclerView);
+
+        int gridColumnCount = getResources().getInteger(R.integer.grid_column_count);
+
+        // Set the Layout Manager.
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, gridColumnCount));
+
+        ArrayList<Modality> modalities = new ArrayList<>();
+        for(Map.Entry<Modality, List<String>> entry : identifiedModalities.entrySet()) {
+            modalities.add(entry.getKey());
+        }
+
+        // Initialize the adapter and set it to the RecyclerView.
+        modalityAdapter = new ModalityAdapter(context, modalities);
+        mRecyclerView.setAdapter(modalityAdapter);
+
+        // Notify the adapter of the change.
+        modalityAdapter.notifyDataSetChanged();
     }
 
     private void setupBiometricViewPager2(Context context) {
