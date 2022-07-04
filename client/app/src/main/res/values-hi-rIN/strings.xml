@@ -87,5 +87,8 @@
     <string name="quality_score">गुणवत्ता स्कोर: %d</string>
     <string name="threshold_score">थ्रेसहोल्ड स्कोर: %d</string>
     <string name="attempt_number">प्रयास: %d</string>
+    <string name="no_internet_connection">कोई इंटरनेट कनेक्शन नहीं</string>
+    <string name="change_connection_settings">केवल वाईफाई पर अपलोड करें, कृपया अपनी कनेक्शन सेटिंग बदलें।</string>
+    <string name="settings">समायोजन</string>
 
 </resources>

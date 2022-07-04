@@ -87,5 +87,8 @@
     <string name="quality_score">نقاط الجودة: %d</string>
     <string name="threshold_score">درجة العتبة: %d</string>
     <string name="attempt_number">المحاولة: %d</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
+    <string name="change_connection_settings">قم بالتحميل عبر wifi فقط ، يرجى تغيير إعدادات الاتصال الخاصة بك.</string>
+    <string name="settings">إعدادات</string>
 
 </resources>

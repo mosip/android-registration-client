@@ -35,4 +35,10 @@
     <color name="switchbox_text_primary_theme1">#FFFFFFFF</color>
     <color name="switchbox_text_secondary_theme1">#FF000000</color>
 
+    <color name="text_primary_theme1">#FF000000</color>
+    <color name="text_secondary_theme1">#CCCCCCCC</color>
+    <color name="text_primary_theme2">#FFFFFFFF</color>
+    <color name="text_secondary_theme2">#EEEEEEEE</color>
+
+    <color name="bg_primary_theme1">#017787</color>
 </resources>

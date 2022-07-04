@@ -84,7 +84,7 @@
         <activity
             android:name=".activites.SettingsActivity"
             android:exported="true"
-            android:parentActivityName=".activites.MainActivity"
+            android:parentActivityName=".activites.PacketListActivity"
             android:windowSoftInputMode="adjustResize" />
 
         <activity

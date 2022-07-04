@@ -87,5 +87,8 @@
     <string name="quality_score">தரமான மதிப்பெண்: %d</string>
     <string name="threshold_score">வரம்பு மதிப்பெண்: %d</string>
     <string name="attempt_number">முயற்சி: %d</string>
+    <string name="no_internet_connection">இணைய இணைப்பு இல்லை</string>
+    <string name="change_connection_settings">வைஃபை மூலம் மட்டும் பதிவேற்றவும், உங்கள் இணைப்பு அமைப்புகளை மாற்றவும்.</string>
+    <string name="settings">அமைப்புகள்</string>
 
 </resources>

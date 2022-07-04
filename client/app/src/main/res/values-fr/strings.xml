@@ -88,4 +88,7 @@
     <string name="quality_score">Niveau de qualité: %d</string>
     <string name="threshold_score">Score seuil : %d</string>
     <string name="attempt_number">Tentative : %d</string>
+    <string name="no_internet_connection">Pas de connexion Internet</string>
+    <string name="change_connection_settings">Télécharger via Wi-Fi uniquement, veuillez modifier vos paramètres de connexion.</string>
+    <string name="settings">Réglages</string>
 </resources>

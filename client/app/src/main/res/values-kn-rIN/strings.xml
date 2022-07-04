@@ -87,5 +87,8 @@
     <string name="quality_score">ಗುಣಮಟ್ಟದ ಸ್ಕೋರ್: %d</string>
     <string name="threshold_score">ಥ್ರೆಶೋಲ್ಡ್ ಸ್ಕೋರ್: %d</string>
     <string name="attempt_number">ಪ್ರಯತ್ನ: %d</string>
+    <string name="no_internet_connection">ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲ</string>
+    <string name="change_connection_settings">ವೈಫೈ ಮೂಲಕ ಮಾತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ದಯವಿಟ್ಟು ನಿಮ್ಮ ಸಂಪರ್ಕ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಬದಲಾಯಿಸಿ.</string>
+    <string name="settings">ಸಂಯೋಜನೆಗಳು</string>
 
 </resources>

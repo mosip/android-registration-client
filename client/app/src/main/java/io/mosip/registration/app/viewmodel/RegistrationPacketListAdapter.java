@@ -80,9 +80,13 @@ public class RegistrationPacketListAdapter extends RecyclerView.Adapter<Registra
      */
     private void toggleItemColor(PacketListItemBinding bi, int position) {
         if (selectedItems.get(position, false)) {
-            bi.getRoot().setBackgroundColor(mContext.getColor(R.color.btn_primary_theme1));
+            bi.statusTxt.setTextColor(mContext.getColor(R.color.text_primary_theme2));
+            bi.date.setTextColor(mContext.getColor(R.color.text_primary_theme2));
+            bi.getRoot().setBackgroundColor(mContext.getColor(R.color.bg_primary_theme1));
             if (selectedIndex == position) selectedIndex = -1;
         } else {
+            bi.statusTxt.setTextColor(mContext.getColor(R.color.text_primary_theme1));
+            bi.date.setTextColor(mContext.getColor(R.color.text_primary_theme1));
             bi.getRoot().setBackgroundColor(mContext.getColor(R.color.design_default_color_background));
             if (selectedIndex == position) selectedIndex = -1;
         }

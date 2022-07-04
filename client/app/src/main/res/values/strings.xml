@@ -84,6 +84,9 @@
     <string name="select_all">Select All</string>
     <string name="upload">Upload</string>
     <string name="packet_upload_min_bw">Weak network. Min up bandwidth required %s, current up bandwidth %s</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="change_connection_settings">Upload over wifi only, please change your connection settings.</string>
+    <string name="settings">Settings</string>
 
     <string name="quality_score">Quality Score: %d</string>
     <string name="threshold_score">Threshold Score: %d</string>
