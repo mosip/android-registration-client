@@ -1,9 +1,14 @@
 package io.mosip.registration.clientmanager.dto.registration;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.dto.sbi.DigitalId;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.json.JSONException;
@@ -36,8 +41,10 @@ public class RegistrationDto extends Observable {
     private Map<String, DocumentDto> documents;
     private Map<String, BiometricsDto> biometrics;
     public Map<String, Object> AGE_GROUPS = new HashMap<>();
-    public Map<Modality, AtomicInteger> ATTEMPTS;
-    public Map<Modality, Set<String>> EXCEPTIONS;
+    public Map<String, AtomicInteger> ATTEMPTS;
+    public Map<String, Set<String>> EXCEPTIONS;
+
+    public Map<Modality, Object> bioDevices = new HashMap<>();
     private OperatorDto maker;
     private OperatorDto reviewer;
 
@@ -52,18 +59,8 @@ public class RegistrationDto extends Observable {
         this.demographics = new HashMap<>();
         this.documents = new HashMap<>();
         this.biometrics = new HashMap<>();
-        ATTEMPTS = new HashMap<>();
-        ATTEMPTS.put(Modality.FACE, new AtomicInteger(0));
-        ATTEMPTS.put(Modality.FINGERPRINT_SLAB_LEFT, new AtomicInteger(0));
-        ATTEMPTS.put(Modality.FINGERPRINT_SLAB_RIGHT, new AtomicInteger(0));
-        ATTEMPTS.put(Modality.FINGERPRINT_SLAB_THUMBS, new AtomicInteger(0));
-        ATTEMPTS.put(Modality.IRIS_DOUBLE, new AtomicInteger(0));
-        EXCEPTIONS = new HashMap<>();
-        EXCEPTIONS.put(Modality.FACE, new HashSet<>());
-        EXCEPTIONS.put(Modality.FINGERPRINT_SLAB_LEFT, new HashSet<>());
-        EXCEPTIONS.put(Modality.FINGERPRINT_SLAB_RIGHT, new HashSet<>());
-        EXCEPTIONS.put(Modality.FINGERPRINT_SLAB_THUMBS, new HashSet<>());
-        EXCEPTIONS.put(Modality.IRIS_DOUBLE, new HashSet<>());
+        this.ATTEMPTS = new HashMap<>();
+        this.EXCEPTIONS = new HashMap<>();
     }
 
     public void setMakerDetails() {
@@ -190,31 +187,60 @@ public class RegistrationDto extends Observable {
         this.biometrics.remove(fieldId);
     }
 
-    public int incrementBioAttempt(Modality modality) {
-        return ATTEMPTS.get(modality).incrementAndGet();
+    public int incrementBioAttempt(String fieldId, Modality modality) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        ATTEMPTS.putIfAbsent(key, new AtomicInteger(0));
+        return ATTEMPTS.get(key).incrementAndGet();
     }
 
-    public void resetBioAttempt(Modality modality) {
-        ATTEMPTS.get(modality).set(0);
+    public int getBioAttempt(String fieldId, Modality modality) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        return Objects.requireNonNull(ATTEMPTS.get(key)).get();
     }
 
-    public void addBioException(Modality modality, String attribute) {
-        EXCEPTIONS.get(modality).add(attribute);
-        resetBioAttempt(modality);
+    public void addBioException(String fieldId, Modality modality, String attribute) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        EXCEPTIONS.putIfAbsent(key, new HashSet<>());
+        EXCEPTIONS.get(key).add(attribute);
+        resetBioCapture(fieldId, modality);
     }
 
-    public void removeBioException(Modality modality, String attribute) {
-        EXCEPTIONS.get(modality).remove(attribute);
-        resetBioAttempt(modality);
+    public void removeBioException(String fieldId, Modality modality, String attribute) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        EXCEPTIONS.putIfAbsent(key, new HashSet<>());
+        EXCEPTIONS.get(key).remove(attribute);
+        resetBioCapture(fieldId, modality);
     }
 
-    public void resetBioException(Modality modality) {
-        EXCEPTIONS.get(modality).clear();
-        resetBioAttempt(modality);
+    public boolean isBioException(String fieldId, Modality modality, String attribute) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        return EXCEPTIONS.getOrDefault(key, Collections.EMPTY_SET).contains(attribute);
     }
 
-    public boolean isBioException(Modality modality, String attribute) {
-       return EXCEPTIONS.get(modality).contains(attribute);
+    private void resetBioCapture(String fieldId, Modality modality) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        ATTEMPTS.put(key, new AtomicInteger(0));
+        for(String attribute : modality.getAttributes()) {
+            key = String.format(BIO_KEY, fieldId, attribute);
+            this.biometrics.remove(key);
+        }
+    }
+
+
+    public void addBioDevice(Modality modality, String deviceCode, DigitalId digitalId) {
+        Map<String, Object> registeredDevice = new LinkedHashMap<>();
+        Map<String, String> digitalIdMap = new HashMap<>();
+        digitalIdMap.put("serialNo", digitalId.getSerialNo());
+        digitalIdMap.put("make", digitalId.getMake());
+        digitalIdMap.put("model", digitalId.getModel());
+        digitalIdMap.put("type", digitalId.getType());
+        digitalIdMap.put("deviceProviderId", digitalId.getDeviceProviderId());
+        digitalIdMap.put("deviceProvider", digitalId.getDeviceProvider());
+        digitalIdMap.put("dateTime", digitalId.getDateTime());
+        registeredDevice.put("deviceCode", deviceCode);
+        registeredDevice.put("deviceServiceVersion", "0.9.5");
+        registeredDevice.put("digitalId", digitalIdMap);
+        bioDevices.put(modality, registeredDevice);
     }
 
     public Set<Map.Entry<String, Object>> getAllDemographicFields() {
@@ -293,6 +319,9 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);
         allIdentityDetails.putAll(this.AGE_GROUPS);
+        if(!allIdentityDetails.containsKey(RegistrationConstants.AGE))
+            allIdentityDetails.put(RegistrationConstants.AGE, 0);
+
         return allIdentityDetails;
     }
 

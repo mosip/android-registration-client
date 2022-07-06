@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.*;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.*;
 import androidx.annotation.Nullable;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import dagger.android.support.DaggerAppCompatActivity;
@@ -27,18 +25,18 @@ import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.sbi.*;
+import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 
 import javax.inject.Inject;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModalityActivity extends DaggerAppCompatActivity {
 
@@ -61,6 +59,9 @@ public class ModalityActivity extends DaggerAppCompatActivity {
     @Inject
     GlobalParamRepository globalParamRepository;
 
+    @Inject
+    Biometrics095Service biometricsService;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         fieldId = getIntent().getStringExtra("fieldId");
         purpose = getIntent().getStringExtra("purpose");
 
-        resetBioCaptureImageView(currentModality);
+        displayCapturedImage(fieldId);
     }
 
     private void resetBioCaptureImageView(Modality modality) {
@@ -131,6 +132,7 @@ public class ModalityActivity extends DaggerAppCompatActivity {
             }
         });
     }
+
 
     private Bitmap getThresholdBitmap(String text) {
         Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.green_round);
@@ -240,7 +242,7 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         });
     }
 
-    private ImageView getImageView(Context context, int x, int y, int parentWidth, int parentHeight, String subType) throws Exception {
+    private ImageView getImageView(Context context, int x, int y, int parentWidth, int parentHeight, String subType) {
         TypedValue typedValue = new TypedValue();
         getResources().getValue(x, typedValue, true);
         float xOffset = typedValue.getFloat();
@@ -254,22 +256,26 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         iv.setX((parentWidth*xOffset)-(width/2));
         iv.setY((parentHeight*yOffset)-(height/2));
         iv.setVisibility(View.VISIBLE);
-        iv.setAlpha((this.registrationService.getRegistrationDto().isBioException(currentModality, subType))  ? 1.0f : 0.0f);
+
+        try {
+            iv.setAlpha((this.registrationService.getRegistrationDto().isBioException(fieldId, currentModality, subType))  ? 1.0f : 0.0f);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to set alpha " + subType, e);
+        }
 
         iv.setOnClickListener(v -> {
             Toast.makeText(this, "Clicked on exception : " + subType, Toast.LENGTH_LONG).show();
-            iv.setAlpha((iv.getAlpha() == 0.0f) ? 1.0f : 0.0f);
             try {
                 if(iv.getAlpha() == 0.0f) { //currently transparent, user clicked to make it visible
                     iv.setAlpha(1.0f);
-                    this.registrationService.getRegistrationDto().addBioException(currentModality, subType);
+                    this.registrationService.getRegistrationDto().addBioException(fieldId, currentModality, subType);
                 }
                 else {
                     iv.setAlpha(0.0f);
-                    this.registrationService.getRegistrationDto().removeBioException(currentModality, subType);
+                    this.registrationService.getRegistrationDto().removeBioException(fieldId, currentModality, subType);
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Failed to add / remove bio exception " + currentModality, e);
+                Log.e(TAG, "Failed to add / remove bio exception " + subType, e);
             }
         });
         return iv;
@@ -354,14 +360,8 @@ public class ModalityActivity extends DaggerAppCompatActivity {
             intent.setAction(callbackId + RegistrationConstants.R_CAPTURE_INTENT_ACTION);
             queryPackage(intent);
             Toast.makeText(this, "Initiating capture request : " + callbackId, Toast.LENGTH_LONG).show();
-            CaptureRequest captureRequest = new CaptureRequest();
-            captureRequest.setEnv("Developer");
-            captureRequest.setPurpose("Registration");
-            captureRequest.setTimeout(10000);
-            captureRequest.setSpecVersion("0.9.5");
-            List<CaptureBioDetail> list = new ArrayList<>();
-            list.add(getBioObject(deviceId));
-            captureRequest.setBio(list);
+            CaptureRequest captureRequest = biometricsService.getRCaptureRequest(currentModality, deviceId,
+                    getExceptionAttributes());
             intent.putExtra("input", objectMapper.writeValueAsBytes(captureRequest));
             startActivityForResult(intent, 3);
         } catch (Exception ex) {
@@ -371,59 +371,23 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private CaptureBioDetail getBioObject(String deviceId) {
-        CaptureBioDetail detail = new CaptureBioDetail();
-        detail.setType(currentModality.getSingleType().name());
-        detail.setBioSubType(Modality.getSpecBioSubType(currentModality.getAttributes()).toArray(new String[0]));
-        detail.setCount(currentModality.getAttributes().size());
-        detail.setException(new String[]{});
-        detail.setDeviceId(deviceId);
-        detail.setRequestedScore(40);
-        detail.setDeviceSubId(String.valueOf(currentModality.getDeviceSubId()));
-        detail.setPreviousHash("");
-        return detail;
-    }
-
-    private byte[] getPayloadBuffer(String jwt) {
-        try {
-            String[] parts = jwt.split("\\.");
-            return Base64.getUrlDecoder().decode(parts[1]);
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to decode payload");
-        }
-        return null;
-    }
-
-    private String getSignature(String jwt) {
-        try {
-            String[] parts = jwt.split("\\.");
-            return parts[2];
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to decode payload");
-        }
-        return null;
+    private List<String> getExceptionAttributes() {
+        return currentModality.getAttributes().stream()
+                .filter( it ->
+                {
+                    try {
+                        return this.registrationService.getRegistrationDto().isBioException(fieldId, currentModality, it);
+                    } catch (Exception e) {}
+                    return false;
+                })
+                .collect(Collectors.toList());
     }
 
     private void parseDiscoverResponse(Bundle bundle) {
         try {
             byte[] bytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
-            List<DeviceDto> list = objectMapper.readValue(bytes, new TypeReference<List<DeviceDto>>() {
-            });
-            if (list.isEmpty()) {
-                Toast.makeText(this, "No SBI discovered!", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            DeviceDto deviceDto = list.get(0);
-            if (deviceDto.getError() != null && !"0".equals(deviceDto.getError().getErrorCode())) {
-                Log.e(TAG, deviceDto.getError().getErrorCode() + " --> " + deviceDto.getError().getErrorInfo());
-                Toast.makeText(this, deviceDto.getError().getErrorInfo(), Toast.LENGTH_LONG).show();
-                return;
-            }
-            callbackId = deviceDto.getCallbackId();
-            String deviceStatus = deviceDto.getDeviceStatus();
-            Log.i(TAG, callbackId + " --> " + deviceStatus);
-        } catch (Exception e) {
+            callbackId = biometricsService.handleDiscoveryResponse(currentModality, bytes);
+        } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.DISCOVER_SBI_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse discover response", e);
         }
@@ -435,27 +399,9 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         String serialNo = null;
         try {
             byte[] bytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
-            List<InfoResponse> list = objectMapper.readValue(bytes, new TypeReference<List<InfoResponse>>() {
-            });
-
-            if (list.isEmpty()) {
-                Toast.makeText(this, "No SBI discovered!", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            InfoResponse response = list.get(0);
-            if (response.getError() != null && !"0".equals(response.getError().getErrorCode())) {
-                Log.e(TAG, response.getError().getErrorCode() + " --> " + response.getError().getErrorInfo());
-                Toast.makeText(this, response.getError().getErrorInfo(), Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            byte[] payloadBuffer = this.getPayloadBuffer(response.getDeviceInfo());
-            DeviceDto deviceDto = objectMapper.readValue(payloadBuffer, DeviceDto.class);
-            callbackId = deviceDto.getCallbackId().replace(".info", "");
-            byte[] digitalIdBuffer = this.getPayloadBuffer(deviceDto.getDigitalId());
-            DigitalId digitalId = objectMapper.readValue(digitalIdBuffer, DigitalId.class);
-            serialNo = digitalId.getSerialNo();
+            String[] result = biometricsService.handleDeviceInfoResponse(currentModality, bytes);
+            callbackId = result[0];
+            serialNo = result[1];
             Log.i(TAG, callbackId + " --> " + serialNo);
         } catch (Exception e) {
             auditManagerService.audit(AuditEvent.DEVICE_INFO_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
@@ -468,35 +414,18 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         try {
             Uri uri = bundle.getParcelable(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
             InputStream respData = getContentResolver().openInputStream(uri);
-            CaptureResponse captureResponse = objectMapper.readValue(respData, new TypeReference<CaptureResponse>() {
-            });
-            List<CaptureRespDetail> list = captureResponse.getBiometrics();
-            float score = 0;
-            for (CaptureRespDetail bio : list) {
-                if (bio.getError() != null && !"0".equals(bio.getError().getErrorCode())) {
-                    Log.e(TAG, bio.getError().getErrorCode() + " --> " + bio.getError().getErrorInfo());
-                    continue;
-                }
-                String signature = this.getSignature(bio.getData());
-                byte[] payloadBuffer = this.getPayloadBuffer(bio.getData());
-                CaptureDto captureDto = objectMapper.readValue(payloadBuffer, new TypeReference<CaptureDto>() {
-                });
+            List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
+                    getExceptionAttributes());
 
-                ProgressBar progressBar = findViewById(R.id.bio_score_bar);
-                progressBar.setProgress((int) captureDto.getQualityScore());
-
-                if (captureDto.getQualityScore() > 0 && captureDto.getBioValue() != null || !captureDto.getBioValue().equals("")) {
-                    BiometricsDto biometricsDto = new BiometricsDto(captureDto.getBioType(), captureDto.getBioSubType(), captureDto.getBioValue(),
-                            bio.getSpecVersion(), false, new String(payloadBuffer), signature, false, 1, 0,
-                            captureDto.getQualityScore());
-                    score = score + biometricsDto.getQualityScore();
+            biometricsDtoList.forEach( dto -> {
+                try {
                     this.registrationService.getRegistrationDto().addBiometric(fieldId,
-                            Modality.getBioAttribute(captureDto.getBioSubType()), biometricsDto);
-                }
-            }
+                            Modality.getBioAttribute(dto.getBioSubType()), dto);
+                } catch (Exception ex) { }
+            });
+            this.registrationService.getRegistrationDto().incrementBioAttempt(fieldId, currentModality);
+            displayCapturedImage(fieldId);
 
-            this.registrationService.getRegistrationDto().incrementBioAttempt(currentModality);
-            displayCapturedImage(fieldId, (int) (score/list.size()));
         } catch (Exception e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse rcapture response", e);
@@ -504,54 +433,69 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         }
     }
 
-    private void displayCapturedImage(String fieldId, int score) throws Exception {
-        List<BiometricsDto> list = this.registrationService.getRegistrationDto().getBiometrics(fieldId, currentModality);
-        if (list.isEmpty()) {
+    private void displayCapturedImage(String fieldId) {
+        List<BiometricsDto> list = null;
+        try {
+           list = this.registrationService.getRegistrationDto().getBiometrics(fieldId, currentModality);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get captured list of biometrics", e);
+        }
+
+        if (list == null || list.isEmpty()) {
             resetBioCaptureImageView(currentModality);
             return;
         }
 
-        Bitmap missingImage = BitmapFactory.decodeResource(getResources(), R.drawable.wrong);
-        ImageView imageView = findViewById(R.id.current_modality_image);
+        //Remove all the exception views
+        LinearLayout layout = findViewById(R.id.exceptionImages);
+        layout.removeAllViews();
 
+        Bitmap missingImage = BitmapFactory.decodeResource(getResources(), R.drawable.blue_cross_mark);
+        ImageView imageView = findViewById(R.id.current_modality_image);
+        List<Bitmap> bitmaps = new ArrayList<>();
+        int total = 0, score = 0;
         switch (currentModality) {
             case FACE:
                 imageView.setImageBitmap(UserInterfaceHelperService.getFaceBitMap(list.get(0)));
+                score = (int) list.get(0).getQualityScore(); total=1;
                 break;
             case FINGERPRINT_SLAB_LEFT:
-                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                        UserInterfaceHelperService.getFingerBitMap(list, "Left LittleFinger"),
-                        UserInterfaceHelperService.getFingerBitMap(list, "Left RingFinger"),
-                        UserInterfaceHelperService.getFingerBitMap(list, "Left MiddleFinger"),
-                        UserInterfaceHelperService.getFingerBitMap(list, "Left IndexFinger")), missingImage));
-                break;
             case FINGERPRINT_SLAB_RIGHT:
-                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                        UserInterfaceHelperService.getFingerBitMap(list, "Right IndexFinger"),
-                        UserInterfaceHelperService.getFingerBitMap(list, "Right MiddleFinger"),
-                        UserInterfaceHelperService.getFingerBitMap(list, "Right RingFinger"),
-                        UserInterfaceHelperService.getFingerBitMap(list, "Right LittleFinger")), missingImage));
-                break;
             case FINGERPRINT_SLAB_THUMBS:
-                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                        UserInterfaceHelperService.getFingerBitMap(list, "Left Thumb"),
-                        UserInterfaceHelperService.getFingerBitMap(list, "Right Thumb")), missingImage));
+                for(String subType : Modality.getSpecBioSubType(currentModality.getAttributes())) {
+                    BiometricsDto finger = getBiometricsDto(subType, list);
+                    bitmaps.add(UserInterfaceHelperService.getFingerBitMap(finger));
+                    score += finger == null ? 0 : finger.getQualityScore();
+                    total += finger == null ? 0 : 1;
+                }
+                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(bitmaps, missingImage));
                 break;
             case IRIS_DOUBLE:
-                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                        UserInterfaceHelperService.getIrisBitMap(list, "Left"),
-                        UserInterfaceHelperService.getIrisBitMap(list, "Right")), missingImage));
+                for(String subType : Modality.getSpecBioSubType(currentModality.getAttributes())) {
+                    BiometricsDto iris = getBiometricsDto(subType, list);
+                    bitmaps.add(UserInterfaceHelperService.getIrisBitMap(iris));
+                    score += iris == null ? 0 : iris.getQualityScore();
+                    total += iris == null ? 0 : 1;
+                }
+                imageView.setImageBitmap(UserInterfaceHelperService.combineBitmaps(bitmaps, missingImage));
                 break;
         }
-
-        setupScoreBar(score);
+        setupScoreBar(score/total);
         Toast.makeText(getApplicationContext(), "Registration Capture completed", Toast.LENGTH_LONG).show();
+    }
+
+    private BiometricsDto getBiometricsDto(String subType, List<BiometricsDto> list) {
+        Optional<BiometricsDto> result = list.stream().filter(dto -> subType.equals(dto.getBioSubType())).findFirst();
+        if(result.isPresent())
+            return result.get();
+        return null;
     }
 
     private void setupScoreBar(int score) {
         TextView textView = findViewById(R.id.current_score);
         textView.setText(score+"");
         ProgressBar progressBar = findViewById(R.id.bio_score_bar);
+        progressBar.setProgress(score);
         progressBar.setProgressTintList((score <= getModalityThreshold()) ? ColorStateList.valueOf(Color.RED) :
                 ColorStateList.valueOf(Color.GREEN));
     }
@@ -560,16 +504,33 @@ public class ModalityActivity extends DaggerAppCompatActivity {
         LinearLayout layout = findViewById(R.id.bio_action_buttons);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(10,10,10,10);
+        layoutParams.setMargins(R.dimen.bio_attempts_margin,R.dimen.bio_attempts_margin,R.dimen.bio_attempts_margin,R.dimen.bio_attempts_margin);
         for(int i=1;i<=getAttemptsCount();i++){
             FloatingActionButton button = new FloatingActionButton(this);
             button.setTag(i);
-            button.setEnabled(false);
+            button.setEnabled(true);
+            button.setImageBitmap(textAsBitmap(String.format("#%d", i), 15, Color.WHITE));
             button.setOnClickListener(v -> {
                 Toast.makeText(this, "Attempt : " + button.getTag(), Toast.LENGTH_LONG).show();
             });
-            layout.addView(button, 1, layoutParams);
+            layout.addView(button, i, layoutParams);
         }
+    }
+
+    //method to convert your text to image
+    public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        paint.setTextAlign(Paint.Align.LEFT);
+        float baseline = -paint.ascent(); // ascent() is negative
+        int width = (int) (paint.measureText(text) + 0.0f); // round
+        int height = (int) (baseline + paint.descent() + 0.0f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(image);
+        canvas.drawText(text, 0, baseline, paint);
+        return image;
     }
 
     private int getModalityThreshold() {

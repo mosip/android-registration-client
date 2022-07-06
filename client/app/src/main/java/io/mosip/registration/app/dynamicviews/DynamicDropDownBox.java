@@ -58,7 +58,7 @@ public class DynamicDropDownBox extends LinearLayout implements DynamicView {
                         registrationDto.getSelectedLanguages().get(0));
 
         CustomArrayAdapter adapter = new CustomArrayAdapter(context, android.R.layout.simple_spinner_item,
-                items == null ? new ArrayList<GenericValueDto>() : (ArrayList<GenericValueDto>) items);
+                items == null || items.isEmpty() ? new ArrayList<GenericValueDto>() : (ArrayList<GenericValueDto>) items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner sItems = (Spinner) findViewById(R.id.dropdown_input);
         sItems.setAdapter(adapter);

@@ -13,17 +13,15 @@
                 android:layout_height="wrap_content"
                 android:indeterminate="false"
                 android:layout_margin="5dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginLeft="15dp"
                 android:max="@integer/max_threshold"
                 android:min="@integer/min_threshold"
-                android:progress="0"
-                android:progressTint="#18B61F"
-                android:layout_weight="1"/>
+                android:progress="0"/>
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"
                   android:id="@+id/current_score"
-                  android:text="0%">
+                  android:text="0">
         </TextView>
     </FrameLayout>
 
@@ -58,9 +56,8 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                                android:layout_height="wrap_content"
-                                                                               android:layout_margin="10dp"
+                                                                               android:layout_margin="@dimen/bio_attempts_margin"
                                                                                android:src="@drawable/button_option_selected"
-                                                                               android:tooltipText="@string/scan"
                                                                                android:tint="@android:color/white"
                                                                                android:onClick="scan_modality">
         </com.google.android.material.floatingactionbutton.FloatingActionButton>
