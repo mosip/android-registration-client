@@ -118,6 +118,11 @@ public class RegistrationDto extends Observable {
         clearAndNotifyAllObservers();
     }
 
+    public void addDemographicField(String fieldId, Object value) {
+        this.demographics.put(fieldId, value);
+        clearAndNotifyAllObservers();
+    }
+
     public void addDemographicField(String fieldId, String value, String language) {
         this.demographics.compute(fieldId, (k, v) -> {
             v = v != null ? v : new ArrayList<SimpleType>();
