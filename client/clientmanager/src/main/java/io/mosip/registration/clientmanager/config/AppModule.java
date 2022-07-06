@@ -15,22 +15,16 @@ import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
-import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
-import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.service.*;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
-import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
-import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.repository.*;
-import io.mosip.registration.clientmanager.service.LoginService;
-import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
-import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -208,15 +202,18 @@ public class AppModule {
 
     @Provides
     @Singleton
-    RegistrationService provideRegistrationService(PacketWriterService packetWriterService,
+    RegistrationService provideRegistrationService(ObjectMapper objectMapper,PacketWriterService packetWriterService,
                                                    UserInterfaceHelperService userInterfaceHelperService,
                                                    RegistrationRepository registrationRepository,
                                                    MasterDataService masterDataService,
                                                    IdentitySchemaRepository identitySchemaRepository,
                                                    ClientCryptoManagerService clientCryptoManagerService,
-                                                   KeyStoreRepository keyStoreRepository) {
-        return new RegistrationServiceImpl(appContext, packetWriterService, userInterfaceHelperService,
-                registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService, keyStoreRepository);
+                                                   KeyStoreRepository keyStoreRepository,
+                                                   GlobalParamRepository globalParamRepository,
+                                                   AuditManagerService auditManagerService) {
+        return new RegistrationServiceImpl(appContext, objectMapper, packetWriterService, userInterfaceHelperService,
+                registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
+                keyStoreRepository, globalParamRepository, auditManagerService);
     }
 
     @Provides
@@ -254,13 +251,20 @@ public class AppModule {
 
     @Provides
     @Singleton
-    AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository, RegistrationService registrationService) {
-        return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, registrationService);
+    AuditManagerService provideAuditManagerService(AuditRepository auditRepository, GlobalParamRepository globalParamRepository) {
+        return new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
     }
 
     @Provides
     @Singleton
     JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService) {
         return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService);
+    }
+
+    @Provides
+    @Singleton
+    Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper,  AuditManagerService auditManagerService,
+                                                     GlobalParamRepository globalParamRepository) {
+        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository);
     }
 }
