@@ -222,8 +222,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService) {
-        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService);
+    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil) {
+        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService, dateUtil);
     }
 
     @Provides
