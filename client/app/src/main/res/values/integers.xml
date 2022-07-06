@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="grid_column_count">2</integer>
+    <integer name="min_threshold">0</integer>
+    <integer name="max_threshold">100</integer>
+
+    <item name="right_little_x" type="integer" format="float">0.62</item>
+    <item name="right_little_y" type="integer" format="float">0.68</item>
+    <item name="right_ring_x" type="integer" format="float">0.55</item>
+    <item name="right_ring_y" type="integer" format="float">0.55</item>
+    <item name="right_middle_x" type="integer" format="float">0.49</item>
+    <item name="right_middle_y" type="integer" format="float">0.47</item>
+    <item name="right_index_x" type="integer" format="float">0.42</item>
+    <item name="right_index_y" type="integer" format="float">0.55</item>
+
+    <item name="left_little_x" type="integer" format="float">0.23</item>
+    <item name="left_little_y" type="integer" format="float">0.68</item>
+    <item name="left_ring_x" type="integer" format="float">0.31</item>
+    <item name="left_ring_y" type="integer" format="float">0.55</item>
+    <item name="left_middle_x" type="integer" format="float">0.37</item>
+    <item name="left_middle_y" type="integer" format="float">0.47</item>
+    <item name="left_index_x" type="integer" format="float">0.44</item>
+    <item name="left_index_y" type="integer" format="float">0.55</item>
+
+    <item name="left_thumb_x" type="integer" format="float">0.34</item>
+    <item name="left_thumb_y" type="integer" format="float">0.5</item>
+    <item name="right_thumb_x" type="integer" format="float">0.43</item>
+    <item name="right_thumb_y" type="integer" format="float">0.5</item>
+
+    <item name="left_iris_x" type="integer" format="float">0.34</item>
+    <item name="left_iris_y" type="integer" format="float">0.5</item>
+    <item name="right_iris_x" type="integer" format="float">0.43</item>
+    <item name="right_iris_y" type="integer" format="float">0.5</item>
+</resources>

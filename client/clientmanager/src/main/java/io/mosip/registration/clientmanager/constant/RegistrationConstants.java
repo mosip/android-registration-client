@@ -13,6 +13,8 @@ public class RegistrationConstants {
     public static final String PROCESS_KEY = "_process";
     public static final String FLOW_KEY = "_flow";
     public static final String ID_SCHEMA_VERSION = "IDSchemaVersion";
+
+    public static final String AUDIT_EXPORTED_TILL = "AuditExportedTill";
     public static final List<String> RIGHT_SLAB_ATTR = Arrays.asList("rightIndex","rightMiddle","rightRing","rightLittle");
     public static final List<String> LEFT_SLAB_ATTR = Arrays.asList("leftIndex","leftMiddle","leftRing","leftLittle");
     public static final List<String> THUMBS_ATTR = Arrays.asList("leftThumb", "rightThumb");
@@ -33,6 +35,16 @@ public class RegistrationConstants {
     public static final String OPTIONAL_LANGUAGES_KEY = "mosip.optional-languages";
     public static final String MAX_LANGUAGES_COUNT_KEY = "mosip.max-languages.count";
     public static final String MIN_LANGUAGES_COUNT_KEY = "mosip.min-languages.count";
+    public static final String LEFT_SLAP_THRESHOLD_KEY = "mosip.registration.leftslap_fingerprint_threshold";
+    public static final String RIGHT_SLAP_THRESHOLD_KEY = "mosip.registration.rightslap_fingerprint_threshold";
+    public static final String THUMBS_THRESHOLD_KEY = "mosip.registration.thumbs_fingerprint_threshold";
+    public static final String IRIS_THRESHOLD_KEY = "mosip.registration.iris_threshold";
+    public static final String FACE_THRESHOLD_KEY = "mosip.registration.face_threshold";
+    public static final String LEFT_SLAP_ATTEMPTS_KEY = "mosip.registration.num_of_fingerprint_retries";
+    public static final String RIGHT_SLAP_ATTEMPTS_KEY = "mosip.registration.num_of_fingerprint_retries";
+    public static final String THUMBS_ATTEMPTS_KEY = "mosip.registration.num_of_fingerprint_retries";
+    public static final String IRIS_ATTEMPTS_KEY = "mosip.registration.num_of_iris_retries";
+    public static final String FACE_ATTEMPTS_KEY = "mosip.registration.num_of_face_retries";
 
     //Audits
     public static final String REGISTRATION_SCREEN = "Registration: %s";

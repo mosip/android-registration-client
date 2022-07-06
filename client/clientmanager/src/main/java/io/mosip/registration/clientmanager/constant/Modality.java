@@ -3,10 +3,11 @@ package io.mosip.registration.clientmanager.constant;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum Modality {
+public enum Modality implements Serializable {
 
     FINGERPRINT_SLAB_LEFT(RegistrationConstants.LEFT_SLAB_ATTR, SingleType.FINGER, 1),
     FINGERPRINT_SLAB_RIGHT(RegistrationConstants.RIGHT_SLAB_ATTR, SingleType.FINGER, 2),

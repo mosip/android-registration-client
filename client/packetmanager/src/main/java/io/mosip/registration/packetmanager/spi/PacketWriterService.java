@@ -17,7 +17,7 @@ public interface PacketWriterService {
 
     void setDocument(String id, String fieldId, Document document);
 
-    void addMetaInfo(String id, String key, String value);
+    void addMetaInfo(String id, String key, Object value);
 
     void addAudits(String id, List<Map<String, String>> audits);
 

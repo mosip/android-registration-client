@@ -108,7 +108,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     }
 
     @Override
-    public void addMetaInfo(String id, String key, String value) {
+    public void addMetaInfo(String id, String key, Object value) {
         this.initialize(id).setMetaData(key, value);
     }
 
@@ -193,7 +193,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (ZipOutputStream subpacketZip = new ZipOutputStream(new BufferedOutputStream(out))) {
-            Log.i(TAG, "Identified fields >>> " + schemaFields.size());
 
             Map<String, Object> identity = new HashMap<String, Object>();
             Map<String, HashSequenceMetaInfo> hashSequences = new HashMap<>();
@@ -217,7 +216,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                         break;
                     default:
                         if (this.registrationPacket.getDemographics().get(fieldName) != null) {
-                            Log.d(TAG, "Adding field : " + fieldName);
                             identity.put(fieldName, this.registrationPacket.getDemographics().get(fieldName));
                         }
                         break;
@@ -225,7 +223,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             }
 
             byte[] identityBytes = getIdentity(identity).getBytes();
-            Log.i(TAG, "getIdentity(identity) >>>>" + new String(identityBytes));
             addEntryToZip(PacketManagerConstant.IDENTITY_FILENAME_WITH_EXT, identityBytes, subpacketZip);
             addHashSequenceWithSource(PacketManagerConstant.DEMOGRAPHIC_SEQ, PacketManagerConstant.IDENTITY_FILENAME, identityBytes,
                     hashSequences);

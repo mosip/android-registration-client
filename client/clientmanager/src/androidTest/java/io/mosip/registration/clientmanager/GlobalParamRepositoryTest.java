@@ -65,7 +65,7 @@ public class GlobalParamRepositoryTest {
         String globalParamValue = globalParamRepository.getGlobalParamValue(GLOBAL_PARAM_STRING_ID);
         assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamValue);
 
-        String globalParamCachedValue = GlobalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
+        String globalParamCachedValue = globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
         assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamCachedValue);
     }
 
@@ -111,25 +111,25 @@ public class GlobalParamRepositoryTest {
 
         globalParamRepository.saveGlobalParams(globalParamList);
 
-        String globalParamCachedStringValue = GlobalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
+        String globalParamCachedStringValue = globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
         assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamCachedStringValue);
 
-        Boolean globalParamCachedBoolValue = GlobalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID);
+        Boolean globalParamCachedBoolValue = globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID);
         assertEquals(GLOBAL_PARAM_BOOLEAN_VALUE, globalParamCachedBoolValue);
 
-        int globalParamCachedIntValue = GlobalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_INT_ID);
+        int globalParamCachedIntValue = globalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_INT_ID);
         assertEquals(GLOBAL_PARAM_INT_VALUE, globalParamCachedIntValue);
     }
 
     @Test
     public void getCachedValuesNotFound() {
-        String globalParamCachedStringValue = GlobalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
+        String globalParamCachedStringValue = globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
         assertNull(globalParamCachedStringValue);
 
-        Boolean globalParamCachedBoolValue = GlobalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID);
+        Boolean globalParamCachedBoolValue = globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID);
         assertNull(globalParamCachedBoolValue);
 
-        int globalParamCachedIntValue = GlobalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_INT_ID);
+        int globalParamCachedIntValue = globalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_INT_ID);
         assertEquals(0, globalParamCachedIntValue);
     }
 }

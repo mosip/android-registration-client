@@ -1,7 +1,10 @@
 package io.mosip.registration.clientmanager.spi;
 
+import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.constant.SBIError;
 import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.packetmanager.util.DateUtils;
 
 import java.time.LocalDateTime;
@@ -22,10 +25,6 @@ import java.util.regex.Pattern;
  */
 public abstract class BiometricsService {
 
-    //TODO Need to take these values from properties
-    private String rCaptureTrustDomain = "DEVICE";
-    private String digitalIdTrustDomain = "DEVICE";
-    private String deviceInfoTrustDomain = "DEVICE";
     private int allowedResponseLagMins = 5;
     public static final String BIOMETRIC_SEPARATOR = "(?<=\\.)(.*)(?=\\.)";
     private static final String DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -38,12 +37,23 @@ public abstract class BiometricsService {
      * @param signedData
      * @param domain
      */
-    private void validateJWTResponse(final String signedData, final String domain)
+    public void validateJWTResponse(final String signedData, final String domain)
             throws BiometricsServiceException {
-        //TODO
+        /*JWTSignatureVerifyRequestDto jwtSignatureVerifyRequestDto = new JWTSignatureVerifyRequestDto();
+        jwtSignatureVerifyRequestDto.setValidateTrust(true);
+        jwtSignatureVerifyRequestDto.setDomain(domain);
+        jwtSignatureVerifyRequestDto.setJwtSignatureData(signedData);
+
+        JWTSignatureVerifyResponseDto jwtSignatureVerifyResponseDto = signatureService.jwtVerify(jwtSignatureVerifyRequestDto);
+        if(!jwtSignatureVerifyResponseDto.isSignatureValid())
+            throw new DeviceException(MDMError.MDM_INVALID_SIGNATURE.getErrorCode(), MDMError.MDM_INVALID_SIGNATURE.getErrorMessage());
+
+        if (jwtSignatureVerifyRequestDto.getValidateTrust() && !jwtSignatureVerifyResponseDto.getTrustValid().equals(SignatureConstant.TRUST_VALID)) {
+            throw new DeviceException(MDMError.MDM_CERT_PATH_TRUST_FAILED.getErrorCode(), MDMError.MDM_CERT_PATH_TRUST_FAILED.getErrorMessage());
+        }*/
     }
 
-    private String getJWTPayLoad(String jwt) throws BiometricsServiceException {
+    public String getJWTPayLoad(String jwt) throws BiometricsServiceException {
         if (jwt == null || jwt.isEmpty()) {
             throw new BiometricsServiceException(SBIError.SBI_JWT_INVALID.getErrorCode(),
                     SBIError.SBI_JWT_INVALID.getErrorMessage());
@@ -90,13 +100,4 @@ public abstract class BiometricsService {
         throw new BiometricsServiceException(SBIError.SBI_CAPTURE_INVALID_TIME.getErrorCode(),
                 SBIError.SBI_CAPTURE_INVALID_TIME.getErrorMessage());
     }
-
-    public void validateQualityScore(String qualityScore) throws BiometricsServiceException {
-        if (qualityScore == null || qualityScore.isEmpty()) {
-            throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
-                    SBIError.SBI_RCAPTURE_ERROR.getErrorMessage()
-                            + " Identified Quality Score for capture biometrics is null or Empty");
-        }
-    }
-
 }
