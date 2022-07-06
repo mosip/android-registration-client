@@ -21,6 +21,8 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
 
     private ArrayList<Modality> modalityData;
     private Context mContext;
+    private String fieldId;
+    private String purpose;
 
     /**
      * Constructor that passes in the Modality data and the context.
@@ -28,9 +30,11 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
      * @param list ArrayList containing the Modality data.
      * @param context Context of the application.
      */
-    public ModalityAdapter(Context context, ArrayList<Modality> list) {
+    public ModalityAdapter(Context context, ArrayList<Modality> list, String fieldId, String purpose) {
         this.modalityData = list;
         this.mContext = context;
+        this.purpose = purpose;
+        this.fieldId = fieldId;
     }
 
 
@@ -100,9 +104,8 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
             itemView.setOnClickListener(this);
         }
 
-        void bindTo(Modality modality){
+        void bindTo(Modality modality) {
             // Populate the textviews with data.
-
             switch (modality) {
                 case FACE:
                     modalityImage.setImageResource(R.drawable.face);
@@ -138,6 +141,8 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
             Toast.makeText(mContext, "Clicked on " + currentModality.name(), Toast.LENGTH_LONG).show();
             Intent detailIntent = new Intent(mContext, ModalityActivity.class);
             detailIntent.putExtra("modality", currentModality);
+            detailIntent.putExtra("fieldId", fieldId);
+            detailIntent.putExtra("purpose", purpose);
             mContext.startActivity(detailIntent);
         }
     }

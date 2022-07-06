@@ -124,7 +124,7 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
         }
 
         // Initialize the adapter and set it to the RecyclerView.
-        modalityAdapter = new ModalityAdapter(context, modalities);
+        modalityAdapter = new ModalityAdapter(context, modalities, fieldSpecDto.getId(), "Registration");
         mRecyclerView.setAdapter(modalityAdapter);
 
         // Notify the adapter of the change.
