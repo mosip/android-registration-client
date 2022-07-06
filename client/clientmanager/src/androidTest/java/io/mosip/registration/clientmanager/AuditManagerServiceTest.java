@@ -69,7 +69,7 @@ public class AuditManagerServiceTest {
 
     @Test
     public void auditWillAllParameters_test() {
-        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, null);
+        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION.getId(), PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
 
         List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
@@ -92,13 +92,13 @@ public class AuditManagerServiceTest {
 
     @Test
     public void auditDelete_test() {
-        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, null);
+        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION.getId(), PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
 
         List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
         assertEquals(1, audits.size());
 
-        globalParamRepository.saveGlobalParam(AuditManagerServiceImpl.AUDIT_EXPORTED_TILL, String.valueOf(System.currentTimeMillis()));
+        globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, String.valueOf(System.currentTimeMillis()));
         auditManagerService.deleteAuditLogs();
 
         audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
@@ -107,7 +107,7 @@ public class AuditManagerServiceTest {
 
     @Test
     public void auditWithComponent_test() {
-        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, null);
+        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION);
 
         List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
@@ -130,7 +130,7 @@ public class AuditManagerServiceTest {
 
     @Test
     public void auditWithoutComponent_test() {
-        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository, null);
+        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, Components.REGISTRATION.getId(), SCREEN_NAME);
 
         List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);

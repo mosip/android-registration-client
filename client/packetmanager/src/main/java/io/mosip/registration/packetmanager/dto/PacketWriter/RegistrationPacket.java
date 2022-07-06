@@ -1,13 +1,8 @@
 package io.mosip.registration.packetmanager.dto.PacketWriter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
+import io.mosip.registration.packetmanager.util.DateUtils;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +26,7 @@ public class RegistrationPacket {
 	private List<HashSequenceMetaInfo> hashSequence2;
 
 	public RegistrationPacket() {
-		this.creationDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+		this.creationDate = DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC));
 		this.demographics = new HashMap<String, Object>();
 		this.documents = new HashMap<String, Document>();
 		this.biometrics = new HashMap<String, BiometricRecord>();
@@ -51,15 +46,7 @@ public class RegistrationPacket {
 		this.documents.put(fieldId, dto);
 	}
 
-	public void setMetaData(String key, String value) {
-		this.metaData.putIfAbsent(key, value);
-	}
-
-	public void setMetaData(String key, HashMap<String, Object> value) {
-		this.metaData.putIfAbsent(key, value);
-	}
-
-	public void setMetaData(String key, List<HashMap<String, Object>> value) {
+	public void setMetaData(String key, Object value) {
 		this.metaData.putIfAbsent(key, value);
 	}
 

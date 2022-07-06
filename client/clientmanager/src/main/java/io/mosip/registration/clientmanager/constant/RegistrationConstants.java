@@ -13,6 +13,8 @@ public class RegistrationConstants {
     public static final String PROCESS_KEY = "_process";
     public static final String FLOW_KEY = "_flow";
     public static final String ID_SCHEMA_VERSION = "IDSchemaVersion";
+
+    public static final String AUDIT_EXPORTED_TILL = "AuditExportedTill";
     public static final List<String> RIGHT_SLAB_ATTR = Arrays.asList("rightIndex","rightMiddle","rightRing","rightLittle");
     public static final List<String> LEFT_SLAB_ATTR = Arrays.asList("leftIndex","leftMiddle","leftRing","leftLittle");
     public static final List<String> THUMBS_ATTR = Arrays.asList("leftThumb", "rightThumb");
