@@ -242,7 +242,7 @@ public class PacketUploadServiceTest {
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertSame(finalProgressStatus.get(), PacketTaskStatus.UPLOAD_COMPLETED);
     }
 
@@ -280,7 +280,7 @@ public class PacketUploadServiceTest {
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertSame(finalProgressStatus.get(), PacketTaskStatus.SYNC_FAILED);
     }
 
@@ -318,7 +318,7 @@ public class PacketUploadServiceTest {
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertSame(finalProgressStatus.get(), PacketTaskStatus.SYNC_FAILED);
     }
 
@@ -365,7 +365,7 @@ public class PacketUploadServiceTest {
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertSame(finalProgressStatus.get(), PacketTaskStatus.UPLOAD_FAILED);
     }
 
@@ -412,7 +412,7 @@ public class PacketUploadServiceTest {
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertSame(finalProgressStatus.get(), PacketTaskStatus.UPLOAD_FAILED);
     }
 
@@ -455,13 +455,17 @@ public class PacketUploadServiceTest {
 
         server.setDispatcher(dispatcher);
 
-        //Sync will be completed, but packet upload will fail
+        //Running sync again
+        AtomicReference<PacketTaskStatus> finalProgressStatus1 = new AtomicReference<>();
         packetUploadService.syncAndUploadPacket(packetId, (RID, progress) -> {
+            finalProgressStatus1.set(progress);
         });
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         //checking packet status
         assertEquals(PacketClientStatus.SYNCED.name(), packetService.getPacketStatus(packetId));
+        assertSame(finalProgressStatus1.get(), PacketTaskStatus.UPLOAD_FAILED);
+
 
         //Sync already done, packet will be successful
         final Dispatcher dispatcher2 = new Dispatcher() {
@@ -485,14 +489,14 @@ public class PacketUploadServiceTest {
         server.setDispatcher(dispatcher2);
 
         //Running sync again
-        AtomicReference<PacketTaskStatus> finalProgressStatus = new AtomicReference<>();
+        AtomicReference<PacketTaskStatus> finalProgressStatus2 = new AtomicReference<>();
         packetUploadService.syncAndUploadPacket(packetId, (RID, progress) -> {
-            finalProgressStatus.set(progress);
+            finalProgressStatus2.set(progress);
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
-        assertSame(finalProgressStatus.get(), PacketTaskStatus.UPLOAD_COMPLETED);
+        Thread.sleep(1000);
+        assertSame(finalProgressStatus2.get(), PacketTaskStatus.UPLOAD_COMPLETED);
     }
 
 
@@ -540,19 +544,19 @@ public class PacketUploadServiceTest {
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertSame(finalProgressStatus1.get(), PacketTaskStatus.UPLOAD_COMPLETED);
 
 
         //Running sync and upload again.
-        AtomicReference<PacketTaskStatus> finalProgressStatus = new AtomicReference<>();
+        AtomicReference<PacketTaskStatus> finalProgressStatus2 = new AtomicReference<>();
         packetUploadService.syncAndUploadPacket(packetId, (RID, progress) -> {
-            finalProgressStatus.set(progress);
+            finalProgressStatus2.set(progress);
         });
 
         //waiting for sync and upload to completed
-        Thread.sleep(2000);
-        assertSame(finalProgressStatus.get(), PacketTaskStatus.UPLOAD_ALREADY_COMPLETED);
+        Thread.sleep(1000);
+        assertSame(finalProgressStatus2.get(), PacketTaskStatus.UPLOAD_ALREADY_COMPLETED);
     }
 
     private String createDummyRegistration() {

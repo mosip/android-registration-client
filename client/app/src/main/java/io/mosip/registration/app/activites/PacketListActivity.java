@@ -198,6 +198,8 @@ public class PacketListActivity extends DaggerAppCompatActivity {
                         packetModel.setProgress(PROGRESS_SYNC_STARTED);
                         break;
                     case SYNC_COMPLETED:
+                        packetModel.setProgress(PROGRESS_SYNC_COMPLETED);
+                        break;
                     case SYNC_ALREADY_COMPLETED:
                         packetModel.setProgress(PROGRESS_SYNC_COMPLETED);
                         Toast.makeText(this, "Packet already synced", Toast.LENGTH_LONG).show();
@@ -206,6 +208,9 @@ public class PacketListActivity extends DaggerAppCompatActivity {
                         packetModel.setProgress(PROGRESS_UPLOAD_STARTED);
                         break;
                     case UPLOAD_COMPLETED:
+                        packetModel.setProgress(PROGRESS_UPLOAD_COMPLETED);
+                        packetModel.ProgressBarVisible(false);
+                        break;
                     case UPLOAD_ALREADY_COMPLETED:
                         packetModel.setProgress(PROGRESS_UPLOAD_COMPLETED);
                         packetModel.ProgressBarVisible(false);
