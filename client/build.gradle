@@ -11,8 +11,10 @@ buildscript {
     }
 }
 plugins {
-    id "org.sonarqube" version "3.4.0.2513"
-    id 'jacoco'
+    id "jacoco"
+    id "java"
+    id "application"
+    id "org.sonarqube" version "3.0"
 }
 
 sonarqube {
@@ -36,13 +38,18 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-    serverBaseURL = "\"https://api-internal.sandbox.xyz.net/\""
+    serverBaseURL = "\"https://api-internal.dev3.mosip.net/\""
 }
 
 task cleanOutputDir(type: Delete) {
     delete fileTree(dir: "build/outputs/apk/debug/")
 }
 
-task clean(type: Delete) {
+task lean(type: Delete) {
     delete rootProject.buildDir
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
 }
