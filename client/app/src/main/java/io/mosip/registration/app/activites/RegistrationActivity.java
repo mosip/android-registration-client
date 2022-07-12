@@ -8,6 +8,7 @@ import android.widget.*;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatCheckedTextView;
+
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
@@ -21,6 +22,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 import javax.inject.Inject;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,19 +66,19 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
         int maxCount = globalParamRepository.getMaxLanguageCount();
         String mandatoryLangString = null;
         List<String> mandatoryLanguages = globalParamRepository.getMandatoryLanguageCodes();
-        for(String langCode : mandatoryLanguages) {
+        for (String langCode : mandatoryLanguages) {
             configuredLanguages.put(langCode, getLangFullForm(langCode));
         }
         mandatoryLangString = String.join(",", configuredLanguages.values());
 
         List<String> optionalLanguages = globalParamRepository.getOptionalLanguageCodes();
-        for(String langCode : optionalLanguages) {
+        for (String langCode : optionalLanguages) {
             configuredLanguages.put(langCode, getLangFullForm(langCode));
         }
 
-        ((TextView)findViewById(R.id.languageInfoText)).setText(getString(R.string.lang_info_text,
+        ((TextView) findViewById(R.id.languageInfoText)).setText(getString(R.string.lang_info_text,
                 String.join(",", configuredLanguages.values()),
-                String.join(",", mandatoryLangString),minCount,maxCount));
+                String.join(",", mandatoryLangString), minCount, maxCount));
 
         ListView listView = findViewById(R.id.languageList);
         listView.clearChoices();
@@ -94,14 +96,12 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
                 else
                     selectedLanguages.remove(getLangCode(checkBox.getText().toString()));
 
-                if(selectedLanguages.size() >= minCount && selectedLanguages.size() <= maxCount) {
-                    startRegistration.setEnabled(true);
-                }
+                startRegistration.setEnabled(selectedLanguages.size() >= minCount && selectedLanguages.size() <= maxCount);
             }
         });
 
 
-        startRegistration.setOnClickListener( v -> {
+        startRegistration.setOnClickListener(v -> {
             auditManagerService.audit(AuditEvent.REGISTRATION_START, Components.REGISTRATION);
             startRegistration.setEnabled(false);
             startRegistration();
@@ -114,7 +114,7 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
         Optional<Map.Entry<String, String>> resultEntry = configuredLanguages
                 .entrySet()
                 .stream()
-                .filter( e -> e.getValue().equals(nativeName) )
+                .filter(e -> e.getValue().equals(nativeName))
                 .findFirst();
 
         return (resultEntry.isPresent()) ? resultEntry.get().getKey() : null;
@@ -147,7 +147,7 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
 
         } catch (Exception e) {
             Log.e(TAG, "Failed to start Registration", e);
-            errorMessage =  e.getMessage();
+            errorMessage = e.getMessage();
         }
         Toast.makeText(this, getString(R.string.start_registration_fail, errorMessage),
                 Toast.LENGTH_LONG).show();
