@@ -5,25 +5,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import io.mosip.registration.app.R;
-import io.mosip.registration.app.util.BiometricService;
-import io.mosip.registration.clientmanager.constant.Modality;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class CustomViewPager2Adapter extends RecyclerView.Adapter<CustomViewPager2Adapter.ViewHolder>{
+import io.mosip.registration.app.R;
+import io.mosip.registration.app.util.BiometricService;
+import io.mosip.registration.clientmanager.constant.Modality;
 
-    private LinkedHashMap<Modality, List<String>> modalityDetails;
-    private List<Modality> modalities;
-    private Context ctx;
+public class CustomViewPager2Adapter extends RecyclerView.Adapter<CustomViewPager2Adapter.ViewHolder> {
+
+    private final List<Modality> modalities;
+    private final Context ctx;
 
     // Constructor of our ViewPager2Adapter class
     public CustomViewPager2Adapter(Context ctx, List<Modality> modalities, LinkedHashMap<Modality, List<String>> configuredModalities) {
         this.ctx = ctx;
-        this.modalityDetails = configuredModalities;
         this.modalities = modalities;
     }
 
@@ -41,27 +41,32 @@ public class CustomViewPager2Adapter extends RecyclerView.Adapter<CustomViewPage
         // This will set the images in imageview
         switch (modalities.get(position)) {
             case FACE:
-                holder.bioCapture.setImageResource(R.drawable.face);
+                if (holder.bioCapture.getDrawable() == null)
+                    holder.bioCapture.setImageResource(R.drawable.face);
                 holder.bioCapture.setTag(Modality.FACE.name());
                 setupClickListener(holder, Modality.FACE, this.ctx);
                 break;
             case FINGERPRINT_SLAB_LEFT:
-                holder.bioCapture.setImageResource(R.drawable.left_palm);
+                if (holder.bioCapture.getDrawable() == null)
+                    holder.bioCapture.setImageResource(R.drawable.left_palm);
                 setupClickListener(holder, Modality.FINGERPRINT_SLAB_LEFT, this.ctx);
                 holder.bioCapture.setTag(Modality.FINGERPRINT_SLAB_LEFT.name());
                 break;
             case FINGERPRINT_SLAB_RIGHT:
-                holder.bioCapture.setImageResource(R.drawable.right_palm);
+                if (holder.bioCapture.getDrawable() == null)
+                    holder.bioCapture.setImageResource(R.drawable.right_palm);
                 setupClickListener(holder, Modality.FINGERPRINT_SLAB_RIGHT, this.ctx);
                 holder.bioCapture.setTag(Modality.FINGERPRINT_SLAB_RIGHT.name());
                 break;
             case FINGERPRINT_SLAB_THUMBS:
-                holder.bioCapture.setImageResource(R.drawable.thumbs);
+                if (holder.bioCapture.getDrawable() == null)
+                    holder.bioCapture.setImageResource(R.drawable.thumbs);
                 setupClickListener(holder, Modality.FINGERPRINT_SLAB_THUMBS, this.ctx);
                 holder.bioCapture.setTag(Modality.FINGERPRINT_SLAB_THUMBS.name());
                 break;
             case IRIS_DOUBLE:
-                holder.bioCapture.setImageResource(R.drawable.double_iris);
+                if (holder.bioCapture.getDrawable() == null)
+                    holder.bioCapture.setImageResource(R.drawable.double_iris);
                 setupClickListener(holder, Modality.IRIS_DOUBLE, this.ctx);
                 holder.bioCapture.setTag(Modality.IRIS_DOUBLE.name());
                 break;
@@ -78,7 +83,7 @@ public class CustomViewPager2Adapter extends RecyclerView.Adapter<CustomViewPage
         holder.bioCapture.setClickable(true);
         holder.bioCapture.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v ) {
+            public void onClick(View v) {
                 BiometricService biometricService = (BiometricService) context;
                 biometricService.startBiometricCapture(modality);
             }
