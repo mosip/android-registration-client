@@ -3,10 +3,6 @@ package io.mosip.registration.app.activites;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -27,6 +23,7 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.databinding.PacketListActivityBinding;
+import io.mosip.registration.app.util.NetworkUtil;
 import io.mosip.registration.app.util.PacketListActivityHelper;
 import io.mosip.registration.app.viewmodel.RegistrationPacketListAdapter;
 import io.mosip.registration.app.viewmodel.RegistrationPacketViewModel;
@@ -72,14 +69,14 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     ActionCallback actionCallback;
     SwipeRefreshLayout swipeRefreshLayout;
     Boolean uploadOverWifiOnly;
-    ConnectivityManager connectivityManager;
     SharedPreferences sharedPreferences;
+    NetworkUtil networkUtil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bi = DataBindingUtil.setContentView(this, R.layout.packet_list_activity);
-        connectivityManager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+        networkUtil = new NetworkUtil(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
         uploadOverWifiOnly = sharedPreferences.getBoolean("wifi_only", false);
@@ -171,9 +168,7 @@ public class PacketListActivity extends DaggerAppCompatActivity {
             return;
         }
 
-        NetworkCapabilities nc = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-        int upstreamBandwidthKbps = nc.getLinkUpstreamBandwidthKbps();
-
+        int upstreamBandwidthKbps = networkUtil.getNetworkUpStreamBandwidthKbps();
         int minUpstreamBandwidthKbps = GlobalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.PACKET_UPLOAD_MIN_UPSTREAM_BANDWIDTH_KBPS);
 
         if (upstreamBandwidthKbps < minUpstreamBandwidthKbps) {
@@ -286,21 +281,16 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     }
 
     private boolean checkNetwork() {
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        Network currentNetwork = connectivityManager.getActiveNetwork();
-        NetworkCapabilities caps = connectivityManager.getNetworkCapabilities(currentNetwork);
-
-        if (info == null || !info.isConnected()) {
+        if (!networkUtil.isNetworkConnection()) {
             Toast.makeText(getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (uploadOverWifiOnly && !caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+        if (uploadOverWifiOnly && !networkUtil.isWifiConnect()) {
             Toast.makeText(getApplicationContext(), R.string.change_connection_settings, Toast.LENGTH_LONG).show();
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 }
 
