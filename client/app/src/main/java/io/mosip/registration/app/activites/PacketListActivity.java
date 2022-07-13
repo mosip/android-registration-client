@@ -99,6 +99,12 @@ public class PacketListActivity extends DaggerAppCompatActivity {
         auditManagerService.audit(AuditEvent.LOADED_REG_LISTING, Components.REG_PACKET_LIST);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        uploadOverWifiOnly = sharedPreferences.getBoolean("wifi_only", false);
+    }
+
     private void init() {
         actionCallback = new ActionCallback();
         registrationPacketViewModel = new RegistrationPacketViewModel(packetService, dateUtil);
