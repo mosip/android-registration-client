@@ -59,6 +59,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     public static final String REG_APP_ID = "REGISTRATION";
     public static final String KERNEL_APP_ID = "KERNEL";
 
+    private final int master_data_recursive_sync_max_retry = 3;
+
     private ObjectMapper objectMapper;
 
     private Context context;
@@ -169,7 +171,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                         Log.e(TAG, "manualSync: User Details sync failed", e);
                     }
                 });
-            });
+            }, 0);
             //syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
@@ -215,10 +217,10 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void syncMasterData() {
         syncMasterData(() -> {
-        });
+        }, 0);
     }
 
-    private void syncMasterData(Runnable onFinish) {
+    private void syncMasterData(Runnable onFinish, int retryNo) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
 
         Map<String, String> queryParams = new HashMap<>();
@@ -251,8 +253,13 @@ public class MasterDataServiceImpl implements MasterDataService {
                     if (error == null) {
                         saveMasterData(response.body().getResponse());
                         if (centerMachineDto == null) {
-                            //rerunning master data to sync completed master data
-                            syncMasterData(onFinish);
+                            if (retryNo < master_data_recursive_sync_max_retry) {
+                                Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
+                                //rerunning master data to sync completed master data
+                                syncMasterData(onFinish, retryNo + 1);
+                            } else {
+                                Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
+                            }
                         } else {
                             Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
                             onFinish.run();
