@@ -1,5 +1,8 @@
 package io.mosip.registration.app.activites;
 
+import static io.mosip.registration.app.util.ClientConstants.MIN_UPSTREAM_BANDWIDTH_KBPS;
+import static io.mosip.registration.app.util.ClientConstants.WIFI_ONLY_PREFERENCE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,8 +34,6 @@ import io.mosip.registration.app.viewmodel.model.RegistrationPacketModel;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
 import io.mosip.registration.clientmanager.constant.Components;
-import io.mosip.registration.clientmanager.constant.RegistrationConstants;
-import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PacketUploadService;
@@ -68,7 +69,6 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     ActionMode actionMode;
     ActionCallback actionCallback;
     SwipeRefreshLayout swipeRefreshLayout;
-    Boolean uploadOverWifiOnly;
     SharedPreferences sharedPreferences;
     NetworkUtil networkUtil;
 
@@ -79,7 +79,6 @@ public class PacketListActivity extends DaggerAppCompatActivity {
         networkUtil = new NetworkUtil(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
-        uploadOverWifiOnly = sharedPreferences.getBoolean("wifi_only", false);
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -87,22 +86,13 @@ public class PacketListActivity extends DaggerAppCompatActivity {
         getSupportActionBar().setSubtitle(R.string.registrations_subtitle);
         init();
         swipeRefreshLayout = findViewById(R.id.packet_list_swipe_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                registrationPacketViewModel.refreshPacketStatus();
-                swipeRefreshLayout.setRefreshing(false);
-                adapter.notifyDataSetChanged();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            swipeRefreshLayout.setRefreshing(true);
+            registrationPacketViewModel.refreshPacketStatus();
+            swipeRefreshLayout.setRefreshing(false);
+            adapter.notifyDataSetChanged();
         });
         auditManagerService.audit(AuditEvent.LOADED_REG_LISTING, Components.REG_PACKET_LIST);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        uploadOverWifiOnly = sharedPreferences.getBoolean("wifi_only", false);
     }
 
     private void init() {
@@ -112,7 +102,6 @@ public class PacketListActivity extends DaggerAppCompatActivity {
         adapter = new RegistrationPacketListAdapter(this, list);
 
         bi.packetList.setLayoutManager(new LinearLayoutManager(this));
-        bi.packetList.setHasFixedSize(true);
         bi.packetList.setAdapter(adapter);
         adapter.setItemClick(new RegistrationPacketListAdapter.OnItemClick() {
             @Override
@@ -136,7 +125,6 @@ public class PacketListActivity extends DaggerAppCompatActivity {
        toggling action bar that will change the color and option
      */
     private void toggleActionBar(int position) {
-
         if (actionMode == null) {
             actionMode = startSupportActionMode(actionCallback);
         }
@@ -175,10 +163,11 @@ public class PacketListActivity extends DaggerAppCompatActivity {
         }
 
         int upstreamBandwidthKbps = networkUtil.getNetworkUpStreamBandwidthKbps();
-        int minUpstreamBandwidthKbps = GlobalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.PACKET_UPLOAD_MIN_UPSTREAM_BANDWIDTH_KBPS);
+        String minSpeedString = sharedPreferences.getString(MIN_UPSTREAM_BANDWIDTH_KBPS, "0");
 
+        int minUpstreamBandwidthKbps = Integer.parseInt(minSpeedString);
         if (upstreamBandwidthKbps < minUpstreamBandwidthKbps) {
-            String msg = getApplicationContext().getString(R.string.packet_upload_min_bw, String.valueOf(minUpstreamBandwidthKbps), String.valueOf(upstreamBandwidthKbps));
+            String msg = getApplicationContext().getString(R.string.packet_upload_min_bw, String.valueOf(upstreamBandwidthKbps), String.valueOf(minUpstreamBandwidthKbps));
             Log.e(TAG, msg);
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             return;
@@ -291,6 +280,8 @@ public class PacketListActivity extends DaggerAppCompatActivity {
             Toast.makeText(getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        boolean uploadOverWifiOnly = sharedPreferences.getBoolean(WIFI_ONLY_PREFERENCE, false);
 
         if (uploadOverWifiOnly && !networkUtil.isWifiConnect()) {
             Toast.makeText(getApplicationContext(), R.string.change_connection_settings, Toast.LENGTH_LONG).show();

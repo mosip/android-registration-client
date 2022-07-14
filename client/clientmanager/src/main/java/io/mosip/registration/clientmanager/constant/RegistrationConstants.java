@@ -36,8 +36,4 @@ public class RegistrationConstants {
 
     //Audits
     public static final String REGISTRATION_SCREEN = "Registration: %s";
-
-    //Global Params.
-    public static final String PACKET_UPLOAD_MIN_UPSTREAM_BANDWIDTH_KBPS = "PacketUploadMinUpstreamBandwidthKbps";
-
 }

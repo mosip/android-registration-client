@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
         app:key="wifi_only"
-        app:title="Allow  upload over wifi only" />
+        app:title="Allow upload over wifi only" />
+
+    <ListPreference
+        android:defaultValue="128"
+        android:entries="@array/minSpeedKeys"
+        android:entryValues="@array/minSpeedValues"
+        android:key="min_upstream_bandwidth_kbps"
+        android:title="Minimum speed required to upload" />
 
 </PreferenceScreen>
