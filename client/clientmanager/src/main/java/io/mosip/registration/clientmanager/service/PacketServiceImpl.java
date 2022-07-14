@@ -69,7 +69,7 @@ public class PacketServiceImpl implements PacketService {
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
             PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
 
-    public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name());
+    public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name(), PacketServerStatus.UPLOAD_PENDING.name());
 
     private Context context;
     private RegistrationRepository registrationRepository;
