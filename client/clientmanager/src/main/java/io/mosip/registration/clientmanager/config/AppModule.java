@@ -17,6 +17,7 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
@@ -260,7 +261,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService) {
-        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService);
+    DateUtil provideDateUtil() {
+        return new DateUtil(appContext);
+    }
+
+    @Provides
+    @Singleton
+    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil) {
+        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService, dateUtil);
     }
 }

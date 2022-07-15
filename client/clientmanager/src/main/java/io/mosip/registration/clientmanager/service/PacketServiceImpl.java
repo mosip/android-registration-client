@@ -22,6 +22,8 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketServerStatus;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.Error;
 import io.mosip.registration.clientmanager.dto.PacketIdDto;
@@ -37,6 +39,8 @@ import io.mosip.registration.clientmanager.dto.http.SyncRIDResponse;
 import io.mosip.registration.clientmanager.dto.http.UploadResponse;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -65,7 +69,7 @@ public class PacketServiceImpl implements PacketService {
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
             PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
 
-    public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name());
+    public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name(), PacketServerStatus.UPLOAD_PENDING.name());
 
     private Context context;
     private RegistrationRepository registrationRepository;
@@ -86,13 +90,28 @@ public class PacketServiceImpl implements PacketService {
 
     @Override
     public void syncRegistration(@NonNull String packetId) throws Exception {
+        syncRegistration(packetId, new AsyncPacketTaskCallBack() {
+            @Override
+            public void inProgress(String RID) {
+                //Do nothing
+            }
+
+            @Override
+            public void onComplete(String RID, PacketTaskStatus status) {
+                //Do nothing
+            }
+        });
+    }
+
+    @Override
+    public void syncRegistration(@NonNull String packetId, AsyncPacketTaskCallBack callBack) throws Exception {
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
 
         Registration registration = registrationRepository.getRegistration(packetId);
 
         if (registration.getClientStatus() != null && !PACKET_UNSYNCED_STATUS.contains(registration.getClientStatus())) {
             Log.i(TAG, "Packet already synced >> " + registration.getClientStatus());
-            Toast.makeText(context, "Packet already synced", Toast.LENGTH_LONG).show();
+            callBack.onComplete(packetId, PacketTaskStatus.SYNC_ALREADY_COMPLETED);
             return;
         }
 
@@ -140,28 +159,50 @@ public class PacketServiceImpl implements PacketService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null && response.body().getResponse().get(0).getStatus().equalsIgnoreCase("SUCCESS")) {
                         registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
+                        callBack.onComplete(packetId, PacketTaskStatus.SYNC_COMPLETED);
                         Toast.makeText(context, "Packet synced successfully", Toast.LENGTH_LONG).show();
-                    } else
+                    } else {
+                        callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
                         Toast.makeText(context, "Packet sync failed : " + error, Toast.LENGTH_LONG).show();
-                } else
+                    }
+                } else {
+                    callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
                     Toast.makeText(context, "Packet sync failed with Status Code : " + response.code(), Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFailure(Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call, Throwable t) {
                 Log.e(TAG, "Packet sync failed", t);
+                callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
                 Toast.makeText(context, "Packet sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+        callBack.inProgress(packetId);
+    }
+
+    @Override
+    public void uploadRegistration(String packetId) {
+        uploadRegistration(packetId, new AsyncPacketTaskCallBack() {
+            @Override
+            public void inProgress(String RID) {
+                //Do nothing
+            }
+
+            @Override
+            public void onComplete(String RID, PacketTaskStatus status) {
+                //Do nothing
             }
         });
     }
 
     @Override
-    public void uploadRegistration(String packetId) {
+    public void uploadRegistration(String packetId, AsyncPacketTaskCallBack callBack) {
         Registration registration = registrationRepository.getRegistration(packetId);
 
         if (registration.getServerStatus() != null && !PACKET_UPLOAD_STATUS.contains(registration.getServerStatus())) {
             Log.i(TAG, "Packet already uploaded >> " + registration.getClientStatus());
-            Toast.makeText(context, "Packet already uploaded", Toast.LENGTH_LONG).show();
+            callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_ALREADY_COMPLETED);
             return;
         }
 
@@ -178,19 +219,26 @@ public class PacketServiceImpl implements PacketService {
                     if (error == null) {
                         registrationRepository.updateStatus(packetId, response.body().getResponse().getStatus(),
                                 PacketClientStatus.UPLOADED.name());
+                        callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_COMPLETED);
                         Toast.makeText(context, "Packet uploaded successfully", Toast.LENGTH_LONG).show();
-                    } else
+                    } else {
+                        callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
                         Toast.makeText(context, "Packet uploaded failed : " + error.getMessage(), Toast.LENGTH_LONG).show();
-                } else
+                    }
+                } else {
+                    callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
                     Toast.makeText(context, "Packet uploaded failed with Status Code : " + response.code(), Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFailure(Call<RegProcResponseWrapper<UploadResponse>> call, Throwable t) {
                 Log.e(TAG, "Packet uploaded failed", t);
+                callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
                 Toast.makeText(context, "Packet uploaded failed", Toast.LENGTH_LONG).show();
             }
         });
+        callBack.inProgress(packetId);
     }
 
     @Override
@@ -237,7 +285,7 @@ public class PacketServiceImpl implements PacketService {
 
                     Toast.makeText(context, context.getString(R.string.packet_status_sync, packetSyncSuccess), Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())) , Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -247,5 +295,12 @@ public class PacketServiceImpl implements PacketService {
                 Toast.makeText(context, "Packet status sync failed", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public String getPacketStatus(String packetId) {
+        Registration registration = registrationRepository.getRegistration(packetId);
+        String packetStatus = registration.getServerStatus() == null ? registration.getClientStatus() : registration.getServerStatus();
+        return packetStatus;
     }
 }

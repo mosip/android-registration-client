@@ -1,40 +1,56 @@
 package io.mosip.registration.app.viewmodel;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.spi.PacketService;
-
+import java.util.ArrayList;
 import java.util.List;
 
-public class RegistrationPacketViewModel extends ViewModel implements IListingViewModel {
+import io.mosip.registration.app.viewmodel.model.RegistrationPacketModel;
+import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.util.DateUtil;
+
+public class RegistrationPacketViewModel {
 
     private static final String TAG = RegistrationPacketViewModel.class.getSimpleName();
 
     private PacketService packetService;
+    private DateUtil dateUtil;
 
-    public RegistrationPacketViewModel(PacketService packetService) {
+    public RegistrationPacketViewModel(PacketService packetService, DateUtil dateUtil) {
         this.packetService = packetService;
+        this.dateUtil = dateUtil;
     }
 
-    private MutableLiveData<List<Registration>> registrationList;
+    private List<RegistrationPacketModel> registrationList;
 
-    @Override
-    public LiveData<List<Registration>> getList() {
+    public List<RegistrationPacketModel> getList() {
         if (registrationList == null) {
-            registrationList = new MutableLiveData<>();
+            registrationList = new ArrayList<>();
             loadRegistrations();
         }
         return registrationList;
     }
 
     private void loadRegistrations() {
-        // do async operation to fetch users
-        /*Handler myHandler = new Handler();
-        myHandler.postDelayed(() -> {
-            registrationList.setValue(this.packetService.getAllRegistrations(0, 0));
-        }, 10000);*/
-        registrationList.setValue(this.packetService.getAllRegistrations(0, 0));
+        List<Registration> registrations = this.packetService.getAllRegistrations(0, 0);
+
+        List<RegistrationPacketModel> registrationPacketModels = new ArrayList<>();
+
+        for (Registration registration : registrations) {
+            String packetStatus = registration.getServerStatus() == null ? registration.getClientStatus() : registration.getServerStatus();
+            String createdDate = dateUtil.getDateTime(registration.getCrDtime());
+            registrationPacketModels.add(new RegistrationPacketModel(
+                    registration.getPacketId(),
+                    packetStatus,
+                    createdDate
+            ));
+        }
+
+        registrationList = registrationPacketModels;
+    }
+
+    public void refreshPacketStatus() {
+        for (RegistrationPacketModel packet : registrationList) {
+            packet.setPacketStatus(packetService.getPacketStatus(packet.getPacketId()));
+        }
     }
 }
