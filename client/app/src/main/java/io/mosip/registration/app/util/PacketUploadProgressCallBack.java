@@ -1,4 +1,4 @@
-package io.mosip.registration.clientmanager.spi;
+package io.mosip.registration.app.util;
 
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 

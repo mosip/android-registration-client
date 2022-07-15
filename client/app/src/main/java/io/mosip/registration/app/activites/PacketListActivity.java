@@ -28,6 +28,7 @@ import io.mosip.registration.app.R;
 import io.mosip.registration.app.databinding.PacketListActivityBinding;
 import io.mosip.registration.app.util.NetworkUtil;
 import io.mosip.registration.app.util.PacketListActivityHelper;
+import io.mosip.registration.app.util.PacketUploadService;
 import io.mosip.registration.app.viewmodel.RegistrationPacketListAdapter;
 import io.mosip.registration.app.viewmodel.RegistrationPacketViewModel;
 import io.mosip.registration.app.viewmodel.model.RegistrationPacketModel;
@@ -36,7 +37,6 @@ import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
-import io.mosip.registration.clientmanager.spi.PacketUploadService;
 import io.mosip.registration.clientmanager.util.DateUtil;
 
 public class PacketListActivity extends DaggerAppCompatActivity {
@@ -51,9 +51,6 @@ public class PacketListActivity extends DaggerAppCompatActivity {
 
     @Inject
     PacketService packetService;
-
-    @Inject
-    PacketUploadService packetUploadService;
 
     @Inject
     DateUtil dateUtil;
@@ -71,6 +68,7 @@ public class PacketListActivity extends DaggerAppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     SharedPreferences sharedPreferences;
     NetworkUtil networkUtil;
+    PacketUploadService packetUploadService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +77,7 @@ public class PacketListActivity extends DaggerAppCompatActivity {
         networkUtil = new NetworkUtil(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        packetUploadService = new PacketUploadService(packetService);
 
         //to display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

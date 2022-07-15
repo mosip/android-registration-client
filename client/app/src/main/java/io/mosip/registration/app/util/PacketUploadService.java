@@ -1,42 +1,32 @@
-package io.mosip.registration.clientmanager.service;
+package io.mosip.registration.app.util;
 
 import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
-import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.PacketService;
-import io.mosip.registration.clientmanager.spi.PacketUploadProgressCallBack;
-import io.mosip.registration.clientmanager.spi.PacketUploadService;
 
 /**
  * @author Anshul vanawat
  * @since 1.0.0
  */
 
-@Singleton
-public class PacketUploadServiceImpl implements PacketUploadService {
+public class PacketUploadService {
 
-    private static final String TAG = JobTransactionService.class.getSimpleName();
+    private static final String TAG = PacketUploadService.class.getSimpleName();
 
     private Operation ongoingOperation;
-    private Queue<Operation> queue = new LinkedList<>();
+    private final Queue<Operation> queue = new LinkedList<>();
 
-    @Inject
     PacketService packetService;
 
-    @Inject
-    public PacketUploadServiceImpl(PacketService packetService) {
+    public PacketUploadService(PacketService packetService) {
         this.packetService = packetService;
     }
 
-    @Override
     public void syncAndUploadPacket(String packetId, PacketUploadProgressCallBack uploadProgressCallBack) {
         Runnable onFinished = this::operationFinished;
         if (ongoingOperation != null) {
@@ -57,7 +47,7 @@ public class PacketUploadServiceImpl implements PacketUploadService {
     private class Operation {
         private final String packetId;
         private final PacketUploadProgressCallBack uploadProgressCallBack;
-        private Runnable onFinished;
+        private final Runnable onFinished;
 
         public Operation(String packetId, PacketUploadProgressCallBack uploadProgressCallBack, Runnable onFinished) {
             this.packetId = packetId;

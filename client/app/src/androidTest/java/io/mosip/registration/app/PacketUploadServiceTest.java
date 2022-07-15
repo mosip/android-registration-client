@@ -1,4 +1,4 @@
-package io.mosip.registration.clientmanager;
+package io.mosip.registration.app;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.mosip.registration.app.util.PacketUploadService;
 import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
@@ -41,11 +42,9 @@ import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.service.PacketServiceImpl;
-import io.mosip.registration.clientmanager.service.PacketUploadServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
-import io.mosip.registration.clientmanager.spi.PacketUploadService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
@@ -195,7 +194,7 @@ public class PacketUploadServiceTest {
         packetService = new PacketServiceImpl(appContext, registrationRepository,
                 packetCryptoService, syncRestService, masterDataService);
 
-        packetUploadService = new PacketUploadServiceImpl(packetService);
+        packetUploadService = new PacketUploadService(packetService);
 
     }
 
