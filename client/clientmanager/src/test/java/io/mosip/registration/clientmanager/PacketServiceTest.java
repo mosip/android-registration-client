@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.room.Room;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,12 +14,11 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -27,18 +26,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
-import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
-import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
 import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
+import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import okhttp3.Cache;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -52,8 +50,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @since 01/06/2022.
  */
 
-@RunWith(AndroidJUnit4.class)
-public class PacketServiceImplTest {
+@RunWith(RobolectricTestRunner.class)
+public class PacketServiceTest {
 
     private static final String PACKET_ID = "10001103911003120220530051317";
     private static final String PACKET_STATUS_CODE_CREATED = PacketClientStatus.CREATED.name();
@@ -79,16 +77,15 @@ public class PacketServiceImplTest {
     @Before
     public void setUp() throws Exception {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        clientDatabase = ClientDatabase.getDatabase(appContext);
-        clientDatabase.clearAllTables();
+        clientDatabase = Room.inMemoryDatabaseBuilder(appContext, ClientDatabase.class)
+                .allowMainThreadQueries()
+                .build();
 
         registrationDao = clientDatabase.registrationDao();
         registrationRepository = new RegistrationRepository(registrationDao, objectMapper);
 
         SyncJobDefDao syncJobDefDao = clientDatabase.syncJobDefDao();
         syncJobDefRepository = new SyncJobDefRepository(syncJobDefDao);
-
-
         server = new MockWebServer();
         server.start();
 
@@ -116,8 +113,8 @@ public class PacketServiceImplTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        clientDatabase.clearAllTables();
+    public void tearDown() {
+        clientDatabase.close();
     }
 
     @Test

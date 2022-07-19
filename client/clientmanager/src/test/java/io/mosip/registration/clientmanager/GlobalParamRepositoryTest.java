@@ -1,17 +1,19 @@
 package io.mosip.registration.clientmanager;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import android.content.Context;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.room.Room;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
  * @since 02/06/2022.
  */
 
-@RunWith(AndroidJUnit4.class)
+@RunWith(RobolectricTestRunner.class)
 public class GlobalParamRepositoryTest {
 
     private static final String GLOBAL_PARAM_STRING_ID = "mosip.lang-code";
@@ -38,6 +40,8 @@ public class GlobalParamRepositoryTest {
     private static final String GLOBAL_PARAM_INT_ID = "mosip.syncJobId";
     private static final int GLOBAL_PARAM_INT_VALUE = 1;
 
+    private static final String GLOBAL_PARAM_STRING_ID_NOT_CACHED = "mosip.lang-code-not-cached";
+
     Context appContext;
     ClientDatabase clientDatabase;
 
@@ -46,8 +50,9 @@ public class GlobalParamRepositoryTest {
     @Before
     public void setUp() {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        clientDatabase = ClientDatabase.getDatabase(appContext);
-        clientDatabase.clearAllTables();
+        clientDatabase = Room.inMemoryDatabaseBuilder(appContext, ClientDatabase.class)
+                .allowMainThreadQueries()
+                .build();
 
         GlobalParamDao globalParamDao = clientDatabase.globalParamDao();
         globalParamRepository = new GlobalParamRepository(globalParamDao);
@@ -55,11 +60,11 @@ public class GlobalParamRepositoryTest {
 
     @After
     public void tearDown() {
-        clientDatabase.clearAllTables();
+        clientDatabase.close();
     }
 
     @Test
-    public void saveGlobalParamTest() {
+    public void saveGlobal() {
         globalParamRepository.saveGlobalParam(GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_VALUE);
 
         String globalParamValue = globalParamRepository.getGlobalParamValue(GLOBAL_PARAM_STRING_ID);
@@ -69,8 +74,9 @@ public class GlobalParamRepositoryTest {
         assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamCachedValue);
     }
 
+
     @Test
-    public void saveGlobalParamListTest() {
+    public void saveGlobalParamList() {
 
         List<GlobalParam> globalParamList = new ArrayList<>();
         globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID
@@ -93,7 +99,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void getCachedValuesTest() {
+    public void getCachedValues() {
 
         List<GlobalParam> globalParamList = new ArrayList<>();
         globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID
@@ -122,14 +128,14 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void getCachedValuesNotFound() {
-        String globalParamCachedStringValue = GlobalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
+    public void getCachedValuesNotFoundTest() {
+        String globalParamCachedStringValue = GlobalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED);
         assertNull(globalParamCachedStringValue);
 
-        Boolean globalParamCachedBoolValue = GlobalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID);
+        Boolean globalParamCachedBoolValue = GlobalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED);
         assertNull(globalParamCachedBoolValue);
 
-        int globalParamCachedIntValue = GlobalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_INT_ID);
+        int globalParamCachedIntValue = GlobalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED);
         assertEquals(0, globalParamCachedIntValue);
     }
 }
