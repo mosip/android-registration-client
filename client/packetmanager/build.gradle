@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.library'
+    id "org.sonarqube"
 }
+
+apply from: '../jacoco.gradle'
 
 android {
 
@@ -16,6 +19,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -53,4 +59,16 @@ dependencies {
 
     // added key-manager Android library module as a dependency
     implementation project(':keymanager')
+}
+
+sonarqube {
+    androidVariant 'debug' //PUT REAL TASK NAME HERE
+
+    properties {
+        //PUT REAL PATHS HERE
+        property "sonar.java.binaries", "build/intermediates/javac/debug"
+        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
+        //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
+    }
 }

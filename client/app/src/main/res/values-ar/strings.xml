@@ -80,5 +80,8 @@
     <string name="double_iris">قزحية</string>
     <string name="face_label">وجه</string>
     <string name="exception_photo_label">استثناء الصورة</string>
+    <string name="quality_score">نقاط الجودة: %d</string>
+    <string name="threshold_score">درجة العتبة: %d</string>
+    <string name="attempt_number">المحاولة: %d</string>
 
 </resources>

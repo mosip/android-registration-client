@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -10,15 +11,19 @@ import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
@@ -27,7 +32,6 @@ import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
 import io.mosip.registration.packetmanager.dto.PacketWriter.*;
 import io.mosip.registration.packetmanager.util.DateUtils;
-import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 import lombok.NonNull;
@@ -61,28 +65,31 @@ public class RegistrationServiceImpl implements RegistrationService {
     private RegistrationRepository registrationRepository;
     private IdentitySchemaRepository identitySchemaRepository;
     private PacketWriterService packetWriterService;
-    private UserInterfaceHelperService userInterfaceHelperService;
     private MasterDataService masterDataService;
     private ClientCryptoManagerService clientCryptoManagerService;
     private KeyStoreRepository keyStoreRepository;
+    private GlobalParamRepository globalParamRepository;
+    private AuditManagerService auditManagerService;
 
     @Inject
     public RegistrationServiceImpl(Context context, PacketWriterService packetWriterService,
-                                   UserInterfaceHelperService userInterfaceHelperService,
                                    RegistrationRepository registrationRepository,
                                    MasterDataService masterDataService,
                                    IdentitySchemaRepository identitySchemaRepository,
                                    ClientCryptoManagerService clientCryptoManagerService,
-                                   KeyStoreRepository keyStoreRepository) {
+                                   KeyStoreRepository keyStoreRepository,
+                                   GlobalParamRepository globalParamRepository,
+                                   AuditManagerService auditManagerService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
-        this.userInterfaceHelperService = userInterfaceHelperService;
         this.registrationRepository = registrationRepository;
         this.masterDataService = masterDataService;
         this.identitySchemaRepository = identitySchemaRepository;
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.keyStoreRepository = keyStoreRepository;
+        this.globalParamRepository = globalParamRepository;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override
@@ -113,7 +120,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (version == null)
             throw new ClientCheckedException(context, R.string.err_002);
 
-        String certificateData = this.keyStoreRepository.getPolicyCertificateData(centerMachineDto.getMachineRefId());
+        String certificateData = keyStoreRepository.getPolicyCertificateData(centerMachineDto.getMachineRefId());
         if (certificateData == null)
             throw new ClientCheckedException(context, R.string.err_008);
 
@@ -123,7 +130,17 @@ public class RegistrationServiceImpl implements RegistrationService {
         timestamp = timestamp.replaceAll(":|T|Z|-", "");
         String rid = String.format("%s%s10031%s", centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), timestamp);
 
-        this.registrationDto = new RegistrationDto(rid, "NEW", "NEW", version, languages);
+        Map<Modality, Integer> bioThresholds = new HashMap<>();
+        for(Modality modality : Modality.values()) {
+            bioThresholds.put(modality, getAttemptsCount(modality));
+        }
+        this.registrationDto = new RegistrationDto(rid, "NEW", "NEW", version, languages, bioThresholds);
+
+        SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE).edit();
+        editor.putString(SessionManager.RID, this.registrationDto.getRId());
+        editor.commit();
+
         return this.registrationDto;
     }
 
@@ -156,17 +173,10 @@ public class RegistrationServiceImpl implements RegistrationService {
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 
-            Map<String, BiometricRecord> capturedData = new HashMap<>();
-            this.registrationDto.getAllBiometricFields().forEach(entry -> {
-                String[] parts = entry.getKey().split("_");
-                BiometricRecord biometricRecord = capturedData.get(parts[0]);
-                if (biometricRecord == null) {
-                    biometricRecord = new BiometricRecord();
-                    biometricRecord.setSegments(new ArrayList<>());
-                    capturedData.put(parts[0], biometricRecord);
-                }
-                biometricRecord.getSegments().add(buildBIR(entry.getValue()));
-                packetWriterService.setBiometric(this.registrationDto.getRId(), parts[0], biometricRecord);
+            this.registrationDto.CAPTURED_BIO_FIELDS.forEach( field -> {
+                BiometricRecord biometricRecord = getBiometricRecord(field);
+                biometricRecord.getSegments().removeIf(Objects::isNull);
+                packetWriterService.setBiometric(this.registrationDto.getRId(), field, biometricRecord);
             });
 
             CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
@@ -181,7 +191,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     this.registrationDto.getProcess(),
                     true, centerMachineDto.getMachineRefId());
 
-            Log.i(TAG, "Packet created here : " + containerPath);
+            Log.i(TAG, "Packet created : " + containerPath);
 
             if (containerPath == null || containerPath.trim().isEmpty()) {
                 throw new ClientCheckedException(context, R.string.err_005);
@@ -195,45 +205,129 @@ public class RegistrationServiceImpl implements RegistrationService {
                     centerMachineDto.getCenterId(), "NEW", additionalInfo);
 
         } finally {
-            this.registrationDto.cleanup();
-            this.registrationDto = null;
+            clearRegistration();
         }
     }
 
     @Override
     public void clearRegistration() {
+        SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE).edit();
+        editor.remove(SessionManager.RID);
+        editor.commit();
         if (this.registrationDto != null) {
             this.registrationDto.cleanup();
             this.registrationDto = null;
         }
     }
 
-    private Map<String, String> addMetaInfoMap(String centerId, String machineId, String makerId) throws Exception {
-        String rid = this.registrationDto.getRId();
-        Map<String, String> metaData = new LinkedHashMap<>();
-        packetWriterService.addMetaInfo(rid, META_OFFICER_ID, makerId);
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_MACHINE_ID, machineId);
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CENTER_ID, centerId);
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_KEYINDEX,
-                this.clientCryptoManagerService.getClientKeyIndex());
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_REGISTRATION_ID, this.registrationDto.getRId());
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_APPLICATION_ID, this.registrationDto.getRId());
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CREATION_DATE,
-                DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_CLIENT_VERSION, BuildConfig.CLIENT_VERSION);
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_REGISTRATION_TYPE, this.registrationDto.getProcess().toUpperCase());
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_PRE_REGISTRATION_ID, null);
-        return metaData;
+    private BiometricRecord getBiometricRecord(String fieldId) {
+        BiometricRecord biometricRecord = new BiometricRecord();
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_LEFT).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_RIGHT).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_THUMBS).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.IRIS_DOUBLE).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FACE).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        return biometricRecord;
     }
 
-    //TODO fetch the saved audits and add them in the packet
+    private void addMetaInfoMap(String centerId, String machineId, String makerId) throws Exception {
+        String rid = this.registrationDto.getRId();
+        //machine metaInfo
+        Map<String, String> metaData = new LinkedHashMap<>();
+        metaData.put(PacketManagerConstant.META_MACHINE_ID, machineId);
+        metaData.put(PacketManagerConstant.META_CENTER_ID, centerId);
+        metaData.put(PacketManagerConstant.META_KEYINDEX, this.clientCryptoManagerService.getClientKeyIndex());
+        metaData.put(PacketManagerConstant.META_REGISTRATION_ID, rid);
+        metaData.put(PacketManagerConstant.META_APPLICATION_ID, rid);
+        metaData.put(PacketManagerConstant.META_CREATION_DATE,
+                DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
+        metaData.put(PacketManagerConstant.META_CLIENT_VERSION, BuildConfig.CLIENT_VERSION);
+        metaData.put(PacketManagerConstant.META_REGISTRATION_TYPE, this.registrationDto.getProcess().toUpperCase());
+        metaData.put(PacketManagerConstant.META_PRE_REGISTRATION_ID, null);
+        metaData.put("langCodes", String.join(RegistrationConstants.COMMA, this.registrationDto.getSelectedLanguages()));
+        packetWriterService.addMetaInfo(rid, "metaData", getLabelValueDTOListString(metaData));
+
+        //Operators metaInfo
+        metaData = new LinkedHashMap<>();
+        metaData.put(PacketManagerConstant.META_OFFICER_ID, makerId);
+        metaData.put(PacketManagerConstant.META_OFFICER_BIOMETRIC_FILE, null);
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_ID, makerId);
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_BIOMETRIC_FILE, null);
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_PWD, "true");
+        metaData.put(PacketManagerConstant.META_OFFICER_PWD, "true");
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_PIN, "false");
+        metaData.put(PacketManagerConstant.META_OFFICER_PIN, "false");
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_OTP, "false");
+        metaData.put(PacketManagerConstant.META_OFFICER_OTP, "false");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_INFO_OPERATIONS_DATA, getLabelValueDTOListString(metaData));
+
+        //other metaInfo
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LATITUDE, "null");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LONGITUDE, "null");
+        packetWriterService.addMetaInfo(rid, "checkSum", "{}");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.REGISTRATIONID, rid);
+
+        //biometric device details
+        List<Map<String, Object>> capturedRegisteredDevices = new ArrayList<>();
+        for(Modality modality : this.registrationDto.BIO_DEVICES.keySet()) {
+            capturedRegisteredDevices.add((Map<String, Object>) this.registrationDto.BIO_DEVICES.get(modality));
+        }
+        packetWriterService.addMetaInfo(rid, "capturedRegisteredDevices", capturedRegisteredDevices);
+    }
+
+    private List<Map<String, String>> getLabelValueDTOListString(Map<String, String> metaInfoMap) {
+        List<Map<String, String>> labelValueMap = new LinkedList<>();
+        for (Map.Entry<String, String> fieldName : metaInfoMap.entrySet()) {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("label", fieldName.getKey());
+            map.put("value", fieldName.getValue());
+            labelValueMap.add(map);
+        }
+        return labelValueMap;
+    }
+
     public List<Map<String, String>> getAudits() {
-        Map<String, String> auditEntry = new HashMap<>();
-        auditEntry.put("date", "date");
-        auditEntry.put("message", "message");
-        auditEntry.put("actor", "operator");
         List<Map<String, String>> audits = new ArrayList<>();
-        audits.add(auditEntry);
+        String savedPoint = globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL);
+        List<Audit> list = auditManagerService.getAuditLogs(savedPoint==null ? 0 : Long.parseLong(savedPoint));
+        for(Audit audit : list) {
+            Map<String, String> auditMap = new HashMap<>();
+            auditMap.put("uuid", String.valueOf(audit.getUuid()));
+            auditMap.put("createdAt", DateUtils.parseEpochToISOString(audit.getCreatedAt()));
+            auditMap.put("eventId", audit.getEventId());
+            auditMap.put("eventName", audit.getEventName());
+            auditMap.put("eventType", audit.getEventType());
+            auditMap.put("hostName", audit.getHostName());
+            auditMap.put("hostIp", audit.getHostIp());
+            auditMap.put("applicationId", audit.getApplicationId());
+            auditMap.put("applicationName", audit.getApplicationName());
+            auditMap.put("sessionUserId", audit.getSessionUserId());
+            auditMap.put("sessionUserName", audit.getSessionUserName());
+            auditMap.put("id", audit.getRefId());
+            auditMap.put("idType", audit.getRefIdType());
+            auditMap.put("createdBy", audit.getCreatedBy());
+            auditMap.put("moduleName", audit.getModuleName());
+            auditMap.put("moduleId", audit.getModuleId());
+            auditMap.put("description", audit.getDescription());
+            auditMap.put("actionTimeStamp", DateUtils.parseEpochToISOString(audit.getActionTimeStamp()));
+            audits.add(auditMap);
+        }
+        globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL,
+                list.isEmpty() ? null : String.valueOf(list.get(list.size()-1).getActionTimeStamp()));
         return audits;
     }
 
@@ -302,6 +396,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     public BIR buildBIR(BiometricsDto biometricsDto) {
+        if(biometricsDto == null)
+            return null;
+
         SingleType singleType = SingleType.valueOf(biometricsDto.getModality());
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
@@ -330,6 +427,9 @@ public class RegistrationServiceImpl implements RegistrationService {
             payLoad = biometricsDto.getDecodedBioResponse().replace(bioValue, PacketManagerConstant.BIOVALUE_PLACEHOLDER);
         }
 
+        if(singleType == SingleType.FACE || singleType == SingleType.EXCEPTION_PHOTO)
+            biometricsDto.setBioSubType(EMPTY);
+
         return new BIR.BIRBuilder().withBdb(iso == null ? new byte[0] : iso)
                 .withVersion(versionType)
                 .withCbeffversion(versionType)
@@ -347,5 +447,21 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .withOthers(OTHER_KEY_PAYLOAD, payLoad == null ? EMPTY : payLoad)
                 .withOthers(OTHER_KEY_SPEC_VERSION, biometricsDto.getSpecVersion() == null ? EMPTY : biometricsDto.getSpecVersion())
                 .build();
+    }
+
+    private int getAttemptsCount(Modality modality) {
+        switch (modality) {
+            case FINGERPRINT_SLAB_LEFT:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.LEFT_SLAP_ATTEMPTS_KEY);
+            case FINGERPRINT_SLAB_RIGHT:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.RIGHT_SLAP_ATTEMPTS_KEY);
+            case FINGERPRINT_SLAB_THUMBS:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.THUMBS_ATTEMPTS_KEY);
+            case IRIS_DOUBLE:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.IRIS_ATTEMPTS_KEY);
+            case FACE:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.FACE_ATTEMPTS_KEY);
+        }
+        return 0;
     }
 }

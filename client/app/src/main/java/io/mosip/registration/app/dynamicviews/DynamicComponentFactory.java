@@ -5,6 +5,8 @@ import android.content.Context;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
+import io.mosip.registration.clientmanager.service.Biometrics095Service;
+import io.mosip.registration.clientmanager.spi.BiometricsService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 
 public class DynamicComponentFactory {
@@ -12,9 +14,12 @@ public class DynamicComponentFactory {
     private Context context;
     private MasterDataService masterDataService;
 
-    public DynamicComponentFactory(Context context, MasterDataService masterDataService) {
+    private Biometrics095Service biometricsService;
+
+    public DynamicComponentFactory(Context context, MasterDataService masterDataService, Biometrics095Service biometricsService) {
         this.context = context;
         this.masterDataService = masterDataService;
+        this.biometricsService = biometricsService;
     }
 
     public DynamicView getTextComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto,
@@ -39,7 +44,7 @@ public class DynamicComponentFactory {
     }
 
     public DynamicView getBiometricsComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
-        return new DynamicBiometricsBox(context, fieldSpecDto, registrationDto);
+        return new DynamicBiometricsBox(context, fieldSpecDto, registrationDto, biometricsService);
     }
 
     public DynamicView getHtmlComponent(FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {

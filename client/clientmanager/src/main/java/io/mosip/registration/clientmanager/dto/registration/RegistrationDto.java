@@ -4,6 +4,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.dto.sbi.DigitalId;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.json.JSONException;
@@ -13,12 +14,16 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ValueRange;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class RegistrationDto extends Observable {
 
     private static final String TAG = RegistrationDto.class.getSimpleName();
     private static final String APPLICANT_DOB_SUBTYPE = "dateOfBirth";
+    private static final String BIO_KEY_ATTEMPT = "%s_%s_%d";
     private static final String BIO_KEY = "%s_%s";
+    private static final String BIO_KEY_PATTERN = "%s_%s_";
 
     //TODO take it from config
     public static final String dateFormatConfig = "yyyy/MM/dd";
@@ -34,12 +39,20 @@ public class RegistrationDto extends Observable {
     private Map<String, Object> demographics;
     private Map<String, DocumentDto> documents;
     private Map<String, BiometricsDto> biometrics;
+
+    //Supporting fields
     public Map<String, Object> AGE_GROUPS = new HashMap<>();
+    public Map<String, AtomicInteger> ATTEMPTS;
+    public Map<String, Set<String>> EXCEPTIONS;
+    public Map<Modality, Integer> BIO_THRESHOLDS;
+    public Set<String> CAPTURED_BIO_FIELDS;
+    public Map<Modality, Object> BIO_DEVICES;
     private OperatorDto maker;
     private OperatorDto reviewer;
 
     public RegistrationDto(@NonNull String rid, @NonNull String flowType, @NonNull String process,
-                           @NonNull Double schemaVersion, @NonNull List<String> languages) {
+                           @NonNull Double schemaVersion, @NonNull List<String> languages,
+                           @NonNull Map<Modality, Integer> bioThresholds) {
         this.rId = rid;
         this.dateTime = LocalDateTime.now(ZoneOffset.UTC);
         this.flowType = flowType;
@@ -49,6 +62,11 @@ public class RegistrationDto extends Observable {
         this.demographics = new HashMap<>();
         this.documents = new HashMap<>();
         this.biometrics = new HashMap<>();
+        this.ATTEMPTS = new HashMap<>();
+        this.EXCEPTIONS = new HashMap<>();
+        this.BIO_THRESHOLDS = bioThresholds;
+        this.CAPTURED_BIO_FIELDS = new HashSet<>();
+        this.BIO_DEVICES = new HashMap<>();
     }
 
     public void setMakerDetails() {
@@ -149,30 +167,103 @@ public class RegistrationDto extends Observable {
         return this.documents.containsKey(fieldId);
     }
 
-    public boolean hasBiometric(String fieldId, String bioAttribute) {
-        return this.biometrics.containsKey(String.format(BIO_KEY, fieldId, bioAttribute));
-    }
-
     public void removeDocumentField(String fieldId) {
         this.documents.remove(fieldId);
     }
 
-    public void addBiometric(String fieldId, String attribute, BiometricsDto biometricsDto) {
-        this.biometrics.put(String.format(BIO_KEY, fieldId, attribute), biometricsDto);
+    public void addBiometric(String fieldId, String attribute, int attempt, BiometricsDto biometricsDto) {
+        biometricsDto.setNumOfRetries(attempt);
+        this.biometrics.put(String.format(BIO_KEY_ATTEMPT, fieldId, attribute, attempt), biometricsDto);
+        this.CAPTURED_BIO_FIELDS.add(fieldId);
     }
 
-    public List<BiometricsDto> getBiometrics(String fieldId, Modality modality) {
+    public List<BiometricsDto> getBiometrics(String fieldId, Modality modality, int attempt) {
         List<BiometricsDto> list = new ArrayList<>();
         for(String attribute : modality.getAttributes()) {
-            String key = String.format(BIO_KEY, fieldId, attribute);
+            String key = String.format(BIO_KEY_ATTEMPT, fieldId, attribute, attempt);
             if(this.biometrics.containsKey(key))
                 list.add(this.biometrics.get(key));
         }
         return list;
     }
 
+    public List<BiometricsDto> getBestBiometrics(String fieldId, Modality modality) {
+        List<BiometricsDto> list = new ArrayList<>();
+        for(String attribute : modality.getAttributes()) {
+            Optional<BiometricsDto> highestScoredAttribute = this.biometrics
+                    .entrySet()
+                    .stream()
+                    .filter(e -> e.getKey().startsWith(String.format(BIO_KEY_PATTERN, fieldId, attribute)))
+                    .map( v -> v.getValue())
+                    .max(Comparator.comparingDouble(BiometricsDto::getQualityScore));
+
+            if(highestScoredAttribute.isPresent()) {
+                BiometricsDto dto = highestScoredAttribute.get();
+                dto.setNumOfRetries(this.getBioAttempt(fieldId, modality));
+                list.add(dto);
+            }
+        }
+        return list;
+    }
+
     public void removeBiometricField(String fieldId) {
         this.biometrics.remove(fieldId);
+    }
+
+    public int incrementBioAttempt(String fieldId, Modality modality) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        ATTEMPTS.putIfAbsent(key, new AtomicInteger(0));
+        return ATTEMPTS.get(key).incrementAndGet();
+    }
+
+    public int getBioAttempt(String fieldId, Modality modality) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        return ATTEMPTS.getOrDefault(key, new AtomicInteger(0)).get();
+    }
+
+    public void addBioException(String fieldId, Modality modality, String attribute) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        EXCEPTIONS.putIfAbsent(key, new HashSet<>());
+        EXCEPTIONS.get(key).add(attribute);
+        resetBioCapture(fieldId, modality);
+    }
+
+    public void removeBioException(String fieldId, Modality modality, String attribute) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        EXCEPTIONS.putIfAbsent(key, new HashSet<>());
+        EXCEPTIONS.get(key).remove(attribute);
+        resetBioCapture(fieldId, modality);
+    }
+
+    public boolean isBioException(String fieldId, Modality modality, String attribute) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        return EXCEPTIONS.getOrDefault(key, Collections.EMPTY_SET).contains(attribute);
+    }
+
+    private void resetBioCapture(String fieldId, Modality modality) {
+        String key = String.format(BIO_KEY, fieldId, modality.name());
+        ATTEMPTS.put(key, new AtomicInteger(0));
+        for(String attribute : modality.getAttributes()) {
+            this.biometrics.keySet()
+                    .removeIf(k -> k.startsWith(String.format(BIO_KEY_PATTERN, fieldId, attribute)));
+        }
+    }
+
+
+    public void addBioDevice(Modality modality, String deviceCode, DigitalId digitalId) {
+        Map<String, Object> registeredDevice = new LinkedHashMap<>();
+        Map<String, String> digitalIdMap = new HashMap<>();
+        digitalIdMap.put("serialNo", digitalId.getSerialNo());
+        digitalIdMap.put("make", digitalId.getMake());
+        digitalIdMap.put("model", digitalId.getModel());
+        digitalIdMap.put("type", digitalId.getType());
+        digitalIdMap.put("deviceProviderId", digitalId.getDeviceProviderId());
+        digitalIdMap.put("deviceProvider", digitalId.getDeviceProvider());
+        digitalIdMap.put("dateTime", digitalId.getDateTime());
+        registeredDevice.put("deviceCode", deviceCode);
+        registeredDevice.put("deviceServiceVersion", "0.9.5");
+        registeredDevice.put("digitalId", digitalIdMap);
+        BIO_DEVICES.put(modality, registeredDevice);
     }
 
     public Set<Map.Entry<String, Object>> getAllDemographicFields() {
@@ -218,7 +309,7 @@ public class RegistrationDto extends Observable {
         this.documents.clear();
         this.biometrics.clear();
         this.AGE_GROUPS.clear();
-        this.selectedLanguages.clear();
+        this.selectedLanguages.removeIf(o->true);
         deleteObservers();
     }
 
@@ -251,6 +342,9 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);
         allIdentityDetails.putAll(this.AGE_GROUPS);
+        if(!allIdentityDetails.containsKey(RegistrationConstants.AGE))
+            allIdentityDetails.put(RegistrationConstants.AGE, 0);
+
         return allIdentityDetails;
     }
 

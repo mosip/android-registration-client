@@ -14,7 +14,8 @@ public enum SingleType {
 	GAIT("Gait"),
 	KEYSTROKE("Keystroke"),
 	LIP_MOVEMENT("LipMovement"),
-	SIGNATURE_SIGN("SignatureSign");
+	SIGNATURE_SIGN("SignatureSign"),
+	EXCEPTION_PHOTO("ExceptionPhoto");
 
 	private final String value;
 

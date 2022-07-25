@@ -79,5 +79,7 @@
     <string name="right_slap">Right Slap</string>
     <string name="thumbs_label">Thumbs</string>
     <string name="fingers">Fingers</string>
-
+    <string name="quality_score">Quality Score: %d</string>
+    <string name="threshold_score">Threshold Score: %d</string>
+    <string name="attempt_number">Attempt: %d</string>
 </resources>

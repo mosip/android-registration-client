@@ -82,17 +82,17 @@ public class GlobalParamRepository {
         }
     }
 
-    public static Boolean getCachedBooleanGlobalParam(String key) {
+    public Boolean getCachedBooleanGlobalParam(String key) {
         String value = getCachedStringGlobalParam(key);
         return value == null ? null : Boolean.parseBoolean(value);
     }
 
-    public static int getCachedIntegerGlobalParam(String key) {
+    public int getCachedIntegerGlobalParam(String key) {
         String value = getCachedStringGlobalParam(key);
         return value == null ? 0 : Integer.parseInt(value);
     }
 
-    public static String getCachedStringGlobalParam(String key) {
+    public String getCachedStringGlobalParam(String key) {
         return globalParamMap.get(key);
     }
 }

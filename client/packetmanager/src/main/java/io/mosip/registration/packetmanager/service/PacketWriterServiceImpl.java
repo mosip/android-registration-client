@@ -14,11 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -99,6 +95,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
 
     @Override
     public void setBiometric(String id, String fieldId, BiometricRecord biometricRecord) {
+        biometricRecord.getSegments().removeIf(Objects::isNull);
         this.initialize(id).setBiometricField(fieldId, biometricRecord);
     }
 
@@ -108,7 +105,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     }
 
     @Override
-    public void addMetaInfo(String id, String key, String value) {
+    public void addMetaInfo(String id, String key, Object value) {
         this.initialize(id).setMetaData(key, value);
     }
 
@@ -193,7 +190,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (ZipOutputStream subpacketZip = new ZipOutputStream(new BufferedOutputStream(out))) {
-            Log.i(TAG, "Identified fields >>> " + schemaFields.size());
 
             Map<String, Object> identity = new HashMap<String, Object>();
             Map<String, HashSequenceMetaInfo> hashSequences = new HashMap<>();
@@ -217,7 +213,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                         break;
                     default:
                         if (this.registrationPacket.getDemographics().get(fieldName) != null) {
-                            Log.d(TAG, "Adding field : " + fieldName);
                             identity.put(fieldName, this.registrationPacket.getDemographics().get(fieldName));
                         }
                         break;
@@ -225,7 +220,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
             }
 
             byte[] identityBytes = getIdentity(identity).getBytes();
-            Log.i(TAG, "getIdentity(identity) >>>>" + new String(identityBytes));
             addEntryToZip(PacketManagerConstant.IDENTITY_FILENAME_WITH_EXT, identityBytes, subpacketZip);
             addHashSequenceWithSource(PacketManagerConstant.DEMOGRAPHIC_SEQ, PacketManagerConstant.IDENTITY_FILENAME, identityBytes,
                     hashSequences);

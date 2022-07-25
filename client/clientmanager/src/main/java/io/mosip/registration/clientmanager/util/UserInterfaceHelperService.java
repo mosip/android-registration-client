@@ -21,9 +21,7 @@ import org.mvel2.integration.impl.MapVariableResolverFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 @Singleton
@@ -106,43 +104,47 @@ public class UserInterfaceHelperService {
     }
 
 
-    public static Bitmap getFaceBitMap(BiometricsDto biometricsDto) throws IOException {
+    public static Bitmap getFaceBitMap(BiometricsDto biometricsDto) {
+        if(biometricsDto == null)
+            return null;
         try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(biometricsDto.getBioValue()));
             DataInputStream inputStream = new DataInputStream(bais);) {
             FaceBDIR faceBDIR = new FaceBDIR(inputStream);
             byte[] bytes = faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
             return new JP2Decoder(bytes).decode();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
         }
+        return null;
     }
-    public static Bitmap getFingerBitMap(List<BiometricsDto> list, String attribute) throws IOException {
-        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getBioSubType())).findFirst();
-        if(!result.isPresent())
-            return null;
 
-        try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(result.get().getBioValue()));
+    public static Bitmap getFingerBitMap(BiometricsDto biometricsDto) {
+        if(biometricsDto == null)
+            return null;
+        try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(biometricsDto.getBioValue()));
             DataInputStream inputStream = new DataInputStream(bais);) {
             FingerBDIR fingerBDIR = new FingerBDIR(inputStream);
             byte[] bytes = fingerBDIR.getRepresentation().getRepresentationBody().getImageData().getImage();
             return new JP2Decoder(bytes).decode();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
         }
+        return null;
     }
 
-    public static Bitmap getIrisBitMap(BiometricsDto biometricsDto) throws IOException {
+    public static Bitmap getIrisBitMap(BiometricsDto biometricsDto) {
+        if(biometricsDto == null)
+            return null;
         try(ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(biometricsDto.getBioValue()));
             DataInputStream inputStream = new DataInputStream(bais);) {
             IrisBDIR irisBDIR = new IrisBDIR(inputStream);
             byte[] bytes = irisBDIR.getRepresentation()
                     .getRepresentationData().getImageData().getImage();
             return new JP2Decoder(bytes).decode();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
         }
-    }
-
-    public static Bitmap getIrisBitMap(List<BiometricsDto> list, String attribute) throws IOException {
-        Optional<BiometricsDto> result = list.stream().filter( dto -> attribute.equals(dto.getBioSubType())).findFirst();
-        if(!result.isPresent())
-            return null;
-
-        return getIrisBitMap(result.get());
+        return null;
     }
 
     public static Bitmap combineBitmaps(List<Bitmap> images, Bitmap missingImage) {
@@ -150,10 +152,11 @@ public class UserInterfaceHelperService {
         int width = 0;
         int height = 0;
         for(Bitmap image : images) {
-            if(image == null)
-                image = missingImage;
-            width = width + image.getWidth();
-            height = image.getHeight() > height ? image.getHeight() : height;
+            //in case image is not present, replace null with missingImage
+            int imageH = (image == null) ? missingImage.getHeight() : image.getHeight();
+            int imageW = (image == null) ? missingImage.getWidth() : image.getWidth();
+            width = width + imageW;
+            height = imageH > height ? imageH : height;
         }
 
         // Create a Bitmap large enough to hold both input images and a canvas to draw to this
@@ -171,5 +174,18 @@ public class UserInterfaceHelperService {
             left = left + image.getWidth();
         }
         return combined;
+    }
+
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
+        try (ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream()) {
+            int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];
+
+            int len = 0;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+            return byteBuffer.toByteArray();
+        }
     }
 }

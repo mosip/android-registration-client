@@ -17,6 +17,7 @@ public class SessionManager {
     public static final String IS_DEFAULT = "is_default";
     public static final String USER_NAME = "user_name";
     public static final String USER_TOKEN = "user_token";
+    public static final String RID = "current_rid";
 
     private static SessionManager manager = null;
     private static final String REALM_ACCESS = "realm_access";

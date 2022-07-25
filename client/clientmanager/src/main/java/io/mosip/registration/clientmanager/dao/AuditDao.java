@@ -18,7 +18,7 @@ import io.mosip.registration.clientmanager.entity.Audit;
 @Dao
 public interface AuditDao {
 
-    @Query("SELECT * FROM app_audit_log where log_dtimes > :fromLogDateTime")
+    @Query("SELECT * FROM app_audit_log where log_dtimes > :fromLogDateTime order by action_dtimes asc")
     List<Audit> getAll(long fromLogDateTime);
 
     @Insert
