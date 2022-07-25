@@ -8,21 +8,12 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'
         classpath "com.ibotta:plugin:1.2.0"
+        //Jacoco Plugin
+        classpath "org.jacoco:org.jacoco.core:0.8.7"
     }
 }
 plugins {
-    id "jacoco"
-    id "java"
-    id "application"
     id "org.sonarqube" version "3.0"
-}
-
-sonarqube {
-    properties {
-        property "sonar.projectKey", "mosip_android-registration-client"
-        property "sonar.organization", "mosip"
-        property "sonar.host.url", "https://sonarcloud.io"
-    }
 }
 
 ext {
@@ -38,18 +29,23 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-    serverBaseURL = "\"https://api-internal.dev3.mosip.net/\""
+    serverBaseURL = "\"https://api-internal.sandbox.xyz.net/\""
 }
 
 task cleanOutputDir(type: Delete) {
     delete fileTree(dir: "build/outputs/apk/debug/")
 }
 
-task lean(type: Delete) {
+task clean(type: Delete) {
     delete rootProject.buildDir
 }
-jacocoTestReport {
-    reports {
-        xml.enabled true
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.projectKey", "android-registration-client"
+        property "sonar.projectName", "android-registration-client"
+       // property "sonar.projectVersion", project.versionName
+        property "sonar.sourceEncoding", "UTF-8"
     }
 }
