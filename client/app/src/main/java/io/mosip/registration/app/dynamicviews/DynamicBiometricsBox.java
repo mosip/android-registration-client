@@ -18,12 +18,16 @@ import io.mosip.registration.app.util.ClientConstants;
 import io.mosip.registration.app.viewmodel.CustomViewPager2Adapter;
 import io.mosip.registration.app.viewmodel.ModalityAdapter;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.service.Biometrics095Service;
+import io.mosip.registration.clientmanager.spi.BiometricsService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import org.apache.commons.collections4.ListUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.mosip.registration.app.util.ClientConstants.FIELD_LABEL_TEMPLATE;
 import static io.mosip.registration.app.util.ClientConstants.REQUIRED_FIELD_LABEL_TEMPLATE;
@@ -37,16 +41,20 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
     List<String> bioAttributes = null;
     final int layoutId = R.layout.biometrics_box;
     LinkedHashMap<Modality, List<String>> identifiedModalities = new LinkedHashMap<>();
-    ViewPager2 viewPager2;
-    TabLayout tabLayout;
 
+    ArrayList<Modality> modalities = new ArrayList<>();
+    HashMap<Modality, Boolean> statuses = new HashMap<>();
     private RecyclerView mRecyclerView;
     private ModalityAdapter modalityAdapter;
 
-    public DynamicBiometricsBox(Context context, FieldSpecDto fieldSpecDto, RegistrationDto registrationDto) {
+    Biometrics095Service biometricsService;
+
+    public DynamicBiometricsBox(Context context, FieldSpecDto fieldSpecDto, RegistrationDto registrationDto,
+                                Biometrics095Service biometricsService) {
         super(context);
         this.fieldSpecDto = fieldSpecDto;
         this.registrationDto = registrationDto;
+        this.biometricsService = biometricsService;
         initializeView(context);
     }
 
@@ -69,7 +77,7 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
         setupConfiguredBioAttributes();
 
-        setModalityRecycleView(context);//setupBiometricViewPager2(context);
+        setModalityRecycleView(context);
 
         ((TextView)findViewById(R.id.biometrics_label)).setText(Html.fromHtml(isRequired() ?
                 String.format(REQUIRED_FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)) :
@@ -90,7 +98,7 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
 
     @Override
     public boolean isValidValue() {
-        return bioAttributes.stream().allMatch( attr -> registrationDto.hasBiometric(fieldSpecDto.getId(), attr));
+        return getCaptureStatuses().values().stream().allMatch(status -> status);
     }
 
     @Override
@@ -118,71 +126,38 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
         // Set the Layout Manager.
         mRecyclerView.setLayoutManager(new GridLayoutManager(context, gridColumnCount));
 
-        ArrayList<Modality> modalities = new ArrayList<>();
         for(Map.Entry<Modality, List<String>> entry : identifiedModalities.entrySet()) {
             modalities.add(entry.getKey());
         }
 
+        addOrRemoveExceptionModality();
+
         // Initialize the adapter and set it to the RecyclerView.
-        modalityAdapter = new ModalityAdapter(context, modalities, fieldSpecDto.getId(), "Registration");
+        modalityAdapter = new ModalityAdapter(context, getCaptureStatuses(), modalities, fieldSpecDto.getId(), "Registration");
         mRecyclerView.setAdapter(modalityAdapter);
 
         // Notify the adapter of the change.
         modalityAdapter.notifyDataSetChanged();
     }
 
-    private void setupBiometricViewPager2(Context context) {
-        viewPager2 = findViewById(R.id.bio_viewpager);
-        tabLayout = findViewById(R.id.bio_tablayout);
+    public void updateAdapterItems() {
+        addOrRemoveExceptionModality();
+        getCaptureStatuses();
+        // Notify the adapter of the change.
+        modalityAdapter.notifyDataSetChanged();
+    }
 
-        List<Modality> modalities = new ArrayList<>();
-        for(Map.Entry<Modality, List<String>> entry : identifiedModalities.entrySet()) {
-            modalities.add(entry.getKey());
+
+    private void addOrRemoveExceptionModality() {
+        boolean isExceptionPresent = registrationDto.EXCEPTIONS.entrySet()
+                .stream()
+                .anyMatch( e -> e.getKey().startsWith(fieldSpecDto.getId()) && e.getValue() != null && !e.getValue().isEmpty());
+
+        modalities.remove(Modality.EXCEPTION_PHOTO);
+
+        if(isExceptionPresent && fieldSpecDto.isExceptionPhotoRequired()) {
+            modalities.add(Modality.EXCEPTION_PHOTO);
         }
-
-        CustomViewPager2Adapter adapter = new CustomViewPager2Adapter(context, modalities, identifiedModalities);
-        viewPager2.setAdapter(adapter);
-
-        new TabLayoutMediator(tabLayout, viewPager2,
-                new TabLayoutMediator.TabConfigurationStrategy() {
-                    @Override
-                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                        switch (modalities.get(position)) {
-                            case FACE: tab.setText(R.string.face_label);
-                                break;
-                            case FINGERPRINT_SLAB_LEFT: tab.setText(R.string.left_slap);
-                                break;
-                            case FINGERPRINT_SLAB_RIGHT: tab.setText(R.string.right_slap);
-                                break;
-                            case FINGERPRINT_SLAB_THUMBS: tab.setText(R.string.thumbs_label);
-                                break;
-                            case IRIS_DOUBLE: tab.setText(R.string.double_iris);
-                                break;
-                        }
-                    }
-                }).attach();
-
-        // To get swipe event of viewpager2
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            // This method is triggered when there is any scrolling activity for the current page
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
-
-            // triggered when you select a new page
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-            }
-
-            // triggered when there is
-            // scroll state will be changed
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-            }
-        });
     }
 
     private void setupConfiguredBioAttributes() {
@@ -192,5 +167,28 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
             identifiedModalities.put(modality, ListUtils.intersection(this.bioAttributes,
                     modality.getAttributes()));
         }
+    }
+
+    private HashMap<Modality, Boolean> getCaptureStatuses() {
+        for(Modality modality : modalities) {
+            int threshold = biometricsService.getModalityThreshold(modality);
+            int allowedAttempts = biometricsService.getAttemptsCount(modality);
+            List<BiometricsDto> list = registrationDto.getBestBiometrics(fieldSpecDto.getId(), modality);
+            if(list.isEmpty()) {
+                statuses.put(modality, false);
+                continue;
+            }
+
+            long exceptions = list.stream().filter( o -> o.isException()).count();
+            double totalScores = list.stream().mapToDouble(BiometricsDto::getQualityScore).sum();
+            int score = (int)Math.ceil(totalScores/(modality.getAttributes().size() - exceptions));
+            int retries = list.get(0).getNumOfRetries();
+            //will be true only in below 3 cases
+            //1. All attributes are marked as exception
+            //2. average quality score is greater or equal to configured threshold
+            //3. exhausted all the available attempts
+            statuses.put(modality, exceptions == modality.getAttributes().size() || score >= threshold || retries >= allowedAttempts);
+        }
+        return statuses;
     }
 }

@@ -80,5 +80,8 @@
     <string name="right_slap">दायां थप्पड़</string>
     <string name="thumbs_label">अंगूठे</string>
     <string name="fingers">फिंगर्स</string>
+    <string name="quality_score">गुणवत्ता स्कोर: %d</string>
+    <string name="threshold_score">थ्रेसहोल्ड स्कोर: %d</string>
+    <string name="attempt_number">प्रयास: %d</string>
 
 </resources>

@@ -4,31 +4,77 @@
                  android:layout_height="match_parent">
 
     <FrameLayout android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:id="@+id/bio_score_frame">
+                 android:layout_height="wrap_content">
         <ProgressBar
                 android:id="@+id/bio_score_bar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:mirrorForRtl="true"
                 android:indeterminate="false"
-                android:layout_margin="5dp"
-                android:layout_marginLeft="15dp"
                 android:max="@integer/max_threshold"
                 android:min="@integer/min_threshold"
+                android:tooltipText="0"
                 android:progress="0"/>
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_margin="5dp"
-                  android:id="@+id/current_score"
-                  android:text="0">
-        </TextView>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:text="0"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:textColor="@color/black"
+                    android:gravity="right"
+                    android:textStyle="bold"
+                    android:text="100"/>
+        </LinearLayout>
     </FrameLayout>
 
     <FrameLayout android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:layout_margin="30dp"
                  android:gravity="center">
+
+        <LinearLayout android:id="@+id/score_board"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:gravity="center"
+                      android:orientation="vertical"
+                      android:backgroundTint="@color/white">
+            <TextView
+                    android:id="@+id/current_attempt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:text="Attempt : 0"/>
+            <TextView
+                    android:id="@+id/current_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:text="Quality Score : 0"/>
+        </LinearLayout>
+
         <ImageView
                 android:id="@+id/current_modality_image"
                 android:layout_width="match_parent"
@@ -44,22 +90,26 @@
         </LinearLayout>
 
     </FrameLayout>
-    <!-- Need to add attempts threshold and score details -->
 
     <LinearLayout android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:id="@+id/bio_action_buttons"
                   android:orientation="vertical"
-                  android:layout_margin="16dp"
-                  android:layout_alignParentRight="true"
-                  android:layout_alignParentBottom="true">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
-                                                                               android:layout_height="wrap_content"
-                                                                               android:layout_margin="@dimen/bio_attempts_margin"
-                                                                               android:src="@drawable/button_option_selected"
-                                                                               android:tint="@android:color/white"
-                                                                               android:onClick="scan_modality">
-        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+                  android:layout_margin="30dp"
+                  android:layout_alignParentStart="true"
+                  android:layout_alignParentBottom="true"
+                  android:layout_marginBottom="50dp">
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
+                                                                           android:layout_height="wrap_content"
+                                                                           android:src="@drawable/button_option_selected"
+                                                                           android:layout_margin="30dp"
+                                                                           android:tint="@android:color/white"
+                                                                           android:layout_alignParentEnd="true"
+                                                                           android:layout_alignParentBottom="true"
+                                                                           android:id="@+id/bio_scan_button"
+                                                                           android:onClick="scan_modality">
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
 </RelativeLayout>

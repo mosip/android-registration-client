@@ -6,23 +6,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 import io.mosip.registration.app.R;
 import io.mosip.registration.app.activites.ModalityActivity;
 import io.mosip.registration.clientmanager.constant.Modality;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /***
  * The adapter class for the RecyclerView, contains the sports data.
  */
-public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHolder>  {
+public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHolder> {
 
     private ArrayList<Modality> modalityData;
+    private HashMap<Modality, Boolean> captureStatuses;
     private Context mContext;
     private String fieldId;
     private String purpose;
+    private ModalityAdapter modalityAdapter;
 
     /**
      * Constructor that passes in the Modality data and the context.
@@ -30,8 +32,10 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
      * @param list ArrayList containing the Modality data.
      * @param context Context of the application.
      */
-    public ModalityAdapter(Context context, ArrayList<Modality> list, String fieldId, String purpose) {
+    public ModalityAdapter(Context context, HashMap<Modality, Boolean>  captureStatuses, ArrayList<Modality> list,
+                           String fieldId, String purpose) {
         this.modalityData = list;
+        this.captureStatuses = captureStatuses;
         this.mContext = context;
         this.purpose = purpose;
         this.fieldId = fieldId;
@@ -49,6 +53,7 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
     @Override
     public ModalityAdapter.ViewHolder onCreateViewHolder(
             ViewGroup parent, int viewType) {
+        modalityAdapter = this;
         return new ViewHolder(LayoutInflater.from(mContext).
                 inflate(R.layout.modality_list_item, parent, false));
     }
@@ -83,8 +88,7 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
     /**
      * ViewHolder class that represents each row of data in the RecyclerView.
      */
-    class ViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Member Variables for the TextViews
         private ImageView modalityImage;
@@ -96,10 +100,8 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
          */
         ViewHolder(View itemView) {
             super(itemView);
-
             // Initialize the views.
             modalityImage = itemView.findViewById(R.id.modalityImage);
-
             // Set the OnClickListener to the entire view.
             itemView.setOnClickListener(this);
         }
@@ -127,7 +129,13 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
                     modalityImage.setImageResource(R.drawable.double_iris);
                     modalityImage.setTag(Modality.IRIS_DOUBLE.name());
                     break;
+                case EXCEPTION_PHOTO:
+                    modalityImage.setImageResource(R.drawable.exception_photo);
+                    modalityImage.setTag(Modality.EXCEPTION_PHOTO.name());
+                    break;
             }
+            modalityImage.setBackground(mContext.getResources().getDrawable(captureStatuses.getOrDefault(modality, false) ?
+                    R.drawable.border_green : R.drawable.border_red));
         }
 
         /**
@@ -138,7 +146,6 @@ public class ModalityAdapter extends RecyclerView.Adapter<ModalityAdapter.ViewHo
         @Override
         public void onClick(View view) {
             Modality currentModality = modalityData.get(getAdapterPosition());
-            Toast.makeText(mContext, "Clicked on " + currentModality.name(), Toast.LENGTH_LONG).show();
             Intent detailIntent = new Intent(mContext, ModalityActivity.class);
             detailIntent.putExtra("modality", currentModality);
             detailIntent.putExtra("fieldId", fieldId);

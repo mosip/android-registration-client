@@ -152,10 +152,11 @@ public class UserInterfaceHelperService {
         int width = 0;
         int height = 0;
         for(Bitmap image : images) {
-            if(image == null)
-                image = missingImage;
-            width = width + image.getWidth();
-            height = image.getHeight() > height ? image.getHeight() : height;
+            //in case image is not present, replace null with missingImage
+            int imageH = (image == null) ? missingImage.getHeight() : image.getHeight();
+            int imageW = (image == null) ? missingImage.getWidth() : image.getWidth();
+            width = width + imageW;
+            height = imageH > height ? imageH : height;
         }
 
         // Create a Bitmap large enough to hold both input images and a canvas to draw to this

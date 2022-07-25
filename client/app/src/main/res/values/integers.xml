@@ -3,6 +3,7 @@
     <integer name="grid_column_count">2</integer>
     <integer name="min_threshold">0</integer>
     <integer name="max_threshold">100</integer>
+    <integer name="bio_attempts_margin">10</integer>
 
     <item name="right_little_x" type="integer" format="float">0.62</item>
     <item name="right_little_y" type="integer" format="float">0.68</item>

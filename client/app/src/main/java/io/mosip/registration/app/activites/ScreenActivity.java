@@ -28,7 +28,9 @@ import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
+import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.BiometricsService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
@@ -49,7 +51,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
     private int BIO_SCAN_REQUEST_CODE = 1;
     private int SCAN_REQUEST_CODE = 99;
     private Map<Integer, String> requestCodeMap = new HashMap<>();
-    private Map<String, DynamicView> currentDynamicViews = new HashMap<>();
+    public static Map<String, DynamicView> currentDynamicViews = new HashMap<>();
 
     @Inject
     RegistrationService registrationService;
@@ -59,6 +61,9 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
 
     @Inject
     MasterDataService masterDataService;
+
+    @Inject
+    Biometrics095Service biometricsService;
 
     @Inject
     LanguageRepository languageRepository;
@@ -82,7 +87,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
             List<String> languages = registrationService.getRegistrationDto().getSelectedLanguages();
             String[] screens = getIntent().getExtras().getStringArray("screens");
             int currentScreenIndex = getIntent().getExtras().getInt("nextScreenIndex");
-
+            currentDynamicViews.clear();
             final Button nextButton = findViewById(R.id.next);
 
             nextButton.setOnClickListener(v -> {
@@ -140,7 +145,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
 
     private boolean loadScreenFields(ScreenSpecDto screenSpecDto) throws Exception {
         fieldPanel.removeAllViews();
-        DynamicComponentFactory factory = new DynamicComponentFactory(this, masterDataService);
+        DynamicComponentFactory factory = new DynamicComponentFactory(this, masterDataService, biometricsService);
 
         Map<String, Object> mvelContext = this.registrationService.getRegistrationDto().getMVELDataContext();
         int visibleFields = 0;

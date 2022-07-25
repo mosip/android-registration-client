@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import static io.mosip.registration.clientmanager.constant.RegistrationConstants.EXCEPTION_PHOTO_ATTR;
+
 public class Biometrics095Service extends BiometricsService {
 
     private static final String TAG = Biometrics095Service.class.getSimpleName();
@@ -49,10 +51,11 @@ public class Biometrics095Service extends BiometricsService {
         captureRequest.setSpecVersion("0.9.5");
         List<CaptureBioDetail> list = new ArrayList<>();
         CaptureBioDetail detail = new CaptureBioDetail();
-        detail.setType(modality.getSingleType().name());
-        detail.setException(Modality.getSpecBioSubType(exceptionAttributes).toArray(new String[0]));
+        detail.setType(modality == Modality.EXCEPTION_PHOTO ? Modality.FACE.getSingleType().name() : modality.getSingleType().name());
+        detail.setException(modality == Modality.EXCEPTION_PHOTO ? exceptionAttributes.toArray(new String[0]) :
+                Modality.getSpecBioSubType(exceptionAttributes).toArray(new String[0]));
         detail.setBioSubType(new String[]{});
-        detail.setCount(modality.getAttributes().size()-exceptionAttributes.size());
+        detail.setCount(modality == Modality.EXCEPTION_PHOTO ? 1 : modality.getAttributes().size()-exceptionAttributes.size());
         detail.setDeviceId(deviceId);
         detail.setRequestedScore(getModalityThreshold(modality));
         detail.setDeviceSubId(String.valueOf(modality.getDeviceSubId()));
@@ -87,8 +90,9 @@ public class Biometrics095Service extends BiometricsService {
                 //TODO need request transaction id to validate response transaction id
                 //TODO need requested spec version to validate response spec version
 
-                biometricsDtoList.add(new BiometricsDto(captureDto.getBioType(),
-                        captureDto.getBioSubType(),
+                biometricsDtoList.add(new BiometricsDto(
+                        modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().name() : captureDto.getBioType(),
+                        modality == Modality.EXCEPTION_PHOTO ? EXCEPTION_PHOTO_ATTR.get(0) : captureDto.getBioSubType(),
                         captureDto.getBioValue(),
                         bio.getSpecVersion(),
                         exemptedBioSubTypes.contains(captureDto.getBioSubType()),
@@ -203,6 +207,7 @@ public class Biometrics095Service extends BiometricsService {
             case FACE:
                 return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.FACE_ATTEMPTS_KEY);
         }
+        //Number of attempts for exception photo is not restricted
         return 0;
     }
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
@@ -33,12 +32,10 @@ import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
 import io.mosip.registration.packetmanager.dto.PacketWriter.*;
 import io.mosip.registration.packetmanager.util.DateUtils;
-import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 import lombok.NonNull;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
@@ -68,17 +65,14 @@ public class RegistrationServiceImpl implements RegistrationService {
     private RegistrationRepository registrationRepository;
     private IdentitySchemaRepository identitySchemaRepository;
     private PacketWriterService packetWriterService;
-    private UserInterfaceHelperService userInterfaceHelperService;
     private MasterDataService masterDataService;
     private ClientCryptoManagerService clientCryptoManagerService;
     private KeyStoreRepository keyStoreRepository;
-    private ObjectMapper objectMapper;
     private GlobalParamRepository globalParamRepository;
     private AuditManagerService auditManagerService;
 
     @Inject
-    public RegistrationServiceImpl(Context context, ObjectMapper objectMapper, PacketWriterService packetWriterService,
-                                   UserInterfaceHelperService userInterfaceHelperService,
+    public RegistrationServiceImpl(Context context, PacketWriterService packetWriterService,
                                    RegistrationRepository registrationRepository,
                                    MasterDataService masterDataService,
                                    IdentitySchemaRepository identitySchemaRepository,
@@ -89,13 +83,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
-        this.userInterfaceHelperService = userInterfaceHelperService;
         this.registrationRepository = registrationRepository;
         this.masterDataService = masterDataService;
         this.identitySchemaRepository = identitySchemaRepository;
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.keyStoreRepository = keyStoreRepository;
-        this.objectMapper = objectMapper;
         this.globalParamRepository = globalParamRepository;
         this.auditManagerService = auditManagerService;
     }
@@ -128,7 +120,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (version == null)
             throw new ClientCheckedException(context, R.string.err_002);
 
-        String certificateData = this.keyStoreRepository.getPolicyCertificateData(centerMachineDto.getMachineRefId());
+        String certificateData = keyStoreRepository.getPolicyCertificateData(centerMachineDto.getMachineRefId());
         if (certificateData == null)
             throw new ClientCheckedException(context, R.string.err_008);
 
@@ -138,11 +130,16 @@ public class RegistrationServiceImpl implements RegistrationService {
         timestamp = timestamp.replaceAll(":|T|Z|-", "");
         String rid = String.format("%s%s10031%s", centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), timestamp);
 
-        this.registrationDto = new RegistrationDto(rid, "NEW", "NEW", version, languages);
+        Map<Modality, Integer> bioThresholds = new HashMap<>();
+        for(Modality modality : Modality.values()) {
+            bioThresholds.put(modality, getAttemptsCount(modality));
+        }
+        this.registrationDto = new RegistrationDto(rid, "NEW", "NEW", version, languages, bioThresholds);
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE).edit();
         editor.putString(SessionManager.RID, this.registrationDto.getRId());
+        editor.commit();
 
         return this.registrationDto;
     }
@@ -176,17 +173,10 @@ public class RegistrationServiceImpl implements RegistrationService {
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 
-            Map<String, BiometricRecord> capturedData = new HashMap<>();
-            this.registrationDto.getAllBiometricFields().forEach(entry -> {
-                String[] parts = entry.getKey().split("_");
-                BiometricRecord biometricRecord = capturedData.get(parts[0]);
-                if (biometricRecord == null) {
-                    biometricRecord = new BiometricRecord();
-                    biometricRecord.setSegments(new ArrayList<>());
-                    capturedData.put(parts[0], biometricRecord);
-                }
-                biometricRecord.getSegments().add(buildBIR(entry.getValue()));
-                packetWriterService.setBiometric(this.registrationDto.getRId(), parts[0], biometricRecord);
+            this.registrationDto.CAPTURED_BIO_FIELDS.forEach( field -> {
+                BiometricRecord biometricRecord = getBiometricRecord(field);
+                biometricRecord.getSegments().removeIf(Objects::isNull);
+                packetWriterService.setBiometric(this.registrationDto.getRId(), field, biometricRecord);
             });
 
             CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
@@ -201,7 +191,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     this.registrationDto.getProcess(),
                     true, centerMachineDto.getMachineRefId());
 
-            Log.i(TAG, "Packet created here : " + containerPath);
+            Log.i(TAG, "Packet created : " + containerPath);
 
             if (containerPath == null || containerPath.trim().isEmpty()) {
                 throw new ClientCheckedException(context, R.string.err_005);
@@ -215,20 +205,43 @@ public class RegistrationServiceImpl implements RegistrationService {
                     centerMachineDto.getCenterId(), "NEW", additionalInfo);
 
         } finally {
-            this.registrationDto.cleanup();
-            SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
-                    Context.MODE_PRIVATE).edit();
-            editor.remove(SessionManager.RID);
-            this.registrationDto = null;
+            clearRegistration();
         }
     }
 
     @Override
     public void clearRegistration() {
+        SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE).edit();
+        editor.remove(SessionManager.RID);
+        editor.commit();
         if (this.registrationDto != null) {
             this.registrationDto.cleanup();
             this.registrationDto = null;
         }
+    }
+
+    private BiometricRecord getBiometricRecord(String fieldId) {
+        BiometricRecord biometricRecord = new BiometricRecord();
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_LEFT).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_RIGHT).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_THUMBS).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.IRIS_DOUBLE).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FACE).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
+            biometricRecord.getSegments().add(buildBIR(b));
+        });
+        return biometricRecord;
     }
 
     private void addMetaInfoMap(String centerId, String machineId, String makerId) throws Exception {
@@ -270,8 +283,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         //biometric device details
         List<Map<String, Object>> capturedRegisteredDevices = new ArrayList<>();
-        for(Modality modality : this.registrationDto.bioDevices.keySet()) {
-            capturedRegisteredDevices.add((Map<String, Object>) this.registrationDto.bioDevices.get(modality));
+        for(Modality modality : this.registrationDto.BIO_DEVICES.keySet()) {
+            capturedRegisteredDevices.add((Map<String, Object>) this.registrationDto.BIO_DEVICES.get(modality));
         }
         packetWriterService.addMetaInfo(rid, "capturedRegisteredDevices", capturedRegisteredDevices);
     }
@@ -314,7 +327,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             audits.add(auditMap);
         }
         globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL,
-                String.valueOf(list.get(list.size()-1).getActionTimeStamp()));
+                list.isEmpty() ? null : String.valueOf(list.get(list.size()-1).getActionTimeStamp()));
         return audits;
     }
 
@@ -383,6 +396,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     public BIR buildBIR(BiometricsDto biometricsDto) {
+        if(biometricsDto == null)
+            return null;
+
         SingleType singleType = SingleType.valueOf(biometricsDto.getModality());
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
@@ -411,6 +427,9 @@ public class RegistrationServiceImpl implements RegistrationService {
             payLoad = biometricsDto.getDecodedBioResponse().replace(bioValue, PacketManagerConstant.BIOVALUE_PLACEHOLDER);
         }
 
+        if(singleType == SingleType.FACE || singleType == SingleType.EXCEPTION_PHOTO)
+            biometricsDto.setBioSubType(EMPTY);
+
         return new BIR.BIRBuilder().withBdb(iso == null ? new byte[0] : iso)
                 .withVersion(versionType)
                 .withCbeffversion(versionType)
@@ -428,5 +447,21 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .withOthers(OTHER_KEY_PAYLOAD, payLoad == null ? EMPTY : payLoad)
                 .withOthers(OTHER_KEY_SPEC_VERSION, biometricsDto.getSpecVersion() == null ? EMPTY : biometricsDto.getSpecVersion())
                 .build();
+    }
+
+    private int getAttemptsCount(Modality modality) {
+        switch (modality) {
+            case FINGERPRINT_SLAB_LEFT:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.LEFT_SLAP_ATTEMPTS_KEY);
+            case FINGERPRINT_SLAB_RIGHT:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.RIGHT_SLAP_ATTEMPTS_KEY);
+            case FINGERPRINT_SLAB_THUMBS:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.THUMBS_ATTEMPTS_KEY);
+            case IRIS_DOUBLE:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.IRIS_ATTEMPTS_KEY);
+            case FACE:
+                return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.FACE_ATTEMPTS_KEY);
+        }
+        return 0;
     }
 }

@@ -1,9 +1,7 @@
 package io.mosip.registration.app.dynamicviews;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
