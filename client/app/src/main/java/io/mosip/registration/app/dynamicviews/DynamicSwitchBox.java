@@ -55,7 +55,7 @@ public class DynamicSwitchBox extends LinearLayout implements DynamicView {
                 String.format(FIELD_LABEL_TEMPLATE, String.join(ClientConstants.LABEL_SEPARATOR, labels)), 1));
 
         ViewGroup viewGroup = findViewById(R.id.option_holder_panel);
-        List<GenericValueDto> options = masterDataService.getFieldValues(fieldSpecDto.getId(), registrationDto.getSelectedLanguages().get(0));
+        List<GenericValueDto> options = masterDataService.getFieldValues(fieldSpecDto.getSubType(), registrationDto.getSelectedLanguages().get(0));
 
         for(GenericValueDto option : options) {
             Button button = new Button(context);
