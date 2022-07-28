@@ -9,8 +9,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.os.Environment;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.room.Room;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,9 +19,13 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.shadows.ShadowEnvironment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,6 +36,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.mosip.registration.app.util.PacketUploadService;
 import io.mosip.registration.clientmanager.config.ClientDatabase;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
@@ -38,17 +45,22 @@ import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
+import io.mosip.registration.clientmanager.repository.AuditRepository;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
+import io.mosip.registration.keymanager.dto.SignResponseDto;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
@@ -76,7 +88,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @since 05/06/2022.
  */
 
-@RunWith(AndroidJUnit4.class)
+@RunWith(RobolectricTestRunner.class)
 public class PacketUploadServiceTest {
 
     private static final String CERT_DATA_FILE_NAME = "certificate_data.txt";
@@ -87,6 +99,8 @@ public class PacketUploadServiceTest {
     private static final String UPLOAD_REGISTRATION_200_SUCCESS = "upload_registration_200_success.json";
     private static final String UPLOAD_REGISTRATION_200_FAILED = "upload_registration_200_failed.json";
 
+    private static final String KEY_INDEX = "a3:1f:08:0b:2e:ff:28:f5:72:44:12:dc:f9:da:90:58:ac:b7:df:dc:d8:a9:3f:d7:c2:a2:75:ce:d7:4a:1b:5a";
+    private static final String SIGNED_DATA = "fLPx2Umz3WRgbPCpDrFysQswRZfN-iEK7g2oCAqEGBPlor410YkN-xnRFxjrMy_067pzSOuC3Qg73qntbdzxBpiRnMIn8DQpClbJKvHMMx11g-uksLcJj58DMegi_9O5fknK0sFLrlGUKRPGc9jDQxEiwUYpJ_lTveTTXBVGKgDleb2rf_FrVv1yEtiu7r1ElxLdVB4ZSAOsd37jZOYlnfXqMKXdTpOIybd0KLduRUft0UGcZ3JZlY-omoP5hAvTHzmsaPNNwn1SJV8fuUlobQKMGeysyWDbIz5-A-glLIPumCX4mCeNzBZAVLIB2ee_jJsXp_0jSWSbImtnvruX9g";
     private static final Double SCHEMA_VERSION = 0.1;
 
     Context appContext;
@@ -96,19 +110,21 @@ public class PacketUploadServiceTest {
     Retrofit retrofit;
 
     SyncRestService syncRestService;
-
     PacketUploadService packetUploadService;
-
     RegistrationService registrationService;
-
     PacketService packetService;
-
+    AuditManagerService auditManagerService;
+    AutoCloseable openMocks;
 
     @Before
     public void setUp() throws Exception {
+        openMocks = MockitoAnnotations.openMocks(this);
+        ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
+
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        clientDatabase = ClientDatabase.getDatabase(appContext);
-        clientDatabase.clearAllTables();
+        clientDatabase = Room.inMemoryDatabaseBuilder(appContext, ClientDatabase.class)
+                .allowMainThreadQueries()
+                .build();
 
         //-------MOCK Server Configuration Start-------
         server = new MockWebServer();
@@ -135,7 +151,6 @@ public class PacketUploadServiceTest {
                 .build();
 
         syncRestService = retrofit.create(SyncRestService.class);
-
 
         //-------MOCK Server Configuration End-------
 
@@ -167,13 +182,15 @@ public class PacketUploadServiceTest {
 
         KeyStoreRepository keyStoreRepository = mock(KeyStoreRepository.class);
 
+        ClientCryptoManagerService clientCryptoManagerService = mock(LocalClientCryptoServiceImpl.class);
+        when(clientCryptoManagerService.getClientKeyIndex()).thenReturn(KEY_INDEX);
+        when(clientCryptoManagerService.sign(any())).thenReturn(new SignResponseDto(SIGNED_DATA));
+
         String certificateData = RestServiceTestHelper.getStringFromFile(appContext, CERT_DATA_FILE_NAME);
         when(keyStoreRepository.getPolicyCertificateData(anyString()))
                 .thenReturn(certificateData);
 
         //-------Service MOCKING End-------
-
-        ClientCryptoManagerService clientCryptoManagerService = new LocalClientCryptoServiceImpl(appContext);
 
         CryptoManagerService cryptoManagerService = new CryptoManagerServiceImpl(appContext, keyStoreRepository);
 
@@ -186,16 +203,24 @@ public class PacketUploadServiceTest {
         PacketWriterService packetWriterService = new PacketWriterServiceImpl(appContext, packetManagerHelper, packetKeeper);
 
         RegistrationRepository registrationRepository = new RegistrationRepository(clientDatabase.registrationDao(), objectMapper);
+        GlobalParamRepository globalParamRepository = new GlobalParamRepository(clientDatabase.globalParamDao());
+        AuditRepository auditRepository = new AuditRepository(clientDatabase.auditDao());
+
+        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
 
         registrationService = new RegistrationServiceImpl(appContext, packetWriterService,
-                null, registrationRepository, masterDataService,
-                identitySchemaRepository, clientCryptoManagerService, keyStoreRepository);
+                registrationRepository, masterDataService,
+                identitySchemaRepository, clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService);
 
         packetService = new PacketServiceImpl(appContext, registrationRepository,
                 packetCryptoService, syncRestService, masterDataService);
 
         packetUploadService = new PacketUploadService(packetService);
+    }
 
+    @After
+    public void tearDown() throws Exception {
+        openMocks.close();
     }
 
     @Test
@@ -564,7 +589,13 @@ public class PacketUploadServiceTest {
         RegistrationDto registrationDto;
 
         try {
-            RegistrationDto dummyReg = new Gson().fromJson(RestServiceTestHelper.getStringFromFile(appContext, DUMMY_REGISTRATION_FILE_NAME), RegistrationDto.class);
+            auditManagerService.audit(AuditEvent.LOADED_ABOUT, Components.LOGIN);
+            auditManagerService.audit(AuditEvent.LOADED_HOME, Components.LOGIN);
+            auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.LOGIN);
+
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonString = RestServiceTestHelper.getStringFromFile(appContext, DUMMY_REGISTRATION_FILE_NAME);
+            RegistrationDto dummyReg = mapper.readValue(jsonString, RegistrationDto.class);
 
             registrationService.startRegistration(dummyReg.getSelectedLanguages());
             registrationDto = registrationService.getRegistrationDto();
@@ -577,7 +608,7 @@ public class PacketUploadServiceTest {
                 String[] strVal = key.split("_");
                 String fieldId = strVal.length > 0 ? strVal[0] : "fieldId";
                 String attribute = strVal.length > 1 ? strVal[0] : "attribute";
-                registrationDto.addBiometric(fieldId, attribute, entry.getValue());
+                registrationDto.addBiometric(fieldId, attribute, 1, entry.getValue());
             }
 
             for (Map.Entry<String, Object> entry : dummyReg.getDemographics().entrySet()) {

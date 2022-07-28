@@ -176,7 +176,6 @@
       "specVersion": "0.9.5"
     }
   },
-  "dateTime": {},
   "demographics": {
     "gender": [
       {
@@ -1090,7 +1089,7 @@
   },
   "flowType": "NEW",
   "process": "NEW",
-  "rId": "10001106921003120220704141850",
+  "rid": "10001106921003120220704141850",
   "schemaVersion": 0.1,
   "selectedLanguages": [
     "eng"

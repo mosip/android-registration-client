@@ -20,8 +20,8 @@ ext {
     compileSdkVersion = 31
     buildToolsVersion = "31.0.0"
 
-    minSdkVersion=28
-    targetSdkVersion=31
+    minSdkVersion = 28
+    targetSdkVersion = 31
 
     junitVersion = "4.+"
 
@@ -42,10 +42,15 @@ task clean(type: Delete) {
 
 sonarqube {
     properties {
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.projectKey", "android-registration-client"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectKey", "mosip_android-registration-client"
+        property "sonar.organization", "mosip"
         property "sonar.projectName", "android-registration-client"
-       // property "sonar.projectVersion", project.versionName
+        // property "sonar.projectVersion", project.versionName
         property "sonar.sourceEncoding", "UTF-8"
+        //ignoring the below files
+        property "sonar.c.file.suffixes", "-"
+        property "sonar.cpp.file.suffixes", "-"
+        property "sonar.objc.file.suffixes", "-"
     }
 }

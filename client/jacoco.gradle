@@ -2,6 +2,18 @@ apply plugin: 'jacoco'
 jacoco {
     toolVersion = "0.8.7"
 }
+
+android {
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+                excludes = ['jdk.internal.*']
+            }
+        }
+    }
+}
+
 project.afterEvaluate {
     if (android.hasProperty("applicationVariants")) {
         android.applicationVariants.all { variant ->
