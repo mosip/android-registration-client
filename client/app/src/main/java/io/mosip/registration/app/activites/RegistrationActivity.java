@@ -96,7 +96,15 @@ public class RegistrationActivity extends DaggerAppCompatActivity {
                 else
                     selectedLanguages.remove(getLangCode(checkBox.getText().toString()));
 
-                startRegistration.setEnabled(selectedLanguages.size() >= minCount && selectedLanguages.size() <= maxCount);
+                boolean enableNextBtn = true;
+                for (String lang : mandatoryLanguages) {
+                    if (!selectedLanguages.contains(lang)) {
+                        enableNextBtn = false;
+                        break;
+                    }
+                }
+
+                startRegistration.setEnabled(enableNextBtn && selectedLanguages.size() >= minCount && selectedLanguages.size() <= maxCount);
             }
         });
 
