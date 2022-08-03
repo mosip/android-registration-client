@@ -42,9 +42,10 @@ task clean(type: Delete) {
 
 sonarqube {
     properties {
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.projectKey", "android-registration-client"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectKey", "mosip_android-registration-client"
         property "sonar.projectName", "android-registration-client"
+        property 'sonar.organization', 'Modular Open Source Identity Platform'
        // property "sonar.projectVersion", project.versionName
         property "sonar.sourceEncoding", "UTF-8"
     }
