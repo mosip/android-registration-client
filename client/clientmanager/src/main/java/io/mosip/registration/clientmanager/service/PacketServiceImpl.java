@@ -274,7 +274,7 @@ public class PacketServiceImpl implements PacketService {
                     List<PacketStatusDto> packetStatusList = response.body().getResponse();
                     int packetSyncSuccess = 0;
 
-                    if (packetStatusList != null || packetStatusList.size() > 0) {
+                    if (packetStatusList != null && packetStatusList.size() > 0) {
                         for (PacketStatusDto packetStatus : packetStatusList) {
                             PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getPacketId(), packetStatus.getStatusCode());
                             registrationRepository.updateStatus(updateDto.getRegistrationId(), updateDto.getStatusCode(),
