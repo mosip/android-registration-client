@@ -44,9 +44,9 @@ sonarqube {
     properties {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.projectKey", "mosip_android-registration-client"
-        property "sonar.organization", "mosip"
         property "sonar.projectName", "android-registration-client"
-        // property "sonar.projectVersion", project.versionName
+        property 'sonar.organization', 'Modular Open Source Identity Platform'
+       // property "sonar.projectVersion", project.versionName
         property "sonar.sourceEncoding", "UTF-8"
         //ignoring the below files
         property "sonar.c.file.suffixes", "-"
