@@ -69,6 +69,6 @@ sonarqube {
         property "sonar.java.binaries", "build/intermediates/javac/debug"
         property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
         //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
-        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
+        property "sonar.coverage.jacoco.xmlReportPaths", "./build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
     }
 }

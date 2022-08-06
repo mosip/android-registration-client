@@ -79,6 +79,15 @@
     <string name="right_slap">Right Slap</string>
     <string name="thumbs_label">Thumbs</string>
     <string name="fingers">Fingers</string>
+    <string name="lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet</string>
+    <string name="packets_upload_scheduled">Packets upload scheduled</string>
+    <string name="select_all">Select All</string>
+    <string name="upload">Upload</string>
+    <string name="packet_upload_min_bw">Weak connection. Current %s kbps, required %s kbps</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="change_connection_settings">Upload over wifi only, please change your connection settings.</string>
+    <string name="settings">Settings</string>
+
     <string name="quality_score">Quality Score: %d</string>
     <string name="threshold_score">Threshold Score: %d</string>
     <string name="attempt_number">Attempt: %d</string>

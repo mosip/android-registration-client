@@ -81,7 +81,14 @@
     <string name="thumbs_label">Pouces</string>
     <string name="fingers">Des doigts</string>
     <string name="ack_slip">Reconnaissance</string>
+    <string name="packets_upload_scheduled">Téléchargement de paquets programmé</string>
+    <string name="select_all">Tout sélectionner</string>
+    <string name="upload">télécharger</string>
+    <string name="packet_upload_min_bw">Réseau faible. Bande passante minimale requise %s, bande passante actuelle %s</string>
     <string name="quality_score">Niveau de qualité: %d</string>
     <string name="threshold_score">Score seuil : %d</string>
     <string name="attempt_number">Tentative : %d</string>
+    <string name="no_internet_connection">Pas de connexion Internet</string>
+    <string name="change_connection_settings">Télécharger via Wi-Fi uniquement, veuillez modifier vos paramètres de connexion.</string>
+    <string name="settings">Réglages</string>
 </resources>

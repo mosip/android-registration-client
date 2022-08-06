@@ -1,22 +1,45 @@
 package io.mosip.registration.clientmanager.dto.registration;
 
 import android.util.Log;
+
 import androidx.annotation.NonNull;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ValueRange;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.sbi.DigitalId;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.util.JsonUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ValueRange;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class RegistrationDto extends Observable {
 
     private static final String TAG = RegistrationDto.class.getSimpleName();
@@ -33,7 +56,6 @@ public class RegistrationDto extends Observable {
     private String flowType;
     private String process;
     private Double schemaVersion;
-    private LocalDateTime dateTime;
     private List<String> selectedLanguages;
     private ConsentDto consentDto;
     private Map<String, Object> demographics;
@@ -54,7 +76,6 @@ public class RegistrationDto extends Observable {
                            @NonNull Double schemaVersion, @NonNull List<String> languages,
                            @NonNull Map<Modality, Integer> bioThresholds) {
         this.rId = rid;
-        this.dateTime = LocalDateTime.now(ZoneOffset.UTC);
         this.flowType = flowType;
         this.process = process;
         this.schemaVersion = schemaVersion;
@@ -115,6 +136,11 @@ public class RegistrationDto extends Observable {
         else
             this.demographics.remove(fieldId);
 
+        clearAndNotifyAllObservers();
+    }
+
+    public void addDemographicField(String fieldId, Object value) {
+        this.demographics.put(fieldId, value);
         clearAndNotifyAllObservers();
     }
 

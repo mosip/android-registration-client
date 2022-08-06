@@ -22,7 +22,7 @@ public abstract class ActivityBuildersModule {
     abstract PreviewActivity contributePreviewActivity();
 
     @ContributesAndroidInjector
-    abstract ListingActivity contributeListingActivity();
+    abstract PacketListActivity contributeListingActivity();
 
     @ContributesAndroidInjector
     abstract ScreenActivity contributeScreenActivity();

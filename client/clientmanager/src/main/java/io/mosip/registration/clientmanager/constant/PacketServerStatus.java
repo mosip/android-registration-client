@@ -1,10 +1,10 @@
 package io.mosip.registration.clientmanager.constant;
 
 public enum PacketServerStatus {
-
     PROCESSED,
     ACCEPTED,
     RESEND,
     REJECTED,
-    REREGISTER;
+    REREGISTER,
+    UPLOAD_PENDING
 }

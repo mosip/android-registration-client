@@ -36,6 +36,7 @@ public enum AuditEvent {
     //REG_PACKET_LIST
     SYNC_PACKET("REG-PKT-001", USER_EVENT.getCode(), "SYNC_PACKET", "Packet sync clicked"),
     UPLOAD_PACKET("REG-PKT-002", USER_EVENT.getCode(), "UPLOAD_PACKET", "Upload packet clicked"),
+    SYNC_AND_UPLOAD_PACKET("REG-PKT-003", USER_EVENT.getCode(), "SYNC_AND_UPLOAD_PACKET", "sync and upload started"),
 
     //JOB_SERVICE
     TRIGGER_JOB("REG-JOB-001", USER_EVENT.getCode(), "TRIGGER_JOB", "Trigger job service clicked"),

@@ -22,6 +22,7 @@ import io.mosip.registration.clientmanager.jobs.PacketStatusSyncJob;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.util.DateUtil;
 
 /**
  * @author Anshul vanawat
@@ -38,17 +39,14 @@ public class JobManagerServiceImpl implements JobManagerService {
     JobScheduler jobScheduler;
     JobTransactionService jobTransactionService;
     SyncJobDefRepository syncJobDefRepository;
-    DateFormat dateFormat;
-    DateFormat timeFormat;
+    DateUtil dateUtil;
 
-    public JobManagerServiceImpl(Context context, SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService) {
+    public JobManagerServiceImpl(Context context, SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil) {
         this.context = context;
         this.jobScheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE);
         this.syncJobDefRepository = syncJobDefRepository;
         this.jobTransactionService = jobTransactionService;
-
-        dateFormat = android.text.format.DateFormat.getMediumDateFormat(context);
-        timeFormat = android.text.format.DateFormat.getTimeFormat(context);
+        this.dateUtil = dateUtil;
     }
 
     /**
@@ -162,10 +160,7 @@ public class JobManagerServiceImpl implements JobManagerService {
         String lastSync = context.getString(R.string.NA);
 
         if (lastSyncTimeSeconds > 0) {
-            Date lastSyncDate = new Date(TimeUnit.SECONDS.toMillis(lastSyncTimeSeconds));
-            String date = dateFormat.format(lastSyncDate);
-            String time = timeFormat.format(lastSyncDate);
-            lastSync = String.format("%s %s", date, time);
+            lastSync = dateUtil.getDateTime(lastSyncTimeSeconds);
         }
         return lastSync;
     }
@@ -178,10 +173,7 @@ public class JobManagerServiceImpl implements JobManagerService {
 
         if (lastSyncTimeSeconds > 0) {
             long nextSyncTimeSeconds = lastSyncTimeSeconds + JOB_PERIODIC_SECONDS;
-            Date nextSyncTime = new Date(TimeUnit.SECONDS.toMillis(nextSyncTimeSeconds));
-            String date = dateFormat.format(nextSyncTime);
-            String time = timeFormat.format(nextSyncTime);
-            nextSync = String.format("%s %s", date, time);
+            nextSync = dateUtil.getDateTime(nextSyncTimeSeconds);
         }
         return nextSync;
     }

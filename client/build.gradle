@@ -20,8 +20,8 @@ ext {
     compileSdkVersion = 31
     buildToolsVersion = "31.0.0"
 
-    minSdkVersion=28
-    targetSdkVersion=31
+    minSdkVersion = 28
+    targetSdkVersion = 31
 
     junitVersion = "4.+"
 
@@ -48,5 +48,9 @@ sonarqube {
         property 'sonar.organization', 'Modular Open Source Identity Platform'
        // property "sonar.projectVersion", project.versionName
         property "sonar.sourceEncoding", "UTF-8"
+        //ignoring the below files
+        property "sonar.c.file.suffixes", "-"
+        property "sonar.cpp.file.suffixes", "-"
+        property "sonar.objc.file.suffixes", "-"
     }
 }

@@ -80,8 +80,15 @@
     <string name="double_iris">قزحية</string>
     <string name="face_label">وجه</string>
     <string name="exception_photo_label">استثناء الصورة</string>
+    <string name="packets_upload_scheduled">جدولة تحميل الحزم</string>
+    <string name="select_all">اختر الكل</string>
+    <string name="upload">تحميل</string>
+    <string name="packet_upload_min_bw">شبكة ضعيفة. الحد الأدنى لعرض النطاق الترددي المطلوب %s ، عرض النطاق الترددي الحالي %s</string>
     <string name="quality_score">نقاط الجودة: %d</string>
     <string name="threshold_score">درجة العتبة: %d</string>
     <string name="attempt_number">المحاولة: %d</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
+    <string name="change_connection_settings">قم بالتحميل عبر wifi فقط ، يرجى تغيير إعدادات الاتصال الخاصة بك.</string>
+    <string name="settings">إعدادات</string>
 
 </resources>

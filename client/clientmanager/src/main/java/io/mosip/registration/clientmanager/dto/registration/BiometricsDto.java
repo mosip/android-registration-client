@@ -2,9 +2,11 @@ package io.mosip.registration.clientmanager.dto.registration;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class BiometricsDto {
 
     private String modality;
@@ -18,4 +20,12 @@ public class BiometricsDto {
     private int numOfRetries;
     private double sdkScore;
     private float qualityScore;
+
+    public void setIsException(boolean exception) {
+        isException = exception;
+    }
+
+    public void setIsForceCaptured(boolean forceCaptured) {
+        isForceCaptured = forceCaptured;
+    }
 }
