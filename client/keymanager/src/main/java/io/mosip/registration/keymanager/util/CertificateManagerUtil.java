@@ -3,12 +3,14 @@ package io.mosip.registration.keymanager.util;
 import android.util.Log;
 import io.mosip.registration.keymanager.entity.CACertificateStore;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
+import lombok.NonNull;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.util.encoders.Hex;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 
@@ -33,25 +35,28 @@ public class CertificateManagerUtil {
     }
 
     public static Certificate convertToCertificate(String certData) {
+        if(!isValidCertificateData(certData))
+            throw new KeymanagerServiceException(KeyManagerErrorCode.INVALID_CERTIFICATE.getErrorCode(),
+                    KeyManagerErrorCode.INVALID_CERTIFICATE.getErrorMessage());
+
         try {
             StringReader strReader = new StringReader(certData);
             PemReader pemReader = new PemReader(strReader);
             PemObject pemObject = pemReader.readPemObject();
-            if (Objects.isNull(pemObject)) {
-                Log.e(TAG, "Error Parsing Certificate.");
-                throw new KeymanagerServiceException(KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorCode(),
-                        KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorMessage());
-            }
             byte[] certBytes = pemObject.getContent();
             CertificateFactory certFactory = CertificateFactory.getInstance(KeyManagerConstant.CERTIFICATE_TYPE);
             return certFactory.generateCertificate(new ByteArrayInputStream(certBytes));
         } catch(IOException | CertificateException e) {
+            Log.e(TAG, "Error Parsing Certificate.", e);
             throw new KeymanagerServiceException(KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorCode(),
                     KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorMessage() + e.getMessage());
         }
     }
 
     public static String getCertificateThumbprint(X509Certificate x509Cert) {
+        if(x509Cert == null)
+            throw new KeymanagerServiceException(KeyManagerErrorCode.CERTIFICATE_THUMBPRINT_ERROR.getErrorCode(),
+                    KeyManagerErrorCode.CERTIFICATE_THUMBPRINT_ERROR.getErrorMessage());
         try {
             return DigestUtils.sha1Hex(x509Cert.getEncoded());
         } catch (CertificateEncodingException e) {
@@ -130,5 +135,19 @@ public class CertificateManagerUtil {
         LocalDateTime certNotAfter = Instant.ofEpochMilli(certStore.getCertNotAfter()).atZone(ZoneId.systemDefault()).toLocalDateTime();
         return timeStamp.isEqual(certNotBefore) || timeStamp.isEqual(certNotAfter)
                 || (timeStamp.isAfter(certNotBefore) && timeStamp.isBefore(certNotAfter));
+    }
+
+    public static byte[] getCertificateThumbprint(Certificate cert) {
+        try {
+            return DigestUtils.sha256(cert.getEncoded());
+        } catch (CertificateEncodingException e) {
+            Log.e(TAG, "Error generating certificate thumbprint.", e);
+            throw new KeymanagerServiceException(KeyManagerErrorCode.CERTIFICATE_THUMBPRINT_ERROR.getErrorCode(),
+                    KeyManagerErrorCode.CERTIFICATE_THUMBPRINT_ERROR.getErrorMessage());
+        }
+    }
+
+    public static String getCertificateThumbprintInHex(Certificate cert) {
+        return Hex.toHexString(getCertificateThumbprint(cert)).toUpperCase();
     }
 }

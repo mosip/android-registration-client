@@ -5,6 +5,7 @@ import android.util.Log;
 import io.mosip.registration.keymanager.dto.CryptoManagerRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoManagerResponseDto;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.keymanager.util.ConfigService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
@@ -57,14 +59,14 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
     private static String CRYPTO_ASYMMETRIC_ALGO_MD;
     private static String CRYPTO_ASYMMETRIC_ALGO_MGF;
     private static String KEY_SPLITTER;
-
-    private KeyStoreRepository keyStoreRepository;
+    private CertificateManagerService certificateManagerService;
+    private SecureRandom secureRandom = new SecureRandom();
 
 
     @Inject
-    public CryptoManagerServiceImpl(Context context, KeyStoreRepository keyStoreRepository) {
+    public CryptoManagerServiceImpl(Context context, CertificateManagerService certificateManagerService) {
         this.context = context;
-        this.keyStoreRepository = keyStoreRepository;
+        this.certificateManagerService = certificateManagerService;
         KEYGEN_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.keygenerator.symmetric-algorithm-name",context);
         KEYGEN_SYMMETRIC_KEY_LENGTH = Integer.parseInt(ConfigService.getProperty("mosip.kernel.keygenerator.symmetric-key-length",context));
         CRYPTO_SYMMETRIC_ALGORITHM = ConfigService.getProperty("mosip.kernel.crypto.symmetric-algorithm-name",context);
@@ -73,6 +75,13 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         CRYPTO_ASYMMETRIC_ALGO_MD = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-message-digest-function",context);
         CRYPTO_ASYMMETRIC_ALGO_MGF = ConfigService.getProperty("mosip.kernel.crypto.asymmetric-algorithm-mask-generation-function",context);
         KEY_SPLITTER = ConfigService.getProperty("mosip.kernel.data-key-splitter", context);
+    }
+
+    @Override
+    public KeyGenerator generateAESKey(int keyLength) throws NoSuchAlgorithmException {
+        KeyGenerator keyGen = KeyGenerator.getInstance(KEYGEN_SYMMETRIC_ALGORITHM);
+        keyGen.init(keyLength);
+        return keyGen;
     }
 
 
@@ -87,8 +96,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
             throw new Exception("ENCRYPT_NOT_ALLOWED_ERROR WITH SIGN KEY");
         }
 
-        KeyGenerator keyGen = KeyGenerator.getInstance(KEYGEN_SYMMETRIC_ALGORITHM);
-        keyGen.init(KEYGEN_SYMMETRIC_KEY_LENGTH);
+        KeyGenerator keyGen = generateAESKey(KEYGEN_SYMMETRIC_KEY_LENGTH);
         SecretKey secretKey = keyGen.generateKey();
         final byte[] encryptedData;
         byte[] headerBytes = new byte[0];
@@ -107,7 +115,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
             }
         }
 
-        String certificateData = getCertificateFromDB(cryptoRequestDto.getReferenceId());
+        String certificateData = certificateManagerService.getCertificate("REGISTRATION", cryptoRequestDto.getReferenceId());
         Certificate certificate = convertToCertificate(certificateData);
         Log.i(TAG,"Found the cerificate, proceeding with session key encryption.");
         PublicKey publicKey = certificate.getPublicKey();
@@ -123,8 +131,22 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         return cryptoResponseDto;
     }
 
-    private String getCertificateFromDB(String refId) {
-        return keyStoreRepository.getPolicyCertificateData(refId);
+
+    @Override
+    public byte[] symmetricEncryptWithRandomIV(SecretKey secretKey, byte[] data, byte[] aad) throws Exception {
+        final Cipher cipher = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+        SecretKeySpec keySpec = new SecretKeySpec(secretKey.getEncoded(), AES);
+        byte[] randomIV = generateRandomBytes(cipher.getBlockSize());
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, randomIV);
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
+        byte[] output = new byte[cipher.getOutputSize(data.length) + cipher.getBlockSize()];
+        if (aad != null && aad.length != 0) {
+            cipher.updateAAD(aad);
+        }
+        byte[] processData = cipher.doFinal(data);
+        System.arraycopy(processData, 0, output, 0, processData.length);
+        System.arraycopy(randomIV, 0, output, processData.length, randomIV.length);
+        return output;
     }
 
     public byte[] concatCertThumbprint(byte[] certThumbprint, byte[] encryptedKey){
@@ -134,7 +156,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         return finalData;
     }
 
-    public byte[] symmetricEncrypt(SecretKey secretKey, byte[] data, byte[] iv, byte[] aad) throws Exception {
+    private byte[] symmetricEncrypt(SecretKey secretKey, byte[] data, byte[] iv, byte[] aad) throws Exception {
         final Cipher cipher = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
         SecretKeySpec keySpec = new SecretKeySpec(secretKey.getEncoded(), AES);
         GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv);
@@ -145,7 +167,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         return cipher.doFinal(data);
     }
 
-    public byte[] symmetricEncrypt(SecretKey secretKey, byte[] data, byte[] aad) throws Exception {
+    private byte[] symmetricEncrypt(SecretKey secretKey, byte[] data, byte[] aad) throws Exception {
         final Cipher cipher = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
         SecretKeySpec keySpec = new SecretKeySpec(secretKey.getEncoded(), AES);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec);
@@ -155,6 +177,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         return cipher.doFinal(data);
     }
 
+    @Override
     public byte[] asymmetricEncrypt(PublicKey publicKey, byte[] data) throws Exception {
         final Cipher cipher = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
         final OAEPParameterSpec oaepParams = new OAEPParameterSpec(HASH_ALGO, MGF1, MGF1ParameterSpec.SHA256,
@@ -181,7 +204,6 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
 
     public byte[] generateRandomBytes(int size) {
         byte[] randomBytes = new byte[size];
-        SecureRandom secureRandom = new SecureRandom();
         secureRandom.nextBytes(randomBytes);
         return randomBytes;
     }
@@ -220,6 +242,8 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         }
     }
 
+
+    @Override
     public byte[] getCertificateThumbprint(Certificate cert) throws Exception {
         try {
             return DigestUtils.sha256(cert.getEncoded());

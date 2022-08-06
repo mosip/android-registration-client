@@ -36,4 +36,8 @@ public class KeyManagerConstant {
 
     public static final String TRUST_INTER = "TrustInter";
     public static final String SUCCESS_UPLOAD = "Upload Success.";
+
+    public static final String KEYALIAS = "keyAlias";
+
+    public static final String CURRENTKEYALIAS = "currentKeyAlias";
 }

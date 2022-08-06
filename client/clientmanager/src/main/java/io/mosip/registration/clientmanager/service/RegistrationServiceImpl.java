@@ -120,7 +120,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (version == null)
             throw new ClientCheckedException(context, R.string.err_002);
 
-        String certificateData = keyStoreRepository.getPolicyCertificateData(centerMachineDto.getMachineRefId());
+        String certificateData = keyStoreRepository.getCertificateData(centerMachineDto.getMachineRefId());
         if (certificateData == null)
             throw new ClientCheckedException(context, R.string.err_008);
 

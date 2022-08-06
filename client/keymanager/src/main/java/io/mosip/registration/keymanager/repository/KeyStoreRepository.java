@@ -14,7 +14,7 @@ public class KeyStoreRepository {
         this.keyStoreDao = keyStoreDao;
     }
 
-    public String getPolicyCertificateData(String referenceId) {
+    public String getCertificateData(String referenceId) {
         KeyStore keyStore = keyStoreDao.findOneKeyStoreByAlias(referenceId);
         return keyStore == null ? null : keyStore.getCertificateData();
     }

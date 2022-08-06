@@ -4,33 +4,35 @@ import android.content.Context;
 import android.util.Log;
 import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CACertificateResponseDto;
+import io.mosip.registration.keymanager.dto.CertificateRequestDto;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
-import io.mosip.registration.keymanager.spi.CACertificateManagerService;
-import io.mosip.registration.keymanager.util.CertificateManagerUtil;
-import io.mosip.registration.keymanager.util.ConfigService;
-import io.mosip.registration.keymanager.util.KeyManagerConstant;
-import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
+import io.mosip.registration.keymanager.repository.KeyStoreRepository;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
+import io.mosip.registration.keymanager.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.security.*;
 import java.security.cert.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
 @Singleton
-public class CACertificateManagerServiceImpl implements CACertificateManagerService {
+public class CertificateManagerServiceImpl implements CertificateManagerService {
 
-    private static final String TAG = CACertificateManagerServiceImpl.class.getSimpleName();
+    private static final String TAG = CertificateManagerServiceImpl.class.getSimpleName();
     private Context context;
     private String partnerAllowedDomains;
-
     private CertificateDBHelper certificateDBHelper;
+    private KeyStoreRepository keyStoreRepository;
 
     @Inject
-    public CACertificateManagerServiceImpl(Context context, CertificateDBHelper certificateDBHelper) {
+    public CertificateManagerServiceImpl(Context context, CertificateDBHelper certificateDBHelper,
+                                         KeyStoreRepository keyStoreRepository) {
         this.context = context;
         this.certificateDBHelper = certificateDBHelper;
+        this.keyStoreRepository = keyStoreRepository;
         partnerAllowedDomains = ConfigService.getProperty("mosip.kernel.partner.allowed.domains",context);
     }
 
@@ -77,6 +79,45 @@ public class CACertificateManagerServiceImpl implements CACertificateManagerServ
         CACertificateResponseDto responseDto = new CACertificateResponseDto();
         responseDto.setStatus(KeyManagerConstant.SUCCESS_UPLOAD);
         return responseDto;
+    }
+
+    @Override
+    public void uploadOtherDomainCertificate(CertificateRequestDto certificateRequestDto) {
+        Log.i(TAG, "Uploading other domain Certificate.");
+
+        String certificateData = certificateRequestDto.getCertificateData();
+        String appId = certificateRequestDto.getApplicationId();
+        String refId = certificateRequestDto.getReferenceId();
+
+        if (!CertificateManagerUtil.isValidCertificateData(certificateData) ||
+               !isValidApplicationId(appId) || !isValidReferenceId(refId)) {
+            Log.e(TAG, "Invalid Data provided to upload other domain certificate. refId : " + refId);
+            throw new KeymanagerServiceException(KeyManagerErrorCode.INVALID_CERTIFICATE.getErrorCode(),
+                    KeyManagerErrorCode.INVALID_CERTIFICATE.getErrorMessage());
+        }
+
+        X509Certificate reqX509Cert = (X509Certificate) CertificateManagerUtil.convertToCertificate(certificateData);
+        boolean validDates = CertificateManagerUtil.isCertificateDatesValid(reqX509Cert);
+        if (!validDates) {
+            Log.e(TAG,"Other domain certificate Dates are not valid. refId : " + refId);
+            throw new KeymanagerServiceException(
+                    KeyManagerErrorCode.CERTIFICATE_DATES_NOT_VALID.getErrorCode(),
+                    KeyManagerErrorCode.CERTIFICATE_DATES_NOT_VALID.getErrorMessage());
+        }
+        keyStoreRepository.saveKeyStore(refId, certificateData);
+    }
+
+    @Override
+    public String getCertificate(String applicationId, String referenceId) {
+        return keyStoreRepository.getCertificateData(referenceId);
+    }
+
+    public boolean isValidReferenceId(String referenceId) {
+        return referenceId != null && !referenceId.trim().isEmpty();
+    }
+
+    public boolean isValidApplicationId(String applicationId) {
+        return applicationId != null && !applicationId.trim().isEmpty();
     }
 
     private boolean validateCertificatePath(X509Certificate reqX509Cert, String partnerDomain) {

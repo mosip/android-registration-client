@@ -2,16 +2,20 @@ package io.mosip.registration.clientmanager.config;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import io.mosip.registration.clientmanager.dao.*;
 import io.mosip.registration.clientmanager.entity.*;
 import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.entity.CACertificateStore;
 import io.mosip.registration.keymanager.entity.KeyStore;
+
+import java.util.concurrent.Executors;
 
 @Database(entities = {UserToken.class, Registration.class, RegistrationCenter.class,
         MachineMaster.class, DocumentType.class, DynamicField.class,
@@ -25,15 +29,17 @@ public abstract class ClientDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "regclient";
     private static ClientDatabase INSTANCE;
 
-    public static ClientDatabase getDatabase(Context context){
-        if(INSTANCE == null) {
-            synchronized ("") {
-                INSTANCE = Room.databaseBuilder(context, ClientDatabase.class, DATABASE_NAME)
-                        .allowMainThreadQueries()
-                        .build();
-            }
+    public synchronized static ClientDatabase getDatabase(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = buildDatabase(context);
         }
         return INSTANCE;
+    }
+
+    public static ClientDatabase buildDatabase(Context context){
+        return Room.databaseBuilder(context, ClientDatabase.class, DATABASE_NAME)
+                .allowMainThreadQueries()
+                .build();
     }
 
     public abstract UserTokenDao userTokenDao();
@@ -56,7 +62,6 @@ public abstract class ClientDatabase extends RoomDatabase {
     public abstract CACertificateStoreDao caCertificateStoreDao();
     public abstract LanguageDao languageDao();
     public abstract AuditDao auditDao();
-
     public static void destroyDB(){
         INSTANCE=null;
     }

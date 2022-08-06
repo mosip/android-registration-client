@@ -4,6 +4,7 @@ import io.mosip.registration.keymanager.entity.CACertificateStore;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.util.CertificateManagerUtil;
+import io.mosip.registration.keymanager.util.DateUtils;
 import io.mosip.registration.keymanager.util.KeyManagerConstant;
 import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import org.bouncycastle.util.io.pem.PemObject;
@@ -104,7 +105,7 @@ public class CertificateDBHelper {
 
 
     public String getIssuerCertId(String certIssuerDn) {
-        LocalDateTime currentDateTime = getUTCCurrentDateTime();
+        LocalDateTime currentDateTime = DateUtils.getUTCCurrentDateTime();
         List<CACertificateStore> certificates = caCertificateStoreRepository.getAllCACertStoreByCertSubject(certIssuerDn)
                 .stream()
                 .filter(cert -> CertificateManagerUtil.isValidTimestamp(currentDateTime, cert))
@@ -118,13 +119,4 @@ public class CertificateDBHelper {
                 .collect(Collectors.toList());
         return sortedCerts.get(0).getCertId();
     }
-
-    public static LocalDateTime parseDateToLocalDateTime(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    public static LocalDateTime getUTCCurrentDateTime() {
-        return ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-    }
-
 }
