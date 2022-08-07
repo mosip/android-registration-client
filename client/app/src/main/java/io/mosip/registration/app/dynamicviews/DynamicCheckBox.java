@@ -26,6 +26,9 @@ public class DynamicCheckBox extends LinearLayout implements DynamicView {
 
     private static final String TAG = DynamicCheckBox.class.getSimpleName();
 
+    private static final String YES = "Y";
+    private static final String NO = "N";
+
     String selected = null;
     RegistrationDto registrationDto = null;
     FieldSpecDto fieldSpecDto = null;
@@ -56,7 +59,7 @@ public class DynamicCheckBox extends LinearLayout implements DynamicView {
         checkBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                selected = checkBox.isChecked() ? "Y" : "N";
+                selected = checkBox.isChecked() ? YES : NO;
                 registrationDto.addDemographicField(fieldSpecDto.getId(), selected);
             }
         });
@@ -74,7 +77,7 @@ public class DynamicCheckBox extends LinearLayout implements DynamicView {
 
     @Override
     public boolean isValidValue() {
-        return selected != null;
+        return selected != null && (isRequired() && selected.equals(YES));
     }
 
     @Override
