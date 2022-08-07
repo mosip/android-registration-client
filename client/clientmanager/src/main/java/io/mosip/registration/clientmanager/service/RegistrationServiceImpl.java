@@ -406,7 +406,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG);
         birFormat.setType(String.valueOf(Modality.getFormatType(singleType)));
 
-        BiometricType biometricType = BiometricType.fromValue(singleType.name());
+        BiometricType biometricType = BiometricType.fromValue(singleType.value());
         // Algorithm
         RegistryIDType birAlgorithm = new RegistryIDType();
         birAlgorithm.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_ALG_ORG);
