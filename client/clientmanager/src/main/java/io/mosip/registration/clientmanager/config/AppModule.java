@@ -28,11 +28,11 @@ import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
-import io.mosip.registration.keymanager.service.CACertificateManagerServiceImpl;
+import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
 import io.mosip.registration.keymanager.service.CertificateDBHelper;
 import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
-import io.mosip.registration.keymanager.spi.CACertificateManagerService;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.packetmanager.service.PacketCryptoServiceImpl;
@@ -43,6 +43,8 @@ import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.PacketKeeper;
 import io.mosip.registration.packetmanager.util.PacketManagerHelper;
+
+import java.security.Key;
 
 @Module
 public class AppModule {
@@ -74,8 +76,8 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public CryptoManagerService provideCryptoManagerService(KeyStoreRepository keyStoreRepository) {
-        return new CryptoManagerServiceImpl(appContext, keyStoreRepository);
+    public CryptoManagerService provideCryptoManagerService(CertificateManagerService certificateManagerService) {
+        return new CryptoManagerServiceImpl(appContext, certificateManagerService);
     }
 
     @Singleton
@@ -120,21 +122,20 @@ public class AppModule {
                                                       ApplicantValidDocRepository applicantValidDocRepository,
                                                       TemplateRepository templateRepository,
                                                       DynamicFieldRepository dynamicFieldRepository,
-                                                      KeyStoreRepository keyStoreRepository,
                                                       LocationRepository locationRepository,
                                                       GlobalParamRepository globalParamRepository,
                                                       IdentitySchemaRepository identitySchemaRepository,
                                                       BlocklistedWordRepository blocklistedWordRepository,
                                                       SyncJobDefRepository syncJobDefRepository,
                                                       UserDetailRepository userDetailRepository,
-                                                      CACertificateManagerService caCertificateManagerService,
+                                                      CertificateManagerService certificateManagerService,
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
-                templateRepository, dynamicFieldRepository, keyStoreRepository, locationRepository,
+                templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                caCertificateManagerService, languageRepository, jobManagerService);
+                certificateManagerService, languageRepository, jobManagerService);
     }
 
 
@@ -153,8 +154,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    RegistrationService provideRegistrationService(ObjectMapper objectMapper,PacketWriterService packetWriterService,
-                                                   UserInterfaceHelperService userInterfaceHelperService,
+    RegistrationService provideRegistrationService(PacketWriterService packetWriterService,
                                                    RegistrationRepository registrationRepository,
                                                    MasterDataService masterDataService,
                                                    IdentitySchemaRepository identitySchemaRepository,
@@ -190,8 +190,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    CACertificateManagerService provideCACertificateManagerService(CertificateDBHelper certificateDBHelper) {
-        return new CACertificateManagerServiceImpl(appContext, certificateDBHelper);
+    CertificateManagerService provideCACertificateManagerService(CertificateDBHelper certificateDBHelper, KeyStoreRepository keyStoreRepository) {
+        return new CertificateManagerServiceImpl(appContext, certificateDBHelper, keyStoreRepository);
     }
 
     @Provides
@@ -223,5 +223,14 @@ public class AppModule {
     Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper,  AuditManagerService auditManagerService,
                                                      GlobalParamRepository globalParamRepository) {
         return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository);
+    }
+
+    @Provides
+    @Singleton
+    UserOnboardService provideUserOnboardService(ObjectMapper objectMapper, AuditManagerService auditManagerService,
+                                                 CertificateManagerService certificateManagerService,
+                                                 SyncRestService syncRestService, CryptoManagerService cryptoManagerService) {
+        return new UserOnboardService(appContext, objectMapper, auditManagerService, certificateManagerService, syncRestService,
+                cryptoManagerService);
     }
 }

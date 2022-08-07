@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
@@ -48,6 +49,10 @@ public class DateUtils {
     public static String parseEpochToISOString(long epochInMillis) {
         LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(epochInMillis/1000, 0, ZoneOffset.UTC);
         return localDateTime.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN_WITHOUT_MILLIS));
+    }
+
+    public static LocalDateTime getUTCCurrentDateTime() {
+        return ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
     }
 
 }

@@ -23,11 +23,12 @@ import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
+import io.mosip.registration.keymanager.dto.CertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
-import io.mosip.registration.keymanager.spi.CACertificateManagerService;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
@@ -72,14 +73,13 @@ public class MasterDataServiceImpl implements MasterDataService {
     private DocumentTypeRepository documentTypeRepository;
     private TemplateRepository templateRepository;
     private DynamicFieldRepository dynamicFieldRepository;
-    private KeyStoreRepository keyStoreRepository;
     private LocationRepository locationRepository;
     private GlobalParamRepository globalParamRepository;
     private IdentitySchemaRepository identitySchemaRepository;
     private BlocklistedWordRepository blocklistedWordRepository;
     private SyncJobDefRepository syncJobDefRepository;
     private UserDetailRepository userDetailRepository;
-    private CACertificateManagerService caCertificateManagerService;
+    private CertificateManagerService certificateManagerService;
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
 
@@ -92,14 +92,13 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  ApplicantValidDocRepository applicantValidDocRepository,
                                  TemplateRepository templateRepository,
                                  DynamicFieldRepository dynamicFieldRepository,
-                                 KeyStoreRepository keyStoreRepository,
                                  LocationRepository locationRepository,
                                  GlobalParamRepository globalParamRepository,
                                  IdentitySchemaRepository identitySchemaRepository,
                                  BlocklistedWordRepository blocklistedWordRepository,
                                  SyncJobDefRepository syncJobDefRepository,
                                  UserDetailRepository userDetailRepository,
-                                 CACertificateManagerService caCertificateManagerService,
+                                 CertificateManagerService certificateManagerService,
                                  LanguageRepository languageRepository,
                                  JobManagerService jobManagerService) {
         this.context = context;
@@ -112,14 +111,13 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.applicantValidDocRepository = applicantValidDocRepository;
         this.templateRepository = templateRepository;
         this.dynamicFieldRepository = dynamicFieldRepository;
-        this.keyStoreRepository = keyStoreRepository;
         this.locationRepository = locationRepository;
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaRepository = identitySchemaRepository;
         this.blocklistedWordRepository = blocklistedWordRepository;
         this.syncJobDefRepository = syncJobDefRepository;
         this.userDetailRepository = userDetailRepository;
-        this.caCertificateManagerService = caCertificateManagerService;
+        this.certificateManagerService = certificateManagerService;
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
     }
@@ -198,7 +196,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
-                        keyStoreRepository.saveKeyStore(centerMachineDto.getMachineRefId(), response.body().getResponse().getCertificate());
+                        CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
+                        certificateRequestDto.setApplicationId("REGISTRATION");
+                        certificateRequestDto.setReferenceId(centerMachineDto.getMachineRefId());
+                        certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
+                        certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
                         onFinish.run();
                     } else
@@ -486,7 +488,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                         CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
                         caCertificateRequestDto.setCertificateData(cert.getCertData());
                         caCertificateRequestDto.setPartnerDomain(cert.getPartnerDomain());
-                        io.mosip.registration.keymanager.dto.CACertificateResponseDto caCertificateResponseDto = caCertificateManagerService.uploadCACertificate(caCertificateRequestDto);
+                        io.mosip.registration.keymanager.dto.CACertificateResponseDto caCertificateResponseDto = certificateManagerService.uploadCACertificate(caCertificateRequestDto);
                         Log.i(TAG, caCertificateResponseDto.getStatus());
                     }
                 } catch (KeymanagerServiceException ex) {

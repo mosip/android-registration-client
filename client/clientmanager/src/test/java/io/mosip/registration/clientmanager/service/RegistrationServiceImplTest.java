@@ -102,7 +102,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
-        when(keyStoreRepository.getPolicyCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
         File mockFile = mock(File.class);
         when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));
@@ -132,7 +132,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
-        when(keyStoreRepository.getPolicyCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
         File mockFile = mock(File.class);
         when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));
@@ -182,7 +182,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
-        when(keyStoreRepository.getPolicyCertificateData("10001_110001")).thenReturn(null);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
         registrationService.startRegistration(selectedLanguages);
     }
 
@@ -198,7 +198,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
-        when(keyStoreRepository.getPolicyCertificateData("10001_110001")).thenReturn(null);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
         registrationService.startRegistration(selectedLanguages);
     }
 
@@ -214,7 +214,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
-        when(keyStoreRepository.getPolicyCertificateData("10001_110001")).thenReturn(null);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
         registrationService.startRegistration(selectedLanguages);
     }
 
@@ -228,7 +228,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
-        when(keyStoreRepository.getPolicyCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
         File mockFile = mock(File.class);
         when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));

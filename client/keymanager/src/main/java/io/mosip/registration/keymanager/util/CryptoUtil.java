@@ -2,9 +2,12 @@ package io.mosip.registration.keymanager.util;
 
 import android.util.Log;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.security.MessageDigest;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.util.Base64;
 
 public class CryptoUtil {
