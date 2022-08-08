@@ -61,9 +61,13 @@ import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.keymanager.dto.SignResponseDto;
+import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
+import io.mosip.registration.keymanager.service.CertificateDBHelper;
+import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
 import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.packetmanager.service.PacketCryptoServiceImpl;
@@ -187,12 +191,18 @@ public class PacketUploadServiceTest {
         when(clientCryptoManagerService.sign(any())).thenReturn(new SignResponseDto(SIGNED_DATA));
 
         String certificateData = RestServiceTestHelper.getStringFromFile(appContext, CERT_DATA_FILE_NAME);
-        when(keyStoreRepository.getPolicyCertificateData(anyString()))
+        when(keyStoreRepository.getCertificateData(anyString()))
                 .thenReturn(certificateData);
+
+        CACertificateStoreRepository cACertificateStoreRepository = mock(CACertificateStoreRepository.class);
 
         //-------Service MOCKING End-------
 
-        CryptoManagerService cryptoManagerService = new CryptoManagerServiceImpl(appContext, keyStoreRepository);
+        CertificateDBHelper certificateDBHelper = new CertificateDBHelper(cACertificateStoreRepository);
+
+        CertificateManagerService certificateManagerService = new CertificateManagerServiceImpl(appContext, certificateDBHelper, keyStoreRepository);
+
+        CryptoManagerService cryptoManagerService = new CryptoManagerServiceImpl(appContext, certificateManagerService);
 
         IPacketCryptoService packetCryptoService = new PacketCryptoServiceImpl(appContext, clientCryptoManagerService, cryptoManagerService);
 
