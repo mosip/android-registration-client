@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import android.content.Context;
 
 import androidx.room.Room;
+import androidx.test.annotation.UiThreadTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
@@ -21,7 +22,6 @@ import java.util.List;
 import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
-import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 
 /**
  * @author Anshul vanawat
@@ -64,6 +64,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
+    @UiThreadTest
     public void saveGlobal() {
         globalParamRepository.saveGlobalParam(GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_VALUE);
 
@@ -76,6 +77,7 @@ public class GlobalParamRepositoryTest {
 
 
     @Test
+    @UiThreadTest
     public void saveGlobalParamList() {
 
         List<GlobalParam> globalParamList = new ArrayList<>();
@@ -99,6 +101,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
+    @UiThreadTest
     public void getCachedValues() {
 
         List<GlobalParam> globalParamList = new ArrayList<>();
@@ -128,6 +131,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
+    @UiThreadTest
     public void getCachedValuesNotFoundTest() {
         String globalParamCachedStringValue = globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED);
         assertNull(globalParamCachedStringValue);

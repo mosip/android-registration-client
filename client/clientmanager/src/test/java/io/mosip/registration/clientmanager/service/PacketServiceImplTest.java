@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 
 import androidx.room.Room;
+import androidx.test.annotation.UiThreadTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +34,6 @@ import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
-import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
@@ -119,6 +119,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void syncAllPacketStatusSuccessResponse() throws Exception {
         //Dummy registration data
         Registration registrationDummyData = new Registration(PACKET_ID);
@@ -148,6 +149,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void syncAllPacketStatusNoRegistrations() throws Exception {
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -165,6 +167,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void syncAllPacketStatusNotFoundResponse() throws Exception {
         //Dummy registration data
         Registration registrationDummyData = new Registration(PACKET_ID);
@@ -194,6 +197,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void defaultMockResponse() {
         MockResponse response = new MockResponse();
         assertTrue(headersToList(response).contains("Content-Length: 0"));

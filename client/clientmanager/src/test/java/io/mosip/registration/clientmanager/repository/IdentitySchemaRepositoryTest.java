@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.repository;
 import android.content.Context;
 
 import androidx.room.Room;
+import androidx.test.annotation.UiThreadTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
@@ -21,7 +22,6 @@ import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
-import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 
 @RunWith(RobolectricTestRunner.class)
 public class IdentitySchemaRepositoryTest {
@@ -61,6 +61,7 @@ public class IdentitySchemaRepositoryTest {
     }
 
     @Test
+    @UiThreadTest
     public void getAllFieldSpecTest() throws Exception {
         identitySchemaRepository.saveIdentitySchema(appContext, idSchemaResponse);
         List<FieldSpecDto> fields = identitySchemaRepository.getAllFieldSpec(appContext, 1.5);
@@ -68,6 +69,7 @@ public class IdentitySchemaRepositoryTest {
     }
 
     @Test
+    @UiThreadTest
     public void getLatestSchemaVersionTest() throws Exception {
         identitySchemaRepository.saveIdentitySchema(appContext, idSchemaResponse);
         Assert.assertEquals(identitySchemaRepository.getLatestSchemaVersion(), 1.5, 1.5);

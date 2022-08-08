@@ -12,6 +12,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import androidx.room.Room;
+import androidx.test.annotation.UiThreadTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -234,6 +235,7 @@ public class PacketUploadServiceTest {
     }
 
     @Test
+    @UiThreadTest
     public void queueSyncAndUploadPacket_Success() throws InterruptedException {
         String packetId = createDummyRegistration();
         if (packetId.isEmpty()) {
@@ -282,6 +284,7 @@ public class PacketUploadServiceTest {
 
 
     @Test
+    @UiThreadTest
     public void queueSyncAndUploadPacket_SyncFailed1() throws InterruptedException {
         String packetId = createDummyRegistration();
         if (packetId.isEmpty()) {
@@ -320,6 +323,7 @@ public class PacketUploadServiceTest {
 
 
     @Test
+    @UiThreadTest
     public void queueSyncAndUploadPacket_SyncFailed2() throws InterruptedException {
         String packetId = createDummyRegistration();
         if (packetId.isEmpty()) {
@@ -357,6 +361,7 @@ public class PacketUploadServiceTest {
     }
 
     @Test
+    @UiThreadTest
     public void queueSyncAndUploadPacket_UploadFailed1() throws InterruptedException {
         String packetId = createDummyRegistration();
         if (packetId.isEmpty()) {
@@ -404,6 +409,7 @@ public class PacketUploadServiceTest {
     }
 
     @Test
+    @UiThreadTest
     public void queueSyncAndUploadPacket_UploadFailed2() throws InterruptedException {
         String packetId = createDummyRegistration();
         if (packetId.isEmpty()) {
@@ -452,6 +458,7 @@ public class PacketUploadServiceTest {
 
 
     @Test
+    @UiThreadTest
     public void queueSyncAndUploadPacket_AlreadySynced() throws InterruptedException {
         String packetId = createDummyRegistration();
         if (packetId.isEmpty()) {
@@ -535,6 +542,7 @@ public class PacketUploadServiceTest {
 
 
     @Test
+    @UiThreadTest
     public void queueSyncAndUploadPacket_AlreadyUploaded() throws InterruptedException {
         String packetId = createDummyRegistration();
         if (packetId.isEmpty()) {

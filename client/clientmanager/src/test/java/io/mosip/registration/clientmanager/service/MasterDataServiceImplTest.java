@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 
 import androidx.room.Room;
+import androidx.test.annotation.UiThreadTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -121,6 +122,7 @@ public class MasterDataServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void syncGlobalParamsData() throws Exception {
         //Mocking clientCrypto
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto(DECRYPTED_RESPONSE);
@@ -158,6 +160,7 @@ public class MasterDataServiceImplTest {
 
 
     @Test
+    @UiThreadTest
     public void syncGlobalParamsDataNotFound() throws Exception {
         //Mocking clientCrypto
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto(DECRYPTED_RESPONSE);
@@ -195,6 +198,7 @@ public class MasterDataServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void syncGlobalParamsDataInvalidKeyIndex() throws Exception {
         //Mocking clientCrypto
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto(DECRYPTED_RESPONSE);
@@ -229,6 +233,7 @@ public class MasterDataServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void syncGlobalParamsDataDecryptionFailed() throws Exception {
         clientCryptoManagerService = mock(LocalClientCryptoServiceImpl.class);
         when(clientCryptoManagerService.getClientKeyIndex())
@@ -260,6 +265,7 @@ public class MasterDataServiceImplTest {
     }
 
     @Test
+    @UiThreadTest
     public void getPreviewTemplateContentTest() {
         MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
                 , objectMapper, syncRestService, clientCryptoManagerService, null

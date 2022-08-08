@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.room.Room;
+import androidx.test.annotation.UiThreadTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
@@ -30,7 +31,6 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
-import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 
 /**
@@ -77,6 +77,7 @@ public class AuditManagerServiceTest {
     }
 
     @Test
+    @UiThreadTest
     public void auditWithAllParameters_test() {
         auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION.getId(), Components.REGISTRATION.getName(), PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
@@ -100,6 +101,7 @@ public class AuditManagerServiceTest {
     }
 
     @Test
+    @UiThreadTest
     public void auditDelete_test() {
         auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION.getId(), PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
@@ -115,6 +117,7 @@ public class AuditManagerServiceTest {
     }
 
     @Test
+    @UiThreadTest
     public void auditWithComponent_test() {
         auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION);
@@ -138,6 +141,7 @@ public class AuditManagerServiceTest {
     }
 
     @Test
+    @UiThreadTest
     public void auditWithoutComponent_test() {
         auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
         auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, Components.REGISTRATION.getId(), String.format(RegistrationConstants.REGISTRATION_SCREEN, SCREEN_NAME));

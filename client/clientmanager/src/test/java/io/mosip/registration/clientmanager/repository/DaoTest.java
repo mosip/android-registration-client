@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 
+import androidx.test.annotation.UiThreadTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Before;
@@ -25,6 +26,7 @@ public class DaoTest {
     }
 
     @Test
+    @UiThreadTest
     public void insert_test() {
         // inserting into database
         clientDatabase.userTokenDao().deleteAll();
