@@ -26,4 +26,28 @@
     <string name="packet_status_sync_completed">Packet status sync completed"</string>
     <string name="packet_status_sync">%d packet/s status synced"</string>
     <string name="NA">NA</string>
+
+    <!-- biometrics -->
+    <string name="face_label">Face</string>
+    <string name="exception_photo_label">Exception Photo</string>
+    <string name="left_iris">Left Iris</string>
+    <string name="right_iris">Right Iris</string>
+    <string name="double_iris">Iris</string>
+    <string name="left_slap">Left Slap</string>
+    <string name="right_slap">Right Slap</string>
+    <string name="thumbs_label">Thumbs</string>
+    <string name="fingers">Fingers</string>
+
+    <!-- Template -->
+    <string name="app_id">Application ID</string>
+    <string name="uin">UIN</string>
+    <string name="date">Date</string>
+    <string name="demographic_info">Demographic Information</string>
+    <string name="photo">Photo</string>
+    <string name="documents">Documents</string>
+    <string name="biometrics">Biometrics</string>
+    <string name="ro_label">Registration Officer</string>
+    <string name="reg_center">Registration Center</string>
+    <string name="imp_guidelines">Important Guidelines</string>
+    <string name="ack_slip">Acknowledgement</string>
 </resources>
