@@ -19,6 +19,7 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install
+          echo $secrets.org_key
       - name: Build Android Registration-Client
         run: |
           cd client
