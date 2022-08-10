@@ -19,7 +19,7 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install
-          echo ${{secrets.ORG_KEY}}
+          echo ${{ secrets.ORG_KEY }}
           echo ${{ secrets.GITHUB_TOKEN }}
       - name: Build Android Registration-Client
         run: |
