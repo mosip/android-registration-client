@@ -1,6 +1,7 @@
 package io.mosip.registration.app.dynamicviews;
 
 import android.content.Context;
+import android.os.LocaleList;
 import android.text.*;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -161,21 +162,25 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
         textInputEditText.setTag(EDITTEXT_TAG_PREFIX+fieldTag);
         textInputEditText.addTextChangedListener(getTextWatcher(languageCode));
 
-        if(inputMethodRequired) {
-            textInputEditText.setOnFocusChangeListener((v, hasFocus) -> {
+        //if(inputMethodRequired) {
+            /*textInputEditText.setOnFocusChangeListener((v, hasFocus) -> {
                 if(hasFocus) {
                     InputMethodManager imeManager = (InputMethodManager)
                             getContext().getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
                     imeManager.showInputMethodPicker();
                 }
-            });
+            });*/
             textInputEditText.setHint(languageRepository.getNativeName(languageCode));
-        }
+            textInputEditText.setImeHintLocales(new LocaleList(getLocale(languageCode)));
+            InputMethodManager imeManager = (InputMethodManager)
+                    getContext().getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+            imeManager.restartInput(textInputEditText);
+        /*}
         else {
             InputMethodManager imeManager = (InputMethodManager)
                     getContext().getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
             imeManager.restartInput(this);
-        }
+        }*/
 
         Optional<FieldValidatorDto> result = (fieldSpecDto.getValidators() != null) ? fieldSpecDto.getValidators()
                 .stream()
@@ -200,7 +205,14 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
     }
 
     private Locale getLocale(String languageCode) {
-       return languageCode == null ? Locale.getDefault() : new Locale(languageCode.substring(0,2));
+        switch (languageCode.toLowerCase()) {
+            case "fra" : return Locale.FRENCH;
+            case "ara" : return new Locale("ar");
+            case "tam" : return new Locale("ta", "IN");
+            case "kan" : return new Locale("kn", "IN");
+            case "hin" : return new Locale("hi", "IN");
+        }
+        return Locale.ENGLISH;
     }
 
 }

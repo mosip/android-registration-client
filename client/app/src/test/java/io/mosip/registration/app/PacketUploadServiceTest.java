@@ -19,6 +19,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,13 +63,9 @@ import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.keymanager.dto.SignResponseDto;
-import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
-import io.mosip.registration.keymanager.service.CertificateDBHelper;
-import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
 import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
-import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.packetmanager.service.PacketCryptoServiceImpl;
@@ -118,6 +116,7 @@ public class PacketUploadServiceTest {
     RegistrationService registrationService;
     PacketService packetService;
     AuditManagerService auditManagerService;
+    CertificateManagerService certificateManagerService;
     AutoCloseable openMocks;
 
     @Before
@@ -191,17 +190,11 @@ public class PacketUploadServiceTest {
         when(clientCryptoManagerService.sign(any())).thenReturn(new SignResponseDto(SIGNED_DATA));
 
         String certificateData = RestServiceTestHelper.getStringFromFile(appContext, CERT_DATA_FILE_NAME);
-        when(keyStoreRepository.getCertificateData(anyString()))
-                .thenReturn(certificateData);
-
-        CACertificateStoreRepository cACertificateStoreRepository = mock(CACertificateStoreRepository.class);
+        when(keyStoreRepository.getCertificateData(anyString())).thenReturn(certificateData);
 
         //-------Service MOCKING End-------
 
-        CertificateDBHelper certificateDBHelper = new CertificateDBHelper(cACertificateStoreRepository);
-
-        CertificateManagerService certificateManagerService = new CertificateManagerServiceImpl(appContext, certificateDBHelper, keyStoreRepository);
-
+        certificateManagerService = mock(CertificateManagerServiceImpl.class);
         CryptoManagerService cryptoManagerService = new CryptoManagerServiceImpl(appContext, certificateManagerService);
 
         IPacketCryptoService packetCryptoService = new PacketCryptoServiceImpl(appContext, clientCryptoManagerService, cryptoManagerService);
