@@ -189,7 +189,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             return;
 
         Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getCertificate(REG_APP_ID,
-                centerMachineDto.getMachineRefId());
+                centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
@@ -245,7 +245,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (delta != null)
             queryParams.put("lastUpdated", delta);
 
-        Call<ResponseWrapper<ClientSettingDto>> call = syncRestService.fetchMasterDate(queryParams);
+        Call<ResponseWrapper<ClientSettingDto>> call = syncRestService.fetchMasterData(queryParams);
 
         call.enqueue(new Callback<ResponseWrapper<ClientSettingDto>>() {
             @Override
@@ -288,7 +288,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     private void syncGlobalParamsData(Runnable onFinish) throws Exception {
         Log.i(TAG, "config data sync is started");
 
-        Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(clientCryptoManagerService.getClientKeyIndex());
+        Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(
+                clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<Map<String, Object>>> call, Response<ResponseWrapper<Map<String, Object>>> response) {
@@ -372,7 +373,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void syncLatestIdSchema(Runnable onFinish) {
-        Call<ResponseBody> call = syncRestService.getLatestIdSchema();
+        Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseBody>() {
 
             @Override
@@ -409,7 +410,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void syncUserDetails(Runnable onFinish) throws Exception {
-        Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(this.clientCryptoManagerService.getClientKeyIndex());
+        Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(
+                this.clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<UserDetailResponse>> call, Response<ResponseWrapper<UserDetailResponse>> response) {
@@ -443,7 +445,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void syncCACertificates() {
 
-        Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null);
+        Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
+                BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CACertificateResponseDto>> call, Response<ResponseWrapper<CACertificateResponseDto>> response) {

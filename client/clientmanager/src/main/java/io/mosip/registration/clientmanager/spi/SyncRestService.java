@@ -17,17 +17,19 @@ public interface SyncRestService {
     Call<ResponseWrapper<String>> login(@Body RequestWrapper<String> authRequest);
 
     @GET("/v1/syncdata/v2/clientsettings")
-    Call<ResponseWrapper<ClientSettingDto>> fetchMasterDate(@QueryMap Map<String, String> params);
+    Call<ResponseWrapper<ClientSettingDto>> fetchMasterData(@QueryMap Map<String, String> params);
 
     @GET("/v1/syncdata/getCertificate")
     Call<ResponseWrapper<CertificateResponse>> getCertificate(@Query("applicationId") String applicationId,
-                                                              @Query("referenceId") String referenceId);
+                                                              @Query("referenceId") String referenceId,
+                                                              @Query("version") String version);
 
     @GET("/v1/syncdata/latestidschema")
-    Call<ResponseBody> getLatestIdSchema();
+    Call<ResponseBody> getLatestIdSchema(@Query("version") String version);
 
     @GET("/v1/syncdata/v2/userdetails")
-    Call<ResponseWrapper<UserDetailResponse>> fetchCenterUserDetails(@Query("keyindex") String keyIndex);
+    Call<ResponseWrapper<UserDetailResponse>> fetchCenterUserDetails(@Query("keyindex") String keyIndex,
+                                                                     @Query("version") String version);
 
     @POST("/registrationprocessor/v1/registrationstatus/syncV2")
     Call<RegProcResponseWrapper<List<SyncRIDResponse>>> syncRID(@Header("timestamp") String timestamp,
@@ -44,10 +46,12 @@ public interface SyncRestService {
 
 
     @GET("/v1/syncdata/configs/{key_index}")
-    Call<ResponseWrapper<Map<String, Object>>> getGlobalConfigs(@Path("key_index") String key_index);
+    Call<ResponseWrapper<Map<String, Object>>> getGlobalConfigs(@Path("key_index") String key_index,
+                                                                @Query("version") String version);
 
     @GET("/v1/syncdata/getcacertificates")
-    Call<ResponseWrapper<CACertificateResponseDto>> getCACertificates(@Query("lastupdated") String lastupdated);
+    Call<ResponseWrapper<CACertificateResponseDto>> getCACertificates(@Query("lastupdated") String lastupdated,
+                                                                      @Query("version") String version);
 
     @GET("/registrationprocessor/v1/registrationstatus/getCertificate?applicationId=IDA&referenceId=INTERNAL")
     Call<ResponseWrapper<Map<String, Object>>> getIDACertificate();
