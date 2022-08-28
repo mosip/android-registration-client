@@ -195,6 +195,7 @@ public class PacketUploadServiceTest {
         //-------Service MOCKING End-------
 
         certificateManagerService = mock(CertificateManagerServiceImpl.class);
+        when(certificateManagerService.getCertificate(anyString(), anyString())).thenReturn(certificateData);
         CryptoManagerService cryptoManagerService = new CryptoManagerServiceImpl(appContext, certificateManagerService);
 
         IPacketCryptoService packetCryptoService = new PacketCryptoServiceImpl(appContext, clientCryptoManagerService, cryptoManagerService);
