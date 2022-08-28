@@ -2,7 +2,9 @@
 <resources>
     <string name="app_name">ನೋಂದಣಿ ಗ್ರಾಹಕ</string>
     <string name="home_title">ಮನೆ</string>
-    <string name="initialization_error">ಯಂತ್ರವನ್ನು ಪ್ರಾರಂಭಿಸಲು ವಿಫಲವಾಗಿದೆ</string>
+    <string name="initialization_error">ಯಂತ್ರವನ್ನು ಪ್ರಾರಂಭಿಸಲು ವಿಫಲವಾಗಿದೆ. ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಮರುಸ್ಥಾಪಿಸುವ ಮೊದಲು
+        ಅಪ್ಲಿಕೇಶನ್ ಡೇಟಾ ಮತ್ತು ಸಂಗ್ರಹವನ್ನು ತೆರವುಗೊಳಿಸಲು ಪ್ರಯತ್ನಿಸಿ.
+    </string>
 
     <!-- Login -->
     <string name="about_client">ಕ್ಲೈಂಟ್ ಬಗ್ಗೆ</string>

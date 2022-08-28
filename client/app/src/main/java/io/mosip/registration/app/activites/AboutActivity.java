@@ -1,5 +1,6 @@
 package io.mosip.registration.app.activites;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -42,12 +43,20 @@ public class AboutActivity extends DaggerAppCompatActivity {
         final TextView editText = findViewById(R.id.about);
         editText.setTextIsSelectable(true);
         Map<String, String> details = clientCryptoManagerService.getMachineDetails();
+
+        if(details.get("name") == null) {
+            editText.setTextColor(Color.RED);
+            editText.setText(R.string.initialization_error);
+            return;
+        }
+
         JSONObject jsonObject = new JSONObject(details);
         try {
             jsonObject.put("version", "Alpha");
             editText.setText(jsonObject.toString(4));
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
+            editText.setTextColor(Color.RED);
             editText.setText(R.string.initialization_error);
         }
 

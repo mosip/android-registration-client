@@ -2,7 +2,9 @@
 <resources>
     <string name="app_name">عميل التسجيل</string>
     <string name="home_title">مسكن</string>
-    <string name="initialization_error">فشل تهيئة الجهاز</string>
+    <string name="initialization_error">فشل في تهيئة الجهاز. حاول مسح بيانات التطبيق وذاكرة التخزين المؤقت قبل إعادة
+        تثبيت التطبيق.
+    </string>
 
     <!-- Login -->
     <string name="about_client">عن العميل</string>

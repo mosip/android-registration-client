@@ -205,6 +205,9 @@ public class DynamicTextBox extends LinearLayout implements DynamicView {
     }
 
     private Locale getLocale(String languageCode) {
+        if(languageCode == null)
+            return Locale.ENGLISH;
+
         switch (languageCode.toLowerCase()) {
             case "fra" : return Locale.FRENCH;
             case "ara" : return new Locale("ar");
