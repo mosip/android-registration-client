@@ -353,6 +353,9 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                     String content = IOUtils.toString(fileReader);
                     byte[] appConfBytes = asymmetricDecrypt(CryptoUtil.base64decoder.decode(content));
                     jsonObject = new JSONObject(new String(appConfBytes));
+                } catch (IllegalBlockSizeException ex) {
+                    Log.e(TAG, "Failed to decrypt the app name, deleting the file", ex);
+                    file.delete();
                 }
             }
 

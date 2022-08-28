@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Registration Client</string>
     <string name="home_title">Home</string>
-    <string name="initialization_error">Failed to initialize machine</string>
+    <string name="initialization_error">Failed to initialize the machine. Try to clear the app data and cache before
+        reinstalling the app.
+    </string>
 
     <!-- Login -->
     <string name="about_client">About Client</string>

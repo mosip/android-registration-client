@@ -2,7 +2,9 @@
 <resources>
     <string name="app_name">பதிவு  வாடிக்கையாளர்</string>
     <string name="home_title">வீடு</string>
-    <string name="initialization_error">இயந்திரத்தை துவக்க முடியவில்லை</string>
+    <string name="initialization_error">இயந்திரத்தை துவக்க முடியவில்லை. பயன்பாட்டை மீண்டும் நிறுவும் முன், பயன்பாட்டுத்
+        தரவு மற்றும் தற்காலிக சேமிப்பை அழிக்க முயற்சிக்கவும்.
+    </string>
 
     <!-- Login -->
     <string name="about_client">வாடிக்கையாளர் பற்றி</string>

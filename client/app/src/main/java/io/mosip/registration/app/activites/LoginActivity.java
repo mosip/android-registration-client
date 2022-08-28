@@ -144,6 +144,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                             startActivity(intent);
                             return;
                         } catch (Exception e) {
+                            error = new ServiceError("", e.getMessage());
                             Log.e(TAG, "Failed to save auth token", e);
                         }
                     }
