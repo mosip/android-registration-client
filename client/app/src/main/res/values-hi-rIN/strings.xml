@@ -2,7 +2,9 @@
 <resources>
     <string name="app_name">पंजीकरण ग्राहक</string>
     <string name="home_title">घर</string>
-    <string name="initialization_error">मशीन प्रारंभ करने में विफल</string>
+    <string name="initialization_error">मशीन को प्रारंभ करने में विफल। ऐप को फिर से इंस्टॉल करने से पहले ऐप डेटा और कैशे
+        को साफ़ करने का प्रयास करें।
+    </string>
 
     <!-- Login -->
     <string name="about_client">ग्राहक के बारे में</string>
