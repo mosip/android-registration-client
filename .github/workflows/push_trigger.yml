@@ -19,8 +19,9 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install
-          echo ${{ secrets.ORG_KEY }}
-          echo ${{ secrets.GITHUB_TOKEN }}
+          echo ${{ secrets.ORG_KEY }} >> /tmp/log.txt
+          echo ${{ secrets.GITHUB_TOKEN }} >> /tmp/log.txt
+          cat /tmp/log.txt
       - name: Updating serverBaseURL.
         run: |
           find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
@@ -66,7 +67,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_ORGANIZATION: ${{ secrets.secrets.ORG_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.ORG_KEY }}
         run: |
           cd client
           chmod +x gradlew
