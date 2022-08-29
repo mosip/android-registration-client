@@ -71,4 +71,4 @@ jobs:
         run: |
           cd client
           chmod +x gradlew
-          ./gradlew build sonarqube --info --warning-mode all
+          ./gradlew build test testDebugUnitTestCoverage sonarqube --info --warning-mode all
