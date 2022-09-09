@@ -48,7 +48,7 @@ public class DateUtils {
 
     public static String parseEpochToISOString(long epochInMillis) {
         LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(epochInMillis/1000, 0, ZoneOffset.UTC);
-        return localDateTime.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN_WITHOUT_MILLIS));
+        return localDateTime.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
     }
 
     public static LocalDateTime getUTCCurrentDateTime() {
