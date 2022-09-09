@@ -164,8 +164,10 @@ public class DynamicBiometricsBox extends LinearLayout implements DynamicView {
         //map with modality name and values of configured attributes
         //non-configured attributes should be blocked out
         for(Modality modality : Modality.values()) {
-            identifiedModalities.put(modality, ListUtils.intersection(this.bioAttributes,
-                    modality.getAttributes()));
+            if (!ListUtils.intersection(this.bioAttributes, modality.getAttributes()).isEmpty()) {
+                identifiedModalities.put(modality, ListUtils.intersection(this.bioAttributes,
+                        modality.getAttributes()));
+            }
         }
     }
 
