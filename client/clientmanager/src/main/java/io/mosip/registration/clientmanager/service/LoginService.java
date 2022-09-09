@@ -7,11 +7,15 @@ import com.auth0.android.jwt.JWT;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import org.json.JSONObject;
 
+import io.mosip.registration.clientmanager.exception.ClientCheckedException;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import org.mvel2.MVEL;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,32 +28,35 @@ public class LoginService {
     private SessionManager sessionManager;
 
     @Inject
+    UserDetailRepository userDetailRepository;
+
+    @Inject
     ClientCryptoManagerService clientCryptoManagerService;
 
-    public LoginService(Context context, ClientCryptoManagerService clientCryptoManagerService) {
+    public LoginService(Context context, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
         this.clientCryptoManagerService = clientCryptoManagerService;
+        this.userDetailRepository = userDetailRepository;
         this.sessionManager = SessionManager.getSessionManager(context);
     }
 
     public boolean isValidUserId(String userId) {
-        //TODO sync user-details
-        // and check if the user is mapped to this center and is active
-        return  (Boolean) MVEL.eval("1==1");
+        return userDetailRepository.getUserDetailCount() != 0 ? userDetailRepository.isActiveUser(userId) : true;
     }
 
     public void saveAuthToken(String authResponse) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);
         CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
-        if(cryptoResponseDto != null) {
-            byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
-            try {
-                JSONObject jsonObject = new JSONObject(new String(decodedBytes));
-                this.sessionManager.saveAuthToken(jsonObject.getString("token"));
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getMessage(), ex);
-                throw ex;
-            }
+        if(cryptoResponseDto == null) {
+            throw new RuntimeException("Invalid Machine Spec ID found");
+        }
+        byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
+        try {
+            JSONObject jsonObject = new JSONObject(new String(decodedBytes));
+            this.sessionManager.saveAuthToken(jsonObject.getString("token"));
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+            throw ex;
         }
     }
 }

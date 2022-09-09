@@ -148,8 +148,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    LoginService provideLoginService(ClientCryptoManagerService clientCryptoManagerService) {
-        return new LoginService(appContext, clientCryptoManagerService);
+    LoginService provideLoginService(ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
+        return new LoginService(appContext, clientCryptoManagerService, userDetailRepository);
     }
 
     @Provides
