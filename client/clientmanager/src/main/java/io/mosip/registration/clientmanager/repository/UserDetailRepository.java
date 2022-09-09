@@ -54,4 +54,12 @@ public class UserDetailRepository {
         }
         userDetailDao.truncateAndInsertAll(userDetailList);
     }
+
+    public boolean isActiveUser(String userId) {
+        return userDetailDao.getUserDetail(userId) != null;
+    }
+
+    public int getUserDetailCount() {
+        return userDetailDao.getUserDetailCount();
+    }
 }
