@@ -21,7 +21,6 @@ jobs:
           npm install
           echo ${{ secrets.ORG_KEY }}
           echo ${{ secrets.GITHUB_TOKEN }}
-          cat /tmp/log.txt
       - name: Updating serverBaseURL.
         run: |
           find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
