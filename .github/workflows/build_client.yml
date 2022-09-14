@@ -25,7 +25,7 @@ jobs:
           find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
           find . -type f -name "*gradle.properties" -print0 | xargs -0 sed -i "s/test_mahesh/${{ secrets.ORG_KEY }}/g"
           find . -type f -name "*gradle.properties" -print0 | xargs -0 sed -i "s/sqp_19c9702eb9f5ddfebbfc36eaa6edf39d22280a49/${{ secrets.GITHUB_TOKEN }}/g"
-          find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/Modular Open Source Identity Platform/${{ secrets.ORG_KEY }}/g"
+          find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/mosip_android-registration-client/${{ secrets.ORG_KEY }}/g"
       - name: Build Android Registration-Client
         run: |
           cd client
