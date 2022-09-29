@@ -16,6 +16,7 @@
     <string name="invalid_username">ಅಮಾನ್ಯ ಬಳಕೆದಾರ ಹೆಸರು</string>
     <string name="login_failed">ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ, ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</string>
     <string name="auth_token_save_failed">ದೃಢೀಕರಣ ಟೋಕನ್ ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ, ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</string>
+    <string name="invalid_machine_spec_id">ಅಮಾನ್ಯವಾದ ಯಂತ್ರ ಸ್ಪೆಕ್ ಐಡಿ ಕಂಡುಬಂದಿದೆ</string>
 
     <!-- Navigation -->
     <string name="next">ಮುಂದೆ</string>

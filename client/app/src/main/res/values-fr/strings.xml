@@ -14,6 +14,7 @@
     <string name="prompt_password">Mot de passe</string>
     <string name="auth_token_save_failed">Échec de l\'enregistrement du jeton d\'authentification, veuillez réessayer
     </string>
+    <string name="invalid_machine_spec_id">ID de spécification de machine non valide trouvé</string>
 
     <!-- Navigation -->
     <string name="next">Suivante</string>

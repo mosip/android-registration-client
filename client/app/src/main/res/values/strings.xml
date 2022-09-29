@@ -15,6 +15,7 @@
     <string name="invalid_username">Invalid username</string>
     <string name="login_failed">Login failed, Kindly try again</string>
     <string name="auth_token_save_failed">Failed to save auth token, Kindly try again</string>
+    <string name="invalid_machine_spec_id">Invalid Machine Spec ID found</string>
 
     <!-- Navigation -->
     <string name="next">Next</string>
