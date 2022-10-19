@@ -8,16 +8,15 @@ import android.print.PrintDocumentAdapter;
 import android.print.PrintJob;
 import android.print.PrintManager;
 import android.util.Log;
-import android.view.View;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
+
 import dagger.android.support.DaggerAppCompatActivity;
 import io.mosip.registration.app.R;
+import io.mosip.registration.app.util.ClientConstants;
+import io.mosip.registration.app.util.FileUtility;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
-import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import javax.inject.Inject;
 
 public class AcknowledgementActivity extends DaggerAppCompatActivity {
 
-    private static final String TAG = AcknowledgementActivity .class.getSimpleName();
+    private static final String TAG = AcknowledgementActivity.class.getSimpleName();
 
     private WebView webView;
     private List<PrintJob> printJobs = new ArrayList<>();
@@ -56,17 +55,28 @@ public class AcknowledgementActivity extends DaggerAppCompatActivity {
         getSupportActionBar().setTitle(R.string.ack_slip);
 
         final Button printButton = findViewById(R.id.printslip);
-        printButton.setOnClickListener( v -> {
+        printButton.setOnClickListener(v -> {
             auditManagerService.audit(AuditEvent.PRINT_ACKNOWLEDGEMENT, Components.REGISTRATION);
             createWebPrintJob(webView);
         });
 
+        String rId = "";
+
         try {
-            String htmlDocument = getIntent().getStringExtra("content");
+            rId = getIntent().getStringExtra(ClientConstants.R_ID);
+            String htmlDocument = FileUtility.getFileContentFromAppStorage(getApplicationContext(), rId);
+
             webView.loadDataWithBaseURL(null, htmlDocument,
                     "text/HTML", "UTF-8", null);
+
         } catch (Exception e) {
             Log.e(TAG, "Failed to set the acknowledgement content", e);
+        }
+
+        try {
+            FileUtility.deleteFileInAppStorage(getApplicationContext(), rId);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to delete acknowledgement file from app storage", e);
         }
         auditManagerService.audit(AuditEvent.LOADED_ACKNOWLEDGEMENT_SCREEN, Components.REGISTRATION);
     }

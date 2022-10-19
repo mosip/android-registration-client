@@ -119,7 +119,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 
-    implementation 'org.apache.velocity:velocity:1.7'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.balysv:material-ripple:1.0.2'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
