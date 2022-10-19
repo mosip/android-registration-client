@@ -16,6 +16,7 @@
     <string name="invalid_username">தவறான பயனர்பெயர்</string>
     <string name="login_failed">உள்நுழைவு தோல்வியடைந்தது, மீண்டும் முயற்சிக்கவும்</string>
     <string name="auth_token_save_failed">அங்கீகார டோக்கனைச் சேமிக்க முடியவில்லை, மீண்டும் முயற்சிக்கவும்</string>
+    <string name="invalid_machine_spec_id">தவறான இயந்திர விவரக்குறிப்பு ஐடி கண்டறியப்பட்டது</string>
 
     <!-- Navigation -->
     <string name="next">அடுத்தது</string>

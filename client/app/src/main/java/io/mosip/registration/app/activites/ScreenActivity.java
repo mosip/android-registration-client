@@ -35,6 +35,7 @@ import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 
@@ -142,6 +143,12 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
             goToHome();
         }
     }
+
+    @Override
+    public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {super.onSaveInstanceState(savedInstanceState);}
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {super.onRestoreInstanceState(savedInstanceState);}
 
     private boolean loadScreenFields(ScreenSpecDto screenSpecDto) throws Exception {
         fieldPanel.removeAllViews();

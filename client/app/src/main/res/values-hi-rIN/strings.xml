@@ -16,6 +16,7 @@
     <string name="invalid_username">अमान्य उपयोगकर्ता नाम</string>
     <string name="login_failed">लॉगिन विफल, कृपया पुन: प्रयास करें</string>
     <string name="auth_token_save_failed">प्रमाणीकरण टोकन सहेजने में विफल, कृपया पुन: प्रयास करें</string>
+    <string name="invalid_machine_spec_id">अमान्य मशीन विशिष्ट आईडी मिली</string>
 
     <!-- Navigation -->
     <string name="next">अगला</string>

@@ -16,6 +16,7 @@
     <string name="username_required">اسم المستخدم مطلوب</string>
     <string name="password_required">كلمة المرور مطلوبة</string>
     <string name="auth_token_save_failed">فشل حفظ رمز المصادقة ، يرجى المحاولة مرة أخرى</string>
+    <string name="invalid_machine_spec_id">تم العثور على معرف مواصفات الجهاز غير صالح</string>
 
     <!-- Navigation -->
     <string name="next">التالي</string>

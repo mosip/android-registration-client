@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import com.auth0.android.jwt.JWT;
 import io.mosip.registration.clientmanager.config.SessionManager;
+import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
 import org.json.JSONObject;
 
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
@@ -48,7 +49,7 @@ public class LoginService {
         cryptoRequestDto.setValue(authResponse);
         CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
         if(cryptoResponseDto == null) {
-            throw new RuntimeException("Invalid Machine Spec ID found");
+            throw new InvalidMachineSpecIDException("Invalid Machine Spec ID found");
         }
         byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
         try {

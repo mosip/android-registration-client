@@ -15,6 +15,7 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -143,6 +144,9 @@ public class LoginActivity extends DaggerAppCompatActivity {
                             intent.putExtra("username", username);
                             startActivity(intent);
                             return;
+                        } catch (InvalidMachineSpecIDException e) {
+                            error = new ServiceError("", getString(R.string.invalid_machine_spec_id));
+                            Log.e(TAG, "Failed to save auth token", e);
                         } catch (Exception e) {
                             error = new ServiceError("", e.getMessage());
                             Log.e(TAG, "Failed to save auth token", e);
