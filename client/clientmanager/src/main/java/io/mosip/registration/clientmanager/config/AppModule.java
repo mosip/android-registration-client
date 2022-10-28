@@ -139,7 +139,6 @@ public class AppModule {
     }
 
 
-
     @Provides
     @Singleton
     SyncRestUtil provideSyncRestFactory(ClientCryptoManagerService clientCryptoManagerService) {
@@ -220,7 +219,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper,  AuditManagerService auditManagerService,
+    Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                      GlobalParamRepository globalParamRepository) {
         return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository);
     }
@@ -232,5 +231,11 @@ public class AppModule {
                                                  SyncRestService syncRestService, CryptoManagerService cryptoManagerService) {
         return new UserOnboardService(appContext, objectMapper, auditManagerService, certificateManagerService, syncRestService,
                 cryptoManagerService);
+    }
+
+    @Provides
+    @Singleton
+    TemplateService TemplateService(MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository) {
+        return new TemplateService(appContext, masterDataService, identitySchemaRepository);
     }
 }
