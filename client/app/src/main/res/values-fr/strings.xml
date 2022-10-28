@@ -43,6 +43,11 @@
     <string name="age_label">Âge</string>
     <string name="page_label">%d Page(s)</string>
     <string name="ref_id">Pièce d\'identité</string>
+    <string name="scan">Analyse</string>
+    <string name="label">Étiquette</string>
+    <string name="authenticate">Authentifier</string>
+    <string name="dob">Date de naissance</string>
+    <string name="or">OU</string>
 
     <!-- Jobs -->
     <string name="scheduled_jobs">Tâches planifiées</string>

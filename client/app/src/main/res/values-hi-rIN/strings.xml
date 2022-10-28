@@ -48,6 +48,11 @@
     <string name="yyyy_label">YYYY</string>
     <string name="age_label">आयु</string>
     <string name="page_label">%d पृष्ठ</string>
+    <string name="scan">स्कैन</string>
+    <string name="label">लेबल</string>
+    <string name="authenticate">प्रमाणित</string>
+    <string name="dob">जन्म तिथि</string>
+    <string name="or">या</string>
 
     <!-- Jobs -->
     <string name="scheduled_jobs">अनुसूचित नौकरियां</string>

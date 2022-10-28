@@ -48,6 +48,11 @@
     <string name="yyyy_label">YYYY</string>
     <string name="age_label">ವಯಸ್ಸು</string>
     <string name="page_label">%d ಪುಟ(s)</string>
+    <string name="scan">ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</string>
+    <string name="label">ಲೇಬಲ್</string>
+    <string name="authenticate">ಪ್ರಮಾಣೀಕರಿಸಿ</string>
+    <string name="dob">DOB</string>
+    <string name="or">ಅಥವಾ</string>
 
     <!-- Jobs -->
     <string name="scheduled_jobs">ನಿಗದಿತ ಉದ್ಯೋಗಗಳು</string>

@@ -48,6 +48,11 @@
     <string name="yyyy_label">YYYY</string>
     <string name="age_label">வயது</string>
     <string name="page_label">%d பக்கம்(s)</string>
+    <string name="scan">ஊடுகதிர்</string>
+    <string name="label">லேபிள்</string>
+    <string name="authenticate">அங்கீகரிக்கவும்</string>
+    <string name="dob">DOB</string>
+    <string name="or">அல்லது</string>
 
     <!-- Jobs -->
     <string name="scheduled_jobs">திட்டமிடப்பட்ட வேலைகள்</string>

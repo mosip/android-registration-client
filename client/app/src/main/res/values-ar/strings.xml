@@ -45,6 +45,11 @@
     <string name="age_label">سن</string>
     <string name="page_label">الصفحة (الصفحات) %d</string>
     <string name="ref_id">مرجع المرجع</string>
+    <string name="scan">مسح</string>
+    <string name="label">مُلصَق</string>
+    <string name="authenticate">المصادقة</string>
+    <string name="dob">DOB</string>
+    <string name="or">أو</string>
 
     <!-- Jobs -->
     <string name="scheduled_jobs">وظائف مجدولة</string>

@@ -10,7 +10,7 @@
             android:id="@+id/text_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Label"
+            android:text="@string/label"
             android:layout_margin="8dp"
     />
 
