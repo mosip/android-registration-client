@@ -53,6 +53,9 @@
     <string name="authenticate">ಪ್ರಮಾಣೀಕರಿಸಿ</string>
     <string name="dob">DOB</string>
     <string name="or">ಅಥವಾ</string>
+    <string name="delete">ಅಳಿಸಿ</string>
+    <string name="preview">ಮುನ್ನೋಟ</string>
+
 
     <!-- Jobs -->
     <string name="scheduled_jobs">ನಿಗದಿತ ಉದ್ಯೋಗಗಳು</string>

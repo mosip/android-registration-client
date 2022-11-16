@@ -53,6 +53,9 @@
     <string name="authenticate">प्रमाणित</string>
     <string name="dob">जन्म तिथि</string>
     <string name="or">या</string>
+    <string name="delete">मिटाना</string>
+    <string name="preview">पूर्वावलोकन</string>
+
 
     <!-- Jobs -->
     <string name="scheduled_jobs">अनुसूचित नौकरियां</string>

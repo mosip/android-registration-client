@@ -52,6 +52,8 @@
     <string name="authenticate">Authenticate</string>
     <string name="dob">DOB</string>
     <string name="or">OR</string>
+    <string name="delete">Delete</string>
+    <string name="preview">Preview</string>
 
     <!-- Jobs -->
     <string name="scheduled_jobs">Scheduled Jobs</string>

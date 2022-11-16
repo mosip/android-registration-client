@@ -53,6 +53,9 @@
     <string name="authenticate">அங்கீகரிக்கவும்</string>
     <string name="dob">DOB</string>
     <string name="or">அல்லது</string>
+    <string name="delete">அழி</string>
+    <string name="preview">முன்னோட்ட</string>
+
 
     <!-- Jobs -->
     <string name="scheduled_jobs">திட்டமிடப்பட்ட வேலைகள்</string>

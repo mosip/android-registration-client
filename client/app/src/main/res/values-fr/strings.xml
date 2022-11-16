@@ -48,6 +48,9 @@
     <string name="authenticate">Authentifier</string>
     <string name="dob">Date de naissance</string>
     <string name="or">OU</string>
+    <string name="delete">Effacer</string>
+    <string name="preview">Aperçu</string>
+
 
     <!-- Jobs -->
     <string name="scheduled_jobs">Tâches planifiées</string>
