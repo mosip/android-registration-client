@@ -149,7 +149,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
     @Override
     public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {super.onSaveInstanceState(savedInstanceState);}
 
-    @Override
+    @Override   
     public void onRestoreInstanceState(Bundle savedInstanceState) {super.onRestoreInstanceState(savedInstanceState);}
 
     private boolean loadScreenFields(ScreenSpecDto screenSpecDto) throws Exception {
