@@ -10,6 +10,9 @@ Registration Client application is built with two different modules *app* and *c
     * dto - has Data Transfer Objects (DTOs).
     * service - implementation of the sync and all the services used by the UI components.
     * spi - Interfaces defined to be used in UI components/activities.
+* keymanager - implementation to handle crypto operations and to maintains trust store.
+* packetmanager - services to create registration packet on the filesystem (POSIXAdapter) 
+* scanlibrary - Document scanning library built on top of OpenCV (credits : https://github.com/jhansireddy/AndroidScannerDemo)
     
 ## Prerequisites
 ### System Requirements
@@ -33,7 +36,7 @@ Wait until the project is loaded in the IDE.
 Configure the sdk version as prompted. Sync the build.gradle files to download the project dependencies.
 Build and run the project.
 
-## Dependency Injection
+## Important Dependencies
 
 ### Dagger2 - Dependency Injection and Inversion of Control
 The project uses Dagger as the IoC framework.
