@@ -26,4 +26,40 @@
     <string name="packet_status_sync_completed">Packet status sync completed"</string>
     <string name="packet_status_sync">%d packet/s status synced"</string>
     <string name="NA">NA</string>
+
+    <!-- Template -->
+    <string name="app_id">Application ID</string>
+    <string name="uin">UIN</string>
+    <string name="date">Date</string>
+    <string name="demographic_info">Demographic Information</string>
+    <string name="photo">Photo</string>
+    <string name="documents">Documents</string>
+    <string name="biometrics">Biometrics</string>
+    <string name="ro_label">Registration Officer</string>
+    <string name="reg_center">Registration Center</string>
+    <string name="imp_guidelines">Important Guidelines</string>
+    <string name="ack_slip">Acknowledgement</string>
+
+    <!-- biometrics -->
+    <string name="face_label">Face</string>
+    <string name="exception_photo_label">Exception Photo</string>
+    <string name="left_iris">Left Iris</string>
+    <string name="right_iris">Right Iris</string>
+    <string name="double_iris">Iris</string>
+    <string name="left_slap">Left Slap</string>
+    <string name="right_slap">Right Slap</string>
+    <string name="thumbs_label">Thumbs</string>
+    <string name="fingers">Fingers</string>
+    <string name="lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet</string>
+    <string name="packets_upload_scheduled">Packets upload scheduled</string>
+    <string name="select_all">Select All</string>
+    <string name="upload">Upload</string>
+    <string name="packet_upload_min_bw">Weak connection. Current %s kbps, required %s kbps</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="change_connection_settings">Upload over wifi only, please change your connection settings.</string>
+    <string name="settings">Settings</string>
+
+    <string name="quality_score">Quality Score: %d</string>
+    <string name="threshold_score">Threshold Score: %d</string>
+    <string name="attempt_number">Attempt: %d</string>
 </resources>
