@@ -10,15 +10,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_config.dart';
 import 'package:registration_client/login_page.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/test.dart';
 
 
-void main() {
- 
+void main() async {
+ await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
 
@@ -38,13 +40,21 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
               lazy: false, create: (context) => GlobalProvider())
         ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.light(primary: primarySolidColor1),
-            primaryColor: primarySolidColor1,
-        ),
-        home: const LoginPage(),
+      child: ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.light(primary: primarySolidColor1),
+                primaryColor: primarySolidColor1,
+            ),
+            home: const LoginPage(),
+          );
+        }
       ),
     );
   }

@@ -83,12 +83,13 @@ public class MainActivity extends FlutterActivity {
                                     initializeAppComponent();
                                     break;
 
-                                case "testMachine":
-                                    new AboutActivityService().testMachine(clientCryptoManagerService, result);
-                                    break;
-
                                 case "getMachineDetails":
                                     new AboutActivityService().getMachineDetails(clientCryptoManagerService, result);
+                                    break;
+
+                                case "validateUsername":
+                                    String usernameVal = call.argument("username");
+                                    new LoginActivityService().usernameValidation(usernameVal, loginService, result);
                                     break;
 
                                 case "login":

@@ -32,6 +32,22 @@ public class LoginActivityService {
     Map<String, String> responseMap = new HashMap<>();
     JSONObject object;
 
+    public void usernameValidation(String username,
+                                       LoginService loginService,
+                                       MethodChannel.Result result) {
+        if(!loginService.isValidUserId(username)) {
+            responseMap.put("user_response", "User not present!");
+            responseMap.put("isUserPresent", "false");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
+        responseMap.put("user_response", "User Validated!");
+        responseMap.put("isUserPresent", "true");
+        object = new JSONObject(responseMap);
+        result.success(object.toString());
+    }
+
     private boolean validateLogin(String username, String password, LoginService loginService) {
         if(username == null || username.trim().length() == 0){
             Log.e(getClass().getSimpleName(), "username incorrect");
