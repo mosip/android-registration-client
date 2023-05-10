@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool isMobile = true;
   static const platform =
       MethodChannel("com.flutter.dev/keymanager.test-machine");
   bool isLoggedIn = false;
@@ -44,58 +45,32 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ScreenUtil.init(context);
+    isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
+    double h = ScreenUtil().screenHeight;
+    double w = ScreenUtil().screenWidth;
     return isLoggedIn
         ? const RegistrationClient()
         : SafeArea(
             child: Scaffold(
               backgroundColor: Utils.appSolidPrimary,
               body: Container(
-                height: ScreenUtil().screenHeight,
-                width: ScreenUtil().screenWidth,
+                height: h,
+                width: w,
                 child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        _appBarComponent(),
-                        SizedBox(
-                          height: 50.h,
+                  child: Column(
+                    children: [
+                      _appBarComponent(),
+                      SizedBox(
+                        height: isMobile ? 50.h : 132.h,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 16.w : 80.w,
                         ),
-                        _welcomeTextComponent(),
-                        SizedBox(
-                          height: 12.h,
-                        ),
-                        _infoTextComponent(),
-                        SizedBox(
-                          height: 40.h,
-                        ),
-                        _loginComponent(),
-
-                        // ElevatedButton(
-                        //   style: const ButtonStyle(
-                        //     backgroundColor:
-                        //         MaterialStatePropertyAll(Colors.deepPurpleAccent),
-                        //   ),
-                        //   onPressed: () {
-                        //     setState(() {
-                        //       isLoggingIn = true;
-                        //     });
-                        //     if (_formKey.currentState!.validate()) {
-                        //       _formKey.currentState!.save();
-                        //       _login(username, password).then((value) {
-                        //         if (loginResponse.isNotEmpty && !isLoggedIn) {
-                        //           showInSnackBar(loginResponse);
-                        //         }
-                        //         isLoggingIn = false;
-                        //       });
-                        //     }
-                        //   },
-                        //   child: isLoggingIn
-                        //       ? const CircularProgressIndicator()
-                        //       : const Text('Login'),
-                        // ),
-                      ],
-                    ),
+                        child: isMobile ? _mobileView() : _tabletView(),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -113,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
       debugPrint('Login: $mp');
     } on PlatformException catch (e) {
       mp = {
-        'login_response': 'Failed!',
+        'login_response': 'Login Failed..Try Again!',
         'isLoggedIn': 'false',
       };
     }
@@ -128,7 +103,8 @@ class _LoginPageState extends State<LoginPage> {
     Map<String, dynamic> mp;
 
     try {
-      response = await platform.invokeMethod("validateUsername", {'username': username});
+      response = await platform
+          .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
     } on PlatformException catch (e) {
       mp = {
@@ -159,9 +135,10 @@ class _LoginPageState extends State<LoginPage> {
       color: Utils.appWhite,
       padding: EdgeInsets.symmetric(
         vertical: 22.h,
-        horizontal: 16.w,
+        horizontal: isMobile ? 16.w : 80.w,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
             onLongPress: () {
@@ -173,21 +150,22 @@ class _LoginPageState extends State<LoginPage> {
               );
             },
             child: Container(
-              height: 46.h,
-              width: 115.39.w,
+              height: isMobile ? 46.h : 54.h,
+              width: isMobile ? 115.39.w : 135.46.w,
               child: Image.asset(
                 appIcon,
                 scale: appIconScale,
               ),
             ),
           ),
-          SizedBox(
-            width: (113.61).w,
-          ),
           InkWell(
             child: Container(
-              width: 129.w,
+              // width: 129.w,
               height: 46.h,
+              padding: EdgeInsets.only(
+                left: 46.w,
+                right: 47.w,
+              ),
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.h,
@@ -197,10 +175,10 @@ class _LoginPageState extends State<LoginPage> {
                   Radius.circular(5),
                 ),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   'HELP',
-                  style: Utils.helpText,
+                  style: Utils.mobileHelpText,
                 ),
               ),
             ),
@@ -213,19 +191,21 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _welcomeTextComponent() {
     return Container(
-      height: 47.w,
+      // height: isMobile ? 47.h : 62.h,
       padding: EdgeInsets.symmetric(
-        horizontal: 57.w,
+        horizontal: isMobile ? 41.w : 0,
       ),
       child: Column(
-        children: const [
+        crossAxisAlignment:
+            isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        children: [
           Text(
             'Welcome to',
-            style: Utils.welcomeText,
+            style: Utils.mobileWelcomeText,
           ),
           Text(
             'Community Registration Client!',
-            style: Utils.communityRegClientText,
+            style: Utils.mobileCommunityRegClientText,
           )
         ],
       ),
@@ -234,23 +214,38 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _infoTextComponent() {
     return Container(
-      height: 17.h,
+      // height: isMobile ? 17.h : 20.h,
       padding: EdgeInsets.symmetric(
-        horizontal: 68.w,
+        horizontal: isMobile ? 52.w : 0,
       ),
-      child: const Text(
+      child: Text(
         'Please login to access all the features.',
-        style: Utils.infoText,
+        style: Utils.mobileInfoText,
       ),
+    );
+  }
+
+  Widget _appCombinedTextComponent() {
+    return Column(
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      children: [
+        _welcomeTextComponent(),
+        SizedBox(
+          height: isMobile ? 12.h : 16.h,
+        ),
+        _infoTextComponent(),
+      ],
     );
   }
 
   Widget _loginComponent() {
     return Container(
-      height: 414.h,
-      width: 358.w,
+      // height: 414.h,
+      width: isMobile ? 358.w : 424.w,
       padding: EdgeInsets.symmetric(
         horizontal: 20.w,
+        vertical: 20.h,
       ),
       decoration: BoxDecoration(
         color: Utils.appWhite,
@@ -263,306 +258,325 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: 54.h,
+            height: 34.h,
           ),
           Container(
             height: 34.h,
-            child: const Text(
+            child: Text(
               'Login',
-              style: Utils.headerText,
+              style: Utils.mobileHeaderText,
             ),
           ),
           SizedBox(
             height: isUserValidated ? 41.h : 38.h,
           ),
-          !isUserValidated
-              ? Container(
-                  height: 17.h,
-                  child: const Text(
-                    'Language',
-                    style: Utils.textfieldHeader,
-                  ),
-                )
-              : const SizedBox(),
-          SizedBox(
-            height: !isUserValidated ? 8.h : 0,
+          !isUserValidated ? _usernameComponent() : const SizedBox(),
+          isUserValidated ? _passwordComponent() : const SizedBox(),
+        ],
+      ),
+    );
+  }
+
+  Widget _usernameComponent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 17.h,
+          child: Text(
+            'Language',
+            style: Utils.mobileTextfieldHeader,
           ),
-          !isUserValidated
-              ? Container(
-                  height: 48.h,
-                  width: 318.w,
-                  padding: EdgeInsets.only(left: 17.w, right: (14.42).w),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1.h,
-                      color: Utils.appGreyShade,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(6),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: DropdownButton(
-                          value: _selectedLanguage,
-                          underline: const SizedBox.shrink(),
-                          icon: const SizedBox.shrink(),
-                          onChanged: (newValue) {
-                            setState(() {
-                              _selectedLanguage = newValue!;
-                            });
-                          },
-                          items: _languages.map((lang) {
-                            return DropdownMenuItem(
-                              value: lang,
-                              child: Container(
-                                height: 17.h,
-                                width: 47.w,
-                                child: Text(
-                                  lang,
-                                  style: Utils.dropdownText,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const Expanded(
-                        child: SizedBox(),
-                      ),
-                      Container(
-                        // height: (8.36).h,
-                        width: (13.16).w,
-                        alignment: Alignment.centerRight,
-                        child: const Icon(
-                          Icons.keyboard_arrow_down_outlined,
-                          color: Utils.appGreyShade,
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              : const SizedBox(),
-          SizedBox(
-            height: !isUserValidated ? 30.h : 0,
+        ),
+        SizedBox(
+          height: 8.h,
+        ),
+        Container(
+          height: 48.h,
+          // width: 318.w,
+          padding: EdgeInsets.only(
+            left: 17.w,
+            right: (14.42).w,
           ),
-          !isUserValidated
-              ? Container(
-                  height: 17.h,
-                  child: const Text(
-                    'Username',
-                    style: Utils.textfieldHeader,
-                  ),
-                )
-              : const SizedBox(),
-          SizedBox(
-            height: !isUserValidated ? 11.h : 0,
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1.h,
+              color: Utils.appGreyShade,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(6),
+            ),
           ),
-          !isUserValidated
-              ? Container(
-                  height: 52.h,
-                  width: 318.w,
-                  padding: EdgeInsets.only(
-                    left: 17.w,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1.h,
-                      color: Utils.appGreyShade,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(6),
-                    ),
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextField(
-                      controller: usernameController,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter Username',
-                        hintStyle: Utils.textfieldHintText,
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-          isUserValidated
-              ? Container(
-                  height: 17.h,
-                  child: const Text(
-                    'Password',
-                    style: Utils.textfieldHeader,
-                  ),
-                )
-              : const SizedBox(),
-          SizedBox(
-            height: isUserValidated ? 11.h : 0,
-          ),
-          isUserValidated
-              ? Container(
-                  height: 52.h,
-                  width: 318.w,
-                  padding: EdgeInsets.only(
-                    left: 17.w,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1.h,
-                      color: Utils.appGreyShade,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(6),
-                    ),
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextField(
-                      obscureText: true,
-                      controller: passwordController,
-                      onChanged: (v) {
-                        setState(() {
-                          password = v;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'Enter Password',
-                        hintStyle: Utils.textfieldHintText,
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-          SizedBox(
-            height: isUserValidated ? 15.h : 0,
-          ),
-          isUserValidated
-              ? InkWell(
-                  onTap: () {},
-                  child: Container(
-                    height: 17.h,
-                    alignment: Alignment.centerRight,
-                    child: const Text(
-                      'Forgot Password?',
-                      style: Utils.forgotPasswordText,
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-          SizedBox(
-            height: 30.h,
-          ),
-          !isUserValidated
-              ? InkWell(
-                  onTap: () {
-                    setState(() {
-                      username = usernameController.text;
-                    });
-                    if(username.isEmpty) {
-                      showInSnackBar("Please enter a valid username!");
-                    } else if(!isUserValidated) {
-                      _validateUsername().then((value) {
-                        showInSnackBar(loginResponse);
-                      });
-                    }
-                  },
-                  child: Container(
-                    height: 52.h,
-                    width: 318.w,
-                    decoration: BoxDecoration(
-                      color: Utils.appSolidPrimary,
-                      border: Border.all(
-                        width: 1.w,
-                        color: Utils.appBlueShade1,
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                    ),
-                    child: const Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              DropdownButton(
+                value: _selectedLanguage,
+                underline: const SizedBox.shrink(),
+                icon: const SizedBox.shrink(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedLanguage = newValue!;
+                  });
+                },
+                items: _languages.map((lang) {
+                  return DropdownMenuItem(
+                    value: lang,
+                    child: Container(
+                      height: 17.h,
+                      // width: 47.w,
                       child: Text(
-                        'NEXT',
-                        style: Utils.buttonText,
+                        lang,
+                        style: Utils.mobileDropdownText,
                       ),
                     ),
-                  ),
-                )
-              : const SizedBox(),
-          isUserValidated
-              ? InkWell(
-                  onTap: () {
-                    debugPrint('Username: $username and Password: $password');
-                    setState(() {
-                      isLoggingIn = true;
-                    });
-                    _login(username, password).then((value) {
-                      if (loginResponse.isNotEmpty && !isLoggedIn) {
-                        showInSnackBar(loginResponse);
-                      }
-                      isLoggingIn = false;
-                    });
-                  },
-                  child: Container(
-                    height: 52.h,
-                    width: 318.w,
-                    decoration: BoxDecoration(
-                      color: Utils.appSolidPrimary,
-                      border: Border.all(
-                        width: 1.w,
-                        color: Utils.appBlueShade1,
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                    ),
-                    child: Center(
-                      child: isLoggingIn ? const CircularProgressIndicator(
-                        color: Utils.appWhite,
-                      ) : const Text(
-                        'LOGIN',
-                        style: Utils.buttonText,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-          SizedBox(
-            height: isUserValidated ? 10.h : 0,
+                  );
+                }).toList(),
+              ),
+              Container(
+                child: const Icon(
+                  Icons.keyboard_arrow_down_outlined,
+                  color: Utils.appGreyShade,
+                ),
+              )
+            ],
           ),
-          isUserValidated
-              ? InkWell(
-                  onTap: () {
-                    setState(() {
-                      isUserValidated = false;
-                    });
-                  },
-                  child: Container(
-                    height: 52.h,
-                    width: 318.w,
-                    decoration: BoxDecoration(
-                      color: Utils.appWhite,
-                      border: Border.all(
-                        width: 1.w,
-                        color: Utils.appBackButtonBorder,
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'BACK',
-                        style: Utils.backButtonText,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
+        ),
+        SizedBox(
+          height: 30.h,
+        ),
+        Container(
+          height: 17.h,
+          child: Text(
+            'Username',
+            style: Utils.mobileTextfieldHeader,
+          ),
+        ),
+        SizedBox(
+          height: 11.h,
+        ),
+        Container(
+          height: 52.h,
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.only(
+            left: 17.w,
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1.h,
+              color: Utils.appGreyShade,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(6),
+            ),
+          ),
+          child: TextField(
+            controller: usernameController,
+            decoration: InputDecoration(
+              hintText: 'Enter Username',
+              hintStyle: Utils.mobileTextfieldHintText,
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 30.h,
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              username = usernameController.text;
+            });
+            if (username.isEmpty) {
+              showInSnackBar("Please enter a valid username!");
+            } else if (!isUserValidated) {
+              _validateUsername().then((value) {
+                showInSnackBar(loginResponse);
+              });
+            }
+          },
+          child: Container(
+            height: 52.h,
+            decoration: BoxDecoration(
+              color: Utils.appSolidPrimary,
+              border: Border.all(
+                width: 1.w,
+                color: Utils.appBlueShade1,
+              ),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(5),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                'NEXT',
+                style: Utils.mobileButtonText,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _passwordComponent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 17.h,
+          child: Text(
+            'Password',
+            style: Utils.mobileTextfieldHeader,
+          ),
+        ),
+        SizedBox(
+          height: 11.h,
+        ),
+        Container(
+          height: 52.h,
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.only(
+            left: 17.w,
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1.h,
+              color: Utils.appGreyShade,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(6),
+            ),
+          ),
+          child: TextField(
+            obscureText: true,
+            controller: passwordController,
+            onChanged: (v) {
+              setState(() {
+                password = v;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Enter Password',
+              hintStyle: Utils.mobileTextfieldHintText,
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 15.h,
+        ),
+        InkWell(
+          onTap: () {},
+          child: Container(
+            height: 17.h,
+            alignment: Alignment.centerRight,
+            child: Text(
+              'Forgot Password?',
+              style: Utils.mobileForgotPasswordText,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 30.h,
+        ),
+        InkWell(
+          onTap: () {
+            debugPrint('Username: $username and Password: $password');
+            setState(() {
+              isLoggingIn = true;
+            });
+            _login(username, password).then((value) {
+              if (loginResponse.isNotEmpty && !isLoggedIn) {
+                showInSnackBar(loginResponse);
+              }
+              isLoggingIn = false;
+            });
+          },
+          child: Container(
+            height: 52.h,
+            decoration: BoxDecoration(
+              color: Utils.appSolidPrimary,
+              border: Border.all(
+                width: 1.w,
+                color: Utils.appBlueShade1,
+              ),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(5),
+              ),
+            ),
+            child: Center(
+              child: isLoggingIn
+                  ? const CircularProgressIndicator(
+                color: Utils.appWhite,
+              )
+                  : Text(
+                'LOGIN',
+                style: Utils.mobileButtonText,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              isUserValidated = false;
+            });
+          },
+          child: Container(
+            height: 52.h,
+            // width: 318.w,
+            decoration: BoxDecoration(
+              color: Utils.appWhite,
+              border: Border.all(
+                width: 1.w,
+                color: Utils.appBackButtonBorder,
+              ),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(5),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                'BACK',
+                style: Utils.mobileBackButtonText,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _mobileView() {
+    return Column(
+      children: [
+        _appCombinedTextComponent(),
+        SizedBox(
+          height: 40.h,
+        ),
+        _loginComponent(),
+      ],
+    );
+  }
+
+  Widget _tabletView() {
+    return SingleChildScrollView(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _appCombinedTextComponent(),
+          SizedBox(
+            width: 41.w,
+          ),
+          _loginComponent(),
         ],
       ),
     );

@@ -18,6 +18,10 @@ allprojects {
     }
 }
 
+ext {
+    serverBaseURL = "\"https://api-internal.dev.mosip.net/\""
+}
+
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"

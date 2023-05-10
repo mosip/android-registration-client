@@ -18,9 +18,8 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/test.dart';
 
-
 void main() async {
- await ScreenUtil.ensureScreenSize();
+  await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
 
@@ -28,8 +27,9 @@ class MyApp extends StatelessWidget {
   const MyApp();
 
   // This widget is the root of your application.
-  static const platform = MethodChannel('com.flutter.dev/keymanager.test-machine');
-  
+  static const platform =
+      MethodChannel('com.flutter.dev/keymanager.test-machine');
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -37,28 +37,45 @@ class MyApp extends StatelessWidget {
     });
     return MultiProvider(
       providers: [
-          ChangeNotifierProvider(
-              lazy: false, create: (context) => GlobalProvider())
-        ],
-      child: ScreenUtilInit(
-        designSize: const Size(390, 844),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) {
-          return MaterialApp(
-            title: 'Flutter Demo',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              colorScheme: ColorScheme.light(primary: primarySolidColor1),
-                primaryColor: primarySolidColor1,
-            ),
-            home: const LoginPage(),
-          );
-        }
+        ChangeNotifierProvider(
+            lazy: false, create: (context) => GlobalProvider())
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.light(primary: primarySolidColor1),
+          primaryColor: primarySolidColor1,
+        ),
+        home: MyHomePage(),
       ),
     );
   }
+
   Future<void> _callAppComponent() async {
     await platform.invokeMethod("callComponent");
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    MediaQueryData mediaQueryData = MediaQuery.of(context);
+    Orientation orientation = mediaQueryData.orientation;
+    ScreenUtil.init(
+      context,
+      designSize: orientation == Orientation.portrait
+          ? const Size(390, 844)
+          : const Size(1024, 768),
+      minTextAdapt: true,
+      splitScreenMode: true,
+    );
+    debugPrint("Font Size: ${16.sp} ${16.spMin} ${16.spMax}");
+    return const LoginPage();
   }
 }
