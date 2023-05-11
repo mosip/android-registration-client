@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void showInSnackBar(String value) {
+  void _showInSnackBar(String value) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(value),
@@ -392,10 +392,12 @@ class _LoginPageState extends State<LoginPage> {
               username = usernameController.text;
             });
             if (username.isEmpty) {
-              showInSnackBar("Please enter a valid username!");
+              _showInSnackBar("Username is required!");
+            } else if(username.length > 50) {
+              _showInSnackBar("Length of Username should not be greater than 50!");
             } else if (!isUserValidated) {
               _validateUsername().then((value) {
-                showInSnackBar(loginResponse);
+                _showInSnackBar(loginResponse);
               });
             }
           },
@@ -487,12 +489,18 @@ class _LoginPageState extends State<LoginPage> {
         InkWell(
           onTap: () {
             debugPrint('Username: $username and Password: $password');
+            if(password.isEmpty) {
+              _showInSnackBar("Password is required!");
+              return;
+            } else if(password.length > 50) {
+              _showInSnackBar("Length of Password should not be greater than 50!");
+            }
             setState(() {
               isLoggingIn = true;
             });
             _login(username, password).then((value) {
               if (loginResponse.isNotEmpty && !isLoggedIn) {
-                showInSnackBar(loginResponse);
+                _showInSnackBar(loginResponse);
               }
               isLoggingIn = false;
             });

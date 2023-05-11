@@ -1,0 +1,83 @@
+plugins {
+    id 'com.android.library'
+    id "org.sonarqube"
+}
+
+apply from: '../jacoco.gradle'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    libraryVariants.every { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.aar')) {
+                output.outputFile = new File(projectDir, '../app/new_libs/' + outputFile.name)
+            }
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'com.google.dagger:dagger:2.41'
+    implementation 'com.google.dagger:dagger-android-support:2.41'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.mockito:mockito-core:4.6.1"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation 'commons-codec:commons-codec:1.15'
+
+    implementation "androidx.room:room-common:2.4.2"
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
+}
+
+sonarqube {
+    androidVariant 'debug' //PUT REAL TASK NAME HERE
+
+    properties {
+        //PUT REAL PATHS HERE
+        property "sonar.java.binaries", "build/intermediates/javac/debug"
+        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
+        //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
+        property "sonar.coverage.jacoco.xmlReportPaths", "./build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
+    }
+}

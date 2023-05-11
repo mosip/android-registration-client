@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Registration Client</string>
+    <string name="packet_sync_id">mosip.registration.sync</string>
+    <string name="packet_external_status_id">mosip.registration.packet.external.status</string>
+    <string name="packet_sync_version">1.0</string>
+    <string name="status_code">Status code</string>
+
+    <!--Error codes used in exceptions-->
+    <string name="err_000">Language is mandatory to begin registration</string>
+    <string name="err_001">Required master data not found</string>
+    <string name="err_002">No Schema found</string>
+    <string name="err_004">Registration not started !</string>
+    <string name="err_005">Failed to create registration packet</string>
+    <string name="err_006">Minimum required space is not available</string>
+    <string name="err_007">Registrations are not allowed</string>
+    <string name="err_008">Policy Certificate Data not allowed</string>
+
+    <!-- Errors -->
+    <string name="global_config_sync_failed">Global config sync failed</string>
+    <string name="packet_status_sync_failed">Packet status sync failed : %s</string>
+    <string name="packet_status_sync_failed_with_status_code">Packet status sync failed with status code : %s</string>
+
+    <!-- Success -->
+    <string name="global_config_sync_completed">Global config sync Completed</string>
+    <string name="packet_status_sync_completed">Packet status sync completed"</string>
+    <string name="packet_status_sync">%d packet/s status synced"</string>
+    <string name="NA">NA</string>
+
+    <!-- Template -->
+    <string name="app_id">Application ID</string>
+    <string name="uin">UIN</string>
+    <string name="date">Date</string>
+    <string name="demographic_info">Demographic Information</string>
+    <string name="photo">Photo</string>
+    <string name="documents">Documents</string>
+    <string name="biometrics">Biometrics</string>
+    <string name="ro_label">Registration Officer</string>
+    <string name="reg_center">Registration Center</string>
+    <string name="imp_guidelines">Important Guidelines</string>
+    <string name="ack_slip">Acknowledgement</string>
+
+    <!-- biometrics -->
+    <string name="face_label">Face</string>
+    <string name="exception_photo_label">Exception Photo</string>
+    <string name="left_iris">Left Iris</string>
+    <string name="right_iris">Right Iris</string>
+    <string name="double_iris">Iris</string>
+    <string name="left_slap">Left Slap</string>
+    <string name="right_slap">Right Slap</string>
+    <string name="thumbs_label">Thumbs</string>
+    <string name="fingers">Fingers</string>
+    <string name="lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet</string>
+    <string name="packets_upload_scheduled">Packets upload scheduled</string>
+    <string name="select_all">Select All</string>
+    <string name="upload">Upload</string>
+    <string name="packet_upload_min_bw">Weak connection. Current %s kbps, required %s kbps</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="change_connection_settings">Upload over wifi only, please change your connection settings.</string>
+    <string name="settings">Settings</string>
+
+    <string name="quality_score">Quality Score: %d</string>
+    <string name="threshold_score">Threshold Score: %d</string>
+    <string name="attempt_number">Attempt: %d</string>
+</resources>

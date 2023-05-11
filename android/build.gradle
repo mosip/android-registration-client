@@ -3,12 +3,20 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.ibotta:plugin:1.2.0"
+        //Jacoco Plugin
+        classpath "org.jacoco:org.jacoco.core:0.8.7"
     }
+}
+
+plugins {
+    id "org.sonarqube" version "3.0"
 }
 
 allprojects {
@@ -19,8 +27,21 @@ allprojects {
 }
 
 ext {
+    compileSdkVersion = 31
+    buildToolsVersion = "31.0.0"
+
+    minSdkVersion = 28
+    targetSdkVersion = 31
+
+    junitVersion = "4.+"
+
+    // clientmanager Library Info
+    clientmanagerLibVersionCode = 1
+    clientmanagerLibVersionName = "\"1.0.0\""
+
     serverBaseURL = "\"https://api-internal.dev.mosip.net/\""
 }
+
 
 rootProject.buildDir = '../build'
 subprojects {
