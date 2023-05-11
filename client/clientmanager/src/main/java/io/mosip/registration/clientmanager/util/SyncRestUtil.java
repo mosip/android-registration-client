@@ -67,8 +67,8 @@ public class SyncRestUtil {
         PublicKeyResponseDto publicKeyResponseDto = this.clientCryptoManagerService.getPublicKey(publicKeyRequestDto);
         String header = String.format("{\"kid\" : \"%s\"}", CryptoUtil.computeFingerPrint(
                 CryptoUtil.base64decoder.decode(publicKeyResponseDto.getPublicKey().getBytes(StandardCharsets.UTF_8)), null));
-        String payload = String.format("{\"userId\" : \"%s\", \"password\": \"%s\", \"authType\":\"%s\", \"timestamp\" : \"%s\", \"machineName\" : \"%s\"}",
-                username, password, "NEW", timestamp, clientCryptoManagerService.getMachineName());
+        String payload = String.format("{\"userId\" : \"%s\", \"password\": \"%s\", \"authType\":\"%s\", \"timestamp\" : \"%s\"}",
+                username, password, "NEW", timestamp);
 
         SignRequestDto signRequestDto = new SignRequestDto();
         signRequestDto.setData(CryptoUtil.base64encoder.encodeToString(payload.getBytes(StandardCharsets.UTF_8)));
