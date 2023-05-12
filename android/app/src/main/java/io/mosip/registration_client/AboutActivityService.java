@@ -18,10 +18,10 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 public class AboutActivityService {
 
-    public void testMachine(ClientCryptoManagerService clientCryptoManagerService, MethodChannel.Result result) {
-        String data = clientCryptoManagerService.testMachine();
-        result.success("data: " + data);
-    }
+//    public void testMachine(ClientCryptoManagerService clientCryptoManagerService, MethodChannel.Result result) {
+//        String data = clientCryptoManagerService.testMachine();
+//        result.success("data: " + data);
+//    }
 
     public void getMachineDetails(ClientCryptoManagerService clientCryptoManagerService, MethodChannel.Result result) {
         Map<String, String> details =

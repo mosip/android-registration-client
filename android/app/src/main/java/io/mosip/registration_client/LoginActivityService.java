@@ -7,6 +7,7 @@
 package io.mosip.registration_client;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -31,6 +32,22 @@ public class LoginActivityService {
     String login_response = "";
     Map<String, String> responseMap = new HashMap<>();
     JSONObject object;
+
+    public void usernameValidation(String username,
+                                       LoginService loginService,
+                                       MethodChannel.Result result) {
+        if(!loginService.isValidUserId(username)) {
+            responseMap.put("user_response", "User not found!");
+            responseMap.put("isUserPresent", "false");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
+        responseMap.put("user_response", "User Validated!");
+        responseMap.put("isUserPresent", "true");
+        object = new JSONObject(responseMap);
+        result.success(object.toString());
+    }
 
     private boolean validateLogin(String username, String password, LoginService loginService) {
         if(username == null || username.trim().length() == 0){
@@ -69,16 +86,17 @@ public class LoginActivityService {
                             result.success(object.toString());
                             return;
                         } catch (InvalidMachineSpecIDException e) {
-                            error = new ServiceError("", e.getMessage());
+                            error = new ServiceError("MACHINE", "Machine not found!");
                             Log.e(getClass().getSimpleName(), "Failed to save auth token", e);
                         } catch (Exception e) {
-                            error = new ServiceError("", e.getMessage());
+                            error = new ServiceError("", "Incorrect Password!");
                             Log.e(getClass().getSimpleName(), "Failed to save auth token", e);
                         }
                     }
 
-                    Log.e(getClass().getSimpleName(), "Some error occurred! " + error);
-                    login_response = error == null ? "Login Failed! Try Again" : "Error: " + error.getMessage();
+                    login_response = error == null ? "Login Failed! Try Again"
+                            : error.getMessage().equals("Invalid Request") ? "Password Incorrect!"
+                            : error.getMessage();
                     responseMap.put("isLoggedIn", "false");
                     responseMap.put("login_response", login_response);
                     object = new JSONObject(responseMap);

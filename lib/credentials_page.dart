@@ -8,6 +8,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/const/FileStorage.dart';
+import 'package:registration_client/const/utils.dart';
+import 'package:registration_client/data/models/screen.dart';
 
 class CredentialsPage extends StatefulWidget {
   const CredentialsPage({super.key});
@@ -17,37 +21,164 @@ class CredentialsPage extends StatefulWidget {
 }
 
 class _CredentialsPageState extends State<CredentialsPage> {
-  static const platform = MethodChannel('com.flutter.dev/keymanager.test-machine');
+  static const platform =
+      MethodChannel('com.flutter.dev/keymanager.test-machine');
   String machineDetails = '';
+  bool isMobile = true;
 
   @override
   void initState() {
     super.initState();
     _getMachineDetails();
   }
-  
+
   @override
   Widget build(BuildContext context) {
+    // ScreenUtil.init(context);
+    isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Device Credentials'),
+        title: const Text(
+          'Device Credentials',
+        ),
+        backgroundColor: Utils.appSolidPrimary,
       ),
-      body: SelectableText(machineDetails),
+      body: Container(
+        height: ScreenUtil().screenHeight,
+        width: ScreenUtil().screenWidth,
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 16.w : 80.w,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 10.h,
+              ),
+              SelectableText(
+                machineDetails,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              isMobile ? _mobileView() : _tabletView(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Future<void> _getMachineDetails() async {
     String resultText;
+    Map<String, dynamic> machineMap;
     try {
       resultText = await platform.invokeMethod('getMachineDetails');
-      Map<String, dynamic> machineMap = jsonDecode(resultText);
+      machineMap = jsonDecode(resultText);
       debugPrint("Machine Map $machineMap");
     } on PlatformException catch (e) {
       resultText = "Failed to get platform version: '${e.message}'.";
+      machineMap = {};
     }
 
     setState(() {
       machineDetails = resultText;
     });
+  }
+
+  void showInSnackBar(String value) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value),
+      ),
+    );
+  }
+
+  Widget _mobileView() {
+    return Column(
+      children: [
+        _copyButton(),
+        SizedBox(
+          height: 10.h,
+        ),
+        _downloadButton(),
+      ],
+    );
+  }
+
+  Widget _tabletView() {
+    return Row(
+      children: [
+        Expanded(child: _copyButton()),
+        SizedBox(
+          width: 25.w,
+        ),
+        Expanded(child: _downloadButton()),
+      ],
+    );
+  }
+
+  Widget _copyButton() {
+    return InkWell(
+      onTap: () {
+        Clipboard.setData(ClipboardData(text: machineDetails)).then((value) {
+          showInSnackBar('Machine Details copied to clipboard!');
+        });
+      },
+      child: Container(
+        height: 48.h,
+        decoration: BoxDecoration(
+          color: Utils.appSolidPrimary,
+          border: Border.all(
+            width: 1.w,
+            color: Utils.appBlueShade1,
+          ),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            'Copy Text',
+            style: Utils.mobileButtonText,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _downloadButton() {
+    return InkWell(
+      onTap: () {
+        FileStorage.writeCounter(
+            machineDetails, "machine_details.json").then((value) {
+              showInSnackBar("File Saved to Downloads");
+        });
+      },
+      child: Container(
+        height: 48.h,
+        decoration: BoxDecoration(
+          color: isMobile ? Utils.appWhite : Utils.appSolidPrimary,
+          border: Border.all(
+            width: 1.w,
+            color: Utils.appBlueShade1,
+          ),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            'Download JSON',
+            style:
+                isMobile ? Utils.mobileBackButtonText : Utils.mobileButtonText,
+          ),
+        ),
+      ),
+    );
   }
 }

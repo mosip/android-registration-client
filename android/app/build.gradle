@@ -41,8 +41,10 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 28
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BASE_URL", rootProject.ext.serverBaseURL)
     }
 
     buildTypes {
@@ -122,8 +124,11 @@ dependencies {
     implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
     implementation 'com.auth0.android:jwtdecode:2.0.1'
 
+    implementation project(':clientmanager')
+    implementation project(':keymanager')
+    implementation project(':packetmanager')
 
-    implementation files('libs/keymanager-debug.aar')
-    implementation files('libs/clientmanager-debug.aar')
-    implementation files('libs/packetmanager-debug.aar')
+//    implementation files('libs/keymanager-debug.aar')
+//    implementation files('libs/clientmanager-debug.aar')
+//    implementation files('libs/packetmanager-debug.aar')
 }
