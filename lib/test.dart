@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Test extends StatelessWidget {
   const Test({super.key});
@@ -12,10 +13,44 @@ class Test extends StatelessWidget {
     // ScreenUtil.init(context, designSize: const Size(390, 854));
     return Scaffold(
       body: Container(
-        height: ScreenUtil().setHeight(50),
-        width: ScreenUtil().setHeight(50),
-        color: Colors.orangeAccent,
+        height: ScreenUtil().screenHeight,
+        width: ScreenUtil().screenWidth,
+        // color: Colors.orangeAccent,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Enter Text'
+                ),
+                onChanged: (v) {
+
+                },
+              ),
+              SizedBox(height: 20.h,),
+
+            ],
+          ),
+        ),
       ),
     );
+  }
+}
+
+class Language {
+  final int id;
+  final String name;
+  final String languageCode;
+
+  Language(this.id, this.name, this.languageCode);
+
+  static List<Language> languageList() {
+    return <Language>[
+      Language(1, "English", "en"),
+      Language(2, "Hindi", "hi"),
+      Language(3, "Arabic", "ar"),
+    ];
   }
 }

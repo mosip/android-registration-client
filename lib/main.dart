@@ -13,14 +13,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_config.dart';
 import 'package:registration_client/login_page.dart';
+import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   await ScreenUtil.ensureScreenSize();
-  runApp(const MyApp());
+  final AppLanguage appLanguage = AppLanguage();
+  await appLanguage.fetchLocale();
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -38,24 +45,43 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            lazy: false, create: (context) => GlobalProvider())
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.light(primary: primarySolidColor1),
-          primaryColor: primarySolidColor1,
+          lazy: false,
+          create: (_) => GlobalProvider(),
         ),
-        home: MyHomePage(),
-      ),
-    );
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => AppLanguage(),
+        ),
+      ],
+      child: BuildApp(),
+      );
   }
 
   Future<void> _callAppComponent() async {
     await platform.invokeMethod("callComponent");
   }
 }
+
+class BuildApp extends StatelessWidget {
+  const BuildApp({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: Provider.of<AppLanguage>(context).appLocal,
+      theme: ThemeData(
+        colorScheme: ColorScheme.light(primary: primarySolidColor1),
+        primaryColor: primarySolidColor1,
+      ),
+      home: MyHomePage(),
+    );
+  }
+}
+
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -75,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
       minTextAdapt: true,
       splitScreenMode: true,
     );
-    debugPrint("Font Size: ${16.sp} ${16.spMin} ${16.spMax}");
     return const LoginPage();
   }
 }
