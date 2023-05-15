@@ -8,12 +8,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:registration_client/app_config.dart';
 import 'package:registration_client/const/utils.dart';
 
 import 'package:registration_client/credentials_page.dart';
 import 'package:flutter/services.dart';
+import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/registration_client.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,8 +35,8 @@ class _LoginPageState extends State<LoginPage> {
   String username = '';
   String password = '';
   bool isUserValidated = false;
-  List<String> _languages = ['English', 'Arabic', 'French'];
-  String _selectedLanguage = 'English';
+  List<String> _languages = ['eng', 'ara', 'fre'];
+  Map<String, String> mp = {};
   final _formKey = GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -41,11 +44,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    mp['eng'] = "English";
+    mp['ara'] = "Arabic";
+    mp['fre'] = "French";
   }
 
   @override
   Widget build(BuildContext context) {
-    // ScreenUtil.init(context);
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
@@ -68,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 16.w : 80.w,
                         ),
-                        child: isMobile ? _mobileView() : _tabletView(),
+                        child: _mobileView(),
                       ),
                     ],
                   ),
@@ -177,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: Center(
                 child: Text(
-                  'HELP',
+                  AppLocalizations.of(context)!.help,
                   style: Utils.mobileHelpText,
                 ),
               ),
@@ -200,11 +205,11 @@ class _LoginPageState extends State<LoginPage> {
             isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
           Text(
-            'Welcome to',
+            AppLocalizations.of(context)!.welcome,
             style: Utils.mobileWelcomeText,
           ),
           Text(
-            'Community Registration Client!',
+            AppLocalizations.of(context)!.community_reg_text,
             style: Utils.mobileCommunityRegClientText,
           )
         ],
@@ -219,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
         horizontal: isMobile ? 52.w : 0,
       ),
       child: Text(
-        'Please login to access all the features.',
+        AppLocalizations.of(context)!.info_text,
         style: Utils.mobileInfoText,
       ),
     );
@@ -266,7 +271,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             height: 34.h,
             child: Text(
-              'Login',
+              AppLocalizations.of(context)!.login_text,
               style: Utils.mobileHeaderText,
             ),
           ),
@@ -281,13 +286,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _usernameComponent() {
+    final appLanguage = Provider.of<AppLanguage>(context, listen: false);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           height: 17.h,
           child: Text(
-            'Language',
+            AppLocalizations.of(context)!.language,
             style: Utils.mobileTextfieldHeader,
           ),
         ),
@@ -315,13 +321,12 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               DropdownButton(
-                value: _selectedLanguage,
+                value: context.watch<AppLanguage>().selectedLanguage,
                 underline: const SizedBox.shrink(),
                 icon: const SizedBox.shrink(),
                 onChanged: (newValue) {
-                  setState(() {
-                    _selectedLanguage = newValue!;
-                  });
+                  context.read<AppLanguage>().selectedLanguage = newValue!;
+                  appLanguage.changeLanguage(Locale(newValue));
                 },
                 items: _languages.map((lang) {
                   return DropdownMenuItem(
@@ -330,7 +335,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 17.h,
                       // width: 47.w,
                       child: Text(
-                        lang,
+                        mp[lang]!,
                         style: Utils.mobileDropdownText,
                       ),
                     ),
@@ -352,7 +357,7 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           height: 17.h,
           child: Text(
-            'Username',
+            AppLocalizations.of(context)!.username,
             style: Utils.mobileTextfieldHeader,
           ),
         ),
@@ -362,8 +367,8 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           height: 52.h,
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(
-            left: 17.w,
+          padding: EdgeInsets.symmetric(
+            horizontal: 17.w,
           ),
           decoration: BoxDecoration(
             border: Border.all(
@@ -377,7 +382,7 @@ class _LoginPageState extends State<LoginPage> {
           child: TextField(
             controller: usernameController,
             decoration: InputDecoration(
-              hintText: 'Enter Username',
+              hintText: AppLocalizations.of(context)!.enter_username,
               hintStyle: Utils.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
@@ -392,9 +397,9 @@ class _LoginPageState extends State<LoginPage> {
               username = usernameController.text;
             });
             if (username.isEmpty) {
-              _showInSnackBar("Username is required!");
-            } else if(username.length > 50) {
-              _showInSnackBar("Length of Username should not be greater than 50!");
+              _showInSnackBar(AppLocalizations.of(context)!.username_required);
+            } else if (username.length > 50) {
+              _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
             } else if (!isUserValidated) {
               _validateUsername().then((value) {
                 _showInSnackBar(loginResponse);
@@ -415,7 +420,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             child: Center(
               child: Text(
-                'NEXT',
+                AppLocalizations.of(context)!.next_button,
                 style: Utils.mobileButtonText,
               ),
             ),
@@ -432,7 +437,7 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           height: 17.h,
           child: Text(
-            'Password',
+            AppLocalizations.of(context)!.password,
             style: Utils.mobileTextfieldHeader,
           ),
         ),
@@ -463,7 +468,7 @@ class _LoginPageState extends State<LoginPage> {
               });
             },
             decoration: InputDecoration(
-              hintText: 'Enter Password',
+              hintText: AppLocalizations.of(context)!.enter_password,
               hintStyle: Utils.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
@@ -478,7 +483,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 17.h,
             alignment: Alignment.centerRight,
             child: Text(
-              'Forgot Password?',
+              AppLocalizations.of(context)!.forgot_password,
               style: Utils.mobileForgotPasswordText,
             ),
           ),
@@ -489,11 +494,11 @@ class _LoginPageState extends State<LoginPage> {
         InkWell(
           onTap: () {
             debugPrint('Username: $username and Password: $password');
-            if(password.isEmpty) {
-              _showInSnackBar("Password is required!");
+            if (password.isEmpty) {
+              _showInSnackBar(AppLocalizations.of(context)!.password_required);
               return;
-            } else if(password.length > 50) {
-              _showInSnackBar("Length of Password should not be greater than 50!");
+            } else if (password.length > 50) {
+              _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
             }
             setState(() {
               isLoggingIn = true;
@@ -520,12 +525,12 @@ class _LoginPageState extends State<LoginPage> {
             child: Center(
               child: isLoggingIn
                   ? const CircularProgressIndicator(
-                color: Utils.appWhite,
-              )
+                      color: Utils.appWhite,
+                    )
                   : Text(
-                'LOGIN',
-                style: Utils.mobileButtonText,
-              ),
+                      AppLocalizations.of(context)!.login_text,
+                      style: Utils.mobileButtonText,
+                    ),
             ),
           ),
         ),
@@ -553,7 +558,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             child: Center(
               child: Text(
-                'BACK',
+                AppLocalizations.of(context)!.back_button,
                 style: Utils.mobileBackButtonText,
               ),
             ),
@@ -575,18 +580,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _tabletView() {
-    return SingleChildScrollView(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _appCombinedTextComponent(),
-          SizedBox(
-            width: 41.w,
-          ),
-          _loginComponent(),
-        ],
-      ),
-    );
-  }
+// Widget _tabletView() {
+//   return SingleChildScrollView(
+//     child: Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         _appCombinedTextComponent(),
+//         // SizedBox(
+//         //   width: 41.w,
+//         // ),
+//         _loginComponent(),
+//       ],
+//     ),
+//   );
+// }
 }
