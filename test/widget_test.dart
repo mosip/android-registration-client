@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:registration_client/main.dart';
-import 'package:registration_client/test.dart';
 
 void main() {
   testWidgets('Find Help Button', (WidgetTester tester) async {
@@ -46,24 +45,42 @@ void main() {
   testWidgets('Login Component', (WidgetTester tester) async {
     await tester.pumpWidget(MyApp());
 
-    var loginText = find.text('Login');
-    expect(loginText, findsOneWidget);
+    expect(find.text('Login'), findsOneWidget);
 
-    var usernameText = find.text('Username');
-    expect(usernameText, findsOneWidget);
+    expect(find.byKey(const Key('language_dropdown')), findsOneWidget);
 
-    var usernameTF = find.widgetWithText(TextField, "Enter Username");
-    expect(usernameTF, findsOneWidget);
+    expect(find.text('Username'), findsOneWidget);
 
-    var nextButton = find.widgetWithText(InkWell, "NEXT");
-    expect(nextButton, findsOneWidget);
+    expect(find.widgetWithText(TextField, "Enter Username"), findsOneWidget);
 
-    await tester.tap(find.text("NEXT"));
-    await tester.pumpAndSettle();
-
-    // expect(usernameText, findsNothing);
+    expect(find.widgetWithText(InkWell, 'NEXT'), findsOneWidget);
   });
 
+  testWidgets("Login Page Username Comp", (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
 
+    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.text('Login'), findsOneWidget);
+    expect(find.text('Username'), findsOneWidget);
+    expect(find.text('Password'), findsNothing); // Password field should not be visible initially
+    expect(find.byType(InkWell), findsNWidgets(4));
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('NEXT'), findsOneWidget);
+    expect(find.text('Enter Password'), findsNothing);
+    expect(find.text('LOGIN'), findsNothing);
+    expect(find.widgetWithText(TextField, 'Enter Password'), findsNothing);
+    expect(find.widgetWithText(InkWell, 'LOGIN'), findsNothing);
+    expect(find.widgetWithText(InkWell, 'BACK'), findsNothing);
+  });
 
+  testWidgets("Login Page Password Comp", (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+
+    await tester.enterText(find.byType(TextField), 'test_username');
+    await tester.tap(find.text('NEXT'));
+
+    await tester.pump();
+
+    expect(find.text('Password'), findsOneWidget);
+  });
 }

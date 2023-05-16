@@ -17,6 +17,8 @@ import 'package:flutter/services.dart';
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/widgets/password_component.dart';
+import 'package:registration_client/widgets/username_component.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -132,6 +134,39 @@ class _LoginPageState extends State<LoginPage> {
         content: Text(value),
       ),
     );
+  }
+
+  void _onTapNext() {
+    if (username.isEmpty) {
+      _showInSnackBar(
+          AppLocalizations.of(context)!.username_required);
+    } else if (username.length > 50) {
+      _showInSnackBar(
+          AppLocalizations.of(context)!.username_exceed);
+    } else if (!isUserValidated) {
+      _validateUsername().then((value) {
+        _showInSnackBar(loginResponse);
+      });
+    }
+  }
+
+  void _onTapLogin() {
+    if (password.isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_required);
+      return;
+    } else if (password.length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
+      return;
+    }
+    setState(() {
+      isLoggingIn = true;
+    });
+    _login(username, password).then((value) {
+      if (loginResponse.isNotEmpty && !isLoggedIn) {
+        _showInSnackBar(loginResponse);
+      }
+      isLoggingIn = false;
+    });
   }
 
   Widget _appBarComponent() {
@@ -278,293 +313,32 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: isUserValidated ? 41.h : 38.h,
           ),
-          !isUserValidated ? _usernameComponent() : const SizedBox(),
-          isUserValidated ? _passwordComponent() : const SizedBox(),
+          !isUserValidated
+              ? UsernameComponent(
+                  onTap: _onTapNext,
+                  languages: _languages,
+                  mp: mp,
+                  onChanged: (v) {
+                    username = v;
+                  },
+                )
+              : const SizedBox(),
+          isUserValidated
+              ? PasswordComponent(
+                  onTapLogin: _onTapLogin,
+                  onTapBack: () {
+                    setState(() {
+                      isUserValidated = false;
+                    });
+                  },
+                  onChanged: (v) {
+                    password = v;
+                  },
+                  isLoggingIn: isLoggingIn,
+                )
+              : const SizedBox(),
         ],
       ),
-    );
-  }
-
-  Widget _usernameComponent() {
-    final appLanguage = Provider.of<AppLanguage>(context, listen: false);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 17.h,
-          child: Text(
-            AppLocalizations.of(context)!.language,
-            style: Utils.mobileTextfieldHeader,
-          ),
-        ),
-        SizedBox(
-          height: 8.h,
-        ),
-        Container(
-          height: 48.h,
-          // width: 318.w,
-          padding: EdgeInsets.only(
-            left: 17.w,
-            right: (14.42).w,
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 1.h,
-              color: Utils.appGreyShade,
-            ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(6),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              DropdownButton(
-                value: context.watch<AppLanguage>().selectedLanguage,
-                underline: const SizedBox.shrink(),
-                icon: const SizedBox.shrink(),
-                onChanged: (newValue) {
-                  context.read<AppLanguage>().selectedLanguage = newValue!;
-                  appLanguage.changeLanguage(Locale(newValue));
-                },
-                items: _languages.map((lang) {
-                  return DropdownMenuItem(
-                    value: lang,
-                    child: Container(
-                      height: 17.h,
-                      // width: 47.w,
-                      child: Text(
-                        mp[lang]!,
-                        style: Utils.mobileDropdownText,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              Container(
-                child: const Icon(
-                  Icons.keyboard_arrow_down_outlined,
-                  color: Utils.appGreyShade,
-                ),
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 30.h,
-        ),
-        Container(
-          height: 17.h,
-          child: Text(
-            AppLocalizations.of(context)!.username,
-            style: Utils.mobileTextfieldHeader,
-          ),
-        ),
-        SizedBox(
-          height: 11.h,
-        ),
-        Container(
-          height: 52.h,
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.symmetric(
-            horizontal: 17.w,
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 1.h,
-              color: Utils.appGreyShade,
-            ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(6),
-            ),
-          ),
-          child: TextField(
-            controller: usernameController,
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.enter_username,
-              hintStyle: Utils.mobileTextfieldHintText,
-              border: InputBorder.none,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 30.h,
-        ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              username = usernameController.text;
-            });
-            if (username.isEmpty) {
-              _showInSnackBar(AppLocalizations.of(context)!.username_required);
-            } else if (username.length > 50) {
-              _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
-            } else if (!isUserValidated) {
-              _validateUsername().then((value) {
-                _showInSnackBar(loginResponse);
-              });
-            }
-          },
-          child: Container(
-            height: 52.h,
-            decoration: BoxDecoration(
-              color: Utils.appSolidPrimary,
-              border: Border.all(
-                width: 1.w,
-                color: Utils.appBlueShade1,
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(5),
-              ),
-            ),
-            child: Center(
-              child: Text(
-                AppLocalizations.of(context)!.next_button,
-                style: Utils.mobileButtonText,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _passwordComponent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 17.h,
-          child: Text(
-            AppLocalizations.of(context)!.password,
-            style: Utils.mobileTextfieldHeader,
-          ),
-        ),
-        SizedBox(
-          height: 11.h,
-        ),
-        Container(
-          height: 52.h,
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(
-            left: 17.w,
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 1.h,
-              color: Utils.appGreyShade,
-            ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(6),
-            ),
-          ),
-          child: TextField(
-            obscureText: true,
-            controller: passwordController,
-            onChanged: (v) {
-              setState(() {
-                password = v;
-              });
-            },
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.enter_password,
-              hintStyle: Utils.mobileTextfieldHintText,
-              border: InputBorder.none,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 15.h,
-        ),
-        InkWell(
-          onTap: () {},
-          child: Container(
-            height: 17.h,
-            alignment: Alignment.centerRight,
-            child: Text(
-              AppLocalizations.of(context)!.forgot_password,
-              style: Utils.mobileForgotPasswordText,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 30.h,
-        ),
-        InkWell(
-          onTap: () {
-            debugPrint('Username: $username and Password: $password');
-            if (password.isEmpty) {
-              _showInSnackBar(AppLocalizations.of(context)!.password_required);
-              return;
-            } else if (password.length > 50) {
-              _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
-            }
-            setState(() {
-              isLoggingIn = true;
-            });
-            _login(username, password).then((value) {
-              if (loginResponse.isNotEmpty && !isLoggedIn) {
-                _showInSnackBar(loginResponse);
-              }
-              isLoggingIn = false;
-            });
-          },
-          child: Container(
-            height: 52.h,
-            decoration: BoxDecoration(
-              color: Utils.appSolidPrimary,
-              border: Border.all(
-                width: 1.w,
-                color: Utils.appBlueShade1,
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(5),
-              ),
-            ),
-            child: Center(
-              child: isLoggingIn
-                  ? const CircularProgressIndicator(
-                      color: Utils.appWhite,
-                    )
-                  : Text(
-                      AppLocalizations.of(context)!.login_text,
-                      style: Utils.mobileButtonText,
-                    ),
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 10.h,
-        ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              isUserValidated = false;
-            });
-          },
-          child: Container(
-            height: 52.h,
-            // width: 318.w,
-            decoration: BoxDecoration(
-              color: Utils.appWhite,
-              border: Border.all(
-                width: 1.w,
-                color: Utils.appBackButtonBorder,
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(5),
-              ),
-            ),
-            child: Center(
-              child: Text(
-                AppLocalizations.of(context)!.back_button,
-                style: Utils.mobileBackButtonText,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 

@@ -10,7 +10,7 @@ class Test extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ScreenUtil.init(context);
-    // ScreenUtil.init(context, designSize: const Size(390, 854));
+    ScreenUtil.init(context, designSize: const Size(390, 854));
     return Scaffold(
       body: Container(
         height: ScreenUtil().screenHeight,
@@ -21,8 +21,19 @@ class Test extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              InkWell(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('SnackBar Message'),
+                    ),
+                  );
+                },
+
+                child: const Text('Show'),
+              ),
               TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Enter Text'
                 ),
                 onChanged: (v) {
