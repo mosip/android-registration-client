@@ -36,41 +36,50 @@ class _CredentialsPageState extends State<CredentialsPage> {
   Widget build(BuildContext context) {
     // ScreenUtil.init(context);
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            AppLocalizations.of(context)!.device_credentials,
-          ),
-          backgroundColor: Utils.appSolidPrimary,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          AppLocalizations.of(context)!.device_credentials,
         ),
-        body: Container(
-          height: ScreenUtil().screenHeight,
-          width: ScreenUtil().screenWidth,
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 16.w : 80.w,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 10.h,
-                ),
-                SelectableText(
-                  machineDetails,
-                  textDirection: TextDirection.ltr,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16.sp,
-                  ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                isMobile ? _mobileView() : _tabletView(),
-              ],
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.close_rounded,
+              color: Utils.appWhite,
             ),
+          )
+        ],
+        backgroundColor: Utils.appSolidPrimary,
+        automaticallyImplyLeading: false,
+      ),
+      body: Container(
+        height: ScreenUtil().screenHeight,
+        width: ScreenUtil().screenWidth,
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 16.w : 80.w,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 10.h,
+              ),
+              SelectableText(
+                machineDetails,
+                textDirection: TextDirection.ltr,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              isMobile ? _mobileView() : _tabletView(),
+            ],
           ),
         ),
       ),
@@ -158,9 +167,9 @@ class _CredentialsPageState extends State<CredentialsPage> {
   Widget _downloadButton() {
     return InkWell(
       onTap: () {
-        FileStorage.writeCounter(
-            machineDetails, "machine_details.txt").then((value) {
-              showInSnackBar(AppLocalizations.of(context)!.download_message);
+        FileStorage.writeCounter(machineDetails, "machine_details.txt")
+            .then((value) {
+          showInSnackBar(AppLocalizations.of(context)!.download_message);
         });
       },
       child: Container(

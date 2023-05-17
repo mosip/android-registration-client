@@ -47,8 +47,8 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     mp['eng'] = "English";
-    mp['ara'] = "Arabic";
-    mp['fre'] = "French";
+    mp['ara'] = "العربية";
+    mp['fre'] = "Français";
   }
 
   @override

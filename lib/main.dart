@@ -77,10 +77,7 @@ class BuildApp extends StatelessWidget {
         colorScheme: ColorScheme.light(primary: primarySolidColor1),
         primaryColor: primarySolidColor1,
       ),
-      home: Directionality(
-        textDirection: TextDirection.ltr,
-        child: MyHomePage(),
-      ),
+      home: MyHomePage(),
     );
   }
 }
