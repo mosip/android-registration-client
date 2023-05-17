@@ -12,12 +12,14 @@ class UsernameComponent extends StatelessWidget {
     required this.languages,
     required this.mp,
     required this.onChanged,
+    required this.isDisabled,
   }) : super(key: key);
 
   final List<String> languages;
   final Map<String, String> mp;
   final VoidCallback onTap;
   final Function onChanged;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -131,11 +133,11 @@ class UsernameComponent extends StatelessWidget {
           height: 30.h,
         ),
         InkWell(
-          onTap: onTap,
+          onTap: !isDisabled ? onTap : null,
           child: Container(
             height: 52.h,
             decoration: BoxDecoration(
-              color: Utils.appSolidPrimary,
+              color: !isDisabled ? Utils.appSolidPrimary : Utils.appGreyShade,
               border: Border.all(
                 width: 1.w,
                 color: Utils.appBlueShade1,

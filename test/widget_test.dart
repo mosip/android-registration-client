@@ -8,9 +8,40 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/credentials_page.dart';
 
 import 'package:registration_client/main.dart';
+import 'package:registration_client/provider/app_language.dart';
+import 'package:registration_client/provider/global_provider.dart';
+
+Widget testableWidget({Widget child}) {
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        lazy: false,
+        create: (_) => GlobalProvider(),
+      ),
+      ChangeNotifierProvider(
+        lazy: false,
+        create: (_) => AppLanguage(),
+      ),
+    ],
+    child: MaterialApp(
+      home: Builder(builder: (BuildContext context) {
+        ScreenUtil.init(
+          context,
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          splitScreenMode: true,
+        );
+        return child;
+      }),
+    ),
+  );
+}
 
 void main() {
   testWidgets('Find Help Button', (WidgetTester tester) async {
@@ -62,7 +93,8 @@ void main() {
     expect(find.byType(Scaffold), findsOneWidget);
     expect(find.text('Login'), findsOneWidget);
     expect(find.text('Username'), findsOneWidget);
-    expect(find.text('Password'), findsNothing); // Password field should not be visible initially
+    expect(find.text('Password'),
+        findsNothing); // Password field should not be visible initially
     expect(find.byType(InkWell), findsNWidgets(4));
     expect(find.byType(TextField), findsOneWidget);
     expect(find.text('NEXT'), findsOneWidget);
@@ -82,5 +114,17 @@ void main() {
     await tester.pump();
 
     expect(find.text('Password'), findsOneWidget);
+  });
+
+  testWidgets("Credentials Page", (WidgetTester tester) async {
+    await tester.pumpWidget(
+      testableWidget(
+        child: const CredentialsPage(),
+      ),
+    );
+
+    expect(find.byType(InkWell), findsNWidgets(2));
+    expect(find.widgetWithText(InkWell, "Copy Text"), findsOneWidget);
+    expect(find.widgetWithText(InkWell, "Download JSON"), findsOneWidget);
   });
 }

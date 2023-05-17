@@ -138,11 +138,9 @@ class _LoginPageState extends State<LoginPage> {
 
   void _onTapNext() {
     if (username.isEmpty) {
-      _showInSnackBar(
-          AppLocalizations.of(context)!.username_required);
+      _showInSnackBar(AppLocalizations.of(context)!.username_required);
     } else if (username.length > 50) {
-      _showInSnackBar(
-          AppLocalizations.of(context)!.username_exceed);
+      _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
     } else if (!isUserValidated) {
       _validateUsername().then((value) {
         _showInSnackBar(loginResponse);
@@ -316,6 +314,7 @@ class _LoginPageState extends State<LoginPage> {
           !isUserValidated
               ? UsernameComponent(
                   onTap: _onTapNext,
+                  isDisabled: username.isEmpty || username.length > 50,
                   languages: _languages,
                   mp: mp,
                   onChanged: (v) {
@@ -325,6 +324,7 @@ class _LoginPageState extends State<LoginPage> {
               : const SizedBox(),
           isUserValidated
               ? PasswordComponent(
+                  isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onTapLogin,
                   onTapBack: () {
                     setState(() {
@@ -354,18 +354,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-// Widget _tabletView() {
-//   return SingleChildScrollView(
-//     child: Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//       children: [
-//         _appCombinedTextComponent(),
-//         // SizedBox(
-//         //   width: 41.w,
-//         // ),
-//         _loginComponent(),
-//       ],
-//     ),
-//   );
-// }
+Widget _tabletView() {
+  return SingleChildScrollView(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _appCombinedTextComponent(),
+        SizedBox(
+          width: 41.w,
+        ),
+        _loginComponent(),
+      ],
+    ),
+  );
+}
 }

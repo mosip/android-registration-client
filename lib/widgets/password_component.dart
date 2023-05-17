@@ -10,12 +10,14 @@ class PasswordComponent extends StatelessWidget {
     required this.onTapBack,
     required this.onChanged,
     required this.isLoggingIn,
+    required this.isDisabled,
   }) : super(key: key);
 
   final VoidCallback onTapLogin;
   final VoidCallback onTapBack;
   final Function onChanged;
   final bool isLoggingIn;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +37,7 @@ class PasswordComponent extends StatelessWidget {
         Container(
           height: 52.h,
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.symmetric(
-            horizontal: 17.w
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 17.w),
           decoration: BoxDecoration(
             border: Border.all(
               width: 1.h,
@@ -77,11 +77,11 @@ class PasswordComponent extends StatelessWidget {
           height: 30.h,
         ),
         InkWell(
-          onTap: onTapLogin,
+          onTap: !isDisabled ? onTapLogin : null,
           child: Container(
             height: 52.h,
             decoration: BoxDecoration(
-              color: Utils.appSolidPrimary,
+              color: !isDisabled ? Utils.appSolidPrimary : Utils.appGreyShade,
               border: Border.all(
                 width: 1.w,
                 color: Utils.appBlueShade1,
