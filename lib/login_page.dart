@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 16.w : 80.w,
                         ),
-                        child: _mobileView(),
+                        child: isMobile ? _mobileView() : _tabletView(),
                       ),
                     ],
                   ),
