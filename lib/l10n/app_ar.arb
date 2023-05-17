@@ -30,5 +30,6 @@
   "copy_text": "نسخ النص",
   "download_json": "تنزيل  جيسون",
   "copy_message": "تفاصيل الجهاز نسخ إلى الحافظة!",
-  "download_message": "تم حفظ الملف للتنزيلات!"
+  "download_message": "تم حفظ الملف للتنزيلات!",
+  "logout": "الخروج"
 }

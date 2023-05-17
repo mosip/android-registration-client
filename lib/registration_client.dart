@@ -10,15 +10,19 @@ import 'dart:io';
 import 'package:document_scanner/document_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_config.dart';
 import 'package:registration_client/const/utils.dart';
 import 'package:registration_client/demographic_details_view.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'provider/global_provider.dart';
 
 class RegistrationClient extends StatefulWidget {
-  const RegistrationClient({super.key});
+  RegistrationClient({super.key, required this.onLogout});
+
+  final VoidCallback onLogout;
 
   @override
   State<RegistrationClient> createState() => _RegistrationClientState();
@@ -29,75 +33,141 @@ class _RegistrationClientState extends State<RegistrationClient> {
   static const platform =
       MethodChannel('com.flutter.dev/keymanager.test-machine');
   String syncDataResponse = '';
+  bool isMobile = true;
 
   @override
   Widget build(BuildContext context) {
+    isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
+    double h = ScreenUtil().screenHeight;
+    double w = ScreenUtil().screenWidth;
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Welcome Piyush!'),
-        ),
-        body: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(20),
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          crossAxisCount: 2,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const MyHomePage(title: "Mosip New Registration"),
-                    ));
-              },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                color: Utils.appSolidPrimary,
-                child: Center(
-                  child: Text(
-                    "New registration",
-                    style: Utils.mobileButtonText,
+        backgroundColor: Utils.appSolidPrimary,
+        body: Container(
+          height: h,
+          width: w,
+          child: Column(
+            children: [
+              _appBarComponent(),
+              SizedBox(
+                height: 30.h,
+              ),
+              GridView.count(
+                primary: false,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(20),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                crossAxisCount: 2,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const MyHomePage(title: "Mosip New Registration"),
+                          ));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      color: Utils.appWhite,
+                      child: Center(
+                        child: Text(
+                          "New registration",
+                          style: Utils.mobileHelpText,
+                        ),
+                      ),
+                    ),
                   ),
+                  InkWell(
+                    onTap: () {
+                      _masterDataSync();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      color: Utils.appWhite,
+                      child: Center(
+                          child: Text(
+                        'Master Data Sync',
+                        style: Utils.mobileHelpText,
+                      )),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    color: Utils.appWhite,
+                    child: Center(
+                        child: Text(
+                      'Packet Bundling',
+                      style: Utils.mobileHelpText,
+                    )),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    color: Utils.appWhite,
+                    child: Center(
+                        child: Text(
+                      'Biometrics Enabled',
+                      style: Utils.mobileHelpText,
+                    )),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _appBarComponent() {
+    return Container(
+      height: 90.h,
+      color: Utils.appWhite,
+      padding: EdgeInsets.symmetric(
+        vertical: 22.h,
+        horizontal: isMobile ? 16.w : 80.w,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            height: isMobile ? 46.h : 54.h,
+            width: isMobile ? 115.39.w : 135.46.w,
+            child: Image.asset(
+              appIcon,
+              scale: appIconScale,
+            ),
+          ),
+          InkWell(
+            onTap: widget.onLogout,
+            child: Container(
+              // width: 129.w,
+              height: 46.h,
+              padding: EdgeInsets.only(
+                left: 46.w,
+                right: 47.w,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 1.h,
+                  color: Utils.appHelpText,
+                ),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(5),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  AppLocalizations.of(context)!.logout,
+                  style: Utils.mobileHelpText,
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                _masterDataSync();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                color: Utils.appSolidPrimary,
-                child: Center(
-                    child: Text(
-                  'Master Data Sync',
-                  style: Utils.mobileButtonText,
-                )),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              color: Utils.appSolidPrimary,
-              child: Center(
-                  child: Text(
-                'Packet Bundling',
-                style: Utils.mobileButtonText,
-              )),
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              color: Utils.appSolidPrimary,
-              child: Center(
-                  child: Text(
-                'Biometrics Enabled',
-                style: Utils.mobileButtonText,
-              )),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

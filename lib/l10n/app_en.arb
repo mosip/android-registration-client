@@ -30,5 +30,6 @@
   "copy_text": "Copy Text",
   "download_json": "Download JSON",
   "copy_message": "Machine Details copied to clipboard!",
-  "download_message": "File Saved to Downloads!"
+  "download_message": "File Saved to Downloads!",
+  "logout": "LOGOUT"
 }

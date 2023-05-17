@@ -57,7 +57,14 @@ class _LoginPageState extends State<LoginPage> {
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
     return isLoggedIn
-        ? const RegistrationClient()
+        ? RegistrationClient(
+            onLogout: () {
+              setState(() {
+                isUserValidated = false;
+                isLoggedIn = false;
+              });
+            },
+          )
         : SafeArea(
             child: Scaffold(
               backgroundColor: Utils.appSolidPrimary,
@@ -123,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       setState(() {
         isUserValidated = mp['isUserPresent'] == 'true' ? true : false;
-        if(isUserValidated) {
+        if (isUserValidated) {
           loginResponse = AppLocalizations.of(context)!.user_validated;
         } else {
           loginResponse = AppLocalizations.of(context)!.username_incorrect;
@@ -141,6 +148,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onTapNext() {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
       _showInSnackBar(AppLocalizations.of(context)!.username_required);
     } else if (username.length > 50) {
@@ -153,6 +161,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onTapLogin() {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
       _showInSnackBar(AppLocalizations.of(context)!.password_required);
       return;
@@ -322,7 +331,9 @@ class _LoginPageState extends State<LoginPage> {
                   languages: _languages,
                   mp: mp,
                   onChanged: (v) {
-                    username = v;
+                    setState(() {
+                      username = v;
+                    });
                   },
                 )
               : const SizedBox(),
@@ -331,13 +342,16 @@ class _LoginPageState extends State<LoginPage> {
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onTapLogin,
                   onTapBack: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     setState(() {
                       username = '';
                       isUserValidated = false;
                     });
                   },
                   onChanged: (v) {
-                    password = v;
+                    setState(() {
+                      password = v;
+                    });
                   },
                   isLoggingIn: isLoggingIn,
                 )
@@ -359,18 +373,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-Widget _tabletView() {
-  return SingleChildScrollView(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _appCombinedTextComponent(),
-        SizedBox(
-          width: 41.w,
-        ),
-        _loginComponent(),
-      ],
-    ),
-  );
-}
+  Widget _tabletView() {
+    return SingleChildScrollView(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _appCombinedTextComponent(),
+          SizedBox(
+            width: 41.w,
+          ),
+          _loginComponent(),
+        ],
+      ),
+    );
+  }
 }

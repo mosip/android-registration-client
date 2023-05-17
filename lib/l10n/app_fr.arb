@@ -30,5 +30,6 @@
   "copy_text": "Copier le texte",
   "download_json": "Télécharger JSON",
   "copy_message": "Détails de la machine copiés dans le presse-papiers !",
-  "download_message": "Fichier enregistré dans les téléchargements!"
+  "download_message": "Fichier enregistré dans les téléchargements!",
+  "logout": "DÉCONNEXION"
 }
