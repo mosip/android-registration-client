@@ -115,15 +115,19 @@ class _LoginPageState extends State<LoginPage> {
       mp = jsonDecode(response);
     } on PlatformException catch (e) {
       mp = {
-        'user_response': 'Failed!',
+        'user_response': 'Failed..Try Again!',
         'isUserPresent': 'false',
       };
     }
 
     setState(() {
       setState(() {
-        loginResponse = mp['user_response'];
         isUserValidated = mp['isUserPresent'] == 'true' ? true : false;
+        if(isUserValidated) {
+          loginResponse = AppLocalizations.of(context)!.user_validated;
+        } else {
+          loginResponse = AppLocalizations.of(context)!.username_incorrect;
+        }
       });
     });
   }
@@ -302,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 34.h,
           ),
           Container(
-            height: 34.h,
+            // height: 34.h,
             child: Text(
               AppLocalizations.of(context)!.login_text,
               style: Utils.mobileHeaderText,
@@ -328,6 +332,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTapLogin: _onTapLogin,
                   onTapBack: () {
                     setState(() {
+                      username = '';
                       isUserValidated = false;
                     });
                   },

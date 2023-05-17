@@ -11,6 +11,7 @@ import 'package:document_scanner/document_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/app_config.dart';
+import 'package:registration_client/const/utils.dart';
 import 'package:registration_client/demographic_details_view.dart';
 import 'package:provider/provider.dart';
 
@@ -18,14 +19,15 @@ import 'provider/global_provider.dart';
 
 class RegistrationClient extends StatefulWidget {
   const RegistrationClient({super.key});
-  
+
   @override
   State<RegistrationClient> createState() => _RegistrationClientState();
 }
 
 class _RegistrationClientState extends State<RegistrationClient> {
   // This widget is the root of your application.
-  static const platform = MethodChannel('com.flutter.dev/keymanager.test-machine');
+  static const platform =
+      MethodChannel('com.flutter.dev/keymanager.test-machine');
   String syncDataResponse = '';
 
   @override
@@ -44,16 +46,22 @@ class _RegistrationClientState extends State<RegistrationClient> {
           children: [
             InkWell(
               onTap: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => 
-                    const MyHomePage(title: "Mosip New Registration"),
-                  )
-                );
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const MyHomePage(title: "Mosip New Registration"),
+                    ));
               },
               child: Container(
                 padding: const EdgeInsets.all(8),
-                color: Colors.deepPurpleAccent,
-                child: const Center(child: Text("New registration"),),
+                color: Utils.appSolidPrimary,
+                child: Center(
+                  child: Text(
+                    "New registration",
+                    style: Utils.mobileButtonText,
+                  ),
+                ),
               ),
             ),
             InkWell(
@@ -62,19 +70,31 @@ class _RegistrationClientState extends State<RegistrationClient> {
               },
               child: Container(
                 padding: const EdgeInsets.all(8),
-                color: Colors.deepPurpleAccent,
-                child: const Center(child: Text('Master Data Sync')),
+                color: Utils.appSolidPrimary,
+                child: Center(
+                    child: Text(
+                  'Master Data Sync',
+                  style: Utils.mobileButtonText,
+                )),
               ),
             ),
             Container(
               padding: const EdgeInsets.all(8),
-              color: Colors.deepPurpleAccent,
-              child: const Center(child: Text('Packet Bundling')),
+              color: Utils.appSolidPrimary,
+              child: Center(
+                  child: Text(
+                'Packet Bundling',
+                style: Utils.mobileButtonText,
+              )),
             ),
             Container(
               padding: const EdgeInsets.all(8),
-              color: Colors.deepPurpleAccent,
-              child: const Center(child: Text('Biometrics Enabled')),
+              color: Utils.appSolidPrimary,
+              child: Center(
+                  child: Text(
+                'Biometrics Enabled',
+                style: Utils.mobileButtonText,
+              )),
             ),
           ],
         ),
@@ -139,11 +159,11 @@ class _MyHomePageState extends State<MyHomePage> {
             //     semanticsLabel: "SVG Icon"),
             // OutlinedButton(
             //   onPressed: () {
-                
+
             //   },
             //   child: Text("Scanner"),
             // ),
-            
+
             Text(
               "Choose your language",
               style: Theme.of(context).textTheme.titleLarge,

@@ -25,5 +25,10 @@
   "username_exceed": "Username should not exceed 50 characters!",
   "password_exceed": "Password should not exceed 50 characters!",
   "username_incorrect": "User not found!",
-  "password_incorrect": "Password incorrect!"
+  "password_incorrect": "Password incorrect!",
+  "device_credentials": "Device Credentials",
+  "copy_text": "Copy Text",
+  "download_json": "Download JSON",
+  "copy_message": "Machine Details copied to clipboard!",
+  "download_message": "File Saved to Downloads!"
 }

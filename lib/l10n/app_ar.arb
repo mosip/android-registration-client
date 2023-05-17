@@ -25,5 +25,10 @@
   "username_exceed": "يجب ألا يتجاوز اسم المستخدم 50 حرفا!",
   "password_exceed": "يجب ألا تتجاوز كلمة المرور 50 حرفا!",
   "username_incorrect": "لم يتم العثور على المستخدم!",
-  "password_incorrect": "كلمة المرور غير صحيحة!"
+  "password_incorrect": "كلمة المرور غير صحيحة!",
+  "device_credentials": "بيانات اعتماد الجهاز",
+  "copy_text": "نسخ النص",
+  "download_json": "تنزيل  جيسون",
+  "copy_message": "تفاصيل الجهاز نسخ إلى الحافظة!",
+  "download_message": "تم حفظ الملف للتنزيلات!"
 }

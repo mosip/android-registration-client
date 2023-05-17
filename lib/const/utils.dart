@@ -13,7 +13,9 @@ abstract class Utils {
   static const Color appHelpText = Color(0xFF1C43A2);
   static const Color appYellow = Color(0xFFFEC401);
   static const Color appOrange = Color(0xFFF97707);
-  static const appBackButtonBorder = Color(0xFF2A4EA7);
+  static const Color appBackButtonBorder = Color(0xFF2A4EA7);
+  static const Color buttonDisabled = Color(0XFFCCCCCC);
+  static const Color mandatoryField = Color(0XFFD32D2D);
 
   static TextStyle mobileHelpText = TextStyle(
     fontWeight: FontWeight.w500,

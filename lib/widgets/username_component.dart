@@ -93,10 +93,18 @@ class UsernameComponent extends StatelessWidget {
           height: 30.h,
         ),
         Container(
-          height: 17.h,
-          child: Text(
-            AppLocalizations.of(context)!.username,
-            style: Utils.mobileTextfieldHeader,
+          // height: 17.h,
+          child: Row(
+            children: [
+              Text(
+                AppLocalizations.of(context)!.username,
+                style: Utils.mobileTextfieldHeader,
+              ),
+              const Text(
+                ' *',
+                style: TextStyle(color: Utils.mandatoryField),
+              ),
+            ],
           ),
         ),
         SizedBox(
@@ -140,7 +148,7 @@ class UsernameComponent extends StatelessWidget {
               color: !isDisabled ? Utils.appSolidPrimary : Utils.appGreyShade,
               border: Border.all(
                 width: 1.w,
-                color: Utils.appBlueShade1,
+                color: !isDisabled ? Utils.appBlueShade1 : Utils.appGreyShade,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),

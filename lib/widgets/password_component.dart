@@ -25,10 +25,18 @@ class PasswordComponent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: 17.h,
-          child: Text(
-            AppLocalizations.of(context)!.password,
-            style: Utils.mobileTextfieldHeader,
+          // height: 17.h,
+          child: Row(
+            children: [
+              Text(
+                AppLocalizations.of(context)!.password,
+                style: Utils.mobileTextfieldHeader,
+              ),
+              const Text(
+                ' *',
+                style: TextStyle(color: Utils.mandatoryField),
+              ),
+            ],
           ),
         ),
         SizedBox(
@@ -81,10 +89,10 @@ class PasswordComponent extends StatelessWidget {
           child: Container(
             height: 52.h,
             decoration: BoxDecoration(
-              color: !isDisabled ? Utils.appSolidPrimary : Utils.appGreyShade,
+              color: !isDisabled ? Utils.appSolidPrimary : Utils.buttonDisabled,
               border: Border.all(
                 width: 1.w,
-                color: Utils.appBlueShade1,
+                color: !isDisabled ? Utils.appBlueShade1 : Utils.buttonDisabled,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),

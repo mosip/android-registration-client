@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: BuildApp(),
-      );
+    );
   }
 
   Future<void> _callAppComponent() async {
@@ -77,11 +77,13 @@ class BuildApp extends StatelessWidget {
         colorScheme: ColorScheme.light(primary: primarySolidColor1),
         primaryColor: primarySolidColor1,
       ),
-      home: MyHomePage(),
+      home: Directionality(
+        textDirection: TextDirection.ltr,
+        child: MyHomePage(),
+      ),
     );
   }
 }
-
 
 class MyHomePage extends StatefulWidget {
   @override
