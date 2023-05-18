@@ -60,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         ? RegistrationClient(
             onLogout: () {
               setState(() {
+                username = '';
                 isUserValidated = false;
                 isLoggedIn = false;
               });
@@ -68,25 +69,34 @@ class _LoginPageState extends State<LoginPage> {
         : SafeArea(
             child: Scaffold(
               backgroundColor: Utils.appSolidPrimary,
-              body: Container(
-                height: h,
-                width: w,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _appBarComponent(),
-                      SizedBox(
-                        height: isMobile ? 50.h : 132.h,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isMobile ? 16.w : 80.w,
-                        ),
-                        child: isMobile ? _mobileView() : _tabletView(),
-                      ),
-                    ],
+              body: Stack(
+                children: [
+                  Positioned(
+                    bottom: 0,
+                    left: 16.w,
+                    child: _getBuildingsImage(),
                   ),
-                ),
+                  Container(
+                    height: h,
+                    width: w,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _appBarComponent(),
+                          SizedBox(
+                            height: isMobile ? 50.h : 132.h,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 16.w : 80.w,
+                            ),
+                            child: isMobile ? _mobileView() : _tabletView(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -369,6 +379,9 @@ class _LoginPageState extends State<LoginPage> {
           height: 40.h,
         ),
         _loginComponent(),
+        SizedBox(
+          height: 174.h,
+        ),
       ],
     );
   }
@@ -384,6 +397,19 @@ class _LoginPageState extends State<LoginPage> {
           ),
           _loginComponent(),
         ],
+      ),
+    );
+  }
+
+  Widget _getBuildingsImage() {
+    return Container(
+      height: isMobile ? (162.48).h : (293.48).h,
+      width: isMobile ? (222.28).w : (400.28).w,
+      // height: 168.48.h,
+      // width: 222.28.w,
+      child: Image.asset(
+        isMobile ? buildingsX : buildingsXX,
+        fit: BoxFit.fill,
       ),
     );
   }

@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 
 String appIcon='assets/images/mosip_logo.png';
+String buildingsX = 'assets/images/buildings.png';
+String buildingsXX = 'assets/images/buildings@2x.png';
 double appIconScale=8;
 Color primarySolidColor1 = Color(0xFF1C43A1);
 Color primarySolidColor2=Color(0xFFFFFFFF);
