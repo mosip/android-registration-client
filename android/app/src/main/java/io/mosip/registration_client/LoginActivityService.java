@@ -30,7 +30,8 @@ import retrofit2.Response;
 
 public class LoginActivityService {
     String login_response = "";
-    Map<String, String> responseMap = new HashMap<>();
+    String error_code = "";
+    Map<String, Object> responseMap = new HashMap<>();
     JSONObject object;
 
     public void usernameValidation(String username,
@@ -38,13 +39,15 @@ public class LoginActivityService {
                                        MethodChannel.Result result) {
         if(!loginService.isValidUserId(username)) {
             responseMap.put("user_response", "User not found!");
-            responseMap.put("isUserPresent", "false");
+            responseMap.put("isUserPresent", false);
+            responseMap.put("error_code", "404");
             object = new JSONObject(responseMap);
             result.success(object.toString());
             return;
         }
         responseMap.put("user_response", "User Validated!");
-        responseMap.put("isUserPresent", "true");
+        responseMap.put("isUserPresent", true);
+        responseMap.put("error_code", "");
         object = new JSONObject(responseMap);
         result.success(object.toString());
     }
@@ -80,8 +83,9 @@ public class LoginActivityService {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse());
                             login_response = wrapper.getResponse();
-                            responseMap.put("isLoggedIn", "true");
+                            responseMap.put("isLoggedIn", true);
                             responseMap.put("login_response", login_response);
+                            responseMap.put("error_code", "");
                             object = new JSONObject(responseMap);
                             result.success(object.toString());
                             return;
@@ -94,18 +98,27 @@ public class LoginActivityService {
                         }
                     }
 
-                    login_response = error == null ? "Login Failed! Try Again"
-                            : error.getMessage().equals("Invalid Request") ? "Password Incorrect!"
-                            : error.getMessage();
-                    responseMap.put("isLoggedIn", "false");
+                    if(error == null) {
+                        login_response = "Login Failed! Try Again";
+                        error_code = "500";
+                    } else if(error.getMessage().equals("Invalid Request")) {
+                        login_response = "Password Incorrect";
+                        error_code = "401";
+                    } else {
+                        login_response = error.getMessage();
+                        error_code = "400";
+                    }
+                    responseMap.put("isLoggedIn", false);
                     responseMap.put("login_response", login_response);
+                    responseMap.put("error_code", error_code);
                     object = new JSONObject(responseMap);
                     result.success(object.toString());
                     return;
                 }
                 login_response = "Login Failed! Try Again";
-                responseMap.put("isLoggedIn", "false");
+                responseMap.put("isLoggedIn", false);
                 responseMap.put("login_response", login_response);
+                responseMap.put("error_code", "500");
                 object = new JSONObject(responseMap);
                 result.success(object.toString());
             }
@@ -113,7 +126,11 @@ public class LoginActivityService {
             @Override
             public void onFailure(Call call, Throwable t) {
                 Log.e(getClass().getSimpleName(), "Login Failure! ");
-                result.error("404", "Custom error", null);
+                responseMap.put("isLoggedIn", false);
+                responseMap.put("login_response", "Login failed. Check network connection!");
+                responseMap.put("error_code", "501");
+                object = new JSONObject(responseMap);
+                result.success(object.toString());
             }
         });
     }

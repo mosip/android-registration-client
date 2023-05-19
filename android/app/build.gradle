@@ -127,8 +127,4 @@ dependencies {
     implementation project(':clientmanager')
     implementation project(':keymanager')
     implementation project(':packetmanager')
-
-//    implementation files('libs/keymanager-debug.aar')
-//    implementation files('libs/clientmanager-debug.aar')
-//    implementation files('libs/packetmanager-debug.aar')
 }

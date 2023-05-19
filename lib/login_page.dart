@@ -9,11 +9,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/app_config.dart';
+import 'package:registration_client/const/app_config.dart';
 import 'package:registration_client/const/utils.dart';
 
 import 'package:registration_client/credentials_page.dart';
 import 'package:flutter/services.dart';
+import 'package:registration_client/data/models/login_response.dart';
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -30,10 +31,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool isMobile = true;
   static const platform =
-      MethodChannel("com.flutter.dev/keymanager.test-machine");
+      MethodChannel("com.flutter.dev/io.mosip.get-package-instance");
   bool isLoggedIn = false;
   bool isLoggingIn = false;
   String loginResponse = '';
+  String errorCode = '';
   String username = '';
   String password = '';
   bool isUserValidated = false;
@@ -42,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  late LoginResponse loginResp;
 
   @override
   void initState() {
@@ -109,16 +112,24 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("login", {'username': username, 'password': password});
       mp = jsonDecode(response);
-      debugPrint('Login: $mp');
+      loginResp = LoginResponse.fromJson(mp);
     } on PlatformException catch (e) {
-      mp = {
-        'login_response': 'Login Failed..Try Again!',
-        'isLoggedIn': 'false',
-      };
+      mp = {};
     }
     setState(() {
-      loginResponse = mp['login_response'];
-      isLoggedIn = mp['isLoggedIn'] == 'true' ? true : false;
+      isLoggedIn = loginResp.isLoggedIn;
+      errorCode = loginResp.error_code;
+      if(isLoggedIn) {
+        loginResponse = loginResp.login_response;
+      } else if(errorCode == '500') {
+        loginResponse = AppLocalizations.of(context)!.login_failed;
+      } else if(errorCode == '501') {
+        loginResponse = AppLocalizations.of(context)!.network_error;
+      } else if(errorCode == '401') {
+        loginResponse = AppLocalizations.of(context)!.password_incorrect;
+      } else {
+        loginResponse = AppLocalizations.of(context)!.machine_not_found;
+      }
     });
   }
 
@@ -131,15 +142,12 @@ class _LoginPageState extends State<LoginPage> {
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
     } on PlatformException catch (e) {
-      mp = {
-        'user_response': 'Failed..Try Again!',
-        'isUserPresent': 'false',
-      };
+      mp = {};
     }
 
     setState(() {
       setState(() {
-        isUserValidated = mp['isUserPresent'] == 'true' ? true : false;
+        isUserValidated = mp['isUserPresent'];
         if (isUserValidated) {
           loginResponse = AppLocalizations.of(context)!.user_validated;
         } else {

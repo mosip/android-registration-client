@@ -18,18 +18,20 @@
   "forgot_password": "نسيت كلمة المرور?",
   "login_button": "تسجيل الدخول",
   "back_button": "ظهر",
-  "login_failed": "فشل تسجيل الدخول.. حاول مرة أخرى!",
   "user_validated": "تم التحقق من صحة المستخدم!",
   "username_required": "اسم المستخدم مطلوب!",
   "password_required": "كلمة المرور مطلوبة!",
   "username_exceed": "يجب ألا يتجاوز اسم المستخدم 50 حرفا!",
   "password_exceed": "يجب ألا تتجاوز كلمة المرور 50 حرفا!",
   "username_incorrect": "لم يتم العثور على المستخدم!",
-  "password_incorrect": "كلمة المرور غير صحيحة!",
   "device_credentials": "بيانات اعتماد الجهاز",
   "copy_text": "نسخ النص",
   "download_json": "تنزيل  جيسون",
   "copy_message": "تفاصيل الجهاز نسخ إلى الحافظة!",
   "download_message": "تم حفظ الملف للتنزيلات!",
-  "logout": "الخروج"
+  "logout": "الخروج",
+  "login_failed": "فشل تسجيل الدخول. حاول مرة أخرى!",
+  "password_incorrect": "كلمة المرور غير صحيحة!",
+  "machine_not_found": "لم يتم العثور على الجهاز!",
+  "network_error": "فشل تسجيل الدخول. تحقق من اتصال الشبكة!"
 }

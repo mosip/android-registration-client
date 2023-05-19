@@ -11,11 +11,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/app_config.dart';
+import 'package:registration_client/const/app_config.dart';
 import 'package:registration_client/login_page.dart';
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/registration_client.dart';
-import 'package:registration_client/provider/global_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   static const platform =
-      MethodChannel('com.flutter.dev/keymanager.test-machine');
+      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +43,6 @@ class MyApp extends StatelessWidget {
     });
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => GlobalProvider(),
-        ),
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => AppLanguage(),

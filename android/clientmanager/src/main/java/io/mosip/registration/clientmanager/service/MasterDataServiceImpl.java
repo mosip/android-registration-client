@@ -436,9 +436,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void saveUserDetails(String encData) {
         try {
-            Log.e(TAG, "Enc Data: " + encData);
             userDetailRepository.saveUserDetail(getDecryptedDataList(encData));
-            Log.e(TAG, "User Details Count " + userDetailRepository.isActiveUser("piyush"));
         } catch (Throwable t) {
             Log.e(TAG, "Failed to save synced user details", t);
         }

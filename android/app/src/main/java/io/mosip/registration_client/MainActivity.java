@@ -32,7 +32,7 @@ import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 public class MainActivity extends FlutterActivity {
-    private static final String CHANNEL_TEST = "com.flutter.dev/keymanager.test-machine";
+    private static final String CHANNEL_TEST = "com.flutter.dev/io.mosip.get-package-instance";
     @Inject
     ClientCryptoManagerService clientCryptoManagerService;
     @Inject

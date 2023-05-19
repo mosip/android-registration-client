@@ -35,8 +35,8 @@ public class UserDetailRepository {
                     .findFirst();
 
             UserDetail userDetail = new UserDetail(userId);
-            userDetail.setIsDeleted(false);
-            userDetail.setIsActive(true);
+            userDetail.setIsDeleted(users.getJSONObject(i).getBoolean("isDeleted"));
+            userDetail.setIsActive(users.getJSONObject(i).getBoolean("isActive"));
             userDetail.setRegCenterId(users.getJSONObject(i).getString("regCenterId"));
             userDetail.setName(userId);
 
@@ -58,7 +58,6 @@ public class UserDetailRepository {
     }
 
     public boolean isActiveUser(String userId) {
-        Log.e(getClass().getSimpleName(), "All users: " + userDetailDao.getUserDetail(userId));
         return userDetailDao.getUserDetail(userId) != null;
     }
 

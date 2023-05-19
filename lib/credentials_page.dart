@@ -22,7 +22,7 @@ class CredentialsPage extends StatefulWidget {
 
 class _CredentialsPageState extends State<CredentialsPage> {
   static const platform =
-      MethodChannel('com.flutter.dev/keymanager.test-machine');
+      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
   String machineDetails = '';
   bool isMobile = true;
 
@@ -34,7 +34,6 @@ class _CredentialsPageState extends State<CredentialsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ScreenUtil.init(context);
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       appBar: AppBar(

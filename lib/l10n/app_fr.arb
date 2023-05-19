@@ -18,7 +18,7 @@
   "forgot_password": "Mot de passe oublié?",
   "login_button": "CONNECTEZ-VOUS",
   "back_button": "PRÉCÉDENT",
-  "login_failed": "Echec de la connexion.. Réessayez!",
+  "login_failed": "",
   "user_validated": "Utilisateur validé !",
   "username_required": "Le nom d’utilisateur est requis!",
   "password_required": "Le mot de passe est requis!",
@@ -31,5 +31,9 @@
   "download_json": "Télécharger JSON",
   "copy_message": "Détails de la machine copiés dans le presse-papiers !",
   "download_message": "Fichier enregistré dans les téléchargements!",
-  "logout": "DÉCONNEXION"
+  "logout": "DÉCONNEXION",
+  "login_failed": "Echec de la connexion.. Réessayez!",
+  "password_incorrect": "Mot de passe incorrect!",
+  "machine_not_found": "Machine introuvable!",
+  "network_error": "Échec de la connexion. Vérifiez la connexion réseau!"
 }

@@ -41,7 +41,6 @@ public class LoginService {
     }
 
     public boolean isValidUserId(String userId) {
-        Log.e(getClass().getSimpleName(), "User Id: " + userDetailRepository.isActiveUser(userId));
         return userDetailRepository.getUserDetailCount() != 0 ? userDetailRepository.isActiveUser(userId) : true;
     }
 

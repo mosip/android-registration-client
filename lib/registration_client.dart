@@ -11,13 +11,10 @@ import 'package:document_scanner/document_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/app_config.dart';
+import 'package:registration_client/const/app_config.dart';
 import 'package:registration_client/const/utils.dart';
-import 'package:registration_client/demographic_details_view.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'provider/global_provider.dart';
 
 class RegistrationClient extends StatefulWidget {
   RegistrationClient({super.key, required this.onLogout});
@@ -31,7 +28,7 @@ class RegistrationClient extends StatefulWidget {
 class _RegistrationClientState extends State<RegistrationClient> {
   // This widget is the root of your application.
   static const platform =
-      MethodChannel('com.flutter.dev/keymanager.test-machine');
+      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
   String syncDataResponse = '';
   bool isMobile = true;
 
@@ -62,14 +59,7 @@ class _RegistrationClientState extends State<RegistrationClient> {
                 crossAxisCount: 2,
                 children: [
                   InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const MyHomePage(title: "Mosip New Registration"),
-                          ));
-                    },
+                    onTap: () {},
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       color: Utils.appWhite,
@@ -183,131 +173,5 @@ class _RegistrationClientState extends State<RegistrationClient> {
       syncDataResponse = result;
     });
     debugPrint(syncDataResponse);
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    File scannedDocument;
-    var height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 25,
-            ),
-            Image.asset(
-              appIcon,
-              scale: appIconScale,
-            ),
-            SizedBox(
-              height: height * .2,
-            ),
-            // SvgPicture.asset("assets/images/svg-1.svg",
-            //     semanticsLabel: "SVG Icon"),
-            // OutlinedButton(
-            //   onPressed: () {
-
-            //   },
-            //   child: Text("Scanner"),
-            // ),
-
-            Text(
-              "Choose your language",
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
-                  children: [
-                    Radio(
-                        value: 1,
-                        groupValue:
-                            context.watch<GlobalProvider>().selectedLangCode,
-                        onChanged: (value) {
-                          context.read<GlobalProvider>().selectedLangCode =
-                              value;
-                        }),
-                    Text("English"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio(
-                        value: 2,
-                        groupValue:
-                            context.watch<GlobalProvider>().selectedLangCode,
-                        onChanged: (value) {
-                          context.read<GlobalProvider>().selectedLangCode =
-                              value;
-                        }),
-                    Text("Arabic"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio(
-                        value: 3,
-                        groupValue:
-                            context.watch<GlobalProvider>().selectedLangCode,
-                        onChanged: (value) {
-                          context.read<GlobalProvider>().selectedLangCode =
-                              value;
-                        }),
-                    Text("French"),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: height * .2,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DemographicDetailsView()));
-                },
-                child: Text("Start New Registration")),
-            // const Text(
-            //   'You have pushed the button this many times:',
-            // ),
-            // Text(
-            //   '$_counter',
-            //   style: Theme.of(context).textTheme.headlineMedium,
-            // ),
-          ],
-        ),
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
   }
 }

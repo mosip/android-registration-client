@@ -15,15 +15,10 @@ import 'package:registration_client/credentials_page.dart';
 
 import 'package:registration_client/main.dart';
 import 'package:registration_client/provider/app_language.dart';
-import 'package:registration_client/provider/global_provider.dart';
 
 Widget testableWidget({Widget child}) {
   return MultiProvider(
     providers: [
-      ChangeNotifierProvider(
-        lazy: false,
-        create: (_) => GlobalProvider(),
-      ),
       ChangeNotifierProvider(
         lazy: false,
         create: (_) => AppLanguage(),
