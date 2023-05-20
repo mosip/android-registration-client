@@ -1,0 +1,130 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "io.mosip.registration_client"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        minSdkVersion 28
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BASE_URL", rootProject.ext.serverBaseURL)
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    def fragment_version = "1.4.1"
+    def room_version = "2.4.0"
+
+    implementation 'javax.inject:javax.inject:1'
+    implementation 'com.google.dagger:dagger:2.41'
+    implementation 'com.google.dagger:dagger-android-support:2.41'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.squareup.okhttp3:mockwebserver:3.14.9'
+//    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.4.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation "androidx.fragment:fragment:$fragment_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.14.9'
+    androidTestImplementation "org.mockito:mockito-android:4.6.0"
+    androidTestImplementation "androidx.room:room-runtime:2.4.2"
+    testImplementation "androidx.room:room-runtime:2.4.2"
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.mockito:mockito-core:4.6.1"
+    testImplementation 'org.mockito:mockito-inline:4.4.0'
+    testImplementation 'org.robolectric:robolectric:4.8'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
+    testImplementation "org.mockito:mockito-android:4.6.1"
+
+    // (Java only)
+    implementation "androidx.work:work-runtime:2.7.1"
+
+    // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
+
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
+    implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.balysv:material-ripple:1.0.2'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.navigation:navigation-fragment:2.4.2'
+    implementation 'androidx.navigation:navigation-ui:2.4.2'
+    implementation "org.jacoco:org.jacoco.agent:0.8.7:runtime"
+
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
+    implementation 'com.auth0.android:jwtdecode:2.0.1'
+
+    implementation project(':clientmanager')
+    implementation project(':keymanager')
+    implementation project(':packetmanager')
+}
