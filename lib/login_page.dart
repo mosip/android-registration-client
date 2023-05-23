@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/const/app_config.dart';
+
 import 'package:registration_client/const/utils.dart';
 
 import 'package:registration_client/credentials_page.dart';
@@ -18,6 +18,7 @@ import 'package:registration_client/data/models/login_response.dart';
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/widgets/password_component.dart';
 import 'package:registration_client/widgets/username_component.dart';
 
@@ -119,13 +120,13 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isLoggedIn = loginResp.isLoggedIn;
       errorCode = loginResp.error_code;
-      if(isLoggedIn) {
+      if (isLoggedIn) {
         loginResponse = loginResp.login_response;
-      } else if(errorCode == '500') {
+      } else if (errorCode == '500') {
         loginResponse = AppLocalizations.of(context)!.login_failed;
-      } else if(errorCode == '501') {
+      } else if (errorCode == '501') {
         loginResponse = AppLocalizations.of(context)!.network_error;
-      } else if(errorCode == '401') {
+      } else if (errorCode == '401') {
         loginResponse = AppLocalizations.of(context)!.password_incorrect;
       } else {
         loginResponse = AppLocalizations.of(context)!.machine_not_found;
@@ -364,6 +365,7 @@ class _LoginPageState extends State<LoginPage> {
                     setState(() {
                       username = '';
                       isUserValidated = false;
+                      isLoggingIn = false;
                     });
                   },
                   onChanged: (v) {

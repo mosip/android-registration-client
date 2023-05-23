@@ -11,7 +11,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/const/app_config.dart';
+
 import 'package:registration_client/login_page.dart';
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/registration_client.dart';
@@ -19,6 +19,8 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/ui/onboarding_page_1/onboarding_page_1_view.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 void main() async {
   await ScreenUtil.ensureScreenSize();
@@ -69,9 +71,14 @@ class BuildApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Provider.of<AppLanguage>(context).appLocal,
       theme: ThemeData(
-        colorScheme: ColorScheme.light(primary: primarySolidColor1),
-        primaryColor: primarySolidColor1,
-      ),
+          colorScheme: ColorScheme.light(primary: solid_primary),
+          primaryColor: solid_primary,
+          textTheme: TextTheme(
+            titleLarge: TextStyle(fontSize: 24),
+            bodyLarge: TextStyle(fontSize: 18),
+            bodyMedium: TextStyle(fontSize: 10),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle())),
       home: MyHomePage(),
     );
   }
@@ -95,6 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
       minTextAdapt: true,
       splitScreenMode: true,
     );
-    return const LoginPage();
+    return OnboardingPage1View();
   }
 }
