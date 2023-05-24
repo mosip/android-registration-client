@@ -70,7 +70,7 @@ public class LoginActivityService {
 
     private void doLogin(final String username, final String password, MethodChannel.Result result,
                          SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                         LoginService loginService){
+                         LoginService loginService) throws Exception {
         //TODO check if the machine is online, if offline check password hash locally
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
@@ -135,9 +135,39 @@ public class LoginActivityService {
         });
     }
 
+    private void offlineLogin(final String username, final String password, MethodChannel.Result result,
+                              LoginService loginService) throws Exception {
+        if(!loginService.isPasswordPresent(username)) {
+            login_response = "Credentials not found or are expired!\nPlease try online login!";
+            responseMap.put("isLoggedIn", false);
+            responseMap.put("login_response", login_response);
+            responseMap.put("error_code", "OFFLINE");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
+
+        if(!loginService.validatePassword(username, password)) {
+            login_response = "Password incorrect!";
+            responseMap.put("isLoggedIn", false);
+            responseMap.put("login_response", login_response);
+            responseMap.put("error_code", "401");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
+
+        login_response = loginService.setPasswordHash(username, password);
+        responseMap.put("isLoggedIn", true);
+        responseMap.put("login_response", login_response);
+        responseMap.put("error_code", "");
+        object = new JSONObject(responseMap);
+        result.success(object.toString());
+    }
+
     void executeLogin(String username, String password, MethodChannel.Result result,
                       SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                      LoginService loginService, AuditManagerService auditManagerService) {
+                      LoginService loginService, AuditManagerService auditManagerService) throws Exception {
 
         auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
         //validate form

@@ -95,9 +95,14 @@ public class MainActivity extends FlutterActivity {
                                 case "login":
                                     String username = call.argument("username");
                                     String password = call.argument("password");
-                                    new LoginActivityService().executeLogin(username, password,
-                                            result, syncRestService, syncRestFactory,
-                                            loginService, auditManagerService);
+                                    boolean isConnected = call.argument("isConnected");
+                                    try {
+                                        new LoginActivityService().executeLogin(username, password,
+                                                result, syncRestService, syncRestFactory,
+                                                loginService, auditManagerService);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
                                     break;
 
                                 case "masterDataSync":

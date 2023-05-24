@@ -44,6 +44,19 @@ public class LoginService {
         return userDetailRepository.getUserDetailCount() != 0 ? userDetailRepository.isActiveUser(userId) : true;
     }
 
+    public boolean isPasswordPresent(String userId) {
+        return userDetailRepository.isPasswordPresent(userId);
+    }
+    public boolean validatePassword(String userId, String password) throws Exception {
+        return userDetailRepository.isValidPassword(userId, password);
+    }
+
+    public String setPasswordHash(String userId, String password) throws Exception {
+        userDetailRepository.setPasswordHash(userId, password);
+        Log.e(TAG, sessionManager.fetchAuthToken());
+        return sessionManager.fetchAuthToken();
+    }
+
     public void saveAuthToken(String authResponse) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);

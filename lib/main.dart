@@ -1,5 +1,3 @@
-// @dart=2.9
-
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,7 +19,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
-  await ScreenUtil.ensureScreenSize();
+  WidgetsFlutterBinding.ensureInitialized();
   final AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
   runApp(
@@ -58,7 +56,6 @@ class MyApp extends StatelessWidget {
 }
 
 class BuildApp extends StatelessWidget {
-  const BuildApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +72,7 @@ class BuildApp extends StatelessWidget {
       home: MyHomePage(),
     );
   }
+
 }
 
 class MyHomePage extends StatefulWidget {
