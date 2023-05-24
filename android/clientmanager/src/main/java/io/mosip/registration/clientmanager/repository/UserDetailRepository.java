@@ -53,7 +53,7 @@ public class UserDetailRepository {
 
             if (result.isPresent()) {
                 userDetail.setName(result.get().getName());
-                userDetail.setName(result.get().getSalt());
+                userDetail.setSalt(result.get().getSalt());
                 userDetail.setDefault(result.get().isDefault());
                 userDetail.setSupervisor(result.get().isSupervisor());
                 userDetail.setOfficer(result.get().isOfficer());
@@ -80,7 +80,7 @@ public class UserDetailRepository {
     public boolean isPasswordPresent(String userId) {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
         UserDetail userDetail = userDetailDao.getUserDetail(userId);
-        if(userPassword == null || userDetail == null || userDetail.getSalt() == null) {
+        if(userDetail == null || userDetail.getSalt() == null || userPassword == null) {
             return false;
         }
         return true;
@@ -106,6 +106,8 @@ public class UserDetailRepository {
                                 encodeToString(DateUtils.formatToISOString(LocalDateTime.now()).getBytes())
                 );
             }
+        } else {
+            return;
         }
 
         if (userPassword == null) {
@@ -122,5 +124,9 @@ public class UserDetailRepository {
         userDetailList.add(userDetail);
         userDetailDao.insertAllUsers(userDetailList);
         userPasswordDao.insertUserPassword(userPassword);
+    }
+
+    public void deletePasswordHash(String userId) {
+        userPasswordDao.deleteUserPassword(userId);
     }
 }

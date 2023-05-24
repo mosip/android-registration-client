@@ -59,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-    debugPrint("isConnected: $_isConnected");
     mp['eng'] = "English";
     mp['ara'] = "العربية";
     mp['fre'] = "Français";
@@ -73,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> initConnectivity() async {
     late ConnectivityResult result;
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
     } on PlatformException catch (e) {
@@ -81,9 +79,6 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) {
       return Future.value(null);
     }
@@ -94,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     setState(() {
       _connectionStatus = result;
-      debugPrint("result: $result");
       if(result == ConnectivityResult.none) {
         _isConnected = false;
       } else {
@@ -176,6 +170,8 @@ class _LoginPageState extends State<LoginPage> {
         loginResponse = AppLocalizations.of(context)!.network_error;
       } else if(errorCode == '401') {
         loginResponse = AppLocalizations.of(context)!.password_incorrect;
+      } else if(errorCode == 'OFFLINE') {
+        loginResponse = loginResp.login_response;
       } else {
         loginResponse = AppLocalizations.of(context)!.machine_not_found;
       }

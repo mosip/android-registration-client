@@ -83,6 +83,7 @@ public class LoginActivityService {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse());
                             login_response = wrapper.getResponse();
+                            loginService.setPasswordHash(username, password);
                             responseMap.put("isLoggedIn", true);
                             responseMap.put("login_response", login_response);
                             responseMap.put("error_code", "");
@@ -157,7 +158,17 @@ public class LoginActivityService {
             return;
         }
 
-        login_response = loginService.setPasswordHash(username, password);
+        login_response = loginService.getAuthToken();
+
+        if(login_response == null) {
+            login_response = "Credentials not found or are expired!\nPlease try online login!";
+            responseMap.put("isLoggedIn", false);
+            responseMap.put("login_response", login_response);
+            responseMap.put("error_code", "OFFLINE");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
         responseMap.put("isLoggedIn", true);
         responseMap.put("login_response", login_response);
         responseMap.put("error_code", "");
@@ -167,11 +178,16 @@ public class LoginActivityService {
 
     void executeLogin(String username, String password, MethodChannel.Result result,
                       SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                      LoginService loginService, AuditManagerService auditManagerService) throws Exception {
+                      LoginService loginService, AuditManagerService auditManagerService,
+                      boolean isConnected) throws Exception {
 
         auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
         //validate form
         if(validateLogin(username, password, loginService)){
+            if(!isConnected) {
+                offlineLogin(username, password, result, loginService);
+                return;
+            }
             doLogin(username, password, result, syncRestService, syncRestFactory, loginService);
         } else {
             result.error("VALIDATION_FAILED","User validation failed!", null);

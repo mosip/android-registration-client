@@ -99,7 +99,7 @@ public class MainActivity extends FlutterActivity {
                                     try {
                                         new LoginActivityService().executeLogin(username, password,
                                                 result, syncRestService, syncRestFactory,
-                                                loginService, auditManagerService);
+                                                loginService, auditManagerService, isConnected);
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
                                     }

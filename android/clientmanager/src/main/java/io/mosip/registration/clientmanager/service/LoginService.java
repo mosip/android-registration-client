@@ -51,9 +51,11 @@ public class LoginService {
         return userDetailRepository.isValidPassword(userId, password);
     }
 
-    public String setPasswordHash(String userId, String password) throws Exception {
+    public void setPasswordHash(String userId, String password) throws Exception {
         userDetailRepository.setPasswordHash(userId, password);
-        Log.e(TAG, sessionManager.fetchAuthToken());
+    }
+
+    public String getAuthToken() {
         return sessionManager.fetchAuthToken();
     }
 
@@ -67,6 +69,7 @@ public class LoginService {
         byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
         try {
             JSONObject jsonObject = new JSONObject(new String(decodedBytes));
+            Log.e(getClass().getSimpleName(), "Auth Token: " + jsonObject);
             this.sessionManager.saveAuthToken(jsonObject.getString("token"));
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
