@@ -33,5 +33,6 @@
   "login_failed": "Login Failed. Try Again!",
   "password_incorrect": "Password incorrect!",
   "machine_not_found": "Machine not found!",
-  "network_error": "Login failed. Check network connection!"
+  "network_error": "Login failed. Check network connection!",
+  "cred_expired": "Credentials not found or are expired. Please try online login!"
 }

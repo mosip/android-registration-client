@@ -139,7 +139,7 @@ public class LoginActivityService {
     private void offlineLogin(final String username, final String password, MethodChannel.Result result,
                               LoginService loginService) throws Exception {
         if(!loginService.isPasswordPresent(username)) {
-            login_response = "Credentials not found or are expired!\nPlease try online login!";
+            login_response = "Credentials not found or are expired. Please try online login!";
             responseMap.put("isLoggedIn", false);
             responseMap.put("login_response", login_response);
             responseMap.put("error_code", "OFFLINE");
@@ -161,7 +161,7 @@ public class LoginActivityService {
         login_response = loginService.getAuthToken();
 
         if(login_response == null) {
-            login_response = "Credentials not found or are expired!\nPlease try online login!";
+            login_response = "Credentials not found or are expired!. Please try online login!";
             responseMap.put("isLoggedIn", false);
             responseMap.put("login_response", login_response);
             responseMap.put("error_code", "OFFLINE");

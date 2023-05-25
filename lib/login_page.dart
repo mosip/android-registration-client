@@ -19,6 +19,7 @@ import 'package:registration_client/credentials_page.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/data/models/login_response.dart';
 import 'package:registration_client/provider/app_language.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/widgets/password_component.dart';
@@ -48,53 +49,13 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   late LoginResponse loginResp;
-  bool _isConnected = false;
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
-    initConnectivity();
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     mp['eng'] = "English";
     mp['ara'] = "العربية";
     mp['fre'] = "Français";
-  }
-
-  @override
-  void dispose() {
-    _connectivitySubscription.cancel();
-    super.dispose();
-  }
-
-  Future<void> initConnectivity() async {
-    late ConnectivityResult result;
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      debugPrint('Couldn\'t check connectivity status');
-      return;
-    }
-
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
-  }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() {
-      _connectionStatus = result;
-      if(result == ConnectivityResult.none) {
-        _isConnected = false;
-      } else {
-        _isConnected = true;
-      }
-    });
   }
 
   @override
@@ -149,11 +110,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login(String username, String password) async {
+    final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
     String response;
     Map<String, dynamic> mp;
     try {
-      response = await platform
-          .invokeMethod("login", {'username': username, 'password': password, 'isConnected': _isConnected,});
+      response = await platform.invokeMethod("login", {
+        'username': username,
+        'password': password,
+        'isConnected': connectivityProvider.isConnected,
+      });
       mp = jsonDecode(response);
       loginResp = LoginResponse.fromJson(mp);
     } on PlatformException catch (e) {
@@ -162,16 +127,16 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isLoggedIn = loginResp.isLoggedIn;
       errorCode = loginResp.error_code;
-      if(isLoggedIn) {
+      if (isLoggedIn) {
         loginResponse = loginResp.login_response;
-      } else if(errorCode == '500') {
+      } else if (errorCode == '500') {
         loginResponse = AppLocalizations.of(context)!.login_failed;
-      } else if(errorCode == '501') {
+      } else if (errorCode == '501') {
         loginResponse = AppLocalizations.of(context)!.network_error;
-      } else if(errorCode == '401') {
+      } else if (errorCode == '401') {
         loginResponse = AppLocalizations.of(context)!.password_incorrect;
-      } else if(errorCode == 'OFFLINE') {
-        loginResponse = loginResp.login_response;
+      } else if (errorCode == 'OFFLINE') {
+        loginResponse = AppLocalizations.of(context)!.cred_expired;
       } else {
         loginResponse = AppLocalizations.of(context)!.machine_not_found;
       }

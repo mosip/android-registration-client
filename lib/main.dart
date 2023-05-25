@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/const/app_config.dart';
 import 'package:registration_client/login_page.dart';
 import 'package:registration_client/provider/app_language.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/test.dart';
@@ -44,6 +45,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => AppLanguage(),
+        ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => ConnectivityProvider(),
         ),
       ],
       child: BuildApp(),

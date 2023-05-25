@@ -69,7 +69,6 @@ public class LoginService {
         byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
         try {
             JSONObject jsonObject = new JSONObject(new String(decodedBytes));
-            Log.e(getClass().getSimpleName(), "Auth Token: " + jsonObject);
             this.sessionManager.saveAuthToken(jsonObject.getString("token"));
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);

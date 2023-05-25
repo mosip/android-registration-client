@@ -32,7 +32,7 @@ import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 public class MainActivity extends FlutterActivity {
-    private static final String CHANNEL_TEST = "com.flutter.dev/io.mosip.get-package-instance";
+    private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
     @Inject
     ClientCryptoManagerService clientCryptoManagerService;
     @Inject
@@ -75,7 +75,7 @@ public class MainActivity extends FlutterActivity {
         super.configureFlutterEngine(flutterEngine);
         GeneratedPluginRegistrant.registerWith(flutterEngine);
 
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL_TEST)
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {
                             switch(call.method) {
