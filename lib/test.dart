@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Test extends StatelessWidget {
   const Test({super.key});
@@ -29,19 +27,15 @@ class Test extends StatelessWidget {
                     ),
                   );
                 },
-
                 child: const Text('Show'),
               ),
               TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Enter Text'
-                ),
-                onChanged: (v) {
-
-                },
+                decoration: const InputDecoration(labelText: 'Enter Text'),
+                onChanged: (v) {},
               ),
-              SizedBox(height: 20.h,),
-
+              SizedBox(
+                height: 20.h,
+              ),
             ],
           ),
         ),
