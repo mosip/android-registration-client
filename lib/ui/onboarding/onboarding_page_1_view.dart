@@ -6,12 +6,47 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_view_model.dart';
 import 'package:registration_client/ui/onboarding/widgets/onboarding_page_1_card.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class OnboardingPage1View extends StatelessWidget {
   const OnboardingPage1View({super.key});
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> helpTopics = [
+      {
+        "icon": "assets/images/Onboarding Yourself.png",
+        "title": "Onboarding Yourself",
+        "onTap": () {},
+      },
+      {
+        "icon": "assets/images/Synchronising Data.png",
+        "title": "Synchronising Data",
+        "onTap": () {},
+      },
+      {
+        "icon": "assets/images/Onboarding Yourself.png",
+        "title": "Update UIN",
+        "onTap": () {},
+      },
+      {
+        "icon": "assets/images/fingerprint_icon.png",
+        "title": "Mapping Devices to Machine",
+        "onTap": () {},
+      },
+      {
+        "icon": "assets/images/Uploading Local - Registration Data.png",
+        "title": "Uploading Local/Registration Data",
+        "onTap": () {},
+      },
+      {
+        "icon": "assets/images/fingerprint_icon.png",
+        "title": "Updating Operator Biometrics",
+        "onTap": () {},
+      },
+    ];
+
+    double w = ScreenUtil().screenWidth;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -20,125 +55,156 @@ class OnboardingPage1View extends StatelessWidget {
         children: [
           Container(
             height: 292.h,
-            width: double.infinity,
-            decoration: BoxDecoration(
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [secondaryColors.elementAt(0), solid_primary],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xff214FBF), Color(0xff1C43A1)],
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.w, 80.h, 0, 0),
-                  child: RichText(
-                      text: TextSpan(
-                          text: "Hello ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
-                                  color: pure_white, fontWeight: regular),
-                          children: [
-                        TextSpan(
-                          text: "Thomas!",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(color: pure_white, fontWeight: bold),
-                        )
-                      ])),
+                SizedBox(
+                  width: w < 512 ? 0 : 60,
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.w, 8.h, 0, 0),
-                  child: Text(
-                    "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Color(0xffFFFFFF).withOpacity(0.6),
-                        fontSize: 18,
-                        fontWeight: regular),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.w, 31.h, 0, 0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.read<DashboardViewModel>().setCurrentIndex(1);
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(pure_white)),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 18.h, horizontal: 44.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 80.h, 0, 0),
+                      child: RichText(
+                          text: TextSpan(
+                              text: "Hello ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                      color: pure_white, fontWeight: regular),
+                              children: [
+                            TextSpan(
+                              text: "Thomas!",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                      color: pure_white, fontWeight: bold),
+                            )
+                          ])),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 8.h, 0, 0),
                       child: Text(
-                        "Get Onboard",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(color: secondaryColors.elementAt(0)),
+                        "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: const Color(0xffFFFFFF).withOpacity(0.6),
+                            fontSize: 18,
+                            fontWeight: regular),
                       ),
                     ),
-                  ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 31.h, 0, 0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.read<DashboardViewModel>().setCurrentIndex(1);
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(pure_white)),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 18.h, horizontal: 44.w),
+                          child: Text(
+                            "Get Onboard",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(color: secondaryColors.elementAt(0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: w < 512 ? 0 : 60,
                 ),
               ],
             ),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(17.w, 30.h, 16.w, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  "Help topics",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontWeight: semiBold),
-                ),
                 SizedBox(
-                  height: 4.h,
+                  width: w < 512 ? 0 : 60,
                 ),
-                Container(
-                  height: 413.h,
-                  child: ListView(
-                    padding: EdgeInsets.all(0),
-                    scrollDirection: Axis.vertical,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Onboarding_Page_1_Card(
-                        icon: "assets/images/Onboarding Yourself.png",
-                        title: "Onboarding Yourself",
-                        ontap: () {},
+                      Text(
+                        "Help topics",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontWeight: semiBold),
                       ),
-                      Onboarding_Page_1_Card(
-                        icon: "assets/images/Registering an Individual.png",
-                        title: "Registering an Individual",
-                        ontap: () {},
+                      SizedBox(
+                        height: 4.h,
                       ),
-                      Onboarding_Page_1_Card(
-                        icon: "assets/images/Synchronising Data.png",
-                        title: "Synchronising Data",
-                        ontap: () {},
+                      ResponsiveGridList(
+                        shrinkWrap: true,
+                        minItemWidth: 300,
+                        horizontalGridSpacing: 8,
+                        verticalGridSpacing: 8,
+                        children: List.generate(
+                          helpTopics.length,
+                          (index) => Onboarding_Page_1_Card(
+                            icon: helpTopics[index]["icon"] as String,
+                            title: helpTopics[index]["title"] as String,
+                            ontap: helpTopics[index]["onTap"] as VoidCallback,
+                          ),
+                        ),
                       ),
-                      Onboarding_Page_1_Card(
-                        icon: "assets/images/fingerprint_icon.png",
-                        title: "Mapping Devices to Machine",
-                        ontap: () {},
-                      ),
-                      Onboarding_Page_1_Card(
-                        icon:
-                            "assets/images/Uploading Local - Registration Data.png",
-                        title: "Uploading Local/Registration Data",
-                        ontap: () {},
-                      ),
-                      Onboarding_Page_1_Card(
-                        icon: "assets/images/fingerprint_icon.png",
-                        title: "Updating Operator Biometrics",
-                        ontap: () {},
-                      ),
+
+                      // Onboarding_Page_1_Card(
+                      //   icon: "assets/images/Onboarding Yourself.png",
+                      //   title: "Onboarding Yourself",
+                      //   ontap: () {},
+                      // ),
+                      // Onboarding_Page_1_Card(
+                      //   icon: "assets/images/Registering an Individual.png",
+                      //   title: "Registering an Individual",
+                      //   ontap: () {},
+                      // ),
+                      // Onboarding_Page_1_Card(
+                      //   icon: "assets/images/Synchronising Data.png",
+                      //   title: "Synchronising Data",
+                      //   ontap: () {},
+                      // ),
+                      // Onboarding_Page_1_Card(
+                      //   icon: "assets/images/fingerprint_icon.png",
+                      //   title: "Mapping Devices to Machine",
+                      //   ontap: () {},
+                      // ),
+                      // Onboarding_Page_1_Card(
+                      //   icon:
+                      //       "assets/images/Uploading Local - Registration Data.png",
+                      //   title: "Uploading Local/Registration Data",
+                      //   ontap: () {},
+                      // ),
+                      // Onboarding_Page_1_Card(
+                      //   icon: "assets/images/fingerprint_icon.png",
+                      //   title: "Updating Operator Biometrics",
+                      //   ontap: () {},
+                      // ),
                     ],
                   ),
-                )
+                ),
+                SizedBox(
+                  width: w < 512 ? 0 : 60,
+                ),
               ],
             ),
           )

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/ui/dashboard/dashboard_tablet/tablet_footer.dart';
+import 'package:registration_client/ui/dashboard/dashboard_tablet/tablet_header.dart';
+import 'package:registration_client/ui/dashboard/dashboard_tablet/tablet_navbar.dart';
 
 import '../../onboarding/onboarding_page_1_view.dart';
 import '../../onboarding/onboarding_page_2_view.dart';
@@ -26,28 +29,15 @@ class DashBoardTabletView extends StatelessWidget {
                   controller: ScrollController(),
                   child: Column(
                     children: [
-                      Container(
-                        height: 50,
-                        width: double.infinity,
-                        color: Colors.blue,
-                        child: Text("Header"),
-                      ),
-                      Container(
-                        height: 100,
-                        width: double.infinity,
-                        color: Colors.white,
-                        child: Text("Navbar"),
-                      ),
+                      const TabletHeader(),
+                      const TabletNavbar(),
                       _pages[context.watch<DashboardViewModel>().currentIndex],
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Container(
-                        height: 50,
-                        width: double.infinity,
-                        color: Colors.blue,
-                        child: Text("Footer"),
-                      ),
+                      context.watch<DashboardViewModel>().currentIndex != 0
+                          ? const TabletFooter()
+                          : const SizedBox.shrink(),
                     ],
                   ),
                 );
