@@ -8,11 +8,15 @@ import 'package:registration_client/ui/onboarding/widgets/onboarding_page_1_card
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
+import '../../utils/responsive.dart';
+
 class OnboardingPage1View extends StatelessWidget {
   const OnboardingPage1View({super.key});
 
   @override
   Widget build(BuildContext context) {
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     List<Map<String, dynamic>> helpTopics = [
       {
         "icon": "assets/images/Onboarding Yourself.png",
@@ -63,73 +67,66 @@ class OnboardingPage1View extends StatelessWidget {
                 colors: [Color(0xff214FBF), Color(0xff1C43A1)],
               ),
             ),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: w < 512 ? 0 : 60,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16.w, 80.h, 0, 0),
-                      child: RichText(
-                          text: TextSpan(
-                              text: "Hello ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      color: pure_white, fontWeight: regular),
-                              children: [
-                            TextSpan(
-                              text: "Thomas!",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      color: pure_white, fontWeight: bold),
-                            )
-                          ])),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16.w, 8.h, 0, 0),
-                      child: Text(
-                        "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: const Color(0xffFFFFFF).withOpacity(0.6),
-                            fontSize: 18,
-                            fontWeight: regular),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16.w, 31.h, 0, 0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          context.read<DashboardViewModel>().setCurrentIndex(1);
-                        },
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(pure_white)),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 18.h, horizontal: 44.w),
-                          child: Text(
-                            "Get Onboard",
+            child: Padding(
+              padding: (isMobile)?EdgeInsets.fromLTRB(20.w,0,0,0):EdgeInsets.fromLTRB(20.w,0,0,0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.w, 80.h, 0, 0),
+                    child: RichText(
+                        text: TextSpan(
+                            text: "Hello ",
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyLarge
-                                ?.copyWith(color: secondaryColors.elementAt(0)),
-                          ),
+                                .titleLarge
+                                ?.copyWith(
+                                    color: pure_white, fontWeight: regular),
+                            children: [
+                          TextSpan(
+                            text: "Thomas!",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(color: pure_white, fontWeight: bold),
+                          )
+                        ])),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.w, 8.h, 0, 0),
+                    child: Text(
+                      "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: const Color(0xffFFFFFF).withOpacity(0.6),
+                          fontSize: 18,
+                          fontWeight: regular),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.w, 31.h, 0, 0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        print(MediaQuery.of(context).size.width);
+                        // context.read<DashboardViewModel>().setCurrentIndex(1);
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(pure_white)),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 18.h, horizontal: 44.w),
+                        child: Text(
+                          "Get Onboard",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: secondaryColors.elementAt(0)),
                         ),
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(
-                  width: w < 512 ? 0 : 60,
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
           Padding(
@@ -156,6 +153,8 @@ class OnboardingPage1View extends StatelessWidget {
                       ResponsiveGridList(
                         shrinkWrap: true,
                         minItemWidth: 300,
+                        minItemsPerRow: 1,
+                        maxItemsPerRow: 3,
                         horizontalGridSpacing: 8,
                         verticalGridSpacing: 8,
                         children: List.generate(
