@@ -6,10 +6,10 @@
 
 import 'package:flutter/material.dart';
 
-String appIcon='assets/images/mosip_logo.png';
+String appIcon='assets/images/MOSIP Logo@2x.png';
 String buildingsX = 'assets/images/buildings.png';
 String buildingsXX = 'assets/images/buildings@2x.png';
-double appIconScale=8;
+double appIconScale=1;
 Color primarySolidColor1 = Color(0xFF1C43A1);
 Color primarySolidColor2=Color(0xFFFFFFFF);
 List<Color> secondaryColors = [

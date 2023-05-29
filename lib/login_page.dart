@@ -88,6 +88,9 @@ class _LoginPageState extends State<LoginPage> {
                     width: w,
                     child: SingleChildScrollView(
                       child: Column(
+                        crossAxisAlignment: isMobile
+                            ? CrossAxisAlignment.center
+                            : CrossAxisAlignment.start,
                         children: [
                           _appBarComponent(),
                           SizedBox(
@@ -110,7 +113,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login(String username, String password) async {
-    final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
+    final connectivityProvider =
+        Provider.of<ConnectivityProvider>(context, listen: false);
     String response;
     Map<String, dynamic> mp;
     try {
@@ -230,10 +234,10 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: Container(
               height: isMobile ? 46.h : 54.h,
-              width: isMobile ? 115.39.w : 135.46.w,
+              // width: isMobile ? 115.39.w : 135.46.w,
               child: Image.asset(
                 appIcon,
-                scale: appIconScale,
+                fit: BoxFit.fill,
               ),
             ),
           ),
@@ -270,7 +274,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _welcomeTextComponent() {
     return Container(
-      // height: isMobile ? 47.h : 62.h,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 41.w : 0,
       ),
@@ -281,10 +284,12 @@ class _LoginPageState extends State<LoginPage> {
           Text(
             AppLocalizations.of(context)!.welcome,
             style: Utils.mobileWelcomeText,
+            textAlign: isMobile ? TextAlign.center : TextAlign.start,
           ),
           Text(
             AppLocalizations.of(context)!.community_reg_text,
             style: Utils.mobileCommunityRegClientText,
+            textAlign: isMobile ? TextAlign.center : TextAlign.start,
           )
         ],
       ),
@@ -293,13 +298,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _infoTextComponent() {
     return Container(
-      // height: isMobile ? 17.h : 20.h,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 52.w : 0,
       ),
       child: Text(
         AppLocalizations.of(context)!.info_text,
         style: Utils.mobileInfoText,
+        textAlign: isMobile ? TextAlign.center : TextAlign.start,
       ),
     );
   }
@@ -320,7 +325,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginComponent() {
     return Container(
-      // height: 414.h,
       width: isMobile ? 358.w : 424.w,
       padding: EdgeInsets.symmetric(
         horizontal: 20.w,
@@ -357,6 +361,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: _onTapNext,
                   isDisabled: username.isEmpty || username.length > 50,
                   languages: _languages,
+                  isMobile: isMobile,
                   mp: mp,
                   onChanged: (v) {
                     setState(() {
@@ -374,6 +379,7 @@ class _LoginPageState extends State<LoginPage> {
                     setState(() {
                       username = '';
                       isUserValidated = false;
+                      isLoggingIn = false;
                     });
                   },
                   onChanged: (v) {
@@ -391,15 +397,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _mobileView() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _appCombinedTextComponent(),
         SizedBox(
           height: 40.h,
         ),
         _loginComponent(),
-        SizedBox(
-          height: 174.h,
-        ),
       ],
     );
   }
@@ -407,9 +411,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget _tabletView() {
     return SingleChildScrollView(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          _appCombinedTextComponent(),
+          Container(
+            width: 399.w,
+            child: _appCombinedTextComponent(),
+          ),
           SizedBox(
             width: 41.w,
           ),
@@ -423,8 +431,6 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       height: isMobile ? (162.48).h : (293.48).h,
       width: isMobile ? (222.28).w : (400.28).w,
-      // height: 168.48.h,
-      // width: 222.28.w,
       child: Image.asset(
         isMobile ? buildingsX : buildingsXX,
         fit: BoxFit.fill,

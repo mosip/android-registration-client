@@ -15,7 +15,6 @@ import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
