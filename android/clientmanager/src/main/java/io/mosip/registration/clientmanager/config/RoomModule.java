@@ -1,19 +1,55 @@
 package io.mosip.registration.clientmanager.config;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.room.Room;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.clientmanager.dao.*;
-import io.mosip.registration.clientmanager.repository.*;
+import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
+import io.mosip.registration.clientmanager.dao.AuditDao;
+import io.mosip.registration.clientmanager.dao.BlocklistedWordDao;
+import io.mosip.registration.clientmanager.dao.DocumentTypeDao;
+import io.mosip.registration.clientmanager.dao.DynamicFieldDao;
+import io.mosip.registration.clientmanager.dao.GlobalParamDao;
+import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
+import io.mosip.registration.clientmanager.dao.JobTransactionDao;
+import io.mosip.registration.clientmanager.dao.LanguageDao;
+import io.mosip.registration.clientmanager.dao.LocationDao;
+import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
+import io.mosip.registration.clientmanager.dao.MachineMasterDao;
+import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
+import io.mosip.registration.clientmanager.dao.RegistrationDao;
+import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
+import io.mosip.registration.clientmanager.dao.TemplateDao;
+import io.mosip.registration.clientmanager.dao.UserDetailDao;
+import io.mosip.registration.clientmanager.dao.UserPasswordDao;
+import io.mosip.registration.clientmanager.dao.UserTokenDao;
+import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
+import io.mosip.registration.clientmanager.repository.AuditRepository;
+import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
+import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
+import io.mosip.registration.clientmanager.repository.DynamicFieldRepository;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.JobTransactionRepository;
+import io.mosip.registration.clientmanager.repository.LanguageRepository;
+import io.mosip.registration.clientmanager.repository.LocationRepository;
+import io.mosip.registration.clientmanager.repository.MachineRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
+import io.mosip.registration.clientmanager.repository.TemplateRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
-
-import javax.inject.Singleton;
 
 
 @Module
@@ -139,6 +175,12 @@ public class RoomModule {
 
     @Singleton
     @Provides
+    UserPasswordDao providesUserPasswordDao(ClientDatabase clientDatabase) {
+        return clientDatabase.userPasswordDao();
+    }
+
+    @Singleton
+    @Provides
     JobTransactionDao providesJobTransactionDao(ClientDatabase clientDatabase) {
         return clientDatabase.jobTransactionDao();
     }
@@ -242,8 +284,9 @@ public class RoomModule {
 
     @Provides
     @Singleton
-    UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao) {
-        return new UserDetailRepository(userDetailDao, userTokenDao);
+    UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao,
+                                                     UserPasswordDao userPasswordDao) {
+        return new UserDetailRepository(userDetailDao, userTokenDao, userPasswordDao);
     }
 
     @Provides

@@ -50,4 +50,18 @@ class Login {
 
     return "Login Successful!";
   }
+  String isOnboarded(Map<String,dynamic> mockData){
+    if(mockData["isOnboarded"]==false){
+      return "User not Onboarded";
+    }else{
+      return "User Onboarded";
+    }
+  }
+  String userRoleAuthorised(List<dynamic> mockData){
+    if(mockData.contains("default_role")||mockData.contains("administrator")){
+      return "Authorised";
+    }else{
+      return "Unauthorised";
+    }
+  }
 }

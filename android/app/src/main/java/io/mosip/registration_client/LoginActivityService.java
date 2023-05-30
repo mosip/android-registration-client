@@ -12,6 +12,7 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel;
@@ -19,7 +20,9 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -36,7 +39,7 @@ public class LoginActivityService {
 
     public void usernameValidation(String username,
                                        LoginService loginService,
-                                       MethodChannel.Result result) {
+                                       MethodChannel.Result result, UserDetailRepository userDetailRepository) {
         if(!loginService.isValidUserId(username)) {
             responseMap.put("user_response", "User not found!");
             responseMap.put("isUserPresent", false);
@@ -45,9 +48,12 @@ public class LoginActivityService {
             result.success(object.toString());
             return;
         }
+        UserDetail userDetail=loginService.getUserDetailsByUserId(username);
         responseMap.put("user_response", "User Validated!");
         responseMap.put("isUserPresent", true);
+        responseMap.put("user_details",userDetail.toString());
         responseMap.put("error_code", "");
+        
         object = new JSONObject(responseMap);
         result.success(object.toString());
     }
@@ -70,7 +76,7 @@ public class LoginActivityService {
 
     private void doLogin(final String username, final String password, MethodChannel.Result result,
                          SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                         LoginService loginService){
+                         LoginService loginService) throws Exception {
         //TODO check if the machine is online, if offline check password hash locally
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
@@ -81,10 +87,11 @@ public class LoginActivityService {
                     ServiceError error = SyncRestUtil.getServiceError(wrapper);
                     if(error == null) {
                         try {
-                            loginService.saveAuthToken(wrapper.getResponse());
+                            List<String> roles=loginService.saveAuthToken(wrapper.getResponse());
                             login_response = wrapper.getResponse();
+                            loginService.setPasswordHash(username, password);
                             responseMap.put("isLoggedIn", true);
-                            responseMap.put("login_response", login_response);
+                            responseMap.put("login_response", roles);
                             responseMap.put("error_code", "");
                             object = new JSONObject(responseMap);
                             result.success(object.toString());
@@ -135,13 +142,58 @@ public class LoginActivityService {
         });
     }
 
+    private void offlineLogin(final String username, final String password, MethodChannel.Result result,
+                              LoginService loginService) throws Exception {
+        if(!loginService.isPasswordPresent(username)) {
+            login_response = "Credentials not found or are expired. Please try online login!";
+            responseMap.put("isLoggedIn", false);
+            responseMap.put("login_response", login_response);
+            responseMap.put("error_code", "OFFLINE");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
+
+        if(!loginService.validatePassword(username, password)) {
+            login_response = "Password incorrect!";
+            responseMap.put("isLoggedIn", false);
+            responseMap.put("login_response", login_response);
+            responseMap.put("error_code", "401");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
+
+        login_response = loginService.getAuthToken();
+
+        if(login_response == null) {
+            login_response = "Credentials not found or are expired!. Please try online login!";
+            responseMap.put("isLoggedIn", false);
+            responseMap.put("login_response", login_response);
+            responseMap.put("error_code", "OFFLINE");
+            object = new JSONObject(responseMap);
+            result.success(object.toString());
+            return;
+        }
+        responseMap.put("isLoggedIn", true);
+        responseMap.put("login_response", login_response);
+        responseMap.put("error_code", "");
+        object = new JSONObject(responseMap);
+        result.success(object.toString());
+    }
+
     void executeLogin(String username, String password, MethodChannel.Result result,
                       SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                      LoginService loginService, AuditManagerService auditManagerService) {
+                      LoginService loginService, AuditManagerService auditManagerService,
+                      boolean isConnected) throws Exception {
 
         auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
         //validate form
         if(validateLogin(username, password, loginService)){
+            if(!isConnected) {
+                offlineLogin(username, password, result, loginService);
+                return;
+            }
             doLogin(username, password, result, syncRestService, syncRestFactory, loginService);
         } else {
             result.error("VALIDATION_FAILED","User validation failed!", null);

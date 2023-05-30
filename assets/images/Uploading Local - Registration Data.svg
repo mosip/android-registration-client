@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="26" height="26" viewBox="0 0 26 26">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#214fbf"/>
+      <stop offset="1" stop-color="#1c43a1"/>
+    </linearGradient>
+  </defs>
+  <g id="Uploading_Local_Registration_Data" data-name="Uploading Local / Registration Data" transform="translate(-0.274 -0.274)">
+    <rect id="Rectangle_176" data-name="Rectangle 176" width="26" height="26" transform="translate(0.274 0.274)" fill="none"/>
+    <path id="Path_155619" data-name="Path 155619" d="M14.144,4.212l5.343,5.343V21.911H6.212V4.212h7.931M15.062,2H6.212A2.219,2.219,0,0,0,4,4.212v17.7a2.219,2.219,0,0,0,2.212,2.212H19.486A2.219,2.219,0,0,0,21.7,21.911V8.637L15.062,2ZM12.849,15.274a2.212,2.212,0,1,0-2.212-2.212A2.219,2.219,0,0,0,12.849,15.274Zm4.425,3.794a2.224,2.224,0,0,0-1.35-2.046,7.691,7.691,0,0,0-6.15,0,2.224,2.224,0,0,0-1.35,2.046V19.7h8.849Z" transform="translate(0.425 0.212)" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

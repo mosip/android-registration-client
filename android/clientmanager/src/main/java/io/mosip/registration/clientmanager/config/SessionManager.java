@@ -35,7 +35,7 @@ public class SessionManager {
         return manager;
     }
 
-    public void saveAuthToken(@NonNull String token) throws Exception {
+    public List<String> saveAuthToken(@NonNull String token) throws Exception {
         final JWT jwt = new JWT(token);
         if(jwt.isExpired(15))
             throw new Exception("Expired token found : " + jwt.getExpiresAt());
@@ -57,6 +57,7 @@ public class SessionManager {
         editor.putBoolean(IS_DEFAULT, roles.contains("Default"));
         editor.putBoolean(IS_OFFICER, roles.contains("REGISTRATION_OFFICER"));
         editor.apply();
+        return roles;
     }
 
     public String fetchAuthToken() {

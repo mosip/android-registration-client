@@ -4,22 +4,22 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:document_scanner/document_scanner.dart';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/const/app_config.dart';
+
 import 'package:registration_client/const/utils.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 class RegistrationClient extends StatefulWidget {
-  RegistrationClient({super.key, required this.onLogout});
+  static const route="/registration-client";
+  RegistrationClient({super.key});
 
-  final VoidCallback onLogout;
+  // final VoidCallback onLogout;
 
   @override
   State<RegistrationClient> createState() => _RegistrationClientState();
@@ -128,11 +128,11 @@ class _RegistrationClientState extends State<RegistrationClient> {
             width: isMobile ? 115.39.w : 135.46.w,
             child: Image.asset(
               appIcon,
-              scale: appIconScale,
+              // scale: appIconScale,
             ),
           ),
           InkWell(
-            onTap: widget.onLogout,
+            onTap: (){},
             child: Container(
               // width: 129.w,
               height: 46.h,

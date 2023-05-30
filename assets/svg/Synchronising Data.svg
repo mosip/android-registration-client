@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25.793" height="25.793" viewBox="0 0 25.793 25.793">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#214fbf"/>
+      <stop offset="1" stop-color="#1c43a1"/>
+    </linearGradient>
+  </defs>
+  <g id="Synchronising_Data" data-name="Synchronising Data" transform="translate(-0.01)">
+    <path id="Path_155615" data-name="Path 155615" d="M.01,0H25.8V25.793H.01V0Z" transform="translate(0)" fill="none"/>
+    <path id="Path_155616" data-name="Path 155616" d="M12.6,4.224V1L8.3,5.3l4.3,4.3V6.374a6.453,6.453,0,0,1,6.448,6.448,6.309,6.309,0,0,1-.752,3.009L19.863,17.4A8.583,8.583,0,0,0,12.6,4.224Zm0,15.046a6.453,6.453,0,0,1-6.448-6.448A6.309,6.309,0,0,1,6.9,9.813L5.333,8.244A8.583,8.583,0,0,0,12.6,21.419v3.224l4.3-4.3-4.3-4.3Z" transform="translate(0.298 0.075)" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

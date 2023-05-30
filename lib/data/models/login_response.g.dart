@@ -8,7 +8,9 @@ part of 'login_response.dart';
 
 LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>
     LoginResponse(
-      login_response: json['login_response'] as String,
+      login_response: (json['login_response'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       isLoggedIn: json['isLoggedIn'] as bool,
       error_code: json['error_code'] as String,
     );

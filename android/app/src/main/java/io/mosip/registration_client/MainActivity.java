@@ -20,6 +20,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
@@ -32,7 +34,7 @@ import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 public class MainActivity extends FlutterActivity {
-    private static final String CHANNEL_TEST = "com.flutter.dev/io.mosip.get-package-instance";
+    private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
     @Inject
     ClientCryptoManagerService clientCryptoManagerService;
     @Inject
@@ -53,6 +55,10 @@ public class MainActivity extends FlutterActivity {
     JobTransactionService jobTransactionService;
     @Inject
     JobManagerService jobManagerService;
+    @Inject
+    IdentitySchemaRepository identitySchemaRepository;
+    @Inject
+    UserDetailRepository userDetailRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +81,7 @@ public class MainActivity extends FlutterActivity {
         super.configureFlutterEngine(flutterEngine);
         GeneratedPluginRegistrant.registerWith(flutterEngine);
 
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL_TEST)
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {
                             switch(call.method) {
@@ -89,15 +95,20 @@ public class MainActivity extends FlutterActivity {
 
                                 case "validateUsername":
                                     String usernameVal = call.argument("username");
-                                    new LoginActivityService().usernameValidation(usernameVal, loginService, result);
+                                    new LoginActivityService().usernameValidation(usernameVal, loginService, result,userDetailRepository);
                                     break;
 
                                 case "login":
                                     String username = call.argument("username");
                                     String password = call.argument("password");
-                                    new LoginActivityService().executeLogin(username, password,
-                                            result, syncRestService, syncRestFactory,
-                                            loginService, auditManagerService);
+                                    boolean isConnected = call.argument("isConnected");
+                                    try {
+                                        new LoginActivityService().executeLogin(username, password,
+                                                result, syncRestService, syncRestFactory,
+                                                loginService, auditManagerService, isConnected);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
                                     break;
 
                                 case "masterDataSync":
