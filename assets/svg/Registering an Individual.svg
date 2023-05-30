@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="27.49" height="19.919" viewBox="0 0 27.49 19.919">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#214fbf"/>
+      <stop offset="1" stop-color="#1c43a1"/>
+    </linearGradient>
+  </defs>
+  <g id="Registering_an_Individual" data-name="Registering an Individual" transform="translate(-0.94 -4.94)">
+    <path id="Path_155614" data-name="Path 155614" d="M18.43,13.96a4.98,4.98,0,1,0-4.98-4.98A4.978,4.978,0,0,0,18.43,13.96Zm0-7.47a2.49,2.49,0,1,1-2.49,2.49A2.5,2.5,0,0,1,18.43,6.49Zm0,9.96c-3.324,0-9.96,1.668-9.96,4.98v2.49H28.389V21.43C28.389,18.118,21.754,16.45,18.43,16.45Zm-7.47,4.98c.274-.9,4.121-2.49,7.47-2.49s7.221,1.606,7.47,2.49Zm21.265-3.735V13.96H35.96V11.47H32.225V7.735h-2.49V11.47H26v2.49h3.735v3.735Z" transform="translate(-7.53 0.94)" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

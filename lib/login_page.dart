@@ -8,20 +8,22 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/const/app_config.dart';
+
 import 'package:registration_client/const/utils.dart';
 
 import 'package:registration_client/credentials_page.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/data/models/login_response.dart';
-import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
-import 'package:registration_client/registration_client.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/registration_client.dart';
+import 'package:registration_client/ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
+import 'package:registration_client/ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
+import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/widgets/password_component.dart';
 import 'package:registration_client/widgets/username_component.dart';
 
@@ -45,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isUserValidated = false;
   List<String> _languages = ['eng', 'ara', 'fre'];
   Map<String, String> mp = {};
-  final _formKey = GlobalKey<FormState>();
+
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   late LoginResponse loginResp;
@@ -64,7 +66,13 @@ class _LoginPageState extends State<LoginPage> {
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
     return isLoggedIn
-        ? RegistrationClient(
+        ?
+    //   Responsive(
+    //   mobile: DashBoardMobileView(),
+    //   desktop: DashBoardTabletView(),
+    //   tablet: DashBoardTabletView(),
+    // )
+    RegistrationClient(
             onLogout: () {
               setState(() {
                 username = '';
@@ -125,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
       });
       mp = jsonDecode(response);
       loginResp = LoginResponse.fromJson(mp);
-    } on PlatformException catch (e) {
+    } on PlatformException {
       mp = {};
     }
     setState(() {
@@ -155,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-    } on PlatformException catch (e) {
+    } on PlatformException {
       mp = {};
     }
 
