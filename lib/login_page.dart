@@ -139,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
       mp = jsonDecode(response);
       loginResp = LoginResponse.fromJson(mp);
 
-      temp = mp["login_response"];
+      temp = loginResp.roles;
     } on PlatformException {
       mp = {};
     }
@@ -147,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoggedIn = loginResp.isLoggedIn;
       errorCode = loginResp.error_code;
       if (isLoggedIn) {
-        loginResponse = loginResp.login_response.first;
+        loginResponse = loginResp.login_response;
       } else if (errorCode == '500') {
         loginResponse = AppLocalizations.of(context)!.login_failed;
       } else if (errorCode == '501') {

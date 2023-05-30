@@ -83,4 +83,20 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: '',
       ) as String);
+  @override
+  String isOnboarded(Map<String, dynamic>? mockData) => (super.noSuchMethod(
+        Invocation.method(
+          #isOnboarded,
+          [mockData],
+        ),
+        returnValue: '',
+      ) as String);
+  @override
+  String userRoleAuthorised(List<dynamic>? mockData) => (super.noSuchMethod(
+        Invocation.method(
+          #userRoleAuthorised,
+          [mockData],
+        ),
+        returnValue: '',
+      ) as String);
 }

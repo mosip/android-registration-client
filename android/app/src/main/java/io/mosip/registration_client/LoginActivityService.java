@@ -7,10 +7,10 @@
 package io.mosip.registration_client;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +35,7 @@ public class LoginActivityService {
     String login_response = "";
     String error_code = "";
     Map<String, Object> responseMap = new HashMap<>();
+    List<String> roles = new ArrayList<>();
     JSONObject object;
 
     public void usernameValidation(String username,
@@ -87,11 +88,12 @@ public class LoginActivityService {
                     ServiceError error = SyncRestUtil.getServiceError(wrapper);
                     if(error == null) {
                         try {
-                            List<String> roles=loginService.saveAuthToken(wrapper.getResponse());
+                            roles=loginService.saveAuthToken(wrapper.getResponse());
                             login_response = wrapper.getResponse();
                             loginService.setPasswordHash(username, password);
                             responseMap.put("isLoggedIn", true);
-                            responseMap.put("login_response", roles);
+                            responseMap.put("login_response", login_response);
+                            responseMap.put("roles", roles);
                             responseMap.put("error_code", "");
                             object = new JSONObject(responseMap);
                             result.success(object.toString());
@@ -117,6 +119,7 @@ public class LoginActivityService {
                     }
                     responseMap.put("isLoggedIn", false);
                     responseMap.put("login_response", login_response);
+                    responseMap.put("roles", roles);
                     responseMap.put("error_code", error_code);
                     object = new JSONObject(responseMap);
                     result.success(object.toString());
@@ -125,6 +128,7 @@ public class LoginActivityService {
                 login_response = "Login Failed! Try Again";
                 responseMap.put("isLoggedIn", false);
                 responseMap.put("login_response", login_response);
+                responseMap.put("roles", roles);
                 responseMap.put("error_code", "500");
                 object = new JSONObject(responseMap);
                 result.success(object.toString());
@@ -134,6 +138,7 @@ public class LoginActivityService {
             public void onFailure(Call call, Throwable t) {
                 Log.e(getClass().getSimpleName(), "Login Failure! ");
                 responseMap.put("isLoggedIn", false);
+                responseMap.put("roles", roles);
                 responseMap.put("login_response", "Login failed. Check network connection!");
                 responseMap.put("error_code", "501");
                 object = new JSONObject(responseMap);
@@ -147,6 +152,7 @@ public class LoginActivityService {
         if(!loginService.isPasswordPresent(username)) {
             login_response = "Credentials not found or are expired. Please try online login!";
             responseMap.put("isLoggedIn", false);
+            responseMap.put("roles", roles);
             responseMap.put("login_response", login_response);
             responseMap.put("error_code", "OFFLINE");
             object = new JSONObject(responseMap);
@@ -157,6 +163,7 @@ public class LoginActivityService {
         if(!loginService.validatePassword(username, password)) {
             login_response = "Password incorrect!";
             responseMap.put("isLoggedIn", false);
+            responseMap.put("roles", roles);
             responseMap.put("login_response", login_response);
             responseMap.put("error_code", "401");
             object = new JSONObject(responseMap);
@@ -169,6 +176,7 @@ public class LoginActivityService {
         if(login_response == null) {
             login_response = "Credentials not found or are expired!. Please try online login!";
             responseMap.put("isLoggedIn", false);
+            responseMap.put("roles", roles);
             responseMap.put("login_response", login_response);
             responseMap.put("error_code", "OFFLINE");
             object = new JSONObject(responseMap);
@@ -177,6 +185,7 @@ public class LoginActivityService {
         }
         responseMap.put("isLoggedIn", true);
         responseMap.put("login_response", login_response);
+        responseMap.put("roles", roles);
         responseMap.put("error_code", "");
         object = new JSONObject(responseMap);
         result.success(object.toString());

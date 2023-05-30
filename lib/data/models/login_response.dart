@@ -4,11 +4,13 @@ part 'login_response.g.dart';
 
 @JsonSerializable()
 class LoginResponse {
-  final List<String> login_response;
+  final String login_response;
   final bool isLoggedIn;
   final String error_code;
+  final List<dynamic> roles;
 
   LoginResponse({
+    required this.roles,
     required this.login_response,
     required this.isLoggedIn,
     required this.error_code,
