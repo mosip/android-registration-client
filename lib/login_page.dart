@@ -22,12 +22,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
+import 'package:registration_client/ui/onboarding/onboarding_page_1_view.dart';
+import 'package:registration_client/ui/onboarding/onboarding_page_2_view.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/widgets/password_component.dart';
 import 'package:registration_client/widgets/username_component.dart';
 
 class LoginPage extends StatefulWidget {
+  static const route = "/login-page";
   const LoginPage({super.key});
 
   @override
@@ -45,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   String username = '';
   String password = '';
   bool isUserValidated = false;
+  String isOnboardedValue = "";
   List<String> _languages = ['eng', 'ara', 'fre'];
   Map<String, String> mp = {};
 
@@ -67,20 +71,20 @@ class _LoginPageState extends State<LoginPage> {
     double w = ScreenUtil().screenWidth;
     return isLoggedIn
         ?
-    //   Responsive(
-    //   mobile: DashBoardMobileView(),
-    //   desktop: DashBoardTabletView(),
-    //   tablet: DashBoardTabletView(),
-    // )
-    RegistrationClient(
-            onLogout: () {
-              setState(() {
-                username = '';
-                isUserValidated = false;
-                isLoggedIn = false;
-              });
-            },
-          )
+        //   Responsive(
+        //   mobile: DashBoardMobileView(),
+        //   desktop: DashBoardTabletView(),
+        //   tablet: DashBoardTabletView(),
+        // )
+        RegistrationClient(
+            // onLogout: () {
+            //   setState(() {
+            //     username = '';
+            //     isUserValidated = false;
+            //     isLoggedIn = false;
+            //   });
+            // },
+            )
         : SafeArea(
             child: Scaffold(
               backgroundColor: Utils.appSolidPrimary,
@@ -124,6 +128,7 @@ class _LoginPageState extends State<LoginPage> {
     final connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     String response;
+    List<dynamic> temp = List.empty(growable: true);
     Map<String, dynamic> mp;
     try {
       response = await platform.invokeMethod("login", {
@@ -133,6 +138,8 @@ class _LoginPageState extends State<LoginPage> {
       });
       mp = jsonDecode(response);
       loginResp = LoginResponse.fromJson(mp);
+
+      temp = mp["login_response"];
     } on PlatformException {
       mp = {};
     }
@@ -140,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoggedIn = loginResp.isLoggedIn;
       errorCode = loginResp.error_code;
       if (isLoggedIn) {
-        loginResponse = loginResp.login_response;
+        loginResponse = loginResp.login_response.first;
       } else if (errorCode == '500') {
         loginResponse = AppLocalizations.of(context)!.login_failed;
       } else if (errorCode == '501') {
@@ -153,6 +160,14 @@ class _LoginPageState extends State<LoginPage> {
         loginResponse = AppLocalizations.of(context)!.machine_not_found;
       }
     });
+    if (isLoggedIn == true) {
+      Navigator.popUntil(context, ModalRoute.withName('/login-page'));
+      if (isOnboardedValue == "true" && temp.contains("default-roles-mosip")) {
+        Navigator.pushNamed(context, RegistrationClient.route);
+      } else {
+        Navigator.pushNamed(context, RegistrationClient.route);
+      }
+    }
   }
 
   Future<void> _validateUsername() async {
@@ -163,6 +178,12 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
+      isOnboardedValue = mp["user_details"]
+          .toString()
+          .split("isOnboarded=")
+          .last
+          .split(",")
+          .first;
     } on PlatformException {
       mp = {};
     }

@@ -11,6 +11,7 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../utils/responsive.dart';
 
 class OnboardingPage1View extends StatelessWidget {
+  static const route="/onboarding-page1-view";
   const OnboardingPage1View({super.key});
 
   @override

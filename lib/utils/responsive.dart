@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-bool get isMobile => ScreenUtil().screenWidth < 750;
-bool get isTablet => ScreenUtil().screenWidth <= 1160;
-
-bool get isDesktop => ScreenUtil().screenWidth > 1160;
 
 class Responsive extends StatelessWidget {
   final Widget mobile;

@@ -20,6 +20,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
@@ -53,6 +55,10 @@ public class MainActivity extends FlutterActivity {
     JobTransactionService jobTransactionService;
     @Inject
     JobManagerService jobManagerService;
+    @Inject
+    IdentitySchemaRepository identitySchemaRepository;
+    @Inject
+    UserDetailRepository userDetailRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,7 +95,7 @@ public class MainActivity extends FlutterActivity {
 
                                 case "validateUsername":
                                     String usernameVal = call.argument("username");
-                                    new LoginActivityService().usernameValidation(usernameVal, loginService, result);
+                                    new LoginActivityService().usernameValidation(usernameVal, loginService, result,userDetailRepository);
                                     break;
 
                                 case "login":

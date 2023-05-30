@@ -12,6 +12,7 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel;
@@ -19,7 +20,9 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -36,7 +39,7 @@ public class LoginActivityService {
 
     public void usernameValidation(String username,
                                        LoginService loginService,
-                                       MethodChannel.Result result) {
+                                       MethodChannel.Result result, UserDetailRepository userDetailRepository) {
         if(!loginService.isValidUserId(username)) {
             responseMap.put("user_response", "User not found!");
             responseMap.put("isUserPresent", false);
@@ -45,9 +48,12 @@ public class LoginActivityService {
             result.success(object.toString());
             return;
         }
+        UserDetail userDetail=loginService.getUserDetailsByUserId(username);
         responseMap.put("user_response", "User Validated!");
         responseMap.put("isUserPresent", true);
+        responseMap.put("user_details",userDetail.toString());
         responseMap.put("error_code", "");
+        
         object = new JSONObject(responseMap);
         result.success(object.toString());
     }
@@ -81,11 +87,11 @@ public class LoginActivityService {
                     ServiceError error = SyncRestUtil.getServiceError(wrapper);
                     if(error == null) {
                         try {
-                            loginService.saveAuthToken(wrapper.getResponse());
+                            List<String> roles=loginService.saveAuthToken(wrapper.getResponse());
                             login_response = wrapper.getResponse();
                             loginService.setPasswordHash(username, password);
                             responseMap.put("isLoggedIn", true);
-                            responseMap.put("login_response", login_response);
+                            responseMap.put("login_response", roles);
                             responseMap.put("error_code", "");
                             object = new JSONObject(responseMap);
                             result.success(object.toString());

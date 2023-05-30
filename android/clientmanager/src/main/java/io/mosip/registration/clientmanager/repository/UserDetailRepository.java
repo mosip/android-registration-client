@@ -72,7 +72,10 @@ public class UserDetailRepository {
     public boolean isActiveUser(String userId) {
         return userDetailDao.getUserDetail(userId) != null;
     }
+public UserDetail getUserDetailByUserId(String userId){
 
+        return userDetailDao.getUserDetail(userId);
+    }
     public int getUserDetailCount() {
         return userDetailDao.getUserDetailCount();
     }

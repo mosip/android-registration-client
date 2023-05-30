@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import com.auth0.android.jwt.JWT;
 import io.mosip.registration.clientmanager.config.SessionManager;
+import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
 import org.json.JSONObject;
 
@@ -43,7 +44,11 @@ public class LoginService {
     public boolean isValidUserId(String userId) {
         return userDetailRepository.getUserDetailCount() != 0 ? userDetailRepository.isActiveUser(userId) : true;
     }
-
+     
+    public UserDetail getUserDetailsByUserId(String userId){
+        return userDetailRepository.getUserDetailByUserId(userId);
+    } 
+    
     public boolean isPasswordPresent(String userId) {
         return userDetailRepository.isPasswordPresent(userId);
     }
@@ -59,7 +64,7 @@ public class LoginService {
         return sessionManager.fetchAuthToken();
     }
 
-    public void saveAuthToken(String authResponse) throws Exception {
+    public List<String> saveAuthToken(String authResponse) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);
         CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
@@ -69,7 +74,8 @@ public class LoginService {
         byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
         try {
             JSONObject jsonObject = new JSONObject(new String(decodedBytes));
-            this.sessionManager.saveAuthToken(jsonObject.getString("token"));
+            List<String> roles=this.sessionManager.saveAuthToken(jsonObject.getString("token"));
+            return roles;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
             throw ex;
