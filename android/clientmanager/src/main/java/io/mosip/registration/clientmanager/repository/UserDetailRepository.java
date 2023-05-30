@@ -102,16 +102,17 @@ public UserDetail getUserDetailByUserId(String userId){
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
         UserDetail userDetail = userDetailDao.getUserDetail(userId);
         List<UserDetail> userDetailList = new ArrayList<>();
-        if (userDetail != null) {
-            if (userDetail.getSalt() == null) {
-                userDetail.setSalt(
-                        CryptoUtil.base64encoder.
-                                encodeToString(DateUtils.formatToISOString(LocalDateTime.now()).getBytes())
-                );
-            }
-        } else {
-            return;
+        if(userDetail == null) {
+            userDetail = new UserDetail(userId);
         }
+
+        if (userDetail.getSalt() == null) {
+            userDetail.setSalt(
+                    CryptoUtil.base64encoder.
+                            encodeToString(DateUtils.formatToISOString(LocalDateTime.now()).getBytes())
+            );
+        }
+
 
         if (userPassword == null) {
             userPassword = new UserPassword(userId);

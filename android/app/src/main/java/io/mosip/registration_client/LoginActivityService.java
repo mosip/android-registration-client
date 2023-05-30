@@ -52,7 +52,7 @@ public class LoginActivityService {
         UserDetail userDetail=loginService.getUserDetailsByUserId(username);
         responseMap.put("user_response", "User Validated!");
         responseMap.put("isUserPresent", true);
-        responseMap.put("user_details",userDetail.toString());
+        responseMap.put("user_details",userDetail == null ? "" : userDetail.toString());
         responseMap.put("error_code", "");
         
         object = new JSONObject(responseMap);

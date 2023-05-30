@@ -178,12 +178,17 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-      isOnboardedValue = mp["user_details"]
+      if(mp["userDetails"] != "") {
+        isOnboardedValue = mp["user_details"]
           .toString()
           .split("isOnboarded=")
           .last
           .split(",")
           .first;
+      } else {
+        isOnboardedValue = "false";
+      }
+
     } on PlatformException {
       mp = {};
     }
