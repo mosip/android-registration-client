@@ -18,7 +18,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:registration_client/ui/dashboard/dashboard_view_model.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 

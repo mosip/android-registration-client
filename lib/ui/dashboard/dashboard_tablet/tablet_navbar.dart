@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/ui/dashboard/dashboard_view_model.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 
 import '../../../utils/app_config.dart';
 
@@ -22,7 +22,7 @@ class TabletNavbar extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(
-                width: (isLandscape) ? 80.w : 20.w,
+                width: w < 512 ? 0 : 60,
               ),
               Image.asset(
                 "assets/images/mosip_logo.png",
@@ -75,7 +75,7 @@ class TabletNavbar extends StatelessWidget {
                     color: Colors.black, fontSize: 16, fontWeight: semiBold),
               ),
               SizedBox(
-                width: (isLandscape) ? 12.w : 3.w,
+                width: (isLandscape) ? 5.w : 3.w,
               ),
               Icon(
                 Icons.arrow_drop_down,
@@ -83,11 +83,8 @@ class TabletNavbar extends StatelessWidget {
                 size: 15.h,
               ),
               SizedBox(
-                width: (isLandscape) ? 30.w : 12.07.w,
+                width: w < 512 ? 0 : 60,
               ),
-              // SizedBox(
-              //   width: (isLandscape) ? 80.w : 20.w,
-              // ),
             ],
           ),
         )

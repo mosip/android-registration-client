@@ -23,7 +23,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
-import 'package:registration_client/ui/dashboard/dashboard_view_model.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 import 'package:registration_client/ui/onboarding/onboarding_page_1_view.dart';
 import 'package:registration_client/ui/onboarding/onboarding_page_2_view.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -71,59 +71,60 @@ class _LoginPageState extends State<LoginPage> {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
-    return isLoggedIn
-        ?
-        //   Responsive(
-        //   mobile: DashBoardMobileView(),
-        //   desktop: DashBoardTabletView(),
-        //   tablet: DashBoardTabletView(),
-        // )
-        RegistrationClient(
-            // onLogout: () {
-            //   setState(() {
-            //     username = '';
-            //     isUserValidated = false;
-            //     isLoggedIn = false;
-            //   });
-            // },
-            )
-        : SafeArea(
-            child: Scaffold(
-              backgroundColor: Utils.appSolidPrimary,
-              body: Stack(
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    left: 16.w,
-                    child: _getBuildingsImage(),
-                  ),
-                  Container(
-                    height: h,
-                    width: w,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: isMobile
-                            ? CrossAxisAlignment.center
-                            : CrossAxisAlignment.start,
-                        children: [
-                          _appBarComponent(),
-                          SizedBox(
-                            height: isMobile ? 50.h : 132.h,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 16.w : 80.w,
-                            ),
-                            child: isMobile ? _mobileView() : _tabletView(),
-                          ),
-                        ],
-                      ),
+    // return isLoggedIn
+    //     ? Responsive(
+    //         mobile: DashBoardMobileView(),
+    //         desktop: DashBoardTabletView(),
+    //         tablet: DashBoardTabletView(),
+    //       )
+    //     // RegistrationClient(
+    //     //     // onLogout: () {
+    //     //     //   setState(() {
+    //     //     //     username = '';
+    //     //     //     isUserValidated = false;
+    //     //     //     isLoggedIn = false;
+    //     //     //   });
+    //     //     // },
+    //     //     )
+    //     :
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Utils.appSolidPrimary,
+        body: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 16.w,
+              child: _getBuildingsImage(),
+            ),
+            Container(
+              height: h,
+              width: w,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: isMobile
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
+                  children: [
+                    _appBarComponent(),
+                    SizedBox(
+                      height: isMobile ? 50.h : 132.h,
                     ),
-                  ),
-                ],
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16.w : 80.w,
+                      ),
+                      child: isMobile ? _mobileView() : _tabletView(),
+                    ),
+                  ],
+                ),
               ),
             ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _login(String username, String password) async {
@@ -164,7 +165,9 @@ class _LoginPageState extends State<LoginPage> {
     });
     if (isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (isOnboardedValue == "true" && temp.contains("default-roles-mosip")) {
+      if (isOnboardedValue == "true" ||
+          temp.contains("REGISTRATION_SUPERVISOR") ||
+          temp.contains("REGISTRATION_OPERATOR")) {
         context.read<DashboardViewModel>().setCurrentIndex(1);
       }
 
@@ -188,6 +191,7 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
+      log(mp.toString());
       if (mp["user_details"] != "") {
         isOnboardedValue = mp["user_details"]
             .toString()
@@ -198,6 +202,8 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         isOnboardedValue = "";
       }
+
+      // mp["user_details"].toString().split("isOnboarded=").last.split(",").first;
     } on PlatformException {
       mp = {};
     }

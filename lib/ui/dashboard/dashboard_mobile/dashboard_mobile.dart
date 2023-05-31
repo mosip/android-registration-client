@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../onboarding/onboarding_page_1_view.dart';
 import '../../onboarding/onboarding_page_2_view.dart';
-import '../dashboard_view_model.dart';
+import '../../../provider/dashboard_view_model.dart';
 import 'mobile_navbar.dart';
 
 class DashBoardMobileView extends StatelessWidget {
