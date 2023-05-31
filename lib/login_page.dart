@@ -6,6 +6,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/registration_client.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
+import 'package:registration_client/ui/dashboard/dashboard_view_model.dart';
 import 'package:registration_client/ui/onboarding/onboarding_page_1_view.dart';
 import 'package:registration_client/ui/onboarding/onboarding_page_2_view.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -163,10 +165,20 @@ class _LoginPageState extends State<LoginPage> {
     if (isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
       if (isOnboardedValue == "true" && temp.contains("default-roles-mosip")) {
-        Navigator.pushNamed(context, RegistrationClient.route);
-      } else {
-        Navigator.pushNamed(context, RegistrationClient.route);
+        context.read<DashboardViewModel>().setCurrentIndex(1);
       }
+
+      log(isOnboardedValue + "onboarded");
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Responsive(
+            mobile: DashBoardMobileView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
+          ),
+        ),
+      );
     }
   }
 
@@ -178,17 +190,18 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-      if(mp["userDetails"] != "") {
+      log(mp["userDetails"].toString());
+      if (mp["userDetails"] != "") {
         isOnboardedValue = mp["user_details"]
-          .toString()
-          .split("isOnboarded=")
-          .last
-          .split(",")
-          .first;
+            .toString()
+            .split("isOnboarded=")
+            .last
+            .split(",")
+            .first;
       } else {
         isOnboardedValue = "false";
       }
-
+      log(isOnboardedValue + "onboardedCheck");
     } on PlatformException {
       mp = {};
     }

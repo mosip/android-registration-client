@@ -57,6 +57,10 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => ConnectivityProvider(),
         ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => DashboardViewModel(),
+        ),
       ],
       child: BuildApp(),
     );
@@ -68,7 +72,6 @@ class MyApp extends StatelessWidget {
 }
 
 class BuildApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -94,7 +97,6 @@ class BuildApp extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class MyHomePage extends StatefulWidget {

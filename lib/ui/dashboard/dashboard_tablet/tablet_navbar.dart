@@ -30,27 +30,22 @@ class TabletNavbar extends StatelessWidget {
               ),
               const Spacer(),
               context.watch<DashboardViewModel>().currentIndex != 0
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.menu,
-                          color: Color(0xff4E4E4E),
-                          size: 26.h,
-                        ),
-                        SizedBox(
-                          width: (isLandscape) ? 50.28.w : 12.07.w,
-                        ),
-                      ],
+                  ? Icon(
+                      Icons.menu,
+                      color: Color(0xff4E4E4E),
+                      size: 26.h,
                     )
                   : const SizedBox.shrink(),
+              SizedBox(
+                width: (isLandscape) ? 30.w : 12.07.w,
+              ),
               Icon(
                 Icons.settings,
                 color: Color(0xff4E4E4E),
                 size: 26.h,
               ),
               SizedBox(
-                width: (isLandscape) ? 50.28.w : 12.07.w,
+                width: (isLandscape) ? 30.w : 12.07.w,
               ),
               Icon(
                 Icons.notifications_outlined,
@@ -58,8 +53,11 @@ class TabletNavbar extends StatelessWidget {
                 size: 25.5.h,
               ),
               SizedBox(
-                width: (isLandscape) ? 54.w : 13.5.w,
+                width: (isLandscape) ? 30.w : 12.07.w,
               ),
+              // SizedBox(
+              //   width: (isLandscape) ? 54.w : 13.5.w,
+              // ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image.asset(
@@ -85,8 +83,11 @@ class TabletNavbar extends StatelessWidget {
                 size: 15.h,
               ),
               SizedBox(
-                width: (isLandscape) ? 80.w : 20.w,
+                width: (isLandscape) ? 30.w : 12.07.w,
               ),
+              // SizedBox(
+              //   width: (isLandscape) ? 80.w : 20.w,
+              // ),
             ],
           ),
         )
