@@ -11,7 +11,7 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../utils/responsive.dart';
 
 class OnboardingPage1View extends StatelessWidget {
-  static const route="/onboarding-page1-view";
+  static const route = "/onboarding-page1-view";
   const OnboardingPage1View({super.key});
 
   @override
@@ -69,7 +69,9 @@ class OnboardingPage1View extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: (isMobile)?EdgeInsets.fromLTRB(20.w,0,0,0):EdgeInsets.fromLTRB(20.w,0,0,0),
+              padding: (isMobile)
+                  ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
+                  : EdgeInsets.fromLTRB(20.w, 0, 0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

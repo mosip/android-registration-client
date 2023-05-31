@@ -8,7 +8,7 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'widgets/onboarding_page2_card.dart';
 
 class OnboardingPage2View extends StatelessWidget {
-  static const route="/onboarding-page2-view";
+  static const route = "/onboarding-page2-view";
   const OnboardingPage2View({super.key});
 
   @override
@@ -100,6 +100,9 @@ class OnboardingPage2View extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        height: 30.h,
+                      ),
                       Text(
                         "Registration Tasks",
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -124,6 +127,9 @@ class OnboardingPage2View extends StatelessWidget {
                                 as VoidCallback,
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        height: 30.h,
                       ),
                     ],
                   ),

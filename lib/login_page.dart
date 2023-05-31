@@ -168,7 +168,6 @@ class _LoginPageState extends State<LoginPage> {
         context.read<DashboardViewModel>().setCurrentIndex(1);
       }
 
-     
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => Responsive(
@@ -199,7 +198,6 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         isOnboardedValue = "";
       }
-      log(isOnboardedValue + "onboardedCheck");
     } on PlatformException {
       mp = {};
     }

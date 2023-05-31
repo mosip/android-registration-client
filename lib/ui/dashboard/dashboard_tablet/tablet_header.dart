@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
 
 import '../../../utils/app_config.dart';
 
@@ -45,9 +47,11 @@ class TabletHeader extends StatelessWidget {
             SizedBox(
               width: (isLandscape) ? 44.w : 11.w,
             ),
-            const Icon(
+            Icon(
               Icons.circle,
-              color: Color(0xff1A9B42),
+              color: context.watch<ConnectivityProvider>().isConnected
+                  ? const Color(0xff1A9B42)
+                  : Colors.grey,
               size: 12,
             ),
             SizedBox(

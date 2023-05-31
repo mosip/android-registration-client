@@ -26,8 +26,11 @@ class DashBoardMobileView extends StatelessWidget {
               builder: (context, constraint) {
                 return SingleChildScrollView(
                   controller: ScrollController(),
-                  child:
+                  child: Column(
+                    children: [
                       _pages[context.watch<DashboardViewModel>().currentIndex],
+                    ],
+                  ),
                 );
               },
             ),
