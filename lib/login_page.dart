@@ -168,8 +168,7 @@ class _LoginPageState extends State<LoginPage> {
         context.read<DashboardViewModel>().setCurrentIndex(1);
       }
 
-      log(isOnboardedValue + "onboarded");
-
+     
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => Responsive(
@@ -190,8 +189,7 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-      log(mp["userDetails"].toString());
-      if (mp["userDetails"] != "") {
+      if (mp["user_details"] != "") {
         isOnboardedValue = mp["user_details"]
             .toString()
             .split("isOnboarded=")
@@ -199,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
             .split(",")
             .first;
       } else {
-        isOnboardedValue = "false";
+        isOnboardedValue = "";
       }
       log(isOnboardedValue + "onboardedCheck");
     } on PlatformException {
