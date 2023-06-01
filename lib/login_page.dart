@@ -171,15 +171,16 @@ class _LoginPageState extends State<LoginPage> {
         context.read<DashboardViewModel>().setCurrentIndex(1);
       }
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
-          ),
-        ),
-      );
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => Responsive(
+      //       mobile: DashBoardMobileView(),
+      //       desktop: DashBoardTabletView(),
+      //       tablet: DashBoardTabletView(),
+      //     ),
+      //   ),
+      // );
+      Navigator.pushNamed(context, RegistrationClient.route);
     }
   }
 
@@ -191,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-      log(mp.toString());
+      log(mp["user_details"]);
       if (mp["user_details"] != "") {
         isOnboardedValue = mp["user_details"]
             .toString()

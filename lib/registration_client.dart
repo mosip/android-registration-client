@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-
 import 'dart:core';
 
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 class RegistrationClient extends StatefulWidget {
-  static const route="/registration-client";
+  static const route = "/registration-client";
   RegistrationClient({super.key});
 
   // final VoidCallback onLogout;
@@ -85,14 +84,20 @@ class _RegistrationClientState extends State<RegistrationClient> {
                       )),
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    color: Utils.appWhite,
-                    child: Center(
-                        child: Text(
-                      'Packet Bundling',
-                      style: Utils.mobileHelpText,
-                    )),
+                  InkWell(
+                    onTap: () {
+                      // _testingSpec();
+                      _adityaTestingSpec();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      color: Utils.appWhite,
+                      child: Center(
+                          child: Text(
+                        'Packet Bundling',
+                        style: Utils.mobileHelpText,
+                      )),
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -132,7 +137,7 @@ class _RegistrationClientState extends State<RegistrationClient> {
             ),
           ),
           InkWell(
-            onTap: (){},
+            onTap: () {},
             child: Container(
               // width: 129.w,
               height: 46.h,
@@ -172,6 +177,31 @@ class _RegistrationClientState extends State<RegistrationClient> {
     setState(() {
       syncDataResponse = result;
     });
+    debugPrint(syncDataResponse);
+  }
+
+  Future<void> _testingSpec() async {
+    String result;
+    try {
+      await platform.invokeMethod("testingSpec");
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    // setState(() {
+    //   // syncDataResponse = result;
+    // });
+    debugPrint(syncDataResponse);
+  }
+  Future<void> _adityaTestingSpec() async {
+    String result;
+    try {
+      await platform.invokeMethod("adityaTestingSpec",{"centerId":"10006"});
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    // setState(() {
+    //   // syncDataResponse = result;
+    // });
     debugPrint(syncDataResponse);
   }
 }
