@@ -64,4 +64,40 @@ class Login {
       return "Unauthorised";
     }
   }
+
+  bool isPasswordPresent(Map<String, dynamic> passwordData, String userId) {
+    if(passwordData.isEmpty) {
+      return false;
+    }
+
+    if(passwordData["userId"] != userId) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool isPasswordValid(Map<String, dynamic> passwordData, String userId, String password) {
+    if(!isPasswordPresent(passwordData, userId)) {
+      return false;
+    }
+
+    if(passwordData["password"] != password) {
+      return false;
+    }
+
+    return true;
+  }
+
+  String offlineLogin(Map<String, dynamic> passwordData, String userId, String password) {
+    if(!isPasswordPresent(passwordData, userId)) {
+      return "Credentials not found. Try online login.";
+    }
+
+    if(!isPasswordValid(passwordData, userId, password)) {
+      return "Password Incorrect";
+    }
+
+    return "Offline Login Successful!";
+  }
 }
