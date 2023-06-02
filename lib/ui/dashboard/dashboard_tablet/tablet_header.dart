@@ -5,43 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 
 import '../../../utils/app_config.dart';
 
-class TabletHeader extends StatefulWidget {
+class TabletHeader extends StatelessWidget {
   const TabletHeader({super.key});
-
-  @override
-  State<TabletHeader> createState() => _TabletHeaderState();
-}
-
-class _TabletHeaderState extends State<TabletHeader> {
-  static const platform =
-      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
-  String machineName = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _getMachineDetails();
-  }
-
-  Future<void> _getMachineDetails() async {
-    String resultText;
-    Map<String, dynamic> machineMap;
-    try {
-      resultText = await platform.invokeMethod('getMachineDetails');
-      machineMap = jsonDecode(resultText);
-      resultText = machineMap['name'];
-      debugPrint("Machine Map $machineMap");
-    } on PlatformException {
-      resultText = "Not Found";
-      machineMap = {};
-    }
-    setState(() {
-      machineName = resultText;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +47,7 @@ class _TabletHeaderState extends State<TabletHeader> {
               width: (isLandscape) ? 7.85.w : 1.96.w,
             ),
             Text(
-              "Center Souissi",
+              context.watch<DashboardViewModel>().centerName,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: const Color(0xff333333), fontWeight: semiBold),
             ),
@@ -104,7 +73,7 @@ class _TabletHeaderState extends State<TabletHeader> {
               width: (isLandscape) ? 7.w : 1.75.w,
             ),
             Text(
-              machineName.toUpperCase(),
+              context.watch<DashboardViewModel>().machineName.toUpperCase(),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: const Color(0xff333333), fontWeight: semiBold),
             ),

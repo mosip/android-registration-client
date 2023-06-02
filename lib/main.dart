@@ -12,7 +12,7 @@ import 'package:registration_client/login_page.dart';
 
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
-import 'package:registration_client/registration_client.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -91,10 +91,7 @@ class BuildApp extends StatelessWidget {
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),
-      home: ChangeNotifierProvider<DashboardViewModel>(
-        create: (context) => DashboardViewModel(),
-        builder: (context, _) => MyHomePage(),
-      ),
+      home: MyHomePage(),
     );
   }
 }
@@ -118,10 +115,5 @@ class _MyHomePageState extends State<MyHomePage> {
       splitScreenMode: true,
     );
     return const LoginPage();
-    //   Responsive(
-    //   mobile: DashBoardMobileView(),
-    //   desktop: DashBoardTabletView(),
-    //   tablet: DashBoardTabletView(),
-    // );
   }
 }

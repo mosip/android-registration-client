@@ -70,7 +70,12 @@ class TabletNavbar extends StatelessWidget {
                 width: (isLandscape) ? 7.w : 1.75.w,
               ),
               Text(
-                "Thomas Mendez",
+                context.watch<DashboardViewModel>().name[0].toUpperCase() +
+                    context
+                        .watch<DashboardViewModel>()
+                        .name
+                        .substring(1)
+                        .toLowerCase(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.black, fontSize: 16, fontWeight: semiBold),
               ),

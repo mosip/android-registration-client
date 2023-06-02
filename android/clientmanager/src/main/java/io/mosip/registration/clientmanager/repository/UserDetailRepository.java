@@ -52,7 +52,7 @@ public class UserDetailRepository {
             userDetail.setName(userId);
 
             if (result.isPresent()) {
-                userDetail.setName(result.get().getName());
+                // userDetail.setName(result.get().getName());
                 userDetail.setSalt(result.get().getSalt());
                 userDetail.setDefault(result.get().isDefault());
                 userDetail.setSupervisor(result.get().isSupervisor());
@@ -105,7 +105,7 @@ public UserDetail getUserDetailByUserId(String userId){
         if(userDetail == null) {
             userDetail = new UserDetail(userId);
         }
-
+        userDetail.setName(userId);
         if (userDetail.getSalt() == null) {
             userDetail.setSalt(
                     CryptoUtil.base64encoder.

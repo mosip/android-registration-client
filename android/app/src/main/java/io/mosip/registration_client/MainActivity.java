@@ -124,10 +124,11 @@ public class MainActivity extends FlutterActivity {
                                     break;
                                 case "testingSpec":
                                     testingSpec();
-                                case "adityaTestingSpec":
+                                case "getCenterName":
                                     String centerId=call.argument("centerId");
-                                    adityaTestingSpec(centerId);
-
+                                    String res = getCenterName(centerId);
+                                    result.success(res);
+                                    break;
                                 default:
                                     result.notImplemented();
                                     break;
@@ -148,13 +149,12 @@ public class MainActivity extends FlutterActivity {
             System.out.println(e);
         }
     }
-    public void adityaTestingSpec(String centerId){
+    public String getCenterName(String centerId){
         try{
             List<RegistrationCenter> registrationCenterList=registrationCenterRepository.getRegistrationCenter(centerId);
-            System.out.println("registrationCenterList");
-            System.out.println(registrationCenterList.get(0).toString());
+            return (registrationCenterList.get(0).toString());
         }catch (Exception e) {
-
+            return "";
         }
     }
 }

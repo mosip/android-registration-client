@@ -87,7 +87,15 @@ class OnboardingPage1View extends StatelessWidget {
                                     color: pure_white, fontWeight: regular),
                             children: [
                           TextSpan(
-                            text: "Thomas!",
+                            text: context
+                                    .watch<DashboardViewModel>()
+                                    .name[0]
+                                    .toUpperCase() +
+                                context
+                                    .watch<DashboardViewModel>()
+                                    .name
+                                    .substring(1)
+                                    .toLowerCase(),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
