@@ -122,8 +122,9 @@ public class MainActivity extends FlutterActivity {
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
                                     break;
-                                case "testingSpec":
-                                    testingSpec();
+                                case "getUISchema":
+                                    getUISchema(result);
+                                    break;
                                 case "getCenterName":
                                     String centerId=call.argument("centerId");
                                     String res = getCenterName(centerId);
@@ -136,17 +137,15 @@ public class MainActivity extends FlutterActivity {
                         }
                 );
     }
-    public void testingSpec(){
+    public void getUISchema(MethodChannel.Result result){
         try{
-            System.out.println("!!!!!!!!!!!!!!!!!!");
-            System.out.println(identitySchemaRepository.getLatestSchemaVersion());
-            String processSpecDto = identitySchemaRepository.getSchemaJson(getApplicationContext(),
+
+            ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(getApplicationContext(),
                     identitySchemaRepository.getLatestSchemaVersion());
-            System.out.println("!!!!!!!!!!!!!!!!!!");
-            System.out.println(processSpecDto);
+            result.success(processSpecDto.toString());
+
         }catch (Exception e){
-            System.out.println("2222222222222222");
-            System.out.println(e);
+
         }
     }
     public String getCenterName(String centerId){
