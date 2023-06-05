@@ -7,12 +7,20 @@ import 'package:registration_client/provider/dashboard_view_model.dart';
 import 'package:registration_client/ui/onboarding/widgets/onboarding_page_1_card.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/responsive.dart';
 
 class OnboardingPage1View extends StatelessWidget {
   static const route = "/onboarding-page1-view";
   const OnboardingPage1View({super.key});
+  goToUrl(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +30,9 @@ class OnboardingPage1View extends StatelessWidget {
       {
         "icon": "assets/images/Onboarding Yourself.png",
         "title": "Onboarding Yourself",
-        "onTap": () {},
+        "onTap": () async {
+          goToUrl("https://mosip.stoplight.io/");
+        },
       },
       {
         "icon": "assets/images/Synchronising Data.png",
@@ -173,7 +183,7 @@ class OnboardingPage1View extends StatelessWidget {
                           (index) => Onboarding_Page_1_Card(
                             icon: helpTopics[index]["icon"] as String,
                             title: helpTopics[index]["title"] as String,
-                            ontap: helpTopics[index]["onTap"] as VoidCallback,
+                            ontap: helpTopics[index]["onTap"],
                           ),
                         ),
                       ),
