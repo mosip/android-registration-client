@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
@@ -10,6 +14,37 @@ import 'widgets/onboarding_page2_card.dart';
 class OnboardingPage2View extends StatelessWidget {
   static const route = "/onboarding-page2-view";
   const OnboardingPage2View({super.key});
+  static const platform =
+      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
+
+  void syncData(BuildContext context) async {
+    await _masterDataSync();
+    String value = await getCenterName(context);
+    context.read<DashboardViewModel>().setCenterName(value);
+  }
+
+  Future<void> _masterDataSync() async {
+    String result;
+    try {
+      result = await platform.invokeMethod("masterDataSync");
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    debugPrint(result);
+  }
+
+  Future<String> getCenterName(BuildContext context) async {
+    String result;
+    try {
+      result = await platform.invokeMethod("getCenterName",
+          {"centerId": context.read<DashboardViewModel>().centerId});
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    result = result.split("name=").last.split(",").first;
+    log("${result}Master Data");
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +77,7 @@ class OnboardingPage2View extends StatelessWidget {
       {
         "icon": "assets/svg/Synchronising Data.svg",
         "title": "Sync Data",
-        "onTap": () {},
+        "onTap": syncData,
       },
       {
         "icon": "assets/svg/Uploading Local - Registration Data.svg",
@@ -215,8 +250,8 @@ class OnboardingPage2View extends StatelessWidget {
                           (index) => Onboarding_Page2_Card(
                             icon: operationalTasks[index]["icon"] as String,
                             title: operationalTasks[index]["title"] as String,
-                            ontap: operationalTasks[index]["onTap"]
-                                as VoidCallback,
+                            ontap: () =>
+                                operationalTasks[index]["onTap"](context),
                           ),
                         ),
                       ),

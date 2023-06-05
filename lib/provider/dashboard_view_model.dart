@@ -1,23 +1,40 @@
 import 'package:flutter/widgets.dart';
 
 class DashboardViewModel with ChangeNotifier {
-  double _currentDot = 0.0;
   int _currentIndex = 0;
+  String _name = "";
+  String _centerId = "";
+  String _centerName = "";
+  String _machineName = "";
 
-  double get currentDot => _currentDot;
   int get currentIndex => _currentIndex;
-
-  setCurrentDot(int value) {
-    _currentDot = double.parse(value.toString());
-    notifyListeners();
-  }
+  String get name => _name;
+  String get centerId => _centerId;
+  String get centerName => _centerName;
+  String get machineName => _machineName;
 
   setCurrentIndex(int value) {
     _currentIndex = value;
     notifyListeners();
   }
 
-  void refreshProviderState() {
-    return notifyListeners();
+  setName(String value) {
+    _name = value;
+    notifyListeners();
+  }
+
+  setCenterId(String value) {
+    _centerId = value;
+    notifyListeners();
+  }
+
+  setCenterName(String value) {
+    _centerName = value;
+    notifyListeners();
+  }
+
+  setMachineName(String value) {
+    _machineName = value;
+    notifyListeners();
   }
 }

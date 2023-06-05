@@ -70,7 +70,7 @@ class OnboardingPage1View extends StatelessWidget {
             ),
             child: Padding(
               padding: (isLandscape)
-                  ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
+                  ? EdgeInsets.fromLTRB(30.w, 0, 0, 0)
                   : EdgeInsets.fromLTRB(10.w, 0, 0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +87,15 @@ class OnboardingPage1View extends StatelessWidget {
                                     color: pure_white, fontWeight: regular),
                             children: [
                           TextSpan(
-                            text: "Thomas!",
+                            text: context
+                                    .watch<DashboardViewModel>()
+                                    .name[0]
+                                    .toUpperCase() +
+                                context
+                                    .watch<DashboardViewModel>()
+                                    .name
+                                    .substring(1)
+                                    .toLowerCase(),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
