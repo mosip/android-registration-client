@@ -145,10 +145,12 @@ class _LoginPageState extends State<LoginPage> {
         loginResponse = AppLocalizations.of(context)!.network_error;
       } else if (errorCode == '401') {
         loginResponse = AppLocalizations.of(context)!.password_incorrect;
+      } else if (errorCode == 'MACHINE_NOT_FOUND') {
+        loginResponse = AppLocalizations.of(context)!.machine_not_found;
       } else if (errorCode == 'OFFLINE') {
         loginResponse = AppLocalizations.of(context)!.cred_expired;
       } else {
-        loginResponse = AppLocalizations.of(context)!.machine_not_found;
+        loginResponse = loginResp.login_response;
       }
     });
     if (isLoggedIn == true) {
