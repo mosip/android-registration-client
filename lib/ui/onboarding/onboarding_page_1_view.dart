@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/ui/dashboard/dashboard_view_model.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 import 'package:registration_client/ui/onboarding/widgets/onboarding_page_1_card.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -11,7 +11,7 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../utils/responsive.dart';
 
 class OnboardingPage1View extends StatelessWidget {
-  static const route="/onboarding-page1-view";
+  static const route = "/onboarding-page1-view";
   const OnboardingPage1View({super.key});
 
   @override
@@ -69,7 +69,9 @@ class OnboardingPage1View extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: (isMobile)?EdgeInsets.fromLTRB(20.w,0,0,0):EdgeInsets.fromLTRB(20.w,0,0,0),
+              padding: (isLandscape)
+                  ? EdgeInsets.fromLTRB(30.w, 0, 0, 0)
+                  : EdgeInsets.fromLTRB(10.w, 0, 0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -85,7 +87,15 @@ class OnboardingPage1View extends StatelessWidget {
                                     color: pure_white, fontWeight: regular),
                             children: [
                           TextSpan(
-                            text: "Thomas!",
+                            text: context
+                                    .watch<DashboardViewModel>()
+                                    .name[0]
+                                    .toUpperCase() +
+                                context
+                                    .watch<DashboardViewModel>()
+                                    .name
+                                    .substring(1)
+                                    .toLowerCase(),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge

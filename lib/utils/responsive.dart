@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class Responsive extends StatelessWidget {
   final Widget mobile;
   final Widget? tablet;

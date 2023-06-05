@@ -6,7 +6,7 @@ import 'package:registration_client/ui/dashboard/dashboard_tablet/tablet_navbar.
 
 import '../../onboarding/onboarding_page_1_view.dart';
 import '../../onboarding/onboarding_page_2_view.dart';
-import '../dashboard_view_model.dart';
+import '../../../provider/dashboard_view_model.dart';
 
 class DashBoardTabletView extends StatelessWidget {
   DashBoardTabletView({Key? key}) : super(key: key);

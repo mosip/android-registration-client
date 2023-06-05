@@ -12,13 +12,13 @@ import 'package:registration_client/login_page.dart';
 
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
-import 'package:registration_client/registration_client.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:registration_client/ui/dashboard/dashboard_view_model.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 
@@ -57,6 +57,10 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => ConnectivityProvider(),
         ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => DashboardViewModel(),
+        ),
       ],
       child: BuildApp(),
     );
@@ -68,7 +72,6 @@ class MyApp extends StatelessWidget {
 }
 
 class BuildApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -88,13 +91,9 @@ class BuildApp extends StatelessWidget {
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),
-      home: ChangeNotifierProvider<DashboardViewModel>(
-        create: (context) => DashboardViewModel(),
-        builder: (context, _) => MyHomePage(),
-      ),
+      home: MyHomePage(),
     );
   }
-
 }
 
 class MyHomePage extends StatefulWidget {
@@ -116,10 +115,5 @@ class _MyHomePageState extends State<MyHomePage> {
       splitScreenMode: true,
     );
     return const LoginPage();
-    //   Responsive(
-    //   mobile: DashBoardMobileView(),
-    //   desktop: DashBoardTabletView(),
-    //   tablet: DashBoardTabletView(),
-    // );
   }
 }

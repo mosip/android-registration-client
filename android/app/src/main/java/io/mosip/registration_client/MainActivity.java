@@ -11,6 +11,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.flutter.embedding.android.FlutterActivity;
@@ -20,7 +22,10 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
+import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -59,6 +64,8 @@ public class MainActivity extends FlutterActivity {
     IdentitySchemaRepository identitySchemaRepository;
     @Inject
     UserDetailRepository userDetailRepository;
+    @Inject
+    RegistrationCenterRepository registrationCenterRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,12 +122,39 @@ public class MainActivity extends FlutterActivity {
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
                                     break;
-
+                                case "testingSpec":
+                                    testingSpec();
+                                case "getCenterName":
+                                    String centerId=call.argument("centerId");
+                                    String res = getCenterName(centerId);
+                                    result.success(res);
+                                    break;
                                 default:
                                     result.notImplemented();
                                     break;
                             }
                         }
                 );
+    }
+    public void testingSpec(){
+        try{
+            System.out.println("!!!!!!!!!!!!!!!!!!");
+            System.out.println(identitySchemaRepository.getLatestSchemaVersion());
+            String processSpecDto = identitySchemaRepository.getSchemaJson(getApplicationContext(),
+                    identitySchemaRepository.getLatestSchemaVersion());
+            System.out.println("!!!!!!!!!!!!!!!!!!");
+            System.out.println(processSpecDto);
+        }catch (Exception e){
+            System.out.println("2222222222222222");
+            System.out.println(e);
+        }
+    }
+    public String getCenterName(String centerId){
+        try{
+            List<RegistrationCenter> registrationCenterList=registrationCenterRepository.getRegistrationCenter(centerId);
+            return (registrationCenterList.get(0).toString());
+        }catch (Exception e) {
+            return "";
+        }
     }
 }

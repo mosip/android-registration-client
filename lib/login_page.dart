@@ -6,6 +6,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -19,9 +20,9 @@ import 'package:flutter/services.dart';
 import 'package:registration_client/data/models/login_response.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:registration_client/registration_client.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 import 'package:registration_client/ui/onboarding/onboarding_page_1_view.dart';
 import 'package:registration_client/ui/onboarding/onboarding_page_2_view.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -70,21 +71,11 @@ class _LoginPageState extends State<LoginPage> {
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
     return isLoggedIn
-        ?
-        //   Responsive(
-        //   mobile: DashBoardMobileView(),
-        //   desktop: DashBoardTabletView(),
-        //   tablet: DashBoardTabletView(),
-        // )
-        RegistrationClient(
-            // onLogout: () {
-            //   setState(() {
-            //     username = '';
-            //     isUserValidated = false;
-            //     isLoggedIn = false;
-            //   });
-            // },
-            )
+        ? Responsive(
+            mobile: DashBoardMobileView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
+          )
         : SafeArea(
             child: Scaffold(
               backgroundColor: Utils.appSolidPrimary,
@@ -162,15 +153,25 @@ class _LoginPageState extends State<LoginPage> {
     });
     if (isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (isOnboardedValue == "true" && temp.contains("default-roles-mosip")) {
-        Navigator.pushNamed(context, RegistrationClient.route);
-      } else {
-        Navigator.pushNamed(context, RegistrationClient.route);
+      if (isOnboardedValue == "true" ||
+          (temp.contains("REGISTRATION_SUPERVISOR") &&
+              temp.contains("REGISTRATION_OPERATOR"))) {
+        context.read<DashboardViewModel>().setCurrentIndex(1);
       }
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Responsive(
+            mobile: DashBoardMobileView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
+          ),
+        ),
+      );
     }
   }
 
-  Future<void> _validateUsername() async {
+  Future<Map<String, String>> _validateUsername() async {
     String response;
     Map<String, dynamic> mp;
 
@@ -178,17 +179,17 @@ class _LoginPageState extends State<LoginPage> {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-      if(mp["userDetails"] != "") {
+      log(mp["user_details"]);
+      if (mp["user_details"] != "") {
         isOnboardedValue = mp["user_details"]
-          .toString()
-          .split("isOnboarded=")
-          .last
-          .split(",")
-          .first;
+            .toString()
+            .split("isOnboarded=")
+            .last
+            .split(",")
+            .first;
       } else {
-        isOnboardedValue = "false";
+        isOnboardedValue = "";
       }
-
     } on PlatformException {
       mp = {};
     }
@@ -203,6 +204,15 @@ class _LoginPageState extends State<LoginPage> {
         }
       });
     });
+    return {
+      "name": mp["user_details"].toString().split("id=").last.split(",").first,
+      "centerId": mp["user_details"]
+          .toString()
+          .split("regCenterId=")
+          .last
+          .split(",")
+          .first
+    };
   }
 
   void _showInSnackBar(String value) {
@@ -213,16 +223,19 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _onTapNext() {
+  void _onTapNext() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
       _showInSnackBar(AppLocalizations.of(context)!.username_required);
     } else if (username.length > 50) {
       _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
     } else if (!isUserValidated) {
-      _validateUsername().then((value) {
-        _showInSnackBar(loginResponse);
-      });
+      var value = await _validateUsername();
+      String machineName = await _getMachineDetails();
+      context.read<DashboardViewModel>().setCenterId(value["centerId"]!);
+      context.read<DashboardViewModel>().setName(value["name"]!);
+      context.read<DashboardViewModel>().setMachineName(machineName);
+      _showInSnackBar(loginResponse);
     }
   }
 
@@ -470,5 +483,19 @@ class _LoginPageState extends State<LoginPage> {
         fit: BoxFit.fill,
       ),
     );
+  }
+
+  Future<String> _getMachineDetails() async {
+    String resultText;
+    Map<String, dynamic> machineMap;
+    try {
+      resultText = await platform.invokeMethod('getMachineDetails');
+      machineMap = jsonDecode(resultText);
+      resultText = machineMap["name"];
+    } on PlatformException {
+      resultText = "Not Found";
+      machineMap = {};
+    }
+    return resultText;
   }
 }

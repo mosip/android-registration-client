@@ -50,6 +50,7 @@ public class IdentitySchemaRepository {
     public String getSchemaJson(Context context, Double version) throws Exception {
         IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version);
 
+
         if(identitySchema == null)
             throw new Exception("Identity schema not found for version : " + version);
 

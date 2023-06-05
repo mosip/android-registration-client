@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
 
 import '../../../utils/app_config.dart';
 
@@ -24,11 +30,14 @@ class TabletHeader extends StatelessWidget {
       width: w,
       height: 50.h,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(0, 11.94.h, 80.w, 13.06.h),
+        padding: EdgeInsets.fromLTRB(17.w, 0, 16.w, 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              width: w < 512 ? 0 : 60,
+            ),
             Icon(
               Icons.location_pin,
               color: solid_primary,
@@ -38,16 +47,18 @@ class TabletHeader extends StatelessWidget {
               width: (isLandscape) ? 7.85.w : 1.96.w,
             ),
             Text(
-              "Center Souissi",
+              context.watch<DashboardViewModel>().centerName,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: const Color(0xff333333), fontWeight: semiBold),
             ),
             SizedBox(
-              width: (isLandscape) ? 44.w : 11.w,
+              width: (isLandscape) ? 20.w : 8.w,
             ),
-            const Icon(
+            Icon(
               Icons.circle,
-              color: Color(0xff1A9B42),
+              color: context.watch<ConnectivityProvider>().isConnected
+                  ? const Color(0xff1A9B42)
+                  : Colors.grey,
               size: 12,
             ),
             SizedBox(
@@ -62,9 +73,12 @@ class TabletHeader extends StatelessWidget {
               width: (isLandscape) ? 7.w : 1.75.w,
             ),
             Text(
-              "M1HSNDS590",
+              context.watch<DashboardViewModel>().machineName.toUpperCase(),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: const Color(0xff333333), fontWeight: semiBold),
+            ),
+            SizedBox(
+              width: w < 512 ? 0 : 60,
             ),
           ],
         ),
