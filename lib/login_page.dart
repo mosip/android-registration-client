@@ -154,8 +154,8 @@ class _LoginPageState extends State<LoginPage> {
     if (isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
       if (isOnboardedValue == "true" ||
-          temp.contains("REGISTRATION_SUPERVISOR") ||
-          temp.contains("REGISTRATION_OPERATOR")) {
+          (temp.contains("REGISTRATION_SUPERVISOR") &&
+              temp.contains("REGISTRATION_OPERATOR"))) {
         context.read<DashboardViewModel>().setCurrentIndex(1);
       }
 

@@ -70,7 +70,7 @@ class OnboardingPage1View extends StatelessWidget {
             ),
             child: Padding(
               padding: (isLandscape)
-                  ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
+                  ? EdgeInsets.fromLTRB(30.w, 0, 0, 0)
                   : EdgeInsets.fromLTRB(10.w, 0, 0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
