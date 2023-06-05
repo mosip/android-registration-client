@@ -109,4 +109,86 @@ void main() {
     List<dynamic> rolesList = ["supervisor"];
     expect(loginTest.userRoleAuthorised(rolesList), "Unauthorised");
   });
+
+  test("check password hash not present", () {
+    Map<String, dynamic> passwordData = {};
+    expect(loginTest.isPasswordPresent(passwordData, "tester1"), false);
+  });
+
+  test("check current user password hash not present", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester2",
+      "password": "secret",
+    };
+    expect(loginTest.isPasswordPresent(passwordData, "tester1"), false);
+  });
+
+  test("check current user password hash present", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester1",
+      "password": "secret",
+    };
+    expect(loginTest.isPasswordPresent(passwordData, "tester1"), true);
+  });
+
+  test("check password hash not valid for empty table", () {
+    Map<String, dynamic> passwordData = {};
+    expect(loginTest.isPasswordValid(passwordData, "tester1", "secret"), false);
+  });
+
+  test("check password hash not valid for current user", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester2",
+      "password": "secret",
+    };
+    expect(loginTest.isPasswordValid(passwordData, "tester1", "secret"), false);
+  });
+
+  test("check password hash not valid for incorrect user password", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester1",
+      "password": "secret",
+    };
+    expect(loginTest.isPasswordValid(passwordData, "tester1", "secret123"), false);
+  });
+
+  test("check password hash valid for current user", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester1",
+      "password": "secret",
+    };
+    expect(loginTest.isPasswordValid(passwordData, "tester1", "secret"), true);
+  });
+
+  test("check offline login failed for empty table", () {
+    Map<String, dynamic> passwordData = {};
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"), "Credentials not found. Try online login.");
+  });
+
+  test("check offline login failed for current user", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester2",
+      "password": "secret",
+    };
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"), "Credentials not found. Try online login.");
+  });
+
+  test("check offline login failed for incorrect user password", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester1",
+      "password": "secret",
+    };
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret123"), "Password Incorrect");
+  });
+
+  test("check offline login successful for current user", () {
+    Map<String, dynamic> passwordData = {
+      "userId": "tester1",
+      "password": "secret",
+    };
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"), "Offline Login Successful!");
+  });
 }
+
+
+
