@@ -44,6 +44,7 @@ public class LoginActivityService {
         if(!loginService.isValidUserId(username)) {
             responseMap.put("user_response", "User not found!");
             responseMap.put("isUserPresent", false);
+            responseMap.put("user_details", "");
             responseMap.put("error_code", "404");
             object = new JSONObject(responseMap);
             result.success(object.toString());
@@ -99,10 +100,10 @@ public class LoginActivityService {
                             result.success(object.toString());
                             return;
                         } catch (InvalidMachineSpecIDException e) {
-                            error = new ServiceError("MACHINE", "Machine not found!");
+                            error = new ServiceError("", "Invalid Machine Spec ID found");
                             Log.e(getClass().getSimpleName(), "Failed to save auth token", e);
                         } catch (Exception e) {
-                            error = new ServiceError("", "Incorrect Password!");
+                            error = new ServiceError("", e.getMessage());
                             Log.e(getClass().getSimpleName(), "Failed to save auth token", e);
                         }
                     }
@@ -113,6 +114,9 @@ public class LoginActivityService {
                     } else if(error.getMessage().equals("Invalid Request")) {
                         login_response = "Password Incorrect";
                         error_code = "401";
+                    } else if(error.getMessage().equals("Machine not found")) {
+                        login_response = "Machine not found!";
+                        error_code = "MACHINE_NOT_FOUND";
                     } else {
                         login_response = error.getMessage();
                         error_code = "400";
