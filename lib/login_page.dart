@@ -12,7 +12,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
 import 'package:registration_client/const/utils.dart';
 
 import 'package:registration_client/credentials_page.dart';

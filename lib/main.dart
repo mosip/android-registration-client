@@ -1,9 +1,15 @@
+<<<<<<< HEAD
+=======
+// @dart=2.9
+
+>>>>>>> mosip-flutter
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+<<<<<<< HEAD
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,6 +34,24 @@ import 'utils/responsive.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+=======
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/const/app_config.dart';
+import 'package:registration_client/login_page.dart';
+import 'package:registration_client/provider/app_language.dart';
+import 'package:registration_client/registration_client.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+void main() async {
+  await ScreenUtil.ensureScreenSize();
+>>>>>>> mosip-flutter
   final AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
   runApp(
@@ -53,6 +77,7 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => AppLanguage(),
         ),
+<<<<<<< HEAD
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => ConnectivityProvider(),
@@ -61,6 +86,8 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => DashboardViewModel(),
         ),
+=======
+>>>>>>> mosip-flutter
       ],
       child: BuildApp(),
     );
@@ -72,16 +99,25 @@ class MyApp extends StatelessWidget {
 }
 
 class BuildApp extends StatelessWidget {
+<<<<<<< HEAD
+=======
+  const BuildApp({Key key}) : super(key: key);
+
+>>>>>>> mosip-flutter
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+<<<<<<< HEAD
       routes: AppRouter.routes,
+=======
+>>>>>>> mosip-flutter
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Provider.of<AppLanguage>(context).appLocal,
       theme: ThemeData(
+<<<<<<< HEAD
           colorScheme: ColorScheme.light(primary: solid_primary),
           primaryColor: solid_primary,
           textTheme: const TextTheme(
@@ -91,6 +127,11 @@ class BuildApp extends StatelessWidget {
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),
+=======
+        colorScheme: ColorScheme.light(primary: primarySolidColor1),
+        primaryColor: primarySolidColor1,
+      ),
+>>>>>>> mosip-flutter
       home: MyHomePage(),
     );
   }
