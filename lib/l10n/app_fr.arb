@@ -35,5 +35,6 @@
   "login_failed": "Echec de la connexion.. Réessayez!",
   "password_incorrect": "Mot de passe incorrect!",
   "machine_not_found": "Machine introuvable!",
-  "network_error": "Échec de la connexion. Vérifiez la connexion réseau!"
+  "network_error": "Échec de la connexion. Vérifiez la connexion réseau!",
+  "cred_expired": "Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!"
 }

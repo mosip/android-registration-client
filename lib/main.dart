@@ -1,27 +1,33 @@
-// @dart=2.9
-
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/const/app_config.dart';
+import 'package:registration_client/app_router.dart';
 import 'package:registration_client/login_page.dart';
+
 import 'package:registration_client/provider/app_language.dart';
-import 'package:registration_client/registration_client.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
+
 import 'package:provider/provider.dart';
-import 'package:registration_client/test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
+
+import 'package:registration_client/utils/app_config.dart';
+
+import 'ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
+import 'ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
+import 'utils/responsive.dart';
 
 void main() async {
-  await ScreenUtil.ensureScreenSize();
+  WidgetsFlutterBinding.ensureInitialized();
   final AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
   runApp(
@@ -47,6 +53,14 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => AppLanguage(),
         ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => ConnectivityProvider(),
+        ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => DashboardViewModel(),
+        ),
       ],
       child: BuildApp(),
     );
@@ -58,20 +72,25 @@ class MyApp extends StatelessWidget {
 }
 
 class BuildApp extends StatelessWidget {
-  const BuildApp({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      routes: AppRouter.routes,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Provider.of<AppLanguage>(context).appLocal,
       theme: ThemeData(
-        colorScheme: ColorScheme.light(primary: primarySolidColor1),
-        primaryColor: primarySolidColor1,
-      ),
+          colorScheme: ColorScheme.light(primary: solid_primary),
+          primaryColor: solid_primary,
+          textTheme: const TextTheme(
+            titleLarge: TextStyle(fontSize: 24),
+            bodyLarge: TextStyle(fontSize: 18),
+            bodyMedium: TextStyle(fontSize: 10),
+          ),
+          elevatedButtonTheme:
+              const ElevatedButtonThemeData(style: ButtonStyle())),
       home: MyHomePage(),
     );
   }

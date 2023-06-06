@@ -1,0 +1,10 @@
+<svg id="Onboarding_Yourself" data-name="Onboarding Yourself" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30" viewBox="0 0 30 30">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#214fbf"/>
+      <stop offset="1" stop-color="#1c43a1"/>
+    </linearGradient>
+  </defs>
+  <path id="Path_155611" data-name="Path 155611" d="M0,0H30V30H0Z" fill="none"/>
+  <path id="Path_155612" data-name="Path 155612" d="M14.02,6.38a2.63,2.63,0,1,1-2.63,2.63,2.63,2.63,0,0,1,2.63-2.63m0,11.273c3.72,0,7.64,1.829,7.64,2.63V21.66H6.38V20.283c0-.8,3.92-2.63,7.64-2.63M14.02,4a5.01,5.01,0,1,0,5.01,5.01A5.009,5.009,0,0,0,14.02,4Zm0,11.273C10.676,15.273,4,16.951,4,20.283V24.04H24.04V20.283C24.04,16.951,17.364,15.273,14.02,15.273Z" transform="translate(0.98 0.98)" fill="url(#linear-gradient)"/>
+</svg>

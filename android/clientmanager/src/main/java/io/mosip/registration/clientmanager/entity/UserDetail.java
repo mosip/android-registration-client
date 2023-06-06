@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.Set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,6 +28,9 @@ public class UserDetail implements Serializable {
 
 	@ColumnInfo(name = "reg_id")
 	private String regId;
+
+	@ColumnInfo(name = "salt")
+	private String salt;
 
 	@ColumnInfo(name = "name")
 	private String name;
