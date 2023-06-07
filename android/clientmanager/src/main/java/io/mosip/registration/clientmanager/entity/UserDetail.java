@@ -26,12 +26,6 @@ public class UserDetail implements Serializable {
 	@ColumnInfo(name = "id")
 	private String id;
 
-	@ColumnInfo(name = "reg_id")
-	private String regId;
-
-	@ColumnInfo(name = "salt")
-	private String salt;
-
 	@ColumnInfo(name = "name")
 	private String name;
 

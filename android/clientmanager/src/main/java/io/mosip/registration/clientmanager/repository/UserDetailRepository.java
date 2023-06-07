@@ -52,8 +52,7 @@ public class UserDetailRepository {
             userDetail.setName(userId);
 
             if (result.isPresent()) {
-                // userDetail.setName(result.get().getName());
-                userDetail.setSalt(result.get().getSalt());
+                 userDetail.setName(result.get().getName());
                 userDetail.setDefault(result.get().isDefault());
                 userDetail.setSupervisor(result.get().isSupervisor());
                 userDetail.setOfficer(result.get().isOfficer());
@@ -73,10 +72,10 @@ public class UserDetailRepository {
         return userDetailDao.getUserDetail(userId) != null;
     }
 
-public UserDetail getUserDetailByUserId(String userId){
-
+    public UserDetail getUserDetailByUserId(String userId){
         return userDetailDao.getUserDetail(userId);
     }
+
     public int getUserDetailCount() {
         return userDetailDao.getUserDetailCount();
     }
@@ -84,54 +83,40 @@ public UserDetail getUserDetailByUserId(String userId){
     public boolean isPasswordPresent(String userId) {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
         UserDetail userDetail = userDetailDao.getUserDetail(userId);
-        if(userDetail == null || userDetail.getSalt() == null || userPassword == null) {
+        if(userDetail == null || userPassword == null || userPassword.getSalt() == null) {
             return false;
         }
         return true;
     }
+
     public boolean isValidPassword(String userId, String password) throws Exception {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
-        UserDetail userDetail = userDetailDao.getUserDetail(userId);
-
         return HMACUtils2.digestAsPlainTextWithSalt(
                     password.getBytes(),
-                    CryptoUtil.base64decoder.decode(userDetail.getSalt())
+                    CryptoUtil.base64decoder.decode(userPassword.getSalt())
                 ).equals(userPassword.getPwd());
     }
 
     public void setPasswordHash(String userId, String password) throws Exception {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
-        UserDetail userDetail = userDetailDao.getUserDetail(userId);
-        List<UserDetail> userDetailList = new ArrayList<>();
-        if(userDetail == null) {
-            userDetail = new UserDetail(userId);
+        if (userPassword == null) {
+            userPassword = new UserPassword(userId);
         }
-        userDetail.setName(userId);
-        if (userDetail.getSalt() == null) {
-            userDetail.setSalt(
+        if (userPassword.getSalt() == null) {
+            userPassword.setSalt(
                     CryptoUtil.base64encoder.
                             encodeToString(DateUtils.formatToISOString(LocalDateTime.now()).getBytes())
             );
         }
 
-
-        if (userPassword == null) {
-            userPassword = new UserPassword(userId);
-        }
         userPassword.setPwd(
                 HMACUtils2.digestAsPlainTextWithSalt(
                         password.getBytes(),
-                        CryptoUtil.base64decoder.decode(userDetail.getSalt())
+                        CryptoUtil.base64decoder.decode(userPassword.getSalt())
                 )
         );
 //        userPassword.setUpdDtimes(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime().toString()).toString());
 
-        userDetailList.add(userDetail);
-        userDetailDao.insertAllUsers(userDetailList);
         userPasswordDao.insertUserPassword(userPassword);
-    }
-
-    public void deletePasswordHash(String userId) {
-        userPasswordDao.deleteUserPassword(userId);
     }
 }

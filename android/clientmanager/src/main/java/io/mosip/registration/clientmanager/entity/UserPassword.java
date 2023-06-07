@@ -21,17 +21,14 @@ public class UserPassword implements Serializable {
     @ColumnInfo(name = "usr_id")
     private String usrId;
 
+    @ColumnInfo(name = "salt")
+    private String salt;
+
     @ColumnInfo(name = "pwd")
     private String pwd;
 
-    @ColumnInfo(name = "pwd_expiry_dtimes")
-    private String pwdExpiryDtimes;
-
     @ColumnInfo(name = "status_code")
     private String statusCode;
-
-    @ColumnInfo(name = "lang_code")
-    private String langCode;
 
     @ColumnInfo(name = "is_deleted")
     private Boolean isDeleted;
