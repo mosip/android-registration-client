@@ -73,8 +73,6 @@ void main() {
 
     expect(find.text('Login'), findsOneWidget);
 
-    expect(find.byKey(const Key('language_dropdown')), findsOneWidget);
-
     expect(find.text('Username'), findsOneWidget);
 
     expect(find.widgetWithText(TextField, "Enter Username"), findsOneWidget);

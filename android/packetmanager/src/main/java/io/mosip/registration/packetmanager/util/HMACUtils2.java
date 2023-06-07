@@ -19,6 +19,14 @@ public class HMACUtils2 {
         return messageDigest.digest(bytes);
     }
 
+    public static String digestAsPlainTextWithSalt(final byte[] password, final byte[] salt)
+            throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM_NAME);
+        messageDigest.update(password);
+        messageDigest.update(salt);
+        return encodeBytesToHex(messageDigest.digest(), true, ByteOrder.BIG_ENDIAN);
+    }
+
     public static String digestAsPlainText(final byte[] bytes) throws NoSuchAlgorithmException {
         return encodeBytesToHex(generateHash(bytes), true, ByteOrder.BIG_ENDIAN);
     }

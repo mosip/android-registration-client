@@ -4,24 +4,33 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/const/app_config.dart';
 import 'package:registration_client/const/utils.dart';
 
 import 'package:registration_client/credentials_page.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/data/models/login_response.dart';
-import 'package:registration_client/provider/app_language.dart';
-import 'package:registration_client/registration_client.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
+import 'package:registration_client/ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
+import 'package:registration_client/provider/dashboard_view_model.dart';
+import 'package:registration_client/ui/onboarding/onboarding_page_1_view.dart';
+import 'package:registration_client/ui/onboarding/onboarding_page_2_view.dart';
+import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/widgets/password_component.dart';
 import 'package:registration_client/widgets/username_component.dart';
 
 class LoginPage extends StatefulWidget {
+  static const route = "/login-page";
   const LoginPage({super.key});
 
   @override
@@ -39,9 +48,10 @@ class _LoginPageState extends State<LoginPage> {
   String username = '';
   String password = '';
   bool isUserValidated = false;
+  String isOnboardedValue = "";
   List<String> _languages = ['eng', 'ara', 'fre'];
   Map<String, String> mp = {};
-  final _formKey = GlobalKey<FormState>();
+
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   late LoginResponse loginResp;
@@ -60,14 +70,10 @@ class _LoginPageState extends State<LoginPage> {
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
     return isLoggedIn
-        ? RegistrationClient(
-            onLogout: () {
-              setState(() {
-                username = '';
-                isUserValidated = false;
-                isLoggedIn = false;
-              });
-            },
+        ? Responsive(
+            mobile: DashBoardMobileView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
           )
         : SafeArea(
             child: Scaffold(
@@ -84,6 +90,9 @@ class _LoginPageState extends State<LoginPage> {
                     width: w,
                     child: SingleChildScrollView(
                       child: Column(
+                        crossAxisAlignment: isMobile
+                            ? CrossAxisAlignment.center
+                            : CrossAxisAlignment.start,
                         children: [
                           _appBarComponent(),
                           SizedBox(
@@ -106,43 +115,88 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login(String username, String password) async {
+    final connectivityProvider =
+        Provider.of<ConnectivityProvider>(context, listen: false);
     String response;
+    List<dynamic> temp = List.empty(growable: true);
     Map<String, dynamic> mp;
     try {
-      response = await platform
-          .invokeMethod("login", {'username': username, 'password': password});
+      response = await platform.invokeMethod("login", {
+        'username': username,
+        'password': password,
+        'isConnected': connectivityProvider.isConnected,
+      });
       mp = jsonDecode(response);
       loginResp = LoginResponse.fromJson(mp);
-    } on PlatformException catch (e) {
+
+      temp = loginResp.roles;
+    } on PlatformException {
       mp = {};
     }
     setState(() {
       isLoggedIn = loginResp.isLoggedIn;
       errorCode = loginResp.error_code;
-      if(isLoggedIn) {
+      if (isLoggedIn) {
         loginResponse = loginResp.login_response;
-      } else if(errorCode == '500') {
+      } else if (errorCode == '500') {
         loginResponse = AppLocalizations.of(context)!.login_failed;
-      } else if(errorCode == '501') {
+      } else if (errorCode == '501') {
         loginResponse = AppLocalizations.of(context)!.network_error;
-      } else if(errorCode == '401') {
+      } else if (errorCode == '401') {
         loginResponse = AppLocalizations.of(context)!.password_incorrect;
-      } else {
+      } else if (errorCode == 'MACHINE_NOT_FOUND') {
         loginResponse = AppLocalizations.of(context)!.machine_not_found;
+      } else if (errorCode == 'OFFLINE') {
+        loginResponse = AppLocalizations.of(context)!.cred_expired;
+      } else {
+        loginResponse = loginResp.login_response;
       }
     });
+    if (isLoggedIn == true) {
+      Navigator.popUntil(context, ModalRoute.withName('/login-page'));
+      if (isOnboardedValue == "true" ||
+          (temp.contains("REGISTRATION_SUPERVISOR") &&
+              temp.contains("REGISTRATION_OPERATOR"))) {
+        context.read<DashboardViewModel>().setCurrentIndex(1);
+      }
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Responsive(
+            mobile: DashBoardMobileView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
+          ),
+        ),
+      );
+    }
   }
 
-  Future<void> _validateUsername() async {
+  Future<Map<String, String>> _validateUsername() async {
     String response;
     Map<String, dynamic> mp;
-
+    Map<String, dynamic> userMap;
     try {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-    } on PlatformException catch (e) {
+      print(" usermap: $mp");
+      if (mp["user_details"] != "") {
+        userMap = jsonDecode(mp['user_details']);
+        isOnboardedValue = userMap["isOnboarded"].toString();
+        // mp["user_details"]
+        //     .toString()
+        //     .split("isOnboarded=")
+        //     .last
+        //     .split(",")
+        //     .first;
+      } else {
+        userMap = {};
+        isOnboardedValue = "";
+      }
+    } on PlatformException {
       mp = {};
+      userMap = {};
     }
 
     setState(() {
@@ -155,6 +209,17 @@ class _LoginPageState extends State<LoginPage> {
         }
       });
     });
+    return {
+      "name": userMap.isEmpty ? "" : userMap["id"].toString(),
+      // mp["user_details"].toString().split("id=").last.split(",").first,
+      "centerId": userMap.isEmpty ? "" : userMap["regCenterId"].toString(),
+      // mp["user_details"]
+      //     .toString()
+      //     .split("regCenterId=")
+      //     .last
+      //     .split(",")
+      //     .first
+    };
   }
 
   void _showInSnackBar(String value) {
@@ -165,16 +230,20 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _onTapNext() {
+  void _onTapNext() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
       _showInSnackBar(AppLocalizations.of(context)!.username_required);
     } else if (username.length > 50) {
       _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
     } else if (!isUserValidated) {
-      _validateUsername().then((value) {
-        _showInSnackBar(loginResponse);
-      });
+      var value = await _validateUsername();
+      String machineName = await _getMachineDetails();
+      print(value.toString());
+      context.read<DashboardViewModel>().setCenterId(value["centerId"]!);
+      context.read<DashboardViewModel>().setName(value["name"]!);
+      context.read<DashboardViewModel>().setMachineName(machineName);
+      _showInSnackBar(loginResponse);
     }
   }
 
@@ -220,10 +289,10 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: Container(
               height: isMobile ? 46.h : 54.h,
-              width: isMobile ? 115.39.w : 135.46.w,
+              // width: isMobile ? 115.39.w : 135.46.w,
               child: Image.asset(
                 appIcon,
-                scale: appIconScale,
+                fit: BoxFit.fill,
               ),
             ),
           ),
@@ -260,7 +329,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _welcomeTextComponent() {
     return Container(
-      // height: isMobile ? 47.h : 62.h,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 41.w : 0,
       ),
@@ -271,10 +339,12 @@ class _LoginPageState extends State<LoginPage> {
           Text(
             AppLocalizations.of(context)!.welcome,
             style: Utils.mobileWelcomeText,
+            textAlign: isMobile ? TextAlign.center : TextAlign.start,
           ),
           Text(
             AppLocalizations.of(context)!.community_reg_text,
             style: Utils.mobileCommunityRegClientText,
+            textAlign: isMobile ? TextAlign.center : TextAlign.start,
           )
         ],
       ),
@@ -283,13 +353,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _infoTextComponent() {
     return Container(
-      // height: isMobile ? 17.h : 20.h,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 52.w : 0,
       ),
       child: Text(
         AppLocalizations.of(context)!.info_text,
         style: Utils.mobileInfoText,
+        textAlign: isMobile ? TextAlign.center : TextAlign.start,
       ),
     );
   }
@@ -310,7 +380,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginComponent() {
     return Container(
-      // height: 414.h,
       width: isMobile ? 358.w : 424.w,
       padding: EdgeInsets.symmetric(
         horizontal: 20.w,
@@ -347,6 +416,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: _onTapNext,
                   isDisabled: username.isEmpty || username.length > 50,
                   languages: _languages,
+                  isMobile: isMobile,
                   mp: mp,
                   onChanged: (v) {
                     setState(() {
@@ -364,6 +434,7 @@ class _LoginPageState extends State<LoginPage> {
                     setState(() {
                       username = '';
                       isUserValidated = false;
+                      isLoggingIn = false;
                     });
                   },
                   onChanged: (v) {
@@ -381,15 +452,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _mobileView() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _appCombinedTextComponent(),
         SizedBox(
           height: 40.h,
         ),
         _loginComponent(),
-        SizedBox(
-          height: 174.h,
-        ),
       ],
     );
   }
@@ -397,9 +466,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget _tabletView() {
     return SingleChildScrollView(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          _appCombinedTextComponent(),
+          Container(
+            width: 399.w,
+            child: _appCombinedTextComponent(),
+          ),
           SizedBox(
             width: 41.w,
           ),
@@ -413,12 +486,24 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       height: isMobile ? (162.48).h : (293.48).h,
       width: isMobile ? (222.28).w : (400.28).w,
-      // height: 168.48.h,
-      // width: 222.28.w,
       child: Image.asset(
         isMobile ? buildingsX : buildingsXX,
         fit: BoxFit.fill,
       ),
     );
+  }
+
+  Future<String> _getMachineDetails() async {
+    String resultText;
+    Map<String, dynamic> machineMap;
+    try {
+      resultText = await platform.invokeMethod('getMachineDetails');
+      machineMap = jsonDecode(resultText);
+      resultText = machineMap["name"];
+    } on PlatformException {
+      resultText = "Not Found";
+      machineMap = {};
+    }
+    return resultText;
   }
 }

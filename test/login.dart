@@ -50,4 +50,55 @@ class Login {
 
     return "Login Successful!";
   }
+
+  String isOnboarded(Map<String,dynamic> mockData){
+    if(mockData["isOnboarded"]==false){
+      return "User not Onboarded";
+    }else{
+      return "User Onboarded";
+    }
+  }
+  String userRoleAuthorised(List<dynamic> mockData){
+    if(mockData.contains("default_role")||mockData.contains("administrator")){
+      return "Authorised";
+    }else{
+      return "Unauthorised";
+    }
+  }
+
+  bool isPasswordPresent(Map<String, dynamic> passwordData, String userId) {
+    if(passwordData.isEmpty) {
+      return false;
+    }
+
+    if(passwordData["userId"] != userId) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool isPasswordValid(Map<String, dynamic> passwordData, String userId, String password) {
+    if(!isPasswordPresent(passwordData, userId)) {
+      return false;
+    }
+
+    if(passwordData["password"] != password) {
+      return false;
+    }
+
+    return true;
+  }
+
+  String offlineLogin(Map<String, dynamic> passwordData, String userId, String password) {
+    if(!isPasswordPresent(passwordData, userId)) {
+      return "Credentials not found. Try online login.";
+    }
+
+    if(!isPasswordValid(passwordData, userId, password)) {
+      return "Password Incorrect";
+    }
+
+    return "Offline Login Successful!";
+  }
 }
