@@ -61,7 +61,7 @@ class TabletNavbar extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image.asset(
-                  "assets/images/myself.jpg",
+                  "assets/images/user_profile@2x.png",
                   height: 50.h,
                   width: 50.h,
                 ),

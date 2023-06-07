@@ -8,6 +8,8 @@ package io.mosip.registration_client;
 
 import android.util.Log;
 
+import com.google.gson.JsonObject;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -51,9 +53,22 @@ public class LoginActivityService {
             return;
         }
         UserDetail userDetail=loginService.getUserDetailsByUserId(username);
+        Log.e(getClass().getSimpleName(), "User Detail: " + userDetail.isOnboarded());
+        Map<String, Object> user = new HashMap<>();
+        if(userDetail != null) {
+            user.put("id", userDetail.getId());
+            user.put("name", userDetail.getName());
+            user.put("email", userDetail.getEmail());
+            user.put("regCenterId", userDetail.getRegCenterId());
+            user.put("isOnboarded", userDetail.isOnboarded());
+            user.put("isSupervisor", userDetail.isSupervisor());
+            user.put("isDefault", userDetail.isDefault());
+            user.put("isOfficer", userDetail.isOfficer());
+        }
+        JSONObject userObj = new JSONObject(user);
         responseMap.put("user_response", "User Validated!");
         responseMap.put("isUserPresent", true);
-        responseMap.put("user_details",userDetail == null ? "" : userDetail.toString());
+        responseMap.put("user_details", userDetail == null ? "" : userObj.toString());
         responseMap.put("error_code", "");
 
         object = new JSONObject(responseMap);

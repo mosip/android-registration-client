@@ -175,24 +175,28 @@ class _LoginPageState extends State<LoginPage> {
   Future<Map<String, String>> _validateUsername() async {
     String response;
     Map<String, dynamic> mp;
-
+    Map<String, dynamic> userMap;
     try {
       response = await platform
           .invokeMethod("validateUsername", {'username': username});
       mp = jsonDecode(response);
-      log(mp["user_details"]);
+      print(" usermap: $mp");
       if (mp["user_details"] != "") {
-        isOnboardedValue = mp["user_details"]
-            .toString()
-            .split("isOnboarded=")
-            .last
-            .split(",")
-            .first;
+        userMap = jsonDecode(mp['user_details']);
+        isOnboardedValue = userMap["isOnboarded"].toString();
+        // mp["user_details"]
+        //     .toString()
+        //     .split("isOnboarded=")
+        //     .last
+        //     .split(",")
+        //     .first;
       } else {
+        userMap = {};
         isOnboardedValue = "";
       }
     } on PlatformException {
       mp = {};
+      userMap = {};
     }
 
     setState(() {
@@ -206,13 +210,15 @@ class _LoginPageState extends State<LoginPage> {
       });
     });
     return {
-      "name": mp["user_details"].toString().split("id=").last.split(",").first,
-      "centerId": mp["user_details"]
-          .toString()
-          .split("regCenterId=")
-          .last
-          .split(",")
-          .first
+      "name": userMap.isEmpty ? "" : userMap["id"].toString(),
+      // mp["user_details"].toString().split("id=").last.split(",").first,
+      "centerId": userMap.isEmpty ? "" : userMap["regCenterId"].toString(),
+      // mp["user_details"]
+      //     .toString()
+      //     .split("regCenterId=")
+      //     .last
+      //     .split(",")
+      //     .first
     };
   }
 
@@ -233,6 +239,7 @@ class _LoginPageState extends State<LoginPage> {
     } else if (!isUserValidated) {
       var value = await _validateUsername();
       String machineName = await _getMachineDetails();
+      print(value.toString());
       context.read<DashboardViewModel>().setCenterId(value["centerId"]!);
       context.read<DashboardViewModel>().setName(value["name"]!);
       context.read<DashboardViewModel>().setMachineName(machineName);
