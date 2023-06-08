@@ -198,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
       mp = {};
       userMap = {};
     }
-
+    
     setState(() {
       setState(() {
         isUserValidated = mp['isUserPresent'];

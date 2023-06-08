@@ -53,7 +53,6 @@ public class LoginActivityService {
             return;
         }
         UserDetail userDetail=loginService.getUserDetailsByUserId(username);
-        Log.e(getClass().getSimpleName(), "User Detail: " + userDetail.isOnboarded());
         Map<String, Object> user = new HashMap<>();
         if(userDetail != null) {
             user.put("id", userDetail.getId());

@@ -31,33 +31,43 @@ class OnboardingPage1View extends StatelessWidget {
         "icon": "assets/images/Onboarding Yourself.png",
         "title": "Onboarding Yourself",
         "onTap": () async {
-          goToUrl("https://mosip.stoplight.io/");
+          goToUrl("https://docs.mosip.io/1.2.0/modules/registration-client/operator-onboarding");
+        },
+      },
+      {
+        "icon": "assets/images/Onboarding Yourself.png",
+        "title": "Registering an Individual",
+        "onTap": () async {
+          goToUrl("https://docs.mosip.io/1.2.0/modules/registration-client/registration-client-home-page");
         },
       },
       {
         "icon": "assets/images/Synchronising Data.png",
         "title": "Synchronising Data",
-        "onTap": () {},
-      },
-      {
-        "icon": "assets/images/Onboarding Yourself.png",
-        "title": "Update UIN",
-        "onTap": () {},
+        "onTap": () async {
+          goToUrl("https://docs.mosip.io/1.2.0/modules/registration-client/registration-client-home-page#synchronize-data");
+        },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Mapping Devices to Machine",
-        "onTap": () {},
+        "onTap": () async {
+          goToUrl("https://docs.mosip.io/1.2.0/modules/registration-client/registration-client-home-page#application-upload");
+        },
       },
       {
         "icon": "assets/images/Uploading Local - Registration Data.png",
         "title": "Uploading Local/Registration Data",
-        "onTap": () {},
+        "onTap": () async {
+          goToUrl("https://docs.mosip.io/1.2.0/modules/registration-client/registration-client-home-page#application-upload");
+        },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Updating Operator Biometrics",
-        "onTap": () {},
+        "onTap": () async {
+          goToUrl("https://docs.mosip.io/1.2.0/modules/registration-client/registration-client-home-page#update-operator-biometrics");
+        },
       },
     ];
 

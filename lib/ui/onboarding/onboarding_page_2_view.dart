@@ -19,6 +19,7 @@ class OnboardingPage2View extends StatelessWidget {
 
   void syncData(BuildContext context) async {
     await _masterDataSync();
+    await _getNewProcessSpec();
     String value = await getCenterName(context);
     context.read<DashboardViewModel>().setCenterName(value);
   }
@@ -27,6 +28,25 @@ class OnboardingPage2View extends StatelessWidget {
     String result;
     try {
       result = await platform.invokeMethod("masterDataSync");
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    debugPrint(result);
+  }
+  Future<void> _getNewProcessSpec() async {
+    String result;
+    try {
+      result = await platform.invokeMethod("getNewProcessSpec");
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    debugPrint(result);
+    await Clipboard.setData(ClipboardData(text: result));
+  }
+  Future<void> _getUISchema() async {
+    String result;
+    try {
+      result = await platform.invokeMethod("getUISchema");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }

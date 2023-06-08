@@ -11,6 +11,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -124,6 +127,9 @@ public class MainActivity extends FlutterActivity {
                                 case "getUISchema":
                                     getUISchema(result);
                                     break;
+                                case "getNewProcessSpec":
+                                    getNewProcessSpec(result);
+                                    break;
                                 case "getCenterName":
                                     String centerId=call.argument("centerId");
                                     String res = getCenterName(centerId);
@@ -140,9 +146,22 @@ public class MainActivity extends FlutterActivity {
     public void getUISchema(MethodChannel.Result result){
         try{
 
+            String schemaJson = identitySchemaRepository.getSchemaJson(getApplicationContext(),
+                    identitySchemaRepository.getLatestSchemaVersion());
+            result.success(schemaJson.toString());
+
+        }catch (Exception e){
+
+        }
+    }
+    public void getNewProcessSpec(MethodChannel.Result result){
+        try{
+
             ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(getApplicationContext(),
                     identitySchemaRepository.getLatestSchemaVersion());
-            result.success(processSpecDto.toString());
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            String json = ow.writeValueAsString(processSpecDto);
+            result.success(json);
 
         }catch (Exception e){
 
