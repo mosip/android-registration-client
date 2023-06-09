@@ -7,6 +7,7 @@
 package io.mosip.registration_client;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
@@ -43,6 +46,8 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
+
+    ObjectWriter ow;
     @Inject
     ClientCryptoManagerService clientCryptoManagerService;
     @Inject
@@ -69,6 +74,9 @@ public class MainActivity extends FlutterActivity {
     UserDetailRepository userDetailRepository;
     @Inject
     RegistrationCenterRepository registrationCenterRepository;
+
+    @Inject
+    GlobalParamRepository globalParamRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,17 +132,26 @@ public class MainActivity extends FlutterActivity {
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
                                     break;
+
                                 case "getUISchema":
                                     getUISchema(result);
                                     break;
+
                                 case "getNewProcessSpec":
                                     getNewProcessSpec(result);
                                     break;
+
                                 case "getCenterName":
                                     String centerId=call.argument("centerId");
-                                    String res = getCenterName(centerId);
-                                    result.success(res);
+                                    getCenterName(centerId,result);
+
                                     break;
+
+                                case "getStringValueGlobalParam":
+                                    String key=call.argument("key");
+                                    getStringValueGlobalParam(key,result);
+                                    break;
+
                                 default:
                                     result.notImplemented();
                                     break;
@@ -151,7 +168,7 @@ public class MainActivity extends FlutterActivity {
             result.success(schemaJson.toString());
 
         }catch (Exception e){
-
+            Log.e(getClass().getSimpleName(), "Error in getUISchema", e);
         }
     }
     public void getNewProcessSpec(MethodChannel.Result result){
@@ -159,20 +176,32 @@ public class MainActivity extends FlutterActivity {
 
             ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(getApplicationContext(),
                     identitySchemaRepository.getLatestSchemaVersion());
-            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(processSpecDto);
-            result.success(json);
+            List<String> processSpecList=new ArrayList<String>();
+            processSpecList.add(json);
+            result.success(processSpecList);
 
         }catch (Exception e){
-
+            Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
         }
     }
-    public String getCenterName(String centerId){
+    public void getCenterName(String centerId,MethodChannel.Result result){
         try{
             List<RegistrationCenter> registrationCenterList=registrationCenterRepository.getRegistrationCenter(centerId);
-            return (registrationCenterList.get(0).toString());
+            result.success(registrationCenterList.get(0).toString());
         }catch (Exception e) {
-            return "";
+            Log.e(getClass().getSimpleName(), "Error in getCenterName", e);
+            result.success("");
+        }
+    }
+
+    public void getStringValueGlobalParam(String key,MethodChannel.Result result){
+        try{
+            String cachedString=globalParamRepository.getCachedStringGlobalParam(key);
+            result.success(cachedString);
+        }catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error in getStringValueGlobalParam", e);
         }
     }
 }

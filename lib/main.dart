@@ -19,6 +19,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/dashboard_view_model.dart';
+import 'package:registration_client/provider/global_provider.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 
@@ -60,6 +61,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => DashboardViewModel(),
+        ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => GlobalProvider(),
         ),
       ],
       child: BuildApp(),

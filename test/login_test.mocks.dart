@@ -83,7 +83,6 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: '',
       ) as String);
-
   @override
   String isOnboarded(Map<String, dynamic>? mockData) => (super.noSuchMethod(
         Invocation.method(
@@ -97,6 +96,55 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         Invocation.method(
           #userRoleAuthorised,
           [mockData],
+        ),
+        returnValue: '',
+      ) as String);
+  @override
+  bool isPasswordPresent(
+    Map<String, dynamic>? passwordData,
+    String? userId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isPasswordPresent,
+          [
+            passwordData,
+            userId,
+          ],
+        ),
+        returnValue: false,
+      ) as bool);
+  @override
+  bool isPasswordValid(
+    Map<String, dynamic>? passwordData,
+    String? userId,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isPasswordValid,
+          [
+            passwordData,
+            userId,
+            password,
+          ],
+        ),
+        returnValue: false,
+      ) as bool);
+  @override
+  String offlineLogin(
+    Map<String, dynamic>? passwordData,
+    String? userId,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #offlineLogin,
+          [
+            passwordData,
+            userId,
+            password,
+          ],
         ),
         returnValue: '',
       ) as String);
