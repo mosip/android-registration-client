@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:registration_client/data/models/login_response.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile/dashboard_mobile.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet/dashboard_tablet_view.dart';
 import 'package:registration_client/provider/dashboard_view_model.dart';
@@ -41,16 +42,17 @@ class _LoginPageState extends State<LoginPage> {
   bool isMobile = true;
   static const platform =
       MethodChannel("com.flutter.dev/io.mosip.get-package-instance");
-  bool isLoggedIn = false;
+  // bool isLoggedIn = false;
   bool isLoggingIn = false;
   String loginResponse = '';
   String errorCode = '';
   String username = '';
   String password = '';
   bool isUserValidated = false;
-  String isOnboardedValue = "";
+  // String isOnboardedValue = "";
   List<String> _languages = ['eng', 'ara', 'fre'];
   Map<String, String> mp = {};
+  late GlobalProvider globalProvider;
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -69,7 +71,8 @@ class _LoginPageState extends State<LoginPage> {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
-    return isLoggedIn
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    return globalProvider.isLoggedIn
         ? Responsive(
             mobile: DashBoardMobileView(),
             desktop: DashBoardTabletView(),
@@ -133,10 +136,13 @@ class _LoginPageState extends State<LoginPage> {
     } on PlatformException {
       mp = {};
     }
+
+    globalProvider.setIsLoggedIn(loginResp.isLoggedIn);
+    globalProvider.setIsSupervisor(temp.contains("REGISTRATION_SUPERVISOR"));
+    globalProvider.setIsOfficer(temp.contains("REGISTRATION_OPERATOR"));
     setState(() {
-      isLoggedIn = loginResp.isLoggedIn;
       errorCode = loginResp.error_code;
-      if (isLoggedIn) {
+      if (globalProvider.isLoggedIn) {
         loginResponse = loginResp.login_response;
       } else if (errorCode == '500') {
         loginResponse = AppLocalizations.of(context)!.login_failed;
@@ -152,11 +158,10 @@ class _LoginPageState extends State<LoginPage> {
         loginResponse = loginResp.login_response;
       }
     });
-    if (isLoggedIn == true) {
+    if (globalProvider.isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (isOnboardedValue == "true" ||
-          (temp.contains("REGISTRATION_SUPERVISOR") &&
-              temp.contains("REGISTRATION_OPERATOR"))) {
+      if (globalProvider.isOnboarded ||
+          (globalProvider.isSupervisor && globalProvider.isOfficer)) {
         context.read<DashboardViewModel>().setCurrentIndex(1);
       }
 
@@ -183,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
       print(" usermap: $mp");
       if (mp["user_details"] != "") {
         userMap = jsonDecode(mp['user_details']);
-        isOnboardedValue = userMap["isOnboarded"].toString();
+        globalProvider.setIsOnboarded(userMap["isOnboarded"]);
         // mp["user_details"]
         //     .toString()
         //     .split("isOnboarded=")
@@ -192,13 +197,13 @@ class _LoginPageState extends State<LoginPage> {
         //     .first;
       } else {
         userMap = {};
-        isOnboardedValue = "";
+        globalProvider.setIsOnboarded(false);
       }
     } on PlatformException {
       mp = {};
       userMap = {};
     }
-
+    
     setState(() {
       setState(() {
         isUserValidated = mp['isUserPresent'];
@@ -260,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoggingIn = true;
     });
     _login(username, password).then((value) {
-      if (loginResponse.isNotEmpty && !isLoggedIn) {
+      if (loginResponse.isNotEmpty && !globalProvider.isLoggedIn) {
         _showInSnackBar(loginResponse);
       }
       isLoggingIn = false;

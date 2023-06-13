@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/data/models/process.dart';
 import 'package:registration_client/provider/dashboard_view_model.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
@@ -19,6 +23,7 @@ class OnboardingPage2View extends StatelessWidget {
 
   void syncData(BuildContext context) async {
     await _masterDataSync();
+    await _getNewProcessSpec(context);
     String value = await getCenterName(context);
     context.read<DashboardViewModel>().setCenterName(value);
   }
@@ -27,6 +32,27 @@ class OnboardingPage2View extends StatelessWidget {
     String result;
     try {
       result = await platform.invokeMethod("masterDataSync");
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    debugPrint(result);
+  }
+
+  Future<void> _getNewProcessSpec(BuildContext context) async {
+    try {
+      context.read<GlobalProvider>().listOfProcesses =
+          await platform.invokeMethod("getNewProcessSpec");
+      await Clipboard.setData(ClipboardData(
+          text: context.read<GlobalProvider>().listOfProcesses.toString()));
+    } on PlatformException catch (e) {
+      debugPrint(e.message);
+    }
+  }
+
+  Future<void> _getUISchema() async {
+    String result;
+    try {
+      result = await platform.invokeMethod("getUISchema");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }
@@ -50,62 +76,90 @@ class OnboardingPage2View extends StatelessWidget {
   Widget build(BuildContext context) {
     double w = ScreenUtil().screenWidth;
 
-    List<Map<String, dynamic>> registrationTask = [
-      {
-        "icon": "assets/svg/Onboarding Yourself.svg",
-        "title": "New Registration",
-        "onTap": () {},
-      },
-      {
-        "icon": "assets/svg/Onboarding Yourself.svg",
-        "title": "Lost UIN",
-        "onTap": () {},
-      },
-      {
-        "icon": "assets/svg/Onboarding Yourself.svg",
-        "title": "Update UIN",
-        "onTap": () {},
-      },
-      {
-        "icon": "assets/svg/Onboarding Yourself.svg",
-        "title": "Biometrics Correction",
-        "onTap": () {},
-      },
-    ];
+    // List<Map<String, dynamic>> registrationTask = [
+    //   {
+    //     "icon": "assets/svg/Onboarding Yourself.svg",
+    //     "title": "New Registration",
+    //     "onTap": () {},
+    //   },
+    //   {
+    //     "icon": "assets/svg/Onboarding Yourself.svg",
+    //     "title": "Lost UIN",
+    //     "onTap": () {},
+    //   },
+    //   {
+    //     "icon": "assets/svg/Onboarding Yourself.svg",
+    //     "title": "Update UIN",
+    //     "onTap": () {},
+    //   },
+    //   {
+    //     "icon": "assets/svg/Onboarding Yourself.svg",
+    //     "title": "Biometrics Correction",
+    //     "onTap": () {},
+    //   },
+    // ];
 
     List<Map<String, dynamic>> operationalTasks = [
       {
-        "icon": "assets/svg/Synchronising Data.svg",
+        "icon": SvgPicture.asset(
+          "assets/svg/Synchronising Data.svg",
+          width: 20,
+          height: 20,
+        ),
         "title": "Sync Data",
         "onTap": syncData,
       },
       {
-        "icon": "assets/svg/Uploading Local - Registration Data.svg",
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+          width: 20,
+          height: 20,
+        ),
         "title": "Download Pre-Registration Data",
         "onTap": () {},
       },
       {
-        "icon": "assets/svg/Updating Operator Biometrics.svg",
+        "icon": SvgPicture.asset(
+          "assets/svg/Updating Operator Biometrics.svg",
+          width: 20,
+          height: 20,
+        ),
         "title": "Update Operator Biometrics",
         "onTap": () {},
       },
       {
-        "icon": "assets/svg/Uploading Local - Registration Data.svg",
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+          width: 20,
+          height: 20,
+        ),
         "title": "Application Upload",
         "onTap": () {},
       },
       {
-        "icon": "assets/svg/Onboarding Yourself.svg",
+        "icon": SvgPicture.asset(
+          "assets/svg/Onboarding Yourself.svg",
+          width: 20,
+          height: 20,
+        ),
         "title": "Pending Approval",
         "onTap": () {},
       },
       {
-        "icon": "assets/svg/Uploading Local - Registration Data.svg",
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+          width: 20,
+          height: 20,
+        ),
         "title": "Check Update",
         "onTap": () {},
       },
       {
-        "icon": "assets/svg/Uploading Local - Registration Data.svg",
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+          width: 20,
+          height: 20,
+        ),
         "title": "Center Remap Sync.",
         "onTap": () {},
       },
@@ -154,14 +208,24 @@ class OnboardingPage2View extends StatelessWidget {
                         horizontalGridSpacing: 8,
                         verticalGridSpacing: 8,
                         children: List.generate(
-                          registrationTask.length,
-                          (index) => Onboarding_Page2_Card(
-                            icon: registrationTask[index]["icon"] as String,
-                            title: registrationTask[index]["title"] as String,
-                            ontap: registrationTask[index]["onTap"]
-                                as VoidCallback,
-                          ),
-                        ),
+                            context
+                                .watch<GlobalProvider>()
+                                .listOfProcesses
+                                .length,
+                            (index) => Onboarding_Page2_Card(
+                                  icon: Image.asset(
+                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<GlobalProvider>().listOfProcesses.elementAt(index).toString())).icon!}",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  title: Process.fromJson(jsonDecode(context
+                                          .watch<GlobalProvider>()
+                                          .listOfProcesses
+                                          .elementAt(index)
+                                          .toString()))
+                                      .label!["eng"]!,
+                                  ontap: () {},
+                                )),
                       ),
                       SizedBox(
                         height: 30.h,
@@ -248,7 +312,7 @@ class OnboardingPage2View extends StatelessWidget {
                         children: List.generate(
                           operationalTasks.length,
                           (index) => Onboarding_Page2_Card(
-                            icon: operationalTasks[index]["icon"] as String,
+                            icon: operationalTasks[index]["icon"],
                             title: operationalTasks[index]["title"] as String,
                             ontap: () =>
                                 operationalTasks[index]["onTap"](context),

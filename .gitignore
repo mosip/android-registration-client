@@ -74,4 +74,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Freezed/Generated files
+/lib/data/models/*.freezed.dart
+/lib/data/models/*.g.dart
+
 

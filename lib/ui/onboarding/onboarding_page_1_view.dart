@@ -13,6 +13,8 @@ import '../../utils/responsive.dart';
 
 class OnboardingPage1View extends StatelessWidget {
   static const route = "/onboarding-page1-view";
+  static const platform =
+      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
   const OnboardingPage1View({super.key});
   goToUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
@@ -20,6 +22,18 @@ class OnboardingPage1View extends StatelessWidget {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<String> _getStringValueGlobalParam(
+      BuildContext context, String key) async {
+    String result;
+    try {
+      result = await platform
+          .invokeMethod("getStringValueGlobalParam", {"key": key});
+    } on PlatformException catch (e) {
+      result = "Some Error Occurred: $e";
+    }
+    return result;
   }
 
   @override
@@ -31,33 +45,67 @@ class OnboardingPage1View extends StatelessWidget {
         "icon": "assets/images/Onboarding Yourself.png",
         "title": "Onboarding Yourself",
         "onTap": () async {
-          goToUrl("https://mosip.stoplight.io/");
+          _getStringValueGlobalParam(
+                  context, "mosip.registration.onboard_yourself_url")
+              .then((value) => {
+                    goToUrl(value),
+                  });
+        },
+      },
+      {
+        "icon": "assets/images/Onboarding Yourself.png",
+        "title": "Registering an Individual",
+        "onTap": () async {
+          _getStringValueGlobalParam(
+                  context, "mosip.registration.registering_individual_url")
+              .then((value) => {
+                    goToUrl(value),
+                  });
         },
       },
       {
         "icon": "assets/images/Synchronising Data.png",
         "title": "Synchronising Data",
-        "onTap": () {},
-      },
-      {
-        "icon": "assets/images/Onboarding Yourself.png",
-        "title": "Update UIN",
-        "onTap": () {},
+        "onTap": () async {
+          _getStringValueGlobalParam(
+                  context, "mosip.registration.sync_data_url")
+              .then((value) => {
+                    goToUrl(value),
+                  });
+        },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Mapping Devices to Machine",
-        "onTap": () {},
+        "onTap": () async {
+          _getStringValueGlobalParam(
+                  context, "mosip.registration.mapping_devices_url")
+              .then((value) => {
+                    goToUrl(value),
+                  });
+        },
       },
       {
         "icon": "assets/images/Uploading Local - Registration Data.png",
         "title": "Uploading Local/Registration Data",
-        "onTap": () {},
+        "onTap": () async {
+          _getStringValueGlobalParam(
+                  context, "mosip.registration.uploading_data_url")
+              .then((value) => {
+                    goToUrl(value),
+                  });
+        },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Updating Operator Biometrics",
-        "onTap": () {},
+        "onTap": () async {
+          _getStringValueGlobalParam(
+                  context, "mosip.registration.updating_biometrics_url")
+              .then((value) => {
+                    goToUrl(value),
+                  });
+        },
       },
     ];
 

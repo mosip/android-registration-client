@@ -104,7 +104,7 @@ class PasswordComponent extends StatelessWidget {
                       color: Utils.appWhite,
                     )
                   : Text(
-                      AppLocalizations.of(context)!.login_text,
+                      AppLocalizations.of(context)!.login_button,
                       style: Utils.mobileButtonText,
                     ),
             ),

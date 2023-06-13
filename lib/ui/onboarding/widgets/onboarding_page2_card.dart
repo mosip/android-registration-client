@@ -11,7 +11,7 @@ class Onboarding_Page2_Card extends StatelessWidget {
       required this.icon,
       required this.title,
       required this.ontap});
-  final String icon;
+  final Widget icon;
   final String title;
   final void Function() ontap;
 
@@ -30,11 +30,7 @@ class Onboarding_Page2_Card extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: const Color(0xffF4F7FF),
                     borderRadius: BorderRadius.circular(4)),
-                child: SvgPicture.asset(
-                  icon,
-                  width: 20,
-                  height: 20,
-                ),
+                child: icon,
               ),
               SizedBox(
                 width: 10.w,
