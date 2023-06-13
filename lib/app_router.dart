@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:registration_client/login_page.dart';
+import 'package:registration_client/ui/login_page/login_page.dart';
 import 'package:registration_client/ui/onboarding/get_onboard_landing_page.dart';
 import 'package:registration_client/ui/onboarding/home_page.dart';
 

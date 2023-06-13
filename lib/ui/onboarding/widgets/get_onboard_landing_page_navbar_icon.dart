@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class OnboardingPage1NavbarIcon extends StatelessWidget {
-  const OnboardingPage1NavbarIcon(
+class GetOnboardLandingPageNavbarIcon extends StatelessWidget {
+  const GetOnboardLandingPageNavbarIcon(
       {super.key,
       required this.icon,
       required this.title,

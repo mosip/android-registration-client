@@ -5,8 +5,8 @@ import 'package:registration_client/utils/app_config.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Onboarding_Page2_Card extends StatelessWidget {
-  const Onboarding_Page2_Card(
+class HomePageCard extends StatelessWidget {
+  const HomePageCard(
       {super.key,
       required this.icon,
       required this.title,

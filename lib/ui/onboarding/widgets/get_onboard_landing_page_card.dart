@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class Onboarding_Page_1_Card extends StatelessWidget {
-  const Onboarding_Page_1_Card(
+class GetOnboardLandingPageCard extends StatelessWidget {
+  const GetOnboardLandingPageCard(
       {super.key,
       required this.icon,
       required this.title,

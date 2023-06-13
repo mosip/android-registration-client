@@ -14,7 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/const/utils.dart';
 
-import 'package:registration_client/credentials_page.dart';
+import 'package:registration_client/ui/credentials_page.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/data/models/login_response.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -27,8 +27,8 @@ import 'package:registration_client/ui/onboarding/get_onboard_landing_page.dart'
 import 'package:registration_client/ui/onboarding/home_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
-import 'package:registration_client/widgets/password_component.dart';
-import 'package:registration_client/widgets/username_component.dart';
+import 'package:registration_client/ui/login_page/widgets/password_component.dart';
+import 'package:registration_client/ui/login_page/widgets/username_component.dart';
 
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";

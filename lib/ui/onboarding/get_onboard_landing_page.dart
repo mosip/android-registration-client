@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/dashboard_view_model.dart';
-import 'package:registration_client/ui/onboarding/widgets/onboarding_page_1_card.dart';
+import 'package:registration_client/ui/onboarding/widgets/get_onboard_landing_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -228,7 +228,7 @@ class GetOnboardLandingPageView extends StatelessWidget {
                         verticalGridSpacing: 8,
                         children: List.generate(
                           helpTopics.length,
-                          (index) => Onboarding_Page_1_Card(
+                          (index) => GetOnboardLandingPageCard(
                             icon: helpTopics[index]["icon"] as String,
                             title: helpTopics[index]["title"] as String,
                             ontap: helpTopics[index]["onTap"],
@@ -236,33 +236,33 @@ class GetOnboardLandingPageView extends StatelessWidget {
                         ),
                       ),
 
-                      // Onboarding_Page_1_Card(
+                      // GetOnboardLandingPageCard(
                       //   icon: "assets/images/Onboarding Yourself.png",
                       //   title: "Onboarding Yourself",
                       //   ontap: () {},
                       // ),
-                      // Onboarding_Page_1_Card(
+                      // GetOnboardLandingPageCard(
                       //   icon: "assets/images/Registering an Individual.png",
                       //   title: "Registering an Individual",
                       //   ontap: () {},
                       // ),
-                      // Onboarding_Page_1_Card(
+                      // GetOnboardLandingPageCard(
                       //   icon: "assets/images/Synchronising Data.png",
                       //   title: "Synchronising Data",
                       //   ontap: () {},
                       // ),
-                      // Onboarding_Page_1_Card(
+                      // GetOnboardLandingPageCard(
                       //   icon: "assets/images/fingerprint_icon.png",
                       //   title: "Mapping Devices to Machine",
                       //   ontap: () {},
                       // ),
-                      // Onboarding_Page_1_Card(
+                      // GetOnboardLandingPageCard(
                       //   icon:
                       //       "assets/images/Uploading Local - Registration Data.png",
                       //   title: "Uploading Local/Registration Data",
                       //   ontap: () {},
                       // ),
-                      // Onboarding_Page_1_Card(
+                      // GetOnboardLandingPageCard(
                       //   icon: "assets/images/fingerprint_icon.png",
                       //   title: "Updating Operator Biometrics",
                       //   ontap: () {},

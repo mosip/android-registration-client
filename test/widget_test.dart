@@ -9,14 +9,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/app_router.dart';
-import 'package:registration_client/credentials_page.dart';
-import 'package:registration_client/login_page.dart';
+import 'package:registration_client/ui/credentials_page.dart';
+import 'package:registration_client/ui/login_page/login_page.dart';
 import 'package:registration_client/main.dart';
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/test.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:registration_client/widgets/password_component.dart';
-import 'package:registration_client/widgets/username_component.dart';
+import 'package:registration_client/ui/login_page/widgets/password_component.dart';
+import 'package:registration_client/ui/login_page/widgets/username_component.dart';
 Widget testableWidget({required Widget child}) {
   return MultiProvider(
     providers: [

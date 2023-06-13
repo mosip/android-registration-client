@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
-import 'package:registration_client/login_page.dart';
+import 'package:registration_client/ui/login_page/login_page.dart';
 
 import 'package:registration_client/provider/app_language.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';

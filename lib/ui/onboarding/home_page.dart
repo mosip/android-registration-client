@@ -13,7 +13,9 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
-import 'widgets/onboarding_page2_card.dart';
+import 'widgets/home_page_card.dart';
+
+
 
 class HomePageView extends StatelessWidget {
   static const route = "/onboarding-page2-view";
@@ -212,7 +214,7 @@ class HomePageView extends StatelessWidget {
                                 .watch<GlobalProvider>()
                                 .listOfProcesses
                                 .length,
-                            (index) => Onboarding_Page2_Card(
+                            (index) => HomePageCard(
                                   icon: Image.asset(
                                     "assets/images/${Process.fromJson(jsonDecode(context.watch<GlobalProvider>().listOfProcesses.elementAt(index).toString())).icon!}",
                                     width: 20,
@@ -262,40 +264,40 @@ class HomePageView extends StatelessWidget {
                       ),
                       // Column(
                       //   children: [
-                      //     Onboarding_Page2_Card(
+                      //     HomePageCard(
                       //       icon: "assets/svg/Synchronising Data.svg",
                       //       title: "Synchronize Data",
                       //       ontap: () {},
                       //     ),
-                      //     Onboarding_Page2_Card(
+                      //     HomePageCard(
                       //       icon:
                       //           "assets/svg/Uploading Local - Registration Data.svg",
                       //       title: "Download Pre-Registration Data",
                       //       ontap: () {},
                       //     ),
-                      //     Onboarding_Page2_Card(
+                      //     HomePageCard(
                       //       icon: "assets/svg/Updating Operator Biometrics.svg",
                       //       title: "Update Operator Biometrics",
                       //       ontap: () {},
                       //     ),
-                      //     Onboarding_Page2_Card(
+                      //     HomePageCard(
                       //       icon:
                       //           "assets/svg/Uploading Local - Registration Data.svg",
                       //       title: "Application Upload",
                       //       ontap: () {},
                       //     ),
-                      //     Onboarding_Page2_Card(
+                      //     HomePageCard(
                       //       icon: "assets/svg/Onboarding Yourself.svg",
                       //       title: "Pending Approval",
                       //       ontap: () {},
                       //     ),
-                      //     Onboarding_Page2_Card(
+                      //     HomePageCard(
                       //       icon:
                       //           "assets/svg/Uploading Local - Registration Data.svg",
                       //       title: "Check Updates",
                       //       ontap: () {},
                       //     ),
-                      //     Onboarding_Page2_Card(
+                      //     HomePageCard(
                       //       icon:
                       //           "assets/svg/Uploading Local - Registration Data.svg",
                       //       title: "Center Remap Sync.",
@@ -311,7 +313,7 @@ class HomePageView extends StatelessWidget {
                         verticalGridSpacing: 12,
                         children: List.generate(
                           operationalTasks.length,
-                          (index) => Onboarding_Page2_Card(
+                          (index) => HomePageCard(
                             icon: operationalTasks[index]["icon"],
                             title: operationalTasks[index]["title"] as String,
                             ontap: () =>
