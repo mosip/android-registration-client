@@ -11,11 +11,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/responsive.dart';
 
-class OnboardingPage1View extends StatelessWidget {
+class GetOnboardLandingPageView extends StatelessWidget {
   static const route = "/onboarding-page1-view";
   static const platform =
       MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
-  const OnboardingPage1View({super.key});
+  const GetOnboardLandingPageView({super.key});
   goToUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../onboarding/onboarding_page_1_view.dart';
-import '../../onboarding/onboarding_page_2_view.dart';
+import '../../onboarding/get_onboard_landing_page.dart';
+import '../../onboarding/home_page.dart';
 import '../../../provider/dashboard_view_model.dart';
 import 'mobile_navbar.dart';
 
@@ -10,8 +10,8 @@ class DashBoardMobileView extends StatelessWidget {
   DashBoardMobileView({Key? key}) : super(key: key);
 
   final List<Widget> _pages = [
-    const OnboardingPage1View(),
-    const OnboardingPage2View()
+    const GetOnboardLandingPageView(),
+    const HomePageView()
   ];
 
   @override

@@ -15,9 +15,9 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import 'widgets/onboarding_page2_card.dart';
 
-class OnboardingPage2View extends StatelessWidget {
+class HomePageView extends StatelessWidget {
   static const route = "/onboarding-page2-view";
-  const OnboardingPage2View({super.key});
+  const HomePageView({super.key});
   static const platform =
       MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
 
