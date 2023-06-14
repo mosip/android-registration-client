@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:registration_client/data/models/process.dart';
+import 'package:registration_client/ui/process_ui/new_process.dart';
 
 class NewProcessLanguageSelection extends StatelessWidget {
   const NewProcessLanguageSelection({super.key, required this.newProcess});
@@ -17,7 +18,12 @@ class NewProcessLanguageSelection extends StatelessWidget {
           onPressed: () {},
           child: Text("CANCEL"),
         ),
-        ElevatedButton(onPressed: () {}, child: Text("SUBMIT"))
+        ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, NewProcess.routeName,
+                  arguments: {"process": newProcess});
+            },
+            child: Text("SUBMIT"))
       ],
     );
   }
