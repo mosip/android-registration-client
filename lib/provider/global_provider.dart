@@ -1,12 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 
 class GlobalProvider with ChangeNotifier {
   List<Object?> _listOfProcesses = List.empty(growable: true);
-  
+
   List<Object?> get listOfProcesses => this._listOfProcesses;
 
   set listOfProcesses(List<Object?> value) {
     this._listOfProcesses = value;
+    notifyListeners();
+  }
+
+  Process? _currentProcess;
+  Process? get currentProcess => this._currentProcess;
+
+  set currentProcess(Process? value) {
+    this._currentProcess = value;
     notifyListeners();
   }
 

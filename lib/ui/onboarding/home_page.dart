@@ -10,12 +10,11 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/data/models/process.dart';
 import 'package:registration_client/provider/dashboard_view_model.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/process_ui/new_process_language_selection.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import 'widgets/home_page_card.dart';
-
-
 
 class HomePageView extends StatelessWidget {
   static const route = "/onboarding-page2-view";
@@ -38,6 +37,18 @@ class HomePageView extends StatelessWidget {
       result = "Some Error Occurred: $e";
     }
     debugPrint(result);
+  }
+
+  Widget getProcessUI(BuildContext context, Process process) {
+    if (process.id == "NEW") {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => NewProcessLanguageSelection(
+          newProcess: process,
+        ),
+      );
+    }
+    return Container();
   }
 
   Future<void> _getNewProcessSpec(BuildContext context) async {
@@ -226,7 +237,20 @@ class HomePageView extends StatelessWidget {
                                           .elementAt(index)
                                           .toString()))
                                       .label!["eng"]!,
-                                  ontap: () {},
+                                  ontap: () {
+                                    getProcessUI(
+                                      context,
+                                      Process.fromJson(
+                                        jsonDecode(
+                                          context
+                                              .read<GlobalProvider>()
+                                              .listOfProcesses
+                                              .elementAt(index)
+                                              .toString(),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 )),
                       ),
                       SizedBox(
