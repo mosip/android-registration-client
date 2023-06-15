@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+// TODO: Need to move all the variables defined here to GlobalProvider
 class DashboardViewModel with ChangeNotifier {
   int _currentIndex = 0;
   String _name = "";

@@ -1,4 +1,4 @@
-import 'package:registration_client/const/validator.dart';
+import 'validator.dart';
 
 class Login {
   String username = '';

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:registration_client/const/validator.dart';
+import 'validator.dart';
 import 'login.dart';
 
 import 'login_test.mocks.dart';
