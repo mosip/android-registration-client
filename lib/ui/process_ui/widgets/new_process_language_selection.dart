@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:registration_client/data/models/process.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/ui/process_ui/new_process.dart';
 
 class NewProcessLanguageSelection extends StatelessWidget {
