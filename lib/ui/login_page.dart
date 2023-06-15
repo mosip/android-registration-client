@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/login_response.dart';
+import 'package:registration_client/pigeons/machine_pigeon.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
@@ -326,11 +327,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              _getMachineKeys();
+            },
           ),
         ],
       ),
     );
+  }
+
+  _getMachineKeys() async {
+    final machine = await MachineApi().getMachineDetails();
+    debugPrint("machine: ${machine.map}");
   }
 
   Widget _welcomeTextComponent() {
