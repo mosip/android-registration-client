@@ -92,7 +92,7 @@ class BuildApp extends StatelessWidget {
           textTheme: const TextTheme(
             titleLarge: TextStyle(fontSize: 24),
             bodyLarge: TextStyle(fontSize: 18),
-            bodyMedium: TextStyle(fontSize: 10),
+            
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),

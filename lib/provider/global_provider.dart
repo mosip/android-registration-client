@@ -20,6 +20,14 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  int _newProcessTabIndex = 0;
+  int get newProcessTabIndex => this._newProcessTabIndex;
+
+  set newProcessTabIndex(int value) {
+    this._newProcessTabIndex = value;
+    notifyListeners();
+  }
+
   bool _isLoggedIn = false;
   bool _isOnboarded = false;
   bool _isDefault = false;

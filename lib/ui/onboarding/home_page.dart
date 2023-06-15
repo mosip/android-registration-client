@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/data/models/process.dart';
 import 'package:registration_client/provider/dashboard_view_model.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/process_ui/new_process_language_selection.dart';
+import 'package:registration_client/ui/process_ui/widgets/new_process_language_selection.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
