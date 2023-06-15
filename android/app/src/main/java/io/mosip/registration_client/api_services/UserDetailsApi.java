@@ -24,9 +24,20 @@ public class UserDetailsApi implements UserPigeon.UserApi {
     }
 
     public void usernameValidation(String username) {
+        if(username == null || username.trim().length() == 0){
+            user = new UserPigeon.User.Builder()
+                    .setUserId(username)
+                    .setIsOnboarded(false)
+                    .setErrorMessage("Please enter a valid username!")
+                    .build();
+            Log.e(getClass().getSimpleName(), "username incorrect");
+            return;
+        }
+
         if(!loginService.isValidUserId(username)) {
             user = new UserPigeon.User.Builder()
                     .setUserId(username)
+                    .setIsOnboarded(false)
                     .setErrorMessage("User not found!")
                     .build();
             return;
@@ -35,6 +46,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
         if(userDetail == null) {
             user = new UserPigeon.User.Builder()
                     .setUserId(username)
+                    .setIsOnboarded(false)
                     .build();
         } else {
             user = new UserPigeon.User.Builder()
@@ -51,7 +63,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
 
     @NonNull
     @Override
-    public UserPigeon.User getUser(@NonNull String username) {
+    public UserPigeon.User validateUser(@NonNull String username) {
         usernameValidation(username);
         return user;
     }

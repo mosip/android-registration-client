@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
+import 'package:registration_client/platform_android/machine_key_impl.dart';
 
 class GlobalProvider with ChangeNotifier {
   //Variables
@@ -10,6 +11,7 @@ class GlobalProvider with ChangeNotifier {
   String _centerName = "";
   String _machineName = "";
   Process? _currentProcess;
+  Map<String?, String?> _machineDetails = {};
 
   //GettersSetters
 
@@ -18,6 +20,7 @@ class GlobalProvider with ChangeNotifier {
   String get centerId => _centerId;
   String get centerName => _centerName;
   String get machineName => _machineName;
+  Map<String?, String?> get machineDetails => _machineDetails;
 
   
   
@@ -59,6 +62,13 @@ class GlobalProvider with ChangeNotifier {
 
   setMachineName(String value) {
     _machineName = value;
+    notifyListeners();
+  }
+
+  setMachineDetails() async {
+    final machine = await MachineKeyImpl().getMachineKeys();
+    _machineDetails = machine.map;
+    _machineName = _machineDetails["name"]!;
     notifyListeners();
   }
 }

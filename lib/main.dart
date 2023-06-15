@@ -122,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
       minTextAdapt: true,
       splitScreenMode: true,
     );
+    context.read<GlobalProvider>().setMachineDetails();
     return const LoginPage();
   }
 }

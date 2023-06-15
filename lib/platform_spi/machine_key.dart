@@ -1,3 +1,5 @@
+import 'package:registration_client/pigeons/machine_pigeon.dart';
+
 abstract class MachineKey {
-  Map<String, dynamic> getMachineKeys();
+  Future<Machine> getMachineKeys();
 }

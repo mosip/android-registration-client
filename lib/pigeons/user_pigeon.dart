@@ -15,7 +15,7 @@ class User {
     this.email,
     this.isActive,
     this.isLocked,
-    this.isOnboarded,
+    required this.isOnboarded,
     this.centerName,
     this.centerId,
     this.machineName,
@@ -34,7 +34,7 @@ class User {
 
   bool? isLocked;
 
-  bool? isOnboarded;
+  bool isOnboarded;
 
   String? centerName;
 
@@ -73,7 +73,7 @@ class User {
       email: result[2] as String?,
       isActive: result[3] as bool?,
       isLocked: result[4] as bool?,
-      isOnboarded: result[5] as bool?,
+      isOnboarded: result[5]! as bool,
       centerName: result[6] as String?,
       centerId: result[7] as String?,
       machineName: result[8] as String?,
@@ -117,9 +117,9 @@ class UserApi {
 
   static const MessageCodec<Object?> codec = _UserApiCodec();
 
-  Future<User> getUser(String arg_username) async {
+  Future<User> validateUser(String arg_username) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserApi.getUser', codec,
+        'dev.flutter.pigeon.UserApi.validateUser', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_username]) as List<Object?>?;

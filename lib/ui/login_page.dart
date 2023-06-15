@@ -14,6 +14,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/login_response.dart';
 import 'package:registration_client/pigeons/machine_pigeon.dart';
+import 'package:registration_client/platform_android/auth_impl.dart';
+import 'package:registration_client/platform_android/machine_key_impl.dart';
+import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
@@ -245,11 +248,10 @@ class _LoginPageState extends State<LoginPage> {
       _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
     } else if (!isUserValidated) {
       var value = await _validateUsername();
-      String machineName = await _getMachineDetails();
+      String machineName = _getMachineName();
       print(value.toString());
       context.read<GlobalProvider>().setCenterId(value["centerId"]!);
       context.read<GlobalProvider>().setName(value["name"]!);
-      context.read<GlobalProvider>().setMachineName(machineName);
       _showInSnackBar(loginResponse);
     }
   }
@@ -290,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MachineKeys(),
+                  builder: (context) => MachineKeys(),
                 ),
               );
             },
@@ -327,18 +329,16 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {
-              _getMachineKeys();
-            },
+            onTap: () {},
           ),
         ],
       ),
     );
   }
 
-  _getMachineKeys() async {
-    final machine = await MachineApi().getMachineDetails();
-    debugPrint("machine: ${machine.map}");
+  _getMachineName() {
+    String machineName = context.read<GlobalProvider>().machineName;
+    return machineName;
   }
 
   Widget _welcomeTextComponent() {
@@ -505,19 +505,5 @@ class _LoginPageState extends State<LoginPage> {
         fit: BoxFit.fill,
       ),
     );
-  }
-
-  Future<String> _getMachineDetails() async {
-    String resultText;
-    Map<String, dynamic> machineMap;
-    try {
-      resultText = await platform.invokeMethod('getMachineDetails');
-      machineMap = jsonDecode(resultText);
-      resultText = machineMap["name"];
-    } on PlatformException {
-      resultText = "Not Found";
-      machineMap = {};
-    }
-    return resultText;
   }
 }

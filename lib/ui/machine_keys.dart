@@ -9,31 +9,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/file_storage.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MachineKeys extends StatefulWidget {
-  const MachineKeys({super.key});
+// ignore: must_be_immutable
+class MachineKeys extends StatelessWidget {
+  MachineKeys({super.key});
 
-  @override
-  State<MachineKeys> createState() => _MachineKeysState();
-}
-
-class _MachineKeysState extends State<MachineKeys> {
-  static const platform =
-      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
   String machineDetails = '';
   bool isMobile = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _getMachineDetails();
-  }
+  late BuildContext _context;
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
+    machineDetails = jsonEncode(context.read<GlobalProvider>().machineDetails).toString();
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       appBar: AppBar(
@@ -85,25 +78,8 @@ class _MachineKeysState extends State<MachineKeys> {
     );
   }
 
-  Future<void> _getMachineDetails() async {
-    String resultText;
-    Map<String, dynamic> machineMap;
-    try {
-      resultText = await platform.invokeMethod('getMachineDetails');
-      machineMap = jsonDecode(resultText);
-      debugPrint("Machine Map $machineMap");
-    } on PlatformException catch (e) {
-      resultText = "Failed to get platform version: '${e.message}'.";
-      machineMap = {};
-    }
-
-    setState(() {
-      machineDetails = resultText;
-    });
-  }
-
   void showInSnackBar(String value) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(_context).showSnackBar(
       SnackBar(
         content: Text(value),
       ),
@@ -138,7 +114,7 @@ class _MachineKeysState extends State<MachineKeys> {
     return InkWell(
       onTap: () {
         Clipboard.setData(ClipboardData(text: machineDetails)).then((value) {
-          showInSnackBar(AppLocalizations.of(context)!.copy_message);
+          showInSnackBar(AppLocalizations.of(_context)!.copy_message);
         });
       },
       child: Container(
@@ -155,7 +131,7 @@ class _MachineKeysState extends State<MachineKeys> {
         ),
         child: Center(
           child: Text(
-            AppLocalizations.of(context)!.copy_text,
+            AppLocalizations.of(_context)!.copy_text,
             style: AppStyle.mobileButtonText,
           ),
         ),
@@ -168,7 +144,7 @@ class _MachineKeysState extends State<MachineKeys> {
       onTap: () {
         FileStorage.writeCounter(machineDetails, "machine_details.txt")
             .then((value) {
-          showInSnackBar(AppLocalizations.of(context)!.download_message);
+          showInSnackBar(AppLocalizations.of(_context)!.download_message);
         });
       },
       child: Container(
@@ -185,7 +161,7 @@ class _MachineKeysState extends State<MachineKeys> {
         ),
         child: Center(
           child: Text(
-            AppLocalizations.of(context)!.download_json,
+            AppLocalizations.of(_context)!.download_json,
             style:
                 isMobile ? AppStyle.mobileBackButtonText : AppStyle.mobileButtonText,
           ),

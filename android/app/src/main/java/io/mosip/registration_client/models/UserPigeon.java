@@ -112,13 +112,16 @@ public class UserPigeon {
       this.isLocked = setterArg;
     }
 
-    private @Nullable Boolean isOnboarded;
+    private @NonNull Boolean isOnboarded;
 
-    public @Nullable Boolean getIsOnboarded() {
+    public @NonNull Boolean getIsOnboarded() {
       return isOnboarded;
     }
 
-    public void setIsOnboarded(@Nullable Boolean setterArg) {
+    public void setIsOnboarded(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isOnboarded\" is null.");
+      }
       this.isOnboarded = setterArg;
     }
 
@@ -224,7 +227,7 @@ public class UserPigeon {
 
       private @Nullable Boolean isOnboarded;
 
-      public @NonNull Builder setIsOnboarded(@Nullable Boolean setterArg) {
+      public @NonNull Builder setIsOnboarded(@NonNull Boolean setterArg) {
         this.isOnboarded = setterArg;
         return this;
       }
@@ -367,7 +370,7 @@ public class UserPigeon {
   public interface UserApi {
 
     @NonNull 
-    User getUser(@NonNull String username);
+    User validateUser(@NonNull String username);
 
     /** The codec used by UserApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -378,7 +381,7 @@ public class UserPigeon {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.UserApi.getUser", getCodec());
+                binaryMessenger, "dev.flutter.pigeon.UserApi.validateUser", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -386,7 +389,7 @@ public class UserPigeon {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String usernameArg = (String) args.get(0);
                 try {
-                  User output = api.getUser(usernameArg);
+                  User output = api.validateUser(usernameArg);
                   wrapped.add(0, output);
                 }
  catch (Throwable exception) {

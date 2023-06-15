@@ -6,7 +6,7 @@ class User {
   final String? email;
   final bool? isActive;
   final bool? isLocked;
-  final bool? isOnboarded;
+  final bool isOnboarded;
   final String? centerName;
   final String? centerId;
   final String? machineName;
@@ -20,7 +20,7 @@ class User {
     this.email,
     this.isActive,
     this.isLocked,
-    this.isOnboarded,
+    required this.isOnboarded,
     this.centerName,
     this.centerId,
     this.machineName,
@@ -32,5 +32,5 @@ class User {
 
 @HostApi()
 abstract class UserApi {
-  User getUser(String username);
+  User validateUser(String username);
 }
