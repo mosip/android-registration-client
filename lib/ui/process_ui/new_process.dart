@@ -20,6 +20,14 @@ class NewProcess extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments! as Map<String, dynamic>;
     final Process newProcess = arguments["process"];
     return Scaffold(
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.all(16),
+        height: 84.h,
+        child: ElevatedButton(
+          child: Text("CONTINUE"),
+          onPressed: () {},
+        ),
+      ),
       body: SingleChildScrollView(
         child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
@@ -154,7 +162,7 @@ class NewProcess extends StatelessWidget {
                         Container(
                           height: 36.h,
                           width: 25.w,
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                           color: solid_primary,
                           child: Icon(
                             Icons.arrow_forward_ios_outlined,
@@ -170,6 +178,7 @@ class NewProcess extends StatelessWidget {
                   ],
                 ),
               ),
+              
             ],
           ),
         ),

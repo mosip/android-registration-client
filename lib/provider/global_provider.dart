@@ -9,7 +9,14 @@ class GlobalProvider with ChangeNotifier {
   String _centerId = "";
   String _centerName = "";
   String _machineName = "";
+  int _newProcessTabIndex = 0;
   Process? _currentProcess;
+  List<String> _chosenLang = [];
+  Map<String, bool> _languageMap = {
+    'English': true,
+    'Arabic': false,
+    'French': false,
+  };
 
   //GettersSetters
 
@@ -18,6 +25,13 @@ class GlobalProvider with ChangeNotifier {
   String get centerId => _centerId;
   String get centerName => _centerName;
   String get machineName => _machineName;
+  Map<String, bool> get languageMap => this._languageMap;
+  
+  List<String> get chosenLang => this._chosenLang;
+
+  set chosenLang(List<String> value) => this._chosenLang = value;
+
+  set languageMap(Map<String, bool> value) => this._languageMap = value;
 
   
   
@@ -28,7 +42,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  int _newProcessTabIndex = 0;
+  
   int get newProcessTabIndex => this._newProcessTabIndex;
 
   set newProcessTabIndex(int value) {
@@ -60,5 +74,26 @@ class GlobalProvider with ChangeNotifier {
   setMachineName(String value) {
     _machineName = value;
     notifyListeners();
+  }
+  addRemoveLang(String key, bool value) {
+    for (int i = 0; i < languageMap.length; i++) {
+      if (languageMap.entries.elementAt(i).key == key) {
+        languageMap["${key}"] = value;
+
+        if (value == true) {
+          chosenLang.add(key);
+        } else {
+          for (var e in chosenLang) {
+            if (e == key) {
+              chosenLang.remove(e);
+              break;
+            }
+          }
+        }
+
+        notifyListeners();
+        break;
+      }
+    }
   }
 }
