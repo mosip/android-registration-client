@@ -26,7 +26,13 @@ class MachineKeys extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _context = context;
-    machineDetails = jsonEncode(context.read<GlobalProvider>().machineDetails).toString();
+    Map<String?, String?> map = context.read<GlobalProvider>().machineDetails;
+    if(map.isEmpty) {
+      machineDetails = AppLocalizations.of(context)!.not_initialized;
+    } else {
+      machineDetails = jsonEncode(map).toString();
+    }
+    
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       appBar: AppBar(

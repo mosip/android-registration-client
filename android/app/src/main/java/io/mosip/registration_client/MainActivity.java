@@ -45,8 +45,8 @@ import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
-import io.mosip.registration_client.models.MachinePigeon;
-import io.mosip.registration_client.models.UserPigeon;
+import io.mosip.registration_client.model.MachinePigeon;
+import io.mosip.registration_client.model.UserPigeon;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";

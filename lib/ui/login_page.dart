@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/login_response.dart';
-import 'package:registration_client/pigeons/machine_pigeon.dart';
+import 'package:registration_client/pigeon/machine_pigeon.dart';
+import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_android/auth_impl.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
@@ -182,54 +183,31 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<Map<String, String>> _validateUsername() async {
-    String response;
-    Map<String, dynamic> mp;
-    Map<String, dynamic> userMap;
-    try {
-      response = await platform
-          .invokeMethod("validateUsername", {'username': username});
-      mp = jsonDecode(response);
-      print(" usermap: $mp");
-      if (mp["user_details"] != "") {
-        userMap = jsonDecode(mp['user_details']);
-        authProvider.setIsOnboarded(userMap["isOnboarded"]);
-        // mp["user_details"]
-        //     .toString()
-        //     .split("isOnboarded=")
-        //     .last
-        //     .split(",")
-        //     .first;
-      } else {
-        userMap = {};
-        authProvider.setIsOnboarded(false);
-      }
-    } on PlatformException {
-      mp = {};
-      userMap = {};
+  _getUserValidation() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (username.isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_required);
+      return;
+    } else if (username.length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
+      return;
     }
-    
-    setState(() {
-      setState(() {
-        isUserValidated = mp['isUserPresent'];
-        if (isUserValidated) {
-          loginResponse = AppLocalizations.of(context)!.user_validated;
-        } else {
-          loginResponse = AppLocalizations.of(context)!.username_incorrect;
-        }
-      });
-    });
-    return {
-      "name": userMap.isEmpty ? "" : userMap["id"].toString(),
-      // mp["user_details"].toString().split("id=").last.split(",").first,
-      "centerId": userMap.isEmpty ? "" : userMap["regCenterId"].toString(),
-      // mp["user_details"]
-      //     .toString()
-      //     .split("regCenterId=")
-      //     .last
-      //     .split(",")
-      //     .first
-    };
+
+    await context.read<AuthProvider>().validateUser(username);
+    bool isValid = context.read<AuthProvider>().isValidUser;
+    if(!isValid) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
+      return;
+    }
+
+    final user = context.read<AuthProvider>().currentUser;
+    context.read<GlobalProvider>().setCenterId(user.centerId!);
+    context.read<GlobalProvider>().setName(user.name!);
+    _showInSnackBar(AppLocalizations.of(context)!.user_validated);
+  }
+
+  void _onNextButtonPressed() async {
+    await _getUserValidation();
   }
 
   void _showInSnackBar(String value) {
@@ -238,22 +216,6 @@ class _LoginPageState extends State<LoginPage> {
         content: Text(value),
       ),
     );
-  }
-
-  void _onTapNext() async {
-    FocusManager.instance.primaryFocus?.unfocus();
-    if (username.isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_required);
-    } else if (username.length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
-    } else if (!isUserValidated) {
-      var value = await _validateUsername();
-      String machineName = _getMachineName();
-      print(value.toString());
-      context.read<GlobalProvider>().setCenterId(value["centerId"]!);
-      context.read<GlobalProvider>().setName(value["name"]!);
-      _showInSnackBar(loginResponse);
-    }
   }
 
   void _onTapLogin() {
@@ -425,9 +387,9 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: isUserValidated ? 41.h : 38.h,
           ),
-          !isUserValidated
+          !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
-                  onTap: _onTapNext,
+                  onTap: _onNextButtonPressed,
                   isDisabled: username.isEmpty || username.length > 50,
                   languages: _languages,
                   isMobile: isMobile,
@@ -439,12 +401,13 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 )
               : const SizedBox(),
-          isUserValidated
+          context.watch<AuthProvider>().isValidUser
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onTapLogin,
                   onTapBack: () {
                     FocusManager.instance.primaryFocus?.unfocus();
+                    context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
                       username = '';
                       isUserValidated = false;

@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/services.dart';
-import 'package:registration_client/pigeons/machine_pigeon.dart';
+import 'package:registration_client/pigeon/machine_pigeon.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
 
 class MachineKeyImpl extends MachineKey {

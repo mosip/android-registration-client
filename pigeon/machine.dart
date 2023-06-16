@@ -2,11 +2,11 @@ import 'package:pigeon/pigeon.dart';
 
 class Machine {
   final Map<String?, String?> map;
-  final String? error;
+  final String? errorCode;
 
   Machine({
     required this.map,
-    this.error,
+    this.errorCode,
   });
 }
 

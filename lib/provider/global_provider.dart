@@ -67,8 +67,12 @@ class GlobalProvider with ChangeNotifier {
 
   setMachineDetails() async {
     final machine = await MachineKeyImpl().getMachineKeys();
-    _machineDetails = machine.map;
-    _machineName = _machineDetails["name"]!;
+    if(machine.errorCode != null) {
+      _machineDetails.addAll({});
+    } else {
+      _machineDetails = machine.map;
+      _machineName = _machineDetails["name"]!;
+    }
     notifyListeners();
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:registration_client/pigeons/user_pigeon.dart';
+import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_spi/auth.dart';
 
 class AuthImpl extends Auth {

@@ -78,4 +78,9 @@ app.*.map.json
 /lib/model/*.freezed.dart
 /lib/model/*.g.dart
 
+# Flutter Pigeon generated files
+/lib/pigeon/
+
+# Android Pigeon generated files
+/android/app/src/main/java/io/mosip/registration_client/model
 

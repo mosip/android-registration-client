@@ -1,16 +1,13 @@
 package io.mosip.registration_client.api_services;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.flutter.plugin.common.MethodChannel;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.service.LoginService;
-import io.mosip.registration_client.models.UserPigeon;
+import io.mosip.registration_client.model.UserPigeon;
 
 @Singleton
 public class UserDetailsApi implements UserPigeon.UserApi {
@@ -28,9 +25,8 @@ public class UserDetailsApi implements UserPigeon.UserApi {
             user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsOnboarded(false)
-                    .setErrorMessage("Please enter a valid username!")
+                    .setErrorCode("REG_USER_EMPTY")
                     .build();
-            Log.e(getClass().getSimpleName(), "username incorrect");
             return;
         }
 
@@ -38,7 +34,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
             user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsOnboarded(false)
-                    .setErrorMessage("User not found!")
+                    .setErrorCode("REG_USER_NOT_FOUND")
                     .build();
             return;
         }
@@ -47,6 +43,9 @@ public class UserDetailsApi implements UserPigeon.UserApi {
             user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsOnboarded(false)
+                    .setCenterId("")
+                    .setName(username)
+                    .setCenterName("")
                     .build();
         } else {
             user = new UserPigeon.User.Builder()

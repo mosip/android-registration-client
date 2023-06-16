@@ -21,97 +21,56 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface User ()
-+ (User *)fromList:(NSArray *)list;
-+ (nullable User *)nullableFromList:(NSArray *)list;
+@interface Machine ()
++ (Machine *)fromList:(NSArray *)list;
++ (nullable Machine *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation User
-+ (instancetype)makeWithUserId:(NSString *)userId
-    name:(nullable NSString *)name
-    email:(nullable NSString *)email
-    isActive:(nullable NSNumber *)isActive
-    isLocked:(nullable NSNumber *)isLocked
-    isOnboarded:(NSNumber *)isOnboarded
-    centerName:(nullable NSString *)centerName
-    centerId:(nullable NSString *)centerId
-    machineName:(nullable NSString *)machineName
-    machineId:(nullable NSString *)machineId
-    failedAttempts:(nullable NSString *)failedAttempts
-    errorMessage:(nullable NSString *)errorMessage {
-  User* pigeonResult = [[User alloc] init];
-  pigeonResult.userId = userId;
-  pigeonResult.name = name;
-  pigeonResult.email = email;
-  pigeonResult.isActive = isActive;
-  pigeonResult.isLocked = isLocked;
-  pigeonResult.isOnboarded = isOnboarded;
-  pigeonResult.centerName = centerName;
-  pigeonResult.centerId = centerId;
-  pigeonResult.machineName = machineName;
-  pigeonResult.machineId = machineId;
-  pigeonResult.failedAttempts = failedAttempts;
-  pigeonResult.errorMessage = errorMessage;
+@implementation Machine
++ (instancetype)makeWithMap:(NSDictionary<NSString *, NSString *> *)map
+    errorCode:(nullable NSString *)errorCode {
+  Machine* pigeonResult = [[Machine alloc] init];
+  pigeonResult.map = map;
+  pigeonResult.errorCode = errorCode;
   return pigeonResult;
 }
-+ (User *)fromList:(NSArray *)list {
-  User *pigeonResult = [[User alloc] init];
-  pigeonResult.userId = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.userId != nil, @"");
-  pigeonResult.name = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.email = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.isActive = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.isLocked = GetNullableObjectAtIndex(list, 4);
-  pigeonResult.isOnboarded = GetNullableObjectAtIndex(list, 5);
-  NSAssert(pigeonResult.isOnboarded != nil, @"");
-  pigeonResult.centerName = GetNullableObjectAtIndex(list, 6);
-  pigeonResult.centerId = GetNullableObjectAtIndex(list, 7);
-  pigeonResult.machineName = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.machineId = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.failedAttempts = GetNullableObjectAtIndex(list, 10);
-  pigeonResult.errorMessage = GetNullableObjectAtIndex(list, 11);
++ (Machine *)fromList:(NSArray *)list {
+  Machine *pigeonResult = [[Machine alloc] init];
+  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.map != nil, @"");
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
-+ (nullable User *)nullableFromList:(NSArray *)list {
-  return (list) ? [User fromList:list] : nil;
++ (nullable Machine *)nullableFromList:(NSArray *)list {
+  return (list) ? [Machine fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.userId ?: [NSNull null]),
-    (self.name ?: [NSNull null]),
-    (self.email ?: [NSNull null]),
-    (self.isActive ?: [NSNull null]),
-    (self.isLocked ?: [NSNull null]),
-    (self.isOnboarded ?: [NSNull null]),
-    (self.centerName ?: [NSNull null]),
-    (self.centerId ?: [NSNull null]),
-    (self.machineName ?: [NSNull null]),
-    (self.machineId ?: [NSNull null]),
-    (self.failedAttempts ?: [NSNull null]),
-    (self.errorMessage ?: [NSNull null]),
+    (self.map ?: [NSNull null]),
+    (self.errorCode ?: [NSNull null]),
   ];
 }
 @end
 
-@interface UserApiCodecReader : FlutterStandardReader
+@interface MachineApiCodecReader : FlutterStandardReader
 @end
-@implementation UserApiCodecReader
+@implementation MachineApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [User fromList:[self readValue]];
+      return [Machine fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface UserApiCodecWriter : FlutterStandardWriter
+@interface MachineApiCodecWriter : FlutterStandardWriter
 @end
-@implementation UserApiCodecWriter
+@implementation MachineApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[User class]]) {
+  if ([value isKindOfClass:[Machine class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else {
@@ -120,41 +79,39 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface UserApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface MachineApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation UserApiCodecReaderWriter
+@implementation MachineApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[UserApiCodecWriter alloc] initWithData:data];
+  return [[MachineApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[UserApiCodecReader alloc] initWithData:data];
+  return [[MachineApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *UserApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *MachineApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    UserApiCodecReaderWriter *readerWriter = [[UserApiCodecReaderWriter alloc] init];
+    MachineApiCodecReaderWriter *readerWriter = [[MachineApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *api) {
+void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.UserApi.validateUser"
+        initWithName:@"dev.flutter.pigeon.MachineApi.getMachineDetails"
         binaryMessenger:binaryMessenger
-        codec:UserApiGetCodec()];
+        codec:MachineApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(validateUserUsername:error:)], @"UserApi api (%@) doesn't respond to @selector(validateUserUsername:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getMachineDetailsWithError:)], @"MachineApi api (%@) doesn't respond to @selector(getMachineDetailsWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        User *output = [api validateUserUsername:arg_username error:&error];
+        Machine *output = [api getMachineDetailsWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {

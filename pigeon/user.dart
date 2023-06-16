@@ -12,7 +12,7 @@ class User {
   final String? machineName;
   final String? machineId;
   final String? failedAttempts;
-  final String? errorMessage;
+  final String? errorCode;
 
   User({
     required this.userId,
@@ -26,7 +26,7 @@ class User {
     this.machineName,
     this.machineId,
     this.failedAttempts,
-    this.errorMessage,
+    this.errorCode,
   });
 }
 
