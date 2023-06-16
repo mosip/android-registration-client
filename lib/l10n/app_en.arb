@@ -34,5 +34,6 @@
   "password_incorrect": "Password incorrect!",
   "machine_not_found": "Machine not found!",
   "network_error": "Login failed. Check network connection!",
-  "cred_expired": "Credentials not found or are expired. Please try online login!"
+  "cred_expired": "Credentials not found or are expired. Please try online login!",
+  "not_initialized": "Machine could not be initialized!"
 }

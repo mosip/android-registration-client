@@ -9,20 +9,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/app_router.dart';
-import 'package:registration_client/credentials_page.dart';
-import 'package:registration_client/login_page.dart';
+import 'package:registration_client/ui/machine_keys.dart';
+import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/main.dart';
-import 'package:registration_client/provider/app_language.dart';
-import 'package:registration_client/test.dart';
+import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:registration_client/widgets/password_component.dart';
-import 'package:registration_client/widgets/username_component.dart';
+import 'package:registration_client/ui/widgets/password_component.dart';
+import 'package:registration_client/ui/widgets/username_component.dart';
 Widget testableWidget({required Widget child}) {
   return MultiProvider(
     providers: [
       ChangeNotifierProvider(
         lazy: false,
-        create: (_) => AppLanguage(),
+        create: (_) => AppLanguageProvider(),
       ),
     ],
     child: TestWidget(
@@ -40,7 +39,7 @@ class TestWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Provider.of<AppLanguage>(context).appLocal,
+      locale: Provider.of<AppLanguageProvider>(context).appLocal,
       home: Builder(builder: (BuildContext context) {
         return child;
       }),

@@ -1,49 +1,78 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
+import 'package:registration_client/platform_android/machine_key_impl.dart';
 
 class GlobalProvider with ChangeNotifier {
-  List<Object?> _listOfProcesses = List.empty(growable: true);
+  //Variables
+  int _currentIndex = 0;
+  String _name = "";
+  String _centerId = "";
+  String _centerName = "";
+  String _machineName = "";
+  Process? _currentProcess;
+  Map<String?, String?> _machineDetails = {};
+
+  //GettersSetters
+
+  int get currentIndex => _currentIndex;
+  String get name => _name;
+  String get centerId => _centerId;
+  String get centerName => _centerName;
+  String get machineName => _machineName;
+  Map<String?, String?> get machineDetails => _machineDetails;
+
   
-  List<Object?> get listOfProcesses => this._listOfProcesses;
+  
+  Process? get currentProcess => this._currentProcess;
 
-  set listOfProcesses(List<Object?> value) {
-    this._listOfProcesses = value;
+  set currentProcess(Process? value) {
+    this._currentProcess = value;
     notifyListeners();
   }
 
-  bool _isLoggedIn = false;
-  bool _isOnboarded = false;
-  bool _isDefault = false;
-  bool _isSupervisor = false;
-  bool _isOfficer = false;
+  int _newProcessTabIndex = 0;
+  int get newProcessTabIndex => this._newProcessTabIndex;
 
-  bool get isLoggedIn => _isLoggedIn;
-  bool get isOnboarded => _isOnboarded;
-  bool get isDefault => _isDefault;
-  bool get isSupervisor => _isSupervisor;
-  bool get isOfficer => _isOfficer;
+  set newProcessTabIndex(int value) {
+    this._newProcessTabIndex = value;
+    notifyListeners();
+  }
+  //Functions
 
-  setIsLoggedIn(bool value) {
-    _isLoggedIn = value;
+  setCurrentIndex(int value) {
+    _currentIndex = value;
     notifyListeners();
   }
 
-  setIsOnboarded(bool value) {
-    _isOnboarded = value;
+  setName(String value) {
+    _name = value;
     notifyListeners();
   }
 
-  setIsDefault(bool value) {
-    _isDefault = value;
+  setCenterId(String value) {
+    _centerId = value;
     notifyListeners();
   }
 
-  setIsSupervisor(bool value) {
-    _isSupervisor = value;
+  setCenterName(String value) {
+    _centerName = value;
     notifyListeners();
   }
 
-  setIsOfficer(bool value) {
-    _isOfficer = value;
+  setMachineName(String value) {
+    _machineName = value;
+    notifyListeners();
+  }
+
+  setMachineDetails() async {
+    final machine = await MachineKeyImpl().getMachineKeys();
+    if(machine.errorCode != null) {
+      _machineDetails.addAll({});
+    } else {
+      _machineDetails = machine.map;
+      _machineName = _machineDetails["name"]!;
+    }
     notifyListeners();
   }
 }

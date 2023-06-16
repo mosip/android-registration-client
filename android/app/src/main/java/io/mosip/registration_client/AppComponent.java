@@ -25,7 +25,8 @@ import io.mosip.registration.clientmanager.config.RoomModule;
                 AndroidSupportInjectionModule.class,
                 NetworkModule.class,
                 RoomModule.class,
-                AppModule.class
+                AppModule.class,
+                HostApiModule.class,
         }
 )
 public interface AppComponent  extends AndroidInjector<FlutterActivity> {
@@ -39,6 +40,7 @@ public interface AppComponent  extends AndroidInjector<FlutterActivity> {
         Builder networkModule(NetworkModule networkModule);
         Builder roomModule(RoomModule roomModule);
         Builder appModule(AppModule appModule);
+        Builder hostApiModule(HostApiModule hostApiModule);
 //        Builder activityBuildersModule(ActivityBuildersModule activityBuildersModule);
         AppComponent build();
     }

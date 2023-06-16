@@ -43,6 +43,10 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.UserDetailsApi;
+import io.mosip.registration_client.model.MachinePigeon;
+import io.mosip.registration_client.model.UserPigeon;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
@@ -78,6 +82,12 @@ public class MainActivity extends FlutterActivity {
     @Inject
     GlobalParamRepository globalParamRepository;
 
+    @Inject
+    MachineDetailsApi machineDetailsApi;
+
+    @Inject
+    UserDetailsApi userDetailsApi;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +99,7 @@ public class MainActivity extends FlutterActivity {
                 .networkModule(new NetworkModule(getApplication()))
                 .roomModule(new RoomModule(getApplication()))
                 .appModule(new AppModule(getApplication()))
+                .hostApiModule(new HostApiModule())
                 .build();
 
         appComponent.inject(this);
@@ -98,6 +109,10 @@ public class MainActivity extends FlutterActivity {
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
         GeneratedPluginRegistrant.registerWith(flutterEngine);
+        initializeAppComponent();
+        MachinePigeon.MachineApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), machineDetailsApi);
+        UserPigeon.UserApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), userDetailsApi);
+
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {
