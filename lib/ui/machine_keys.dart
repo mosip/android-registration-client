@@ -29,6 +29,7 @@ class MachineKeys extends StatelessWidget {
   Widget build(BuildContext context) {
     _context = context;
     Map<String?, String?> map = context.read<GlobalProvider>().machineDetails;
+
     if (map.isEmpty) {
       machineDetails = AppLocalizations.of(context)!.not_initialized;
     } else {

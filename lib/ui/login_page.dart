@@ -197,6 +197,7 @@ class _LoginPageState extends State<LoginPage> {
 
     await context.read<AuthProvider>().validateUser(username);
     bool isValid = context.read<AuthProvider>().isValidUser;
+
     if (!isValid) {
       _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
       return;

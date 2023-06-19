@@ -5,6 +5,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -89,15 +90,24 @@ public class UserDetailRepository {
         return true;
     }
 
-    public boolean isValidPassword(String userId, String password) throws Exception {
+    public boolean isValidPassword(String userId, String password) {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
-        return HMACUtils2.digestAsPlainTextWithSalt(
+        boolean isValid = false;
+
+        try {
+            isValid = HMACUtils2.digestAsPlainTextWithSalt(
                     password.getBytes(),
                     CryptoUtil.base64decoder.decode(userPassword.getSalt())
-                ).equals(userPassword.getPwd());
+            ).equals(userPassword.getPwd());
+        } catch (NoSuchAlgorithmException e) {
+            isValid = false;
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
+
+        return isValid;
     }
 
-    public void setPasswordHash(String userId, String password) throws Exception {
+    public void setPasswordHash(String userId, String password) {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
         if (userPassword == null) {
             userPassword = new UserPassword(userId);
@@ -109,12 +119,17 @@ public class UserDetailRepository {
             );
         }
 
-        userPassword.setPwd(
-                HMACUtils2.digestAsPlainTextWithSalt(
-                        password.getBytes(),
-                        CryptoUtil.base64decoder.decode(userPassword.getSalt())
-                )
-        );
+        try {
+            userPassword.setPwd(
+                    HMACUtils2.digestAsPlainTextWithSalt(
+                            password.getBytes(),
+                            CryptoUtil.base64decoder.decode(userPassword.getSalt())
+                    )
+            );
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
+
 //        userPassword.setUpdDtimes(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime().toString()).toString());
 
         userPasswordDao.insertUserPassword(userPassword);

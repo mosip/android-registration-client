@@ -15,7 +15,7 @@ class GlobalProvider with ChangeNotifier {
   Map<String?, String?> _machineDetails = {};
 
   int _newProcessTabIndex = 0;
-  
+
   List<String> _chosenLang = [];
   Map<String, bool> _languageMap = {
     'English': true,
@@ -30,7 +30,6 @@ class GlobalProvider with ChangeNotifier {
   String get centerId => _centerId;
   String get centerName => _centerName;
   String get machineName => _machineName;
-
   Map<String?, String?> get machineDetails => _machineDetails;
 
   Process? get currentProcess => this._currentProcess;
@@ -42,8 +41,6 @@ class GlobalProvider with ChangeNotifier {
   set chosenLang(List<String> value) => this._chosenLang = value;
 
   set languageMap(Map<String, bool> value) => this._languageMap = value;
-
-  
 
   set currentProcess(Process? value) {
     this._currentProcess = value;
@@ -86,6 +83,7 @@ class GlobalProvider with ChangeNotifier {
 
   setMachineDetails() async {
     final machine = await MachineKeyImpl().getMachineKeys();
+
     if (machine.errorCode != null) {
       _machineDetails.addAll({});
     } else {
