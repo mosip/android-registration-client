@@ -99,7 +99,7 @@ public class MainActivity extends FlutterActivity {
                 .networkModule(new NetworkModule(getApplication()))
                 .roomModule(new RoomModule(getApplication()))
                 .appModule(new AppModule(getApplication()))
-                .hostApiModule(new HostApiModule())
+                .hostApiModule(new HostApiModule(getApplication()))
                 .build();
 
         appComponent.inject(this);

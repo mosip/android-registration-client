@@ -52,11 +52,11 @@ public class LoginService {
     public boolean isPasswordPresent(String userId) {
         return userDetailRepository.isPasswordPresent(userId);
     }
-    public boolean validatePassword(String userId, String password) throws Exception {
+    public boolean validatePassword(String userId, String password) {
         return userDetailRepository.isValidPassword(userId, password);
     }
 
-    public void setPasswordHash(String userId, String password) throws Exception {
+    public void setPasswordHash(String userId, String password) {
         userDetailRepository.setPasswordHash(userId, password);
     }
 
