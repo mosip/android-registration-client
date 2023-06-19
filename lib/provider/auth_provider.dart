@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_android/auth_impl.dart';
 
@@ -8,6 +9,7 @@ class AuthProvider with ChangeNotifier {
   bool _isDefault = false;
   bool _isSupervisor = false;
   bool _isOfficer = false;
+
   bool _isValidUser = false;
   late User _currentUser;
 
@@ -16,6 +18,7 @@ class AuthProvider with ChangeNotifier {
   bool get isDefault => _isDefault;
   bool get isSupervisor => _isSupervisor;
   bool get isOfficer => _isOfficer;
+
   bool get isValidUser => _isValidUser;
   User get currentUser => _currentUser;
 
@@ -57,7 +60,7 @@ class AuthProvider with ChangeNotifier {
   validateUser(username) async {
     final user = await AuthImpl().validateUser(username);
 
-    if(user.errorCode != null) {
+    if (user.errorCode != null) {
       _isValidUser = false;
     } else {
       _isOnboarded = false;

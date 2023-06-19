@@ -13,11 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/login_response.dart';
+
 import 'package:registration_client/pigeon/machine_pigeon.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_android/auth_impl.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
+
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
@@ -195,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
 
     await context.read<AuthProvider>().validateUser(username);
     bool isValid = context.read<AuthProvider>().isValidUser;
-    if(!isValid) {
+    if (!isValid) {
       _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
       return;
     }
