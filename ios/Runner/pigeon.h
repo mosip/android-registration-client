@@ -10,25 +10,33 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Machine;
+@class AuthResponse;
 
-@interface Machine : NSObject
+@interface AuthResponse : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMap:(NSDictionary<NSString *, NSString *> *)map
++ (instancetype)makeWithResponse:(NSString *)response
+    username:(NSString *)username
+    isOfficer:(NSNumber *)isOfficer
+    isDefault:(NSNumber *)isDefault
+    isSupervisor:(NSNumber *)isSupervisor
     errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> * map;
+@property(nonatomic, copy) NSString * response;
+@property(nonatomic, copy) NSString * username;
+@property(nonatomic, strong) NSNumber * isOfficer;
+@property(nonatomic, strong) NSNumber * isDefault;
+@property(nonatomic, strong) NSNumber * isSupervisor;
 @property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by MachineApi.
-NSObject<FlutterMessageCodec> *MachineApiGetCodec(void);
+/// The codec used by AuthResponseApi.
+NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void);
 
-@protocol MachineApi
+@protocol AuthResponseApi
 /// @return `nil` only when `error != nil`.
-- (nullable Machine *)getMachineDetailsWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable AuthResponse *)loginUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *_Nullable api);
+extern void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

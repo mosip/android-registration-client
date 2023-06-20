@@ -21,56 +21,76 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface Machine ()
-+ (Machine *)fromList:(NSArray *)list;
-+ (nullable Machine *)nullableFromList:(NSArray *)list;
+@interface AuthResponse ()
++ (AuthResponse *)fromList:(NSArray *)list;
++ (nullable AuthResponse *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation Machine
-+ (instancetype)makeWithMap:(NSDictionary<NSString *, NSString *> *)map
+@implementation AuthResponse
++ (instancetype)makeWithResponse:(NSString *)response
+    username:(NSString *)username
+    isOfficer:(NSNumber *)isOfficer
+    isDefault:(NSNumber *)isDefault
+    isSupervisor:(NSNumber *)isSupervisor
     errorCode:(nullable NSString *)errorCode {
-  Machine* pigeonResult = [[Machine alloc] init];
-  pigeonResult.map = map;
+  AuthResponse* pigeonResult = [[AuthResponse alloc] init];
+  pigeonResult.response = response;
+  pigeonResult.username = username;
+  pigeonResult.isOfficer = isOfficer;
+  pigeonResult.isDefault = isDefault;
+  pigeonResult.isSupervisor = isSupervisor;
   pigeonResult.errorCode = errorCode;
   return pigeonResult;
 }
-+ (Machine *)fromList:(NSArray *)list {
-  Machine *pigeonResult = [[Machine alloc] init];
-  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.map != nil, @"");
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
++ (AuthResponse *)fromList:(NSArray *)list {
+  AuthResponse *pigeonResult = [[AuthResponse alloc] init];
+  pigeonResult.response = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.response != nil, @"");
+  pigeonResult.username = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.username != nil, @"");
+  pigeonResult.isOfficer = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.isOfficer != nil, @"");
+  pigeonResult.isDefault = GetNullableObjectAtIndex(list, 3);
+  NSAssert(pigeonResult.isDefault != nil, @"");
+  pigeonResult.isSupervisor = GetNullableObjectAtIndex(list, 4);
+  NSAssert(pigeonResult.isSupervisor != nil, @"");
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 5);
   return pigeonResult;
 }
-+ (nullable Machine *)nullableFromList:(NSArray *)list {
-  return (list) ? [Machine fromList:list] : nil;
++ (nullable AuthResponse *)nullableFromList:(NSArray *)list {
+  return (list) ? [AuthResponse fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.map ?: [NSNull null]),
+    (self.response ?: [NSNull null]),
+    (self.username ?: [NSNull null]),
+    (self.isOfficer ?: [NSNull null]),
+    (self.isDefault ?: [NSNull null]),
+    (self.isSupervisor ?: [NSNull null]),
     (self.errorCode ?: [NSNull null]),
   ];
 }
 @end
 
-@interface MachineApiCodecReader : FlutterStandardReader
+@interface AuthResponseApiCodecReader : FlutterStandardReader
 @end
-@implementation MachineApiCodecReader
+@implementation AuthResponseApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [Machine fromList:[self readValue]];
+      return [AuthResponse fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface MachineApiCodecWriter : FlutterStandardWriter
+@interface AuthResponseApiCodecWriter : FlutterStandardWriter
 @end
-@implementation MachineApiCodecWriter
+@implementation AuthResponseApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[Machine class]]) {
+  if ([value isKindOfClass:[AuthResponse class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else {
@@ -79,39 +99,43 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface MachineApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface AuthResponseApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation MachineApiCodecReaderWriter
+@implementation AuthResponseApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[MachineApiCodecWriter alloc] initWithData:data];
+  return [[AuthResponseApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[MachineApiCodecReader alloc] initWithData:data];
+  return [[AuthResponseApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *MachineApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    MachineApiCodecReaderWriter *readerWriter = [[MachineApiCodecReaderWriter alloc] init];
+    AuthResponseApiCodecReaderWriter *readerWriter = [[AuthResponseApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *api) {
+void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.MachineApi.getMachineDetails"
+        initWithName:@"dev.flutter.pigeon.AuthResponseApi.login"
         binaryMessenger:binaryMessenger
-        codec:MachineApiGetCodec()];
+        codec:AuthResponseApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMachineDetailsWithError:)], @"MachineApi api (%@) doesn't respond to @selector(getMachineDetailsWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(loginUsername:password:isConnected:error:)], @"AuthResponseApi api (%@) doesn't respond to @selector(loginUsername:password:isConnected:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_password = GetNullableObjectAtIndex(args, 1);
+        NSNumber *arg_isConnected = GetNullableObjectAtIndex(args, 2);
         FlutterError *error;
-        Machine *output = [api getMachineDetailsWithError:&error];
+        AuthResponse *output = [api loginUsername:arg_username password:arg_password isConnected:arg_isConnected error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
