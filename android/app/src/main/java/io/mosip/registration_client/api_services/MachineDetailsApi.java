@@ -25,9 +25,8 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
         this.clientCryptoManagerService = clientCryptoManagerService;
     }
 
-    @NonNull
     @Override
-    public MachinePigeon.Machine getMachineDetails() {
+    public void getMachineDetails(@NonNull MachinePigeon.Result<MachinePigeon.Machine> result) {
         Map<String, String> details =
                 clientCryptoManagerService.getMachineDetails();
 
@@ -36,7 +35,7 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
                     .setMap(machineDetails)
                     .setErrorCode("REG_MACHINE_NOT_INITIALIZED")
                     .build();
-            return machine;
+            result.success(machine);
         }
 
         try {
@@ -44,14 +43,15 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
             machine = new MachinePigeon.Machine.Builder()
                     .setMap(details)
                     .build();
+            result.success(machine);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), e.getMessage(), e);
             machine = new MachinePigeon.Machine.Builder()
                     .setMap(machineDetails)
                     .setErrorCode("REG_MACHINE_NOT_FETCHED")
                     .build();
+            result.success(machine);
         }
 
-        return machine;
     }
 }

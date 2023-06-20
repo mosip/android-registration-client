@@ -12,5 +12,6 @@ class Machine {
 
 @HostApi()
 abstract class MachineApi {
+  @async
   Machine getMachineDetails();
 }

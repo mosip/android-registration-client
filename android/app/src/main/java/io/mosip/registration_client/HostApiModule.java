@@ -5,10 +5,13 @@ import android.app.Application;
 import android.content.Context;
 
 
+import androidx.annotation.NonNull;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -32,11 +35,22 @@ public class HostApiModule {
         this.appContext = application.getApplicationContext();
     }
 
+    @Provides
+    Application providesApplication() {
+        return application;
+    }
+
+    @Provides
+    @NonNull
+    public Context provideApplicationContext() {
+        return appContext;
+    }
 
     @Provides
     @Singleton
-    UserDetailsApi getLoginActivityApi(LoginService loginService) {
-        return new UserDetailsApi(loginService);
+    UserDetailsApi getLoginActivityApi(LoginService loginService,
+                                       RegistrationCenterRepository registrationCenterRepository) {
+        return new UserDetailsApi(loginService, registrationCenterRepository);
     }
 
     @Provides

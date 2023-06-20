@@ -26,10 +26,11 @@ class AuthImpl extends Auth {
     try {
       authResponse =
           await AuthResponseApi().login(username, password, isConnected);
+    } on PlatformException {
+      print('AuthResponseApi call failed');
     } catch (e) {
       debugPrint(e.toString());
     }
-
     return authResponse;
   }
 }

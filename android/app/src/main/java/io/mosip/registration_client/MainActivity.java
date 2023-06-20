@@ -43,8 +43,10 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
+import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.UserPigeon;
 
@@ -88,6 +90,9 @@ public class MainActivity extends FlutterActivity {
     @Inject
     UserDetailsApi userDetailsApi;
 
+    @Inject
+    AuthenticationApi authenticationApi;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,9 +104,7 @@ public class MainActivity extends FlutterActivity {
                 .networkModule(new NetworkModule(getApplication()))
                 .roomModule(new RoomModule(getApplication()))
                 .appModule(new AppModule(getApplication()))
-
                 .hostApiModule(new HostApiModule(getApplication()))
-
                 .build();
 
         appComponent.inject(this);
@@ -114,6 +117,7 @@ public class MainActivity extends FlutterActivity {
         initializeAppComponent();
         MachinePigeon.MachineApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), machineDetailsApi);
         UserPigeon.UserApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), userDetailsApi);
+        AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(

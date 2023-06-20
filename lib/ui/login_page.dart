@@ -125,66 +125,6 @@ class _LoginPageState extends State<LoginPage> {
           );
   }
 
-  Future<void> _login(String username, String password) async {
-    final connectivityProvider =
-        Provider.of<ConnectivityProvider>(context, listen: false);
-    String response;
-    List<dynamic> temp = List.empty(growable: true);
-    Map<String, dynamic> mp;
-    try {
-      response = await platform.invokeMethod("login", {
-        'username': username,
-        'password': password,
-        'isConnected': connectivityProvider.isConnected,
-      });
-      mp = jsonDecode(response);
-      loginResp = LoginResponse.fromJson(mp);
-
-      temp = loginResp.roles;
-    } on PlatformException {
-      mp = {};
-    }
-
-    authProvider.setIsLoggedIn(loginResp.isLoggedIn);
-    authProvider.setIsSupervisor(temp.contains("REGISTRATION_SUPERVISOR"));
-    authProvider.setIsOfficer(temp.contains("REGISTRATION_OPERATOR"));
-    setState(() {
-      errorCode = loginResp.error_code;
-      if (authProvider.isLoggedIn) {
-        loginResponse = loginResp.login_response;
-      } else if (errorCode == '500') {
-        loginResponse = AppLocalizations.of(context)!.login_failed;
-      } else if (errorCode == '501') {
-        loginResponse = AppLocalizations.of(context)!.network_error;
-      } else if (errorCode == '401') {
-        loginResponse = AppLocalizations.of(context)!.password_incorrect;
-      } else if (errorCode == 'MACHINE_NOT_FOUND') {
-        loginResponse = AppLocalizations.of(context)!.machine_not_found;
-      } else if (errorCode == 'OFFLINE') {
-        loginResponse = AppLocalizations.of(context)!.cred_expired;
-      } else {
-        loginResponse = loginResp.login_response;
-      }
-    });
-    if (authProvider.isLoggedIn == true) {
-      Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (authProvider.isOnboarded ||
-          (authProvider.isSupervisor && authProvider.isOfficer)) {
-        context.read<GlobalProvider>().setCurrentIndex(1);
-      }
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
-          ),
-        ),
-      );
-    }
-  }
-
   _getUserValidation() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
@@ -206,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
     final user = context.read<AuthProvider>().currentUser;
     context.read<GlobalProvider>().setCenterId(user.centerId!);
     context.read<GlobalProvider>().setName(user.name!);
+    context.read<GlobalProvider>().setCenterName(user.centerName!);
     _showInSnackBar(AppLocalizations.of(context)!.user_validated);
   }
 
@@ -221,24 +162,96 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _onTapLogin() {
+  _onLoginButtonPressed() async {
+    await _getLoginAction();
+  }
+
+  _getLoginAction() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
       _showInSnackBar(AppLocalizations.of(context)!.password_required);
       return;
-    } else if (password.length > 50) {
+    }
+    if (password.length > 50) {
       _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
       return;
     }
+
     setState(() {
       isLoggingIn = true;
     });
-    _login(username, password).then((value) {
-      if (loginResponse.isNotEmpty && !authProvider.isLoggedIn) {
-        _showInSnackBar(loginResponse);
-      }
+    bool isConnected = context.read<ConnectivityProvider>().isConnected;
+    await context
+        .read<AuthProvider>()
+        .authenticateUser(username, password, isConnected);
+
+    bool isTrue = context.read<AuthProvider>().isLoggedIn;
+    if (!isTrue) {
+      _showErrorInSnackbar();
+    } else {
+      _navigateToHomePage();
+    }
+
+    setState(() {
       isLoggingIn = false;
     });
+  }
+
+  _showErrorInSnackbar() {
+    String errorMsg = context.read<AuthProvider>().loginError;
+    String snackbarText = "";
+
+    switch (errorMsg) {
+      case "REG_TRY_AGAIN":
+        snackbarText = AppLocalizations.of(context)!.login_failed;
+        break;
+
+      case "REG_INVALID_REQUEST":
+        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        break;
+
+      case "REG_MACHINE_NOT_FOUND":
+        snackbarText = AppLocalizations.of(context)!.machine_not_found;
+        break;
+
+      case "REG_NETWORK_ERROR":
+        snackbarText = AppLocalizations.of(context)!.network_error;
+        break;
+
+      case "REG_CRED_EXPIRED":
+        snackbarText = AppLocalizations.of(context)!.cred_expired;
+        break;
+
+      case "":
+        return;
+
+      default:
+        snackbarText = errorMsg;
+        break;
+    }
+
+    _showInSnackBar(snackbarText);
+  }
+
+  _navigateToHomePage() {
+    if (context.read<AuthProvider>().isLoggedIn == true) {
+      Navigator.popUntil(context, ModalRoute.withName('/login-page'));
+      if (context.read<AuthProvider>().isOnboarded ||
+          (context.read<AuthProvider>().isSupervisor &&
+              context.read<AuthProvider>().isOfficer)) {
+        context.read<GlobalProvider>().setCurrentIndex(1);
+      }
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Responsive(
+            mobile: DashBoardMobileView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _appBarComponent() {
@@ -294,7 +307,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              _onLoginButtonPressed();
+            },
           ),
         ],
       ),
@@ -407,7 +422,7 @@ class _LoginPageState extends State<LoginPage> {
           context.watch<AuthProvider>().isValidUser
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
-                  onTapLogin: _onTapLogin,
+                  onTapLogin: _onLoginButtonPressed,
                   onTapBack: () {
                     FocusManager.instance.primaryFocus?.unfocus();
                     context.read<AuthProvider>().setIsValidUser(false);
