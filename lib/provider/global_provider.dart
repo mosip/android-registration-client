@@ -15,8 +15,9 @@ class GlobalProvider with ChangeNotifier {
   Map<String?, String?> _machineDetails = {};
 
   int _newProcessTabIndex = 0;
+  int _htmlBoxTabIndex = 0;
 
-  List<String> _chosenLang = [];
+  List<String> _chosenLang = ["English"];
   Map<String, bool> _languageMap = {
     'English': true,
     'Arabic': false,
@@ -51,6 +52,13 @@ class GlobalProvider with ChangeNotifier {
 
   set newProcessTabIndex(int value) {
     this._newProcessTabIndex = value;
+    notifyListeners();
+  }
+
+  int get htmlBoxTabIndex => this._htmlBoxTabIndex;
+
+  set htmlBoxTabIndex(int value) {
+    this._htmlBoxTabIndex = value;
     notifyListeners();
   }
   //Functions
@@ -114,5 +122,21 @@ class GlobalProvider with ChangeNotifier {
         break;
       }
     }
+  }
+  chooseLanguage(Map<String,String> label) {
+    String x = '';
+    for (var i in chosenLang) {
+      if (i == "English") {
+        x = x + label["eng"]! + "/";
+      }
+      if (i == "Arabic") {
+        x = x + label["ara"]! + "/";
+      }
+      if (i == "French") {
+        x = x + label["fra"]! + "/";
+      }
+    }
+    x = x.substring(0, x.length - 1);
+    return x;
   }
 }

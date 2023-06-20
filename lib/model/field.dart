@@ -13,6 +13,7 @@ class Field with _$Field {
     bool? inputRequired,
     bool? required,
     String? fieldCategory,
+    String? subType,
     String? type,
     int? minimum,
     int? maximum,
