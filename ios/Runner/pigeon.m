@@ -118,4 +118,23 @@ void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Machin
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.MachineApi.getCenterName"
+        binaryMessenger:binaryMessenger
+        codec:MachineApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getCenterNameRegCenterId:completion:)], @"MachineApi api (%@) doesn't respond to @selector(getCenterNameRegCenterId:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_regCenterId = GetNullableObjectAtIndex(args, 0);
+        [api getCenterNameRegCenterId:arg_regCenterId completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }

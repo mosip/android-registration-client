@@ -115,4 +115,10 @@ class GlobalProvider with ChangeNotifier {
       }
     }
   }
+
+  getRegCenterName(String regCenterId) async {
+    String regCenterName = await MachineKeyImpl().getCenterName(regCenterId);
+    _centerName = regCenterName;
+    notifyListeners();
+  }
 }

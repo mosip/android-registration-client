@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/onboard/widgets/onboard_landing_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -17,6 +18,7 @@ class OnboardLandingPage extends StatelessWidget {
   static const platform =
       MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
   const OnboardLandingPage({super.key});
+  
   goToUrl(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
@@ -37,6 +39,12 @@ class OnboardLandingPage extends StatelessWidget {
     return result;
   }
 
+  _getStringValueGlobalParamAction(BuildContext context, String key) async {
+    await context.read<RegistrationTaskProvider>().getStringValueGlobalParam(key);
+    String res = context.read<RegistrationTaskProvider>().stringValueGlobalParam;
+    await goToUrl(res);
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isLandscape =
@@ -45,67 +53,85 @@ class OnboardLandingPage extends StatelessWidget {
       {
         "icon": "assets/images/Onboarding Yourself.png",
         "title": "Onboarding Yourself",
-        "onTap": () async {
-          _getStringValueGlobalParam(
-                  context, "mosip.registration.onboard_yourself_url")
-              .then((value) => {
-                    goToUrl(value),
-                  });
+        "onTap": () {
+          // _getStringValueGlobalParamAction(
+          //         context, "mosip.registration.onboard_yourself_url")
+          //     .then((value) => {
+          //           goToUrl(value),
+          //         });
+
+          _getStringValueGlobalParamAction(
+            context, "mosip.registration.onboard_yourself_url");
         },
       },
       {
         "icon": "assets/images/Onboarding Yourself.png",
         "title": "Registering an Individual",
         "onTap": () async {
-          _getStringValueGlobalParam(
-                  context, "mosip.registration.registering_individual_url")
-              .then((value) => {
-                    goToUrl(value),
-                  });
+          // _getStringValueGlobalParam(
+          //         context, "mosip.registration.registering_individual_url")
+          //     .then((value) => {
+          //           goToUrl(value),
+          //         });
+
+          _getStringValueGlobalParamAction(
+            context, "mosip.registration.registering_individual_url");
         },
       },
       {
         "icon": "assets/images/Synchronising Data.png",
         "title": "Synchronising Data",
         "onTap": () async {
-          _getStringValueGlobalParam(
-                  context, "mosip.registration.sync_data_url")
-              .then((value) => {
-                    goToUrl(value),
-                  });
+          // _getStringValueGlobalParam(
+          //         context, "mosip.registration.sync_data_url")
+          //     .then((value) => {
+          //           goToUrl(value),
+          //         });
+
+          _getStringValueGlobalParamAction(
+            context, "mosip.registration.sync_data_url");
         },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Mapping Devices to Machine",
         "onTap": () async {
-          _getStringValueGlobalParam(
-                  context, "mosip.registration.mapping_devices_url")
-              .then((value) => {
-                    goToUrl(value),
-                  });
+          // _getStringValueGlobalParam(
+          //         context, "mosip.registration.mapping_devices_url")
+          //     .then((value) => {
+          //           goToUrl(value),
+          //         });
+
+          _getStringValueGlobalParamAction(
+            context, "mosip.registration.mapping_devices_url");
         },
       },
       {
         "icon": "assets/images/Uploading Local - Registration Data.png",
         "title": "Uploading Local/Registration Data",
         "onTap": () async {
-          _getStringValueGlobalParam(
-                  context, "mosip.registration.uploading_data_url")
-              .then((value) => {
-                    goToUrl(value),
-                  });
+          // _getStringValueGlobalParam(
+          //         context, "mosip.registration.uploading_data_url")
+          //     .then((value) => {
+          //           goToUrl(value),
+          //         });
+
+          _getStringValueGlobalParamAction(
+            context, "mosip.registration.uploading_data_url");
         },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Updating Operator Biometrics",
         "onTap": () async {
-          _getStringValueGlobalParam(
-                  context, "mosip.registration.updating_biometrics_url")
-              .then((value) => {
-                    goToUrl(value),
-                  });
+          // _getStringValueGlobalParam(
+          //         context, "mosip.registration.updating_biometrics_url")
+          //     .then((value) => {
+          //           goToUrl(value),
+          //         });
+
+          _getStringValueGlobalParamAction(
+            context, "mosip.registration.updating_biometrics_url");
         },
       },
     ];

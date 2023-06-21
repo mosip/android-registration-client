@@ -11,6 +11,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 
@@ -21,6 +23,7 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 
 @Module
@@ -55,8 +58,9 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    MachineDetailsApi getMachineDetailsApi(ClientCryptoManagerService clientCryptoManagerService) {
-        return new MachineDetailsApi(clientCryptoManagerService);
+    MachineDetailsApi getMachineDetailsApi(ClientCryptoManagerService clientCryptoManagerService,
+                                           RegistrationCenterRepository registrationCenterRepository) {
+        return new MachineDetailsApi(clientCryptoManagerService, registrationCenterRepository);
     }
 
 
@@ -68,6 +72,14 @@ public class HostApiModule {
                                            AuditManagerService auditManagerService) {
         return new AuthenticationApi(appContext, syncRestService, syncRestFactory,
                         loginService, auditManagerService);
+    }
+
+    @Provides
+    @Singleton
+    ProcessSpecDetailsApi getProcessSpecDetailsApi(IdentitySchemaRepository identitySchemaRepository,
+                                                   GlobalParamRepository globalParamRepository) {
+        return new ProcessSpecDetailsApi(appContext, identitySchemaRepository,
+                        globalParamRepository);
     }
 
 }

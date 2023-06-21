@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/machine_pigeon.dart';
 
@@ -12,11 +13,24 @@ class MachineKeyImpl extends MachineKey {
     try {
       machine = await MachineApi().getMachineDetails();
     } on PlatformException {
-      print('MachineApi call failed!');
+      debugPrint('MachineApi call failed!');
     } catch (e) {
-      print('Machine not fetched! ${e.toString()}');
+      debugPrint('Machine not fetched! ${e.toString()}');
     }
 
     return machine;
+  }
+  
+  @override
+  Future<String> getCenterName(String regCenterId) async {
+    String regCenterName;
+    try {
+      regCenterName = await MachineApi().getCenterName(regCenterId);
+    } on PlatformException catch (e) {
+      debugPrint('Machine not found $e');
+      regCenterName = "";
+    }
+
+    return regCenterName;
   }
 }

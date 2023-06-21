@@ -26,6 +26,7 @@ NSObject<FlutterMessageCodec> *MachineApiGetCodec(void);
 
 @protocol MachineApi
 - (void)getMachineDetailsWithCompletion:(void (^)(Machine *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCenterNameRegCenterId:(NSString *)regCenterId completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *_Nullable api);

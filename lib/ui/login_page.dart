@@ -307,9 +307,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {
-              _onLoginButtonPressed();
-            },
+            onTap: () {},
           ),
         ],
       ),

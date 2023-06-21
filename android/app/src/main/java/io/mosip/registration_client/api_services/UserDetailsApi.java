@@ -1,14 +1,16 @@
 package io.mosip.registration_client.api_services;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.flutter.Log;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -63,12 +65,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .build();
             result.success(user);
         } else {
-            List<RegistrationCenter> registrationCenterList =
-                    registrationCenterRepository.getRegistrationCenter(userDetail.getRegCenterId());
-            String regCenter = "";
-            if(registrationCenterList != null && !registrationCenterList.isEmpty()) {
-                regCenter = registrationCenterList.get(0).getName();
-            }
+            String regCenter = getCenterName(userDetail);
             user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsActive(userDetail.getIsActive())
@@ -80,5 +77,22 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .build();
             result.success(user);
         }
+    }
+
+    private String getCenterName(UserDetail userDetail) {
+        List<RegistrationCenter> registrationCenterList = new ArrayList<>();
+        String regCenter = "";
+        try {
+            registrationCenterList =
+                    registrationCenterRepository.getRegistrationCenter(userDetail.getRegCenterId());
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error in getCenterName", e);
+        }
+
+        if(registrationCenterList != null && !registrationCenterList.isEmpty()) {
+            regCenter = registrationCenterList.get(0).getName();
+        }
+
+        return regCenter;
     }
 }
