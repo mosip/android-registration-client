@@ -9,7 +9,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 
-
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/new_process_language_selection.dart';
 
@@ -18,15 +17,24 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
+import '../../provider/auth_provider.dart';
+import '../../utils/app_style.dart';
+import '../login_page.dart';
 import 'widgets/home_page_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const route = "/home-page";
   const HomePage({super.key});
 
   static const platform =
       MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   void syncData(BuildContext context) async {
     await _masterDataSync();
     await _getNewProcessSpec(context);
@@ -37,7 +45,7 @@ class HomePage extends StatelessWidget {
   Future<void> _masterDataSync() async {
     String result;
     try {
-      result = await platform.invokeMethod("masterDataSync");
+      result = await HomePage.platform.invokeMethod("masterDataSync");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }
@@ -59,7 +67,7 @@ class HomePage extends StatelessWidget {
   Future<void> _getNewProcessSpec(BuildContext context) async {
     try {
       context.read<RegistrationTaskProvider>().listOfProcesses =
-          await platform.invokeMethod("getNewProcessSpec");
+          await HomePage.platform.invokeMethod("getNewProcessSpec");
       await Clipboard.setData(ClipboardData(
           text: context
               .read<RegistrationTaskProvider>()
@@ -73,7 +81,7 @@ class HomePage extends StatelessWidget {
   Future<void> _getUISchema() async {
     String result;
     try {
-      result = await platform.invokeMethod("getUISchema");
+      result = await HomePage.platform.invokeMethod("getUISchema");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }
@@ -83,7 +91,7 @@ class HomePage extends StatelessWidget {
   Future<String> getCenterName(BuildContext context) async {
     String result;
     try {
-      result = await platform.invokeMethod("getCenterName",
+      result = await HomePage.platform.invokeMethod("getCenterName",
           {"centerId": context.read<GlobalProvider>().centerId});
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
@@ -93,8 +101,15 @@ class HomePage extends StatelessWidget {
     return result;
   }
 
+  late AuthProvider authProvider;
+
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    Future<void> logout() async {
+      await context.read<AuthProvider>().logoutUser();
+    }
+
     double w = ScreenUtil().screenWidth;
     List<Map<String, dynamic>> operationalTasks = [
       {
@@ -260,6 +275,48 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      InkWell(
+                        //onTap: widget.onLogout,
+                        onTap: () async {
+                          print("logging out");
+                          authProvider.clearUser();
+                          await logout();
+                          print("logged out");
+
+                          Navigator.popUntil(
+                              context, ModalRoute.withName(HomePage.route));
+                          // Navigator.of(context).pushNamed(LoginPage.route);
+                          // Navigator.pushNamed(context, LoginPage.route);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                          );
+                          print("Navigated to Login Page");
+                        },
+                        child: Container(
+                          // width: 129.w,
+                          height: 46.h,
+                          padding: EdgeInsets.only(
+                            left: 46.w,
+                            right: 47.w,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1.h,
+                              color: AppStyle.appHelpText,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(5),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.logout,
+                              style: AppStyle.mobileHelpText,
+                            ),
+                          ),
+                        ),
+                      ),
                       Text(
                         "Operational Tasks",
                         style: Theme.of(context)

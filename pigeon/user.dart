@@ -32,5 +32,8 @@ class User {
 
 @HostApi()
 abstract class UserApi {
+  @async
   User validateUser(String username);
+  @async
+  User logoutUser();
 }

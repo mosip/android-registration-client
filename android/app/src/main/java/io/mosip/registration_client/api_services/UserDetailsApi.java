@@ -20,6 +20,9 @@ public class UserDetailsApi implements UserPigeon.UserApi {
         this.loginService = loginService;
     }
 
+    public void logout(){
+        loginService.clearAuthToken();
+    }
     public void usernameValidation(String username) {
         if(username == null || username.trim().length() == 0){
             user = new UserPigeon.User.Builder()
@@ -64,6 +67,12 @@ public class UserDetailsApi implements UserPigeon.UserApi {
     @Override
     public UserPigeon.User validateUser(@NonNull String username) {
         usernameValidation(username);
+        return user;
+    }
+    @NonNull
+    @Override
+    public UserPigeon.User logoutUser() {
+        logout();
         return user;
     }
 }

@@ -60,6 +60,15 @@ public class SessionManager {
         return roles;
     }
 
+    public String clearAuthToken(){
+        SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
+        return this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+        Context.MODE_PRIVATE).getString(USER_TOKEN, null);
+    }
+
     public String fetchAuthToken() {
         return this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE).getString(USER_TOKEN, null);

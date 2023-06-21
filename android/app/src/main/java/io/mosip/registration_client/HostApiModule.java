@@ -22,4 +22,6 @@ public class HostApiModule {
     MachineDetailsApi getMachineDetailsApi(ClientCryptoManagerService clientCryptoManagerService) {
         return new MachineDetailsApi(clientCryptoManagerService);
     }
+   
+
 }
