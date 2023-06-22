@@ -74,7 +74,7 @@ class CustomHtmlBox extends StatelessWidget {
           Container(
             height: 341.h,
             padding: EdgeInsets.all(18),
-            child: Text("Content"),
+            child: Text(context.watch<GlobalProvider>().fieldDisplayValues[field.id][context.watch<GlobalProvider>().htmlBoxTabIndex]),
           ),
         ],
       ),
@@ -88,7 +88,7 @@ class CustomHtmlBox extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
 //     return SingleChildScrollView(
-//       child: Html(data:"""<!DOCTYPE html>
+//       child: HtmlElementView(data:"""<!DOCTYPE html>
 //     <html>
 //     <head>
 //       <title>Terms and Conditions</title>

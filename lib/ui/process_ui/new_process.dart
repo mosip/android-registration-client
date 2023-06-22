@@ -31,6 +31,7 @@ class NewProcess extends StatelessWidget {
         child: ElevatedButton(
           child: Text("CONTINUE"),
           onPressed: () {
+            print(context.read<GlobalProvider>().fieldDisplayValues);
             if (context.read<GlobalProvider>().newProcessTabIndex <
                 newProcess.screens!.length - 1) {
               context.read<GlobalProvider>().newProcessTabIndex =

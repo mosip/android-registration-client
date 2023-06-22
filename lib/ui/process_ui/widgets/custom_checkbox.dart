@@ -24,7 +24,21 @@ class CustomCheckbox extends StatelessWidget {
             SizedBox(
                 height: 20,
                 width: 20,
-                child: Checkbox(value: false, onChanged: (value) {})),
+                child: Checkbox(
+                  activeColor: solid_primary,
+                    value: (context
+                            .watch<GlobalProvider>()
+                            .fieldInputValues
+                            .containsKey(field.id))
+                        ? context
+                            .watch<GlobalProvider>()
+                            .fieldInputValues[field.id]
+                        : false,
+                    onChanged: (value) {
+                      context
+                          .read<GlobalProvider>()
+                          .setInputMapValue(field.id!, value);
+                    })),
             SizedBox(
               width: 8,
             ),

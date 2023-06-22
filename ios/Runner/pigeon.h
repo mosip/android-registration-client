@@ -10,33 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class AuthResponse;
 
-@interface AuthResponse : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithResponse:(NSString *)response
-    username:(NSString *)username
-    isOfficer:(NSNumber *)isOfficer
-    isDefault:(NSNumber *)isDefault
-    isSupervisor:(NSNumber *)isSupervisor
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * response;
-@property(nonatomic, copy) NSString * username;
-@property(nonatomic, strong) NSNumber * isOfficer;
-@property(nonatomic, strong) NSNumber * isDefault;
-@property(nonatomic, strong) NSNumber * isSupervisor;
-@property(nonatomic, copy, nullable) NSString * errorCode;
+/// The codec used by CommonApi.
+NSObject<FlutterMessageCodec> *CommonApiGetCodec(void);
+
+@protocol CommonApi
+- (void)getTemplateContentTemplateName:(NSString *)templateName langCode:(NSString *)langCode completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateContentTemplateTypeCode:(NSString *)templateTypeCode langCode:(NSString *)langCode completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getDocumentTypesCategoryCode:(NSString *)categoryCode applicantType:(NSString *)applicantType langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getFieldValuesFieldName:(NSString *)fieldName langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by AuthResponseApi.
-NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void);
-
-@protocol AuthResponseApi
-/// @return `nil` only when `error != nil`.
-- (nullable AuthResponse *)loginUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected error:(FlutterError *_Nullable *_Nonnull)error;
-@end
-
-extern void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *_Nullable api);
+extern void CommonApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<CommonApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

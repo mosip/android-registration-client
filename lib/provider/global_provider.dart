@@ -1,7 +1,11 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
+import 'package:registration_client/model/process.dart';
+import 'package:registration_client/pigeon/common_api_pigeon.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
+import 'package:registration_client/ui/process_ui/new_process.dart';
 
 class GlobalProvider with ChangeNotifier {
   //Variables
@@ -23,7 +27,10 @@ class GlobalProvider with ChangeNotifier {
     'Arabic': false,
     'French': false,
   };
+  Map<String, dynamic> _fieldDisplayValues = {};
 
+  Map<String, dynamic> _fieldInputValues={};
+ 
   //GettersSetters
 
   int get currentIndex => _currentIndex;
@@ -61,6 +68,21 @@ class GlobalProvider with ChangeNotifier {
     this._htmlBoxTabIndex = value;
     notifyListeners();
   }
+
+  Map<String, dynamic> get fieldDisplayValues => this._fieldDisplayValues;
+
+  set fieldDisplayValues(Map<String, dynamic> value) {
+    this._fieldDisplayValues = value;
+    notifyListeners();
+  }
+
+  Map<String, dynamic> get fieldInputValues => this._fieldInputValues;
+
+  set fieldInputValues(Map<String, dynamic> value) {
+    this._fieldInputValues = value;
+    notifyListeners();
+  }
+
   //Functions
 
   setCurrentIndex(int value) {
@@ -123,7 +145,12 @@ class GlobalProvider with ChangeNotifier {
       }
     }
   }
-  chooseLanguage(Map<String,String> label) {
+  setInputMapValue(String key,dynamic value){
+    fieldInputValues[key]=value;
+    notifyListeners();
+  }
+
+  chooseLanguage(Map<String, String> label) {
     String x = '';
     for (var i in chosenLang) {
       if (i == "English") {
@@ -138,5 +165,40 @@ class GlobalProvider with ChangeNotifier {
     }
     x = x.substring(0, x.length - 1);
     return x;
+  }
+
+  langToCode(String lang) {
+    if (lang == "English") {
+      return "eng";
+    }
+    if (lang == "Arabic") {
+      return "ara";
+    }
+    if (lang == "French") {
+      return "fra";
+    }
+  }
+
+  fieldValues(Process process) {
+    process.screens!.forEach((screen) {
+      screen!.fields!.forEach((field) async {
+        if (field!.fieldType == "dynamic") {
+          fieldDisplayValues[field.id!] =
+              await CommonApi().getFieldValues(field.id!, "eng");
+        }
+        if (field.templateName != null) {
+          List values = List.empty(growable: true);
+          chosenLang.forEach((lang) async {
+            values.add(
+              await CommonApi().getTemplateContent(
+                field.templateName!,
+                langToCode(lang),
+              ),
+            );
+          });
+          fieldDisplayValues[field.id!] = values;
+        }
+      });
+    });
   }
 }

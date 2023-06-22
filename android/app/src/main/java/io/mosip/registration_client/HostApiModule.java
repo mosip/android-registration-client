@@ -12,11 +12,13 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.service.LoginService;
 
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 
+import io.mosip.registration_client.api_services.CommonApiImpl;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 
@@ -54,6 +56,12 @@ public class HostApiModule {
                                            AuditManagerService auditManagerService) {
         return new AuthenticationApi(appContext, syncRestService, syncRestFactory,
                         loginService, auditManagerService);
+    }
+
+    @Provides
+    @Singleton
+    CommonApiImpl getCommonApiImpl(MasterDataService masterDataService){
+        return new CommonApiImpl(masterDataService);
     }
 
 }

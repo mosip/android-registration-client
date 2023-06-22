@@ -43,8 +43,10 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration_client.api_services.CommonApiImpl;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
+import io.mosip.registration_client.model.CommonApiPigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.UserPigeon;
 
@@ -88,6 +90,9 @@ public class MainActivity extends FlutterActivity {
     @Inject
     UserDetailsApi userDetailsApi;
 
+    @Inject
+    CommonApiImpl commonApiImpl;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +119,7 @@ public class MainActivity extends FlutterActivity {
         initializeAppComponent();
         MachinePigeon.MachineApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), machineDetailsApi);
         UserPigeon.UserApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), userDetailsApi);
+        CommonApiPigeon.CommonApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),commonApiImpl);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(

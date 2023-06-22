@@ -21,122 +21,89 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface AuthResponse ()
-+ (AuthResponse *)fromList:(NSArray *)list;
-+ (nullable AuthResponse *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@implementation AuthResponse
-+ (instancetype)makeWithResponse:(NSString *)response
-    username:(NSString *)username
-    isOfficer:(NSNumber *)isOfficer
-    isDefault:(NSNumber *)isDefault
-    isSupervisor:(NSNumber *)isSupervisor
-    errorCode:(nullable NSString *)errorCode {
-  AuthResponse* pigeonResult = [[AuthResponse alloc] init];
-  pigeonResult.response = response;
-  pigeonResult.username = username;
-  pigeonResult.isOfficer = isOfficer;
-  pigeonResult.isDefault = isDefault;
-  pigeonResult.isSupervisor = isSupervisor;
-  pigeonResult.errorCode = errorCode;
-  return pigeonResult;
-}
-+ (AuthResponse *)fromList:(NSArray *)list {
-  AuthResponse *pigeonResult = [[AuthResponse alloc] init];
-  pigeonResult.response = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.response != nil, @"");
-  pigeonResult.username = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.username != nil, @"");
-  pigeonResult.isOfficer = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.isOfficer != nil, @"");
-  pigeonResult.isDefault = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.isDefault != nil, @"");
-  pigeonResult.isSupervisor = GetNullableObjectAtIndex(list, 4);
-  NSAssert(pigeonResult.isSupervisor != nil, @"");
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 5);
-  return pigeonResult;
-}
-+ (nullable AuthResponse *)nullableFromList:(NSArray *)list {
-  return (list) ? [AuthResponse fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    (self.response ?: [NSNull null]),
-    (self.username ?: [NSNull null]),
-    (self.isOfficer ?: [NSNull null]),
-    (self.isDefault ?: [NSNull null]),
-    (self.isSupervisor ?: [NSNull null]),
-    (self.errorCode ?: [NSNull null]),
-  ];
-}
-@end
-
-@interface AuthResponseApiCodecReader : FlutterStandardReader
-@end
-@implementation AuthResponseApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128: 
-      return [AuthResponse fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface AuthResponseApiCodecWriter : FlutterStandardWriter
-@end
-@implementation AuthResponseApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[AuthResponse class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface AuthResponseApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation AuthResponseApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[AuthResponseApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[AuthResponseApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *CommonApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    AuthResponseApiCodecReaderWriter *readerWriter = [[AuthResponseApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
-void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *api) {
+void CommonApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<CommonApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.AuthResponseApi.login"
+        initWithName:@"dev.flutter.pigeon.CommonApi.getTemplateContent"
         binaryMessenger:binaryMessenger
-        codec:AuthResponseApiGetCodec()];
+        codec:CommonApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(loginUsername:password:isConnected:error:)], @"AuthResponseApi api (%@) doesn't respond to @selector(loginUsername:password:isConnected:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getTemplateContentTemplateName:langCode:completion:)], @"CommonApi api (%@) doesn't respond to @selector(getTemplateContentTemplateName:langCode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_password = GetNullableObjectAtIndex(args, 1);
-        NSNumber *arg_isConnected = GetNullableObjectAtIndex(args, 2);
-        FlutterError *error;
-        AuthResponse *output = [api loginUsername:arg_username password:arg_password isConnected:arg_isConnected error:&error];
-        callback(wrapResult(output, error));
+        NSString *arg_templateName = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
+        [api getTemplateContentTemplateName:arg_templateName langCode:arg_langCode completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.CommonApi.getPreviewTemplateContent"
+        binaryMessenger:binaryMessenger
+        codec:CommonApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateContentTemplateTypeCode:langCode:completion:)], @"CommonApi api (%@) doesn't respond to @selector(getPreviewTemplateContentTemplateTypeCode:langCode:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_templateTypeCode = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
+        [api getPreviewTemplateContentTemplateTypeCode:arg_templateTypeCode langCode:arg_langCode completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.CommonApi.getDocumentTypes"
+        binaryMessenger:binaryMessenger
+        codec:CommonApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getDocumentTypesCategoryCode:applicantType:langCode:completion:)], @"CommonApi api (%@) doesn't respond to @selector(getDocumentTypesCategoryCode:applicantType:langCode:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_categoryCode = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_applicantType = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 2);
+        [api getDocumentTypesCategoryCode:arg_categoryCode applicantType:arg_applicantType langCode:arg_langCode completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.CommonApi.getFieldValues"
+        binaryMessenger:binaryMessenger
+        codec:CommonApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getFieldValuesFieldName:langCode:completion:)], @"CommonApi api (%@) doesn't respond to @selector(getFieldValuesFieldName:langCode:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldName = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
+        [api getFieldValuesFieldName:arg_fieldName langCode:arg_langCode completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];

@@ -71,6 +71,8 @@ class NewProcessLanguageSelection extends StatelessWidget {
         ),
         ElevatedButton(
             onPressed: () {
+              context.read<GlobalProvider>().fieldDisplayValues={};
+              context.read<GlobalProvider>().fieldValues(newProcess);
               Navigator.pushNamed(context, NewProcess.routeName,
                   arguments: {"process": newProcess});
             },

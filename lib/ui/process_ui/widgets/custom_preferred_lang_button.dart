@@ -3,12 +3,22 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/common_api_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 class CustomPreferredLangButton extends StatelessWidget {
-  const CustomPreferredLangButton({super.key, required this.feild});
-  final Field feild;
+  const CustomPreferredLangButton({super.key, required this.field});
+  final Field field;
+
+  generateList(BuildContext context, int index) {
+    List temp = List.generate(
+        context.read<GlobalProvider>().fieldDisplayValues[field.id].length,
+        (index) => false);
+    temp[index] = false;
+    context.read<GlobalProvider>().setInputMapValue(field.id!, temp);
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +31,7 @@ class CustomPreferredLangButton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              context.read<GlobalProvider>().chooseLanguage(feild.label!),
+              context.read<GlobalProvider>().chooseLanguage(field.label!),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 14, color: black_shade_1, fontWeight: semiBold),
             ),
@@ -30,26 +40,49 @@ class CustomPreferredLangButton extends StatelessWidget {
             ),
             Row(
               children: [
-                ...feild.label!.keys.map(
-                  (e) => Row(
+                for (int i = 0;
+                    i <
+                        context
+                            .watch<GlobalProvider>()
+                            .fieldDisplayValues[field.id]
+                            .length;
+                    i++)
+                  Row(
                     children: [
                       SizedBox(
                           height: 20,
                           width: 20,
                           child: Checkbox(
-                            value: false,
-                            onChanged: (value) {},
+                            activeColor: solid_primary,
+                            value: (context
+                                    .watch<GlobalProvider>()
+                                    .fieldInputValues
+                                    .containsKey(field.id))
+                                ? context
+                                    .watch<GlobalProvider>()
+                                    .fieldInputValues[field.id][i]
+                                : generateList(context, i),
+                            onChanged: (value) {
+                              List temp = context
+                                  .read<GlobalProvider>()
+                                  .fieldInputValues[field.id];
+                              temp[i] = value;
+                              context
+                                  .read<GlobalProvider>()
+                                  .setInputMapValue(field.id!, temp);
+                            },
                           )),
                       SizedBox(
                         width: 5,
                       ),
-                      Text(e),
+                      Text(context
+                          .read<GlobalProvider>()
+                          .fieldDisplayValues[field.id][i]),
                       SizedBox(
                         width: 37,
                       ),
                     ],
                   ),
-                ),
               ],
             )
           ],

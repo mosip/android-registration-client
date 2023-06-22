@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/login_response.dart';
+import 'package:registration_client/pigeon/common_api_pigeon.dart';
 
 import 'package:registration_client/pigeon/machine_pigeon.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
@@ -294,7 +295,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              _testerFunction();
+            },
           ),
         ],
       ),
@@ -304,6 +307,20 @@ class _LoginPageState extends State<LoginPage> {
   _getMachineName() {
     String machineName = context.read<GlobalProvider>().machineName;
     return machineName;
+  }
+
+  _testerFunction() async {
+    List<String?> response =
+        await CommonApi().getFieldValues("preferredLang", "eng");
+    String response1 =
+        await CommonApi().getTemplateContent("Registration Consent", "eng");
+    List<String?> response2=await CommonApi().getDocumentTypes("POI","001","eng");
+    String response3 = await CommonApi()
+        .getPreviewTemplateContent("Registration Consent", "ara");
+    print(response);
+    print(response1);
+    print(response3);
+     print(response2);
   }
 
   Widget _welcomeTextComponent() {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_checkbox.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_html_box.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_preferred_lang_button.dart';
@@ -23,7 +25,7 @@ class NewProcessScreenContent extends StatelessWidget {
         if(e.subType=="preferredLang"){
           return CustomPreferredLangButton(field: e);
         }
-        return CustomCheckbox(field: e);
+        return Text("${e.controlType}");
      }
      return Text("${e.controlType}");
   }
