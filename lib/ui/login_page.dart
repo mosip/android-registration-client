@@ -4,35 +4,17 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/model/login_response.dart';
-
-import 'package:registration_client/pigeon/machine_pigeon.dart';
-import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_android/auth_impl.dart';
-import 'package:registration_client/platform_android/machine_key_impl.dart';
-import 'package:registration_client/platform_spi/machine_key.dart';
-
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
-
 import 'package:registration_client/ui/machine_keys.dart';
-import 'package:flutter/services.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
-
-import 'package:registration_client/ui/onboard/onboard_landing_page.dart';
-import 'package:registration_client/ui/onboard/home_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
@@ -48,23 +30,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isMobile = true;
-  static const platform =
-      MethodChannel("com.flutter.dev/io.mosip.get-package-instance");
-  // bool isLoggedIn = false;
   bool isLoggingIn = false;
-  String loginResponse = '';
-  String errorCode = '';
   String username = '';
   String password = '';
-  bool isUserValidated = false;
-  // String isOnboardedValue = "";
-  List<String> _languages = ['eng', 'ara', 'fre'];
+  final List<String> _languages = ['eng', 'ara', 'fre'];
   Map<String, String> mp = {};
   late AuthProvider authProvider;
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  late LoginResponse loginResp;
 
   @override
   void initState() {
@@ -314,11 +288,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  _getMachineName() {
-    String machineName = context.read<GlobalProvider>().machineName;
-    return machineName;
-  }
-
   Widget _welcomeTextComponent() {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -401,7 +370,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(
-            height: isUserValidated ? 41.h : 38.h,
+            height: context.watch<AuthProvider>().isValidUser ? 41.h : 38.h,
           ),
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
@@ -426,7 +395,6 @@ class _LoginPageState extends State<LoginPage> {
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
                       username = '';
-                      isUserValidated = false;
                       isLoggingIn = false;
                     });
                   },

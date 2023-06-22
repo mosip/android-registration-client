@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,8 +65,6 @@ class HomePage extends StatelessWidget {
   _getCenterNameAction(BuildContext context) async {
     String regCenterId = context.read<GlobalProvider>().centerId;
     await context.read<GlobalProvider>().getRegCenterName(regCenterId);
-    String centerName = context.read<GlobalProvider>().centerName;
-    debugPrint("center name: $centerName");
   }
 
   @override

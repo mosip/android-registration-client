@@ -36,7 +36,7 @@ class OnboardLandingPageCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: Text(
-                    "${title}",
+                    title,
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall

@@ -11,8 +11,6 @@ import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../utils/responsive.dart';
-
 class OnboardLandingPage extends StatelessWidget {
   static const route = "/onboard-landing-page";
   static const platform =

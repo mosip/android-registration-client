@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_android/auth_impl.dart';
 
-import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_android/auth_impl.dart';
-
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
   bool _isOnboarded = false;
