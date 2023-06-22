@@ -43,7 +43,6 @@ task clean(type: Delete) {
 sonarqube {
     properties {
         property "sonar.projectName", "android-registration-client"
-        property 'sonar.organization', "mosip"
        // property "sonar.projectVersion", project.versionName
         property "sonar.sourceEncoding", "UTF-8"
         //ignoring the below files
