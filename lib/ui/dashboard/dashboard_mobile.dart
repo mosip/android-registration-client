@@ -7,7 +7,6 @@ import '../onboard/home_page.dart';
 
 import '../common/mobile_navbar.dart';
 
-// TODO : Check whether it is a view then should be named as mobile_view
 class DashBoardMobileView extends StatelessWidget {
   DashBoardMobileView({Key? key}) : super(key: key);
 

@@ -12,9 +12,9 @@ class AuthImpl extends Auth {
     try {
       user = await UserApi().validateUser(username);
     } on PlatformException {
-      print('UserApi call failed');
+      debugPrint('UserApi call failed');
     } catch (e) {
-      print('User not fetched! ${e.toString()}');
+      debugPrint('User not fetched! ${e.toString()}');
     }
     return user;
   }
@@ -26,10 +26,11 @@ class AuthImpl extends Auth {
     try {
       authResponse =
           await AuthResponseApi().login(username, password, isConnected);
+    } on PlatformException {
+      debugPrint('AuthResponseApi call failed');
     } catch (e) {
       debugPrint(e.toString());
     }
-
     return authResponse;
   }
 }

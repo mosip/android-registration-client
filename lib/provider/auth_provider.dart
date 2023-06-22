@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_android/auth_impl.dart';
 
-import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_android/auth_impl.dart';
-
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
   bool _isOnboarded = false;
@@ -13,6 +10,8 @@ class AuthProvider with ChangeNotifier {
   bool _isOfficer = false;
   bool _isValidUser = false;
   late User _currentUser;
+  String _loginError = "";
+  bool _isLoggingIn = false;
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isOnboarded => _isOnboarded;
@@ -21,6 +20,8 @@ class AuthProvider with ChangeNotifier {
   bool get isOfficer => _isOfficer;
   bool get isValidUser => _isValidUser;
   User get currentUser => _currentUser;
+  String get loginError => _loginError;
+  bool get isLoggingIn => _isLoggingIn;
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -56,17 +57,45 @@ class AuthProvider with ChangeNotifier {
     _currentUser = user;
     notifyListeners();
   }
+  
+  setLoginError(String value) {
+    _loginError = value;
+    notifyListeners();
+  }
 
-  validateUser(username) async {
+  setIsLoggingIn(bool value) {
+    _isLoggingIn = false;
+    notifyListeners();
+  }
+
+  validateUser(String username) async {
     final user = await AuthImpl().validateUser(username);
 
     if (user.errorCode != null) {
       _isValidUser = false;
     } else {
-      _isOnboarded = false;
       _isValidUser = true;
       _currentUser = user;
+      _isOnboarded = user.isOnboarded;
     }
+
+    notifyListeners();
+  }
+
+  authenticateUser(String username, String password, bool isConnected) async {
+    final authResponse = await AuthImpl().login(username, password, isConnected);
+
+    setIsLoggingIn(true);
+    if(authResponse.errorCode != null) {
+      _loginError = authResponse.errorCode!;
+      _isLoggedIn = false;
+    } else {
+      _isDefault = authResponse.isDefault;
+      _isOfficer = authResponse.isOfficer;
+      _isSupervisor = authResponse.isSupervisor;
+      _isLoggedIn = true;
+    }
+    setIsLoggingIn(false);
 
     notifyListeners();
   }

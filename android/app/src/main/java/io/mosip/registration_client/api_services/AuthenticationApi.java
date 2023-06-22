@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,6 +37,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     public static final String IS_SUPERVISOR = "is_supervisor";
     public static final String IS_DEFAULT = "is_default";
     public static final String USER_NAME = "user_name";
+    public static final String IS_OPERATOR = "is_operator";
 
     @Inject
     public AuthenticationApi(Context context, SyncRestService syncRestService, SyncRestUtil syncRestFactory,
@@ -50,7 +53,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                         Context.MODE_PRIVATE);
     }
 
-    private void doLogin(final String username, final String password) {
+    private void doLogin(final String username, final String password, AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
             @Override
@@ -61,13 +64,15 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     if (error == null) {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse());
+                            loginService.setPasswordHash(username, password);
                             authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                                     .setResponse(wrapper.getResponse())
                                     .setUsername(sharedPreferences.getString(USER_NAME, null))
                                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
-                                    .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
+                                    .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
                                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
                                     .build();
+                            result.success(authResponse);
                             return;
                         } catch (InvalidMachineSpecIDException e) {
                             error = new ServiceError("", "Invalid Machine Spec ID found");
@@ -96,8 +101,18 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                             .setIsSupervisor(false)
                             .setErrorCode(errorCode)
                             .build();
+                    result.success(authResponse);
                     return;
                 }
+                authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                        .setResponse("")
+                        .setUsername("")
+                        .setIsDefault(false)
+                        .setIsOfficer(false)
+                        .setIsSupervisor(false)
+                        .setErrorCode("REG_TRY_AGAIN")
+                        .build();
+                result.success(authResponse);
             }
 
             @Override
@@ -111,11 +126,12 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                         .setIsSupervisor(false)
                         .setErrorCode("REG_NETWORK_ERROR")
                         .build();
+                result.success(authResponse);
             }
         });
     }
 
-    private void offlineLogin(final String username, final String password) {
+    private void offlineLogin(final String username, final String password, AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         if(!loginService.isPasswordPresent(username)) {
             authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse("")
@@ -125,6 +141,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     .setIsSupervisor(false)
                     .setErrorCode("REG_CRED_EXPIRED")
                     .build();
+            result.success(authResponse);
             return;
         }
 
@@ -137,6 +154,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     .setIsSupervisor(false)
                     .setErrorCode("REG_INVALID_REQUEST")
                     .build();
+            result.success(authResponse);
             return;
         }
 
@@ -151,28 +169,26 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     .setIsSupervisor(false)
                     .setErrorCode("REG_CRED_EXPIRED")
                     .build();
+            result.success(authResponse);
             return;
         }
         authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                 .setResponse(loginService.getAuthToken())
                 .setUsername(sharedPreferences.getString(USER_NAME, null))
                 .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
-                .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
+                .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
                 .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
                 .build();
+        result.success(authResponse);
     }
 
-    @NonNull
     @Override
-    public AuthResponsePigeon.AuthResponse login(@NonNull String username,
-                                                 @NonNull String password,
-                                                 @NonNull Boolean isConnected) {
-
+    public void login(@NonNull String username, @NonNull String password, @NonNull Boolean isConnected, @NonNull AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         if(!isConnected) {
-            offlineLogin(username, password);
-            return authResponse;
+            offlineLogin(username, password, result);
+            return;
         }
-        doLogin(username, password);
-        return authResponse;
+        doLogin(username, password, result);
+        return;
     }
 }

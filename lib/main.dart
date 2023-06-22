@@ -14,18 +14,11 @@ import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
-
 import 'package:registration_client/utils/app_config.dart';
-
-import 'ui/dashboard/dashboard_mobile.dart';
-import 'utils/responsive.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +30,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp();
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   static const platform =
@@ -45,9 +38,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _callAppComponent();
-    });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -71,16 +61,14 @@ class MyApp extends StatelessWidget {
           create: (_) => AuthProvider(),
         ),
       ],
-      child: BuildApp(),
+      child: const BuildApp(),
     );
-  }
-
-  Future<void> _callAppComponent() async {
-    await platform.invokeMethod("callComponent");
   }
 }
 
 class BuildApp extends StatelessWidget {
+  const BuildApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -99,12 +87,14 @@ class BuildApp extends StatelessWidget {
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }

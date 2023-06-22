@@ -29,8 +29,8 @@ class GlobalProvider with ChangeNotifier {
   };
   Map<String, dynamic> _fieldDisplayValues = {};
 
-  Map<String, dynamic> _fieldInputValues={};
- 
+  Map<String, dynamic> _fieldInputValues = {};
+
   //GettersSetters
 
   int get currentIndex => _currentIndex;
@@ -145,8 +145,9 @@ class GlobalProvider with ChangeNotifier {
       }
     }
   }
-  setInputMapValue(String key,dynamic value){
-    fieldInputValues[key]=value;
+
+  setInputMapValue(String key, dynamic value) {
+    fieldInputValues[key] = value;
     notifyListeners();
   }
 
@@ -200,5 +201,11 @@ class GlobalProvider with ChangeNotifier {
         }
       });
     });
+  }
+
+  getRegCenterName(String regCenterId) async {
+    String regCenterName = await MachineKeyImpl().getCenterName(regCenterId);
+    _centerName = regCenterName;
+    notifyListeners();
   }
 }

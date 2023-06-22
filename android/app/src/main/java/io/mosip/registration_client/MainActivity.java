@@ -7,16 +7,11 @@
 package io.mosip.registration_client;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -27,8 +22,6 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
-import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
-import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -43,11 +36,21 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+
 import io.mosip.registration_client.api_services.CommonApiImpl;
+
+import io.mosip.registration_client.api_services.AuthenticationApi;
+
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
+
 import io.mosip.registration_client.model.CommonApiPigeon;
+
+import io.mosip.registration_client.model.AuthResponsePigeon;
+
 import io.mosip.registration_client.model.MachinePigeon;
+import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 
 public class MainActivity extends FlutterActivity {
@@ -93,6 +96,13 @@ public class MainActivity extends FlutterActivity {
     @Inject
     CommonApiImpl commonApiImpl;
 
+    @Inject
+    AuthenticationApi authenticationApi;
+
+    @Inject
+    ProcessSpecDetailsApi processSpecDetailsApi;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,9 +114,7 @@ public class MainActivity extends FlutterActivity {
                 .networkModule(new NetworkModule(getApplication()))
                 .roomModule(new RoomModule(getApplication()))
                 .appModule(new AppModule(getApplication()))
-
                 .hostApiModule(new HostApiModule(getApplication()))
-
                 .build();
 
         appComponent.inject(this);
@@ -120,59 +128,17 @@ public class MainActivity extends FlutterActivity {
         MachinePigeon.MachineApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), machineDetailsApi);
         UserPigeon.UserApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), userDetailsApi);
         CommonApiPigeon.CommonApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),commonApiImpl);
+        AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
+        ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
+
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {
                             switch(call.method) {
-                                case "callComponent":
-                                    initializeAppComponent();
-                                    break;
-
-                                case "getMachineDetails":
-                                    new AboutActivityService().getMachineDetails(clientCryptoManagerService, result);
-                                    break;
-
-                                case "validateUsername":
-                                    String usernameVal = call.argument("username");
-                                    new LoginActivityService().usernameValidation(usernameVal, loginService, result,userDetailRepository);
-                                    break;
-
-                                case "login":
-                                    String username = call.argument("username");
-                                    String password = call.argument("password");
-                                    boolean isConnected = call.argument("isConnected");
-                                    try {
-                                        new LoginActivityService().executeLogin(username, password,
-                                                result, syncRestService, syncRestFactory,
-                                                loginService, auditManagerService, isConnected);
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    break;
-
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
-                                    break;
-
-                                case "getUISchema":
-                                    getUISchema(result);
-                                    break;
-
-                                case "getNewProcessSpec":
-                                    getNewProcessSpec(result);
-                                    break;
-
-                                case "getCenterName":
-                                    String centerId=call.argument("centerId");
-                                    getCenterName(centerId,result);
-
-                                    break;
-
-                                case "getStringValueGlobalParam":
-                                    String key=call.argument("key");
-                                    getStringValueGlobalParam(key,result);
                                     break;
 
                                 default:
@@ -181,50 +147,5 @@ public class MainActivity extends FlutterActivity {
                             }
                         }
                 );
-    }
-
-    public void getUISchema(MethodChannel.Result result){
-        try{
-
-            String schemaJson = identitySchemaRepository.getSchemaJson(getApplicationContext(),
-                    identitySchemaRepository.getLatestSchemaVersion());
-            result.success(schemaJson.toString());
-
-        }catch (Exception e){
-            Log.e(getClass().getSimpleName(), "Error in getUISchema", e);
-        }
-    }
-    public void getNewProcessSpec(MethodChannel.Result result){
-        try{
-
-            ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(getApplicationContext(),
-                    identitySchemaRepository.getLatestSchemaVersion());
-            ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            String json = ow.writeValueAsString(processSpecDto);
-            List<String> processSpecList=new ArrayList<String>();
-            processSpecList.add(json);
-            result.success(processSpecList);
-
-        }catch (Exception e){
-            Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
-        }
-    }
-    public void getCenterName(String centerId,MethodChannel.Result result){
-        try{
-            List<RegistrationCenter> registrationCenterList=registrationCenterRepository.getRegistrationCenter(centerId);
-            result.success(registrationCenterList.get(0).toString());
-        }catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error in getCenterName", e);
-            result.success("");
-        }
-    }
-
-    public void getStringValueGlobalParam(String key,MethodChannel.Result result){
-        try{
-            String cachedString=globalParamRepository.getCachedStringGlobalParam(key);
-            result.success(cachedString);
-        }catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error in getStringValueGlobalParam", e);
-        }
     }
 }

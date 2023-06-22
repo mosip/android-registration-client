@@ -33,7 +33,7 @@ class TabletNavbar extends StatelessWidget {
               context.watch<GlobalProvider>().currentIndex != 0
                   ? Icon(
                       Icons.menu,
-                      color: Color(0xff4E4E4E),
+                      color: const Color(0xff4E4E4E),
                       size: 26.h,
                     )
                   : const SizedBox.shrink(),
@@ -42,7 +42,7 @@ class TabletNavbar extends StatelessWidget {
               ),
               Icon(
                 Icons.settings,
-                color: Color(0xff4E4E4E),
+                color: const Color(0xff4E4E4E),
                 size: 26.h,
               ),
               SizedBox(
@@ -50,7 +50,7 @@ class TabletNavbar extends StatelessWidget {
               ),
               Icon(
                 Icons.notifications_outlined,
-                color: Color(0xff4E4E4E),
+                color: const Color(0xff4E4E4E),
                 size: 25.5.h,
               ),
               SizedBox(
@@ -85,7 +85,7 @@ class TabletNavbar extends StatelessWidget {
               ),
               Icon(
                 Icons.arrow_drop_down,
-                color: Color(0xff4D4C4C),
+                color: const Color(0xff4D4C4C),
                 size: 15.h,
               ),
               SizedBox(
