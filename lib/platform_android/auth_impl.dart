@@ -15,5 +15,19 @@ class AuthImpl extends Auth {
       print('User not fetched! ${e.toString()}');
     }
     return user;
+
+  }
+
+  @override
+  Future<User> logoutUser() async {
+    late User user;
+    try {
+      user = await UserApi().logoutUser();
+    } on PlatformException {
+      print('UserApi logout call failed');
+    } catch(e) {
+      print('User not fetched! ${e.toString()}');
+    }
+    return user;
   }
 }
