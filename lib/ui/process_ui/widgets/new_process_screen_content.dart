@@ -154,28 +154,31 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     //   }).toList(),
 //       ],
 // =======
-    return Card(
-      margin: const EdgeInsets.all(14),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: context.read<GlobalProvider>().formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: context.watch<GlobalProvider>().newProcessTabIndex == 0
-                ? [
-                    ...widget.screen.fields!.map((e) {
-                      if (e!.inputRequired == true) {
-                        return widgetType(e);
-                      }
-                      return Container();
-                    }).toList(),
-                  ]
-                : buildFormFields(),
-          ),
-        ),
-      ),
-// >>>>>>> new_registration_ui
-    );
+    return context.watch<GlobalProvider>().newProcessTabIndex == 0
+        ? Column(
+            children: [
+              ...widget.screen.fields!.map(
+                (e) {
+                  if (e!.inputRequired == true) {
+                    return widgetType(e);
+                  }
+                  return Container();
+                },
+              ).toList(),
+            ],
+          )
+        : Card(
+            margin: const EdgeInsets.all(14),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: context.read<GlobalProvider>().formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: buildFormFields(),
+                ),
+              ),
+            ),
+          );
   }
 }
