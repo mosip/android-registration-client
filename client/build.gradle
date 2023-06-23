@@ -13,7 +13,7 @@ buildscript {
     }
 }
 plugins {
-    id "org.sonarqube" version "3.0"
+    id "org.sonarqube" version "4.2.1.3168"
 }
 
 ext {
@@ -42,12 +42,8 @@ task clean(type: Delete) {
 
 sonarqube {
     properties {
-        property "sonar.projectName", "android-registration-client"
-       // property "sonar.projectVersion", project.versionName
-        property "sonar.sourceEncoding", "UTF-8"
-        //ignoring the below files
-        property "sonar.c.file.suffixes", "-"
-        property "sonar.cpp.file.suffixes", "-"
-        property "sonar.objc.file.suffixes", "-"
+        property "sonar.projectKey", "mosip_android-registration-client"
+        property "sonar.organization", "mosip"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
