@@ -10,6 +10,7 @@ class GlobalProvider with ChangeNotifier {
   String _centerId = "";
   String _centerName = "";
   String _machineName = "";
+  final formKey = GlobalKey<FormState>();
 
   Process? _currentProcess;
   Map<String?, String?> _machineDetails = {};

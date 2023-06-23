@@ -31,10 +31,16 @@ class NewProcess extends StatelessWidget {
         child: ElevatedButton(
           child: Text("CONTINUE"),
           onPressed: () {
-            if (context.read<GlobalProvider>().newProcessTabIndex <
-                newProcess.screens!.length - 1) {
-              context.read<GlobalProvider>().newProcessTabIndex =
-                  context.read<GlobalProvider>().newProcessTabIndex + 1;
+            if (context
+                .read<GlobalProvider>()
+                .formKey
+                .currentState!
+                .validate()) {
+              if (context.read<GlobalProvider>().newProcessTabIndex <
+                  newProcess.screens!.length - 1) {
+                context.read<GlobalProvider>().newProcessTabIndex =
+                    context.read<GlobalProvider>().newProcessTabIndex + 1;
+              }
             }
           },
         ),
