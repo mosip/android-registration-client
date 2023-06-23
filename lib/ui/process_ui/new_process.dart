@@ -31,11 +31,24 @@ class NewProcess extends StatelessWidget {
         child: ElevatedButton(
           child: Text("CONTINUE"),
           onPressed: () {
+// <<<<<<< HEAD
             print(context.read<GlobalProvider>().fieldDisplayValues);
-            if (context.read<GlobalProvider>().newProcessTabIndex <
-                newProcess.screens!.length - 1) {
-              context.read<GlobalProvider>().newProcessTabIndex =
-                  context.read<GlobalProvider>().newProcessTabIndex + 1;
+            // if (context.read<GlobalProvider>().newProcessTabIndex <
+            //     newProcess.screens!.length - 1) {
+            //   context.read<GlobalProvider>().newProcessTabIndex =
+                  // context.read<GlobalProvider>().newProcessTabIndex + 1;
+// =======
+            if (context
+                .read<GlobalProvider>()
+                .formKey
+                .currentState!
+                .validate()) {
+              if (context.read<GlobalProvider>().newProcessTabIndex <
+                  newProcess.screens!.length - 1) {
+                context.read<GlobalProvider>().newProcessTabIndex =
+                    context.read<GlobalProvider>().newProcessTabIndex + 1;
+              }
+// >>>>>>> new_registration_ui
             }
           },
         ),

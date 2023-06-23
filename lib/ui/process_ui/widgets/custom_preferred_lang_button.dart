@@ -13,6 +13,7 @@ class CustomPreferredLangButton extends StatelessWidget {
 
   generateList(BuildContext context, int index) {
     List temp = List.generate(
+      context.read<GlobalProvider>().fieldDisplayValues[field.id] == null ? 0 :
         context.read<GlobalProvider>().fieldDisplayValues[field.id].length,
         (index) => false);
     temp[index] = false;
@@ -49,29 +50,26 @@ class CustomPreferredLangButton extends StatelessWidget {
                     i++)
                   Row(
                     children: [
-                      SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: Checkbox(
-                            activeColor: solid_primary,
-                            value: (context
-                                    .watch<GlobalProvider>()
-                                    .fieldInputValues
-                                    .containsKey(field.id))
-                                ? context
-                                    .watch<GlobalProvider>()
-                                    .fieldInputValues[field.id][i]
-                                : generateList(context, i),
-                            onChanged: (value) {
-                              List temp = context
-                                  .read<GlobalProvider>()
-                                  .fieldInputValues[field.id];
-                              temp[i] = value;
-                              context
-                                  .read<GlobalProvider>()
-                                  .setInputMapValue(field.id!, temp);
-                            },
-                          )),
+                      Checkbox(
+                        activeColor: solid_primary,
+                        value: (context
+                                .watch<GlobalProvider>()
+                                .fieldInputValues
+                                .containsKey(field.id))
+                            ? context
+                                .watch<GlobalProvider>()
+                                .fieldInputValues[field.id][i]
+                            : generateList(context, i),
+                        onChanged: (value) {
+                          List temp = context
+                              .read<GlobalProvider>()
+                              .fieldInputValues[field.id];
+                          temp[i] = value;
+                          context
+                              .read<GlobalProvider>()
+                              .setInputMapValue(field.id!, temp);
+                        },
+                      ),
                       SizedBox(
                         width: 5,
                       ),
