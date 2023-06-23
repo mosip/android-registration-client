@@ -154,20 +154,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     //   }).toList(),
 //       ],
 // =======
-    return context.watch<GlobalProvider>().newProcessTabIndex == 0
-        ? Column(
-            children: [
-              ...widget.screen.fields!.map(
-                (e) {
-                  if (e!.inputRequired == true) {
-                    return widgetType(e);
-                  }
-                  return Container();
-                },
-              ).toList(),
-            ],
-          )
-        : Card(
+    return context.watch<GlobalProvider>().newProcessTabIndex == 1
+        ?Card(
             margin: const EdgeInsets.all(14),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -179,6 +167,18 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 ),
               ),
             ),
+          ) 
+        : Column(
+            children: [
+              ...widget.screen.fields!.map(
+                (e) {
+                  if (e!.inputRequired == true) {
+                    return widgetType(e);
+                  }
+                  return Container();
+                },
+              ).toList(),
+            ],
           );
   }
 }

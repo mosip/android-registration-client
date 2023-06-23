@@ -50,25 +50,29 @@ class CustomPreferredLangButton extends StatelessWidget {
                     i++)
                   Row(
                     children: [
-                      Checkbox(
-                        activeColor: solid_primary,
-                        value: (context
-                                .watch<GlobalProvider>()
-                                .fieldInputValues
-                                .containsKey(field.id))
-                            ? context
-                                .watch<GlobalProvider>()
-                                .fieldInputValues[field.id][i]
-                            : generateList(context, i),
-                        onChanged: (value) {
-                          List temp = context
-                              .read<GlobalProvider>()
-                              .fieldInputValues[field.id];
-                          temp[i] = value;
-                          context
-                              .read<GlobalProvider>()
-                              .setInputMapValue(field.id!, temp);
-                        },
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Checkbox(
+                          activeColor: solid_primary,
+                          value: (context
+                                  .watch<GlobalProvider>()
+                                  .fieldInputValues
+                                  .containsKey(field.id))
+                              ? context
+                                  .watch<GlobalProvider>()
+                                  .fieldInputValues[field.id][i]
+                              : generateList(context, i),
+                          onChanged: (value) {
+                            List temp = context
+                                .read<GlobalProvider>()
+                                .fieldInputValues[field.id];
+                            temp[i] = value;
+                            context
+                                .read<GlobalProvider>()
+                                .setInputMapValue(field.id!, temp);
+                          },
+                        ),
                       ),
                       SizedBox(
                         width: 5,

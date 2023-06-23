@@ -37,17 +37,19 @@ class NewProcess extends StatelessWidget {
             //     newProcess.screens!.length - 1) {
             //   context.read<GlobalProvider>().newProcessTabIndex =
                   // context.read<GlobalProvider>().newProcessTabIndex + 1;
-// =======
-            if (context
-                .read<GlobalProvider>()
-                .formKey
-                .currentState!
-                .validate()) {
-              if (context.read<GlobalProvider>().newProcessTabIndex <
+// ======= 
+            if (context.read<GlobalProvider>().newProcessTabIndex <
                   newProcess.screens!.length - 1) {
                 context.read<GlobalProvider>().newProcessTabIndex =
                     context.read<GlobalProvider>().newProcessTabIndex + 1;
-              }
+           
+            // if (context
+            //     .read<GlobalProvider>()
+            //     .formKey
+            //     .currentState!
+            //     .validate()) {
+              
+            //   }
 // >>>>>>> new_registration_ui
             }
           },
