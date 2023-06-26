@@ -20,8 +20,6 @@ import io.mosip.registration_client.model.MachinePigeon;
 
 @Singleton
 public class MachineDetailsApi  implements MachinePigeon.MachineApi {
-    Map<String, String> machineDetails = new HashMap<>();
-    MachinePigeon.Machine machine;
     ClientCryptoManagerService clientCryptoManagerService;
     RegistrationCenterRepository registrationCenterRepository;
 
@@ -34,11 +32,12 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
 
     @Override
     public void getMachineDetails(@NonNull MachinePigeon.Result<MachinePigeon.Machine> result) {
+        Map<String, String> machineDetails = new HashMap<>();
         Map<String, String> details =
                 clientCryptoManagerService.getMachineDetails();
 
         if(details.get("name") == null) {
-            machine = new MachinePigeon.Machine.Builder()
+            MachinePigeon.Machine machine = new MachinePigeon.Machine.Builder()
                     .setMap(machineDetails)
                     .setErrorCode("REG_MACHINE_NOT_INITIALIZED")
                     .build();
@@ -47,13 +46,13 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
 
         try {
             details.put("version", "Alpha");
-            machine = new MachinePigeon.Machine.Builder()
+            MachinePigeon.Machine machine = new MachinePigeon.Machine.Builder()
                     .setMap(details)
                     .build();
             result.success(machine);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), e.getMessage(), e);
-            machine = new MachinePigeon.Machine.Builder()
+            MachinePigeon.Machine machine = new MachinePigeon.Machine.Builder()
                     .setMap(machineDetails)
                     .setErrorCode("REG_MACHINE_NOT_FETCHED")
                     .build();

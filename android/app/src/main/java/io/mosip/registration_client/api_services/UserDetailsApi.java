@@ -19,8 +19,6 @@ import io.mosip.registration_client.model.UserPigeon;
 
 @Singleton
 public class UserDetailsApi implements UserPigeon.UserApi {
-    UserPigeon.User user;
-
     LoginService loginService;
     RegistrationCenterRepository registrationCenterRepository;
 
@@ -33,7 +31,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
     @Override
     public void validateUser(@NonNull String username, @NonNull UserPigeon.Result<UserPigeon.User> result) {
         if (username == null || username.trim().length() == 0) {
-            user = new UserPigeon.User.Builder()
+            UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsOnboarded(false)
                     .setErrorCode("REG_USER_EMPTY")
@@ -43,7 +41,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
         }
 
         if (!loginService.isValidUserId(username)) {
-            user = new UserPigeon.User.Builder()
+            UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsOnboarded(false)
                     .setErrorCode("REG_USER_NOT_FOUND")
@@ -53,7 +51,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
         }
         UserDetail userDetail = loginService.getUserDetailsByUserId(username);
         if (userDetail == null) {
-            user = new UserPigeon.User.Builder()
+            UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsActive(true)
                     .setIsOnboarded(false)
@@ -66,7 +64,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
             result.success(user);
         } else {
             String regCenter = getCenterName(userDetail);
-            user = new UserPigeon.User.Builder()
+            UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsActive(userDetail.getIsActive())
                     .setName(userDetail.getName())

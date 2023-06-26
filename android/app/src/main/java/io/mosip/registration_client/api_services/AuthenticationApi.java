@@ -27,7 +27,6 @@ import retrofit2.Response;
 @Singleton
 public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     private Context context;
-    AuthResponsePigeon.AuthResponse authResponse;
     SyncRestService syncRestService;
     SyncRestUtil syncRestFactory;
     LoginService loginService;
@@ -65,7 +64,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse());
                             loginService.setPasswordHash(username, password);
-                            authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                            AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                                     .setResponse(wrapper.getResponse())
                                     .setUsername(sharedPreferences.getString(USER_NAME, null))
                                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
@@ -93,7 +92,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     } else {
                         errorCode = error.getMessage();
                     }
-                    authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                    AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                             .setResponse("")
                             .setUsername("")
                             .setIsDefault(false)
@@ -104,7 +103,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     result.success(authResponse);
                     return;
                 }
-                authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                         .setResponse("")
                         .setUsername("")
                         .setIsDefault(false)
@@ -118,7 +117,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             @Override
             public void onFailure(Call call, Throwable t) {
                 Log.e(getClass().getSimpleName(), "Login Failure! ");
-                authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                         .setResponse("")
                         .setUsername("")
                         .setIsDefault(false)
@@ -133,7 +132,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     private void offlineLogin(final String username, final String password, AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         if(!loginService.isPasswordPresent(username)) {
-            authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+            AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse("")
                     .setUsername("")
                     .setIsDefault(false)
@@ -146,7 +145,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
         }
 
         if(!loginService.validatePassword(username, password)) {
-            authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+            AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse("")
                     .setUsername("")
                     .setIsDefault(false)
@@ -161,7 +160,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
 
         if(loginService.getAuthToken() == null) {
-            authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+            AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse("")
                     .setUsername("")
                     .setIsDefault(false)
@@ -172,7 +171,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             result.success(authResponse);
             return;
         }
-        authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+        AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                 .setResponse(loginService.getAuthToken())
                 .setUsername(sharedPreferences.getString(USER_NAME, null))
                 .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
