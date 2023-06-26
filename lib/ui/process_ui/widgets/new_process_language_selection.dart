@@ -161,20 +161,6 @@ class NewProcessLanguageSelection extends StatelessWidget {
         ),
       ),
       actions: [
-// <<<<<<< HEAD
-//         OutlinedButton(
-//           onPressed: () {},
-//           child: Text("CANCEL"),
-//         ),
-//         ElevatedButton(
-//             onPressed: () {
-//               context.read<GlobalProvider>().fieldDisplayValues={};
-//               context.read<GlobalProvider>().fieldValues(newProcess);
-//               Navigator.pushNamed(context, NewProcess.routeName,
-//                   arguments: {"process": newProcess});
-//             },
-//             child: Text("SUBMIT"))
-// =======
         const Divider(),
         Row(
           children: [
@@ -202,7 +188,6 @@ class NewProcessLanguageSelection extends StatelessWidget {
             )
           ],
         )
-// >>>>>>> new_registration_ui
       ],
     );
   }

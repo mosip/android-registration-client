@@ -1,4 +1,3 @@
-// <<<<<<< HEAD
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -9,9 +8,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_checkbox.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_html_box.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_preferred_lang_button.dart';
-// =======
 import 'dart:developer';
-// >>>>>>> new_registration_ui
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -143,17 +140,6 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-// <<<<<<< HEAD
-//     return Column(
-    // children: [
-    //   ...screen.fields!.map((e){
-    //     if(e!.inputRequired == true){
-    //       return widgetType(e);
-    //     }
-    //     return Container();
-    //   }).toList(),
-//       ],
-// =======
     return context.watch<GlobalProvider>().newProcessTabIndex == 1
         ?Card(
             margin: const EdgeInsets.all(14),
