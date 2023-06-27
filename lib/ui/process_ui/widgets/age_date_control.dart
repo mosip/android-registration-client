@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class AgeDate extends StatefulWidget {
-  const AgeDate({super.key, required this.validation, required this.onChanged});
+class AgeDateControl extends StatefulWidget {
+  const AgeDateControl({super.key, required this.validation, required this.onChanged});
 
   final RegExp validation;
   final Function(String) onChanged;
 
   @override
-  State<AgeDate> createState() => _AgeDateState();
+  State<AgeDateControl> createState() => _AgeDateControlState();
 }
 
-class _AgeDateState extends State<AgeDate> {
+class _AgeDateControlState extends State<AgeDateControl> {
   final TextEditingController _dayController = TextEditingController();
 
   final TextEditingController _monthController = TextEditingController();

@@ -10,7 +10,7 @@ import 'package:registration_client/model/process.dart';
 
 
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/new_process_language_selection.dart';
+import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -46,7 +46,7 @@ class HomePage extends StatelessWidget {
     if (process.id == "NEW") {
       showDialog(
         context: context,
-        builder: (BuildContext context) => NewProcessLanguageSelection(
+        builder: (BuildContext context) => LanguageSelector(
           newProcess: process,
         ),
       );

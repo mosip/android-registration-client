@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class RadioFormField extends StatefulWidget {
-  const RadioFormField(
+class RadioButtonControl extends StatefulWidget {
+  const RadioButtonControl(
       {super.key, required this.values, required this.onChanged});
 
   final List<String> values;
@@ -12,7 +12,7 @@ class RadioFormField extends StatefulWidget {
   _RadioFormFieldState createState() => _RadioFormFieldState();
 }
 
-class _RadioFormFieldState extends State<RadioFormField> {
+class _RadioFormFieldState extends State<RadioButtonControl> {
   String? selectedOption;
 
   void handleOptionChange(String? value) {
@@ -34,45 +34,16 @@ class _RadioFormFieldState extends State<RadioFormField> {
                   activeColor: solid_primary,
                   value: e.toLowerCase(),
                   groupValue: selectedOption,
-                  onChanged: handleOptionChange,
+                  onChanged: (value) {
+                    widget.onChanged(value!);
+                    handleOptionChange(value);
+                  },
                 ),
                 Text(e)
               ],
             ),
           )
           .toList(),
-
-      // [
-
-      //   const SizedBox(
-      //     width: 10,
-      //   ),
-      //   Row(
-      //     children: [
-      //       Radio<String>(
-      //         activeColor: solid_primary,
-      //         value: 'male',
-      //         groupValue: selectedOption,
-      //         onChanged: handleOptionChange,
-      //       ),
-      //       const Text('Male')
-      //     ],
-      //   ),
-      //   const SizedBox(
-      //     width: 10,
-      //   ),
-      //   Row(
-      //     children: [
-      //       Radio<String>(
-      //         activeColor: solid_primary,
-      //         value: 'other',
-      //         groupValue: selectedOption,
-      //         onChanged: handleOptionChange,
-      //       ),
-      //       const Text('Others')
-      //     ],
-      //   ),
-      // ],
     );
   }
 }

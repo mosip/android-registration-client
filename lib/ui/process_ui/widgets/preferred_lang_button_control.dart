@@ -6,8 +6,8 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class CustomPreferredLangButton extends StatelessWidget {
-  const CustomPreferredLangButton({super.key, required this.field});
+class PreferredLangButtonControl extends StatelessWidget {
+  const PreferredLangButtonControl({super.key, required this.field});
   final Field field;
 
   generateList(BuildContext context, int index) {

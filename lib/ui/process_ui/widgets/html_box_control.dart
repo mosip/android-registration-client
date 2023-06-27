@@ -7,8 +7,8 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class CustomHtmlBox extends StatelessWidget {
-  const CustomHtmlBox({super.key, required this.field});
+class HtmlBoxControl extends StatelessWidget {
+  const HtmlBoxControl({super.key, required this.field});
   final Field field;
 
   @override

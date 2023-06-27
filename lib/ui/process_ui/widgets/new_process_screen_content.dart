@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_checkbox.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_html_box.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_preferred_lang_button.dart';
+import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
+import 'package:registration_client/ui/process_ui/widgets/preferred_lang_button_control.dart';
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'package:registration_client/model/field.dart';
-import 'package:registration_client/model/screen.dart';
-import 'package:registration_client/ui/process_ui/demographic_details/dropdown.dart';
-import 'package:registration_client/ui/process_ui/demographic_details/textbox.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-import '../../../provider/global_provider.dart';
-import '../demographic_details/age_date.dart';
-import '../demographic_details/button.dart';
+import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
+
+import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
   const NewProcessScreenContent(
@@ -37,134 +32,153 @@ class NewProcessScreenContent extends StatefulWidget {
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   Map<String, dynamic> formValues = {};
 
-  List<Widget> buildFormFields() {
-    List<Field?> data = widget.screen.fields!;
-    log(widget.screen.fields!.toString());
-    List<Widget> formFields = [];
+  Widget widgetType(Field e) {
+    RegExp regexPattern = RegExp(r'^.*$');
 
-    for (var field in data) {
-      final label = field!.label!['eng'].toString();
-      final type = field.controlType.toString();
-      RegExp regexPattern = RegExp(r'^.*$');
-
-      if (field.validators!.isNotEmpty) {
-        final validation = field.validators?.first?.validator;
-        if (validation != null) {
-          regexPattern = RegExp(validation);
-        }
-      }
-
-      List<Widget> formField = [];
-
-      // if (requiredFeild == "false") {
-      //   if (requiredOn.isEmpty || mvelEvalutation == false) {
-      //     continue;
-      //   }
-      // }
-
-      if (type == 'textbox') {
-        for (var lang in context.read<GlobalProvider>().chosenLang) {
-          formField.add(
-            TextBox(
-              onChanged: (value) => formValues[label] = value,
-              label: label,
-              validation: regexPattern,
-            ),
-          );
-          formField.add(const SizedBox(
-            height: 10,
-          ));
-        }
-      } else if (type == 'button') {
-        List<String> values = [];
-        if (label == "Gender") {
-          values = ["Female", "Male", "Others"];
-        } else if (label == "Residence Status") {
-          values = ["Permanent", "Temporary"];
-        }
-        formField.add(
-          RadioFormField(
-              values: values, onChanged: (value) => formValues[label] = value),
-        );
-      } else if (type == 'dropdown') {
-        formField.add(
-          CustomDropDown(onChanged: (value) => formValues[label] = value),
-        );
-      } else if (type == 'ageDate') {
-        formField.add(AgeDate(
-            validation: regexPattern,
-            onChanged: (value) => formValues[label] = value));
-      }
-
-      if (formField.isNotEmpty) {
-        formFields.add(Text(
-          label,
-          style: TextStyle(fontWeight: semiBold),
-        ));
-        formFields.add(const SizedBox(
-          height: 10,
-        ));
-        for (var feild in formField) {
-          formFields.add(feild);
-        }
-        formFields.add(const SizedBox(
-          height: 16,
-        ));
-        formFields.add(const Divider(
-          thickness: 1,
-          color: Color(0xffE5EBFA),
-        ));
-        formFields.add(const SizedBox(
-          height: 16,
-        ));
+    if (e.validators!.isNotEmpty) {
+      final validation = e.validators?.first?.validator;
+      if (validation != null) {
+        regexPattern = RegExp(validation);
       }
     }
-    return formFields;
-  }
 
-  Widget widgetType(Field e) {
     if (e.controlType == "checkbox") {
-      return CustomCheckbox(field: e);
+      return CheckboxControl(field: e);
     }
     if (e.controlType == "html") {
-      return CustomHtmlBox(field: e);
+      return HtmlBoxControl(field: e);
     }
     if (e.controlType == "button") {
       if (e.subType == "preferredLang") {
-        return CustomPreferredLangButton(field: e);
+        return PreferredLangButtonControl(field: e);
+      }
+
+      if (e.subType == "gender" || e.subType == "residenceStatus") {
+        Map<String, List<String>> values = {
+          'gender': ["Female", "Male", "Others"],
+          'residenceStatus': ["Permanent", "Temporary"],
+        };
+        return Card(
+          elevation: 0,
+          margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomLabel(feild: e),
+                RadioButtonControl(
+                  onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                  values: values[e.subType] ?? [],
+                ),
+              ],
+            ),
+          ),
+        );
       }
       return Text("${e.controlType}");
     }
+    if (e.controlType == "textbox") {
+      List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
+      List<String> singleTextBox = [
+        "Phone",
+        "Email",
+        "introducerName",
+        "RID",
+        "UIN",
+        "none"
+      ];
+      if (singleTextBox.contains(e.subType)) {
+        choosenLang = ["English"];
+      }
+
+      return Card(
+        elevation: 0,
+        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomLabel(feild: e),
+              const SizedBox(
+                height: 10,
+              ),
+              Column(
+                children: choosenLang.map((code) {
+                  String newCode =
+                      context.read<GlobalProvider>().langToCode(code);
+                  return TextBoxControl(
+                      onChanged: (value) =>
+                          formValues[e.label![newCode]!] = value,
+                      label: e.label![newCode]!.toString(),
+                      lang: newCode,
+                      validation: regexPattern);
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (e.controlType == "dropdown") {
+      return Card(
+        elevation: 0,
+        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomLabel(feild: e),
+              const SizedBox(
+                height: 10,
+              ),
+              DropDownControl(
+                onChanged: (value) => formValues[e.label!["eng"]!] = value,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (e.controlType == "ageDate") {
+      return Card(
+        elevation: 0,
+        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomLabel(feild: e),
+              const SizedBox(
+                height: 10,
+              ),
+              AgeDateControl(
+                onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                validation: regexPattern,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Text("${e.controlType}");
   }
 
   @override
   Widget build(BuildContext context) {
-    return context.watch<GlobalProvider>().newProcessTabIndex == 1
-        ?Card(
-            margin: const EdgeInsets.all(14),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: context.read<GlobalProvider>().formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: buildFormFields(),
-                ),
-              ),
-            ),
-          ) 
-        : Column(
-            children: [
-              ...widget.screen.fields!.map(
-                (e) {
-                  if (e!.inputRequired == true) {
-                    return widgetType(e);
-                  }
-                  return Container();
-                },
-              ).toList(),
-            ],
-          );
+    return Column(
+      children: [
+        ...widget.screen.fields!.map((e) {
+          if (e!.inputRequired == true) {
+            return widgetType(e);
+          }
+          return Container();
+        }).toList(),
+      ],
+    );
   }
 }
