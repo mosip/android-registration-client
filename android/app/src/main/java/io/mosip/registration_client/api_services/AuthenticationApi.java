@@ -62,7 +62,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     ServiceError error = SyncRestUtil.getServiceError(wrapper);
                     if (error == null) {
                         try {
-                            loginService.saveAuthToken(wrapper.getResponse());
+                            loginService.saveAuthToken(wrapper.getResponse(), username);
                             loginService.setPasswordHash(username, password);
                             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                                     .setResponse(wrapper.getResponse())
@@ -160,6 +160,34 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
 
         if(loginService.getAuthToken() == null) {
+
+        }
+
+        try {
+            String token = loginService.saveAuthTokenOffline(username);
+
+            if(token != null && !token.isEmpty()) {
+                AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                        .setResponse(loginService.getAuthToken())
+                        .setUsername(sharedPreferences.getString(USER_NAME, null))
+                        .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
+                        .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
+                        .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
+                        .build();
+                result.success(authResponse);
+            } else {
+                AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                        .setResponse("")
+                        .setUsername("")
+                        .setIsDefault(false)
+                        .setIsOfficer(false)
+                        .setIsSupervisor(false)
+                        .setErrorCode("REG_CRED_EXPIRED")
+                        .build();
+                result.success(authResponse);
+            }
+        } catch (Exception ex) {
+            Log.e(getClass().getSimpleName(), "Some error occurred!");
             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse("")
                     .setUsername("")
@@ -168,17 +196,9 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     .setIsSupervisor(false)
                     .setErrorCode("REG_CRED_EXPIRED")
                     .build();
-            result.success(authResponse);
-            return;
+            result.error(ex);
         }
-        AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                .setResponse(loginService.getAuthToken())
-                .setUsername(sharedPreferences.getString(USER_NAME, null))
-                .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
-                .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
-                .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
-                .build();
-        result.success(authResponse);
+
     }
 
     @Override
