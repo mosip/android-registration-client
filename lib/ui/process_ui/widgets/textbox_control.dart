@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class CustomTextBox extends StatelessWidget {
-  const CustomTextBox(
+class TextBoxControl extends StatelessWidget {
+  const TextBoxControl(
       {super.key,
       required this.onChanged,
       required this.label,

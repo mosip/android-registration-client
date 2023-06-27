@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomDropDown extends StatefulWidget {
-  const CustomDropDown({
+class DropDownControl extends StatefulWidget {
+  const DropDownControl({
     super.key,
     required this.onChanged,
   });
@@ -9,10 +9,10 @@ class CustomDropDown extends StatefulWidget {
   final Function(String) onChanged;
 
   @override
-  State<CustomDropDown> createState() => _CustomDropDownState();
+  State<DropDownControl> createState() => _CustomDropDownState();
 }
 
-class _CustomDropDownState extends State<CustomDropDown> {
+class _CustomDropDownState extends State<DropDownControl> {
   String selected = "Select feild";
 
   @override

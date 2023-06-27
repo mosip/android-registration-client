@@ -7,8 +7,8 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class NewProcessLanguageSelection extends StatelessWidget {
-  const NewProcessLanguageSelection({super.key, required this.newProcess});
+class LanguageSelector extends StatelessWidget {
+  const LanguageSelector({super.key, required this.newProcess});
   final Process newProcess;
 
   @override
