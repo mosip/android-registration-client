@@ -52,6 +52,19 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                         Context.MODE_PRIVATE);
     }
 
+    private AuthResponsePigeon.AuthResponse getAuthErrorResponse(String errorCode) {
+        AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
+                .setResponse("")
+                .setUsername("")
+                .setIsDefault(false)
+                .setIsOfficer(false)
+                .setIsSupervisor(false)
+                .setErrorCode(errorCode)
+                .build();
+
+        return authResponse;
+    }
+
     private void doLogin(final String username, final String password, AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
         call.enqueue(new Callback<ResponseWrapper<String>>() {
@@ -92,39 +105,18 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     } else {
                         errorCode = error.getMessage();
                     }
-                    AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                            .setResponse("")
-                            .setUsername("")
-                            .setIsDefault(false)
-                            .setIsOfficer(false)
-                            .setIsSupervisor(false)
-                            .setErrorCode(errorCode)
-                            .build();
+                    AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse(errorCode);
                     result.success(authResponse);
                     return;
                 }
-                AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                        .setResponse("")
-                        .setUsername("")
-                        .setIsDefault(false)
-                        .setIsOfficer(false)
-                        .setIsSupervisor(false)
-                        .setErrorCode("REG_TRY_AGAIN")
-                        .build();
+                AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_TRY_AGAIN");
                 result.success(authResponse);
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
                 Log.e(getClass().getSimpleName(), "Login Failure! ");
-                AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                        .setResponse("")
-                        .setUsername("")
-                        .setIsDefault(false)
-                        .setIsOfficer(false)
-                        .setIsSupervisor(false)
-                        .setErrorCode("REG_NETWORK_ERROR")
-                        .build();
+                AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_NETWORK_ERROR");
                 result.success(authResponse);
             }
         });
@@ -132,27 +124,13 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     private void offlineLogin(final String username, final String password, AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         if(!loginService.isPasswordPresent(username)) {
-            AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                    .setResponse("")
-                    .setUsername("")
-                    .setIsDefault(false)
-                    .setIsOfficer(false)
-                    .setIsSupervisor(false)
-                    .setErrorCode("REG_CRED_EXPIRED")
-                    .build();
+            AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_CRED_EXPIRED");
             result.success(authResponse);
             return;
         }
 
         if(!loginService.validatePassword(username, password)) {
-            AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                    .setResponse("")
-                    .setUsername("")
-                    .setIsDefault(false)
-                    .setIsOfficer(false)
-                    .setIsSupervisor(false)
-                    .setErrorCode("REG_INVALID_REQUEST")
-                    .build();
+            AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_INVALID_REQUEST");
             result.success(authResponse);
             return;
         }
@@ -169,26 +147,11 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                         .build();
                 result.success(authResponse);
             } else {
-                AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                        .setResponse("")
-                        .setUsername("")
-                        .setIsDefault(false)
-                        .setIsOfficer(false)
-                        .setIsSupervisor(false)
-                        .setErrorCode("REG_CRED_EXPIRED")
-                        .build();
+                AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_CRED_EXPIRED");
                 result.success(authResponse);
             }
         } catch (Exception ex) {
             Log.e(getClass().getSimpleName(), "Some error occurred!");
-            AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
-                    .setResponse("")
-                    .setUsername("")
-                    .setIsDefault(false)
-                    .setIsOfficer(false)
-                    .setIsSupervisor(false)
-                    .setErrorCode("REG_CRED_EXPIRED")
-                    .build();
             result.error(ex);
         }
 

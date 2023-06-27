@@ -1,7 +1,7 @@
 import 'package:pigeon/pigeon.dart';
 
 @HostApi()
-abstract class CommonApi {
+abstract class CommonDetailsApi {
   @async
   String getTemplateContent(String templateName, String langCode);
   @async

@@ -11,15 +11,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by ProcessSpecApi.
-NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void);
+/// The codec used by CommonDetailsApi.
+NSObject<FlutterMessageCodec> *CommonDetailsApiGetCodec(void);
 
-@protocol ProcessSpecApi
-- (void)getUISchemaWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getStringValueGlobalParamKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getNewProcessSpecWithCompletion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+@protocol CommonDetailsApi
+- (void)getTemplateContentTemplateName:(NSString *)templateName langCode:(NSString *)langCode completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateContentTemplateTypeCode:(NSString *)templateTypeCode langCode:(NSString *)langCode completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getDocumentTypesCategoryCode:(NSString *)categoryCode applicantType:(NSString *)applicantType langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getFieldValuesFieldName:(NSString *)fieldName langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *_Nullable api);
+extern void CommonDetailsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<CommonDetailsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

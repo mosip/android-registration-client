@@ -25,16 +25,12 @@ void main() async {
   final AppLanguageProvider appLanguage = AppLanguageProvider();
   await appLanguage.fetchLocale();
   runApp(
-    const MyApp(),
+    const RegistrationClientApp(),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  static const platform =
-      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
+class RegistrationClientApp extends StatelessWidget {
+  const RegistrationClientApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -87,19 +83,19 @@ class BuildApp extends StatelessWidget {
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),
-      home: const MyHomePage(),
+      home: const RegistrationClientSplashPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class RegistrationClientSplashPage extends StatefulWidget {
+  const RegistrationClientSplashPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<RegistrationClientSplashPage> createState() => _RegistrationClientSplashPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _RegistrationClientSplashPageState extends State<RegistrationClientSplashPage> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);

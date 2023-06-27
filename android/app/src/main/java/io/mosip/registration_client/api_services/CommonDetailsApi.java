@@ -10,38 +10,38 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
-import io.mosip.registration_client.model.CommonApiPigeon;
+import io.mosip.registration_client.model.CommonDetailsPigeon;
 
 @Singleton
-public class CommonApiImpl implements CommonApiPigeon.CommonApi {
+public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
 
     MasterDataService masterDataService;
 
     @Inject
-    public CommonApiImpl(MasterDataService masterDataService){
+    public CommonDetailsApi(MasterDataService masterDataService){
         this.masterDataService=masterDataService;
     }
 
     @Override
-    public void getTemplateContent(@NonNull String templateName, @NonNull String langCode, @NonNull CommonApiPigeon.Result<String> result) {
+    public void getTemplateContent(@NonNull String templateName, @NonNull String langCode, @NonNull CommonDetailsPigeon.Result<String> result) {
         String response=masterDataService.getTemplateContent(templateName,langCode);
         result.success(response);
     }
 
     @Override
-    public void getPreviewTemplateContent(@NonNull String templateTypeCode, @NonNull String langCode, @NonNull CommonApiPigeon.Result<String> result) {
+    public void getPreviewTemplateContent(@NonNull String templateTypeCode, @NonNull String langCode, @NonNull CommonDetailsPigeon.Result<String> result) {
         String response=masterDataService.getPreviewTemplateContent(templateTypeCode,langCode);
         result.success(response);
     }
 
     @Override
-    public void getDocumentTypes(@NonNull String categoryCode, @NonNull String applicantType, @NonNull String langCode, @NonNull CommonApiPigeon.Result<List<String>> result) {
+    public void getDocumentTypes(@NonNull String categoryCode, @NonNull String applicantType, @NonNull String langCode, @NonNull CommonDetailsPigeon.Result<List<String>> result) {
      List<String> response=masterDataService.getDocumentTypes(categoryCode,applicantType,langCode);
      result.success(response);
     }
 
     @Override
-    public void getFieldValues(@NonNull String fieldName, @NonNull String langCode, @NonNull CommonApiPigeon.Result<List<String>> result) {
+    public void getFieldValues(@NonNull String fieldName, @NonNull String langCode, @NonNull CommonDetailsPigeon.Result<List<String>> result) {
       List<GenericValueDto> output=masterDataService.getFieldValues(fieldName,langCode);
       List<String> response=new ArrayList<>();
       output.forEach((value)->{response.add(value.toString());});

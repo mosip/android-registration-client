@@ -13,7 +13,7 @@ flutter pub run pigeon --input pigeon/auth_response.dart --dart_out lib/pigeon/a
 
 
 # Generate common_api pigeon files
-flutter pub run pigeon --input pigeon/common_api.dart --dart_out lib/pigeon/common_api_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/CommonApiPigeon.java --java_package "io.mosip.registration_client.model"
+flutter pub run pigeon --input pigeon/common_details.dart --dart_out lib/pigeon/common_details_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/CommonDetailsPigeon.java --java_package "io.mosip.registration_client.model"
 
 # Generate process_spec pigeon files
 flutter pub run pigeon --input pigeon/process_spec.dart --dart_out lib/pigeon/process_spec_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/ProcessSpecPigeon.java --java_package "io.mosip.registration_client.model"

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/pigeon/common_api_pigeon.dart';
+import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/ui/process_ui/new_process.dart';
@@ -188,13 +188,13 @@ class GlobalProvider with ChangeNotifier {
       screen!.fields!.forEach((field) async {
         if (field!.fieldType == "dynamic") {
           fieldDisplayValues[field.id!] =
-              await CommonApi().getFieldValues(field.id!, "eng");
+              await CommonDetailsApi().getFieldValues(field.id!, "eng");
         }
         if (field.templateName != null) {
           List values = List.empty(growable: true);
           chosenLang.forEach((lang) async {
             values.add(
-              await CommonApi().getTemplateContent(
+              await CommonDetailsApi().getTemplateContent(
                 field.templateName!,
                 langToCode(lang),
               ),
