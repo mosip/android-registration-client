@@ -4,9 +4,9 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.entity.UserPassword;
+import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
@@ -133,5 +134,34 @@ public class UserDetailRepository {
 //        userPassword.setUpdDtimes(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime().toString()).toString());
 
         userPasswordDao.insertUserPassword(userPassword);
+    }
+
+    public void saveAuthTokenOnLogin(String userId, JSONObject jsonObject) {
+        UserToken userToken = userTokenDao.findByUsername(userId);
+
+        if(userToken == null) {
+            userToken = new UserToken(userId, "", "", 0, 0);
+        }
+
+        try {
+            userToken.setToken(jsonObject.getString("token"));
+            userToken.setRefreshToken(jsonObject.getString("refreshToken"));
+            long tExpiry = Long.parseLong(jsonObject.getString("expiryTime"));
+            long rExpiry = Long.parseLong(jsonObject.getString("refreshExpiryTime"));
+            userToken.setTExpiry(tExpiry);
+            userToken.setRExpiry(rExpiry);
+        } catch (Exception ex) {
+            Log.e( getClass().getSimpleName(), ex.getMessage(), ex);
+        }
+        userTokenDao.insert(userToken);
+    }
+
+    public String getUserToken(String username) {
+        UserToken userToken = userTokenDao.findByUsername(username);
+        if(userToken == null) {
+            return "";
+        }
+
+        return userToken.getToken();
     }
 }
