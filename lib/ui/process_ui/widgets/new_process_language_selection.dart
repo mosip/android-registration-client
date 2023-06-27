@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
-
-import '../../../utils/app_config.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 class NewProcessLanguageSelection extends StatelessWidget {
   const NewProcessLanguageSelection({super.key, required this.newProcess});
@@ -178,7 +175,8 @@ class NewProcessLanguageSelection extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                   onPressed: () {
-                    context.read<GlobalProvider>().fieldDisplayValues={};
+                    context.read<GlobalProvider>().fieldDisplayValues = {};
+
                     context.read<GlobalProvider>().fieldValues(newProcess);
                     Navigator.of(context).pop();
                     Navigator.pushNamed(context, NewProcess.routeName,

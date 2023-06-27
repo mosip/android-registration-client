@@ -34,45 +34,16 @@ class _RadioFormFieldState extends State<RadioFormField> {
                   activeColor: solid_primary,
                   value: e.toLowerCase(),
                   groupValue: selectedOption,
-                  onChanged: handleOptionChange,
+                  onChanged: (value) {
+                    widget.onChanged(value!);
+                    handleOptionChange(value);
+                  },
                 ),
                 Text(e)
               ],
             ),
           )
           .toList(),
-
-      // [
-
-      //   const SizedBox(
-      //     width: 10,
-      //   ),
-      //   Row(
-      //     children: [
-      //       Radio<String>(
-      //         activeColor: solid_primary,
-      //         value: 'male',
-      //         groupValue: selectedOption,
-      //         onChanged: handleOptionChange,
-      //       ),
-      //       const Text('Male')
-      //     ],
-      //   ),
-      //   const SizedBox(
-      //     width: 10,
-      //   ),
-      //   Row(
-      //     children: [
-      //       Radio<String>(
-      //         activeColor: solid_primary,
-      //         value: 'other',
-      //         groupValue: selectedOption,
-      //         onChanged: handleOptionChange,
-      //       ),
-      //       const Text('Others')
-      //     ],
-      //   ),
-      // ],
     );
   }
 }

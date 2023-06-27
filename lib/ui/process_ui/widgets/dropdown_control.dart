@@ -13,11 +13,11 @@ class CustomDropDown extends StatefulWidget {
 }
 
 class _CustomDropDownState extends State<CustomDropDown> {
-  String selected = "";
+  String selected = "Select feild";
 
   @override
   Widget build(BuildContext context) {
-    final options = ["Data1", "Data2", "Data3"];
+    final options = [""];
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -33,6 +33,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: selected,
+          hintStyle: const TextStyle(color: Color(0xff999999)),
         ),
         items: options
             .map((option) => DropdownMenuItem(
