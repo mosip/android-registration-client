@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/process_spec_pigeon.dart';
 import 'package:registration_client/platform_spi/process_spec.dart';
 
-class ProcessSpecImpl extends ProcessSpec {
+class ProcessSpecImpl implements ProcessSpec {
   @override
   Future<List<String?>> getNewProcessSpec() async {
     List<String?> listOfProcesses;
@@ -40,5 +40,6 @@ class ProcessSpecImpl extends ProcessSpec {
     }
     return result;
   }
-
 }
+
+ProcessSpec getProcessSpecImpl() => ProcessSpecImpl();

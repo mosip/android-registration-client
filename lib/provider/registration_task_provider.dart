@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:registration_client/platform_android/process_spec_impl.dart';
+import 'package:registration_client/platform_spi/process_spec.dart';
 
 class RegistrationTaskProvider with ChangeNotifier {
+  final ProcessSpec processSpec = ProcessSpec();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
@@ -26,7 +27,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
   
   getStringValueGlobalParam(String key) async {
-    String result = await ProcessSpecImpl().getStringValueGlobalParam(key);
+    String result = await processSpec.getStringValueGlobalParam(key);
     if(result == "REG_GLOBAL_PARAM_ERROR") {
       _stringValueGlobalParam = "";
     } else {
@@ -36,7 +37,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getUISchema() async {
-    String result = await ProcessSpecImpl().getUISchema();
+    String result = await processSpec.getUISchema();
     if(result == "REG_UI_SCHEMA_ERROR") {
       _uiSchema = "";
     } else {
@@ -51,7 +52,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getListOfProcesses() async {
-    List<String?> result = await ProcessSpecImpl().getNewProcessSpec();
+    List<String?> result = await processSpec.getNewProcessSpec();
     if(result.isEmpty) {
       _listOfProcesses = [];
     } else {

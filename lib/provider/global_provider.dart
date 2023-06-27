@@ -5,9 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/common_api_pigeon.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
+import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/ui/process_ui/new_process.dart';
 
 class GlobalProvider with ChangeNotifier {
+  final MachineKey machineKey = MachineKey();
   //Variables
   int _currentIndex = 0;
   String _name = "";
@@ -113,7 +115,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   setMachineDetails() async {
-    final machine = await MachineKeyImpl().getMachineKeys();
+    final machine = await machineKey.getMachineKeys();
 
     if (machine.errorCode != null) {
       _machineDetails.addAll({});
@@ -205,7 +207,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   getRegCenterName(String regCenterId) async {
-    String regCenterName = await MachineKeyImpl().getCenterName(regCenterId);
+    String regCenterName = await machineKey.getCenterName(regCenterId);
     _centerName = regCenterName;
     notifyListeners();
   }

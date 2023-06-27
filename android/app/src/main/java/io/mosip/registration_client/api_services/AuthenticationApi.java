@@ -157,15 +157,8 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             return;
         }
 
-
-
-        if(loginService.getAuthToken() == null) {
-
-        }
-
         try {
             String token = loginService.saveAuthTokenOffline(username);
-
             if(token != null && !token.isEmpty()) {
                 AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                         .setResponse(loginService.getAuthToken())

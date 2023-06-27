@@ -4,7 +4,7 @@ import 'package:registration_client/pigeon/machine_pigeon.dart';
 
 import 'package:registration_client/platform_spi/machine_key.dart';
 
-class MachineKeyImpl extends MachineKey {
+class MachineKeyImpl implements MachineKey {
   @override
   Future<Machine> getMachineKeys() async {
     late Machine machine;
@@ -32,3 +32,5 @@ class MachineKeyImpl extends MachineKey {
     return regCenterName;
   }
 }
+
+MachineKey getMachineKeyImpl() => MachineKeyImpl();
