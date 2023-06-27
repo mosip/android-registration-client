@@ -9,7 +9,7 @@ import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_preferred_lang_button.dart';
+import 'package:registration_client/ui/process_ui/widgets/preferred_lang_button_control.dart';
 import 'dart:developer';
 
 import 'package:registration_client/utils/app_config.dart';
@@ -43,14 +43,14 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     }
 
     if (e.controlType == "checkbox") {
-      return CustomCheckbox(field: e);
+      return CheckboxControl(field: e);
     }
     if (e.controlType == "html") {
-      return CustomHtmlBox(field: e);
+      return HtmlBoxControl(field: e);
     }
     if (e.controlType == "button") {
       if (e.subType == "preferredLang") {
-        return CustomPreferredLangButton(field: e);
+        return PreferredLangButtonControl(field: e);
       }
 
       if (e.subType == "gender" || e.subType == "residenceStatus") {
@@ -67,7 +67,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomLabel(feild: e),
-                RadioFormField(
+                RadioButtonControl(
                   onChanged: (value) => formValues[e.label!["eng"]!] = value,
                   values: values[e.subType] ?? [],
                 ),
@@ -108,7 +108,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 children: choosenLang.map((code) {
                   String newCode =
                       context.read<GlobalProvider>().langToCode(code);
-                  return CustomTextBox(
+                  return TextBoxControl(
                       onChanged: (value) =>
                           formValues[e.label![newCode]!] = value,
                       label: e.label![newCode]!.toString(),
@@ -134,7 +134,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
               const SizedBox(
                 height: 10,
               ),
-              CustomDropDown(
+              DropDownControl(
                 onChanged: (value) => formValues[e.label!["eng"]!] = value,
               ),
             ],
@@ -155,7 +155,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
               const SizedBox(
                 height: 10,
               ),
-              AgeDate(
+              AgeDateControl(
                 onChanged: (value) => formValues[e.label!["eng"]!] = value,
                 validation: regexPattern,
               ),
