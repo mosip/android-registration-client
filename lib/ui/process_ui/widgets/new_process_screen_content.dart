@@ -141,7 +141,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   @override
   Widget build(BuildContext context) {
     return context.watch<GlobalProvider>().newProcessTabIndex == 1
-        ?Card(
+        ? Card(
             margin: const EdgeInsets.all(14),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -153,7 +153,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 ),
               ),
             ),
-          ) 
+          )
         : Column(
             children: [
               ...widget.screen.fields!.map(
