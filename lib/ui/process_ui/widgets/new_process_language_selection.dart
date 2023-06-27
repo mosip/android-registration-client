@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
@@ -15,7 +13,7 @@ class NewProcessLanguageSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Select Language"),
+      title: const Text("Select Language"),
       content: Column(
         children: [
           Row(
@@ -71,7 +69,7 @@ class NewProcessLanguageSelection extends StatelessWidget {
         ),
         ElevatedButton(
             onPressed: () {
-              context.read<GlobalProvider>().fieldDisplayValues={};
+              context.read<GlobalProvider>().fieldDisplayValues = {};
               context.read<GlobalProvider>().fieldValues(newProcess);
               Navigator.pushNamed(context, NewProcess.routeName,
                   arguments: {"process": newProcess});
