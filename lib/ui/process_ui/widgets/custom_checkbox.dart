@@ -25,7 +25,7 @@ class CustomCheckbox extends StatelessWidget {
                 height: 20,
                 width: 20,
                 child: Checkbox(
-                  activeColor: solid_primary,
+                    activeColor: solid_primary,
                     value: (context
                             .watch<GlobalProvider>()
                             .fieldInputValues
@@ -42,8 +42,8 @@ class CustomCheckbox extends StatelessWidget {
             SizedBox(
               width: 8,
             ),
-            Container(
-              width: 300.w,
+            Flexible(
+              // width: 300.w,
               child: Text(
                 context.read<GlobalProvider>().chooseLanguage(field.label!),
               ),
