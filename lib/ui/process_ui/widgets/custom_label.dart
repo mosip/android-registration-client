@@ -18,6 +18,9 @@ class CustomLabel extends StatelessWidget {
           Text(
             context.read<GlobalProvider>().chooseLanguage(feild.label!),
           ),
+          const SizedBox(
+            width: 5,
+          ),
           if (feild.inputRequired!)
             const Text(
               "*",

@@ -4,15 +4,15 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_age_date.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_checkbox.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_dropdown.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_html_box.dart';
+import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_preferred_lang_button.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_textbox.dart';
+import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
-import 'radio_button_feild.dart';
+import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
   const NewProcessScreenContent(
@@ -73,6 +73,19 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       return Text("${e.controlType}");
     }
     if (e.controlType == "textbox") {
+      List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
+      List<String> singleTextBox = [
+        "Phone",
+        "Email",
+        "introducerName",
+        "RID",
+        "UIN",
+        "none"
+      ];
+      if (singleTextBox.contains(e.subType)) {
+        choosenLang = ["English"];
+      }
+
       return Card(
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
@@ -86,7 +99,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 height: 10,
               ),
               Column(
-                children: context.read<GlobalProvider>().chosenLang.map((code) {
+                children: choosenLang.map((code) {
                   String newCode =
                       context.read<GlobalProvider>().langToCode(code);
                   return CustomTextBox(
