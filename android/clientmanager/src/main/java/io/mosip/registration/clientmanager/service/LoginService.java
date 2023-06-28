@@ -60,10 +60,6 @@ public class LoginService {
         userDetailRepository.setPasswordHash(userId, password);
     }
 
-    public String getAuthToken() {
-        return sessionManager.fetchAuthToken();
-    }
-
     public List<String> saveAuthToken(String authResponse, String userId) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);
@@ -74,8 +70,12 @@ public class LoginService {
         byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
         try {
             JSONObject jsonObject = new JSONObject(new String(decodedBytes));
-            userDetailRepository.saveAuthTokenOnLogin(userId, jsonObject);
-            List<String> roles=this.sessionManager.saveAuthToken(jsonObject.getString("token"));
+            String token = jsonObject.getString("token");
+            String refreshToken = jsonObject.getString("refreshToken");
+            long tExpiry = Long.parseLong(jsonObject.getString("expiryTime"));
+            long rExpiry = Long.parseLong(jsonObject.getString("refreshExpiryTime"));
+            userDetailRepository.saveUserAuthToken(userId, token, refreshToken, tExpiry, rExpiry);
+            List<String> roles=this.sessionManager.saveAuthToken(token);
             return roles;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
@@ -83,8 +83,8 @@ public class LoginService {
         }
     }
 
-    public String saveAuthTokenOffline(String userId) throws Exception {
-        String token = userDetailRepository.getUserToken(userId);
+    public String saveUserAuthTokenOffline(String userId) throws Exception {
+        String token = userDetailRepository.getUserAuthToken(userId);
         if(token != null && !token.isEmpty()) {
             try {
                 this.sessionManager.saveAuthToken(token);
@@ -93,7 +93,6 @@ public class LoginService {
                 throw ex;
             }
         }
-
         return token;
     }
 }

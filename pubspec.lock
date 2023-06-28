@@ -185,14 +185,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
-  csslib:
-    dependency: transitive
-    description:
-      name: csslib
-      sha256: dca126e17a739525457aa0e7b7511e4ee01f1211578b67273852d9c2a5f9fc24
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.15.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -286,14 +278,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_html:
-    dependency: "direct main"
-    description:
-      name: flutter_html
-      sha256: "8ba9918cf8ea7031f319f225e948f3592ef6b74aabe10fbe3b74d346e02f883a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.8.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -381,14 +365,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-  html:
-    dependency: transitive
-    description:
-      name: html
-      sha256: "7da9d216cfd35679c53f73446304ea255b0df4991961ef2aadb07089ec6a87dc"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.13.4+2"
   http:
     dependency: transitive
     description:
@@ -1018,14 +994,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
-  utf:
-    dependency: transitive
-    description:
-      name: utf
-      sha256: fcf596423864d67b6b4199f77d4bfd83e159eb62228ac0ec0781d8613fcd6a5c
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.0+5"
   vector_graphics:
     dependency: transitive
     description:
