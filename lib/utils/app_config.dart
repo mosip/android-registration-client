@@ -29,7 +29,7 @@ FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;
 FontWeight semiBold = FontWeight.w500;
 
-bool get isMobile => ScreenUtil().screenWidth < 750;
-bool get isTablet => ScreenUtil().screenWidth <= 1160;
+// bool get isMobile => ScreenUtil().screenWidth < 750;
+// bool get isTablet => ScreenUtil().screenWidth <= 1160;
 
-bool get isDesktop => ScreenUtil().screenWidth > 1160;
+// bool get isDesktop => ScreenUtil().screenWidth > 1160;
