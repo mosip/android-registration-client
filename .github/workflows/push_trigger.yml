@@ -2,7 +2,7 @@ name: Android Registration-Client Build
 on:
   push:
     branches:
-      - "!release-branch"
+      - !release-branch
       - release-1*
       - master
       - 1.*
@@ -12,59 +12,59 @@ jobs:
   build-android:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install npm dependencies
-        run: |
-          npm install
-      - name: Updating serverBaseURL.
-        run: >
-          find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g";
-          find . -type f -name "*gradle.properties" -print0 | xargs -0 sed -i "s/sqp_19c9702eb9f5ddfebbfc36eaa6edf39d22280a49/${{ secrets.SONAR_TOKEN }}/g"
-      - name: Build Android Registration-Client
-        run: |
-          cd client
-          chmod +x gradlew
-          ./gradlew assembleDebug
-          ls app/build/outputs/apk/debug
-          find -name '*.apk'
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: apk-output
-          path: ./client/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 5
-  build:
+    - uses: actions/checkout@v2
+    - name: Install npm dependencies
+      run: |
+        npm install
+    - name: Updating serverBaseURL.
+      run: >
+        find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g";
+        find . -type f -name "*gradle.properties" -print0 | xargs -0 sed -i "s/sqp_19c9702eb9f5ddfebbfc36eaa6edf39d22280a49/${{ secrets.SONAR_TOKEN }}/g"
+    - name: Build Android Registration-Client
+      run: |
+        cd client
+        chmod +x gradlew
+        ./gradlew assembleDebug
+        ls app/build/outputs/apk/debug
+        find -name '*.apk'
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: apk-output
+        path: ./client/app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 5
+  build-sonar:
     name: SonarCloud
     jobs:
       build:
         name: Build and analyze
         runs-on: ubuntu-latest
         steps:
-          - uses: actions/checkout@v3
-            with:
-              fetch-depth: 0
-          - name: Set up JDK 11
-            uses: actions/setup-java@v3
-            with:
-              java-version: 11
-              distribution: zulu
-          - name: Cache SonarCloud packages
-            uses: actions/cache@v3
-            with:
-              path: ~/.sonar/cache
-              key: ${{ runner.os }}-sonar
-              restore-keys: ${{ runner.os }}-sonar
-          - name: Cache Gradle packages
-            uses: actions/cache@v3
-            with:
-              path: ~/.gradle/caches
-              key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-              restore-keys: ${{ runner.os }}-gradle
-          - name: Build and analyze
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            run: |
-              cd client
-              chmod +x gradlew
-              ./gradlew build sonarqube --info
+        - uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+        - name: Set up JDK 11
+          uses: actions/setup-java@v3
+          with:
+            java-version: 11
+            distribution: zulu
+        - name: Cache SonarCloud packages
+          uses: actions/cache@v3
+          with:
+            path: ~/.sonar/cache
+            key: ${{ runner.os }}-sonar
+            restore-keys: ${{ runner.os }}-sonar
+        - name: Cache Gradle packages
+          uses: actions/cache@v3
+          with:
+            path: ~/.gradle/caches
+            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+            restore-keys: ${{ runner.os }}-gradle
+        - name: Build and analyze
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          run: |
+            cd client
+            chmod +x gradlew
+            ./gradlew build sonarqube --info
