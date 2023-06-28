@@ -2,7 +2,7 @@ name: Android Registration-Client Build
 on:
   push:
     branches:
-      - !release-branch
+      - "!release-branch"
       - release-1*
       - master
       - 1.*
