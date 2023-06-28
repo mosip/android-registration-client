@@ -9,8 +9,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+
 import 'package:registration_client/utils/file_storage.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -27,12 +29,13 @@ class MachineKeys extends StatelessWidget {
   Widget build(BuildContext context) {
     _context = context;
     Map<String?, String?> map = context.read<GlobalProvider>().machineDetails;
-    if(map.isEmpty) {
+
+    if (map.isEmpty) {
       machineDetails = AppLocalizations.of(context)!.not_initialized;
     } else {
       machineDetails = jsonEncode(map).toString();
     }
-    
+
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       appBar: AppBar(
@@ -168,8 +171,9 @@ class MachineKeys extends StatelessWidget {
         child: Center(
           child: Text(
             AppLocalizations.of(_context)!.download_json,
-            style:
-                isMobile ? AppStyle.mobileBackButtonText : AppStyle.mobileButtonText,
+            style: isMobile
+                ? AppStyle.mobileBackButtonText
+                : AppStyle.mobileButtonText,
           ),
         ),
       ),

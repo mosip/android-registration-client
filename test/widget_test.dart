@@ -9,13 +9,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/app_router.dart';
-import 'package:registration_client/ui/machine_keys.dart';
+import 'package:registration_client/provider/auth_provider.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
-import 'package:registration_client/main.dart';
 import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
 import 'package:registration_client/ui/widgets/username_component.dart';
+
 Widget testableWidget({required Widget child}) {
   return MultiProvider(
     providers: [
@@ -23,14 +27,31 @@ Widget testableWidget({required Widget child}) {
         lazy: false,
         create: (_) => AppLanguageProvider(),
       ),
+      ChangeNotifierProvider(
+        lazy: false,
+        create: (_) => ConnectivityProvider(),
+      ),
+      ChangeNotifierProvider(
+        lazy: false,
+        create: (_) => GlobalProvider(),
+      ),
+      ChangeNotifierProvider(
+        lazy: false,
+        create: (_) => RegistrationTaskProvider(),
+      ),
+      ChangeNotifierProvider(
+        lazy: false,
+        create: (_) => AuthProvider(),
+      ),
     ],
-    child: TestWidget(
+    child: ParentWidget(
       child: child,
     ),
   );
 }
-class TestWidget extends StatelessWidget {
-  const TestWidget({ required this.child});
+
+class ParentWidget extends StatelessWidget {
+  const ParentWidget({super.key, required this.child});
   final Widget child;
   @override
   Widget build(BuildContext context) {
@@ -46,29 +67,31 @@ class TestWidget extends StatelessWidget {
     );
   }
 }
-class TestWidget2 extends StatelessWidget {
-  const TestWidget2({ required this.child});
+
+class SizedWidget extends StatelessWidget {
+  const SizedWidget({super.key, required this.child});
   final Widget child;
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     Orientation orientation = mediaQueryData.orientation;
     ScreenUtil.init(
-          context,
-          designSize: orientation == Orientation.portrait
+      context,
+      designSize: orientation == Orientation.portrait
           ? const Size(390, 844)
           : const Size(1024, 768),
-          minTextAdapt: true,
-          splitScreenMode: true,
-        );
+      minTextAdapt: true,
+      splitScreenMode: true,
+    );
     return child;
   }
 }
+
 void main() {
-  testWidgets("Username Component", (WidgetTester tester) async {
+  testWidgets("Login Page", (WidgetTester tester) async {
     await tester.pumpWidget(
       testableWidget(
-        child: const TestWidget2(
+        child: const SizedWidget(
           child: LoginPage(),
         ),
       ),
@@ -81,7 +104,6 @@ void main() {
     expect(find.widgetWithText(TextField, "Enter Username"), findsOneWidget);
     expect(find.widgetWithText(InkWell, 'NEXT'), findsOneWidget);
     expect(find.byType(Scaffold), findsOneWidget);
-    expect(find.byType(SafeArea), findsOneWidget);
     expect(find.byType(SizedBox), findsNWidgets(19));
     expect(find.byType(Container), findsNWidgets(23));
     expect(find.byType(Text), findsNWidgets(13));
@@ -93,10 +115,54 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
     expect(find.text('NEXT'), findsOneWidget);
   });
+
+  testWidgets("Username Component", (WidgetTester tester) async {
+    await tester.pumpWidget(
+      testableWidget(
+        child: SizedWidget(
+          child: SafeArea(
+            child: Scaffold(
+              body: UsernameComponent(
+                onTap: () {},
+                languages: const [
+                  'eng',
+                  'ara',
+                  'fre',
+                ],
+                mp: const {
+                  "eng": "",
+                  "ara": "",
+                  "fre": "",
+                },
+                onChanged: (v) {},
+                isDisabled: false,
+                isMobile: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.byType(SafeArea), findsOneWidget);
+    expect(find.widgetWithText(InkWell, 'NEXT'), findsOneWidget);
+    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.byType(SizedBox), findsNWidgets(13));
+    expect(find.byType(Container), findsNWidgets(12));
+    expect(find.byType(Text), findsNWidgets(8));
+    expect(find.byType(InkWell), findsNWidgets(2));
+    expect(find.text('Language'), findsOneWidget);
+    expect(find.text('Username'), findsOneWidget);
+    expect(find.widgetWithText(TextField, "Enter Username"), findsOneWidget);
+    expect(find.widgetWithText(InkWell, 'NEXT'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('NEXT'), findsOneWidget);
+  });
+
   testWidgets("Password Component", (WidgetTester tester) async {
     await tester.pumpWidget(
       testableWidget(
-        child: TestWidget2(
+        child: SizedWidget(
+            child: SafeArea(
           child: Scaffold(
             body: PasswordComponent(
               onChanged: (v) {},
@@ -105,10 +171,12 @@ void main() {
               isDisabled: false,
               isLoggingIn: false,
             ),
-          )
-        ),
+          ),
+        )),
       ),
     );
+    expect(find.byType(SafeArea), findsOneWidget);
+    expect(find.byType(Scaffold), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.byType(Container), findsNWidgets(5));
     expect(find.byType(InkWell), findsNWidgets(3));
@@ -123,5 +191,31 @@ void main() {
     expect(find.widgetWithText(InkWell, 'BACK'), findsOneWidget);
     expect(find.widgetWithText(InkWell, 'Forgot Password?'), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets("Machine Keys", (WidgetTester tester) async {
+    await tester.pumpWidget(
+      testableWidget(
+        child: SizedWidget(
+          child: MachineKeys(),
+        ),
+      ),
+    );
+
+    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.byType(IconButton), findsOneWidget);
+    expect(find.byType(Icon), findsOneWidget);
+    expect(find.byType(Container), findsNWidgets(3));
+    expect(find.byType(Center), findsNWidgets(3));
+    expect(find.byType(Text), findsNWidgets(3));
+    expect(find.byType(InkWell), findsNWidgets(2));
+    expect(find.text('Copy Text'), findsOneWidget);
+    expect(find.text('Download JSON'), findsOneWidget);
+    expect(find.text('Device Credentials'), findsOneWidget);
+    expect(find.byType(SizedBox), findsNWidgets(5));
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
+    expect(find.byType(Column), findsOneWidget);
+    expect(find.byType(SelectableText), findsOneWidget);
+    expect(find.byType(AppBar), findsOneWidget);
   });
 }

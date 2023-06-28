@@ -6,6 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/global_provider.dart';
+
+import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
+
 import 'package:registration_client/utils/app_config.dart';
 
 class NewProcess extends StatelessWidget {
@@ -20,6 +23,35 @@ class NewProcess extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments! as Map<String, dynamic>;
     final Process newProcess = arguments["process"];
     return Scaffold(
+      backgroundColor: secondaryColors.elementAt(10),
+      bottomNavigationBar: Container(
+        color: pure_white,
+        padding: EdgeInsets.all(16),
+        height: 84.h,
+        child: ElevatedButton(
+          child: Text("CONTINUE"),
+          onPressed: () {
+            print(context.read<GlobalProvider>().fieldDisplayValues);
+            // if (context.read<GlobalProvider>().newProcessTabIndex <
+            //     newProcess.screens!.length - 1) {
+            //   context.read<GlobalProvider>().newProcessTabIndex =
+                  // context.read<GlobalProvider>().newProcessTabIndex + 1;
+            if (context.read<GlobalProvider>().newProcessTabIndex <
+                  newProcess.screens!.length - 1) {
+                context.read<GlobalProvider>().newProcessTabIndex =
+                    context.read<GlobalProvider>().newProcessTabIndex + 1;
+           
+            // if (context
+            //     .read<GlobalProvider>()
+            //     .formKey
+            //     .currentState!
+            //     .validate()) {
+              
+            //   }
+            }
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
@@ -76,9 +108,14 @@ class NewProcess extends StatelessWidget {
                                 itemBuilder: (BuildContext context, int index) {
                                   return GestureDetector(
                                     onTap: () {
-                                      context
-                                          .read<GlobalProvider>()
-                                          .newProcessTabIndex = index;
+                                      if (index <
+                                          context
+                                              .read<GlobalProvider>()
+                                              .newProcessTabIndex) {
+                                        context
+                                            .read<GlobalProvider>()
+                                            .newProcessTabIndex = index;
+                                      }
                                     },
                                     child: Row(
                                       children: [
@@ -100,24 +137,33 @@ class NewProcess extends StatelessWidget {
                                           ),
                                           child: Row(
                                             children: [
-                                              Icon(
-                                                (context
-                                                            .watch<
-                                                                GlobalProvider>()
-                                                            .newProcessTabIndex ==
-                                                        index)
-                                                    ? Icons.circle
-                                                    : Icons.circle_outlined,
-                                                size: 17,
-                                                color: (context
-                                                            .watch<
-                                                                GlobalProvider>()
-                                                            .newProcessTabIndex ==
-                                                        index)
-                                                    ? pure_white
-                                                    : secondaryColors
-                                                        .elementAt(9),
-                                              ),
+                                              (index <
+                                                      context
+                                                          .watch<
+                                                              GlobalProvider>()
+                                                          .newProcessTabIndex)
+                                                  ? Icon(
+                                                      Icons.check_circle,
+                                                      size: 17,
+                                                      color: secondaryColors
+                                                          .elementAt(11),
+                                                    )
+                                                  : (context
+                                                              .watch<
+                                                                  GlobalProvider>()
+                                                              .newProcessTabIndex ==
+                                                          index)
+                                                      ? Icon(
+                                                          Icons.circle,
+                                                          color: pure_white,
+                                                          size: 17,
+                                                        )
+                                                      : Icon(
+                                                          Icons.circle_outlined,
+                                                          size: 17,
+                                                          color: secondaryColors
+                                                              .elementAt(9),
+                                                        ),
                                               SizedBox(
                                                 width: 6.w,
                                               ),
@@ -154,7 +200,7 @@ class NewProcess extends StatelessWidget {
                         Container(
                           height: 36.h,
                           width: 25.w,
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                           color: solid_primary,
                           child: Icon(
                             Icons.arrow_forward_ios_outlined,
@@ -170,6 +216,10 @@ class NewProcess extends StatelessWidget {
                   ],
                 ),
               ),
+              NewProcessScreenContent(
+                  context: context,
+                  screen: newProcess.screens!.elementAt(
+                      context.watch<GlobalProvider>().newProcessTabIndex)!),
             ],
           ),
         ),

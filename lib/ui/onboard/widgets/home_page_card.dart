@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
-
 class HomePageCard extends StatelessWidget {
   const HomePageCard(
       {super.key,
@@ -37,7 +35,7 @@ class HomePageCard extends StatelessWidget {
               ),
               Flexible(
                 child: Text(
-                  "${title}",
+                  title,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: semiBold,
                       fontSize: 15,
