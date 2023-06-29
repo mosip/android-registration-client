@@ -63,7 +63,6 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .build();
             result.success(user);
         } else {
-            String regCenter = getCenterName(userDetail);
             UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsActive(userDetail.getIsActive())
@@ -71,26 +70,9 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .setEmail(userDetail.getEmail())
                     .setCenterId(userDetail.getRegCenterId())
                     .setIsOnboarded(userDetail.isOnboarded())
-                    .setCenterName(regCenter)
+                    .setCenterName("")
                     .build();
             result.success(user);
         }
-    }
-
-    private String getCenterName(UserDetail userDetail) {
-        List<RegistrationCenter> registrationCenterList = new ArrayList<>();
-        String regCenter = "";
-        try {
-            registrationCenterList =
-                    registrationCenterRepository.getRegistrationCenter(userDetail.getRegCenterId());
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error in getCenterName", e);
-        }
-
-        if(registrationCenterList != null && !registrationCenterList.isEmpty()) {
-            regCenter = registrationCenterList.get(0).getName();
-        }
-
-        return regCenter;
     }
 }

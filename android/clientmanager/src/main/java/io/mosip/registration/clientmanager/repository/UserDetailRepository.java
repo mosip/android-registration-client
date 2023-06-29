@@ -136,32 +136,25 @@ public class UserDetailRepository {
         userPasswordDao.insertUserPassword(userPassword);
     }
 
-    public void saveAuthTokenOnLogin(String userId, JSONObject jsonObject) {
+    public void saveUserAuthToken(String userId, String token, String refreshToken,
+                                     long tExpiry, long rExpiry) {
         UserToken userToken = userTokenDao.findByUsername(userId);
-
         if(userToken == null) {
             userToken = new UserToken(userId, "", "", 0, 0);
         }
+        userToken.setToken(token);
+        userToken.setRefreshToken(refreshToken);
+        userToken.setTExpiry(tExpiry);
+        userToken.setRExpiry(rExpiry);
 
-        try {
-            userToken.setToken(jsonObject.getString("token"));
-            userToken.setRefreshToken(jsonObject.getString("refreshToken"));
-            long tExpiry = Long.parseLong(jsonObject.getString("expiryTime"));
-            long rExpiry = Long.parseLong(jsonObject.getString("refreshExpiryTime"));
-            userToken.setTExpiry(tExpiry);
-            userToken.setRExpiry(rExpiry);
-        } catch (Exception ex) {
-            Log.e( getClass().getSimpleName(), ex.getMessage(), ex);
-        }
         userTokenDao.insert(userToken);
     }
 
-    public String getUserToken(String username) {
-        UserToken userToken = userTokenDao.findByUsername(username);
+    public String getUserAuthToken(String userId) {
+        UserToken userToken = userTokenDao.findByUsername(userId);
         if(userToken == null) {
             return "";
         }
-
         return userToken.getToken();
     }
 }

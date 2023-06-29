@@ -38,12 +38,15 @@ class AppLanguageProvider with ChangeNotifier {
       _appLocale = const Locale("ar");
       await prefs.setString('language_code', 'ar');
       await prefs.setString('countryCode', '');
-    } else if(code == const Locale("fre")) {
+    } else if(code == const Locale("fra")) {
       _appLocale = const Locale("fr");
       await prefs.setString('language_code', 'fr');
       await prefs.setString('countryCode', '');
+    } else {
+      _appLocale = const Locale("en");
+      await prefs.setString('language_code', 'en');
+      await prefs.setString('countryCode', '');
     }
-
     notifyListeners();
   }
 }

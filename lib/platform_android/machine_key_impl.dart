@@ -20,10 +20,10 @@ class MachineKeyImpl implements MachineKey {
   }
   
   @override
-  Future<String> getCenterName(String regCenterId) async {
+  Future<String> getCenterName(String regCenterId, String langCode) async {
     String regCenterName;
     try {
-      regCenterName = await MachineApi().getCenterName(regCenterId);
+      regCenterName = await MachineApi().getCenterName(regCenterId, langCode);
     } on PlatformException catch (e) {
       debugPrint('Machine not found $e');
       regCenterName = "";
