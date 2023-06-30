@@ -10,25 +10,44 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Machine;
+@class User;
 
-@interface Machine : NSObject
+@interface User : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMap:(NSDictionary<NSString *, NSString *> *)map
++ (instancetype)makeWithUserId:(NSString *)userId
+    name:(nullable NSString *)name
+    email:(nullable NSString *)email
+    isActive:(nullable NSNumber *)isActive
+    isLocked:(nullable NSNumber *)isLocked
+    isOnboarded:(NSNumber *)isOnboarded
+    centerName:(nullable NSString *)centerName
+    centerId:(nullable NSString *)centerId
+    machineName:(nullable NSString *)machineName
+    machineId:(nullable NSString *)machineId
+    failedAttempts:(nullable NSString *)failedAttempts
     errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> * map;
+@property(nonatomic, copy) NSString * userId;
+@property(nonatomic, copy, nullable) NSString * name;
+@property(nonatomic, copy, nullable) NSString * email;
+@property(nonatomic, strong, nullable) NSNumber * isActive;
+@property(nonatomic, strong, nullable) NSNumber * isLocked;
+@property(nonatomic, strong) NSNumber * isOnboarded;
+@property(nonatomic, copy, nullable) NSString * centerName;
+@property(nonatomic, copy, nullable) NSString * centerId;
+@property(nonatomic, copy, nullable) NSString * machineName;
+@property(nonatomic, copy, nullable) NSString * machineId;
+@property(nonatomic, copy, nullable) NSString * failedAttempts;
 @property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by MachineApi.
-NSObject<FlutterMessageCodec> *MachineApiGetCodec(void);
+/// The codec used by UserApi.
+NSObject<FlutterMessageCodec> *UserApiGetCodec(void);
 
-@protocol MachineApi
-- (void)getMachineDetailsWithCompletion:(void (^)(Machine *_Nullable, FlutterError *_Nullable))completion;
-- (void)getCenterNameRegCenterId:(NSString *)regCenterId langCode:(NSString *)langCode completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol UserApi
+- (void)validateUserUsername:(NSString *)username completion:(void (^)(User *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *_Nullable api);
+extern void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
