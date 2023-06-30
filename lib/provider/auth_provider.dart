@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
+
 import 'package:registration_client/platform_spi/auth.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -58,7 +59,7 @@ class AuthProvider with ChangeNotifier {
     _currentUser = user;
     notifyListeners();
   }
-  
+
   setLoginError(String value) {
     _loginError = value;
     notifyListeners();
@@ -87,7 +88,7 @@ class AuthProvider with ChangeNotifier {
     final authResponse = await auth.login(username, password, isConnected);
 
     setIsLoggingIn(true);
-    if(authResponse.errorCode != null) {
+    if (authResponse.errorCode != null) {
       _loginError = authResponse.errorCode!;
       _isLoggedIn = false;
     } else {
