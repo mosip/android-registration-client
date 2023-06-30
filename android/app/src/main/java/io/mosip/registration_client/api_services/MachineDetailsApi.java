@@ -61,6 +61,7 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
     }
 
     @Override
+
     public void getCenterName(@NonNull String regCenterId, @NonNull String langCode, @NonNull MachinePigeon.Result<String> result) {
         List<RegistrationCenter> registrationCenterList = new ArrayList<>();
         RegistrationCenter registrationCenter;
@@ -72,6 +73,7 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
                 result.success(regCenter);
                 return;
             }
+
             registrationCenterList =
                     registrationCenterRepository.getRegistrationCenter(regCenterId);
         } catch (Exception e) {

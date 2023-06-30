@@ -60,6 +60,7 @@ public class LoginService {
         userDetailRepository.setPasswordHash(userId, password);
     }
 
+
     public List<String> saveAuthToken(String authResponse, String userId) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);
@@ -70,12 +71,14 @@ public class LoginService {
         byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
         try {
             JSONObject jsonObject = new JSONObject(new String(decodedBytes));
+
             String token = jsonObject.getString("token");
             String refreshToken = jsonObject.getString("refreshToken");
             long tExpiry = Long.parseLong(jsonObject.getString("expiryTime"));
             long rExpiry = Long.parseLong(jsonObject.getString("refreshExpiryTime"));
             userDetailRepository.saveUserAuthToken(userId, token, refreshToken, tExpiry, rExpiry);
             List<String> roles=this.sessionManager.saveAuthToken(token);
+
             return roles;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
@@ -83,8 +86,10 @@ public class LoginService {
         }
     }
 
+
     public String saveUserAuthTokenOffline(String userId) throws Exception {
         String token = userDetailRepository.getUserAuthToken(userId);
+
         if(token != null && !token.isEmpty()) {
             try {
                 this.sessionManager.saveAuthToken(token);
@@ -93,6 +98,7 @@ public class LoginService {
                 throw ex;
             }
         }
+
         return token;
     }
 }

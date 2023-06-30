@@ -17,4 +17,5 @@ abstract class MachineApi {
   
   @async
   String getCenterName(String regCenterId, String langCode);
+
 }

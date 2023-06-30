@@ -136,6 +136,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
         }
 
         try {
+
             String token = loginService.saveUserAuthTokenOffline(username);
             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse(token)
@@ -149,6 +150,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_CRED_EXPIRED");
             result.success(authResponse);
         }
+
     }
 
     @Override

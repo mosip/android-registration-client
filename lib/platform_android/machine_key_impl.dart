@@ -18,7 +18,7 @@ class MachineKeyImpl implements MachineKey {
 
     return machine;
   }
-  
+
   @override
   Future<String> getCenterName(String regCenterId, String langCode) async {
     String regCenterName;
