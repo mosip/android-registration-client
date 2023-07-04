@@ -13,13 +13,16 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
+import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
+import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
@@ -85,6 +88,13 @@ public class HostApiModule {
                                                    GlobalParamRepository globalParamRepository) {
         return new ProcessSpecDetailsApi(appContext, identitySchemaRepository,
                         globalParamRepository);
+
+    }
+
+    @Provides
+    @Singleton
+    BiometricsDetailsApi getBiometricsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository, Biometrics095Service biometrics095Service) {
+        return new BiometricsDetailsApi(registrationService,biometrics095Service,globalParamRepository,auditManagerService);
 
     }
 
