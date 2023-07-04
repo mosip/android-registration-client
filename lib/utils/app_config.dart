@@ -11,6 +11,7 @@ Color backgroundColor = Color(0xFFF8FCFF);
 Color pure_white = Color(0xFFFFFFFF);
 
 Color black_shade_1 = Color(0xFF333333);
+
 List<Color> secondaryColors = [
   Color(0xFF214FBF),
   Color(0xFF6F6E6E),
@@ -24,6 +25,10 @@ List<Color> secondaryColors = [
   Color(0xFF0C0CAE3),
   Color(0xFFFAFBFF),
   Color(0xFF4B9D20),
+  Color(0xFF1C429F),
+  Color(0xFFE1EDF5),
+  Color(0xFFE5EBFA),
+  Color(0xFFFF0000),
 ];
 FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;
