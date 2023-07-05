@@ -60,7 +60,7 @@ jobs:
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_1 }}
+          SONAR_TOKEN: 1a3b221327468ff07156f8676c6b3ba1b7c1d66e
         run: |
           cd client
           chmod +x gradlew
