@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/app_language_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';

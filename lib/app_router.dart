@@ -13,7 +13,7 @@ class AppRouter {
 
   static Map<String, Widget Function(BuildContext)> routes = {
     LoginPage.route: (context) => const LoginPage(),
-    NewProcess.routeName: (context) => const NewProcess(),
+    NewProcess.routeName: (context) => NewProcess(),
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
     PreviewPage.routeName: (context) => const PreviewPage(),

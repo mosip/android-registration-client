@@ -9,15 +9,24 @@ import 'package:registration_client/provider/global_provider.dart';
 
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
+import 'package:registration_client/ui/post_registration/authentication_page.dart';
+import 'package:registration_client/ui/post_registration/preview_page.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/app_style.dart';
 
 class NewProcess extends StatelessWidget {
-  const NewProcess({super.key});
+  NewProcess({super.key});
 
   static const routeName = '/new_process';
+
+  final List<String> postRegistrationTabs = [
+    'Preview',
+    'Authentication',
+    'Acknowledgement'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +35,7 @@ class NewProcess extends StatelessWidget {
     Map<String, dynamic> arguments =
         ModalRoute.of(context)!.settings.arguments! as Map<String, dynamic>;
     final Process newProcess = arguments["process"];
+    int size = newProcess.screens!.length;
     return Scaffold(
       backgroundColor: secondaryColors.elementAt(10),
       bottomNavigationBar: Container(
@@ -34,20 +44,28 @@ class NewProcess extends StatelessWidget {
         height: 84.h,
         child: isMobile
             ? ElevatedButton(
-                child: Text("CONTINUE"),
+                child: Text(
+                    context.read<GlobalProvider>().newProcessTabIndex <= size
+                        ? "CONTINUE"
+                        : context.read<GlobalProvider>().newProcessTabIndex ==
+                                size + 1
+                            ? "AUTHENTICATE"
+                            : "COMPLETE"),
                 onPressed: () {
-                  if (context.read<GlobalProvider>().newProcessTabIndex <
-                      newProcess.screens!.length - 1) {
+                  if (context.read<GlobalProvider>().newProcessTabIndex <=
+                      newProcess.screens!.length) {
                     context.read<GlobalProvider>().newProcessTabIndex =
                         context.read<GlobalProvider>().newProcessTabIndex + 1;
-                  }
+                  } else if (context
+                          .read<GlobalProvider>()
+                          .newProcessTabIndex ==
+                      size + 1) {}
                 },
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    child: Text("CONTINUE"),
                     style: ButtonStyle(
                       maximumSize:
                           MaterialStateProperty.all<Size>(Size(209, 52)),
@@ -55,13 +73,25 @@ class NewProcess extends StatelessWidget {
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                     ),
                     onPressed: () {
-                      if (context.read<GlobalProvider>().newProcessTabIndex <
-                          newProcess.screens!.length - 1) {
+                      if (context.read<GlobalProvider>().newProcessTabIndex <=
+                          newProcess.screens!.length) {
                         context.read<GlobalProvider>().newProcessTabIndex =
                             context.read<GlobalProvider>().newProcessTabIndex +
                                 1;
-                      }
+                      } else if (context
+                              .read<GlobalProvider>()
+                              .newProcessTabIndex ==
+                          size + 1) {}
                     },
+                    child: Text(context
+                                .read<GlobalProvider>()
+                                .newProcessTabIndex <=
+                            size
+                        ? "CONTINUE"
+                        : context.read<GlobalProvider>().newProcessTabIndex ==
+                                size + 1
+                            ? "AUTHENTICATE"
+                            : "COMPLETE"),
                   )
                 ],
               ),
@@ -134,7 +164,7 @@ class NewProcess extends StatelessWidget {
                               child: ListView.builder(
                                   padding: EdgeInsets.all(0),
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: newProcess.screens!.length,
+                                  itemCount: newProcess.screens!.length + 3,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return GestureDetector(
@@ -202,8 +232,12 @@ class NewProcess extends StatelessWidget {
                                                   width: 6.w,
                                                 ),
                                                 Text(
-                                                  newProcess.screens![index]!
-                                                      .label!["eng"]!,
+                                                  index < size
+                                                      ? newProcess
+                                                          .screens![index]!
+                                                          .label!["eng"]!
+                                                      : postRegistrationTabs[
+                                                          index - size],
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .titleSmall
@@ -255,10 +289,18 @@ class NewProcess extends StatelessWidget {
                 padding: isMobile
                     ? EdgeInsets.all(0)
                     : EdgeInsets.fromLTRB(60, 0, 60, 0),
-                child: NewProcessScreenContent(
-                    context: context,
-                    screen: newProcess.screens!.elementAt(
-                        context.watch<GlobalProvider>().newProcessTabIndex)!),
+                child: context.watch<GlobalProvider>().newProcessTabIndex < size
+                    ? NewProcessScreenContent(
+                        context: context,
+                        screen: newProcess.screens!.elementAt(context
+                            .watch<GlobalProvider>()
+                            .newProcessTabIndex)!)
+                    : context.watch<GlobalProvider>().newProcessTabIndex == size
+                        ? const PreviewPage()
+                        : context.watch<GlobalProvider>().newProcessTabIndex ==
+                                size + 1
+                            ? const AuthenticationPage()
+                            : const PreviewPage(),
               ),
             ],
           ),
