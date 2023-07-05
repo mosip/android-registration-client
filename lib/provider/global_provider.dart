@@ -204,7 +204,9 @@ class GlobalProvider with ChangeNotifier {
   }
 
   getRegCenterName(String regCenterId, String langCode) async {
-    String regCenterName = await machineKey.getCenterName(regCenterId, langCode);
+    String regCenterName =
+        await machineKey.getCenterName(regCenterId, langCode);
+
     _centerName = regCenterName;
     notifyListeners();
   }

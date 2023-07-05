@@ -21,96 +21,23 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface Machine ()
-+ (Machine *)fromList:(NSArray *)list;
-+ (nullable Machine *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@implementation Machine
-+ (instancetype)makeWithMap:(NSDictionary<NSString *, NSString *> *)map
-    errorCode:(nullable NSString *)errorCode {
-  Machine* pigeonResult = [[Machine alloc] init];
-  pigeonResult.map = map;
-  pigeonResult.errorCode = errorCode;
-  return pigeonResult;
-}
-+ (Machine *)fromList:(NSArray *)list {
-  Machine *pigeonResult = [[Machine alloc] init];
-  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.map != nil, @"");
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
-  return pigeonResult;
-}
-+ (nullable Machine *)nullableFromList:(NSArray *)list {
-  return (list) ? [Machine fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    (self.map ?: [NSNull null]),
-    (self.errorCode ?: [NSNull null]),
-  ];
-}
-@end
-
-@interface MachineApiCodecReader : FlutterStandardReader
-@end
-@implementation MachineApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128: 
-      return [Machine fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface MachineApiCodecWriter : FlutterStandardWriter
-@end
-@implementation MachineApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[Machine class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface MachineApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation MachineApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[MachineApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[MachineApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *MachineApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    MachineApiCodecReaderWriter *readerWriter = [[MachineApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
-void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *api) {
+void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.MachineApi.getMachineDetails"
+        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getUISchema"
         binaryMessenger:binaryMessenger
-        codec:MachineApiGetCodec()];
+        codec:ProcessSpecApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMachineDetailsWithCompletion:)], @"MachineApi api (%@) doesn't respond to @selector(getMachineDetailsWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getUISchemaWithCompletion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getUISchemaWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getMachineDetailsWithCompletion:^(Machine *_Nullable output, FlutterError *_Nullable error) {
+        [api getUISchemaWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -121,16 +48,32 @@ void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Machin
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.MachineApi.getCenterName"
+        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getStringValueGlobalParam"
         binaryMessenger:binaryMessenger
-        codec:MachineApiGetCodec()];
+        codec:ProcessSpecApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getCenterNameRegCenterId:langCode:completion:)], @"MachineApi api (%@) doesn't respond to @selector(getCenterNameRegCenterId:langCode:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getStringValueGlobalParamKey:completion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getStringValueGlobalParamKey:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_regCenterId = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
-        [api getCenterNameRegCenterId:arg_regCenterId langCode:arg_langCode completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_key = GetNullableObjectAtIndex(args, 0);
+        [api getStringValueGlobalParamKey:arg_key completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getNewProcessSpec"
+        binaryMessenger:binaryMessenger
+        codec:ProcessSpecApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getNewProcessSpecWithCompletion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getNewProcessSpecWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getNewProcessSpecWithCompletion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

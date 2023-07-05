@@ -26,7 +26,7 @@ class AppLanguageProvider with ChangeNotifier {
   void changeLanguage(Locale code) async {
     var prefs = await SharedPreferences.getInstance();
 
-    if(_appLocale == code) {
+    if (_appLocale == code) {
       return;
     }
 
@@ -34,11 +34,11 @@ class AppLanguageProvider with ChangeNotifier {
       _appLocale = const Locale("en");
       await prefs.setString('language_code', 'en');
       await prefs.setString('countryCode', '');
-    } else if(code == const Locale("ara")) {
+    } else if (code == const Locale("ara")) {
       _appLocale = const Locale("ar");
       await prefs.setString('language_code', 'ar');
       await prefs.setString('countryCode', '');
-    } else if(code == const Locale("fra")) {
+    } else if (code == const Locale("fra")) {
       _appLocale = const Locale("fr");
       await prefs.setString('language_code', 'fr');
       await prefs.setString('countryCode', '');

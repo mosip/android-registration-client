@@ -10,18 +10,22 @@ class PreferredLangButtonControl extends StatelessWidget {
   const PreferredLangButtonControl({super.key, required this.field});
   final Field field;
 
-  generateList(BuildContext context, int index) {
-    List temp = List.generate(
-      context.read<GlobalProvider>().fieldDisplayValues[field.id] == null ? 0 :
-        context.read<GlobalProvider>().fieldDisplayValues[field.id].length,
-        (index) => false);
-    temp[index] = false;
-    context.read<GlobalProvider>().setInputMapValue(field.id!, temp);
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
+    generateList(BuildContext context, int index) {
+      List temp = List.generate(
+          context.read<GlobalProvider>().fieldDisplayValues[field.id] == null
+              ? 0
+              : context
+                  .read<GlobalProvider>()
+                  .fieldDisplayValues[field.id]
+                  .length,
+          (index) => false);
+      temp[index] = false;
+      context.read<GlobalProvider>().setInputMapValue(field.id!, temp);
+      return false;
+    }
+
     return Card(
       color: pure_white,
       margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -59,7 +63,7 @@ class PreferredLangButtonControl extends StatelessWidget {
                                   .fieldInputValues
                                   .containsKey(field.id))
                               ? context
-                                  .watch<GlobalProvider>()
+                                  .read<GlobalProvider>()
                                   .fieldInputValues[field.id][i]
                               : generateList(context, i),
                           onChanged: (value) {

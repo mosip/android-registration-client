@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/app_language_provider.dart';
 
-
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -65,8 +64,11 @@ class HomePage extends StatelessWidget {
 
   _getCenterNameAction(BuildContext context) async {
     String regCenterId = context.read<GlobalProvider>().centerId;
+
     String langCode = context.read<AppLanguageProvider>().selectedLanguage;
-    await context.read<GlobalProvider>().getRegCenterName(regCenterId, langCode);
+    await context
+        .read<GlobalProvider>()
+        .getRegCenterName(regCenterId, langCode);
   }
 
   @override
