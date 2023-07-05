@@ -21,59 +21,100 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void) {
+@interface PacketAuth ()
++ (PacketAuth *)fromList:(NSArray *)list;
++ (nullable PacketAuth *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@implementation PacketAuth
++ (instancetype)makeWithResponse:(NSString *)response
+    errorCode:(nullable NSString *)errorCode {
+  PacketAuth* pigeonResult = [[PacketAuth alloc] init];
+  pigeonResult.response = response;
+  pigeonResult.errorCode = errorCode;
+  return pigeonResult;
+}
++ (PacketAuth *)fromList:(NSArray *)list {
+  PacketAuth *pigeonResult = [[PacketAuth alloc] init];
+  pigeonResult.response = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.response != nil, @"");
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
+  return pigeonResult;
+}
++ (nullable PacketAuth *)nullableFromList:(NSArray *)list {
+  return (list) ? [PacketAuth fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.response ?: [NSNull null]),
+    (self.errorCode ?: [NSNull null]),
+  ];
+}
+@end
+
+@interface PacketAuthApiCodecReader : FlutterStandardReader
+@end
+@implementation PacketAuthApiCodecReader
+- (nullable id)readValueOfType:(UInt8)type {
+  switch (type) {
+    case 128: 
+      return [PacketAuth fromList:[self readValue]];
+    default:
+      return [super readValueOfType:type];
+  }
+}
+@end
+
+@interface PacketAuthApiCodecWriter : FlutterStandardWriter
+@end
+@implementation PacketAuthApiCodecWriter
+- (void)writeValue:(id)value {
+  if ([value isKindOfClass:[PacketAuth class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else {
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface PacketAuthApiCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation PacketAuthApiCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[PacketAuthApiCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[PacketAuthApiCodecReader alloc] initWithData:data];
+}
+@end
+
+NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    PacketAuthApiCodecReaderWriter *readerWriter = [[PacketAuthApiCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
   return sSharedObject;
 }
 
-void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *api) {
+void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getUISchema"
+        initWithName:@"dev.flutter.pigeon.PacketAuthApi.authenticate"
         binaryMessenger:binaryMessenger
-        codec:ProcessSpecApiGetCodec()];
+        codec:PacketAuthApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getUISchemaWithCompletion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getUISchemaWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getUISchemaWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getStringValueGlobalParam"
-        binaryMessenger:binaryMessenger
-        codec:ProcessSpecApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getStringValueGlobalParamKey:completion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getStringValueGlobalParamKey:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(authenticateUsername:password:isConnected:completion:)], @"PacketAuthApi api (%@) doesn't respond to @selector(authenticateUsername:password:isConnected:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_key = GetNullableObjectAtIndex(args, 0);
-        [api getStringValueGlobalParamKey:arg_key completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getNewProcessSpec"
-        binaryMessenger:binaryMessenger
-        codec:ProcessSpecApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getNewProcessSpecWithCompletion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getNewProcessSpecWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getNewProcessSpecWithCompletion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_password = GetNullableObjectAtIndex(args, 1);
+        NSNumber *arg_isConnected = GetNullableObjectAtIndex(args, 2);
+        [api authenticateUsername:arg_username password:arg_password isConnected:arg_isConnected completion:^(PacketAuth *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

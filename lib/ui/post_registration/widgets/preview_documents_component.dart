@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/ui/preview/widgets/header_response_tile.dart';
+import 'package:registration_client/ui/post_registration/widgets/header_response_tile.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class PreviewDocumentsComponent extends StatelessWidget {

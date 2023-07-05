@@ -19,6 +19,8 @@ abstract class AppStyle {
   static const Color mandatoryField = Color(0XFFD32D2D);
   static const previewHeaderColor = Color(0XFF666666);
   static const previewHeaderComponentColor = Color(0XFFF5F5F5);
+  static const authIconBackground = Color(0XFFF8FCFF);
+  static const authIconBorder = Color(0XFFE1EDF5);
 
   static TextStyle mobileHelpText = TextStyle(
     fontWeight: FontWeight.w500,

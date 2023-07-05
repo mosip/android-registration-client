@@ -10,7 +10,8 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/app_language_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/preview/preview_page.dart';
+import 'package:registration_client/ui/post_registration/authentication_page.dart';
+import 'package:registration_client/ui/post_registration/preview_page.dart';
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -215,16 +216,6 @@ class HomePage extends StatelessWidget {
                                     );
                                   },
                                 )),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const PreviewPage(),
-                            ),
-                          );
-                        },
-                        child: const Text('Preview'),
                       ),
                       SizedBox(
                         height: 30.h,

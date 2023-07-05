@@ -10,16 +10,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class PacketAuth;
 
-/// The codec used by ProcessSpecApi.
-NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void);
-
-@protocol ProcessSpecApi
-- (void)getUISchemaWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getStringValueGlobalParamKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getNewProcessSpecWithCompletion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+@interface PacketAuth : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithResponse:(NSString *)response
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy) NSString * response;
+@property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-extern void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *_Nullable api);
+/// The codec used by PacketAuthApi.
+NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void);
+
+@protocol PacketAuthApi
+- (void)authenticateUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(PacketAuth *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

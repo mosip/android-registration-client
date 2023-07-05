@@ -22,6 +22,7 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 
@@ -86,6 +87,13 @@ public class HostApiModule {
         return new ProcessSpecDetailsApi(appContext, identitySchemaRepository,
                         globalParamRepository);
 
+    }
+
+    @Provides
+    @Singleton
+    PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
+                                                       LoginService loginService) {
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService);
     }
 
 }

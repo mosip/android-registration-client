@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/post_registration/authentication_page.dart';
+import 'package:registration_client/ui/post_registration/preview_page.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/ui/onboard/onboard_landing_page.dart';
 import 'package:registration_client/ui/onboard/home_page.dart';
-import 'package:registration_client/ui/preview/preview_page.dart';
 
 class AppRouter {
   AppRouter._();
@@ -16,6 +17,7 @@ class AppRouter {
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
     PreviewPage.routeName: (context) => const PreviewPage(),
+    AuthenticationPage.routeName: (context) => const AuthenticationPage(),
   };
 
   static Route<dynamic>? onUnknownRoute(RouteSettings settings) {

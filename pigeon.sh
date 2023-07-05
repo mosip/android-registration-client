@@ -17,3 +17,6 @@ flutter pub run pigeon --input pigeon/common_details.dart --dart_out lib/pigeon/
 
 # Generate process_spec pigeon files
 flutter pub run pigeon --input pigeon/process_spec.dart --dart_out lib/pigeon/process_spec_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/ProcessSpecPigeon.java --java_package "io.mosip.registration_client.model"
+
+# Generate packet_auth_response pigeon files
+flutter pub run pigeon --input pigeon/packet_auth.dart --dart_out lib/pigeon/packet_auth_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/PacketAuthPigeon.java --java_package "io.mosip.registration_client.model"

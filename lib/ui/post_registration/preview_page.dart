@@ -4,11 +4,11 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
-import 'package:registration_client/ui/preview/widgets/preview_biometrics_component.dart';
-import 'package:registration_client/ui/preview/widgets/preview_demographics_address_component.dart';
-import 'package:registration_client/ui/preview/widgets/preview_demographics_profile_component.dart';
-import 'package:registration_client/ui/preview/widgets/preview_documents_component.dart';
-import 'package:registration_client/ui/preview/widgets/preview_head_component.dart';
+import 'package:registration_client/ui/post_registration/widgets/preview_biometrics_component.dart';
+import 'package:registration_client/ui/post_registration/widgets/preview_demographics_address_component.dart';
+import 'package:registration_client/ui/post_registration/widgets/preview_demographics_profile_component.dart';
+import 'package:registration_client/ui/post_registration/widgets/preview_documents_component.dart';
+import 'package:registration_client/ui/post_registration/widgets/preview_head_component.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 

@@ -68,7 +68,7 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
         String regCenter = "";
         try {
             registrationCenter = registrationCenterRepository.getRegistrationCenterByCenterIdAndLangCode(regCenterId, langCode);
-            if(registrationCenter == null) {
+            if(registrationCenter != null) {
                 regCenter = registrationCenter.getName();
                 result.success(regCenter);
                 return;
