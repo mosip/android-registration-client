@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
-class BiometricAttributeData{
+class BiometricAttributeData {
   bool isScanned;
   List<bool> exceptions;
   String exceptionType;
   int qualityPercentage;
+
   List<Uint8List> listofImages;
   BiometricAttributeData({
     required this.isScanned,

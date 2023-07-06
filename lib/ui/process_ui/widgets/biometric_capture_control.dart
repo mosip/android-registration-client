@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
@@ -247,6 +247,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             ),
                           ),
                         ),
+                      if (widget.iris.exceptions.contains(true) ||
+                          widget.rightHand.exceptions.contains(true) ||
+                          widget.leftHand.exceptions.contains(true) ||
+                          widget.thumbs.exceptions.contains(true) ||
+                          widget.face.exceptions.contains(true))
                         InkWell(
                           onTap: () {
                             setState(() {
@@ -260,10 +265,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color:
-                                          (widget.biometricAttribute == "Person")
-                                              ? secondaryColors.elementAt(12)
-                                              : secondaryColors.elementAt(14)),
+                                      color: (widget.biometricAttribute ==
+                                              "Person")
+                                          ? secondaryColors.elementAt(12)
+                                          : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -309,6 +314,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       images: ["assets/images/Face@2x.png"]),
                 if (widget.biometricAttribute == "Iris")
                   BiometricCaptureExceptionBlock(
+                    attribute: widget.iris,
                     exceptionImage: SizedBox(
                       height: 164.h,
                       child: Row(
@@ -327,18 +333,43 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color: black_shade_1)),
                                 Stack(
                                   children: [
-                                    Image.asset(
-                                      "assets/images/Left Eye@2x.png",
-                                      height: 72.h,
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          widget.iris.exceptions[0] = !(widget
+                                              .iris.exceptions
+                                              .elementAt(0));
+
+                                          if (widget.iris.exceptions
+                                              .contains(true)) {
+                                            if (widget
+                                                .iris.exceptionType.isEmpty) {
+                                              widget.iris.exceptionType =
+                                                  "Permanent";
+                                            }
+                                          }
+                                          if (!widget.iris.exceptions
+                                              .contains(true)) {
+                                            widget.iris.exceptionType = "";
+                                          }
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        "assets/images/Left Eye@2x.png",
+                                        height: 72,
+                                      ),
                                     ),
-                                    Positioned(
-                                        top: 0,
-                                        left: 0,
-                                        child: Icon(
-                                          Icons.cancel_rounded,
-                                          color: secondaryColors.elementAt(15),
-                                          size: 30.h,
-                                        ))
+                                    (widget.iris.exceptions[0] == true)
+                                        ? Positioned(
+                                            top: 0,
+                                            left: 0,
+                                            child: Icon(
+                                              Icons.cancel_rounded,
+                                              color:
+                                                  secondaryColors.elementAt(15),
+                                              size: 30.h,
+                                            ))
+                                        : Container(),
                                   ],
                                 )
                               ],
@@ -356,18 +387,42 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color: black_shade_1)),
                                 Stack(
                                   children: [
-                                    Image.asset(
-                                      "assets/images/Right Eye@2x.png",
-                                      height: 72.h,
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          widget.iris.exceptions[1] = !(widget
+                                              .iris.exceptions
+                                              .elementAt(1));
+                                          if (widget.iris.exceptions
+                                              .contains(true)) {
+                                            if (widget
+                                                .iris.exceptionType.isEmpty) {
+                                              widget.iris.exceptionType =
+                                                  "Permanent";
+                                            }
+                                          }
+                                          if (!widget.iris.exceptions
+                                              .contains(true)) {
+                                            widget.iris.exceptionType = "";
+                                          }
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        "assets/images/Right Eye@2x.png",
+                                        height: 72,
+                                      ),
                                     ),
-                                    Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: Icon(
-                                          Icons.cancel_rounded,
-                                          color: secondaryColors.elementAt(15),
-                                          size: 30.h,
-                                        ))
+                                    (widget.iris.exceptions[1] == true)
+                                        ? Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Icon(
+                                              Icons.cancel_rounded,
+                                              color:
+                                                  secondaryColors.elementAt(15),
+                                              size: 30.h,
+                                            ))
+                                        : Container(),
                                   ],
                                 )
                               ],
@@ -377,19 +432,503 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                   ),
                 if (widget.biometricAttribute == "Right Hand")
                   BiometricCaptureExceptionBlock(
-                    exceptionImage: SizedBox(height: 164.h),
+                    attribute: widget.rightHand,
+                    exceptionImage: SizedBox(
+                      height: 164.h,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Right Hand",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1)),
+                              Stack(
+                                children: [
+                                  Image.asset(
+                                    "assets/images/Right Hand@2x.png",
+                                    height: 114,
+                                  ),
+                                  Positioned(
+                                      top: 11,
+                                      left: 25,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.rightHand.exceptions[0] =
+                                                !(widget.rightHand.exceptions
+                                                    .elementAt(0));
+                                            if (widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.rightHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.rightHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              widget.rightHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget.rightHand
+                                                      .exceptions[0] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                  Positioned(
+                                      top: 1,
+                                      left: 40,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.rightHand.exceptions[1] =
+                                                !(widget.rightHand.exceptions
+                                                    .elementAt(1));
+                                            if (widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.rightHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.rightHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              widget.rightHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget.rightHand
+                                                      .exceptions[1] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                  Positioned(
+                                      top: 17,
+                                      right: 16,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.rightHand.exceptions[2] =
+                                                !(widget.rightHand.exceptions
+                                                    .elementAt(2));
+                                            if (widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.rightHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.rightHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              widget.rightHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget.rightHand
+                                                      .exceptions[2] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                  Positioned(
+                                      top: 33,
+                                      right: 5,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.rightHand.exceptions[3] =
+                                                !(widget.rightHand.exceptions
+                                                    .elementAt(3));
+                                            if (widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.rightHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.rightHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.rightHand.exceptions
+                                                .contains(true)) {
+                                              widget.rightHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget.rightHand
+                                                      .exceptions[3] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 if (widget.biometricAttribute == "Left Hand")
                   BiometricCaptureExceptionBlock(
-                    exceptionImage: SizedBox(height: 164.h),
+                    attribute: widget.leftHand,
+                    exceptionImage: SizedBox(
+                      height: 164.h,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Left Hand",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1)),
+                              Stack(
+                                children: [
+                                  Image.asset(
+                                    "assets/images/Left Hand@2x.png",
+                                    height: 114,
+                                  ),
+                                  Positioned(
+                                      top: 11,
+                                      right: 25,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.leftHand.exceptions[0] =
+                                                !(widget.leftHand.exceptions
+                                                    .elementAt(0));
+                                            if (widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.leftHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.leftHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              widget.leftHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget
+                                                      .leftHand.exceptions[0] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                  Positioned(
+                                      top: 1,
+                                      right: 40,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.leftHand.exceptions[1] =
+                                                !(widget.leftHand.exceptions
+                                                    .elementAt(1));
+                                            if (widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.leftHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.leftHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              widget.leftHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget
+                                                      .leftHand.exceptions[1] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                  Positioned(
+                                      top: 17,
+                                      left: 16,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.leftHand.exceptions[2] =
+                                                !(widget.leftHand.exceptions
+                                                    .elementAt(2));
+                                            if (widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.leftHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.leftHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              widget.leftHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget
+                                                      .leftHand.exceptions[2] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                  Positioned(
+                                      top: 33,
+                                      left: 5,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.leftHand.exceptions[3] =
+                                                !(widget.leftHand.exceptions
+                                                    .elementAt(3));
+                                            if (widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              if (widget.leftHand.exceptionType
+                                                  .isEmpty) {
+                                                widget.leftHand.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.leftHand.exceptions
+                                                .contains(true)) {
+                                              widget.leftHand.exceptionType =
+                                                  "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget
+                                                      .leftHand.exceptions[3] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 if (widget.biometricAttribute == "Thumbs")
                   BiometricCaptureExceptionBlock(
-                    exceptionImage: SizedBox(height: 164.h),
+                    attribute: widget.thumbs,
+                    exceptionImage: SizedBox(
+                      height: 164.h,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Thumbs",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1)),
+                              Stack(
+                                children: [
+                                  Image.asset(
+                                    "assets/images/Thumbs@2x.png",
+                                    height: 114,
+                                  ),
+                                  Positioned(
+                                      top: 22,
+                                      left: 25,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.thumbs.exceptions[0] =
+                                                !(widget.thumbs.exceptions
+                                                    .elementAt(0));
+                                            if (widget.thumbs.exceptions
+                                                .contains(true)) {
+                                              if (widget.thumbs.exceptionType
+                                                  .isEmpty) {
+                                                widget.thumbs.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.thumbs.exceptions
+                                                .contains(true)) {
+                                              widget.thumbs.exceptionType = "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget.thumbs.exceptions[0] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                  Positioned(
+                                      top: 22,
+                                      right: 25,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            widget.thumbs.exceptions[1] =
+                                                !(widget.thumbs.exceptions
+                                                    .elementAt(1));
+                                            if (widget.thumbs.exceptions
+                                                .contains(true)) {
+                                              if (widget.thumbs.exceptionType
+                                                  .isEmpty) {
+                                                widget.thumbs.exceptionType =
+                                                    "Permanent";
+                                              }
+                                            }
+                                            if (!widget.thumbs.exceptions
+                                                .contains(true)) {
+                                              widget.thumbs.exceptionType = "";
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel_rounded,
+                                          color: (widget.thumbs.exceptions[1] ==
+                                                  true)
+                                              ? secondaryColors.elementAt(15)
+                                              : Colors.transparent,
+                                          size: 20,
+                                        ),
+                                      )),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 if (widget.biometricAttribute == "Face")
                   BiometricCaptureExceptionBlock(
-                    exceptionImage: SizedBox(height: 164.h),
+                    attribute: widget.face,
+                    exceptionImage: SizedBox(
+                      height: 164.h,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Face",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1)),
+                              Stack(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        widget.face.exceptions[0] = !(widget
+                                            .face.exceptions
+                                            .elementAt(0));
+                                        if (widget.face.exceptions
+                                            .contains(true)) {
+                                          if (widget
+                                              .face.exceptionType.isEmpty) {
+                                            widget.face.exceptionType =
+                                                "Permanent";
+                                          }
+                                        }
+                                        if (!widget.face.exceptions
+                                            .contains(true)) {
+                                          widget.face.exceptionType = "";
+                                        }
+                                      });
+                                    },
+                                    child: Image.asset(
+                                      "assets/images/Face@2x.png",
+                                      height: 114,
+                                    ),
+                                  ),
+                                  Positioned(
+                                      top: 1,
+                                      left: 48,
+                                      child: Icon(
+                                        Icons.cancel_rounded,
+                                        color:
+                                            (widget.face.exceptions[0] == true)
+                                                ? secondaryColors.elementAt(15)
+                                                : Colors.transparent,
+                                        size: 20,
+                                      )),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
               ],
             ),

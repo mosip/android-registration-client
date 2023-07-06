@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class BiometricCaptureExceptionBlock extends StatelessWidget {
+class BiometricCaptureExceptionBlock extends StatefulWidget {
   const BiometricCaptureExceptionBlock(
-      {super.key, required this.exceptionImage});
+      {super.key, required this.exceptionImage, required this.attribute});
   final Widget exceptionImage;
+  final BiometricAttributeData attribute;
 
+  @override
+  State<BiometricCaptureExceptionBlock> createState() =>
+      _BiometricCaptureExceptionBlockState();
+}
+
+class _BiometricCaptureExceptionBlockState
+    extends State<BiometricCaptureExceptionBlock> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,7 +40,7 @@ class BiometricCaptureExceptionBlock extends StatelessWidget {
               ),
             ),
           ),
-          exceptionImage,
+          widget.exceptionImage,
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: Column(
@@ -55,9 +63,13 @@ class BiometricCaptureExceptionBlock extends StatelessWidget {
                           width: 10.h,
                           child: Radio(
                             activeColor: solid_primary,
-                            value: "value",
-                            groupValue: "groupValue",
-                            onChanged: ((value) {}),
+                            value: "Permanent",
+                            groupValue: widget.attribute.exceptionType,
+                            onChanged: ((value) {
+                              setState(() {
+                                widget.attribute.exceptionType = value!;
+                              });
+                            }),
                           ),
                         ),
                         SizedBox(
@@ -84,9 +96,14 @@ class BiometricCaptureExceptionBlock extends StatelessWidget {
                           height: 10.h,
                           width: 10.h,
                           child: Radio(
-                            value: "value",
-                            groupValue: "groupValue",
-                            onChanged: ((value) {}),
+                            activeColor: solid_primary,
+                            value: "Temporary",
+                            groupValue: widget.attribute.exceptionType,
+                            onChanged: ((value) {
+                              setState(() {
+                                widget.attribute.exceptionType = value!;
+                              });
+                            }),
                           ),
                         ),
                         SizedBox(
