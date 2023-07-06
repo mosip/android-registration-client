@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import '../../../provider/global_provider.dart';
+
 class DropDownControl extends StatefulWidget {
   const DropDownControl({
     super.key,
-    required this.onChanged,
+    required this.id,
   });
 
-  final Function(String) onChanged;
+  final String id;
 
   @override
   State<DropDownControl> createState() => _CustomDropDownState();
@@ -29,7 +33,7 @@ class _CustomDropDownState extends State<DropDownControl> {
         ),
       ),
       child: DropdownButtonFormField(
-        icon: Icon(null),
+        icon: const Icon(null),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: selected,
@@ -42,7 +46,8 @@ class _CustomDropDownState extends State<DropDownControl> {
                 ))
             .toList(),
         onChanged: (value) {
-          widget.onChanged(value.toString());
+          context.read<GlobalProvider>().setInputMapValue(widget.id, value);
+
           setState(() {
             selected = value!;
           });

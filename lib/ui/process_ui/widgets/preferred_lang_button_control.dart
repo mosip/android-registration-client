@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -39,7 +38,7 @@ class PreferredLangButtonControl extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 14, color: black_shade_1, fontWeight: semiBold),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Row(
@@ -63,7 +62,7 @@ class PreferredLangButtonControl extends StatelessWidget {
                                   .fieldInputValues
                                   .containsKey(field.id))
                               ? context
-                                  .read<GlobalProvider>()
+                                  .watch<GlobalProvider>()
                                   .fieldInputValues[field.id][i]
                               : generateList(context, i),
                           onChanged: (value) {
@@ -77,13 +76,13 @@ class PreferredLangButtonControl extends StatelessWidget {
                           },
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
                       Text(context
                           .read<GlobalProvider>()
                           .fieldDisplayValues[field.id][i]),
-                      SizedBox(
+                      const SizedBox(
                         width: 37,
                       ),
                     ],

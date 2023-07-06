@@ -88,6 +88,7 @@ class AuthProvider with ChangeNotifier {
     final authResponse = await auth.login(username, password, isConnected);
 
     setIsLoggingIn(true);
+
     if (authResponse.errorCode != null) {
       _loginError = authResponse.errorCode!;
       _isLoggedIn = false;

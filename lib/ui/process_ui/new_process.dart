@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
@@ -61,6 +60,14 @@ class NewProcess extends StatelessWidget {
                             context.read<GlobalProvider>().newProcessTabIndex +
                                 1;
                       }
+
+                      // if (context
+                      //     .read<GlobalProvider>()
+                      //     .formKey
+                      //     .currentState!
+                      //     .validate()) {
+
+                      //   }
                     },
                   )
                 ],
@@ -245,7 +252,7 @@ class NewProcess extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                   ],

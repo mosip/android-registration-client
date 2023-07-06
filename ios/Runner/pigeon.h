@@ -10,16 +10,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class Machine;
 
-/// The codec used by ProcessSpecApi.
-NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void);
-
-@protocol ProcessSpecApi
-- (void)getUISchemaWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getStringValueGlobalParamKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getNewProcessSpecWithCompletion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+@interface Machine : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithMap:(NSDictionary<NSString *, NSString *> *)map
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> * map;
+@property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-extern void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *_Nullable api);
+/// The codec used by MachineApi.
+NSObject<FlutterMessageCodec> *MachineApiGetCodec(void);
+
+@protocol MachineApi
+- (void)getMachineDetailsWithCompletion:(void (^)(Machine *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCenterNameRegCenterId:(NSString *)regCenterId langCode:(NSString *)langCode completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
