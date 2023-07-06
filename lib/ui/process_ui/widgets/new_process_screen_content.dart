@@ -10,7 +10,7 @@ import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
-import 'package:registration_client/ui/process_ui/widgets/preferred_lang_button_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'dart:developer';
 
 import 'package:registration_client/utils/app_config.dart';
@@ -49,12 +49,12 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     if (e.controlType == "html") {
       return HtmlBoxControl(field: e);
     }
-    if(e.controlType=="biometrics"){
+    if (e.controlType == "biometrics") {
       return BiometricCaptureControl(field: e);
     }
     if (e.controlType == "button") {
       if (e.subType == "preferredLang") {
-        return PreferredLangButtonControl(field: e);
+        return ButtonControl(field: e);
       }
 
       if (e.subType == "gender" || e.subType == "residenceStatus") {

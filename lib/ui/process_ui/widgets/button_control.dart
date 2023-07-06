@@ -6,8 +6,8 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class PreferredLangButtonControl extends StatelessWidget {
-  const PreferredLangButtonControl({super.key, required this.field});
+class ButtonControl extends StatelessWidget {
+  const ButtonControl({super.key, required this.field});
   final Field field;
 
   @override
