@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -74,7 +73,9 @@ class HtmlBoxControl extends StatelessWidget {
           Container(
             height: 341.h,
             padding: EdgeInsets.all(18),
-            child: Text(context.watch<GlobalProvider>().fieldDisplayValues[field.id][context.watch<GlobalProvider>().htmlBoxTabIndex]),
+            child: Text(
+                context.watch<GlobalProvider>().fieldDisplayValues[field.id]
+                    [context.watch<GlobalProvider>().htmlBoxTabIndex]),
           ),
         ],
       ),

@@ -7,6 +7,7 @@
 package io.mosip.registration_client;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -46,6 +48,10 @@ import io.mosip.registration_client.model.CommonDetailsPigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.UserPigeon;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
@@ -113,6 +119,16 @@ public class MainActivity extends FlutterActivity {
 
         appComponent.inject(this);
     }
+    void evaluateMVEL(){
+        File jsonFile = new File("data.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            RegistrationDto registrationDTO = objectMapper.readValue(jsonFile, RegistrationDto.class);
+            Log.d(getClass().getSimpleName(), registrationDTO.getMVELDataContext().toString()) ;
+        }catch (Exception e){
+            Log.d(getClass().getSimpleName(), "DTO creation");
+        }
+    }
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
@@ -125,7 +141,6 @@ public class MainActivity extends FlutterActivity {
         AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
 
-
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {
@@ -133,6 +148,7 @@ public class MainActivity extends FlutterActivity {
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
+                                    // evaluateMVEL();
                                     break;
 
                                 default:

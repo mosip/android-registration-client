@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
@@ -35,19 +34,19 @@ class NewProcess extends StatelessWidget {
             // if (context.read<GlobalProvider>().newProcessTabIndex <
             //     newProcess.screens!.length - 1) {
             //   context.read<GlobalProvider>().newProcessTabIndex =
-                  // context.read<GlobalProvider>().newProcessTabIndex + 1;
+            // context.read<GlobalProvider>().newProcessTabIndex + 1;
             if (context.read<GlobalProvider>().newProcessTabIndex <
-                  newProcess.screens!.length - 1) {
-                context.read<GlobalProvider>().newProcessTabIndex =
-                    context.read<GlobalProvider>().newProcessTabIndex + 1;
-           
-            // if (context
-            //     .read<GlobalProvider>()
-            //     .formKey
-            //     .currentState!
-            //     .validate()) {
-              
-            //   }
+                newProcess.screens!.length - 1) {
+              context.read<GlobalProvider>().newProcessTabIndex =
+                  context.read<GlobalProvider>().newProcessTabIndex + 1;
+
+              // if (context
+              //     .read<GlobalProvider>()
+              //     .formKey
+              //     .currentState!
+              //     .validate()) {
+
+              //   }
             }
           },
         ),

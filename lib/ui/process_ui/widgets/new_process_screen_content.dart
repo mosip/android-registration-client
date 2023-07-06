@@ -10,30 +10,35 @@ import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 import 'package:registration_client/ui/process_ui/widgets/preferred_lang_button_control.dart';
-import 'dart:developer';
-
-import 'package:registration_client/utils/app_config.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
 import 'radio_button_control.dart';
 
-class NewProcessScreenContent extends StatefulWidget {
+class NewProcessScreenContent extends StatelessWidget {
   const NewProcessScreenContent(
       {super.key, required this.context, required this.screen});
   final BuildContext context;
   final Screen screen;
 
-  @override
-  State<NewProcessScreenContent> createState() =>
-      _NewProcessScreenContentState();
-}
-
-class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
-  Map<String, dynamic> formValues = {};
+  bool validateExpression(String? engine, String? expression) {
+    return true;
+  }
 
   Widget widgetType(Field e) {
     RegExp regexPattern = RegExp(r'^.*$');
+
+    if (e.required == false) {
+      if (e.requiredOn!.isEmpty) {
+        return const SizedBox.shrink();
+      }
+      String? engine = e.requiredOn?[0]?.engine;
+      String? expression = e.requiredOn?[0]?.expr;
+      bool mvelEvalutation = validateExpression(engine, expression);
+      if (mvelEvalutation == false) {
+        return const SizedBox.shrink();
+      }
+    }
 
     if (e.validators!.isNotEmpty) {
       final validation = e.validators?.first?.validator;
@@ -62,13 +67,13 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           elevation: 0,
           margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomLabel(feild: e),
                 RadioButtonControl(
-                  onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                  id: e.id ?? "",
                   values: values[e.subType] ?? [],
                 ),
               ],
@@ -96,7 +101,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -109,8 +114,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                   String newCode =
                       context.read<GlobalProvider>().langToCode(code);
                   return TextBoxControl(
-                      onChanged: (value) =>
-                          formValues[e.label![newCode]!] = value,
+                      id: e.id ?? "",
                       label: e.label![newCode]!.toString(),
                       lang: newCode,
                       validation: regexPattern);
@@ -126,7 +130,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -135,7 +139,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 height: 10,
               ),
               DropDownControl(
-                onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                id: e.id ?? "",
               ),
             ],
           ),
@@ -147,7 +151,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -156,7 +160,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 height: 10,
               ),
               AgeDateControl(
-                onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                format: e.format ?? "DD/MM/YYYY",
+                id: e.id ?? "",
                 validation: regexPattern,
               ),
             ],
@@ -172,7 +177,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ...widget.screen.fields!.map((e) {
+        ...screen.fields!.map((e) {
           if (e!.inputRequired == true) {
             return widgetType(e);
           }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -12,8 +11,12 @@ class PreferredLangButtonControl extends StatelessWidget {
 
   generateList(BuildContext context, int index) {
     List temp = List.generate(
-      context.read<GlobalProvider>().fieldDisplayValues[field.id] == null ? 0 :
-        context.read<GlobalProvider>().fieldDisplayValues[field.id].length,
+        context.read<GlobalProvider>().fieldDisplayValues[field.id] == null
+            ? 0
+            : context
+                .read<GlobalProvider>()
+                .fieldDisplayValues[field.id]
+                .length,
         (index) => false);
     temp[index] = false;
     context.read<GlobalProvider>().setInputMapValue(field.id!, temp);
@@ -24,7 +27,7 @@ class PreferredLangButtonControl extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: pure_white,
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
         child: Column(
@@ -35,7 +38,7 @@ class PreferredLangButtonControl extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 14, color: black_shade_1, fontWeight: semiBold),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Row(
@@ -73,13 +76,13 @@ class PreferredLangButtonControl extends StatelessWidget {
                           },
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
                       Text(context
                           .read<GlobalProvider>()
                           .fieldDisplayValues[field.id][i]),
-                      SizedBox(
+                      const SizedBox(
                         width: 37,
                       ),
                     ],
