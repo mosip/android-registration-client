@@ -5,6 +5,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
@@ -47,6 +48,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     }
     if (e.controlType == "html") {
       return HtmlBoxControl(field: e);
+    }
+    if(e.controlType=="biometrics"){
+      return BiometricCaptureControl(field: e);
     }
     if (e.controlType == "button") {
       if (e.subType == "preferredLang") {
