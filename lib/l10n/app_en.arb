@@ -35,5 +35,9 @@
   "machine_not_found": "Machine not found!",
   "network_error": "Login failed. Check network connection!",
   "cred_expired": "Credentials not found or are expired. Please try online login!",
-  "not_initialized": "Machine could not be initialized!"
+  "not_initialized": "Machine could not be initialized!",
+  "sync_completed_succesfully": "Sync. Completed Successfully",
+  "sync_completed_message": "System will restart in a few seconds and you will be redirected to login page.",
+  "sync_failed": "Sync. Failed",
+  "sync_failed_message": "Please connect with the system admin or supervisor for help."
 }

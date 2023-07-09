@@ -37,5 +37,9 @@
   "machine_not_found": "Machine introuvable!",
   "network_error": "Échec de la connexion. Vérifiez la connexion réseau!",
   "cred_expired": "Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!",
-  "not_initialized": "La machine n’a pas pu être initialisée!"
+  "not_initialized": "La machine n’a pas pu être initialisée!",
+  "sync_completed_succesfully": "Synchro. Complété avec succès",
+  "sync_completed_message": "Le système redémarrera dans quelques secondes et vous serez redirigé vers la page de connexion.",
+  "sync_failed": "Synchro. Échoué",
+  "sync_failed_message": "Veuillez contacter l'administrateur système ou le superviseur pour obtenir de l'aide."
 }
