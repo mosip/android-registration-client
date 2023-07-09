@@ -100,7 +100,7 @@ class SyncProvider with ChangeNotifier {
               .getIDSchemaSync()
               .then((Sync getAutoSync) async {
             setCurrentProgressType(getAutoSync.syncType!);
-            if (getAutoSync.errorCode == "kjh") {
+            if (getAutoSync.errorCode == "") {
               _idSchemaSyncSuccess = true;
               _currentSyncProgress = getAutoSync.syncProgress!;
               notifyListeners();
