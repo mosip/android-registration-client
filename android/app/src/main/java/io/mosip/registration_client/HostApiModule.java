@@ -133,5 +133,31 @@ public class HostApiModule {
                 syncJobDefRepository, languageRepository,jobManagerService
                 );
     }
+    @Provides
+    @Singleton
+    SyncResponseApi getSyncResponseApi(
+            MasterDataServiceImpl masterDataService, ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository,
+            SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository,
+            IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
+            ApplicantValidDocRepository applicantValidDocRepository,
+            TemplateRepository templateRepository,
+            DynamicFieldRepository dynamicFieldRepository,
+            LocationRepository locationRepository,
+            BlocklistedWordRepository blocklistedWordRepository,
+            SyncJobDefRepository syncJobDefRepository,
+            LanguageRepository languageRepository,
+            JobManagerService jobManagerService) {
+        return new SyncResponseApi( masterDataService,clientCryptoManagerService,
+                machineRepository, registrationCenterRepository,
+                syncRestService, certificateManagerService,
+                globalParamRepository, objectMapper, userDetailRepository,
+                identitySchemaRepository, context,
+                documentTypeRepository, applicantValidDocRepository,
+                templateRepository, dynamicFieldRepository,
+                locationRepository, blocklistedWordRepository,
+                syncJobDefRepository, languageRepository,jobManagerService
+                );
+    }
+
 }
 

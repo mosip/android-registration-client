@@ -39,13 +39,19 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+<<<<<<< HEAD
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
+=======
+>>>>>>> 92cebc7 (auto data sync done)
 import io.mosip.registration_client.api_services.SyncResponseApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 import io.mosip.registration_client.model.MachinePigeon;
+<<<<<<< HEAD
 import io.mosip.registration_client.model.ProcessSpecPigeon;
+=======
+>>>>>>> 92cebc7 (auto data sync done)
 import io.mosip.registration_client.model.SyncPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 
@@ -90,6 +96,7 @@ public class MainActivity extends FlutterActivity {
     UserDetailsApi userDetailsApi;
 
     @Inject
+<<<<<<< HEAD
     CommonDetailsApi commonDetailsApi;
 
     @Inject
@@ -98,6 +105,8 @@ public class MainActivity extends FlutterActivity {
     @Inject
     ProcessSpecDetailsApi processSpecDetailsApi;
 
+=======
+>>>>>>> 92cebc7 (auto data sync done)
     SyncResponseApi syncResponseApi;
 
     @Override
@@ -124,10 +133,13 @@ public class MainActivity extends FlutterActivity {
         initializeAppComponent();
         MachinePigeon.MachineApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), machineDetailsApi);
         UserPigeon.UserApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), userDetailsApi);
+<<<<<<< HEAD
         CommonDetailsPigeon.CommonDetailsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),commonDetailsApi);
         AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
 
+=======
+>>>>>>> 92cebc7 (auto data sync done)
         SyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),syncResponseApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)

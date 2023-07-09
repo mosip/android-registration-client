@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+<<<<<<< HEAD
 @class User;
 
 @interface User : NSObject
@@ -49,5 +50,37 @@ NSObject<FlutterMessageCodec> *UserApiGetCodec(void);
 @end
 
 extern void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *_Nullable api);
+=======
+@class Sync;
+@class SyncTime;
+
+@interface Sync : NSObject
++ (instancetype)makeWithSyncType:(nullable NSString *)syncType
+    syncProgress:(nullable NSNumber *)syncProgress
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy, nullable) NSString * syncType;
+@property(nonatomic, strong, nullable) NSNumber * syncProgress;
+@property(nonatomic, copy, nullable) NSString * errorCode;
+@end
+
+@interface SyncTime : NSObject
++ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
+@property(nonatomic, copy, nullable) NSString * syncTime;
+@end
+
+/// The codec used by SyncApi.
+NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
+
+@protocol SyncApi
+- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCertificateSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
+>>>>>>> 92cebc7 (auto data sync done)
 
 NS_ASSUME_NONNULL_END
