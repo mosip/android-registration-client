@@ -5,6 +5,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/provider/auth_provider.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
 import 'package:registration_client/ui/common/tablet_header.dart';
@@ -16,6 +18,7 @@ import 'package:registration_client/ui/process_ui/widgets/new_process_screen_con
 
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewProcess extends StatelessWidget {
   NewProcess({super.key});
@@ -27,6 +30,84 @@ class NewProcess extends StatelessWidget {
     'Authentication',
     'Acknowledgement'
   ];
+  String username = '';
+  String password = '';
+
+  void _showInSnackBar(String value, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value),
+      ),
+    );
+  }
+
+  _authenticatePacket(BuildContext context) async {
+    if (!_validateUsername(context)) {
+      return false;
+    }
+
+    if (!_validatePassword(context)) {
+      return false;
+    }
+
+    if (!_isUserLoggedInUser(context)) {
+      return false;
+    }
+
+    bool isConnected = context.read<ConnectivityProvider>().isConnected;
+    await context
+        .read<AuthProvider>()
+        .authenticatePacket(username, password, isConnected);
+    bool isPacketAuthenticated =
+        context.read<AuthProvider>().isPacketAuthenticated;
+
+    if (!isPacketAuthenticated) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_incorrect, context);
+      return false;
+    }
+
+    username = '';
+    password = '';
+    return true;
+  }
+
+  bool _validateUsername(BuildContext context) {
+    if (username.isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_required, context);
+      return false;
+    }
+
+    if (username.length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_exceed, context);
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _validatePassword(BuildContext context) {
+    if (password.isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_required, context);
+      return false;
+    }
+
+    if (password.length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_exceed, context);
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _isUserLoggedInUser(BuildContext context) {
+    final user = context.read<AuthProvider>().currentUser;
+    if (user.userId != username) {
+      _showInSnackBar(AppLocalizations.of(context)!.invalid_user, context);
+      return false;
+    }
+    return true;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +132,7 @@ class NewProcess extends StatelessWidget {
                                 size + 1
                             ? "AUTHENTICATE"
                             : "COMPLETE"),
-                onPressed: () {
+                onPressed: () async {
                   if (context.read<GlobalProvider>().newProcessTabIndex <=
                       newProcess.screens!.length) {
                     context.read<GlobalProvider>().newProcessTabIndex =
@@ -59,7 +140,13 @@ class NewProcess extends StatelessWidget {
                   } else if (context
                           .read<GlobalProvider>()
                           .newProcessTabIndex ==
-                      size + 1) {}
+                      size + 1) {
+                        bool isPacketAuthenticated = await _authenticatePacket(context);
+                        if(isPacketAuthenticated) {
+                          context.read<GlobalProvider>().newProcessTabIndex =
+                            context.read<GlobalProvider>().newProcessTabIndex + 1;
+                        }
+                      }
                 },
               )
             : Row(
@@ -72,7 +159,7 @@ class NewProcess extends StatelessWidget {
                       minimumSize:
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (context.read<GlobalProvider>().newProcessTabIndex <=
                           newProcess.screens!.length) {
                         context.read<GlobalProvider>().newProcessTabIndex =
@@ -81,7 +168,13 @@ class NewProcess extends StatelessWidget {
                       } else if (context
                               .read<GlobalProvider>()
                               .newProcessTabIndex ==
-                          size + 1) {}
+                          size + 1) {
+                            bool isPacketAuthenticated = await _authenticatePacket(context);
+                            if(isPacketAuthenticated) {
+                              context.read<GlobalProvider>().newProcessTabIndex =
+                                context.read<GlobalProvider>().newProcessTabIndex + 1;
+                            }
+                          }
                     },
                     child: Text(context
                                 .read<GlobalProvider>()
@@ -299,7 +392,14 @@ class NewProcess extends StatelessWidget {
                         ? const PreviewPage()
                         : context.watch<GlobalProvider>().newProcessTabIndex ==
                                 size + 1
-                            ? const AuthenticationPage()
+                            ? AuthenticationPage(
+                              onChangeUsername: (v) {
+                                username = v;
+                              },
+                              onChangePassword: (v) {
+                                password = v;
+                              },
+                            )
                             : const PreviewPage(),
               ),
             ],

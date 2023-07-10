@@ -16,8 +16,6 @@ class AppRouter {
     NewProcess.routeName: (context) => NewProcess(),
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
-    PreviewPage.routeName: (context) => const PreviewPage(),
-    AuthenticationPage.routeName: (context) => const AuthenticationPage(),
   };
 
   static Route<dynamic>? onUnknownRoute(RouteSettings settings) {

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:registration_client/provider/auth_provider.dart';
-import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthenticationPage extends StatefulWidget {
-  const AuthenticationPage({super.key});
-
-  static const routeName = '/authentication-page';
+  const AuthenticationPage({
+    super.key,
+    required this.onChangeUsername,
+    required this.onChangePassword,
+  });
+  final Function onChangeUsername;
+  final Function onChangePassword;
 
   @override
   State<AuthenticationPage> createState() => _AuthenticationPageState();
@@ -100,80 +101,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       ],
     );
   }
-
-  void _showInSnackBar(String value) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(value),
-      ),
-    );
-  }
-
-  _authenticatePacket() async {
-    if (!_validateUsername()) {
-      return;
-    }
-
-    if (!_validatePassword()) {
-      return;
-    }
-
-    if (!_isUserLoggedInUser()) {
-      return;
-    }
-
-    bool isConnected = context.read<ConnectivityProvider>().isConnected;
-    await context
-        .read<AuthProvider>()
-        .authenticatePacket(username, password, isConnected);
-    bool isPacketAuthenticated =
-        context.read<AuthProvider>().isPacketAuthenticated;
-
-    if (!isPacketAuthenticated) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_incorrect);
-      return;
-    }
-
-    _showInSnackBar("Authentication Successful!");
-  }
-
-  bool _validateUsername() {
-    if (username.isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_required);
-      return false;
-    }
-
-    if (username.length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
-      return false;
-    }
-
-    return true;
-  }
-
-  bool _validatePassword() {
-    if (password.isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_required);
-      return false;
-    }
-
-    if (password.length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
-      return false;
-    }
-
-    return true;
-  }
-
-  bool _isUserLoggedInUser() {
-    final user = context.read<AuthProvider>().currentUser;
-    if (user.userId != username) {
-      _showInSnackBar(AppLocalizations.of(context)!.invalid_user);
-      return false;
-    }
-    return true;
-  }
-
+  
   _getAuthIcon() {
     return Container(
       height: 80.w,
@@ -216,9 +144,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           border: InputBorder.none,
         ),
         onChanged: (v) {
-          setState(() {
-            username = v;
-          });
+          widget.onChangeUsername(v);
         },
       ),
     );
@@ -249,9 +175,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           border: InputBorder.none,
         ),
         onChanged: (v) {
-          setState(() {
-            password = v;
-          });
+          widget.onChangePassword(v);
         },
       ),
     );
