@@ -10,47 +10,33 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class User;
+@class AuthResponse;
 
-@interface User : NSObject
+@interface AuthResponse : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithUserId:(NSString *)userId
-    name:(nullable NSString *)name
-    email:(nullable NSString *)email
-    isActive:(nullable NSNumber *)isActive
-    isLocked:(nullable NSNumber *)isLocked
-    isOnboarded:(NSNumber *)isOnboarded
-    centerName:(nullable NSString *)centerName
-    centerId:(nullable NSString *)centerId
-    machineName:(nullable NSString *)machineName
-    machineId:(nullable NSString *)machineId
-    failedAttempts:(nullable NSString *)failedAttempts
++ (instancetype)makeWithResponse:(NSString *)response
+    username:(NSString *)username
+    isOfficer:(NSNumber *)isOfficer
+    isDefault:(NSNumber *)isDefault
+    isSupervisor:(NSNumber *)isSupervisor
     errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * userId;
-@property(nonatomic, copy, nullable) NSString * name;
-@property(nonatomic, copy, nullable) NSString * email;
-@property(nonatomic, strong, nullable) NSNumber * isActive;
-@property(nonatomic, strong, nullable) NSNumber * isLocked;
-@property(nonatomic, strong) NSNumber * isOnboarded;
-@property(nonatomic, copy, nullable) NSString * centerName;
-@property(nonatomic, copy, nullable) NSString * centerId;
-@property(nonatomic, copy, nullable) NSString * machineName;
-@property(nonatomic, copy, nullable) NSString * machineId;
-@property(nonatomic, copy, nullable) NSString * failedAttempts;
+@property(nonatomic, copy) NSString * response;
+@property(nonatomic, copy) NSString * username;
+@property(nonatomic, strong) NSNumber * isOfficer;
+@property(nonatomic, strong) NSNumber * isDefault;
+@property(nonatomic, strong) NSNumber * isSupervisor;
 @property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by UserApi.
-NSObject<FlutterMessageCodec> *UserApiGetCodec(void);
+/// The codec used by AuthResponseApi.
+NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void);
 
-@protocol UserApi
+@protocol AuthResponseApi
 /// @return `nil` only when `error != nil`.
-- (nullable User *)validateUserUsername:(NSString *)username error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable User *)logoutUserWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable AuthResponse *)loginUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *_Nullable api);
+extern void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
