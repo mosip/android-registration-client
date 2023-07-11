@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
@@ -161,6 +163,7 @@ class GlobalProvider with ChangeNotifier {
 
   setLanguageSpecificValue(String key, dynamic value, String language,
       Map<String, dynamic> commonMap) {
+    log(language);
     if (!commonMap.containsKey(key)) {
       commonMap[key] = [
         {"value": value, "language": language}

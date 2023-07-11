@@ -89,10 +89,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
         });
         return "";
       }
-      context.read<GlobalProvider>().setInputMapValue(
-          widget.id,
-          targetDateString,
-          context.read<GlobalProvider>().feildDemographicsValues);
+
       setState(() {
         showError = false;
       });
@@ -186,6 +183,16 @@ class _AgeDateControlState extends State<AgeDateControl> {
             const SizedBox(width: 8.0),
             Flexible(
               child: TextFormField(
+                onSaved: (value) {
+                  String targetDateString = widget.format
+                      .replaceAll('dd', _dayController.text.padLeft(2, '0'))
+                      .replaceAll('MM', _monthController.text.padLeft(2, '0'))
+                      .replaceAll('yyyy', _yearController.text);
+                  context.read<GlobalProvider>().setInputMapValue(
+                      widget.id,
+                      targetDateString,
+                      context.read<GlobalProvider>().feildDemographicsValues);
+                },
                 onTap: () => _removeFocusFromAll("year"),
                 validator: feildValidation,
                 maxLength: 4,

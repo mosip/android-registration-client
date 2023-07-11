@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -35,15 +36,17 @@ class NewProcess extends StatelessWidget {
         height: 84.h,
         child: isMobile
             ? ElevatedButton(
-                child: Text("CONTINUE"),
+                child: const Text("CONTINUE"),
                 onPressed: () {
                   if (context
                       .read<GlobalProvider>()
                       .formKey
                       .currentState!
                       .validate()) {
-                    log("Input Values : ${context.read<GlobalProvider>().feildConsentValues}");
-                    log("Input Values : ${context.read<GlobalProvider>().feildDemographicsValues}");
+                    context.read<GlobalProvider>().formKey.currentState?.save();
+                    log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildConsentValues)}");
+                    log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildDemographicsValues)}");
+
                     if (context.read<GlobalProvider>().newProcessTabIndex <
                         newProcess.screens!.length - 1) {
                       context.read<GlobalProvider>().newProcessTabIndex =

@@ -20,9 +20,24 @@ class TextBoxControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> excluded = [
+      "email",
+      "phone",
+      "introducerUIN",
+      "introducerRID"
+    ];
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       child: TextFormField(
+        onSaved: (value) {
+          if (excluded.contains(id)) {
+            context.read<GlobalProvider>().setInputMapValue(id, value,
+                context.read<GlobalProvider>().feildDemographicsValues);
+          } else {
+            context.read<GlobalProvider>().setLanguageSpecificValue(id, value,
+                lang, context.read<GlobalProvider>().feildDemographicsValues);
+          }
+        },
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter a value';
@@ -30,8 +45,6 @@ class TextBoxControl extends StatelessWidget {
           if (!validation.hasMatch(value)) {
             return 'Invalid input';
           }
-          context.read<GlobalProvider>().setLanguageSpecificValue(id, value,
-              lang, context.read<GlobalProvider>().feildDemographicsValues);
           return null;
         },
         textAlign: (lang == 'ara') ? TextAlign.right : TextAlign.left,
