@@ -28,4 +28,9 @@ public class BiometricsDto {
     public void setIsForceCaptured(boolean forceCaptured) {
         isForceCaptured = forceCaptured;
     }
+
+
+    public String getBioSubType() {
+        return  bioSubType;
+    }
 }

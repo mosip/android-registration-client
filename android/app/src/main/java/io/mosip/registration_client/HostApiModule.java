@@ -1,10 +1,13 @@
 package io.mosip.registration_client;
 
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.inject.Singleton;
 
@@ -93,8 +96,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    BiometricsDetailsApi getBiometricsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository, Biometrics095Service biometrics095Service) {
-        return new BiometricsDetailsApi(registrationService,biometrics095Service,globalParamRepository,auditManagerService);
+    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper,Biometrics095Service biometrics095Service,RegistrationService registrationService) {
+        return new BiometricsDetailsApi(auditManagerService, objectMapper,biometrics095Service,registrationService);
 
     }
 

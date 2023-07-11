@@ -6,6 +6,8 @@
 
 package io.mosip.registration_client;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -130,6 +132,7 @@ public class MainActivity extends FlutterActivity {
         AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
         BiometricsPigeon.BiometricsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),biometricsDetailsApi);
+        biometricsDetailsApi.setCallbackActivity(this);
 
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
@@ -147,5 +150,23 @@ public class MainActivity extends FlutterActivity {
                             }
                         }
                 );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    biometricsDetailsApi.parseDiscoverResponse(data.getExtras());
+                    break;
+                case 2:
+                    biometricsDetailsApi.parseDeviceInfoResponse(data.getExtras());
+                    break;
+                case 3:
+                    biometricsDetailsApi.parseRCaptureResponse(data.getExtras());
+                    break;
+            }
+        }
     }
 }
