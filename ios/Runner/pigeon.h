@@ -10,32 +10,28 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class LocationResponse;
+@class RegistrationData;
 
-@interface LocationResponse : NSObject
+@interface RegistrationData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithCountryList:(NSArray<NSString *> *)countryList
-    regionList:(NSArray<NSString *> *)regionList
-    provinceList:(NSArray<NSString *> *)provinceList
-    cityList:(NSArray<NSString *> *)cityList
-    zoneList:(NSArray<NSString *> *)zoneList
-    postalCodeList:(NSArray<NSString *> *)postalCodeList;
-@property(nonatomic, strong) NSArray<NSString *> * countryList;
-@property(nonatomic, strong) NSArray<NSString *> * regionList;
-@property(nonatomic, strong) NSArray<NSString *> * provinceList;
-@property(nonatomic, strong) NSArray<NSString *> * cityList;
-@property(nonatomic, strong) NSArray<NSString *> * zoneList;
-@property(nonatomic, strong) NSArray<NSString *> * postalCodeList;
++ (instancetype)makeWithLanguages:(NSArray<NSString *> *)languages
+    demographicsData:(NSString *)demographicsData
+    biometricsData:(NSString *)biometricsData
+    documentsData:(NSString *)documentsData;
+@property(nonatomic, strong) NSArray<NSString *> * languages;
+@property(nonatomic, copy) NSString * demographicsData;
+@property(nonatomic, copy) NSString * biometricsData;
+@property(nonatomic, copy) NSString * documentsData;
 @end
 
-/// The codec used by LocationResponseApi.
-NSObject<FlutterMessageCodec> *LocationResponseApiGetCodec(void);
+/// The codec used by RegistrationDataApi.
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
 
-@protocol LocationResponseApi
-- (void)fetchLocationListLangCode:(NSString *)langCode hierarchyName:(NSArray<NSString *> *)hierarchyName completion:(void (^)(LocationResponse *_Nullable, FlutterError *_Nullable))completion;
+@protocol RegistrationDataApi
+- (void)registrationRegistrationData:(RegistrationData *)registrationData completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void LocationResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<LocationResponseApi> *_Nullable api);
+extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

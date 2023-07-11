@@ -21,77 +21,67 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface LocationResponse ()
-+ (LocationResponse *)fromList:(NSArray *)list;
-+ (nullable LocationResponse *)nullableFromList:(NSArray *)list;
+@interface RegistrationData ()
++ (RegistrationData *)fromList:(NSArray *)list;
++ (nullable RegistrationData *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation LocationResponse
-+ (instancetype)makeWithCountryList:(NSArray<NSString *> *)countryList
-    regionList:(NSArray<NSString *> *)regionList
-    provinceList:(NSArray<NSString *> *)provinceList
-    cityList:(NSArray<NSString *> *)cityList
-    zoneList:(NSArray<NSString *> *)zoneList
-    postalCodeList:(NSArray<NSString *> *)postalCodeList {
-  LocationResponse* pigeonResult = [[LocationResponse alloc] init];
-  pigeonResult.countryList = countryList;
-  pigeonResult.regionList = regionList;
-  pigeonResult.provinceList = provinceList;
-  pigeonResult.cityList = cityList;
-  pigeonResult.zoneList = zoneList;
-  pigeonResult.postalCodeList = postalCodeList;
+@implementation RegistrationData
++ (instancetype)makeWithLanguages:(NSArray<NSString *> *)languages
+    demographicsData:(NSString *)demographicsData
+    biometricsData:(NSString *)biometricsData
+    documentsData:(NSString *)documentsData {
+  RegistrationData* pigeonResult = [[RegistrationData alloc] init];
+  pigeonResult.languages = languages;
+  pigeonResult.demographicsData = demographicsData;
+  pigeonResult.biometricsData = biometricsData;
+  pigeonResult.documentsData = documentsData;
   return pigeonResult;
 }
-+ (LocationResponse *)fromList:(NSArray *)list {
-  LocationResponse *pigeonResult = [[LocationResponse alloc] init];
-  pigeonResult.countryList = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.countryList != nil, @"");
-  pigeonResult.regionList = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.regionList != nil, @"");
-  pigeonResult.provinceList = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.provinceList != nil, @"");
-  pigeonResult.cityList = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.cityList != nil, @"");
-  pigeonResult.zoneList = GetNullableObjectAtIndex(list, 4);
-  NSAssert(pigeonResult.zoneList != nil, @"");
-  pigeonResult.postalCodeList = GetNullableObjectAtIndex(list, 5);
-  NSAssert(pigeonResult.postalCodeList != nil, @"");
++ (RegistrationData *)fromList:(NSArray *)list {
+  RegistrationData *pigeonResult = [[RegistrationData alloc] init];
+  pigeonResult.languages = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.languages != nil, @"");
+  pigeonResult.demographicsData = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.demographicsData != nil, @"");
+  pigeonResult.biometricsData = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.biometricsData != nil, @"");
+  pigeonResult.documentsData = GetNullableObjectAtIndex(list, 3);
+  NSAssert(pigeonResult.documentsData != nil, @"");
   return pigeonResult;
 }
-+ (nullable LocationResponse *)nullableFromList:(NSArray *)list {
-  return (list) ? [LocationResponse fromList:list] : nil;
++ (nullable RegistrationData *)nullableFromList:(NSArray *)list {
+  return (list) ? [RegistrationData fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.countryList ?: [NSNull null]),
-    (self.regionList ?: [NSNull null]),
-    (self.provinceList ?: [NSNull null]),
-    (self.cityList ?: [NSNull null]),
-    (self.zoneList ?: [NSNull null]),
-    (self.postalCodeList ?: [NSNull null]),
+    (self.languages ?: [NSNull null]),
+    (self.demographicsData ?: [NSNull null]),
+    (self.biometricsData ?: [NSNull null]),
+    (self.documentsData ?: [NSNull null]),
   ];
 }
 @end
 
-@interface LocationResponseApiCodecReader : FlutterStandardReader
+@interface RegistrationDataApiCodecReader : FlutterStandardReader
 @end
-@implementation LocationResponseApiCodecReader
+@implementation RegistrationDataApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [LocationResponse fromList:[self readValue]];
+      return [RegistrationData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface LocationResponseApiCodecWriter : FlutterStandardWriter
+@interface RegistrationDataApiCodecWriter : FlutterStandardWriter
 @end
-@implementation LocationResponseApiCodecWriter
+@implementation RegistrationDataApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[LocationResponse class]]) {
+  if ([value isKindOfClass:[RegistrationData class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else {
@@ -100,41 +90,40 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface LocationResponseApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface RegistrationDataApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation LocationResponseApiCodecReaderWriter
+@implementation RegistrationDataApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[LocationResponseApiCodecWriter alloc] initWithData:data];
+  return [[RegistrationDataApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[LocationResponseApiCodecReader alloc] initWithData:data];
+  return [[RegistrationDataApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *LocationResponseApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    LocationResponseApiCodecReaderWriter *readerWriter = [[LocationResponseApiCodecReaderWriter alloc] init];
+    RegistrationDataApiCodecReaderWriter *readerWriter = [[RegistrationDataApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void LocationResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<LocationResponseApi> *api) {
+void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.LocationResponseApi.fetchLocationList"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.registration"
         binaryMessenger:binaryMessenger
-        codec:LocationResponseApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(fetchLocationListLangCode:hierarchyName:completion:)], @"LocationResponseApi api (%@) doesn't respond to @selector(fetchLocationListLangCode:hierarchyName:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(registrationRegistrationData:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(registrationRegistrationData:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_langCode = GetNullableObjectAtIndex(args, 0);
-        NSArray<NSString *> *arg_hierarchyName = GetNullableObjectAtIndex(args, 1);
-        [api fetchLocationListLangCode:arg_langCode hierarchyName:arg_hierarchyName completion:^(LocationResponse *_Nullable output, FlutterError *_Nullable error) {
+        RegistrationData *arg_registrationData = GetNullableObjectAtIndex(args, 0);
+        [api registrationRegistrationData:arg_registrationData completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

@@ -18,6 +18,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -26,6 +27,7 @@ import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
+import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 
 @Module
@@ -96,6 +98,13 @@ public class HostApiModule {
     @Singleton
     LocationDetailsApi getLocationDetailsApi(LocationHierarchyDao locationHierarchyDao, LocationDao locationDao) {
         return new LocationDetailsApi(locationHierarchyDao, locationDao);
+
+    }
+
+    @Provides
+    @Singleton
+    RegistrationApi getRegistrationDataApi(RegistrationService registrationService) {
+        return new RegistrationApi(registrationService);
 
     }
 }

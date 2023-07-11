@@ -20,3 +20,6 @@ flutter pub run pigeon --input pigeon/process_spec.dart --dart_out lib/pigeon/pr
 
 # Generate process_spec pigeon files
 flutter pub run pigeon --input pigeon/location_response.dart --dart_out lib/pigeon/location_response_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/LocationResponsePigeon.java --java_package "io.mosip.registration_client.model"
+
+# Generate registration_data pigeon files
+flutter pub run pigeon --input pigeon/registration_data.dart --dart_out lib/pigeon/registration_data_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/RegistrationDataPigeon.java --java_package "io.mosip.registration_client.model"

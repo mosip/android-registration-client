@@ -7,7 +7,6 @@
 package io.mosip.registration_client;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,13 +22,6 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
-
-import io.mosip.registration.clientmanager.dao.LocationDao;
-import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
-import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
-import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
-
-import io.mosip.registration.clientmanager.entity.LocationHierarchy;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -49,18 +41,15 @@ import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
+import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 import io.mosip.registration_client.model.LocationResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
+import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.UserPigeon;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
-import java.util.List;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
@@ -115,6 +104,9 @@ public class MainActivity extends FlutterActivity {
     @Inject
     LocationDetailsApi locationDetailsApi;
 
+    @Inject
+    RegistrationApi registrationApi;
+
 
 
     @Override
@@ -146,6 +138,7 @@ public class MainActivity extends FlutterActivity {
         AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
         LocationResponsePigeon.LocationResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), locationDetailsApi);
+        RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(

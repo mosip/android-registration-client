@@ -7,7 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
@@ -46,6 +48,18 @@ class NewProcess extends StatelessWidget {
                     context.read<GlobalProvider>().formKey.currentState?.save();
                     log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildConsentValues)}");
                     log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildDemographicsValues)}");
+                    String demographicsData = jsonEncode(
+                        context.read<GlobalProvider>().feildDemographicsValues);
+                    List<String> languages =
+                        context.read<GlobalProvider>().chosenLang;
+                    RegistrationData regData = RegistrationData(
+                        languages: languages,
+                        demographicsData: demographicsData,
+                        biometricsData: "",
+                        documentsData: "");
+                    context
+                        .read<RegistrationTaskProvider>()
+                        .registerApplicant(regData);
 
                     if (context.read<GlobalProvider>().newProcessTabIndex <
                         newProcess.screens!.length - 1) {
@@ -72,6 +86,27 @@ class NewProcess extends StatelessWidget {
                           .formKey
                           .currentState!
                           .validate()) {
+                        context
+                            .read<GlobalProvider>()
+                            .formKey
+                            .currentState
+                            ?.save();
+                        log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildConsentValues)}");
+                        log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildDemographicsValues)}");
+                        String demographicsData = jsonEncode(context
+                            .read<GlobalProvider>()
+                            .feildDemographicsValues);
+                        List<String> languages =
+                            context.read<GlobalProvider>().chosenLang;
+                        RegistrationData regData = RegistrationData(
+                            languages: languages,
+                            demographicsData: demographicsData,
+                            biometricsData: "",
+                            documentsData: "");
+                        context
+                            .read<RegistrationTaskProvider>()
+                            .registerApplicant(regData);
+
                         if (context.read<GlobalProvider>().newProcessTabIndex <
                             newProcess.screens!.length - 1) {
                           context.read<GlobalProvider>().newProcessTabIndex =

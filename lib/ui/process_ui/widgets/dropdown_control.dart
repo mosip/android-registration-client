@@ -37,11 +37,16 @@ class _CustomDropDownState extends State<DropDownControl> {
       child: DropdownButtonFormField(
         icon: const Icon(null),
         onSaved: (value) {
-          context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.id,
-              value,
-              "eng",
-              context.read<GlobalProvider>().feildDemographicsValues);
+          if (widget.id == 'postalCode') {
+            context.read<GlobalProvider>().setInputMapValue(widget.id, value,
+                context.read<GlobalProvider>().feildDemographicsValues);
+          } else {
+            context.read<GlobalProvider>().setLanguageSpecificValue(
+                widget.id,
+                value,
+                "eng",
+                context.read<GlobalProvider>().feildDemographicsValues);
+          }
         },
         decoration: InputDecoration(
           border: InputBorder.none,

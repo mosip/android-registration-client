@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/process_spec.dart';
+import 'package:registration_client/platform_spi/registration.dart';
 
 class RegistrationTaskProvider with ChangeNotifier {
+  final Registration registration = Registration();
   final ProcessSpec processSpec = ProcessSpec();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
+  bool _isRegistered = false;
   
   List<Object?> get listOfProcesses => this._listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
+  bool get isRegistered => _isRegistered;
 
   set listOfProcesses(List<Object?> value) {
     this._listOfProcesses = value;
@@ -58,6 +63,11 @@ class RegistrationTaskProvider with ChangeNotifier {
     } else {
       _listOfProcesses = result;
     }
+    notifyListeners();
+  }
+
+  registerApplicant(RegistrationData registrationData) async {
+    _isRegistered = await registration.registerApplicant(registrationData);
     notifyListeners();
   }
 }
