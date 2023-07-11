@@ -7,7 +7,7 @@ import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class UsernameComponent extends StatelessWidget {
-  UsernameComponent({
+  const UsernameComponent({
     Key? key,
     required this.onTap,
     required this.languages,
@@ -26,7 +26,6 @@ class UsernameComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appLanguage = Provider.of<AppLanguageProvider>(context, listen: false);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -119,9 +118,9 @@ class UsernameComponent extends StatelessWidget {
   }
 
   List<DropdownMenuItem<String>> _addDividersAfterItems(List<String> items) {
-    List<DropdownMenuItem<String>> _menuItems = [];
+    List<DropdownMenuItem<String>> menuItems = [];
     for (var item in items) {
-      _menuItems.addAll(
+      menuItems.addAll(
         [
           DropdownMenuItem<String>(
             value: item,
@@ -139,20 +138,20 @@ class UsernameComponent extends StatelessWidget {
         ],
       );
     }
-    return _menuItems;
+    return menuItems;
   }
 
   List<double> _getCustomItemsHeights() {
-    List<double> _itemsHeights = [];
+    List<double> itemsHeights = [];
     for (var i = 0; i < (languages.length * 2) - 1; i++) {
       if (i.isEven) {
-        _itemsHeights.add(52.h);
+        itemsHeights.add(52.h);
       }
       if (i.isOdd) {
-        _itemsHeights.add(4.h);
+        itemsHeights.add(4.h);
       }
     }
-    return _itemsHeights;
+    return itemsHeights;
   }
 
   _getLanguageDropdownButton(BuildContext context) {

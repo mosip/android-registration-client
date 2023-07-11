@@ -4,17 +4,17 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/common/tablet_footer.dart';
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
+import 'package:registration_client/ui/process_ui/new_process.dart';
 
 import '../onboard/onboard_landing_page.dart';
 import '../onboard/home_page.dart';
-
 
 class DashBoardTabletView extends StatelessWidget {
   DashBoardTabletView({Key? key}) : super(key: key);
 
   final List<Widget> _pages = [
     const OnboardLandingPage(),
-    const HomePage()
+    const HomePage(),
   ];
 
   @override

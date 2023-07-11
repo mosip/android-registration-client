@@ -5,7 +5,6 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
 
@@ -14,40 +13,26 @@ import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
-
 import 'package:registration_client/utils/app_config.dart';
-
-import 'ui/dashboard/dashboard_mobile.dart';
-import 'utils/responsive.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final AppLanguageProvider appLanguage = AppLanguageProvider();
   await appLanguage.fetchLocale();
   runApp(
-    const MyApp(),
+    const RegistrationClientApp(),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp();
-
-  // This widget is the root of your application.
-  static const platform =
-      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
+class RegistrationClientApp extends StatelessWidget {
+  const RegistrationClientApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _callAppComponent();
-    });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -71,16 +56,14 @@ class MyApp extends StatelessWidget {
           create: (_) => AuthProvider(),
         ),
       ],
-      child: BuildApp(),
+      child: const BuildApp(),
     );
-  }
-
-  Future<void> _callAppComponent() async {
-    await platform.invokeMethod("callComponent");
   }
 }
 
 class BuildApp extends StatelessWidget {
+  const BuildApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -99,17 +82,19 @@ class BuildApp extends StatelessWidget {
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),
-      home: MyHomePage(),
+      home: const RegistrationClientSplashPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class RegistrationClientSplashPage extends StatefulWidget {
+  const RegistrationClientSplashPage({super.key});
+
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<RegistrationClientSplashPage> createState() => _RegistrationClientSplashPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _RegistrationClientSplashPageState extends State<RegistrationClientSplashPage> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);

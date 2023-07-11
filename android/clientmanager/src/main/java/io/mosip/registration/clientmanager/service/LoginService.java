@@ -52,19 +52,16 @@ public class LoginService {
     public boolean isPasswordPresent(String userId) {
         return userDetailRepository.isPasswordPresent(userId);
     }
-    public boolean validatePassword(String userId, String password) throws Exception {
+    public boolean validatePassword(String userId, String password) {
         return userDetailRepository.isValidPassword(userId, password);
     }
 
-    public void setPasswordHash(String userId, String password) throws Exception {
+    public void setPasswordHash(String userId, String password) {
         userDetailRepository.setPasswordHash(userId, password);
     }
 
-    public String getAuthToken() {
-        return sessionManager.fetchAuthToken();
-    }
 
-    public List<String> saveAuthToken(String authResponse) throws Exception {
+    public List<String> saveAuthToken(String authResponse, String userId) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
         cryptoRequestDto.setValue(authResponse);
         CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
@@ -74,11 +71,34 @@ public class LoginService {
         byte[] decodedBytes = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
         try {
             JSONObject jsonObject = new JSONObject(new String(decodedBytes));
-            List<String> roles=this.sessionManager.saveAuthToken(jsonObject.getString("token"));
+
+            String token = jsonObject.getString("token");
+            String refreshToken = jsonObject.getString("refreshToken");
+            long tExpiry = Long.parseLong(jsonObject.getString("expiryTime"));
+            long rExpiry = Long.parseLong(jsonObject.getString("refreshExpiryTime"));
+            userDetailRepository.saveUserAuthToken(userId, token, refreshToken, tExpiry, rExpiry);
+            List<String> roles=this.sessionManager.saveAuthToken(token);
+
             return roles;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
             throw ex;
         }
+    }
+
+
+    public String saveUserAuthTokenOffline(String userId) throws Exception {
+        String token = userDetailRepository.getUserAuthToken(userId);
+
+        if(token != null && !token.isEmpty()) {
+            try {
+                this.sessionManager.saveAuthToken(token);
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getMessage(), ex);
+                throw ex;
+            }
+        }
+
+        return token;
     }
 }

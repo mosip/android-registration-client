@@ -4,8 +4,9 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.sql.Timestamp;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.entity.UserPassword;
+import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
@@ -89,15 +91,24 @@ public class UserDetailRepository {
         return true;
     }
 
-    public boolean isValidPassword(String userId, String password) throws Exception {
+    public boolean isValidPassword(String userId, String password) {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
-        return HMACUtils2.digestAsPlainTextWithSalt(
+        boolean isValid = false;
+
+        try {
+            isValid = HMACUtils2.digestAsPlainTextWithSalt(
                     password.getBytes(),
                     CryptoUtil.base64decoder.decode(userPassword.getSalt())
-                ).equals(userPassword.getPwd());
+            ).equals(userPassword.getPwd());
+        } catch (NoSuchAlgorithmException e) {
+            isValid = false;
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
+
+        return isValid;
     }
 
-    public void setPasswordHash(String userId, String password) throws Exception {
+    public void setPasswordHash(String userId, String password) {
         UserPassword userPassword = userPasswordDao.getUserPassword(userId);
         if (userPassword == null) {
             userPassword = new UserPassword(userId);
@@ -109,14 +120,43 @@ public class UserDetailRepository {
             );
         }
 
-        userPassword.setPwd(
-                HMACUtils2.digestAsPlainTextWithSalt(
-                        password.getBytes(),
-                        CryptoUtil.base64decoder.decode(userPassword.getSalt())
-                )
-        );
+        try {
+            userPassword.setPwd(
+                    HMACUtils2.digestAsPlainTextWithSalt(
+                            password.getBytes(),
+                            CryptoUtil.base64decoder.decode(userPassword.getSalt())
+                    )
+            );
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
+
 //        userPassword.setUpdDtimes(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime().toString()).toString());
 
         userPasswordDao.insertUserPassword(userPassword);
+    }
+
+
+    public void saveUserAuthToken(String userId, String token, String refreshToken,
+                                     long tExpiry, long rExpiry) {
+        UserToken userToken = userTokenDao.findByUsername(userId);
+        if(userToken == null) {
+            userToken = new UserToken(userId, "", "", 0, 0);
+        }
+        userToken.setToken(token);
+        userToken.setRefreshToken(refreshToken);
+        userToken.setTExpiry(tExpiry);
+        userToken.setRExpiry(rExpiry);
+
+        userTokenDao.insert(userToken);
+    }
+
+    public String getUserAuthToken(String userId) {
+        UserToken userToken = userTokenDao.findByUsername(userId);
+        if(userToken == null) {
+            return "";
+        }
+
+        return userToken.getToken();
     }
 }

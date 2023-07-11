@@ -4,33 +4,17 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/model/login_response.dart';
-import 'package:registration_client/pigeon/machine_pigeon.dart';
-import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_android/auth_impl.dart';
-import 'package:registration_client/platform_android/machine_key_impl.dart';
-import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
-
 import 'package:registration_client/ui/machine_keys.dart';
-import 'package:flutter/services.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
-
-import 'package:registration_client/ui/onboard/onboard_landing_page.dart';
-import 'package:registration_client/ui/onboard/home_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
@@ -46,30 +30,24 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isMobile = true;
-  static const platform =
-      MethodChannel("com.flutter.dev/io.mosip.get-package-instance");
-  // bool isLoggedIn = false;
   bool isLoggingIn = false;
-  String loginResponse = '';
-  String errorCode = '';
   String username = '';
   String password = '';
-  bool isUserValidated = false;
-  // String isOnboardedValue = "";
-  List<String> _languages = ['eng', 'ara', 'fre'];
+
+  final List<String> _languages = ['eng', 'ara', 'fra'];
+
   Map<String, String> mp = {};
   late AuthProvider authProvider;
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  late LoginResponse loginResp;
 
   @override
   void initState() {
     super.initState();
     mp['eng'] = "English";
     mp['ara'] = "العربية";
-    mp['fre'] = "Français";
+    mp['fra'] = "Français";
   }
 
   @override
@@ -123,66 +101,6 @@ class _LoginPageState extends State<LoginPage> {
           );
   }
 
-  Future<void> _login(String username, String password) async {
-    final connectivityProvider =
-        Provider.of<ConnectivityProvider>(context, listen: false);
-    String response;
-    List<dynamic> temp = List.empty(growable: true);
-    Map<String, dynamic> mp;
-    try {
-      response = await platform.invokeMethod("login", {
-        'username': username,
-        'password': password,
-        'isConnected': connectivityProvider.isConnected,
-      });
-      mp = jsonDecode(response);
-      loginResp = LoginResponse.fromJson(mp);
-
-      temp = loginResp.roles;
-    } on PlatformException {
-      mp = {};
-    }
-
-    authProvider.setIsLoggedIn(loginResp.isLoggedIn);
-    authProvider.setIsSupervisor(temp.contains("REGISTRATION_SUPERVISOR"));
-    authProvider.setIsOfficer(temp.contains("REGISTRATION_OPERATOR"));
-    setState(() {
-      errorCode = loginResp.error_code;
-      if (authProvider.isLoggedIn) {
-        loginResponse = loginResp.login_response;
-      } else if (errorCode == '500') {
-        loginResponse = AppLocalizations.of(context)!.login_failed;
-      } else if (errorCode == '501') {
-        loginResponse = AppLocalizations.of(context)!.network_error;
-      } else if (errorCode == '401') {
-        loginResponse = AppLocalizations.of(context)!.password_incorrect;
-      } else if (errorCode == 'MACHINE_NOT_FOUND') {
-        loginResponse = AppLocalizations.of(context)!.machine_not_found;
-      } else if (errorCode == 'OFFLINE') {
-        loginResponse = AppLocalizations.of(context)!.cred_expired;
-      } else {
-        loginResponse = loginResp.login_response;
-      }
-    });
-    if (authProvider.isLoggedIn == true) {
-      Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (authProvider.isOnboarded ||
-          (authProvider.isSupervisor && authProvider.isOfficer)) {
-        context.read<GlobalProvider>().setCurrentIndex(1);
-      }
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
-          ),
-        ),
-      );
-    }
-  }
-
   _getUserValidation() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
@@ -195,7 +113,8 @@ class _LoginPageState extends State<LoginPage> {
 
     await context.read<AuthProvider>().validateUser(username);
     bool isValid = context.read<AuthProvider>().isValidUser;
-    if(!isValid) {
+
+    if (!isValid) {
       _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
       return;
     }
@@ -203,6 +122,7 @@ class _LoginPageState extends State<LoginPage> {
     final user = context.read<AuthProvider>().currentUser;
     context.read<GlobalProvider>().setCenterId(user.centerId!);
     context.read<GlobalProvider>().setName(user.name!);
+    context.read<GlobalProvider>().setCenterName(user.centerName!);
     _showInSnackBar(AppLocalizations.of(context)!.user_validated);
   }
 
@@ -218,24 +138,96 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _onTapLogin() {
+  _onLoginButtonPressed() async {
+    await _getLoginAction();
+  }
+
+  _getLoginAction() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
       _showInSnackBar(AppLocalizations.of(context)!.password_required);
       return;
-    } else if (password.length > 50) {
+    }
+    if (password.length > 50) {
       _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
       return;
     }
+
     setState(() {
       isLoggingIn = true;
     });
-    _login(username, password).then((value) {
-      if (loginResponse.isNotEmpty && !authProvider.isLoggedIn) {
-        _showInSnackBar(loginResponse);
-      }
+    bool isConnected = context.read<ConnectivityProvider>().isConnected;
+    await context
+        .read<AuthProvider>()
+        .authenticateUser(username, password, isConnected);
+
+    bool isTrue = context.read<AuthProvider>().isLoggedIn;
+    if (!isTrue) {
+      _showErrorInSnackbar();
+    } else {
+      _navigateToHomePage();
+    }
+
+    setState(() {
       isLoggingIn = false;
     });
+  }
+
+  _showErrorInSnackbar() {
+    String errorMsg = context.read<AuthProvider>().loginError;
+    String snackbarText = "";
+
+    switch (errorMsg) {
+      case "REG_TRY_AGAIN":
+        snackbarText = AppLocalizations.of(context)!.login_failed;
+        break;
+
+      case "REG_INVALID_REQUEST":
+        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        break;
+
+      case "REG_MACHINE_NOT_FOUND":
+        snackbarText = AppLocalizations.of(context)!.machine_not_found;
+        break;
+
+      case "REG_NETWORK_ERROR":
+        snackbarText = AppLocalizations.of(context)!.network_error;
+        break;
+
+      case "REG_CRED_EXPIRED":
+        snackbarText = AppLocalizations.of(context)!.cred_expired;
+        break;
+
+      case "":
+        return;
+
+      default:
+        snackbarText = errorMsg;
+        break;
+    }
+
+    _showInSnackBar(snackbarText);
+  }
+
+  _navigateToHomePage() {
+    if (context.read<AuthProvider>().isLoggedIn == true) {
+      Navigator.popUntil(context, ModalRoute.withName('/login-page'));
+      if (context.read<AuthProvider>().isOnboarded ||
+          (context.read<AuthProvider>().isSupervisor &&
+              context.read<AuthProvider>().isOfficer)) {
+        context.read<GlobalProvider>().setCurrentIndex(1);
+      }
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Responsive(
+            mobile: DashBoardMobileView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _appBarComponent() {
@@ -296,11 +288,6 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }
-
-  _getMachineName() {
-    String machineName = context.read<GlobalProvider>().machineName;
-    return machineName;
   }
 
   Widget _welcomeTextComponent() {
@@ -385,7 +372,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(
-            height: isUserValidated ? 41.h : 38.h,
+            height: context.watch<AuthProvider>().isValidUser ? 41.h : 38.h,
           ),
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
@@ -404,13 +391,12 @@ class _LoginPageState extends State<LoginPage> {
           context.watch<AuthProvider>().isValidUser
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
-                  onTapLogin: _onTapLogin,
+                  onTapLogin: _onLoginButtonPressed,
                   onTapBack: () {
                     FocusManager.instance.primaryFocus?.unfocus();
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
                       username = '';
-                      isUserValidated = false;
                       isLoggingIn = false;
                     });
                   },

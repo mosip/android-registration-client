@@ -21,6 +21,10 @@ public class RegistrationCenterRepository {
         return this.registrationCenterDao.getAllRegistrationCentersById(centerId);
     }
 
+    public RegistrationCenter getRegistrationCenterByCenterIdAndLangCode(String centerId, String langCode) {
+        return this.registrationCenterDao.getRegistrationCenterByCenterIdAndLangCode(centerId, langCode);
+    }
+
     public void saveRegistrationCenter(JSONObject centerJson) throws JSONException {
         RegistrationCenter registrationCenter = new RegistrationCenter(centerJson.getString("id"),
                 centerJson.getString("langCode"));
