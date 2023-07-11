@@ -20,5 +20,6 @@ class AuthResponse {
 
 @HostApi()
 abstract class AuthResponseApi {
+  @async
   AuthResponse login(String username, String password, bool isConnected);
 }

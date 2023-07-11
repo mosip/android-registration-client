@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,10 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-
+import 'package:registration_client/provider/app_language_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/new_process_language_selection.dart';
+import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -29,9 +28,8 @@ class HomePage extends StatelessWidget {
 
   void syncData(BuildContext context) async {
     await _masterDataSync();
-    await _getNewProcessSpec(context);
-    String value = await getCenterName(context);
-    context.read<GlobalProvider>().setCenterName(value);
+    await _getNewProcessSpecAction(context);
+    await _getCenterNameAction(context);
   }
 
   Future<void> _masterDataSync() async {
@@ -48,7 +46,7 @@ class HomePage extends StatelessWidget {
     if (process.id == "NEW") {
       showDialog(
         context: context,
-        builder: (BuildContext context) => NewProcessLanguageSelection(
+        builder: (BuildContext context) => LanguageSelector(
           newProcess: process,
         ),
       );
@@ -56,41 +54,21 @@ class HomePage extends StatelessWidget {
     return Container();
   }
 
-  Future<void> _getNewProcessSpec(BuildContext context) async {
-    try {
-      context.read<RegistrationTaskProvider>().listOfProcesses =
-          await platform.invokeMethod("getNewProcessSpec");
-      await Clipboard.setData(ClipboardData(
-          text: context
-              .read<RegistrationTaskProvider>()
-              .listOfProcesses
-              .toString()));
-    } on PlatformException catch (e) {
-      debugPrint(e.message);
-    }
+  _getNewProcessSpecAction(BuildContext context) async {
+    await context.read<RegistrationTaskProvider>().getListOfProcesses();
   }
 
-  Future<void> _getUISchema() async {
-    String result;
-    try {
-      result = await platform.invokeMethod("getUISchema");
-    } on PlatformException catch (e) {
-      result = "Some Error Occurred: $e";
-    }
-    debugPrint(result);
+  _getUiSchemaAction(BuildContext context) async {
+    await context.read<RegistrationTaskProvider>().getUISchema();
   }
 
-  Future<String> getCenterName(BuildContext context) async {
-    String result;
-    try {
-      result = await platform.invokeMethod("getCenterName",
-          {"centerId": context.read<GlobalProvider>().centerId});
-    } on PlatformException catch (e) {
-      result = "Some Error Occurred: $e";
-    }
-    result = result.split("name=").last.split(",").first;
-    log("${result}Master Data");
-    return result;
+  _getCenterNameAction(BuildContext context) async {
+    String regCenterId = context.read<GlobalProvider>().centerId;
+
+    String langCode = context.read<AppLanguageProvider>().selectedLanguage;
+    await context
+        .read<GlobalProvider>()
+        .getRegCenterName(regCenterId, langCode);
   }
 
   @override

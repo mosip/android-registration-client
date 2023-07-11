@@ -12,5 +12,10 @@ class Machine {
 
 @HostApi()
 abstract class MachineApi {
+  @async
   Machine getMachineDetails();
+  
+  @async
+  String getCenterName(String regCenterId, String langCode);
+
 }

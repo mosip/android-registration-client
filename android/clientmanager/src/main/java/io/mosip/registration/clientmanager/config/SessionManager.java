@@ -2,18 +2,22 @@ package io.mosip.registration.clientmanager.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
+
 import com.auth0.android.jwt.JWT;
-import io.mosip.registration.clientmanager.R;
 
 import java.util.List;
 import java.util.Map;
+
+import io.mosip.registration.clientmanager.R;
 
 public class SessionManager {
 
     private static final String TAG = SessionManager.class.getSimpleName();
     public static final String IS_OFFICER = "is_officer";
     public static final String IS_SUPERVISOR = "is_supervisor";
+    public static final String IS_OPERATOR = "is_operator";
     public static final String IS_DEFAULT = "is_default";
     public static final String USER_NAME = "user_name";
     public static final String USER_TOKEN = "user_token";
@@ -56,6 +60,7 @@ public class SessionManager {
         editor.putBoolean(IS_SUPERVISOR, roles.contains("REGISTRATION_SUPERVISOR"));
         editor.putBoolean(IS_DEFAULT, roles.contains("Default"));
         editor.putBoolean(IS_OFFICER, roles.contains("REGISTRATION_OFFICER"));
+        editor.putBoolean(IS_OPERATOR, roles.contains("REGISTRATION_OPERATOR"));
         editor.apply();
         return roles;
     }
