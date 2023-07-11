@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -8,9 +10,11 @@ class DropDownControl extends StatefulWidget {
   const DropDownControl({
     super.key,
     required this.id,
+    required this.options,
   });
 
   final String id;
+  final List<String?> options;
 
   @override
   State<DropDownControl> createState() => _CustomDropDownState();
@@ -21,8 +25,6 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   @override
   Widget build(BuildContext context) {
-    final options = [""];
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
@@ -39,15 +41,18 @@ class _CustomDropDownState extends State<DropDownControl> {
           hintText: selected,
           hintStyle: const TextStyle(color: Color(0xff999999)),
         ),
-        items: options
+        items: widget.options
             .map((option) => DropdownMenuItem(
                   value: option,
-                  child: Text(option),
+                  child: Text(option!),
                 ))
             .toList(),
         onChanged: (value) {
-          context.read<GlobalProvider>().setInputMapValue(widget.id, value);
-
+          context.read<GlobalProvider>().setLanguageSpecificValue(
+              widget.id,
+              value,
+              "eng",
+              context.read<GlobalProvider>().feildDemographicsValues);
           setState(() {
             selected = value!;
           });

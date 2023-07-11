@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -21,6 +23,7 @@ class AgeDateControl extends StatefulWidget {
 }
 
 class _AgeDateControlState extends State<AgeDateControl> {
+  bool showError = false;
   final TextEditingController _dayController = TextEditingController();
 
   final TextEditingController _monthController = TextEditingController();
@@ -49,161 +52,200 @@ class _AgeDateControlState extends State<AgeDateControl> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  void _removeFocusFromAll() {
-    dayFocus.unfocus();
-    monthFocus.unfocus();
-    yearFocus.unfocus();
+  void _removeFocusFromAll(String currentTab) {
+    setState(() {
+      showError = false;
+    });
+    switch (currentTab) {
+      case "day":
+        monthFocus.unfocus();
+        yearFocus.unfocus();
+        break;
+      case "month":
+        dayFocus.unfocus();
+        yearFocus.unfocus();
+        break;
+      case "year":
+        dayFocus.unfocus();
+        monthFocus.unfocus();
+        break;
+      default:
+    }
+  }
+
+  String? feildValidation(value) {
+    try {
+      String targetDateString = widget.format
+          .replaceAll('dd', _dayController.text.padLeft(2, '0'))
+          .replaceAll('MM', _monthController.text.padLeft(2, '0'))
+          .replaceAll('yyyy', _yearController.text);
+
+      if (value == null || value.isEmpty) {
+        return 'Please enter a value';
+      }
+      if (!widget.validation.hasMatch(targetDateString)) {
+        setState(() {
+          showError = true;
+        });
+        return "";
+      }
+      context.read<GlobalProvider>().setInputMapValue(
+          widget.id,
+          targetDateString,
+          context.read<GlobalProvider>().feildDemographicsValues);
+      setState(() {
+        showError = false;
+      });
+      return null;
+    } catch (e) {
+      log("error");
+      setState(() {
+        showError = true;
+      });
+      return "";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat formatter = DateFormat(widget.format);
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Flexible(
-          child: TextFormField(
-            onTap: () => _removeFocusFromAll(),
-            validator: (value) {
-              try {
-                String date = formatter.format(DateTime.parse(
-                    "${_yearController.text}-${_monthController.text}-${_dayController.text}"));
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a value';
-                }
-                if (!widget.validation.hasMatch(date)) {
-                  return widget.format;
-                }
-                context
-                    .read<GlobalProvider>()
-                    .setInputMapValue(widget.id, value);
-                return widget.format;
-              } catch (e) {
-                return null;
-              }
-            },
-            onChanged: (value) {
-              if (value.length >= 2) {
-                focusNextField(dayFocus, monthFocus);
-              }
-            },
-            maxLength: 2,
-            focusNode: dayFocus,
-            keyboardType: TextInputType.number,
-            controller: _dayController,
-            decoration: InputDecoration(
-              counterText: "",
-              hintText: 'DD',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide:
-                    const BorderSide(color: Color(0xff9B9B9F), width: 1),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: TextFormField(
+                onTap: () => _removeFocusFromAll("day"),
+                validator: feildValidation,
+                onChanged: (value) {
+                  if (value.length >= 2) {
+                    focusNextField(dayFocus, monthFocus);
+                  }
+                },
+                maxLength: 2,
+                focusNode: dayFocus,
+                keyboardType: TextInputType.number,
+                controller: _dayController,
+                decoration: InputDecoration(
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide:
+                        const BorderSide(color: Color(0xff9B9B9F), width: 1),
+                  ),
+                  errorStyle: const TextStyle(fontSize: 0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  hintStyle:
+                      const TextStyle(color: Color(0xff999999), fontSize: 14),
+                  counterText: "",
+                  hintText: 'DD',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide:
+                        const BorderSide(color: Color(0xff9B9B9F), width: 1),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 8.0),
-        Flexible(
-          child: TextFormField(
-            onTap: () => _removeFocusFromAll(),
-            validator: (value) {
-              try {
-                String date = formatter.format(DateTime.parse(
-                    "${_yearController.text}-${_monthController.text}-${_dayController.text}"));
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a value';
-                }
-                if (!widget.validation.hasMatch(date)) {
-                  return widget.format;
-                }
-                context
-                    .read<GlobalProvider>()
-                    .setInputMapValue(widget.id, value);
-                return widget.format;
-              } catch (e) {
-                return null;
-              }
-            },
-            onChanged: (value) {
-              if (value.length >= 2) {
-                focusNextField(monthFocus, yearFocus);
-              }
-            },
-            maxLength: 2,
-            focusNode: monthFocus,
-            keyboardType: TextInputType.number,
-            controller: _monthController,
-            decoration: InputDecoration(
-              counterText: "",
-              hintText: 'MM',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide:
-                    const BorderSide(color: Color(0xff9B9B9F), width: 1),
+            const SizedBox(width: 8.0),
+            Flexible(
+              child: TextFormField(
+                onTap: () => _removeFocusFromAll("month"),
+                validator: feildValidation,
+                onChanged: (value) {
+                  if (value.length >= 2) {
+                    focusNextField(monthFocus, yearFocus);
+                  }
+                },
+                maxLength: 2,
+                focusNode: monthFocus,
+                keyboardType: TextInputType.number,
+                controller: _monthController,
+                decoration: InputDecoration(
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide:
+                        const BorderSide(color: Color(0xff9B9B9F), width: 1),
+                  ),
+                  errorStyle: const TextStyle(fontSize: 0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  hintStyle:
+                      const TextStyle(color: Color(0xff999999), fontSize: 14),
+                  counterText: "",
+                  hintText: 'MM',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide:
+                        const BorderSide(color: Color(0xff9B9B9F), width: 1),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 8.0),
-        Flexible(
-          child: TextFormField(
-            onTap: () => _removeFocusFromAll(),
-            validator: (value) {
-              try {
-                String date = formatter.format(DateTime.parse(
-                    "${_yearController.text}-${_monthController.text}-${_dayController.text}"));
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a value';
-                }
-                if (!widget.validation.hasMatch(date)) {
-                  return widget.format;
-                }
-                context
-                    .read<GlobalProvider>()
-                    .setInputMapValue(widget.id, value);
-                return widget.format;
-              } catch (e) {
-                return null;
-              }
-            },
-            onChanged: (value) {
-              if (value.length >= 4) {
-                yearFocus.unfocus();
-              }
-            },
-            maxLength: 4,
-            focusNode: yearFocus,
-            controller: _yearController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              counterText: "",
-              hintText: 'YYYY',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide:
-                    const BorderSide(color: Color(0xff9B9B9F), width: 1),
+            const SizedBox(width: 8.0),
+            Flexible(
+              child: TextFormField(
+                onTap: () => _removeFocusFromAll("year"),
+                validator: feildValidation,
+                maxLength: 4,
+                focusNode: yearFocus,
+                controller: _yearController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide:
+                        const BorderSide(color: Color(0xff9B9B9F), width: 1),
+                  ),
+                  errorStyle: const TextStyle(fontSize: 0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  hintStyle:
+                      const TextStyle(color: Color(0xff999999), fontSize: 14),
+                  counterText: "",
+                  hintText: 'YYYY',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide:
+                        const BorderSide(color: Color(0xff9B9B9F), width: 1),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        const Text("OR"),
-        const SizedBox(width: 12),
-        Flexible(
-          child: TextFormField(
-            controller: _ageController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              hintText: 'Age',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide:
-                    const BorderSide(color: Color(0xff9B9B9F), width: 1),
+            const SizedBox(width: 12),
+            const Text("OR"),
+            const SizedBox(width: 12),
+            Flexible(
+              child: TextFormField(
+                controller: _ageController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  hintStyle:
+                      const TextStyle(color: Color(0xff999999), fontSize: 14),
+                  hintText: 'Age',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide:
+                        const BorderSide(color: Color(0xff9B9B9F), width: 1),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
+        const SizedBox(
+          height: 5,
+        ),
+        showError
+            ? Text(
+                " Date Format: ${widget.format}",
+                style: const TextStyle(
+                    color: Color.fromARGB(255, 183, 21, 9), fontSize: 12),
+              )
+            : const SizedBox.shrink()
       ],
     );
   }

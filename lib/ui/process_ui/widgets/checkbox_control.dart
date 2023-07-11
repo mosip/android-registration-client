@@ -26,16 +26,17 @@ class CheckboxControl extends StatelessWidget {
                     activeColor: solid_primary,
                     value: (context
                             .watch<GlobalProvider>()
-                            .fieldInputValues
+                            .feildConsentValues
                             .containsKey(field.id))
                         ? context
                             .watch<GlobalProvider>()
-                            .fieldInputValues[field.id]
+                            .feildConsentValues[field.id]
                         : false,
                     onChanged: (value) {
-                      context
-                          .read<GlobalProvider>()
-                          .setInputMapValue(field.id!, value);
+                      context.read<GlobalProvider>().setInputMapValue(
+                          field.id!,
+                          value,
+                          context.read<GlobalProvider>().feildConsentValues);
                     })),
             SizedBox(
               width: 8,

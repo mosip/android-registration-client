@@ -19,7 +19,8 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   String? selectedOption;
 
   void handleOptionChange(String? value) {
-    context.read<GlobalProvider>().setInputMapValue(widget.id, value);
+    context.read<GlobalProvider>().setLanguageSpecificValue(widget.id, value,
+        "eng", context.read<GlobalProvider>().feildDemographicsValues);
     setState(() {
       selectedOption = value;
     });

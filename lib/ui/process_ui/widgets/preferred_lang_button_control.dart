@@ -21,7 +21,8 @@ class PreferredLangButtonControl extends StatelessWidget {
                   .length,
           (index) => false);
       temp[index] = false;
-      context.read<GlobalProvider>().setInputMapValue(field.id!, temp);
+      context.read<GlobalProvider>().setInputMapValue(
+          field.id!, temp, context.read<GlobalProvider>().feildConsentValues);
       return false;
     }
 
@@ -59,20 +60,23 @@ class PreferredLangButtonControl extends StatelessWidget {
                           activeColor: solid_primary,
                           value: (context
                                   .watch<GlobalProvider>()
-                                  .fieldInputValues
+                                  .feildConsentValues
                                   .containsKey(field.id))
                               ? context
                                   .watch<GlobalProvider>()
-                                  .fieldInputValues[field.id][i]
+                                  .feildConsentValues[field.id][i]
                               : generateList(context, i),
                           onChanged: (value) {
                             List temp = context
                                 .read<GlobalProvider>()
-                                .fieldInputValues[field.id];
+                                .feildConsentValues[field.id];
                             temp[i] = value;
-                            context
-                                .read<GlobalProvider>()
-                                .setInputMapValue(field.id!, temp);
+                            context.read<GlobalProvider>().setInputMapValue(
+                                field.id!,
+                                temp,
+                                context
+                                    .read<GlobalProvider>()
+                                    .feildConsentValues);
                           },
                         ),
                       ),

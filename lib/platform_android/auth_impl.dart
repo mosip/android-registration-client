@@ -7,7 +7,6 @@ import 'package:registration_client/platform_spi/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthImpl implements Auth {
-
   @override
   Future<User> validateUser(String username) async {
     late User user;

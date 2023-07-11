@@ -10,25 +10,32 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Machine;
+@class LocationResponse;
 
-@interface Machine : NSObject
+@interface LocationResponse : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMap:(NSDictionary<NSString *, NSString *> *)map
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> * map;
-@property(nonatomic, copy, nullable) NSString * errorCode;
++ (instancetype)makeWithCountryList:(NSArray<NSString *> *)countryList
+    regionList:(NSArray<NSString *> *)regionList
+    provinceList:(NSArray<NSString *> *)provinceList
+    cityList:(NSArray<NSString *> *)cityList
+    zoneList:(NSArray<NSString *> *)zoneList
+    postalCodeList:(NSArray<NSString *> *)postalCodeList;
+@property(nonatomic, strong) NSArray<NSString *> * countryList;
+@property(nonatomic, strong) NSArray<NSString *> * regionList;
+@property(nonatomic, strong) NSArray<NSString *> * provinceList;
+@property(nonatomic, strong) NSArray<NSString *> * cityList;
+@property(nonatomic, strong) NSArray<NSString *> * zoneList;
+@property(nonatomic, strong) NSArray<NSString *> * postalCodeList;
 @end
 
-/// The codec used by MachineApi.
-NSObject<FlutterMessageCodec> *MachineApiGetCodec(void);
+/// The codec used by LocationResponseApi.
+NSObject<FlutterMessageCodec> *LocationResponseApiGetCodec(void);
 
-@protocol MachineApi
-- (void)getMachineDetailsWithCompletion:(void (^)(Machine *_Nullable, FlutterError *_Nullable))completion;
-- (void)getCenterNameRegCenterId:(NSString *)regCenterId langCode:(NSString *)langCode completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol LocationResponseApi
+- (void)fetchLocationListLangCode:(NSString *)langCode hierarchyName:(NSArray<NSString *> *)hierarchyName completion:(void (^)(LocationResponse *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void MachineApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MachineApi> *_Nullable api);
+extern void LocationResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<LocationResponseApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

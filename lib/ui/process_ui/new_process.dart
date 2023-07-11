@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -35,10 +37,18 @@ class NewProcess extends StatelessWidget {
             ? ElevatedButton(
                 child: Text("CONTINUE"),
                 onPressed: () {
-                  if (context.read<GlobalProvider>().newProcessTabIndex <
-                      newProcess.screens!.length - 1) {
-                    context.read<GlobalProvider>().newProcessTabIndex =
-                        context.read<GlobalProvider>().newProcessTabIndex + 1;
+                  if (context
+                      .read<GlobalProvider>()
+                      .formKey
+                      .currentState!
+                      .validate()) {
+                    log("Input Values : ${context.read<GlobalProvider>().feildConsentValues}");
+                    log("Input Values : ${context.read<GlobalProvider>().feildDemographicsValues}");
+                    if (context.read<GlobalProvider>().newProcessTabIndex <
+                        newProcess.screens!.length - 1) {
+                      context.read<GlobalProvider>().newProcessTabIndex =
+                          context.read<GlobalProvider>().newProcessTabIndex + 1;
+                    }
                   }
                 },
               )
@@ -54,20 +64,20 @@ class NewProcess extends StatelessWidget {
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                     ),
                     onPressed: () {
-                      if (context.read<GlobalProvider>().newProcessTabIndex <
-                          newProcess.screens!.length - 1) {
-                        context.read<GlobalProvider>().newProcessTabIndex =
-                            context.read<GlobalProvider>().newProcessTabIndex +
-                                1;
+                      if (context
+                          .read<GlobalProvider>()
+                          .formKey
+                          .currentState!
+                          .validate()) {
+                        if (context.read<GlobalProvider>().newProcessTabIndex <
+                            newProcess.screens!.length - 1) {
+                          context.read<GlobalProvider>().newProcessTabIndex =
+                              context
+                                      .read<GlobalProvider>()
+                                      .newProcessTabIndex +
+                                  1;
+                        }
                       }
-
-                      // if (context
-                      //     .read<GlobalProvider>()
-                      //     .formKey
-                      //     .currentState!
-                      //     .validate()) {
-
-                      //   }
                     },
                   )
                 ],

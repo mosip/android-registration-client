@@ -10,6 +10,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.LocationDao;
+import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -21,6 +23,7 @@ import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
@@ -79,6 +82,7 @@ public class HostApiModule {
         return new CommonDetailsApi(masterDataService);
     }
     
+
     @Provides
     @Singleton
     ProcessSpecDetailsApi getProcessSpecDetailsApi(IdentitySchemaRepository identitySchemaRepository,
@@ -88,4 +92,10 @@ public class HostApiModule {
 
     }
 
+    @Provides
+    @Singleton
+    LocationDetailsApi getLocationDetailsApi(LocationHierarchyDao locationHierarchyDao, LocationDao locationDao) {
+        return new LocationDetailsApi(locationHierarchyDao, locationDao);
+
+    }
 }

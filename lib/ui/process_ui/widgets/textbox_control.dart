@@ -30,9 +30,8 @@ class TextBoxControl extends StatelessWidget {
           if (!validation.hasMatch(value)) {
             return 'Invalid input';
           }
-
-          context.read<GlobalProvider>().setInputMapValue(id, value);
-
+          context.read<GlobalProvider>().setLanguageSpecificValue(id, value,
+              lang, context.read<GlobalProvider>().feildDemographicsValues);
           return null;
         },
         textAlign: (lang == 'ara') ? TextAlign.right : TextAlign.left,
@@ -41,8 +40,10 @@ class TextBoxControl extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(color: Color(0xff9B9B9F), width: 1),
           ),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
           hintText: label,
-          hintStyle: const TextStyle(color: Color(0xff999999)),
+          hintStyle: const TextStyle(color: Color(0xff999999), fontSize: 14),
           prefixIcon: (lang == 'ara')
               ? const Icon(
                   Icons.keyboard_outlined,

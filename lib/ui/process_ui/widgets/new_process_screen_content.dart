@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/pigeon/location_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/location_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
@@ -15,11 +17,23 @@ import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
 import 'radio_button_control.dart';
 
-class NewProcessScreenContent extends StatelessWidget {
+class NewProcessScreenContent extends StatefulWidget {
   const NewProcessScreenContent(
       {super.key, required this.context, required this.screen});
   final BuildContext context;
   final Screen screen;
+
+  @override
+  State<NewProcessScreenContent> createState() =>
+      _NewProcessScreenContentState();
+}
+
+class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
+  @override
+  void initState() {
+    context.read<LocationProvider>().setLocationResponse("eng");
+    super.initState();
+  }
 
   bool validateExpression(String? engine, String? expression) {
     return true;
@@ -84,7 +98,8 @@ class NewProcessScreenContent extends StatelessWidget {
       return Text("${e.controlType}");
     }
     if (e.controlType == "textbox") {
-      List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
+      List<String> choosenLang =
+          widget.context.read<GlobalProvider>().chosenLang;
       List<String> singleTextBox = [
         "Phone",
         "Email",
@@ -112,7 +127,7 @@ class NewProcessScreenContent extends StatelessWidget {
               Column(
                 children: choosenLang.map((code) {
                   String newCode =
-                      context.read<GlobalProvider>().langToCode(code);
+                      widget.context.read<GlobalProvider>().langToCode(code);
                   return TextBoxControl(
                       id: e.id ?? "",
                       label: e.label![newCode]!.toString(),
@@ -126,6 +141,27 @@ class NewProcessScreenContent extends StatelessWidget {
       );
     }
     if (e.controlType == "dropdown") {
+      List<String?> options = [];
+      LocationResponse? locationResponse =
+          context.watch<LocationProvider>().locationResponse;
+      if (locationResponse != null) {
+        switch (e.subType) {
+          case "Region":
+            options = locationResponse.regionList;
+            break;
+          case "City":
+            options = locationResponse.cityList;
+            break;
+          case "Zone":
+            options = locationResponse.zoneList;
+            break;
+          case "Postal Code":
+            options = locationResponse.postalCodeList;
+            break;
+          default:
+        }
+      }
+
       return Card(
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
@@ -140,6 +176,7 @@ class NewProcessScreenContent extends StatelessWidget {
               ),
               DropDownControl(
                 id: e.id ?? "",
+                options: options,
               ),
             ],
           ),
@@ -160,7 +197,7 @@ class NewProcessScreenContent extends StatelessWidget {
                 height: 10,
               ),
               AgeDateControl(
-                format: e.format ?? "DD/MM/YYYY",
+                format: e.format ?? "yyyy/MM/dd",
                 id: e.id ?? "",
                 validation: regexPattern,
               ),
@@ -175,15 +212,18 @@ class NewProcessScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ...screen.fields!.map((e) {
-          if (e!.inputRequired == true) {
-            return widgetType(e);
-          }
-          return Container();
-        }).toList(),
-      ],
+    return Form(
+      key: context.read<GlobalProvider>().formKey,
+      child: Column(
+        children: [
+          ...widget.screen.fields!.map((e) {
+            if (e!.inputRequired == true) {
+              return widgetType(e);
+            }
+            return Container();
+          }).toList(),
+        ],
+      ),
     );
   }
 }
