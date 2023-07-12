@@ -38,14 +38,16 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   }
 
   readJson() async {
-    final String response = await rootBundle.loadString('assets/images/registration_data.json');
+    final String response =
+        await rootBundle.loadString('assets/images/registration_data.json');
     return response;
   }
 
   validateExpression(String? engine, String? expression) async {
     String data = await readJson();
-    context.read<RegistrationTaskProvider>().checkMVEL(data, expression!);
-    return context.read<RegistrationTaskProvider>().isMvelValid;
+    return context
+        .read<RegistrationTaskProvider>()
+        .checkMVEL(data, expression!);
   }
 
   Widget widgetType(Field e) {
