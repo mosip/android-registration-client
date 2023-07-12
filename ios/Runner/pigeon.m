@@ -21,67 +21,56 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface RegistrationData ()
-+ (RegistrationData *)fromList:(NSArray *)list;
-+ (nullable RegistrationData *)nullableFromList:(NSArray *)list;
+@interface PacketAuth ()
++ (PacketAuth *)fromList:(NSArray *)list;
++ (nullable PacketAuth *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation RegistrationData
-+ (instancetype)makeWithLanguages:(NSArray<NSString *> *)languages
-    demographicsData:(NSString *)demographicsData
-    biometricsData:(NSString *)biometricsData
-    documentsData:(NSString *)documentsData {
-  RegistrationData* pigeonResult = [[RegistrationData alloc] init];
-  pigeonResult.languages = languages;
-  pigeonResult.demographicsData = demographicsData;
-  pigeonResult.biometricsData = biometricsData;
-  pigeonResult.documentsData = documentsData;
+@implementation PacketAuth
++ (instancetype)makeWithResponse:(NSString *)response
+    errorCode:(nullable NSString *)errorCode {
+  PacketAuth* pigeonResult = [[PacketAuth alloc] init];
+  pigeonResult.response = response;
+  pigeonResult.errorCode = errorCode;
   return pigeonResult;
 }
-+ (RegistrationData *)fromList:(NSArray *)list {
-  RegistrationData *pigeonResult = [[RegistrationData alloc] init];
-  pigeonResult.languages = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.languages != nil, @"");
-  pigeonResult.demographicsData = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.demographicsData != nil, @"");
-  pigeonResult.biometricsData = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.biometricsData != nil, @"");
-  pigeonResult.documentsData = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.documentsData != nil, @"");
++ (PacketAuth *)fromList:(NSArray *)list {
+  PacketAuth *pigeonResult = [[PacketAuth alloc] init];
+  pigeonResult.response = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.response != nil, @"");
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
-+ (nullable RegistrationData *)nullableFromList:(NSArray *)list {
-  return (list) ? [RegistrationData fromList:list] : nil;
++ (nullable PacketAuth *)nullableFromList:(NSArray *)list {
+  return (list) ? [PacketAuth fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.languages ?: [NSNull null]),
-    (self.demographicsData ?: [NSNull null]),
-    (self.biometricsData ?: [NSNull null]),
-    (self.documentsData ?: [NSNull null]),
+    (self.response ?: [NSNull null]),
+    (self.errorCode ?: [NSNull null]),
   ];
 }
 @end
 
-@interface RegistrationDataApiCodecReader : FlutterStandardReader
+@interface PacketAuthApiCodecReader : FlutterStandardReader
 @end
-@implementation RegistrationDataApiCodecReader
+@implementation PacketAuthApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [RegistrationData fromList:[self readValue]];
+      return [PacketAuth fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface RegistrationDataApiCodecWriter : FlutterStandardWriter
+@interface PacketAuthApiCodecWriter : FlutterStandardWriter
 @end
-@implementation RegistrationDataApiCodecWriter
+@implementation PacketAuthApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[RegistrationData class]]) {
+  if ([value isKindOfClass:[PacketAuth class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else {
@@ -90,80 +79,42 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface RegistrationDataApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface PacketAuthApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation RegistrationDataApiCodecReaderWriter
+@implementation PacketAuthApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[RegistrationDataApiCodecWriter alloc] initWithData:data];
+  return [[PacketAuthApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[RegistrationDataApiCodecReader alloc] initWithData:data];
+  return [[PacketAuthApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    RegistrationDataApiCodecReaderWriter *readerWriter = [[RegistrationDataApiCodecReaderWriter alloc] init];
+    PacketAuthApiCodecReaderWriter *readerWriter = [[PacketAuthApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
+void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.registration"
+        initWithName:@"dev.flutter.pigeon.PacketAuthApi.authenticate"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:PacketAuthApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(registrationRegistrationData:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(registrationRegistrationData:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(authenticateUsername:password:isConnected:completion:)], @"PacketAuthApi api (%@) doesn't respond to @selector(authenticateUsername:password:isConnected:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        RegistrationData *arg_registrationData = GetNullableObjectAtIndex(args, 0);
-        [api registrationRegistrationData:arg_registrationData completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.checkMVEL"
-        binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(checkMVELData:expression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(checkMVELData:expression:completion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_data = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_expression = GetNullableObjectAtIndex(args, 1);
-        [api checkMVELData:arg_data expression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.getPreviewTemplate"
-        binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateData:isPreview:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateData:isPreview:completion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_data = GetNullableObjectAtIndex(args, 0);
-        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 1);
-        [api getPreviewTemplateData:arg_data isPreview:arg_isPreview completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_password = GetNullableObjectAtIndex(args, 1);
+        NSNumber *arg_isConnected = GetNullableObjectAtIndex(args, 2);
+        [api authenticateUsername:arg_username password:arg_password isConnected:arg_isConnected completion:^(PacketAuth *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

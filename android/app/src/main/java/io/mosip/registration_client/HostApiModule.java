@@ -27,6 +27,7 @@ import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
@@ -107,5 +108,12 @@ public class HostApiModule {
     RegistrationApi getRegistrationDataApi(RegistrationService registrationService, TemplateService templateService) {
         return new RegistrationApi(registrationService, templateService);
 
+    }
+
+    @Provides
+    @Singleton
+    PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
+                                                       LoginService loginService) {
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService);
     }
 }

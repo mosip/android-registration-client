@@ -78,8 +78,6 @@ public class LoginService {
             long rExpiry = Long.parseLong(jsonObject.getString("refreshExpiryTime"));
             userDetailRepository.saveUserAuthToken(userId, token, refreshToken, tExpiry, rExpiry);
             List<String> roles=this.sessionManager.saveAuthToken(token);
-
-
             return roles;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
@@ -89,7 +87,6 @@ public class LoginService {
 
     public String saveUserAuthTokenOffline(String userId) throws Exception {
         String token = userDetailRepository.getUserAuthToken(userId);
-
 
         if(token != null && !token.isEmpty()) {
             try {

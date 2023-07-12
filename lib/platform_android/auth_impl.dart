@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/auth_response_pigeon.dart';
+import 'package:registration_client/pigeon/packet_auth_pigeon.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/platform_spi/auth.dart';
@@ -33,6 +34,21 @@ class AuthImpl implements Auth {
       debugPrint(e.toString());
     }
     return authResponse;
+  }
+
+  @override
+  Future<PacketAuth> packetAuthentication(String username, String password, 
+                                          bool isConnected) async {
+    late PacketAuth packetAuth;
+    try {
+      packetAuth = await PacketAuthApi().authenticate(username, password, isConnected);
+    } on PlatformException {
+      debugPrint('PacketAuthenticationApi call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    return packetAuth;
   }
 }
 

@@ -10,30 +10,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RegistrationData;
+@class PacketAuth;
 
-@interface RegistrationData : NSObject
+@interface PacketAuth : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithLanguages:(NSArray<NSString *> *)languages
-    demographicsData:(NSString *)demographicsData
-    biometricsData:(NSString *)biometricsData
-    documentsData:(NSString *)documentsData;
-@property(nonatomic, strong) NSArray<NSString *> * languages;
-@property(nonatomic, copy) NSString * demographicsData;
-@property(nonatomic, copy) NSString * biometricsData;
-@property(nonatomic, copy) NSString * documentsData;
++ (instancetype)makeWithResponse:(NSString *)response
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy) NSString * response;
+@property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by RegistrationDataApi.
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
+/// The codec used by PacketAuthApi.
+NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void);
 
-@protocol RegistrationDataApi
-- (void)registrationRegistrationData:(RegistrationData *)registrationData completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)checkMVELData:(NSString *)data expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPreviewTemplateData:(NSString *)data isPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol PacketAuthApi
+- (void)authenticateUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(PacketAuth *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
+extern void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

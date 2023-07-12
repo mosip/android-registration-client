@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
 
@@ -68,12 +71,30 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         try {
             RegistrationDto regDTO = JsonUtils.jsonStringToJavaObject(data, RegistrationDto.class);
             Log.e(getClass().getSimpleName(), "regDTO: " + regDTO);
-            String template = this.templateService.getTemplate(regDTO, true);
+            regDTO.getDemographics().forEach((k, v) -> {
+
+                if(v instanceof List) {
+                    List<SimpleType> simpleTypeList = new ArrayList<>();
+                    ((List<?>) v).forEach((value) -> {
+                        if(value instanceof HashMap) {
+                            Log.e(getClass().getSimpleName(), "Key: " + ((HashMap<?, ?>) value).get("language") + " Value: " + ((HashMap<?, ?>) value).get("value"));
+                            SimpleType simpleType = new SimpleType();
+                            simpleType.setValue("" + ((HashMap) value).get("value"));
+                            simpleType.setLanguage("" + ((HashMap) value).get("language"));
+                            simpleTypeList.add(simpleType);
+                        }
+                    });
+                    regDTO.getDemographics().put(k, simpleTypeList);
+                }
+            });
+
+//            String template = this.templateService.getTemplate(regDTO, true);
             Log.e(getClass().getSimpleName(), "PreviewTemplate: " + regDTO);
             result.success("");
             return;
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Registration start failed: " + e);
+            e.printStackTrace();
+            Log.e(getClass().getSimpleName(), "Registration start failed: " + e.getStackTrace());
         }
         Log.e(getClass().getSimpleName(), "Empty template!");
         result.success("");

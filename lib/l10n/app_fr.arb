@@ -37,5 +37,6 @@
   "machine_not_found": "Machine introuvable!",
   "network_error": "Échec de la connexion. Vérifiez la connexion réseau!",
   "cred_expired": "Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!",
-  "not_initialized": "La machine n’a pas pu être initialisée!"
+  "not_initialized": "La machine n’a pas pu être initialisée!",
+  "invalid_user": "Nom d’utilisateur non valide!"
 }
