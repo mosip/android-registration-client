@@ -16,6 +16,7 @@ import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
@@ -103,8 +104,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    RegistrationApi getRegistrationDataApi(RegistrationService registrationService) {
-        return new RegistrationApi(registrationService);
+    RegistrationApi getRegistrationDataApi(RegistrationService registrationService, TemplateService templateService) {
+        return new RegistrationApi(registrationService, templateService);
 
     }
 }

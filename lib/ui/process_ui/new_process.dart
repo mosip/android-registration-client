@@ -23,6 +23,11 @@ class NewProcess extends StatelessWidget {
 
   static const routeName = '/new_process';
 
+  readJson() async {
+    final String response = await rootBundle.loadString('assets/images/registration_data.json');
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
@@ -39,7 +44,11 @@ class NewProcess extends StatelessWidget {
         child: isMobile
             ? ElevatedButton(
                 child: const Text("CONTINUE"),
-                onPressed: () {
+                onPressed: () async {
+                  String value = await readJson();
+                  context.read<RegistrationTaskProvider>().checkMVEL(value, "");
+                  // String template = await context.read<RegistrationTaskProvider>().getPreviewTemplate(value, true);
+                  // debugPrint("template: $template");
                   if (context
                       .read<GlobalProvider>()
                       .formKey
@@ -80,7 +89,11 @@ class NewProcess extends StatelessWidget {
                       minimumSize:
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      String value = await readJson();
+                      // context.read<RegistrationTaskProvider>().checkMVEL(value, "");
+                      // context.read<RegistrationTaskProvider>().getPreviewTemplate(value, true);
+                      debugPrint("template:");
                       if (context
                           .read<GlobalProvider>()
                           .formKey

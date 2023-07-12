@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -6,6 +7,7 @@ import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/location_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/location_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
@@ -35,8 +37,15 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     super.initState();
   }
 
-  bool validateExpression(String? engine, String? expression) {
-    return true;
+  readJson() async {
+    final String response = await rootBundle.loadString('assets/images/registration_data.json');
+    return response;
+  }
+
+  validateExpression(String? engine, String? expression) async {
+    String data = await readJson();
+    context.read<RegistrationTaskProvider>().checkMVEL(data, expression!);
+    return context.read<RegistrationTaskProvider>().isMvelValid;
   }
 
   Widget widgetType(Field e) {

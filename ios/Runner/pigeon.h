@@ -30,6 +30,8 @@ NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
 
 @protocol RegistrationDataApi
 - (void)registrationRegistrationData:(RegistrationData *)registrationData completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)checkMVELData:(NSString *)data expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateData:(NSString *)data isPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);

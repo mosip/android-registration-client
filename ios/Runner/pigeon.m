@@ -131,4 +131,44 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.checkMVEL"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(checkMVELData:expression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(checkMVELData:expression:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_data = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_expression = GetNullableObjectAtIndex(args, 1);
+        [api checkMVELData:arg_data expression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.getPreviewTemplate"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateData:isPreview:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateData:isPreview:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_data = GetNullableObjectAtIndex(args, 0);
+        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 1);
+        [api getPreviewTemplateData:arg_data isPreview:arg_isPreview completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }

@@ -18,4 +18,10 @@ class RegistrationData {
 abstract class RegistrationDataApi {
   @async
   bool registration(RegistrationData registrationData);
+
+  @async
+  bool checkMVEL(String data, String expression);
+
+  @async
+  String getPreviewTemplate(String data, bool isPreview);
 }

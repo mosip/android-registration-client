@@ -23,6 +23,33 @@ class RegistrationImpl implements Registration {
     return isRegistered;
   }
   
+  @override
+  Future<bool> checkMVEL(String data, String expression) async {
+    bool isMvelValid = false;
+    try {
+      isMvelValid = await RegistrationDataApi().checkMVEL(data, expression);
+    } on PlatformException {
+      debugPrint('RegApi call failed');
+    } catch (e) {
+      debugPrint('Registration not completed! ${e.toString()}');
+    }
+    return isMvelValid;
+  }
+  
+  @override
+  Future<String> getPreviewTemplate(String data, bool isPreview) async {
+    String previewTemplate = '';
+    try {
+      previewTemplate = await RegistrationDataApi().getPreviewTemplate(data, isPreview);
+    } on PlatformException {
+      debugPrint('Registration API template call failed');
+    } catch (e) {
+      debugPrint('Preview Template not fetched! ${e.toString()}');
+    }
+
+    return previewTemplate;
+  }
+  
 }
 
 Registration getRegistrationImpl() => RegistrationImpl();

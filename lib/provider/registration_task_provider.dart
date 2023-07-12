@@ -10,11 +10,15 @@ class RegistrationTaskProvider with ChangeNotifier {
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
   bool _isRegistered = false;
+  bool _isMvelValid = false;
+  String _previewTemplate = "";
   
   List<Object?> get listOfProcesses => this._listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
   bool get isRegistered => _isRegistered;
+  String get previewTemplate => _previewTemplate;
+  bool get isMvelValid => _isMvelValid;
 
   set listOfProcesses(List<Object?> value) {
     this._listOfProcesses = value;
@@ -68,6 +72,16 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   registerApplicant(RegistrationData registrationData) async {
     _isRegistered = await registration.registerApplicant(registrationData);
+    notifyListeners();
+  }
+
+  checkMVEL(String data, String expression) async {
+    _isMvelValid = await registration.checkMVEL(data, expression);
+    notifyListeners();
+  }
+
+  getPreviewTemplate(String data, bool isPreview) async {
+    _previewTemplate = await registration.getPreviewTemplate(data, isPreview);
     notifyListeners();
   }
 }
