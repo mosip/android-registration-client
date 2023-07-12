@@ -74,10 +74,6 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  checkMVEL(String data, String expression) async {
-    return await registration.checkMVEL(data, expression);
-  }
-
   getPreviewTemplate(String data, bool isPreview) async {
     _previewTemplate = await registration.getPreviewTemplate(data, isPreview);
     notifyListeners();

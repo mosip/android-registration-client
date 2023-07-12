@@ -17,6 +17,7 @@ import 'package:registration_client/ui/process_ui/widgets/preferred_lang_button_
 
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
+import '../../../platform_spi/registration.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -37,33 +38,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     super.initState();
   }
 
-  readJson() async {
-    final String response =
-        await rootBundle.loadString('assets/images/registration_data.json');
-    return response;
-  }
-
-  validateExpression(String? engine, String? expression) async {
-    String data = await readJson();
-    return context
-        .read<RegistrationTaskProvider>()
-        .checkMVEL(data, expression!);
-  }
-
   Widget widgetType(Field e) {
     RegExp regexPattern = RegExp(r'^.*$');
-
-    if (e.required == false) {
-      if (e.requiredOn!.isEmpty) {
-        return const SizedBox.shrink();
-      }
-      String? engine = e.requiredOn?[0]?.engine;
-      String? expression = e.requiredOn?[0]?.expr;
-      bool mvelEvalutation = validateExpression(engine, expression);
-      if (mvelEvalutation == false) {
-        return const SizedBox.shrink();
-      }
-    }
 
     if (e.validators!.isNotEmpty) {
       final validation = e.validators?.first?.validator;
@@ -109,47 +85,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       return Text("${e.controlType}");
     }
     if (e.controlType == "textbox") {
-      List<String> choosenLang =
-          widget.context.read<GlobalProvider>().chosenLang;
-      List<String> singleTextBox = [
-        "Phone",
-        "Email",
-        "introducerName",
-        "RID",
-        "UIN",
-        "none"
-      ];
-      if (singleTextBox.contains(e.subType)) {
-        choosenLang = ["English"];
-      }
-
-      return Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(feild: e),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                children: choosenLang.map((code) {
-                  String newCode =
-                      widget.context.read<GlobalProvider>().langToCode(code);
-                  return TextBoxControl(
-                      id: e.id ?? "",
-                      label: e.label![newCode]!.toString(),
-                      lang: newCode,
-                      validation: regexPattern);
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
-      );
+      return TextBoxControl(e: e, validation: regexPattern);
     }
     if (e.controlType == "dropdown") {
       List<String?> options = [];

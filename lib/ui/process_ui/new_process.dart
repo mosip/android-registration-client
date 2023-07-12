@@ -24,7 +24,8 @@ class NewProcess extends StatelessWidget {
   static const routeName = '/new_process';
 
   readJson() async {
-    final String response = await rootBundle.loadString('assets/images/registration_data.json');
+    final String response =
+        await rootBundle.loadString('assets/images/registration_data.json');
     return response;
   }
 
@@ -46,7 +47,6 @@ class NewProcess extends StatelessWidget {
                 child: const Text("CONTINUE"),
                 onPressed: () async {
                   String value = await readJson();
-                  context.read<RegistrationTaskProvider>().checkMVEL(value, "");
                   // String template = await context.read<RegistrationTaskProvider>().getPreviewTemplate(value, true);
                   // debugPrint("template: $template");
                   if (context
