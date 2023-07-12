@@ -66,18 +66,14 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     @Override
     public void getPreviewTemplate(@NonNull String data, @NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            RegistrationDto regDTO = mapper.readValue(data, RegistrationDto.class);
-//            Log.e(getClass().getSimpleName(), "data: " + data);
-//            Log.e(getClass().getSimpleName(), "regDTO: " + regDTO);
-//            List<String> selectedLang = regDTO.getSelectedLanguages();
-//            String template = this.templateService.getTemplate(this.registrationDto, isPreview);
             RegistrationDto regDTO = JsonUtils.jsonStringToJavaObject(data, RegistrationDto.class);
+            Log.e(getClass().getSimpleName(), "regDTO: " + regDTO);
+            String template = this.templateService.getTemplate(regDTO, true);
             Log.e(getClass().getSimpleName(), "PreviewTemplate: " + regDTO);
             result.success("");
             return;
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Registration start failed");
+            Log.e(getClass().getSimpleName(), "Registration start failed: " + e);
         }
         Log.e(getClass().getSimpleName(), "Empty template!");
         result.success("");

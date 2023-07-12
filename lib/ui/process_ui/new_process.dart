@@ -47,8 +47,8 @@ class NewProcess extends StatelessWidget {
                 child: const Text("CONTINUE"),
                 onPressed: () async {
                   String value = await readJson();
-                  // String template = await context.read<RegistrationTaskProvider>().getPreviewTemplate(value, true);
-                  // debugPrint("template: $template");
+                  String template = await context.read<RegistrationTaskProvider>().getPreviewTemplate(value, true);
+                  debugPrint("template: $template");
                   if (context
                       .read<GlobalProvider>()
                       .formKey
@@ -91,8 +91,7 @@ class NewProcess extends StatelessWidget {
                     ),
                     onPressed: () async {
                       String value = await readJson();
-                      // context.read<RegistrationTaskProvider>().checkMVEL(value, "");
-                      // context.read<RegistrationTaskProvider>().getPreviewTemplate(value, true);
+                      await context.read<RegistrationTaskProvider>().getPreviewTemplate(value, true);
                       debugPrint("template:");
                       if (context
                           .read<GlobalProvider>()
