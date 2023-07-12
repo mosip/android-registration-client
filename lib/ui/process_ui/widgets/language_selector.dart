@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/pigeon/process_spec_pigeon.dart';
+import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
@@ -174,11 +176,14 @@ class LanguageSelector extends StatelessWidget {
             ),
             Expanded(
               child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async{
+
                     context.read<GlobalProvider>().fieldDisplayValues = {};
 
                     context.read<GlobalProvider>().fieldValues(newProcess);
+                    
                     Navigator.of(context).pop();
+                    await ProcessSpecApi().startRegistration(context.read<GlobalProvider>().chosenLang);
                     Navigator.pushNamed(context, NewProcess.routeName,
                         arguments: {"process": newProcess});
                   },

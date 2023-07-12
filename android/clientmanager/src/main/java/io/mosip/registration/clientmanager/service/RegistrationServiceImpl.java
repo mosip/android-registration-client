@@ -418,6 +418,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         qualityType.setScore((long) biometricsDto.getQualityScore());
         VersionType versionType = new VersionType(1, 1);
 
+
         String payLoad = null;
         if (iso != null) {
             int bioValueKeyIndex = biometricsDto.getDecodedBioResponse().indexOf(PacketManagerConstant.BIOVALUE_KEY) + (PacketManagerConstant.BIOVALUE_KEY.length() + 1);

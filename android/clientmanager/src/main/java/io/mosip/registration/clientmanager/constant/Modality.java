@@ -84,6 +84,9 @@ public enum Modality implements Serializable {
     }
 
     public static String getBioAttribute(String bioSubType) {
+        if(bioSubType==null){
+            return "";
+        }
         switch (bioSubType) {
             case "Left LittleFinger": return "leftLittle";
             case "Left RingFinger" : return "leftRing";

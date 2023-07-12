@@ -1,22 +1,92 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:registration_client/model/biometrics_dto.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class BiometricCaptureScanBlock extends StatelessWidget {
-  const BiometricCaptureScanBlock(
+class BiometricCaptureScanBlock extends StatefulWidget {
+  BiometricCaptureScanBlock(
       {super.key,
       required this.title,
       required this.images,
-      required this.thresholdPercentage});
+      required this.thresholdPercentage,
+      required this.id});
   final String title;
+  final String id;
   final List<String> images;
   final int thresholdPercentage;
+  List<BiometricsDto> listOfBiomatricsDto=[];
+  List<Uint8List?> listOfUint8List=[];
+  
 
   @override
+  State<BiometricCaptureScanBlock> createState() =>
+      _BiometricCaptureScanBlockState();
+}
+
+class _BiometricCaptureScanBlockState extends State<BiometricCaptureScanBlock> {
+  
+  @override
   Widget build(BuildContext context) {
+    
+    listOfResultImages(List<Uint8List?> list) {
+      List<Widget> temp = [];
+      for (var e in list) {
+        temp.add(
+          Flexible(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 48.h, horizontal: 27.h),
+              child: Image.memory(
+                e!,
+                height: 100,
+              ),
+            ),
+          ),
+        );
+      }
+      return temp;
+    }
+
+    listOfImages(List<String> images) {
+      List<Widget> temp = [];
+      for (var e in images) {
+        temp.add(
+          Container(
+            height: 164.h,
+            width: 164.h,
+            decoration: BoxDecoration(
+              color: pure_white,
+              border: Border.all(
+                color: secondaryColors.elementAt(14),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 48.h, horizontal: 27.h),
+              child: Image.asset(
+                e,
+              ),
+            ),
+          ),
+        );
+      }
+      return temp;
+    }
+
+    avgScore(List<BiometricsDto> list) {
+      double avg = 0;
+      int i;
+      for (i = 0; i < list.length; i++) {
+        avg = avg + list[i].qualityScore!;
+      }
+      avg = avg / i;
+      return avg;
+    }
     return Container(
       height: 547.h,
       width: 370.h,
@@ -30,36 +100,47 @@ class BiometricCaptureScanBlock extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 16, 0, 36),
             child: Text(
-              title,
+              widget.title,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 18, fontWeight: semiBold, color: black_shade_1),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ...images.map(
-                (e) => Container(
-                    height: 164.h,
-                    width: 164.h,
-                    decoration: BoxDecoration(
-                      color: pure_white,
-                      border: Border.all(
-                        color: secondaryColors.elementAt(14),
-                      ),
+          (widget.listOfBiomatricsDto.isEmpty)
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ...listOfImages(widget.images).map(
+                      (e) => e,
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 48.h, horizontal: 27.h),
-                      child: Image.asset(
-                        e,
-                      ),
-                    )),
-              ),
-            ],
-          ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ...listOfResultImages(widget.listOfUint8List).map(
+                      (e) => e,
+                    ),
+                  ],
+                ),
           OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () async {
+              await BiometricsApi().invokeDiscoverSbi(
+                  widget.id, widget.title.split("Scan").first);
+              await BiometricsApi()
+                  .getBestBiometrics(
+                      widget.id, widget.title.split("Scan").first)
+                  .then((value) async {
+                for (var e in value) {
+                  widget.listOfBiomatricsDto
+                      .add(BiometricsDto.fromJson(json.decode(e!)));
+                }
+               
+              });
+               await BiometricsApi().extractImageValues().then((value) {
+                  widget.listOfUint8List = value;
+                });
+                setState(() {});
+            },
             icon: Icon(
               Icons.crop_free,
               color: solid_primary,
@@ -100,7 +181,7 @@ class BiometricCaptureScanBlock extends StatelessWidget {
                   height: 42.h,
                 ),
                 Text(
-                  "Threshold $thresholdPercentage%",
+                  "Threshold ${widget.thresholdPercentage}%",
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 14,
                         fontWeight: regular,
@@ -116,7 +197,9 @@ class BiometricCaptureScanBlock extends StatelessWidget {
                     LinearPercentIndicator(
                       width: 260.h,
                       lineHeight: 8,
-                      percent: 0.0,
+                      percent: (widget.listOfBiomatricsDto.isEmpty)
+                          ? 0.0
+                          : (avgScore(widget.listOfBiomatricsDto) / 100),
                       backgroundColor: Colors.grey,
                       progressColor: secondaryColors.elementAt(11),
                     ),
@@ -124,7 +207,9 @@ class BiometricCaptureScanBlock extends StatelessWidget {
                       width: 16.h,
                     ),
                     Text(
-                      "0%",
+                      (widget.listOfBiomatricsDto.isEmpty)
+                          ? "0%"
+                          : "${avgScore(widget.listOfBiomatricsDto)}%",
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontSize: 14,
                             fontWeight: regular,

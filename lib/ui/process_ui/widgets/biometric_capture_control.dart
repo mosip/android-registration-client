@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
+import 'package:registration_client/model/biometrics_dto.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_exception_block.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_scan_block.dart';
@@ -45,7 +50,7 @@ class BiometricCaptureControl extends StatefulWidget {
       isScanned: false,
       listofImages: [],
       qualityPercentage: 0);
-  BiometricAttributeData extra = BiometricAttributeData(
+  BiometricAttributeData exception = BiometricAttributeData(
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
@@ -58,6 +63,25 @@ class BiometricCaptureControl extends StatefulWidget {
 }
 
 class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
+  // checkListOfBiometricsDto(String id, String modality) async {
+  //   List<BiometricsDto> list = [];
+  //   await BiometricsApi().getBestBiometrics(id, modality).then((value) {
+  //     for (var e in value) {
+  //       list.add(BiometricsDto.fromJson(json.decode(e!)));
+  //     }
+  //     return list;
+  //   });
+  // }
+
+  // checkListOfUintList() async {
+  //   List<Uint8List?> list = [];
+  //   await BiometricsApi().extractImageValues().then((value) {
+  //     list = value;
+  //     return list;
+  //   });
+  //   return list;
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -255,7 +279,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                         InkWell(
                           onTap: () {
                             setState(() {
-                              widget.biometricAttribute = "Person";
+                              widget.biometricAttribute = "Exception";
                             });
                           },
                           child: Padding(
@@ -266,7 +290,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color: (widget.biometricAttribute ==
-                                              "Person")
+                                              "Exception")
                                           ? secondaryColors.elementAt(12)
                                           : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
@@ -286,7 +310,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                 ),
                 if (widget.biometricAttribute == "Iris")
                   BiometricCaptureScanBlock(
+                      id: widget.field.id!,
                       title: "IrisScan",
+                      // listOfBiomatricsDto:
+                      //     checkListOfBiometricsDto(widget.field.id!, "Iris"),
+                      // listOfUint8List: [],
                       thresholdPercentage: widget.iris.qualityPercentage,
                       images: [
                         "assets/images/Left Eye@2x.png",
@@ -294,24 +322,44 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       ]),
                 if (widget.biometricAttribute == "Right Hand")
                   BiometricCaptureScanBlock(
+                      id: widget.field.id!,
+                      // listOfBiomatricsDto: [],
+                      // listOfUint8List: [],
                       title: "RightHandScan",
                       thresholdPercentage: widget.rightHand.qualityPercentage,
                       images: ["assets/images/Right Hand@2x.png"]),
                 if (widget.biometricAttribute == "Left Hand")
                   BiometricCaptureScanBlock(
+                      id: widget.field.id!,
                       title: "LeftHandScan",
+                      // listOfBiomatricsDto: [],
+                      // listOfUint8List: [],
                       thresholdPercentage: widget.leftHand.qualityPercentage,
                       images: ["assets/images/Left Hand@2x.png"]),
                 if (widget.biometricAttribute == "Thumbs")
                   BiometricCaptureScanBlock(
+                      id: widget.field.id!,
                       title: "ThumbsScan",
+                      // listOfBiomatricsDto: [],
+                      // listOfUint8List: [],
                       thresholdPercentage: widget.thumbs.qualityPercentage,
                       images: ["assets/images/Thumbs@2x.png"]),
                 if (widget.biometricAttribute == "Face")
                   BiometricCaptureScanBlock(
+                      id: widget.field.id!,
                       title: "FaceScan",
+                      // listOfBiomatricsDto: [],
+                      // listOfUint8List: [],
                       thresholdPercentage: widget.face.qualityPercentage,
                       images: ["assets/images/Face@2x.png"]),
+                if (widget.biometricAttribute == "Exception")
+                  BiometricCaptureScanBlock(
+                      id: widget.field.id!,
+                      title: "ExceptionScan",
+                      // listOfBiomatricsDto: [],
+                      // listOfUint8List: [],
+                      thresholdPercentage: widget.face.qualityPercentage,
+                      images: ["assets/images/Person@2x.png"]),
                 if (widget.biometricAttribute == "Iris")
                   BiometricCaptureExceptionBlock(
                     attribute: widget.iris,
@@ -924,6 +972,35 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       )),
                                 ],
                               )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (widget.biometricAttribute == "Exception")
+                  BiometricCaptureExceptionBlock(
+                    attribute: widget.exception,
+                    exceptionImage: SizedBox(
+                      height: 164.h,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Exception",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1)),
+                              Image.asset(
+                                "assets/images/Face@2x.png",
+                                height: 114,
+                              ),
                             ],
                           ),
                         ],

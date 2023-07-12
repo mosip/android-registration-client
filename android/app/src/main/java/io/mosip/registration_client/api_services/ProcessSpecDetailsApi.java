@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 
 @Singleton
@@ -26,14 +27,18 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
     IdentitySchemaRepository identitySchemaRepository;
     GlobalParamRepository globalParamRepository;
 
+    RegistrationService registrationService;
+
     @Inject
     public ProcessSpecDetailsApi(Context context,
                                  IdentitySchemaRepository identitySchemaRepository,
-                                 GlobalParamRepository globalParamRepository) {
+                                 GlobalParamRepository globalParamRepository,
+                                 RegistrationService registrationService) {
 
         this.context = context;
         this.identitySchemaRepository = identitySchemaRepository;
         this.globalParamRepository = globalParamRepository;
+        this.registrationService=registrationService;
     }
 
     @Override
@@ -71,5 +76,16 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         }catch (Exception e){
             Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
         }
+    }
+
+    @Override
+    public void startRegistration(@NonNull List<String> languages, @NonNull ProcessSpecPigeon.Result<String> result) {
+       try{
+           registrationService.startRegistration(languages);
+           result.success("Ok");
+
+       }catch(Exception e){
+           Log.e("ProcessSpecDetailsApi",e.getMessage());
+       }
     }
 }
