@@ -373,7 +373,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void syncLatestIdSchema(Runnable onFinish) {
-        Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION);
+        Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION, "registration-client");
         call.enqueue(new Callback<ResponseBody>() {
 
             @Override

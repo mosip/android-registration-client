@@ -25,7 +25,8 @@ public interface SyncRestService {
                                                               @Query("version") String version);
 
     @GET("/v1/syncdata/latestidschema")
-    Call<ResponseBody> getLatestIdSchema(@Query("version") String version);
+    Call<ResponseBody> getLatestIdSchema(@Query("version") String version,
+                                         @Query("domain") String domain);
 
     @GET("/v1/syncdata/v2/userdetails")
     Call<ResponseWrapper<UserDetailResponse>> fetchCenterUserDetails(@Query("keyindex") String keyIndex,
