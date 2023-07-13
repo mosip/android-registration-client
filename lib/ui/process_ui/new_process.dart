@@ -165,45 +165,37 @@ class NewProcess extends StatelessWidget {
                           .formKey
                           .currentState
                           ?.save();
-                      log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildConsentValues)}");
-                      log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildDemographicsValues)}");
-                      String demographicsData = jsonEncode(context
-                          .read<GlobalProvider>()
-                          .feildDemographicsValues);
-                      List<String> languages =
-                          context.read<GlobalProvider>().chosenLang;
-                      RegistrationData regData = RegistrationData(
-                          languages: languages,
-                          demographicsData: demographicsData,
-                          biometricsData: "",
-                          documentsData: "");
-                      context
-                          .read<RegistrationTaskProvider>()
-                          .registerApplicant(regData);
-
-                      if (context.read<GlobalProvider>().newProcessTabIndex <=
-                          newProcess.screens!.length) {
-                        context.read<GlobalProvider>().newProcessTabIndex =
-                            context.read<GlobalProvider>().newProcessTabIndex +
-                                1;
+                      if (context.read<GlobalProvider>().newProcessTabIndex ==
+                          newProcess.screens!.length - 1) {
+                        String demographicsData = jsonEncode(context
+                            .read<GlobalProvider>()
+                            .feildDemographicsValues);
+                        List<String> languages =
+                            context.read<GlobalProvider>().chosenLang;
+                        RegistrationData regData = RegistrationData(
+                            languages: languages,
+                            demographicsData: demographicsData,
+                            biometricsData: "",
+                            documentsData: "");
+                        context
+                            .read<RegistrationTaskProvider>()
+                            .registerApplicant(regData);
                       }
-                    }
-                  } else if (context
-                          .read<GlobalProvider>()
-                          .newProcessTabIndex ==
-                      size) {
-                    context.read<GlobalProvider>().newProcessTabIndex =
-                        context.read<GlobalProvider>().newProcessTabIndex + 1;
-                  } else if (context
-                          .read<GlobalProvider>()
-                          .newProcessTabIndex ==
-                      size + 1) {
-                    bool isPacketAuthenticated =
-                        await _authenticatePacket(context);
-                    if (isPacketAuthenticated) {
+
                       context.read<GlobalProvider>().newProcessTabIndex =
                           context.read<GlobalProvider>().newProcessTabIndex + 1;
                     }
+                  } else {
+                    if (context.read<GlobalProvider>().newProcessTabIndex ==
+                        size + 1) {
+                      bool isPacketAuthenticated =
+                          await _authenticatePacket(context);
+                      if (!isPacketAuthenticated) {
+                        return;
+                      }
+                    }
+                    context.read<GlobalProvider>().newProcessTabIndex =
+                        context.read<GlobalProvider>().newProcessTabIndex + 1;
                   }
                 },
               )
@@ -234,53 +226,43 @@ class NewProcess extends StatelessWidget {
                               .formKey
                               .currentState
                               ?.save();
-                          log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildConsentValues)}");
-                          log("Input Values : ${jsonEncode(context.read<GlobalProvider>().feildDemographicsValues)}");
-                          String demographicsData = jsonEncode(context
-                              .read<GlobalProvider>()
-                              .feildDemographicsValues);
-                          List<String> languages =
-                              context.read<GlobalProvider>().chosenLang;
-                          RegistrationData regData = RegistrationData(
-                              languages: languages,
-                              demographicsData: demographicsData,
-                              biometricsData: "",
-                              documentsData: "");
-                          context
-                              .read<RegistrationTaskProvider>()
-                              .registerApplicant(regData);
-
                           if (context
                                   .read<GlobalProvider>()
-                                  .newProcessTabIndex <=
-                              newProcess.screens!.length) {
-                            context.read<GlobalProvider>().newProcessTabIndex =
-                                context
-                                        .read<GlobalProvider>()
-                                        .newProcessTabIndex +
-                                    1;
+                                  .newProcessTabIndex ==
+                              newProcess.screens!.length - 1) {
+                            String demographicsData = jsonEncode(context
+                                .read<GlobalProvider>()
+                                .feildDemographicsValues);
+                            List<String> languages =
+                                context.read<GlobalProvider>().chosenLang;
+                            RegistrationData regData = RegistrationData(
+                                languages: languages,
+                                demographicsData: demographicsData,
+                                biometricsData: "",
+                                documentsData: "");
+                            context
+                                .read<RegistrationTaskProvider>()
+                                .registerApplicant(regData);
                           }
-                        }
-                      } else if (context
-                              .read<GlobalProvider>()
-                              .newProcessTabIndex ==
-                          size) {
-                        context.read<GlobalProvider>().newProcessTabIndex =
-                            context.read<GlobalProvider>().newProcessTabIndex +
-                                1;
-                      } else if (context
-                              .read<GlobalProvider>()
-                              .newProcessTabIndex ==
-                          size + 1) {
-                        bool isPacketAuthenticated =
-                            await _authenticatePacket(context);
-                        if (isPacketAuthenticated) {
+
                           context.read<GlobalProvider>().newProcessTabIndex =
                               context
                                       .read<GlobalProvider>()
                                       .newProcessTabIndex +
                                   1;
                         }
+                      } else {
+                        if (context.read<GlobalProvider>().newProcessTabIndex ==
+                            size + 1) {
+                          bool isPacketAuthenticated =
+                              await _authenticatePacket(context);
+                          if (!isPacketAuthenticated) {
+                            return;
+                          }
+                        }
+                        context.read<GlobalProvider>().newProcessTabIndex =
+                            context.read<GlobalProvider>().newProcessTabIndex +
+                                1;
                       }
                     },
                     child: Text(context

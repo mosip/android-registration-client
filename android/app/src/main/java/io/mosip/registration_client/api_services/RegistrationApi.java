@@ -4,10 +4,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -55,13 +55,12 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         try {
             ObjectMapper mapper = new ObjectMapper();
             RegistrationDto regDTO = mapper.readValue(data, RegistrationDto.class);
-            Log.e(getClass().getSimpleName(), "Age Groups: " + regDTO.AGE_GROUPS);
             Map<String, Object> dataContext = regDTO.getMVELDataContext();
             boolean isValid = UserInterfaceHelperService.evaluateMvel(expression, dataContext);
             result.success(isValid);
             return;
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Registration start failed");
+            Log.e(getClass().getSimpleName(), "Mvel Evaluation failed!" + Arrays.toString(e.getStackTrace()));
         }
         result.success(false);
     }
@@ -70,31 +69,20 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void getPreviewTemplate(@NonNull String data, @NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             RegistrationDto regDTO = JsonUtils.jsonStringToJavaObject(data, RegistrationDto.class);
-            Log.e(getClass().getSimpleName(), "regDTO: " + regDTO);
             regDTO.getDemographics().forEach((k, v) -> {
-
                 if(v instanceof List) {
-                    List<SimpleType> simpleTypeList = new ArrayList<>();
-                    ((List<?>) v).forEach((value) -> {
-                        if(value instanceof HashMap) {
-                            Log.e(getClass().getSimpleName(), "Key: " + ((HashMap<?, ?>) value).get("language") + " Value: " + ((HashMap<?, ?>) value).get("value"));
-                            SimpleType simpleType = new SimpleType();
-                            simpleType.setValue("" + ((HashMap) value).get("value"));
-                            simpleType.setLanguage("" + ((HashMap) value).get("language"));
-                            simpleTypeList.add(simpleType);
-                        }
-                    });
+                    ObjectMapper mapper = new ObjectMapper();
+                    List<SimpleType> simpleTypeList = mapper.convertValue(v, new TypeReference<List<SimpleType>>() {});
                     regDTO.getDemographics().put(k, simpleTypeList);
                 }
             });
 
 //            String template = this.templateService.getTemplate(regDTO, true);
-            Log.e(getClass().getSimpleName(), "PreviewTemplate: " + regDTO);
             result.success("");
             return;
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(getClass().getSimpleName(), "Registration start failed: " + e.getStackTrace());
+//            e.printStackTrace();
+            Log.e(getClass().getSimpleName(), "Fetch template failed: " + Arrays.toString(e.getStackTrace()));
         }
         Log.e(getClass().getSimpleName(), "Empty template!");
         result.success("");
