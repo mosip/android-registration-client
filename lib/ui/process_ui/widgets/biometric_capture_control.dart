@@ -174,7 +174,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   border: Border.all(
                                       color:
                                           (widget.biometricAttribute == "Iris")
-                                              ? secondaryColors.elementAt(12)
+                                              ? (widget.iris.exceptions.contains(true))?secondaryColors.elementAt(16):secondaryColors.elementAt(12)
                                               : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -207,7 +207,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   border: Border.all(
                                       color: (widget.biometricAttribute ==
                                               "Right Hand")
-                                          ? secondaryColors.elementAt(12)
+                                          ? (widget.rightHand.exceptions.contains(true))?secondaryColors.elementAt(16):secondaryColors.elementAt(12)
                                           : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -240,7 +240,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   border: Border.all(
                                       color: (widget.biometricAttribute ==
                                               "Left Hand")
-                                          ? secondaryColors.elementAt(12)
+                                          ?(widget.leftHand.exceptions.contains(true))?secondaryColors.elementAt(16): secondaryColors.elementAt(12)
                                           : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -271,7 +271,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   border: Border.all(
                                       color: (widget.biometricAttribute ==
                                               "Thumbs")
-                                          ? secondaryColors.elementAt(12)
+                                          ?(widget.thumbs.exceptions.contains(true))?secondaryColors.elementAt(16): secondaryColors.elementAt(12)
                                           : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -301,7 +301,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   border: Border.all(
                                       color:
                                           (widget.biometricAttribute == "Face")
-                                              ? secondaryColors.elementAt(12)
+                                              ?(widget.face.exceptions.contains(true))?secondaryColors.elementAt(16): secondaryColors.elementAt(12)
                                               : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -335,7 +335,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   border: Border.all(
                                       color: (widget.biometricAttribute ==
                                               "Exception")
-                                          ? secondaryColors.elementAt(12)
+                                          ? (widget.exception.exceptions.contains(true))?secondaryColors.elementAt(16):secondaryColors.elementAt(12)
                                           : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
