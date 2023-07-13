@@ -172,9 +172,14 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color:
-                                          (widget.biometricAttribute == "Iris")
-                                              ? (widget.iris.exceptions.contains(true))?secondaryColors.elementAt(16):secondaryColors.elementAt(12)
+                                      color: (widget.iris.isScanned == true)
+                                          ? (widget.iris.exceptions
+                                                  .contains(true))
+                                              ? secondaryColors.elementAt(16)
+                                              : secondaryColors.elementAt(11)
+                                          : (widget.biometricAttribute ==
+                                                  "Iris")
+                                              ? secondaryColors.elementAt(12)
                                               : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -205,10 +210,15 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: (widget.biometricAttribute ==
-                                              "Right Hand")
-                                          ? (widget.rightHand.exceptions.contains(true))?secondaryColors.elementAt(16):secondaryColors.elementAt(12)
-                                          : secondaryColors.elementAt(14)),
+                                      color: (widget.rightHand.isScanned == true)
+                                          ? (widget.rightHand.exceptions
+                                                  .contains(true))
+                                              ? secondaryColors.elementAt(16)
+                                              : secondaryColors.elementAt(11)
+                                          : (widget.biometricAttribute ==
+                                                  "Right Hand")
+                                              ? secondaryColors.elementAt(12)
+                                              : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -238,10 +248,15 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: (widget.biometricAttribute ==
-                                              "Left Hand")
-                                          ?(widget.leftHand.exceptions.contains(true))?secondaryColors.elementAt(16): secondaryColors.elementAt(12)
-                                          : secondaryColors.elementAt(14)),
+                                      color: (widget.leftHand.isScanned == true)
+                                          ? (widget.leftHand.exceptions
+                                                  .contains(true))
+                                              ? secondaryColors.elementAt(16)
+                                              : secondaryColors.elementAt(11)
+                                          : (widget.biometricAttribute ==
+                                                  "Left Hand")
+                                              ? secondaryColors.elementAt(12)
+                                              : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -269,10 +284,15 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: (widget.biometricAttribute ==
-                                              "Thumbs")
-                                          ?(widget.thumbs.exceptions.contains(true))?secondaryColors.elementAt(16): secondaryColors.elementAt(12)
-                                          : secondaryColors.elementAt(14)),
+                                      color: (widget.thumbs.isScanned == true)
+                                          ? (widget.thumbs.exceptions
+                                                  .contains(true))
+                                              ? secondaryColors.elementAt(16)
+                                              : secondaryColors.elementAt(11)
+                                          : (widget.biometricAttribute ==
+                                                  "Thumbs")
+                                              ? secondaryColors.elementAt(12)
+                                              : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -299,9 +319,14 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color:
-                                          (widget.biometricAttribute == "Face")
-                                              ?(widget.face.exceptions.contains(true))?secondaryColors.elementAt(16): secondaryColors.elementAt(12)
+                                      color: (widget.face.isScanned == true)
+                                          ? (widget.face.exceptions
+                                                  .contains(true))
+                                              ? secondaryColors.elementAt(16)
+                                              : secondaryColors.elementAt(11)
+                                          : (widget.biometricAttribute ==
+                                                  "Face")
+                                              ? secondaryColors.elementAt(12)
                                               : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -333,10 +358,15 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: (widget.biometricAttribute ==
-                                              "Exception")
-                                          ? (widget.exception.exceptions.contains(true))?secondaryColors.elementAt(16):secondaryColors.elementAt(12)
-                                          : secondaryColors.elementAt(14)),
+                                      color: (widget.exception.isScanned == true)
+                                          ? (widget.exception.exceptions
+                                                  .contains(true))
+                                              ? secondaryColors.elementAt(16)
+                                              : secondaryColors.elementAt(11)
+                                          : (widget.biometricAttribute ==
+                                                  "Exception")
+                                              ? secondaryColors.elementAt(12)
+                                              : secondaryColors.elementAt(14)),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -505,6 +535,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.iris.listofImages =
                                                         value;
                                                   });
+                                                  widget.iris.isScanned = true;
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -769,6 +800,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.rightHand
                                                         .listofImages = value;
                                                   });
+                                                  widget.rightHand.isScanned =
+                                                      true;
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -1034,6 +1067,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.leftHand
                                                         .listofImages = value;
                                                   });
+                                                  widget.leftHand.isScanned =
+                                                      true;
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -1298,6 +1333,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.thumbs.listofImages =
                                                         value;
                                                   });
+                                                  widget.thumbs.isScanned =
+                                                      true;
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -1561,6 +1598,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.face.listofImages =
                                                         value;
                                                   });
+                                                  widget.face.isScanned = true;
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -1825,6 +1863,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.exception
                                                         .listofImages = value;
                                                   });
+                                                  widget.exception.isScanned =
+                                                      true;
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
