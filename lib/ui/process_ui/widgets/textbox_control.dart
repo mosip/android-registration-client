@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../model/field.dart';
 import '../../../platform_spi/registration.dart';
@@ -99,6 +100,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                                     context
                                         .read<GlobalProvider>()
                                         .feildDemographicsValues);
+                                    context.read<RegistrationTaskProvider>().addDemographicField(widget.e.id!, value!);
                               } else {
                                 context
                                     .read<GlobalProvider>()
@@ -109,6 +111,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                                         context
                                             .read<GlobalProvider>()
                                             .feildDemographicsValues);
+                                context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.e.id!, value!, lang);
                               }
                             },
                             validator: (value) {

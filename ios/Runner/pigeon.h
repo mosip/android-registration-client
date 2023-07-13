@@ -10,24 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PacketAuth;
 
-@interface PacketAuth : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithResponse:(NSString *)response
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * response;
-@property(nonatomic, copy, nullable) NSString * errorCode;
+/// The codec used by DemographicsApi.
+NSObject<FlutterMessageCodec> *DemographicsApiGetCodec(void);
+
+@protocol DemographicsApi
+- (void)addDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)addSimpleTypeDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value language:(NSString *)language completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setDateFieldFieldId:(NSString *)fieldId subType:(NSString *)subType day:(NSString *)day month:(NSString *)month year:(NSString *)year completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)removeDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setConsentFieldConsentData:(NSString *)consentData completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by PacketAuthApi.
-NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void);
-
-@protocol PacketAuthApi
-- (void)authenticateUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(PacketAuth *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *_Nullable api);
+extern void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DemographicsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

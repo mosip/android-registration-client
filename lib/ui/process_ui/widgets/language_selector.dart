@@ -5,6 +5,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/process_spec_pigeon.dart';
 import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -176,16 +177,27 @@ class LanguageSelector extends StatelessWidget {
             ),
             Expanded(
               child: ElevatedButton(
-                  onPressed: () async{
-
+                  onPressed: () async {
                     context.read<GlobalProvider>().fieldDisplayValues = {};
 
                     context.read<GlobalProvider>().fieldValues(newProcess);
-                    
+
                     Navigator.of(context).pop();
-                    await ProcessSpecApi().startRegistration(context.read<GlobalProvider>().chosenLang);
-                    Navigator.pushNamed(context, NewProcess.routeName,
-                        arguments: {"process": newProcess});
+                    bool isRegStarted = await context
+                        .read<RegistrationTaskProvider>()
+                        .startRegistration(
+                            context.read<GlobalProvider>().chosenLang);
+
+                    if (isRegStarted) {
+                      Navigator.pushNamed(context, NewProcess.routeName,
+                          arguments: {"process": newProcess});
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Some Error occurred!'),
+                        ),
+                      );
+                    }
                   },
                   child: const Text("SUBMIT")),
             )

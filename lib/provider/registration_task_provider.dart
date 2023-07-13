@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
+import 'package:registration_client/platform_spi/demographics.dart';
 import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:registration_client/platform_spi/registration.dart';
 
 class RegistrationTaskProvider with ChangeNotifier {
   final Registration registration = Registration();
   final ProcessSpec processSpec = ProcessSpec();
+  final Demographics demographics = Demographics();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
@@ -69,13 +71,33 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  registerApplicant(RegistrationData registrationData) async {
-    _isRegistered = await registration.registerApplicant(registrationData);
+  startRegistration(List<String> languages) async {
+    _isRegistered = await registration.startRegistration(languages);
     notifyListeners();
   }
 
   getPreviewTemplate(String data, bool isPreview) async {
     _previewTemplate = await registration.getPreviewTemplate(data, isPreview);
     notifyListeners();
+  }
+
+  addDemographicField(String fieldId, String value) async {
+    await demographics.addDemographicField(fieldId, value);
+  }
+
+  addSimpleTypeDemographicField(String fieldId, String value, String language) async {
+    await demographics.addSimpleTypeDemographicField(fieldId, value, language);
+  }
+  
+  setDateField(String fieldId, String subType, String day, String month, String year) async {
+    await demographics.setDateField(fieldId, subType, day, month, year);
+  }
+
+  removeDemographicField(String fieldId) async {
+    await demographics.removeDemographicField(fieldId);
+  }
+  
+  addConsentField(String consentData) async {
+    await demographics.setConsentField(consentData);
   }
 }

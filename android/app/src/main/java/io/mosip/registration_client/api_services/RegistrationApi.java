@@ -35,19 +35,15 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void registration(@NonNull RegistrationDataPigeon.RegistrationData registrationData, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
-        List<String> languages = registrationData.getLanguages();
+    public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
             this.registrationDto = registrationService.startRegistration(languages);
-            String json = registrationData.getDemographicsData();
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String,Object> map = mapper.readValue(json, Map.class);
-//            Log.e(getClass().getSimpleName(), "reg map: " + map);
+            result.success(true);
+            return;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Registration start failed");
         }
-
-        result.success(true);
+        result.success(false);
     }
 
     @Override
@@ -77,7 +73,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
                 }
             });
 
-//            String template = this.templateService.getTemplate(regDTO, true);
+            String template = this.templateService.getTemplate(regDTO, true);
             result.success("");
             return;
         } catch (Exception e) {

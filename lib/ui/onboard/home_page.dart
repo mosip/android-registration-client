@@ -192,7 +192,7 @@ class HomePage extends StatelessWidget {
                                 .length,
                             (index) => HomePageCard(
                                   icon: Image.asset(
-                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon!}",
+                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon??""}",
                                     width: 20,
                                     height: 20,
                                   ),

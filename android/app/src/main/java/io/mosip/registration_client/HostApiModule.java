@@ -1,7 +1,6 @@
 package io.mosip.registration_client;
 
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
@@ -13,8 +12,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
-import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
@@ -32,6 +29,7 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.DemographicsDetailsApi;
 import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
@@ -129,5 +127,11 @@ public class HostApiModule {
     PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
                                                        LoginService loginService) {
         return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService);
+    }
+
+    @Provides
+    @Singleton
+    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService) {
+        return new DemographicsDetailsApi(registrationService);
     }
 }
