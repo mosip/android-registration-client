@@ -166,32 +166,51 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             });
                           },
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                            child: Container(
-                              height: 78.h,
-                              width: 78.h,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: (widget.iris.isScanned == true)
-                                          ? (widget.iris.exceptions
-                                                  .contains(true))
-                                              ? secondaryColors.elementAt(16)
-                                              : secondaryColors.elementAt(11)
-                                          : (widget.biometricAttribute ==
-                                                  "Iris")
-                                              ? secondaryColors.elementAt(12)
-                                              : secondaryColors.elementAt(14)),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  "assets/images/Eye@2x.png",
-                                  height: 18.h,
-                                  width: 64.h,
-                                ),
-                              ),
-                            ),
-                          ),
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    height: 78.h,
+                                    width: 78.h,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: (widget.iris.isScanned ==
+                                                    true)
+                                                ? (widget.iris.exceptions
+                                                        .contains(true))
+                                                    ? secondaryColors
+                                                        .elementAt(16)
+                                                    : secondaryColors
+                                                        .elementAt(11)
+                                                : (widget.biometricAttribute ==
+                                                        "Iris")
+                                                    ? secondaryColors
+                                                        .elementAt(12)
+                                                    : secondaryColors
+                                                        .elementAt(14)),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Image.asset(
+                                        "assets/images/Eye@2x.png",
+                                        height: 18.h,
+                                        width: 64.h,
+                                      ),
+                                    ),
+                                  ),
+                                  // Positioned(
+                                  //     top: 2,
+                                  //     left: 2,
+                                  //     child: Image.asset(
+                                  //         "assets/images/Ellipse 1181.png")),
+                                  //  Positioned(
+                                  //     top: -5,
+                                  //     right: -5,
+                                  //     child: Image.asset(
+                                  //         "assets/images/Group 57548.png")),
+                                ],
+                              )),
                         ),
                       if (widget.field.bioAttributes!.contains("rightIndex") &&
                           widget.field.bioAttributes!.contains("rightLittle") &&
@@ -210,7 +229,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: (widget.rightHand.isScanned == true)
+                                      color: (widget.rightHand.isScanned ==
+                                              true)
                                           ? (widget.rightHand.exceptions
                                                   .contains(true))
                                               ? secondaryColors.elementAt(16)
@@ -358,7 +378,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               width: 78.h,
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: (widget.exception.isScanned == true)
+                                      color: (widget.exception.isScanned ==
+                                              true)
                                           ? (widget.exception.exceptions
                                                   .contains(true))
                                               ? secondaryColors.elementAt(16)
