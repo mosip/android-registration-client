@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/biometrics_dto.dart';
@@ -24,37 +25,46 @@ class BiometricCaptureControl extends StatefulWidget {
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
-      listofImages: [],
+      listofImages: [
+        "assets/images/Left Eye@2x.png",
+        "assets/images/Right Eye@2x.png"
+      ],
+      listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData rightHand = BiometricAttributeData(
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
-      listofImages: [],
+      listofImages: ["assets/images/Right Hand@2x.png"],
+      listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData leftHand = BiometricAttributeData(
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
-      listofImages: [],
+      listofImages: ["assets/images/Left Hand@2x.png"],
+      listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData thumbs = BiometricAttributeData(
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
-      listofImages: [],
+      listofImages: ["assets/images/Thumbs@2x.png"],
+      listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData face = BiometricAttributeData(
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
-      listofImages: [],
+      listofImages: ["assets/images/Face@2x.png"],
+      listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData exception = BiometricAttributeData(
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
-      listofImages: [],
+      listofImages: ["assets/images/Person@2x.png"],
+      listOfBiometricsDto: [],
       qualityPercentage: 0);
 
   @override
@@ -63,24 +73,58 @@ class BiometricCaptureControl extends StatefulWidget {
 }
 
 class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
-  // checkListOfBiometricsDto(String id, String modality) async {
-  //   List<BiometricsDto> list = [];
-  //   await BiometricsApi().getBestBiometrics(id, modality).then((value) {
-  //     for (var e in value) {
-  //       list.add(BiometricsDto.fromJson(json.decode(e!)));
-  //     }
-  //     return list;
-  //   });
-  // }
+  listOfResultImages(List<dynamic> list) {
+    List<Widget> temp = [];
+    for (var e in list) {
+      temp.add(
+        Flexible(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 48.h, horizontal: 27.h),
+            child: Image.memory(
+              e!,
+              height: 100,
+            ),
+          ),
+        ),
+      );
+    }
+    return temp;
+  }
 
-  // checkListOfUintList() async {
-  //   List<Uint8List?> list = [];
-  //   await BiometricsApi().extractImageValues().then((value) {
-  //     list = value;
-  //     return list;
-  //   });
-  //   return list;
-  // }
+  listOfImages(List<dynamic> images) {
+    List<Widget> temp = [];
+    for (var e in images) {
+      temp.add(
+        Container(
+          height: 164.h,
+          width: 164.h,
+          decoration: BoxDecoration(
+            color: pure_white,
+            border: Border.all(
+              color: secondaryColors.elementAt(14),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 48.h, horizontal: 27.h),
+            child: Image.asset(
+              e,
+            ),
+          ),
+        ),
+      );
+    }
+    return temp;
+  }
+
+  avgScore(List<BiometricsDto> list) {
+    double avg = 0;
+    int i;
+    for (i = 0; i < list.length; i++) {
+      avg = avg + list[i].qualityScore!;
+    }
+    avg = avg / i;
+    return avg;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -310,56 +354,1588 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                 ),
                 if (widget.biometricAttribute == "Iris")
                   BiometricCaptureScanBlock(
-                      id: widget.field.id!,
-                      title: "IrisScan",
-                      // listOfBiomatricsDto:
-                      //     checkListOfBiometricsDto(widget.field.id!, "Iris"),
-                      // listOfUint8List: [],
-                      thresholdPercentage: widget.iris.qualityPercentage,
-                      images: [
-                        "assets/images/Left Eye@2x.png",
-                        "assets/images/Right Eye@2x.png"
-                      ]),
+                    title: "IrisScan",
+                    middleBlock: Container(
+                      height: 460.h,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          (widget.iris.listOfBiometricsDto.isEmpty)
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfImages(widget.iris.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfResultImages(
+                                            widget.iris.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              List<Uint8List?> temp = [];
+                              await BiometricsApi()
+                                  .invokeDiscoverSbi(widget.field.id!, "Iris");
+                              await BiometricsApi()
+                                  .getBestBiometrics(widget.field.id!, "Iris");
+                              await BiometricsApi()
+                                  .extractImageValues()
+                                  .then((value) {
+                                temp = value;
+                              });
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                    content: Container(
+                                  height: 539.h,
+                                  width: 768.w,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Iris Capture",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      fontSize: 18,
+                                                      fontWeight: bold,
+                                                      color: black_shade_1),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: Icon(
+                                                  Icons.close,
+                                                )),
+                                          ],
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: EdgeInsets.all(0),
+                                          // EdgeInsets.fromLTRB(
+                                          //     60.w, 35.h, 60.w, 35.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ...temp.map((e) => Image.memory(
+                                                    e!,
+                                                    height: 310.h,
+                                                    width: 310.h,
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                      maximumSize:
+                                                          Size(160.w, 42.h),
+                                                      minimumSize:
+                                                          Size(160.w, 42.h),
+                                                      side: BorderSide(
+                                                          color:
+                                                              solid_primary)),
+                                                  onPressed: () async {
+                                                    await BiometricsApi()
+                                                        .invokeDiscoverSbi(
+                                                            widget.field.id!,
+                                                            "Iris");
+                                                    await BiometricsApi()
+                                                        .extractImageValues()
+                                                        .then((value) {
+                                                      temp = value;
+                                                    });
+                                                  },
+                                                  child: Text("RESCAN")),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    maximumSize:
+                                                        Size(160.w, 42.h),
+                                                    minimumSize:
+                                                        Size(160.w, 42.h)),
+                                                onPressed: () async {
+                                                  await BiometricsApi()
+                                                      .getBestBiometrics(
+                                                          widget.field.id!,
+                                                          "Iris")
+                                                      .then((value) async {
+                                                    for (var e in value) {
+                                                      widget.iris
+                                                          .listOfBiometricsDto
+                                                          .add(BiometricsDto
+                                                              .fromJson(json
+                                                                  .decode(e!)));
+                                                    }
+                                                  });
+                                                  widget.iris
+                                                          .qualityPercentage =
+                                                      avgScore(widget.iris
+                                                          .listOfBiometricsDto);
+                                                  await BiometricsApi()
+                                                      .extractImageValues()
+                                                      .then((value) {
+                                                    widget.iris.listofImages =
+                                                        value;
+                                                  });
+                                                  setState(() {});
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("SAVE"),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ]),
+                                )),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.crop_free,
+                              color: solid_primary,
+                              size: 14,
+                            ),
+                            label: Text(
+                              "SCAN",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: bold,
+                                      color: solid_primary),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: solid_primary, width: 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 157.h,
+                            width: 338.h,
+                            decoration: BoxDecoration(
+                              color: pure_white,
+                              border: Border.all(
+                                color: secondaryColors.elementAt(14),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                Text(
+                                  "Quality",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1),
+                                ),
+                                SizedBox(
+                                  height: 42.h,
+                                ),
+                                Text(
+                                  "Threshold ${widget.iris.qualityPercentage.toInt()}%",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: secondaryColors.elementAt(1),
+                                      ),
+                                ),
+                                SizedBox(
+                                  height: 16.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearPercentIndicator(
+                                      width: 260.h,
+                                      lineHeight: 8,
+                                      percent:
+                                          widget.iris.qualityPercentage / 100,
+                                      backgroundColor: Colors.grey,
+                                      progressColor:
+                                          secondaryColors.elementAt(11),
+                                    ),
+                                    SizedBox(
+                                      width: 16.h,
+                                    ),
+                                    Text(
+                                      "${widget.iris.qualityPercentage.toInt()}%",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: regular,
+                                            color: black_shade_1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (widget.biometricAttribute == "Right Hand")
                   BiometricCaptureScanBlock(
-                      id: widget.field.id!,
-                      // listOfBiomatricsDto: [],
-                      // listOfUint8List: [],
-                      title: "RightHandScan",
-                      thresholdPercentage: widget.rightHand.qualityPercentage,
-                      images: ["assets/images/Right Hand@2x.png"]),
+                    title: "RightHandScan",
+                    middleBlock: Container(
+                      height: 460.h,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          (widget.rightHand.listOfBiometricsDto.isEmpty)
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfImages(
+                                            widget.rightHand.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfResultImages(
+                                            widget.rightHand.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              List<Uint8List?> temp = [];
+                              await BiometricsApi().invokeDiscoverSbi(
+                                  widget.field.id!, "RightHand");
+                              await BiometricsApi().getBestBiometrics(
+                                  widget.field.id!, "RightHand");
+                              await BiometricsApi()
+                                  .extractImageValues()
+                                  .then((value) {
+                                temp = value;
+                              });
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                    content: Container(
+                                  height: 539.h,
+                                  width: 768.w,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Right Hand Capture",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      fontSize: 18,
+                                                      fontWeight: bold,
+                                                      color: black_shade_1),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: Icon(
+                                                  Icons.close,
+                                                )),
+                                          ],
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: EdgeInsets.all(0),
+                                          // EdgeInsets.fromLTRB(
+                                          //     60.w, 35.h, 60.w, 35.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ...temp.map((e) => Image.memory(
+                                                    e!,
+                                                    height: 190.h,
+                                                    width: 190.h,
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                      maximumSize:
+                                                          Size(160.w, 42.h),
+                                                      minimumSize:
+                                                          Size(160.w, 42.h),
+                                                      side: BorderSide(
+                                                          color:
+                                                              solid_primary)),
+                                                  onPressed: () async {
+                                                    await BiometricsApi()
+                                                        .invokeDiscoverSbi(
+                                                            widget.field.id!,
+                                                            "RightHand");
+                                                    await BiometricsApi()
+                                                        .extractImageValues()
+                                                        .then((value) {
+                                                      temp = value;
+                                                    });
+                                                  },
+                                                  child: Text("RESCAN")),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    maximumSize:
+                                                        Size(160.w, 42.h),
+                                                    minimumSize:
+                                                        Size(160.w, 42.h)),
+                                                onPressed: () async {
+                                                  await BiometricsApi()
+                                                      .getBestBiometrics(
+                                                          widget.field.id!,
+                                                          "RightHand")
+                                                      .then((value) async {
+                                                    for (var e in value) {
+                                                      widget.rightHand
+                                                          .listOfBiometricsDto
+                                                          .add(BiometricsDto
+                                                              .fromJson(json
+                                                                  .decode(e!)));
+                                                    }
+                                                  });
+                                                  widget.rightHand
+                                                          .qualityPercentage =
+                                                      avgScore(widget.rightHand
+                                                          .listOfBiometricsDto);
+                                                  await BiometricsApi()
+                                                      .extractImageValues()
+                                                      .then((value) {
+                                                    widget.rightHand
+                                                        .listofImages = value;
+                                                  });
+                                                  setState(() {});
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("SAVE"),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ]),
+                                )),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.crop_free,
+                              color: solid_primary,
+                              size: 14,
+                            ),
+                            label: Text(
+                              "SCAN",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: bold,
+                                      color: solid_primary),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: solid_primary, width: 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 157.h,
+                            width: 338.h,
+                            decoration: BoxDecoration(
+                              color: pure_white,
+                              border: Border.all(
+                                color: secondaryColors.elementAt(14),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                Text(
+                                  "Quality",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1),
+                                ),
+                                SizedBox(
+                                  height: 42.h,
+                                ),
+                                Text(
+                                  "Threshold ${widget.rightHand.qualityPercentage.toInt()}%",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: secondaryColors.elementAt(1),
+                                      ),
+                                ),
+                                SizedBox(
+                                  height: 16.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearPercentIndicator(
+                                      width: 260.h,
+                                      lineHeight: 8,
+                                      percent:
+                                          widget.rightHand.qualityPercentage /
+                                              100,
+                                      backgroundColor: Colors.grey,
+                                      progressColor:
+                                          secondaryColors.elementAt(11),
+                                    ),
+                                    SizedBox(
+                                      width: 16.h,
+                                    ),
+                                    Text(
+                                      "${widget.rightHand.qualityPercentage.toInt()}%",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: regular,
+                                            color: black_shade_1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (widget.biometricAttribute == "Left Hand")
                   BiometricCaptureScanBlock(
-                      id: widget.field.id!,
-                      title: "LeftHandScan",
-                      // listOfBiomatricsDto: [],
-                      // listOfUint8List: [],
-                      thresholdPercentage: widget.leftHand.qualityPercentage,
-                      images: ["assets/images/Left Hand@2x.png"]),
+                    title: "LeftHandScan",
+                    middleBlock: Container(
+                      height: 460.h,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          (widget.leftHand.listOfBiometricsDto.isEmpty)
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfImages(
+                                            widget.leftHand.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfResultImages(
+                                            widget.leftHand.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              List<Uint8List?> temp = [];
+                              await BiometricsApi().invokeDiscoverSbi(
+                                  widget.field.id!, "LeftHand");
+                              await BiometricsApi().getBestBiometrics(
+                                  widget.field.id!, "LeftHand");
+                              await BiometricsApi()
+                                  .extractImageValues()
+                                  .then((value) {
+                                temp = value;
+                              });
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                    content: Container(
+                                  height: 539.h,
+                                  width: 768.w,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Left Hand Capture",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      fontSize: 18,
+                                                      fontWeight: bold,
+                                                      color: black_shade_1),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: Icon(
+                                                  Icons.close,
+                                                )),
+                                          ],
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: EdgeInsets.all(0),
+                                          // EdgeInsets.fromLTRB(
+                                          //     60.w, 35.h, 60.w, 35.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ...temp.map((e) => Image.memory(
+                                                    e!,
+                                                    height: 190.h,
+                                                    width: 190.h,
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                      maximumSize:
+                                                          Size(160.w, 42.h),
+                                                      minimumSize:
+                                                          Size(160.w, 42.h),
+                                                      side: BorderSide(
+                                                          color:
+                                                              solid_primary)),
+                                                  onPressed: () async {
+                                                    await BiometricsApi()
+                                                        .invokeDiscoverSbi(
+                                                            widget.field.id!,
+                                                            "LeftHand");
+                                                    await BiometricsApi()
+                                                        .extractImageValues()
+                                                        .then((value) {
+                                                      temp = value;
+                                                    });
+                                                  },
+                                                  child: Text("RESCAN")),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    maximumSize:
+                                                        Size(160.w, 42.h),
+                                                    minimumSize:
+                                                        Size(160.w, 42.h)),
+                                                onPressed: () async {
+                                                  await BiometricsApi()
+                                                      .getBestBiometrics(
+                                                          widget.field.id!,
+                                                          "LeftHand")
+                                                      .then((value) async {
+                                                    for (var e in value) {
+                                                      widget.leftHand
+                                                          .listOfBiometricsDto
+                                                          .add(BiometricsDto
+                                                              .fromJson(json
+                                                                  .decode(e!)));
+                                                    }
+                                                  });
+                                                  widget.leftHand
+                                                          .qualityPercentage =
+                                                      avgScore(widget.leftHand
+                                                          .listOfBiometricsDto);
+                                                  await BiometricsApi()
+                                                      .extractImageValues()
+                                                      .then((value) {
+                                                    widget.leftHand
+                                                        .listofImages = value;
+                                                  });
+                                                  setState(() {});
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("SAVE"),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ]),
+                                )),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.crop_free,
+                              color: solid_primary,
+                              size: 14,
+                            ),
+                            label: Text(
+                              "SCAN",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: bold,
+                                      color: solid_primary),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: solid_primary, width: 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 157.h,
+                            width: 338.h,
+                            decoration: BoxDecoration(
+                              color: pure_white,
+                              border: Border.all(
+                                color: secondaryColors.elementAt(14),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                Text(
+                                  "Quality",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1),
+                                ),
+                                SizedBox(
+                                  height: 42.h,
+                                ),
+                                Text(
+                                  "Threshold ${widget.leftHand.qualityPercentage.toInt()}%",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: secondaryColors.elementAt(1),
+                                      ),
+                                ),
+                                SizedBox(
+                                  height: 16.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearPercentIndicator(
+                                      width: 260.h,
+                                      lineHeight: 8,
+                                      percent:
+                                          widget.leftHand.qualityPercentage /
+                                              100,
+                                      backgroundColor: Colors.grey,
+                                      progressColor:
+                                          secondaryColors.elementAt(11),
+                                    ),
+                                    SizedBox(
+                                      width: 16.h,
+                                    ),
+                                    Text(
+                                      "${widget.leftHand.qualityPercentage.toInt()}%",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: regular,
+                                            color: black_shade_1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (widget.biometricAttribute == "Thumbs")
                   BiometricCaptureScanBlock(
-                      id: widget.field.id!,
-                      title: "ThumbsScan",
-                      // listOfBiomatricsDto: [],
-                      // listOfUint8List: [],
-                      thresholdPercentage: widget.thumbs.qualityPercentage,
-                      images: ["assets/images/Thumbs@2x.png"]),
+                    title: "ThumbsScan",
+                    middleBlock: Container(
+                      height: 460.h,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          (widget.thumbs.listOfBiometricsDto.isEmpty)
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfImages(widget.thumbs.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfResultImages(
+                                            widget.thumbs.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              List<Uint8List?> temp = [];
+                              await BiometricsApi().invokeDiscoverSbi(
+                                  widget.field.id!, "Thumbs");
+                              await BiometricsApi().getBestBiometrics(
+                                  widget.field.id!, "Thumbs");
+                              await BiometricsApi()
+                                  .extractImageValues()
+                                  .then((value) {
+                                temp = value;
+                              });
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                    content: Container(
+                                  height: 539.h,
+                                  width: 768.w,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Thumbs Capture",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      fontSize: 18,
+                                                      fontWeight: bold,
+                                                      color: black_shade_1),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: Icon(
+                                                  Icons.close,
+                                                )),
+                                          ],
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: EdgeInsets.all(0),
+                                          // EdgeInsets.fromLTRB(
+                                          //     60.w, 35.h, 60.w, 35.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ...temp.map((e) => Image.memory(
+                                                    e!,
+                                                    height: 310.h,
+                                                    width: 310.h,
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                      maximumSize:
+                                                          Size(160.w, 42.h),
+                                                      minimumSize:
+                                                          Size(160.w, 42.h),
+                                                      side: BorderSide(
+                                                          color:
+                                                              solid_primary)),
+                                                  onPressed: () async {
+                                                    await BiometricsApi()
+                                                        .invokeDiscoverSbi(
+                                                            widget.field.id!,
+                                                            "Thumbs");
+                                                    await BiometricsApi()
+                                                        .extractImageValues()
+                                                        .then((value) {
+                                                      temp = value;
+                                                    });
+                                                  },
+                                                  child: Text("RESCAN")),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    maximumSize:
+                                                        Size(160.w, 42.h),
+                                                    minimumSize:
+                                                        Size(160.w, 42.h)),
+                                                onPressed: () async {
+                                                  await BiometricsApi()
+                                                      .getBestBiometrics(
+                                                          widget.field.id!,
+                                                          "Thumbs")
+                                                      .then((value) async {
+                                                    for (var e in value) {
+                                                      widget.thumbs
+                                                          .listOfBiometricsDto
+                                                          .add(BiometricsDto
+                                                              .fromJson(json
+                                                                  .decode(e!)));
+                                                    }
+                                                  });
+                                                  widget.thumbs
+                                                          .qualityPercentage =
+                                                      avgScore(widget.thumbs
+                                                          .listOfBiometricsDto);
+                                                  await BiometricsApi()
+                                                      .extractImageValues()
+                                                      .then((value) {
+                                                    widget.thumbs.listofImages =
+                                                        value;
+                                                  });
+                                                  setState(() {});
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("SAVE"),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ]),
+                                )),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.crop_free,
+                              color: solid_primary,
+                              size: 14,
+                            ),
+                            label: Text(
+                              "SCAN",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: bold,
+                                      color: solid_primary),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: solid_primary, width: 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 157.h,
+                            width: 338.h,
+                            decoration: BoxDecoration(
+                              color: pure_white,
+                              border: Border.all(
+                                color: secondaryColors.elementAt(14),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                Text(
+                                  "Quality",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1),
+                                ),
+                                SizedBox(
+                                  height: 42.h,
+                                ),
+                                Text(
+                                  "Threshold ${widget.thumbs.qualityPercentage.toInt()}%",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: secondaryColors.elementAt(1),
+                                      ),
+                                ),
+                                SizedBox(
+                                  height: 16.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearPercentIndicator(
+                                      width: 260.h,
+                                      lineHeight: 8,
+                                      percent:
+                                          widget.thumbs.qualityPercentage / 100,
+                                      backgroundColor: Colors.grey,
+                                      progressColor:
+                                          secondaryColors.elementAt(11),
+                                    ),
+                                    SizedBox(
+                                      width: 16.h,
+                                    ),
+                                    Text(
+                                      "${widget.thumbs.qualityPercentage.toInt()}%",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: regular,
+                                            color: black_shade_1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (widget.biometricAttribute == "Face")
                   BiometricCaptureScanBlock(
-                      id: widget.field.id!,
-                      title: "FaceScan",
-                      // listOfBiomatricsDto: [],
-                      // listOfUint8List: [],
-                      thresholdPercentage: widget.face.qualityPercentage,
-                      images: ["assets/images/Face@2x.png"]),
+                    title: "FaceScan",
+                    middleBlock: Container(
+                      height: 460.h,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          (widget.face.listOfBiometricsDto.isEmpty)
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfImages(widget.face.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfResultImages(
+                                            widget.face.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              List<Uint8List?> temp = [];
+                              await BiometricsApi()
+                                  .invokeDiscoverSbi(widget.field.id!, "Face");
+                              await BiometricsApi()
+                                  .getBestBiometrics(widget.field.id!, "Face");
+                              await BiometricsApi()
+                                  .extractImageValues()
+                                  .then((value) {
+                                temp = value;
+                              });
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                    content: Container(
+                                  height: 539.h,
+                                  width: 768.w,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Face Capture",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      fontSize: 18,
+                                                      fontWeight: bold,
+                                                      color: black_shade_1),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: Icon(
+                                                  Icons.close,
+                                                )),
+                                          ],
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: EdgeInsets.all(0),
+                                          // EdgeInsets.fromLTRB(
+                                          //     60.w, 35.h, 60.w, 35.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ...temp.map((e) => Image.memory(
+                                                    e!,
+                                                    height: 310.h,
+                                                    width: 310.h,
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                      maximumSize:
+                                                          Size(160.w, 42.h),
+                                                      minimumSize:
+                                                          Size(160.w, 42.h),
+                                                      side: BorderSide(
+                                                          color:
+                                                              solid_primary)),
+                                                  onPressed: () async {
+                                                    await BiometricsApi()
+                                                        .invokeDiscoverSbi(
+                                                            widget.field.id!,
+                                                            "Face");
+                                                    await BiometricsApi()
+                                                        .extractImageValues()
+                                                        .then((value) {
+                                                      temp = value;
+                                                    });
+                                                  },
+                                                  child: Text("RESCAN")),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    maximumSize:
+                                                        Size(160.w, 42.h),
+                                                    minimumSize:
+                                                        Size(160.w, 42.h)),
+                                                onPressed: () async {
+                                                  await BiometricsApi()
+                                                      .getBestBiometrics(
+                                                          widget.field.id!,
+                                                          "Face")
+                                                      .then((value) async {
+                                                    for (var e in value) {
+                                                      widget.face
+                                                          .listOfBiometricsDto
+                                                          .add(BiometricsDto
+                                                              .fromJson(json
+                                                                  .decode(e!)));
+                                                    }
+                                                  });
+                                                  widget.face
+                                                          .qualityPercentage =
+                                                      avgScore(widget.face
+                                                          .listOfBiometricsDto);
+                                                  await BiometricsApi()
+                                                      .extractImageValues()
+                                                      .then((value) {
+                                                    widget.face.listofImages =
+                                                        value;
+                                                  });
+                                                  setState(() {});
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("SAVE"),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ]),
+                                )),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.crop_free,
+                              color: solid_primary,
+                              size: 14,
+                            ),
+                            label: Text(
+                              "SCAN",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: bold,
+                                      color: solid_primary),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: solid_primary, width: 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 157.h,
+                            width: 338.h,
+                            decoration: BoxDecoration(
+                              color: pure_white,
+                              border: Border.all(
+                                color: secondaryColors.elementAt(14),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                Text(
+                                  "Quality",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1),
+                                ),
+                                SizedBox(
+                                  height: 42.h,
+                                ),
+                                Text(
+                                  "Threshold ${widget.face.qualityPercentage.toInt()}%",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: secondaryColors.elementAt(1),
+                                      ),
+                                ),
+                                SizedBox(
+                                  height: 16.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearPercentIndicator(
+                                      width: 260.h,
+                                      lineHeight: 8,
+                                      percent:
+                                          widget.face.qualityPercentage / 100,
+                                      backgroundColor: Colors.grey,
+                                      progressColor:
+                                          secondaryColors.elementAt(11),
+                                    ),
+                                    SizedBox(
+                                      width: 16.h,
+                                    ),
+                                    Text(
+                                      "${widget.face.qualityPercentage.toInt()}%",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: regular,
+                                            color: black_shade_1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (widget.biometricAttribute == "Exception")
                   BiometricCaptureScanBlock(
-                      id: widget.field.id!,
-                      title: "ExceptionScan",
-                      // listOfBiomatricsDto: [],
-                      // listOfUint8List: [],
-                      thresholdPercentage: widget.face.qualityPercentage,
-                      images: ["assets/images/Person@2x.png"]),
+                    title: "ExceptionScan",
+                    middleBlock: Container(
+                      height: 460.h,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          (widget.exception.listOfBiometricsDto.isEmpty)
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfImages(
+                                            widget.exception.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ...listOfResultImages(
+                                            widget.exception.listofImages)
+                                        .map(
+                                      (e) => e,
+                                    ),
+                                  ],
+                                ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              List<Uint8List?> temp = [];
+                              await BiometricsApi().invokeDiscoverSbi(
+                                  widget.field.id!, "Exception");
+                              await BiometricsApi().getBestBiometrics(
+                                  widget.field.id!, "Exception");
+                              await BiometricsApi()
+                                  .extractImageValues()
+                                  .then((value) {
+                                temp = value;
+                              });
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                    content: Container(
+                                  height: 539.h,
+                                  width: 768.w,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Exception Capture",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      fontSize: 18,
+                                                      fontWeight: bold,
+                                                      color: black_shade_1),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: Icon(
+                                                  Icons.close,
+                                                )),
+                                          ],
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: EdgeInsets.all(0),
+                                          // EdgeInsets.fromLTRB(
+                                          //     60.w, 35.h, 60.w, 35.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ...temp.map((e) => Image.memory(
+                                                    e!,
+                                                    height: 310.h,
+                                                    width: 310.h,
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                      maximumSize:
+                                                          Size(160.w, 42.h),
+                                                      minimumSize:
+                                                          Size(160.w, 42.h),
+                                                      side: BorderSide(
+                                                          color:
+                                                              solid_primary)),
+                                                  onPressed: () async {
+                                                    await BiometricsApi()
+                                                        .invokeDiscoverSbi(
+                                                            widget.field.id!,
+                                                            "Exception");
+                                                    await BiometricsApi()
+                                                        .extractImageValues()
+                                                        .then((value) {
+                                                      temp = value;
+                                                    });
+                                                  },
+                                                  child: Text("RESCAN")),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    maximumSize:
+                                                        Size(160.w, 42.h),
+                                                    minimumSize:
+                                                        Size(160.w, 42.h)),
+                                                onPressed: () async {
+                                                  await BiometricsApi()
+                                                      .getBestBiometrics(
+                                                          widget.field.id!,
+                                                          "Exception")
+                                                      .then((value) async {
+                                                    for (var e in value) {
+                                                      widget.exception
+                                                          .listOfBiometricsDto
+                                                          .add(BiometricsDto
+                                                              .fromJson(json
+                                                                  .decode(e!)));
+                                                    }
+                                                  });
+                                                  widget.exception
+                                                          .qualityPercentage =
+                                                      avgScore(widget.exception
+                                                          .listOfBiometricsDto);
+                                                  await BiometricsApi()
+                                                      .extractImageValues()
+                                                      .then((value) {
+                                                    widget.exception
+                                                        .listofImages = value;
+                                                  });
+                                                  setState(() {});
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("SAVE"),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ]),
+                                )),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.crop_free,
+                              color: solid_primary,
+                              size: 14,
+                            ),
+                            label: Text(
+                              "SCAN",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: bold,
+                                      color: solid_primary),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: solid_primary, width: 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 157.h,
+                            width: 338.h,
+                            decoration: BoxDecoration(
+                              color: pure_white,
+                              border: Border.all(
+                                color: secondaryColors.elementAt(14),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                Text(
+                                  "Quality",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: semiBold,
+                                          color: black_shade_1),
+                                ),
+                                SizedBox(
+                                  height: 42.h,
+                                ),
+                                Text(
+                                  "Threshold ${widget.exception.qualityPercentage.toInt()}%",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: secondaryColors.elementAt(1),
+                                      ),
+                                ),
+                                SizedBox(
+                                  height: 16.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearPercentIndicator(
+                                      width: 260.h,
+                                      lineHeight: 8,
+                                      percent:
+                                          widget.exception.qualityPercentage /
+                                              100,
+                                      backgroundColor: Colors.grey,
+                                      progressColor:
+                                          secondaryColors.elementAt(11),
+                                    ),
+                                    SizedBox(
+                                      width: 16.h,
+                                    ),
+                                    Text(
+                                      "${widget.exception.qualityPercentage.toInt()}%",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: regular,
+                                            color: black_shade_1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (widget.biometricAttribute == "Iris")
                   BiometricCaptureExceptionBlock(
                     attribute: widget.iris,

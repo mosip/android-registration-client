@@ -187,7 +187,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             }
             break;
             case EXCEPTION_PHOTO:
-
+                
                 break;
         }
         for (int i = 0; i < listBitmaps.size(); i++) {
