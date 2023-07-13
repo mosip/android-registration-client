@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
@@ -29,7 +31,8 @@ class GlobalProvider with ChangeNotifier {
   };
   Map<String, dynamic> _fieldDisplayValues = {};
 
-  Map<String, dynamic> _fieldInputValues = {};
+  Map<String, dynamic> _feildConsentValues = {};
+  Map<String, dynamic> _feildDemographicsValues = {};
 
   //GettersSetters
 
@@ -40,46 +43,53 @@ class GlobalProvider with ChangeNotifier {
   String get machineName => _machineName;
   Map<String?, String?> get machineDetails => _machineDetails;
 
-  Process? get currentProcess => this._currentProcess;
+  Process? get currentProcess => _currentProcess;
 
-  Map<String, bool> get languageMap => this._languageMap;
+  Map<String, bool> get languageMap => _languageMap;
 
-  List<String> get chosenLang => this._chosenLang;
+  List<String> get chosenLang => _chosenLang;
 
-  set chosenLang(List<String> value) => this._chosenLang = value;
+  set chosenLang(List<String> value) => _chosenLang = value;
 
-  set languageMap(Map<String, bool> value) => this._languageMap = value;
+  set languageMap(Map<String, bool> value) => _languageMap = value;
 
   set currentProcess(Process? value) {
-    this._currentProcess = value;
+    _currentProcess = value;
     notifyListeners();
   }
 
-  int get newProcessTabIndex => this._newProcessTabIndex;
+  int get newProcessTabIndex => _newProcessTabIndex;
 
   set newProcessTabIndex(int value) {
-    this._newProcessTabIndex = value;
+    _newProcessTabIndex = value;
     notifyListeners();
   }
 
-  int get htmlBoxTabIndex => this._htmlBoxTabIndex;
+  int get htmlBoxTabIndex => _htmlBoxTabIndex;
 
   set htmlBoxTabIndex(int value) {
-    this._htmlBoxTabIndex = value;
+    _htmlBoxTabIndex = value;
     notifyListeners();
   }
 
-  Map<String, dynamic> get fieldDisplayValues => this._fieldDisplayValues;
+  Map<String, dynamic> get fieldDisplayValues => _fieldDisplayValues;
 
   set fieldDisplayValues(Map<String, dynamic> value) {
-    this._fieldDisplayValues = value;
+    _fieldDisplayValues = value;
     notifyListeners();
   }
 
-  Map<String, dynamic> get fieldInputValues => this._fieldInputValues;
+  Map<String, dynamic> get feildConsentValues => _feildConsentValues;
 
-  set fieldInputValues(Map<String, dynamic> value) {
-    this._fieldInputValues = value;
+  set feildConsentValues(Map<String, dynamic> value) {
+    _feildConsentValues = value;
+    notifyListeners();
+  }
+
+  Map<String, dynamic> get feildDemographicsValues => _feildDemographicsValues;
+
+  set feildDemographicsValues(Map<String, dynamic> value) {
+    _feildDemographicsValues = value;
     notifyListeners();
   }
 
@@ -146,8 +156,23 @@ class GlobalProvider with ChangeNotifier {
     }
   }
 
-  setInputMapValue(String key, dynamic value) {
-    fieldInputValues[key] = value;
+  setInputMapValue(String key, dynamic value, Map<String, dynamic> commonMap) {
+    commonMap[key] = value;
+    notifyListeners();
+  }
+
+  setLanguageSpecificValue(String key, dynamic value, String language,
+      Map<String, dynamic> commonMap) {
+    log(language);
+    if (!commonMap.containsKey(key)) {
+      commonMap[key] = [
+        {"value": value, "language": language}
+      ];
+    } else {
+      List<dynamic> feild = commonMap[key] as List<dynamic>;
+      feild.add({"value": value, "language": language});
+    }
+
     notifyListeners();
   }
 

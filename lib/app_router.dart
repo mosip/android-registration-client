@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/post_registration/authentication_page.dart';
+import 'package:registration_client/ui/post_registration/preview_page.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 
@@ -11,7 +13,7 @@ class AppRouter {
 
   static Map<String, Widget Function(BuildContext)> routes = {
     LoginPage.route: (context) => const LoginPage(),
-    NewProcess.routeName: (context) => const NewProcess(),
+    NewProcess.routeName: (context) => NewProcess(),
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
   };

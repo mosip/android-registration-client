@@ -42,14 +42,20 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
+import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.BiometricsPigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
+import io.mosip.registration_client.model.LocationResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
+import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
+import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 
 public class MainActivity extends FlutterActivity {
@@ -104,6 +110,17 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     BiometricsDetailsApi biometricsDetailsApi;
+    
+    @Inject
+    PacketAuthenticationApi packetAuthenticationApi;
+
+
+    @Inject
+    LocationDetailsApi locationDetailsApi;
+
+    @Inject
+    RegistrationApi registrationApi;
+
 
 
     @Override
@@ -123,6 +140,7 @@ public class MainActivity extends FlutterActivity {
         appComponent.inject(this);
     }
 
+
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
@@ -136,6 +154,9 @@ public class MainActivity extends FlutterActivity {
         BiometricsPigeon.BiometricsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),biometricsDetailsApi);
         biometricsDetailsApi.setCallbackActivity(this);
 
+        LocationResponsePigeon.LocationResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), locationDetailsApi);
+        RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
+        PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(
@@ -144,6 +165,7 @@ public class MainActivity extends FlutterActivity {
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
+
                                     break;
 
                                 default:

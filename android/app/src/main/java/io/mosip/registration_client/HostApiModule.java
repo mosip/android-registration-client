@@ -15,11 +15,14 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.dao.LocationDao;
+import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
@@ -29,8 +32,11 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
+import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 
 @Module
@@ -87,6 +93,7 @@ public class HostApiModule {
         return new CommonDetailsApi(masterDataService);
     }
     
+
     @Provides
     @Singleton
     ProcessSpecDetailsApi getProcessSpecDetailsApi(IdentitySchemaRepository identitySchemaRepository,
@@ -103,4 +110,24 @@ public class HostApiModule {
 
     }
 
+    @Provides
+    @Singleton
+    LocationDetailsApi getLocationDetailsApi(LocationHierarchyDao locationHierarchyDao, LocationDao locationDao) {
+        return new LocationDetailsApi(locationHierarchyDao, locationDao);
+
+    }
+
+    @Provides
+    @Singleton
+    RegistrationApi getRegistrationDataApi(RegistrationService registrationService, TemplateService templateService) {
+        return new RegistrationApi(registrationService, templateService);
+
+    }
+
+    @Provides
+    @Singleton
+    PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
+                                                       LoginService loginService) {
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService);
+    }
 }

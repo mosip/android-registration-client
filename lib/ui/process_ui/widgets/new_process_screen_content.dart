@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/pigeon/location_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/location_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
+
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'dart:developer';
 
 import 'package:registration_client/utils/app_config.dart';
 
+
+
+
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
+import '../../../platform_spi/registration.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -31,7 +40,11 @@ class NewProcessScreenContent extends StatefulWidget {
 }
 
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
-  Map<String, dynamic> formValues = {};
+  @override
+  void initState() {
+    context.read<LocationProvider>().setLocationResponse("eng");
+    super.initState();
+  }
 
   Widget widgetType(Field e) {
     RegExp regexPattern = RegExp(r'^.*$');
@@ -66,13 +79,13 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           elevation: 0,
           margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomLabel(feild: e),
                 RadioButtonControl(
-                  onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                  id: e.id ?? "",
                   values: values[e.subType] ?? [],
                 ),
               ],
@@ -83,54 +96,35 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       return Text("${e.controlType}");
     }
     if (e.controlType == "textbox") {
-      List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
-      List<String> singleTextBox = [
-        "Phone",
-        "Email",
-        "introducerName",
-        "RID",
-        "UIN",
-        "none"
-      ];
-      if (singleTextBox.contains(e.subType)) {
-        choosenLang = ["English"];
+      return TextBoxControl(e: e, validation: regexPattern);
+    }
+    if (e.controlType == "dropdown") {
+      List<String?> options = [];
+      LocationResponse? locationResponse =
+          context.watch<LocationProvider>().locationResponse;
+      if (locationResponse != null) {
+        switch (e.subType) {
+          case "Region":
+            options = locationResponse.regionList;
+            break;
+          case "City":
+            options = locationResponse.cityList;
+            break;
+          case "Zone":
+            options = locationResponse.zoneList;
+            break;
+          case "Postal Code":
+            options = locationResponse.postalCodeList;
+            break;
+          default:
+        }
       }
 
       return Card(
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(feild: e),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                children: choosenLang.map((code) {
-                  String newCode =
-                      context.read<GlobalProvider>().langToCode(code);
-                  return TextBoxControl(
-                      onChanged: (value) =>
-                          formValues[e.label![newCode]!] = value,
-                      label: e.label![newCode]!.toString(),
-                      lang: newCode,
-                      validation: regexPattern);
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    if (e.controlType == "dropdown") {
-      return Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -139,7 +133,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 height: 10,
               ),
               DropDownControl(
-                onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                id: e.id ?? "",
+                options: options,
               ),
             ],
           ),
@@ -151,7 +146,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -160,7 +155,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 height: 10,
               ),
               AgeDateControl(
-                onChanged: (value) => formValues[e.label!["eng"]!] = value,
+                format: e.format ?? "yyyy/MM/dd",
+                id: e.id ?? "",
                 validation: regexPattern,
               ),
             ],
@@ -174,15 +170,18 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ...widget.screen.fields!.map((e) {
-          if (e!.inputRequired == true) {
-            return widgetType(e);
-          }
-          return Container();
-        }).toList(),
-      ],
+    return Form(
+      key: context.read<GlobalProvider>().formKey,
+      child: Column(
+        children: [
+          ...widget.screen.fields!.map((e) {
+            if (e!.inputRequired == true) {
+              return widgetType(e);
+            }
+            return Container();
+          }).toList(),
+        ],
+      ),
     );
   }
 }
