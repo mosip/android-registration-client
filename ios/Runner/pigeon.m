@@ -26,26 +26,25 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-NSObject<FlutterMessageCodec> *BiometricsApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
-void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<BiometricsApi> *api) {
+void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.BiometricsApi.invokeDiscoverSbi"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.startRegistration"
         binaryMessenger:binaryMessenger
-        codec:BiometricsApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(invokeDiscoverSbiFieldId:modality:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(invokeDiscoverSbiFieldId:modality:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(startRegistrationLanguages:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(startRegistrationLanguages:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
-        [api invokeDiscoverSbiFieldId:arg_fieldId modality:arg_modality completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        NSArray<NSString *> *arg_languages = GetNullableObjectAtIndex(args, 0);
+        [api startRegistrationLanguages:arg_languages completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -56,16 +55,15 @@ void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Bio
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.BiometricsApi.getBestBiometrics"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.checkMVEL"
         binaryMessenger:binaryMessenger
-        codec:BiometricsApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getBestBiometricsFieldId:modality:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(getBestBiometricsFieldId:modality:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(checkMVELExpression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(checkMVELExpression:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
-        [api getBestBiometricsFieldId:arg_fieldId modality:arg_modality completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_expression = GetNullableObjectAtIndex(args, 0);
+        [api checkMVELExpression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -76,13 +74,15 @@ void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Bio
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.BiometricsApi.extractImageValues"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.getPreviewTemplate"
         binaryMessenger:binaryMessenger
-        codec:BiometricsApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(extractImageValuesWithCompletion:)], @"BiometricsApi api (%@) doesn't respond to @selector(extractImageValuesWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateIsPreview:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateIsPreview:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api extractImageValuesWithCompletion:^(NSArray<FlutterStandardTypedData *> *_Nullable output, FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 0);
+        [api getPreviewTemplateIsPreview:arg_isPreview completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

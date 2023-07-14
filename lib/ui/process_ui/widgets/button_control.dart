@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -22,7 +21,8 @@ class ButtonControl extends StatelessWidget {
                   .length,
           (index) => false);
       temp[index] = false;
-      context.read<GlobalProvider>().setInputMapValue(field.id!, temp);
+      context.read<GlobalProvider>().setInputMapValue(
+          field.id!, temp, context.read<GlobalProvider>().feildConsentValues);
       return false;
     }
 
@@ -39,7 +39,7 @@ class ButtonControl extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 14, color: black_shade_1, fontWeight: semiBold),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Row(
@@ -60,30 +60,33 @@ class ButtonControl extends StatelessWidget {
                           activeColor: solid_primary,
                           value: (context
                                   .watch<GlobalProvider>()
-                                  .fieldInputValues
+                                  .feildConsentValues
                                   .containsKey(field.id))
                               ? context
-                                  .read<GlobalProvider>()
-                                  .fieldInputValues[field.id][i]
+                                  .watch<GlobalProvider>()
+                                  .feildConsentValues[field.id][i]
                               : generateList(context, i),
                           onChanged: (value) {
                             List temp = context
                                 .read<GlobalProvider>()
-                                .fieldInputValues[field.id];
+                                .feildConsentValues[field.id];
                             temp[i] = value;
-                            context
-                                .read<GlobalProvider>()
-                                .setInputMapValue(field.id!, temp);
+                            context.read<GlobalProvider>().setInputMapValue(
+                                field.id!,
+                                temp,
+                                context
+                                    .read<GlobalProvider>()
+                                    .feildConsentValues);
                           },
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
                       Text(context
                           .read<GlobalProvider>()
                           .fieldDisplayValues[field.id][i]),
-                      SizedBox(
+                      const SizedBox(
                         width: 37,
                       ),
                     ],

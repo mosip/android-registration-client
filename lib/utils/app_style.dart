@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 abstract class AppStyle {
   static const Color appWhite = Color(0xFFffffff);
@@ -16,6 +17,10 @@ abstract class AppStyle {
   static const Color appBackButtonBorder = Color(0xFF2A4EA7);
   static const Color buttonDisabled = Color(0XFFCCCCCC);
   static const Color mandatoryField = Color(0XFFD32D2D);
+  static const previewHeaderColor = Color(0XFF666666);
+  static const previewHeaderComponentColor = Color(0XFFF5F5F5);
+  static const authIconBackground = Color(0XFFF8FCFF);
+  static const authIconBorder = Color(0XFFE1EDF5);
 
   static TextStyle mobileHelpText = TextStyle(
     fontWeight: FontWeight.w500,
@@ -169,5 +174,23 @@ abstract class AppStyle {
     fontSize: 14.spMin,
     color: appHelpText,
     letterSpacing: 0,
+  );
+
+  static TextStyle previewHeaderText = TextStyle(
+    fontWeight: regular,
+    fontSize: 14.spMax,
+    color: previewHeaderColor,
+  );
+
+  static TextStyle previewHeaderResponseText = TextStyle(
+    fontWeight: semiBold,
+    fontSize: 16.spMax,
+    color: appBlackShade1,
+  );
+
+  static TextStyle previewComponentHeaderText = TextStyle(
+    fontWeight: semiBold,
+    fontSize: 20.spMax,
+    color: appBlack
   );
 }

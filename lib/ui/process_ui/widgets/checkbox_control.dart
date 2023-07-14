@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 class CheckboxControl extends StatelessWidget {
@@ -28,16 +27,20 @@ class CheckboxControl extends StatelessWidget {
                     activeColor: solid_primary,
                     value: (context
                             .watch<GlobalProvider>()
-                            .fieldInputValues
+                            .feildConsentValues
                             .containsKey(field.id))
                         ? context
                             .watch<GlobalProvider>()
-                            .fieldInputValues[field.id]
+                            .feildConsentValues[field.id]
                         : false,
                     onChanged: (value) {
+                      context.read<GlobalProvider>().setInputMapValue(
+                          field.id!,
+                          value,
+                          context.read<GlobalProvider>().feildConsentValues);
                       context
-                          .read<GlobalProvider>()
-                          .setInputMapValue(field.id!, value);
+                          .read<RegistrationTaskProvider>()
+                          .addConsentField(value != null && value ? 'Y' : 'N');
                     })),
             SizedBox(
               width: 8,

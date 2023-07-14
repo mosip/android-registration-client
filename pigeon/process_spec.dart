@@ -10,7 +10,4 @@ abstract class ProcessSpecApi {
 
   @async
   List<String?> getNewProcessSpec();
-
-  @async
-  String startRegistration(List<String> languages);
 }

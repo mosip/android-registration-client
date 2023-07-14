@@ -61,14 +61,13 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
     }
 
     @Override
-
     public void getCenterName(@NonNull String regCenterId, @NonNull String langCode, @NonNull MachinePigeon.Result<String> result) {
         List<RegistrationCenter> registrationCenterList = new ArrayList<>();
         RegistrationCenter registrationCenter;
         String regCenter = "";
         try {
             registrationCenter = registrationCenterRepository.getRegistrationCenterByCenterIdAndLangCode(regCenterId, langCode);
-            if(registrationCenter == null) {
+            if(registrationCenter != null) {
                 regCenter = registrationCenter.getName();
                 result.success(regCenter);
                 return;

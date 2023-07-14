@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
+import '../../../provider/global_provider.dart';
+
 class RadioButtonControl extends StatefulWidget {
-  const RadioButtonControl(
-      {super.key, required this.values, required this.onChanged});
+  const RadioButtonControl({super.key, required this.values, required this.id});
 
   final List<String> values;
-  final Function(String) onChanged;
+  final String id;
 
   @override
   _RadioFormFieldState createState() => _RadioFormFieldState();
@@ -16,10 +20,12 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   String? selectedOption;
 
   void handleOptionChange(String? value) {
+    context.read<GlobalProvider>().setLanguageSpecificValue(widget.id, value,
+        "eng", context.read<GlobalProvider>().feildDemographicsValues);
+    context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.id, value!, "eng");
     setState(() {
       selectedOption = value;
     });
-    widget.onChanged(value.toString());
   }
 
   @override
@@ -34,10 +40,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                   activeColor: solid_primary,
                   value: e.toLowerCase(),
                   groupValue: selectedOption,
-                  onChanged: (value) {
-                    widget.onChanged(value!);
-                    handleOptionChange(value);
-                  },
+                  onChanged: handleOptionChange,
                 ),
                 Text(e)
               ],

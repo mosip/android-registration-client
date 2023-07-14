@@ -1,23 +1,123 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+// <<<<<<< HEAD
+import 'package:registration_client/pigeon/registration_data_pigeon.dart';
+// =======
+import 'package:registration_client/provider/auth_provider.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
+// >>>>>>> preview-integration
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
 
+import 'package:registration_client/ui/common/tablet_header.dart';
+import 'package:registration_client/ui/common/tablet_navbar.dart';
+import 'package:registration_client/ui/post_registration/authentication_page.dart';
+import 'package:registration_client/ui/post_registration/preview_page.dart';
+
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/app_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewProcess extends StatelessWidget {
-  const NewProcess({super.key});
+  NewProcess({super.key});
 
   static const routeName = '/new_process';
+
+  final List<String> postRegistrationTabs = [
+    'Preview',
+    'Authentication',
+    'Acknowledgement'
+  ];
+  String username = '';
+  String password = '';
+
+  void _showInSnackBar(String value, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value),
+      ),
+    );
+  }
+
+  _authenticatePacket(BuildContext context) async {
+    if (!_validateUsername(context)) {
+      return false;
+    }
+
+    if (!_validatePassword(context)) {
+      return false;
+    }
+
+    if (!_isUserLoggedInUser(context)) {
+      return false;
+    }
+
+    bool isConnected = context.read<ConnectivityProvider>().isConnected;
+    await context
+        .read<AuthProvider>()
+        .authenticatePacket(username, password, isConnected);
+    bool isPacketAuthenticated =
+        context.read<AuthProvider>().isPacketAuthenticated;
+
+    if (!isPacketAuthenticated) {
+      _showInSnackBar(
+          AppLocalizations.of(context)!.password_incorrect, context);
+      return false;
+    }
+
+    username = '';
+    password = '';
+    return true;
+  }
+
+  bool _validateUsername(BuildContext context) {
+    if (username.isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_required, context);
+      return false;
+    }
+
+    if (username.length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_exceed, context);
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _validatePassword(BuildContext context) {
+    if (password.isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_required, context);
+      return false;
+    }
+
+    if (password.length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_exceed, context);
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _isUserLoggedInUser(BuildContext context) {
+    final user = context.read<AuthProvider>().currentUser;
+    if (user.userId != username) {
+      _showInSnackBar(AppLocalizations.of(context)!.invalid_user, context);
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +126,7 @@ class NewProcess extends StatelessWidget {
     Map<String, dynamic> arguments =
         ModalRoute.of(context)!.settings.arguments! as Map<String, dynamic>;
     final Process newProcess = arguments["process"];
+    int size = newProcess.screens!.length;
     return Scaffold(
       backgroundColor: secondaryColors.elementAt(10),
       bottomNavigationBar: Container(
@@ -34,10 +135,41 @@ class NewProcess extends StatelessWidget {
         height: 84.h,
         child: isMobile
             ? ElevatedButton(
-                child: Text("CONTINUE"),
-                onPressed: () {
+                child: Text(
+                    context.read<GlobalProvider>().newProcessTabIndex <= size
+                        ? "CONTINUE"
+                        : context.read<GlobalProvider>().newProcessTabIndex ==
+                                size + 1
+                            ? "AUTHENTICATE"
+                            : "COMPLETE"),
+                onPressed: () async {
                   if (context.read<GlobalProvider>().newProcessTabIndex <
-                      newProcess.screens!.length - 1) {
+                      size) {
+                    if (context
+                        .read<GlobalProvider>()
+                        .formKey
+                        .currentState!
+                        .validate()) {
+                      context
+                          .read<GlobalProvider>()
+                          .formKey
+                          .currentState
+                          ?.save();
+                      if (context.read<GlobalProvider>().newProcessTabIndex ==
+                          newProcess.screens!.length - 1) {}
+
+                      context.read<GlobalProvider>().newProcessTabIndex =
+                          context.read<GlobalProvider>().newProcessTabIndex + 1;
+                    }
+                  } else {
+                    if (context.read<GlobalProvider>().newProcessTabIndex ==
+                        size + 1) {
+                      bool isPacketAuthenticated =
+                          await _authenticatePacket(context);
+                      if (!isPacketAuthenticated) {
+                        return;
+                      }
+                    }
                     context.read<GlobalProvider>().newProcessTabIndex =
                         context.read<GlobalProvider>().newProcessTabIndex + 1;
                   }
@@ -47,21 +179,61 @@ class NewProcess extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    child: Text("CONTINUE"),
                     style: ButtonStyle(
                       maximumSize:
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                       minimumSize:
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (context.read<GlobalProvider>().newProcessTabIndex <
-                          newProcess.screens!.length - 1) {
+                          size) {
+                        if (context
+                            .read<GlobalProvider>()
+                            .formKey
+                            .currentState!
+                            .validate()) {
+                          context
+                              .read<GlobalProvider>()
+                              .formKey
+                              .currentState
+                              ?.save();
+                          if (context
+                                  .read<GlobalProvider>()
+                                  .newProcessTabIndex ==
+                              newProcess.screens!.length - 1) {
+                                context.read<RegistrationTaskProvider>().getPreviewTemplate(true);
+                              }
+
+                          context.read<GlobalProvider>().newProcessTabIndex =
+                              context
+                                      .read<GlobalProvider>()
+                                      .newProcessTabIndex +
+                                  1;
+                        }
+                      } else {
+                        if (context.read<GlobalProvider>().newProcessTabIndex ==
+                            size + 1) {
+                          bool isPacketAuthenticated =
+                              await _authenticatePacket(context);
+                          if (!isPacketAuthenticated) {
+                            return;
+                          }
+                        }
                         context.read<GlobalProvider>().newProcessTabIndex =
                             context.read<GlobalProvider>().newProcessTabIndex +
                                 1;
                       }
                     },
+                    child: Text(context
+                                .read<GlobalProvider>()
+                                .newProcessTabIndex <=
+                            size
+                        ? "CONTINUE"
+                        : context.read<GlobalProvider>().newProcessTabIndex ==
+                                size + 1
+                            ? "AUTHENTICATE"
+                            : "COMPLETE"),
                   )
                 ],
               ),
@@ -76,7 +248,7 @@ class NewProcess extends StatelessWidget {
               isMobile
                   ? SizedBox()
                   : Column(
-                      children: [
+                      children: const [
                         TabletHeader(),
                         TabletNavbar(),
                       ],
@@ -134,7 +306,7 @@ class NewProcess extends StatelessWidget {
                               child: ListView.builder(
                                   padding: EdgeInsets.all(0),
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: newProcess.screens!.length,
+                                  itemCount: newProcess.screens!.length + 3,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return GestureDetector(
@@ -202,8 +374,12 @@ class NewProcess extends StatelessWidget {
                                                   width: 6.w,
                                                 ),
                                                 Text(
-                                                  newProcess.screens![index]!
-                                                      .label!["eng"]!,
+                                                  index < size
+                                                      ? newProcess
+                                                          .screens![index]!
+                                                          .label!["eng"]!
+                                                      : postRegistrationTabs[
+                                                          index - size],
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .titleSmall
@@ -245,7 +421,7 @@ class NewProcess extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                   ],
@@ -255,10 +431,25 @@ class NewProcess extends StatelessWidget {
                 padding: isMobile
                     ? EdgeInsets.all(0)
                     : EdgeInsets.fromLTRB(60, 0, 60, 0),
-                child: NewProcessScreenContent(
-                    context: context,
-                    screen: newProcess.screens!.elementAt(
-                        context.watch<GlobalProvider>().newProcessTabIndex)!),
+                child: context.watch<GlobalProvider>().newProcessTabIndex < size
+                    ? NewProcessScreenContent(
+                        context: context,
+                        screen: newProcess.screens!.elementAt(context
+                            .watch<GlobalProvider>()
+                            .newProcessTabIndex)!)
+                    : context.watch<GlobalProvider>().newProcessTabIndex == size
+                        ? const PreviewPage()
+                        : context.watch<GlobalProvider>().newProcessTabIndex ==
+                                size + 1
+                            ? AuthenticationPage(
+                                onChangeUsername: (v) {
+                                  username = v;
+                                },
+                                onChangePassword: (v) {
+                                  password = v;
+                                },
+                              )
+                            : const PreviewPage(),
               ),
             ],
           ),
