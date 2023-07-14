@@ -11,14 +11,14 @@ class RegistrationTaskProvider with ChangeNotifier {
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
-  bool _isRegistered = false;
+  bool _isRegistrationStartSuccess = false;
 
   String _previewTemplate = "";
 
   List<Object?> get listOfProcesses => this._listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
-  bool get isRegistered => _isRegistered;
+  bool get isRegistrationStartSuccess => _isRegistrationStartSuccess;
   String get previewTemplate => _previewTemplate;
 
   set listOfProcesses(List<Object?> value) {
@@ -72,12 +72,12 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   startRegistration(List<String> languages) async {
-    _isRegistered = await registration.startRegistration(languages);
+    _isRegistrationStartSuccess = await registration.startRegistration(languages);
     notifyListeners();
   }
 
-  getPreviewTemplate(String data, bool isPreview) async {
-    _previewTemplate = await registration.getPreviewTemplate(data, isPreview);
+  getPreviewTemplate(bool isPreview) async {
+    _previewTemplate = await registration.getPreviewTemplate(isPreview);
     notifyListeners();
   }
 

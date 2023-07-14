@@ -19,10 +19,10 @@ class RegistrationImpl implements Registration {
   }
   
   @override
-  Future<bool> checkMVEL(String data, String expression) async {
+  Future<bool> checkMVEL(String expression) async {
     bool isMvelValid = false;
     try {
-      isMvelValid = await RegistrationDataApi().checkMVEL(data, expression);
+      isMvelValid = await RegistrationDataApi().checkMVEL(expression);
     } on PlatformException {
       debugPrint('RegApi call failed');
     } catch (e) {
@@ -32,10 +32,10 @@ class RegistrationImpl implements Registration {
   }
   
   @override
-  Future<String> getPreviewTemplate(String data, bool isPreview) async {
+  Future<String> getPreviewTemplate(bool isPreview) async {
     String previewTemplate = '';
     try {
-      previewTemplate = await RegistrationDataApi().getPreviewTemplate(data, isPreview);
+      previewTemplate = await RegistrationDataApi().getPreviewTemplate(isPreview);
     } on PlatformException {
       debugPrint('Registration API template call failed');
     } catch (e) {

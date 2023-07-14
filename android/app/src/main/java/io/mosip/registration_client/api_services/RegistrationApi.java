@@ -4,12 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,14 +13,11 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
-import io.mosip.registration.packetmanager.dto.SimpleType;
-import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
 
 @Singleton
 public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataApi {
-    RegistrationService registrationService;
+    private final RegistrationService registrationService;
     RegistrationDto registrationDto;
     TemplateService templateService;
 
@@ -47,13 +40,9 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void checkMVEL(@NonNull String data, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void checkMVEL(@NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            RegistrationDto regDTO = mapper.readValue(data, RegistrationDto.class);
-            Map<String, Object> dataContext = regDTO.getMVELDataContext();
-            boolean isValid = UserInterfaceHelperService.evaluateMvel(expression, dataContext);
-            result.success(isValid);
+            result.success(true);
             return;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Mvel Evaluation failed!" + Arrays.toString(e.getStackTrace()));
@@ -62,22 +51,14 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void getPreviewTemplate(@NonNull String data, @NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
+    public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
-            RegistrationDto regDTO = JsonUtils.jsonStringToJavaObject(data, RegistrationDto.class);
-            regDTO.getDemographics().forEach((k, v) -> {
-                if(v instanceof List) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    List<SimpleType> simpleTypeList = mapper.convertValue(v, new TypeReference<List<SimpleType>>() {});
-                    regDTO.getDemographics().put(k, simpleTypeList);
-                }
-            });
-
-            String template = this.templateService.getTemplate(regDTO, true);
+            this.registrationDto = this.registrationService.getRegistrationDto();
+            String template = this.templateService.getTemplate(this.registrationDto, true);
+            Log.e(getClass().getSimpleName(), "Template: " + template);
             result.success("");
             return;
         } catch (Exception e) {
-//            e.printStackTrace();
             Log.e(getClass().getSimpleName(), "Fetch template failed: " + Arrays.toString(e.getStackTrace()));
         }
         Log.e(getClass().getSimpleName(), "Empty template!");

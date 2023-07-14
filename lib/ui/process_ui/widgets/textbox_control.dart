@@ -23,16 +23,9 @@ class TextBoxControl extends StatefulWidget {
 class _TextBoxControlState extends State<TextBoxControl> {
   bool isMvelValid = true;
 
-  readJson() async {
-    final String response =
-        await rootBundle.loadString('assets/images/registration_data.json');
-    return response;
-  }
-
   validateMvel(String? engine, String? expression) async {
-    String data = await readJson();
     final Registration registration = Registration();
-    registration.checkMVEL(data, expression!).then((value) {
+    registration.checkMVEL(expression!).then((value) {
       log(value.toString());
       setState(() {
         isMvelValid = value;
@@ -70,7 +63,8 @@ class _TextBoxControlState extends State<TextBoxControl> {
       "email",
       "phone",
       "introducerUIN",
-      "introducerRID"
+      "introducerRID",
+      "referenceIdentityNumber",
     ];
     return isMvelValid
         ? Card(
@@ -100,7 +94,9 @@ class _TextBoxControlState extends State<TextBoxControl> {
                                     context
                                         .read<GlobalProvider>()
                                         .feildDemographicsValues);
-                                    context.read<RegistrationTaskProvider>().addDemographicField(widget.e.id!, value!);
+                                context
+                                    .read<RegistrationTaskProvider>()
+                                    .addDemographicField(widget.e.id!, value!);
                               } else {
                                 context
                                     .read<GlobalProvider>()
@@ -111,7 +107,10 @@ class _TextBoxControlState extends State<TextBoxControl> {
                                         context
                                             .read<GlobalProvider>()
                                             .feildDemographicsValues);
-                                context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.e.id!, value!, lang);
+                                context
+                                    .read<RegistrationTaskProvider>()
+                                    .addSimpleTypeDemographicField(
+                                        widget.e.id!, value!, lang);
                               }
                             },
                             validator: (value) {

@@ -6,8 +6,8 @@ abstract class RegistrationDataApi {
   bool startRegistration(List<String> languages);
 
   @async
-  bool checkMVEL(String data, String expression);
+  bool checkMVEL(String expression);
 
   @async
-  String getPreviewTemplate(String data, bool isPreview);
+  String getPreviewTemplate(bool isPreview);
 }

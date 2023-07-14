@@ -158,6 +158,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 format: e.format ?? "yyyy/MM/dd",
                 id: e.id ?? "",
                 validation: regexPattern,
+                subType: e.subType ?? "",
               ),
             ],
           ),

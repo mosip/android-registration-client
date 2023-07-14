@@ -11,17 +11,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by DemographicsApi.
-NSObject<FlutterMessageCodec> *DemographicsApiGetCodec(void);
+/// The codec used by RegistrationDataApi.
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
 
-@protocol DemographicsApi
-- (void)addDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)addSimpleTypeDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value language:(NSString *)language completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)setDateFieldFieldId:(NSString *)fieldId subType:(NSString *)subType day:(NSString *)day month:(NSString *)month year:(NSString *)year completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)removeDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)setConsentFieldConsentData:(NSString *)consentData completion:(void (^)(FlutterError *_Nullable))completion;
+@protocol RegistrationDataApi
+- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)checkMVELExpression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DemographicsApi> *_Nullable api);
+extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

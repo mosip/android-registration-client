@@ -4,19 +4,23 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../provider/global_provider.dart';
 
 class AgeDateControl extends StatefulWidget {
-  const AgeDateControl(
-      {super.key,
-      required this.validation,
-      required this.id,
-      required this.format});
+  const AgeDateControl({
+    super.key,
+    required this.validation,
+    required this.id,
+    required this.format,
+    required this.subType,
+  });
 
   final RegExp validation;
   final String format;
   final String id;
+  final String subType;
 
   @override
   State<AgeDateControl> createState() => _AgeDateControlState();
@@ -192,6 +196,13 @@ class _AgeDateControlState extends State<AgeDateControl> {
                       widget.id,
                       targetDateString,
                       context.read<GlobalProvider>().feildDemographicsValues);
+                  context.read<RegistrationTaskProvider>().setDateField(
+                        widget.id,
+                        widget.subType,
+                        _dayController.text.padLeft(2, '0'),
+                        _monthController.text.padLeft(2, '0'),
+                        _yearController.text,
+                      );
                 },
                 onTap: () => _removeFocusFromAll("year"),
                 validator: feildValidation,

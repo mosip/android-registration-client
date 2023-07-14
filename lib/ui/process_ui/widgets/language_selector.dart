@@ -183,12 +183,13 @@ class LanguageSelector extends StatelessWidget {
                     context.read<GlobalProvider>().fieldValues(newProcess);
 
                     Navigator.of(context).pop();
-                    bool isRegStarted = await context
+                    await context
                         .read<RegistrationTaskProvider>()
                         .startRegistration(
                             context.read<GlobalProvider>().chosenLang);
+                    bool isRegistrationStartSuccess = context.read<RegistrationTaskProvider>().isRegistrationStartSuccess;
 
-                    if (isRegStarted) {
+                    if (isRegistrationStartSuccess) {
                       Navigator.pushNamed(context, NewProcess.routeName,
                           arguments: {"process": newProcess});
                     } else {

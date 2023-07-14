@@ -41,14 +41,18 @@ class _CustomDropDownState extends State<DropDownControl> {
           if (widget.id == 'postalCode') {
             context.read<GlobalProvider>().setInputMapValue(widget.id, value,
                 context.read<GlobalProvider>().feildDemographicsValues);
-            context.read<RegistrationTaskProvider>().addDemographicField(widget.id, value!);
+            if(value != null) {
+                  context.read<RegistrationTaskProvider>().addDemographicField(widget.id, value);
+                }
           } else {
             context.read<GlobalProvider>().setLanguageSpecificValue(
                 widget.id,
                 value,
                 "eng",
                 context.read<GlobalProvider>().feildDemographicsValues);
-            context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.id, value!, "eng");
+                if(value != null) {
+                  context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.id, value, "eng");
+                }
           }
         },
         decoration: InputDecoration(
