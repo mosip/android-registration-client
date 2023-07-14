@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../provider/global_provider.dart';
 
@@ -40,12 +41,18 @@ class _CustomDropDownState extends State<DropDownControl> {
           if (widget.id == 'postalCode') {
             context.read<GlobalProvider>().setInputMapValue(widget.id, value,
                 context.read<GlobalProvider>().feildDemographicsValues);
+            if(value != null) {
+                  context.read<RegistrationTaskProvider>().addDemographicField(widget.id, value);
+                }
           } else {
             context.read<GlobalProvider>().setLanguageSpecificValue(
                 widget.id,
                 value,
                 "eng",
                 context.read<GlobalProvider>().feildDemographicsValues);
+                if(value != null) {
+                  context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.id, value, "eng");
+                }
           }
         },
         decoration: InputDecoration(

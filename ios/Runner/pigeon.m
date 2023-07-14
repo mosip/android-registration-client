@@ -26,100 +26,63 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface PacketAuth ()
-+ (PacketAuth *)fromList:(NSArray *)list;
-+ (nullable PacketAuth *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@implementation PacketAuth
-+ (instancetype)makeWithResponse:(NSString *)response
-    errorCode:(nullable NSString *)errorCode {
-  PacketAuth* pigeonResult = [[PacketAuth alloc] init];
-  pigeonResult.response = response;
-  pigeonResult.errorCode = errorCode;
-  return pigeonResult;
-}
-+ (PacketAuth *)fromList:(NSArray *)list {
-  PacketAuth *pigeonResult = [[PacketAuth alloc] init];
-  pigeonResult.response = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.response != nil, @"");
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
-  return pigeonResult;
-}
-+ (nullable PacketAuth *)nullableFromList:(NSArray *)list {
-  return (list) ? [PacketAuth fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    (self.response ?: [NSNull null]),
-    (self.errorCode ?: [NSNull null]),
-  ];
-}
-@end
-
-@interface PacketAuthApiCodecReader : FlutterStandardReader
-@end
-@implementation PacketAuthApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128: 
-      return [PacketAuth fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface PacketAuthApiCodecWriter : FlutterStandardWriter
-@end
-@implementation PacketAuthApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[PacketAuth class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface PacketAuthApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation PacketAuthApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[PacketAuthApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[PacketAuthApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    PacketAuthApiCodecReaderWriter *readerWriter = [[PacketAuthApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
-void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *api) {
+void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.PacketAuthApi.authenticate"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.startRegistration"
         binaryMessenger:binaryMessenger
-        codec:PacketAuthApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(authenticateUsername:password:isConnected:completion:)], @"PacketAuthApi api (%@) doesn't respond to @selector(authenticateUsername:password:isConnected:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(startRegistrationLanguages:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(startRegistrationLanguages:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_password = GetNullableObjectAtIndex(args, 1);
-        NSNumber *arg_isConnected = GetNullableObjectAtIndex(args, 2);
-        [api authenticateUsername:arg_username password:arg_password isConnected:arg_isConnected completion:^(PacketAuth *_Nullable output, FlutterError *_Nullable error) {
+        NSArray<NSString *> *arg_languages = GetNullableObjectAtIndex(args, 0);
+        [api startRegistrationLanguages:arg_languages completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.checkMVEL"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(checkMVELExpression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(checkMVELExpression:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_expression = GetNullableObjectAtIndex(args, 0);
+        [api checkMVELExpression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.getPreviewTemplate"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateIsPreview:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateIsPreview:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 0);
+        [api getPreviewTemplateIsPreview:arg_isPreview completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 class CheckboxControl extends StatelessWidget {
@@ -37,6 +38,9 @@ class CheckboxControl extends StatelessWidget {
                           field.id!,
                           value,
                           context.read<GlobalProvider>().feildConsentValues);
+                      context
+                          .read<RegistrationTaskProvider>()
+                          .addConsentField(value != null && value ? 'Y' : 'N');
                     })),
             SizedBox(
               width: 8,

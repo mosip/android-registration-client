@@ -24,7 +24,6 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
-import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -42,6 +41,7 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.DemographicsDetailsApi;
 import io.mosip.registration_client.api_services.LocationDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
@@ -51,6 +51,7 @@ import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.BiometricsPigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
+import io.mosip.registration_client.model.DemographicsDataPigeon;
 import io.mosip.registration_client.model.LocationResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.PacketAuthPigeon;
@@ -121,7 +122,8 @@ public class MainActivity extends FlutterActivity {
     @Inject
     RegistrationApi registrationApi;
 
-
+    @Inject
+    DemographicsDetailsApi demographicsDetailsApi;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -153,10 +155,10 @@ public class MainActivity extends FlutterActivity {
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
         BiometricsPigeon.BiometricsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),biometricsDetailsApi);
         biometricsDetailsApi.setCallbackActivity(this);
-
         LocationResponsePigeon.LocationResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), locationDetailsApi);
         RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
+        DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(

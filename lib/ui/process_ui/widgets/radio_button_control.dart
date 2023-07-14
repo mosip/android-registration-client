@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../provider/global_provider.dart';
@@ -21,6 +22,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   void handleOptionChange(String? value) {
     context.read<GlobalProvider>().setLanguageSpecificValue(widget.id, value,
         "eng", context.read<GlobalProvider>().feildDemographicsValues);
+    context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.id, value!, "eng");
     setState(() {
       selectedOption = value;
     });

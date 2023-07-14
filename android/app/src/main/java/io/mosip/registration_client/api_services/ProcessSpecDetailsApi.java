@@ -77,15 +77,4 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
             Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
         }
     }
-
-    @Override
-    public void startRegistration(@NonNull List<String> languages, @NonNull ProcessSpecPigeon.Result<String> result) {
-       try{
-           registrationService.startRegistration(languages);
-           result.success("Ok");
-
-       }catch(Exception e){
-           Log.e("ProcessSpecDetailsApi",e.getMessage());
-       }
-    }
 }

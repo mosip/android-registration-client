@@ -35,12 +35,6 @@ class NewProcess extends StatelessWidget {
 
   static const routeName = '/new_process';
 
-  readJson() async {
-    final String response =
-        await rootBundle.loadString('assets/images/registration_data.json');
-    return response;
-  }
-
   final List<String> postRegistrationTabs = [
     'Preview',
     'Authentication',
@@ -149,10 +143,6 @@ class NewProcess extends StatelessWidget {
                             ? "AUTHENTICATE"
                             : "COMPLETE"),
                 onPressed: () async {
-                  String value = await readJson();
-                  context
-                      .read<RegistrationTaskProvider>()
-                      .getPreviewTemplate(value, true);
                   if (context.read<GlobalProvider>().newProcessTabIndex <
                       size) {
                     if (context
@@ -166,21 +156,7 @@ class NewProcess extends StatelessWidget {
                           .currentState
                           ?.save();
                       if (context.read<GlobalProvider>().newProcessTabIndex ==
-                          newProcess.screens!.length - 1) {
-                        String demographicsData = jsonEncode(context
-                            .read<GlobalProvider>()
-                            .feildDemographicsValues);
-                        List<String> languages =
-                            context.read<GlobalProvider>().chosenLang;
-                        RegistrationData regData = RegistrationData(
-                            languages: languages,
-                            demographicsData: demographicsData,
-                            biometricsData: "",
-                            documentsData: "");
-                        context
-                            .read<RegistrationTaskProvider>()
-                            .registerApplicant(regData);
-                      }
+                          newProcess.screens!.length - 1) {}
 
                       context.read<GlobalProvider>().newProcessTabIndex =
                           context.read<GlobalProvider>().newProcessTabIndex + 1;
@@ -210,10 +186,6 @@ class NewProcess extends StatelessWidget {
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                     ),
                     onPressed: () async {
-                      String value = await readJson();
-                      context
-                          .read<RegistrationTaskProvider>()
-                          .getPreviewTemplate(value, true);
                       if (context.read<GlobalProvider>().newProcessTabIndex <
                           size) {
                         if (context
@@ -230,20 +202,8 @@ class NewProcess extends StatelessWidget {
                                   .read<GlobalProvider>()
                                   .newProcessTabIndex ==
                               newProcess.screens!.length - 1) {
-                            String demographicsData = jsonEncode(context
-                                .read<GlobalProvider>()
-                                .feildDemographicsValues);
-                            List<String> languages =
-                                context.read<GlobalProvider>().chosenLang;
-                            RegistrationData regData = RegistrationData(
-                                languages: languages,
-                                demographicsData: demographicsData,
-                                biometricsData: "",
-                                documentsData: "");
-                            context
-                                .read<RegistrationTaskProvider>()
-                                .registerApplicant(regData);
-                          }
+                                context.read<RegistrationTaskProvider>().getPreviewTemplate(true);
+                              }
 
                           context.read<GlobalProvider>().newProcessTabIndex =
                               context
