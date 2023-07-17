@@ -22,6 +22,7 @@ class BiometricCaptureControl extends StatefulWidget {
   final Field field;
   String biometricAttribute = "Iris";
   BiometricAttributeData iris = BiometricAttributeData(
+      title: "Iris",
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
@@ -32,6 +33,7 @@ class BiometricCaptureControl extends StatefulWidget {
       listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData rightHand = BiometricAttributeData(
+      title: "Right Hand",
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
@@ -39,6 +41,7 @@ class BiometricCaptureControl extends StatefulWidget {
       listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData leftHand = BiometricAttributeData(
+      title: "Left Hand",
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
@@ -46,6 +49,7 @@ class BiometricCaptureControl extends StatefulWidget {
       listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData thumbs = BiometricAttributeData(
+      title: "Thumbs",
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
@@ -53,6 +57,7 @@ class BiometricCaptureControl extends StatefulWidget {
       listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData face = BiometricAttributeData(
+      title: "Face",
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
@@ -60,6 +65,7 @@ class BiometricCaptureControl extends StatefulWidget {
       listOfBiometricsDto: [],
       qualityPercentage: 0);
   BiometricAttributeData exception = BiometricAttributeData(
+      title: "Exception",
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
@@ -2569,46 +2575,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           fontSize: 14,
                                           fontWeight: semiBold,
                                           color: black_shade_1)),
-                              Stack(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        widget.face.exceptions[0] = !(widget
-                                            .face.exceptions
-                                            .elementAt(0));
-                                        if (widget.face.exceptions
-                                            .contains(true)) {
-                                          if (widget
-                                              .face.exceptionType.isEmpty) {
-                                            widget.face.exceptionType =
-                                                "Permanent";
-                                          }
-                                        }
-                                        if (!widget.face.exceptions
-                                            .contains(true)) {
-                                          widget.face.exceptionType = "";
-                                        }
-                                      });
-                                    },
-                                    child: Image.asset(
-                                      "assets/images/Face@2x.png",
-                                      height: 114,
-                                    ),
-                                  ),
-                                  Positioned(
-                                      top: 1,
-                                      left: 48,
-                                      child: Icon(
-                                        Icons.cancel_rounded,
-                                        color:
-                                            (widget.face.exceptions[0] == true)
-                                                ? secondaryColors.elementAt(15)
-                                                : Colors.transparent,
-                                        size: 20,
-                                      )),
-                                ],
-                              )
+                              Image.asset(
+                                "assets/images/Face@2x.png",
+                                height: 114,
+                              ),
                             ],
                           ),
                         ],
