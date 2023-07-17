@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:registration_client/model/biometrics_dto.dart';
 
 class BiometricAttributeData {
+  String title;
   bool isScanned;
   List<bool> exceptions;
   String exceptionType;
@@ -10,6 +11,7 @@ class BiometricAttributeData {
   List<BiometricsDto> listOfBiometricsDto;
   List<dynamic> listofImages;
   BiometricAttributeData({
+    required this.title,
     required this.isScanned,
     required this.exceptions,
     required this.exceptionType,
