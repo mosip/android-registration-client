@@ -11,15 +11,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by RegistrationDataApi.
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
+/// The codec used by ProcessSpecApi.
+NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void);
 
-@protocol RegistrationDataApi
-- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)checkMVELExpression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol ProcessSpecApi
+- (void)getUISchemaWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getStringValueGlobalParamKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getNewProcessSpecWithCompletion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
+extern void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

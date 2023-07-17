@@ -41,141 +41,151 @@ class _BiometricCaptureExceptionBlockState
             ),
           ),
           widget.exceptionImage,
-          if(widget.attribute.title == "Face" &&
+          if (widget.attribute.title == "Face" ||
               widget.attribute.title == "Exception")
-          Text("Marking exceptions on ${widget.attribute.title.toLowerCase()} are not allowed"),
+            Center(
+                child: Padding(
+              padding: EdgeInsets.only(top: 27.h),
+              child: Text(
+                "Marking exceptions on ${widget.attribute.title.toLowerCase()} are not allowed",
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontSize: 14, fontWeight: regular, color: black_shade_1),
+              ),
+            )),
           (widget.attribute.title != "Face" &&
-              widget.attribute.title != "Exception")?
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Exception Type",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 14,
-                        fontWeight: semiBold,
-                        color: black_shade_1),
-                  ),
-                  SizedBox(
-                    height: 17.h,
-                  ),
-                  Row(
+                  widget.attribute.title != "Exception")
+              ? Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          SizedBox(
-                            height: 10.h,
-                            width: 10.h,
-                            child: Radio(
-                              activeColor: solid_primary,
-                              value: "Permanent",
-                              groupValue: widget.attribute.exceptionType,
-                              onChanged: ((value) {
-                                setState(() {
-                                  widget.attribute.exceptionType = value!;
-                                });
-                              }),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8.w,
-                          ),
-                          Text(
-                            "Permanent",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    fontSize: 14,
-                                    fontWeight: regular,
-                                    color: black_shade_1),
-                          ),
-                        ],
+                      Text(
+                        "Exception Type",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 14,
+                            fontWeight: semiBold,
+                            color: black_shade_1),
                       ),
                       SizedBox(
-                        width: 28.w,
+                        height: 17.h,
                       ),
                       Row(
                         children: [
-                          SizedBox(
-                            height: 10.h,
-                            width: 10.h,
-                            child: Radio(
-                              activeColor: solid_primary,
-                              value: "Temporary",
-                              groupValue: widget.attribute.exceptionType,
-                              onChanged: ((value) {
-                                setState(() {
-                                  widget.attribute.exceptionType = value!;
-                                });
-                              }),
-                            ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                height: 10.h,
+                                width: 10.h,
+                                child: Radio(
+                                  activeColor: solid_primary,
+                                  value: "Permanent",
+                                  groupValue: widget.attribute.exceptionType,
+                                  onChanged: ((value) {
+                                    setState(() {
+                                      widget.attribute.exceptionType = value!;
+                                    });
+                                  }),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8.w,
+                              ),
+                              Text(
+                                "Permanent",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: black_shade_1),
+                              ),
+                            ],
                           ),
                           SizedBox(
-                            width: 8.w,
+                            width: 28.w,
                           ),
-                          Text(
-                            "Temporary",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    fontSize: 14,
-                                    fontWeight: regular,
-                                    color: black_shade_1),
+                          Row(
+                            children: [
+                              SizedBox(
+                                height: 10.h,
+                                width: 10.h,
+                                child: Radio(
+                                  activeColor: solid_primary,
+                                  value: "Temporary",
+                                  groupValue: widget.attribute.exceptionType,
+                                  onChanged: ((value) {
+                                    setState(() {
+                                      widget.attribute.exceptionType = value!;
+                                    });
+                                  }),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8.w,
+                              ),
+                              Text(
+                                "Temporary",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: regular,
+                                        color: black_shade_1),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ):Spacer(),
+                )
+              : Spacer(),
           (widget.attribute.title != "Face" &&
-              widget.attribute.title != "Exception")?
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Comments",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 14,
-                        fontWeight: semiBold,
-                        color: black_shade_1),
-                  ),
-                  SizedBox(
-                    height: 11.h,
-                  ),
-                  SizedBox(
-                    width: 284.w,
-                    height: 129.h,
-                    child: TextField(
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: secondaryColors.elementAt(14),
+                  widget.attribute.title != "Exception")
+              ? Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Comments",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 14,
+                            fontWeight: semiBold,
+                            color: black_shade_1),
+                      ),
+                      SizedBox(
+                        height: 11.h,
+                      ),
+                      SizedBox(
+                        width: 284.w,
+                        height: 129.h,
+                        child: TextField(
+                          maxLines: 5,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                color: secondaryColors.elementAt(14),
+                              ),
+                            ),
+                            hintText: "Add comments for marking the exception",
+                            hintStyle: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                    fontSize: 14,
+                                    fontWeight: regular,
+                                    color: secondaryColors.elementAt(2)),
                           ),
                         ),
-                        hintText: "Add comments for marking the exception",
-                        hintStyle: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(
-                                fontSize: 14,
-                                fontWeight: regular,
-                                color: secondaryColors.elementAt(2)),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ):Spacer(),
+                )
+              : Spacer(),
         ],
       ),
     );

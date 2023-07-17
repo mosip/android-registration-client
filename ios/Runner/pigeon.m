@@ -26,25 +26,23 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
-void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
+void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.startRegistration"
+        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getUISchema"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:ProcessSpecApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(startRegistrationLanguages:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(startRegistrationLanguages:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getUISchemaWithCompletion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getUISchemaWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSArray<NSString *> *arg_languages = GetNullableObjectAtIndex(args, 0);
-        [api startRegistrationLanguages:arg_languages completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+        [api getUISchemaWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -55,15 +53,15 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.checkMVEL"
+        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getStringValueGlobalParam"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:ProcessSpecApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(checkMVELExpression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(checkMVELExpression:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getStringValueGlobalParamKey:completion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getStringValueGlobalParamKey:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_expression = GetNullableObjectAtIndex(args, 0);
-        [api checkMVELExpression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_key = GetNullableObjectAtIndex(args, 0);
+        [api getStringValueGlobalParamKey:arg_key completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -74,15 +72,13 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.getPreviewTemplate"
+        initWithName:@"dev.flutter.pigeon.ProcessSpecApi.getNewProcessSpec"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:ProcessSpecApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateIsPreview:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateIsPreview:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getNewProcessSpecWithCompletion:)], @"ProcessSpecApi api (%@) doesn't respond to @selector(getNewProcessSpecWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 0);
-        [api getPreviewTemplateIsPreview:arg_isPreview completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getNewProcessSpecWithCompletion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
