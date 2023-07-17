@@ -19,14 +19,14 @@ class RegistrationImpl implements Registration {
 
     return registrationStartResponse;
   }
-  
+
   @override
-  Future<bool> checkMVEL(String expression) async {
+  Future<bool> evaluateMVEL(String fieldData, String expression) async {
     bool isMvelValid = false;
     try {
-      isMvelValid = await RegistrationDataApi().checkMVEL(expression);
+      isMvelValid = await RegistrationDataApi().evaluateMVEL(fieldData, expression);
     } on PlatformException {
-      debugPrint('RegApi call failed');
+      debugPrint('RegApi mvel call failed');
     } catch (e) {
       debugPrint('Registration not completed! ${e.toString()}');
     }

@@ -55,15 +55,16 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.checkMVEL"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.evaluateMVEL"
         binaryMessenger:binaryMessenger
         codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(checkMVELExpression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(checkMVELExpression:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(evaluateMVELFieldData:expression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(evaluateMVELFieldData:expression:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_expression = GetNullableObjectAtIndex(args, 0);
-        [api checkMVELExpression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_fieldData = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_expression = GetNullableObjectAtIndex(args, 1);
+        [api evaluateMVELFieldData:arg_fieldData expression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

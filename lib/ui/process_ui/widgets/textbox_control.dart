@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -23,10 +24,9 @@ class TextBoxControl extends StatefulWidget {
 class _TextBoxControlState extends State<TextBoxControl> {
   bool isMvelValid = true;
 
-  validateMvel(String? engine, String? expression) async {
+  evaluateMVEL(String fieldData, String? engine, String? expression) async {
     final Registration registration = Registration();
-    registration.checkMVEL(expression!).then((value) {
-      log(value.toString());
+    registration.evaluateMVEL(fieldData, expression!).then((value) {
       setState(() {
         isMvelValid = value;
       });
@@ -37,8 +37,11 @@ class _TextBoxControlState extends State<TextBoxControl> {
   void initState() {
     if (widget.e.required == false) {
       if (widget.e.requiredOn!.isNotEmpty) {
-        validateMvel(
-            widget.e.requiredOn?[0]?.engine, widget.e.requiredOn?[0]?.expr);
+        evaluateMVEL(
+          jsonEncode(widget.e.toJson()),
+          widget.e.requiredOn?[0]?.engine,
+          widget.e.requiredOn?[0]?.expr,
+        );
       }
     }
     super.initState();

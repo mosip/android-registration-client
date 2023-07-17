@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +13,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
 
 @Singleton
@@ -41,12 +46,15 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void checkMVEL(@NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void evaluateMVEL(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
-            result.success(true);
+            FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {});
+            this.registrationDto = this.registrationService.getRegistrationDto();
+            boolean isFieldVisible = UserInterfaceHelperService.isFieldVisible(fieldSpecDto, this.registrationDto.getMVELDataContext());
+            result.success(isFieldVisible);
             return;
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Mvel Evaluation failed!" + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), "Object Mapping error: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(false);
     }
@@ -55,9 +63,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            Log.e(getClass().getSimpleName(), "Template: " + this.registrationDto.getDemographics());
             String template = this.templateService.getTemplate(this.registrationDto, true);
-            Log.e(getClass().getSimpleName(), "Template: " + template);
             result.success("");
             return;
         } catch (Exception e) {
