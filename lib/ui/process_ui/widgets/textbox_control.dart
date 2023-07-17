@@ -59,13 +59,6 @@ class _TextBoxControlState extends State<TextBoxControl> {
     if (singleTextBox.contains(widget.e.subType)) {
       choosenLang = ["English"];
     }
-    List<String> excluded = [
-      "email",
-      "phone",
-      "introducerUIN",
-      "introducerRID",
-      "referenceIdentityNumber",
-    ];
     return isMvelValid
         ? Card(
             elevation: 0,
@@ -87,17 +80,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                           margin: const EdgeInsets.only(bottom: 8),
                           child: TextFormField(
                             onSaved: (value) {
-                              if (excluded.contains(widget.e.id)) {
-                                context.read<GlobalProvider>().setInputMapValue(
-                                    widget.e.id!,
-                                    value,
-                                    context
-                                        .read<GlobalProvider>()
-                                        .feildDemographicsValues);
-                                context
-                                    .read<RegistrationTaskProvider>()
-                                    .addDemographicField(widget.e.id!, value!);
-                              } else {
+                              if (widget.e.type == 'simpleType') {
                                 context
                                     .read<GlobalProvider>()
                                     .setLanguageSpecificValue(
@@ -111,6 +94,16 @@ class _TextBoxControlState extends State<TextBoxControl> {
                                     .read<RegistrationTaskProvider>()
                                     .addSimpleTypeDemographicField(
                                         widget.e.id!, value!, lang);
+                              } else {
+                                context.read<GlobalProvider>().setInputMapValue(
+                                    widget.e.id!,
+                                    value,
+                                    context
+                                        .read<GlobalProvider>()
+                                        .feildDemographicsValues);
+                                context
+                                    .read<RegistrationTaskProvider>()
+                                    .addDemographicField(widget.e.id!, value!);
                               }
                             },
                             validator: (value) {

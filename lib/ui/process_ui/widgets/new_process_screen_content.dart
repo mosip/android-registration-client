@@ -16,16 +16,7 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
-import 'dart:developer';
-
-import 'package:registration_client/utils/app_config.dart';
-
-
-
-
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
-
-import '../../../platform_spi/registration.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -106,6 +97,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
         switch (e.subType) {
           case "Region":
             options = locationResponse.regionList;
+            break;
+          case "Province":
+            options = locationResponse.provinceList;
             break;
           case "City":
             options = locationResponse.cityList;

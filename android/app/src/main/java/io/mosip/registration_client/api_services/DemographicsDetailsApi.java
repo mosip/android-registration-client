@@ -62,7 +62,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
         try {
             this.registrationService.getRegistrationDto().setConsent(consentData);
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Add date field failed!" + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), "Add consent dto failed!" + Arrays.toString(e.getStackTrace()));
         }
     }
 }
