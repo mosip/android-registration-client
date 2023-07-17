@@ -44,7 +44,7 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSArray<NSString *> *arg_languages = GetNullableObjectAtIndex(args, 0);
-        [api startRegistrationLanguages:arg_languages completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+        [api startRegistrationLanguages:arg_languages completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

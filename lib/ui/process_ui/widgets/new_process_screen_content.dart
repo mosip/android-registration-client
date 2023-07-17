@@ -129,6 +129,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
               DropDownControl(
                 id: e.id ?? "",
                 options: options,
+                type: e.type ?? "",
               ),
             ],
           ),

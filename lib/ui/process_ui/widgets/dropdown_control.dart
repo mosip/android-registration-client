@@ -12,10 +12,12 @@ class DropDownControl extends StatefulWidget {
     super.key,
     required this.id,
     required this.options,
+    required this.type,
   });
 
   final String id;
   final List<String?> options;
+  final String type;
 
   @override
   State<DropDownControl> createState() => _CustomDropDownState();
@@ -38,13 +40,7 @@ class _CustomDropDownState extends State<DropDownControl> {
       child: DropdownButtonFormField(
         icon: const Icon(null),
         onSaved: (value) {
-          if (widget.id == 'postalCode') {
-            context.read<GlobalProvider>().setInputMapValue(widget.id, value,
-                context.read<GlobalProvider>().feildDemographicsValues);
-            if(value != null) {
-                  context.read<RegistrationTaskProvider>().addDemographicField(widget.id, value);
-                }
-          } else {
+          if (widget.type == 'simpleType') {
             context.read<GlobalProvider>().setLanguageSpecificValue(
                 widget.id,
                 value,
@@ -52,6 +48,12 @@ class _CustomDropDownState extends State<DropDownControl> {
                 context.read<GlobalProvider>().feildDemographicsValues);
                 if(value != null) {
                   context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.id, value, "eng");
+                }
+          } else {
+            context.read<GlobalProvider>().setInputMapValue(widget.id, value,
+                context.read<GlobalProvider>().feildDemographicsValues);
+            if(value != null) {
+                  context.read<RegistrationTaskProvider>().addDemographicField(widget.id, value);
                 }
           }
         },

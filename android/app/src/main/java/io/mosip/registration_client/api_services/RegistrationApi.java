@@ -26,17 +26,18 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         this.registrationService = registrationService;
         this.templateService = templateService;
     }
-
     @Override
-    public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<String> result) {
+        String response = "";
         try {
             this.registrationDto = registrationService.startRegistration(languages);
-            result.success(true);
+            result.success(response);
             return;
         } catch (Exception e) {
+            response = e.getMessage();
             Log.e(getClass().getSimpleName(), "Registration start failed");
         }
-        result.success(false);
+        result.success(response);
     }
 
     @Override
@@ -54,6 +55,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
+            Log.e(getClass().getSimpleName(), "Template: " + this.registrationDto.getDemographics());
             String template = this.templateService.getTemplate(this.registrationDto, true);
             Log.e(getClass().getSimpleName(), "Template: " + template);
             result.success("");

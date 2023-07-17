@@ -5,17 +5,19 @@ import 'package:registration_client/platform_spi/registration.dart';
 
 class RegistrationImpl implements Registration {
   @override
-  Future<bool> startRegistration(List<String> langauages) async {
-    bool isRegistered = false;
+  Future<String> startRegistration(List<String> langauages) async {
+    String registrationStartResponse = '';
     try {
-      isRegistered = await RegistrationDataApi().startRegistration(langauages);
+      registrationStartResponse = await RegistrationDataApi().startRegistration(langauages);
     } on PlatformException {
+      registrationStartResponse = "Something went wrong!";
       debugPrint('RegApi call failed');
     } catch (e) {
+      registrationStartResponse = "Something went wrong!";
       debugPrint('Registration not completed! ${e.toString()}');
     }
 
-    return isRegistered;
+    return registrationStartResponse;
   }
   
   @override

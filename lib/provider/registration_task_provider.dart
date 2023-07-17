@@ -12,6 +12,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
   bool _isRegistrationStartSuccess = false;
+  String _registrationStartError = '';
 
   String _previewTemplate = "";
 
@@ -20,6 +21,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get uiSchema => _uiSchema;
   bool get isRegistrationStartSuccess => _isRegistrationStartSuccess;
   String get previewTemplate => _previewTemplate;
+  String get registrationStartError => _registrationStartError;
 
   set listOfProcesses(List<Object?> value) {
     this._listOfProcesses = value;
@@ -72,7 +74,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   startRegistration(List<String> languages) async {
-    _isRegistrationStartSuccess = await registration.startRegistration(languages);
+    _registrationStartError = await registration.startRegistration(languages);
     notifyListeners();
   }
 
