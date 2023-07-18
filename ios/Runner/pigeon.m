@@ -21,7 +21,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-<<<<<<< HEAD
 @interface User ()
 + (User *)fromList:(NSArray *)list;
 + (nullable User *)nullableFromList:(NSArray *)list;
@@ -90,7 +89,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.machineName ?: [NSNull null]),
     (self.machineId ?: [NSNull null]),
     (self.failedAttempts ?: [NSNull null]),
-=======
 @interface Sync ()
 + (Sync *)fromList:(NSArray *)list;
 + (nullable Sync *)nullableFromList:(NSArray *)list;
@@ -127,13 +125,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     (self.syncType ?: [NSNull null]),
     (self.syncProgress ?: [NSNull null]),
->>>>>>> 92cebc7 (auto data sync done)
     (self.errorCode ?: [NSNull null]),
   ];
 }
 @end
 
-<<<<<<< HEAD
 @interface UserApiCodecReader : FlutterStandardReader
 @end
 @implementation UserApiCodecReader
@@ -141,7 +137,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   switch (type) {
     case 128: 
       return [User fromList:[self readValue]];
-=======
 @implementation SyncTime
 + (instancetype)makeWithSyncTime:(nullable NSString *)syncTime {
   SyncTime* pigeonResult = [[SyncTime alloc] init];
@@ -172,26 +167,22 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
       return [Sync fromList:[self readValue]];
     case 129: 
       return [SyncTime fromList:[self readValue]];
->>>>>>> 92cebc7 (auto data sync done)
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-<<<<<<< HEAD
 @interface UserApiCodecWriter : FlutterStandardWriter
 @end
 @implementation UserApiCodecWriter
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[User class]]) {
-=======
 @interface SyncApiCodecWriter : FlutterStandardWriter
 @end
 @implementation SyncApiCodecWriter
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[Sync class]]) {
->>>>>>> 92cebc7 (auto data sync done)
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[SyncTime class]]) {
@@ -203,7 +194,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-<<<<<<< HEAD
 @interface UserApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
 @implementation UserApiCodecReaderWriter
@@ -220,7 +210,6 @@ NSObject<FlutterMessageCodec> *UserApiGetCodec(void) {
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
     UserApiCodecReaderWriter *readerWriter = [[UserApiCodecReaderWriter alloc] init];
-=======
 @interface SyncApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
 @implementation SyncApiCodecReaderWriter
@@ -237,13 +226,11 @@ NSObject<FlutterMessageCodec> *SyncApiGetCodec(void) {
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
     SyncApiCodecReaderWriter *readerWriter = [[SyncApiCodecReaderWriter alloc] init];
->>>>>>> 92cebc7 (auto data sync done)
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-<<<<<<< HEAD
 void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
@@ -257,7 +244,6 @@ void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> 
         NSArray *args = message;
         NSString *arg_username = GetNullableObjectAtIndex(args, 0);
         [api validateUserUsername:arg_username completion:^(User *_Nullable output, FlutterError *_Nullable error) {
-=======
 void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
@@ -354,7 +340,6 @@ void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> 
       NSCAssert([api respondsToSelector:@selector(getMasterDataSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getMasterDataSyncWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api getMasterDataSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
->>>>>>> 92cebc7 (auto data sync done)
           callback(wrapResult(output, error));
         }];
       }];

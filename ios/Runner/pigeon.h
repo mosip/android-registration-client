@@ -10,7 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-<<<<<<< HEAD
 @class User;
 
 @interface User : NSObject
@@ -50,7 +49,6 @@ NSObject<FlutterMessageCodec> *UserApiGetCodec(void);
 @end
 
 extern void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *_Nullable api);
-=======
 @class Sync;
 @class SyncTime;
 
@@ -81,6 +79,5 @@ NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
 @end
 
 extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
->>>>>>> 92cebc7 (auto data sync done)
 
 NS_ASSUME_NONNULL_END
