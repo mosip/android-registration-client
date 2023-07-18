@@ -47,6 +47,18 @@ class _TextBoxControlState extends State<TextBoxControl> {
     super.initState();
   }
 
+  void saveData(value, lang) {
+    if (widget.e.type == 'simpleType') {
+      context
+          .read<RegistrationTaskProvider>()
+          .addSimpleTypeDemographicField(widget.e.id!, value!, lang);
+    } else {
+      context
+          .read<RegistrationTaskProvider>()
+          .addDemographicField(widget.e.id!, value!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
@@ -62,6 +74,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
     if (singleTextBox.contains(widget.e.subType)) {
       choosenLang = ["English"];
     }
+
     return isMvelValid
         ? Card(
             elevation: 0,
@@ -82,33 +95,8 @@ class _TextBoxControlState extends State<TextBoxControl> {
                         return Container(
                           margin: const EdgeInsets.only(bottom: 8),
                           child: TextFormField(
-                            onSaved: (value) {
-                              if (widget.e.type == 'simpleType') {
-                                context
-                                    .read<GlobalProvider>()
-                                    .setLanguageSpecificValue(
-                                        widget.e.id!,
-                                        value,
-                                        lang,
-                                        context
-                                            .read<GlobalProvider>()
-                                            .feildDemographicsValues);
-                                context
-                                    .read<RegistrationTaskProvider>()
-                                    .addSimpleTypeDemographicField(
-                                        widget.e.id!, value!, lang);
-                              } else {
-                                context.read<GlobalProvider>().setInputMapValue(
-                                    widget.e.id!,
-                                    value,
-                                    context
-                                        .read<GlobalProvider>()
-                                        .feildDemographicsValues);
-                                context
-                                    .read<RegistrationTaskProvider>()
-                                    .addDemographicField(widget.e.id!, value!);
-                              }
-                            },
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a value';
@@ -116,6 +104,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                               if (!widget.validation.hasMatch(value)) {
                                 return 'Invalid input';
                               }
+                              saveData(value, lang);
                               return null;
                             },
                             textAlign: (lang == 'ara')

@@ -17,12 +17,20 @@ class RadioButtonControl extends StatefulWidget {
 }
 
 class _RadioFormFieldState extends State<RadioButtonControl> {
+  @override
+  void initState() {
+    context
+        .read<RegistrationTaskProvider>()
+        .addSimpleTypeDemographicField(widget.id, widget.values[0], "eng");
+    super.initState();
+  }
+
   String? selectedOption;
 
   void handleOptionChange(String? value) {
-    context.read<GlobalProvider>().setLanguageSpecificValue(widget.id, value,
-        "eng", context.read<GlobalProvider>().feildDemographicsValues);
-    context.read<RegistrationTaskProvider>().addSimpleTypeDemographicField(widget.id, value!, "eng");
+    context
+        .read<RegistrationTaskProvider>()
+        .addSimpleTypeDemographicField(widget.id, value!, "eng");
     setState(() {
       selectedOption = value;
     });
@@ -39,7 +47,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                 Radio<String>(
                   activeColor: solid_primary,
                   value: e.toLowerCase(),
-                  groupValue: selectedOption,
+                  groupValue: selectedOption ?? widget.values[0].toLowerCase(),
                   onChanged: handleOptionChange,
                 ),
                 Text(e)

@@ -11,15 +11,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by RegistrationDataApi.
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
+/// The codec used by DemographicsApi.
+NSObject<FlutterMessageCodec> *DemographicsApiGetCodec(void);
 
-@protocol RegistrationDataApi
-- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)evaluateMVELFieldData:(NSString *)fieldData expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol DemographicsApi
+- (void)addDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)getDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)addSimpleTypeDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value language:(NSString *)language completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)getSimpleTypeDemographicFieldFieldId:(NSString *)fieldId language:(NSString *)language completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)setDateFieldFieldId:(NSString *)fieldId subType:(NSString *)subType day:(NSString *)day month:(NSString *)month year:(NSString *)year completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)removeDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setConsentFieldConsentData:(NSString *)consentData completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
+extern void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DemographicsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

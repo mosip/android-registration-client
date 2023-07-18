@@ -6,10 +6,18 @@ abstract class DemographicsApi {
   void addDemographicField(String fieldId, String value);
 
   @async
-  void addSimpleTypeDemographicField(String fieldId, String value, String language);
-  
-  @async 
-  void setDateField(String fieldId, String subType, String day, String month, String year);
+  String getDemographicField(String fieldId);
+
+  @async
+  void addSimpleTypeDemographicField(
+      String fieldId, String value, String language);
+
+  @async
+  String getSimpleTypeDemographicField(String fieldId, String language);
+
+  @async
+  void setDateField(
+      String fieldId, String subType, String day, String month, String year);
 
   @async
   void removeDemographicField(String fieldId);

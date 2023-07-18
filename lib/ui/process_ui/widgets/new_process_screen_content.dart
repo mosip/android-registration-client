@@ -127,6 +127,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 height: 10,
               ),
               DropDownControl(
+                validation: regexPattern,
                 id: e.id ?? "",
                 options: options,
                 type: e.type ?? "",
@@ -137,27 +138,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       );
     }
     if (e.controlType == "ageDate") {
-      return Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(feild: e),
-              const SizedBox(
-                height: 10,
-              ),
-              AgeDateControl(
-                format: e.format ?? "yyyy/MM/dd",
-                id: e.id ?? "",
-                validation: regexPattern,
-                subType: e.subType ?? "",
-              ),
-            ],
-          ),
-        ),
+      return AgeDateControl(
+        field: e,
+        validation: regexPattern,
       );
     }
 
@@ -167,7 +150,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: context.read<GlobalProvider>().formKey,
+      key: context.watch<GlobalProvider>().formKey,
       child: Column(
         children: [
           ...widget.screen.fields!.map((e) {
