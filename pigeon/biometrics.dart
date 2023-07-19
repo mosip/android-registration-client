@@ -9,7 +9,7 @@ abstract class BiometricsApi {
   List<String> getBestBiometrics(String fieldId, String modality);
 
   @async
-  List<Uint8List> extractImageValues();
+  List<Uint8List> extractImageValues(String fieldId, String modality);
 
 
 }

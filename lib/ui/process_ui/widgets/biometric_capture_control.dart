@@ -20,6 +20,12 @@ import 'package:registration_client/utils/app_config.dart';
 class BiometricCaptureControl extends StatefulWidget {
   BiometricCaptureControl({super.key, required this.field});
   final Field field;
+  int once = 0;
+  int once1 = 0;
+  int once2 = 0;
+  int once3 = 0;
+  int once4 = 0;
+  int once5 = 0;
   String biometricAttribute = "Iris";
   BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
@@ -132,8 +138,186 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     return avg;
   }
 
+  initialize() async {
+    List<String?> checkingValue = [];
+
+    await BiometricsApi()
+        .getBestBiometrics(widget.field.id!, "Iris")
+        .then((value) async {
+      checkingValue = value;
+    });
+
+    if (checkingValue.isNotEmpty) {
+      widget.iris.isScanned = true;
+      for (var e in checkingValue) {
+        widget.iris.listOfBiometricsDto
+            .add(BiometricsDto.fromJson(json.decode(e!)));
+      }
+      await BiometricsApi()
+          .extractImageValues(widget.field.id!, "Iris")
+          .then((value) {
+        widget.iris.listofImages = value;
+      });
+      setState(() {
+        widget.iris.qualityPercentage =
+            avgScore(widget.iris.listOfBiometricsDto);
+      });
+    }
+
+    widget.once = widget.once + 1;
+  }
+
+  initialize1() async {
+    List<String?> checkingValue = [];
+    await BiometricsApi()
+        .getBestBiometrics(widget.field.id!, "RightHand")
+        .then((value) async {
+      checkingValue = value;
+    });
+    if (checkingValue.isNotEmpty) {
+      widget.rightHand.isScanned = true;
+      for (var e in checkingValue) {
+        widget.rightHand.listOfBiometricsDto
+            .add(BiometricsDto.fromJson(json.decode(e!)));
+      }
+      await BiometricsApi()
+          .extractImageValues(widget.field.id!, "RightHand")
+          .then((value) {
+        widget.rightHand.listofImages = value;
+      });
+      setState(() {
+        widget.rightHand.qualityPercentage =
+            avgScore(widget.rightHand.listOfBiometricsDto);
+      });
+    }
+    widget.once1 = widget.once1 + 1;
+  }
+
+  initialize2() async {
+    List<String?> checkingValue = [];
+    await BiometricsApi()
+        .getBestBiometrics(widget.field.id!, "LeftHand")
+        .then((value) async {
+      checkingValue = value;
+    });
+    if (checkingValue.isNotEmpty) {
+      widget.leftHand.isScanned = true;
+      for (var e in checkingValue) {
+        widget.leftHand.listOfBiometricsDto
+            .add(BiometricsDto.fromJson(json.decode(e!)));
+      }
+      await BiometricsApi()
+          .extractImageValues(widget.field.id!, "LeftHand")
+          .then((value) {
+        widget.leftHand.listofImages = value;
+      });
+      setState(() {
+        widget.leftHand.qualityPercentage =
+            avgScore(widget.leftHand.listOfBiometricsDto);
+      });
+    }
+    widget.once2 = widget.once2 + 1;
+  }
+
+  initialize3() async {
+    List<String?> checkingValue = [];
+    await BiometricsApi()
+        .getBestBiometrics(widget.field.id!, "Face")
+        .then((value) async {
+      checkingValue = value;
+    });
+    if (checkingValue.isNotEmpty) {
+      widget.face.isScanned = true;
+      for (var e in checkingValue) {
+        widget.face.listOfBiometricsDto
+            .add(BiometricsDto.fromJson(json.decode(e!)));
+      }
+      await BiometricsApi()
+          .extractImageValues(widget.field.id!, "Face")
+          .then((value) {
+        widget.face.listofImages = value;
+      });
+      setState(() {
+        widget.face.qualityPercentage =
+            avgScore(widget.face.listOfBiometricsDto);
+      });
+    }
+    widget.once3 = widget.once3 + 1;
+  }
+
+  initialize4() async {
+    List<String?> checkingValue = [];
+    await BiometricsApi()
+        .getBestBiometrics(widget.field.id!, "Thumbs")
+        .then((value) async {
+      checkingValue = value;
+    });
+    if (checkingValue.isNotEmpty) {
+      widget.thumbs.isScanned = true;
+      for (var e in checkingValue) {
+        widget.thumbs.listOfBiometricsDto
+            .add(BiometricsDto.fromJson(json.decode(e!)));
+      }
+      await BiometricsApi()
+          .extractImageValues(widget.field.id!, "Thumbs")
+          .then((value) {
+        widget.thumbs.listofImages = value;
+      });
+      setState(() {
+        widget.thumbs.qualityPercentage =
+            avgScore(widget.thumbs.listOfBiometricsDto);
+      });
+    }
+    widget.once4 = widget.once4 + 1;
+  }
+
+  initialize5() async {
+    List<String?> checkingValue = [];
+    await BiometricsApi()
+        .getBestBiometrics(widget.field.id!, "Exception")
+        .then((value) async {
+      checkingValue = value;
+    });
+    if (checkingValue.isNotEmpty) {
+      widget.exception.isScanned = true;
+      for (var e in checkingValue) {
+        widget.exception.listOfBiometricsDto
+            .add(BiometricsDto.fromJson(json.decode(e!)));
+      }
+      await BiometricsApi()
+          .extractImageValues(widget.field.id!, "Exception")
+          .then((value) {
+        widget.exception.listofImages = value;
+      });
+      setState(() {
+        widget.exception.qualityPercentage =
+            avgScore(widget.exception.listOfBiometricsDto);
+      });
+    }
+    widget.once5 = widget.once5 + 1;
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.once <= 0) {
+      initialize();
+    }
+    if (widget.once1 <= 0) {
+      initialize1();
+    }
+    if (widget.once2 <= 0) {
+      initialize2();
+    }
+    if (widget.once3 <= 0) {
+      initialize3();
+    }
+    if (widget.once4 <= 0) {
+      initialize4();
+    }
+    if (widget.once5 <= 0) {
+      initialize5();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -167,6 +351,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           widget.field.bioAttributes!.contains("rightEye"))
                         InkWell(
                           onTap: () {
+                            print(widget.iris.title);
+                            print(widget.iris.listofImages);
                             setState(() {
                               widget.biometricAttribute = "Iris";
                             });
@@ -247,7 +433,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           widget.field.bioAttributes!.contains("rightRing") &&
                           widget.field.bioAttributes!.contains("rightMiddle"))
                         InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              print(widget.rightHand.title);
+                              print(widget.rightHand.listofImages);
                               setState(() {
                                 widget.biometricAttribute = "Right Hand";
                               });
@@ -332,6 +520,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           widget.field.bioAttributes!.contains("leftMiddle"))
                         InkWell(
                             onTap: () {
+                              print(widget.leftHand.title);
+                              print(widget.leftHand.listofImages);
                               setState(() {
                                 widget.biometricAttribute = "Left Hand";
                               });
@@ -531,7 +721,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .map((e) => Flexible(
                                                         child: Image.memory(
                                                           e,
-                                                         fit: BoxFit.fill,
+                                                          fit: BoxFit.fill,
                                                         ),
                                                       )),
                                             ],
@@ -694,7 +884,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               await BiometricsApi()
                                   .getBestBiometrics(widget.field.id!, "Iris");
                               await BiometricsApi()
-                                  .extractImageValues()
+                                  .extractImageValues(widget.field.id!, "Iris")
                                   .then((value) {
                                 temp = value;
                               });
@@ -770,7 +960,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                             widget.field.id!,
                                                             "Iris");
                                                     await BiometricsApi()
-                                                        .extractImageValues()
+                                                        .extractImageValues(
+                                                            widget.field.id!,
+                                                            "Iris")
                                                         .then((value) {
                                                       temp = value;
                                                     });
@@ -804,7 +996,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                       avgScore(widget.iris
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
-                                                      .extractImageValues()
+                                                      .extractImageValues(
+                                                          widget.field.id!,
+                                                          "Iris")
                                                       .then((value) {
                                                     widget.iris.listofImages =
                                                         value;
@@ -959,7 +1153,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               await BiometricsApi().getBestBiometrics(
                                   widget.field.id!, "RightHand");
                               await BiometricsApi()
-                                  .extractImageValues()
+                                  .extractImageValues(
+                                      widget.field.id!, "RightHand")
                                   .then((value) {
                                 temp = value;
                               });
@@ -1035,7 +1230,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                             widget.field.id!,
                                                             "RightHand");
                                                     await BiometricsApi()
-                                                        .extractImageValues()
+                                                        .extractImageValues(
+                                                            widget.field.id!,
+                                                            "RightHand")
                                                         .then((value) {
                                                       temp = value;
                                                     });
@@ -1069,7 +1266,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                       avgScore(widget.rightHand
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
-                                                      .extractImageValues()
+                                                      .extractImageValues(
+                                                          widget.field.id!,
+                                                          "RightHand")
                                                       .then((value) {
                                                     widget.rightHand
                                                         .listofImages = value;
@@ -1226,7 +1425,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               await BiometricsApi().getBestBiometrics(
                                   widget.field.id!, "LeftHand");
                               await BiometricsApi()
-                                  .extractImageValues()
+                                  .extractImageValues(
+                                      widget.field.id!, "LeftHand")
                                   .then((value) {
                                 temp = value;
                               });
@@ -1302,7 +1502,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                             widget.field.id!,
                                                             "LeftHand");
                                                     await BiometricsApi()
-                                                        .extractImageValues()
+                                                        .extractImageValues(
+                                                            widget.field.id!,
+                                                            "LeftHand")
                                                         .then((value) {
                                                       temp = value;
                                                     });
@@ -1336,7 +1538,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                       avgScore(widget.leftHand
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
-                                                      .extractImageValues()
+                                                      .extractImageValues(
+                                                          widget.field.id!,
+                                                          "LeftHand")
                                                       .then((value) {
                                                     widget.leftHand
                                                         .listofImages = value;
@@ -1492,7 +1696,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               await BiometricsApi().getBestBiometrics(
                                   widget.field.id!, "Thumbs");
                               await BiometricsApi()
-                                  .extractImageValues()
+                                  .extractImageValues(
+                                      widget.field.id!, "Thumbs")
                                   .then((value) {
                                 temp = value;
                               });
@@ -1568,7 +1773,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                             widget.field.id!,
                                                             "Thumbs");
                                                     await BiometricsApi()
-                                                        .extractImageValues()
+                                                        .extractImageValues(
+                                                            widget.field.id!,
+                                                            "Thumbs")
                                                         .then((value) {
                                                       temp = value;
                                                     });
@@ -1602,7 +1809,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                       avgScore(widget.thumbs
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
-                                                      .extractImageValues()
+                                                      .extractImageValues(
+                                                          widget.field.id!,
+                                                          "Thumbs")
                                                       .then((value) {
                                                     widget.thumbs.listofImages =
                                                         value;
@@ -1757,7 +1966,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               await BiometricsApi()
                                   .getBestBiometrics(widget.field.id!, "Face");
                               await BiometricsApi()
-                                  .extractImageValues()
+                                  .extractImageValues(widget.field.id!, "Face")
                                   .then((value) {
                                 temp = value;
                               });
@@ -1833,7 +2042,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                             widget.field.id!,
                                                             "Face");
                                                     await BiometricsApi()
-                                                        .extractImageValues()
+                                                        .extractImageValues(
+                                                            widget.field.id!,
+                                                            "Face")
                                                         .then((value) {
                                                       temp = value;
                                                     });
@@ -1867,7 +2078,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                       avgScore(widget.face
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
-                                                      .extractImageValues()
+                                                      .extractImageValues(
+                                                          widget.field.id!,
+                                                          "Face")
                                                       .then((value) {
                                                     widget.face.listofImages =
                                                         value;
@@ -2022,7 +2235,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               await BiometricsApi().getBestBiometrics(
                                   widget.field.id!, "Exception");
                               await BiometricsApi()
-                                  .extractImageValues()
+                                  .extractImageValues(
+                                      widget.field.id!, "Exception")
                                   .then((value) {
                                 temp = value;
                               });
@@ -2098,7 +2312,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                             widget.field.id!,
                                                             "Exception");
                                                     await BiometricsApi()
-                                                        .extractImageValues()
+                                                        .extractImageValues(
+                                                            widget.field.id!,
+                                                            "Exception")
                                                         .then((value) {
                                                       temp = value;
                                                     });
@@ -2132,7 +2348,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                       avgScore(widget.exception
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
-                                                      .extractImageValues()
+                                                      .extractImageValues(
+                                                          widget.field.id!,
+                                                          "Exception")
                                                       .then((value) {
                                                     widget.exception
                                                         .listofImages = value;

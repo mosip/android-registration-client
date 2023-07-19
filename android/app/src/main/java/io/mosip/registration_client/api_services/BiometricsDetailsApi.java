@@ -131,75 +131,85 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     }
 
     @Override
-    public void extractImageValues(@NonNull BiometricsPigeon.Result<List<byte[]>> result) {
+    public void extractImageValues(@NonNull String fieldId, @NonNull String modality, @NonNull BiometricsPigeon.Result<List<byte[]>> result) {
         List<Bitmap> listBitmaps=new ArrayList<>();
         List<byte[]> listByteArrayTester=new ArrayList<>();
-        switch (currentModality) {
-            case FACE:
-            {
-                try{
-                    Bitmap var5;
-                    ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(biometricsDtoList.get(0).getBioValue()));
-                    DataInputStream inputStream = new DataInputStream(bais);
-                    FaceBDIR faceBDIR = new FaceBDIR(inputStream);
-                    byte[] bytes = faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
-                    var5 = (new JP2Decoder(bytes)).decode();
-                    listBitmaps.add(var5);
-                }catch(Exception e){
-                    Log.e(TAG,e.getMessage());
-                }
-            }
-            break;
-            case FINGERPRINT_SLAB_LEFT:
-            case FINGERPRINT_SLAB_THUMBS:
-            case FINGERPRINT_SLAB_RIGHT:
-            {
-                try{
-                    Bitmap var5;
-                    for (int i = 0; i < biometricsDtoList.size(); i++) {
-                        ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(biometricsDtoList.get(i).getBioValue()));
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            String json;
+            List<String> jsonList=new ArrayList<>();
+
+            switch (getModality(modality)) {
+                case FACE:
+                {
+                    try{
+                        Bitmap var5;
+                        ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(registrationDto.getBestBiometrics(fieldId,getModality(modality)).get(0).getBioValue()));
                         DataInputStream inputStream = new DataInputStream(bais);
-                        FingerBDIR fingerBDIR = new FingerBDIR(inputStream);
-                        byte[] bytes = fingerBDIR.getRepresentation().getRepresentationBody().getImageData().getImage();
+                        FaceBDIR faceBDIR = new FaceBDIR(inputStream);
+                        byte[] bytes = faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
                         var5 = (new JP2Decoder(bytes)).decode();
                         listBitmaps.add(var5);
+                    }catch(Exception e){
+                        Log.e(TAG,e.getMessage());
                     }
-                }catch (Exception e){
-                    Log.e(TAG,e.getMessage());
                 }
-            }
-            break;
-            case IRIS_DOUBLE:
-            {
-                try{
-                    Bitmap var5;
-                    for (int i = 0; i < biometricsDtoList.size(); i++){
-                        ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(biometricsDtoList.get(0).getBioValue()));
-                        DataInputStream inputStream = new DataInputStream(bais);
-                        IrisBDIR irisBDIR = new IrisBDIR(inputStream);
-                        byte[] bytes = irisBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
-                        var5 = (new JP2Decoder(bytes)).decode();
-                        listBitmaps.add(var5);
-                    }
-                }catch (Exception e){
-                    Log.e(TAG,e.getMessage());
-                }
-            }
-            break;
-            case EXCEPTION_PHOTO:
-                
                 break;
-        }
-        for (int i = 0; i < listBitmaps.size(); i++) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            listBitmaps.get(i).compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byteArrayTester= stream.toByteArray();
-            listByteArrayTester.add(byteArrayTester);
-        }
+                case FINGERPRINT_SLAB_LEFT:
+                case FINGERPRINT_SLAB_THUMBS:
+                case FINGERPRINT_SLAB_RIGHT:
+                {
+                    try{
+                        Bitmap var5;
+                        for (int i = 0; i < registrationDto.getBestBiometrics(fieldId,getModality(modality)).size(); i++) {
+                            ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(registrationDto.getBestBiometrics(fieldId,getModality(modality)).get(i).getBioValue()));
+                            DataInputStream inputStream = new DataInputStream(bais);
+                            FingerBDIR fingerBDIR = new FingerBDIR(inputStream);
+                            byte[] bytes = fingerBDIR.getRepresentation().getRepresentationBody().getImageData().getImage();
+                            var5 = (new JP2Decoder(bytes)).decode();
+                            listBitmaps.add(var5);
+                        }
+                    }catch (Exception e){
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+                break;
+                case IRIS_DOUBLE:
+                {
+                    try{
+                        Bitmap var5;
+                        for (int i = 0; i < registrationDto.getBestBiometrics(fieldId,getModality(modality)).size(); i++){
+                            ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(registrationDto.getBestBiometrics(fieldId,getModality(modality)).get(0).getBioValue()));
+                            DataInputStream inputStream = new DataInputStream(bais);
+                            IrisBDIR irisBDIR = new IrisBDIR(inputStream);
+                            byte[] bytes = irisBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
+                            var5 = (new JP2Decoder(bytes)).decode();
+                            listBitmaps.add(var5);
+                        }
+                    }catch (Exception e){
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+                break;
+                case EXCEPTION_PHOTO:
+
+                    break;
+            }
+            for (int i = 0; i < listBitmaps.size(); i++) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                listBitmaps.get(i).compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byteArrayTester= stream.toByteArray();
+                listByteArrayTester.add(byteArrayTester);
+            }
 
 
-        listByteArrayTester1=listByteArrayTester;
-        result.success(listByteArrayTester1);
+            listByteArrayTester1=listByteArrayTester;
+            result.success(listByteArrayTester1);
+        }catch (Exception e){
+            Log.e(TAG,e.getMessage());
+        }
     }
 
 

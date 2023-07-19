@@ -11,15 +11,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by ProcessSpecApi.
-NSObject<FlutterMessageCodec> *ProcessSpecApiGetCodec(void);
+/// The codec used by BiometricsApi.
+NSObject<FlutterMessageCodec> *BiometricsApiGetCodec(void);
 
-@protocol ProcessSpecApi
-- (void)getUISchemaWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getStringValueGlobalParamKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getNewProcessSpecWithCompletion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+@protocol BiometricsApi
+- (void)invokeDiscoverSbiFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getBestBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)extractImageValuesFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void ProcessSpecApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ProcessSpecApi> *_Nullable api);
+extern void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<BiometricsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
