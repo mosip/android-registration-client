@@ -9,9 +9,12 @@ class ProcessSpecImpl implements ProcessSpec {
     List<String?> listOfProcesses;
     try {
       listOfProcesses = await ProcessSpecApi().getNewProcessSpec();
-    } on PlatformException catch (e) {
-      debugPrint(e.message);
-      listOfProcesses = [];
+    } on PlatformException {
+      debugPrint("Process Spec Api failed!");
+      listOfProcesses = List.empty();
+    }  catch (e) {
+      listOfProcesses = List.empty();
+      debugPrint("Process spec fetch error: $e");
     }
     
     return listOfProcesses;

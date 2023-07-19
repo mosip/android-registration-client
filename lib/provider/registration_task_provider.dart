@@ -11,20 +11,18 @@ class RegistrationTaskProvider with ChangeNotifier {
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
-  bool _isRegistrationStartSuccess = false;
   String _registrationStartError = '';
 
   String _previewTemplate = "";
 
-  List<Object?> get listOfProcesses => this._listOfProcesses;
+  List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
-  bool get isRegistrationStartSuccess => _isRegistrationStartSuccess;
   String get previewTemplate => _previewTemplate;
   String get registrationStartError => _registrationStartError;
 
   set listOfProcesses(List<Object?> value) {
-    this._listOfProcesses = value;
+    _listOfProcesses = value;
     notifyListeners();
   }
 

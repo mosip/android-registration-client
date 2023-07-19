@@ -88,7 +88,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
       if (!widget.validation.hasMatch(targetDateString)) {
         return message;
       }
-      saveData();
       return null;
     } catch (e) {
       log("error");
@@ -161,6 +160,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           if (value.length >= 2) {
                             focusNextField(dayFocus, monthFocus);
                           }
+                          saveData();
                         },
                         maxLength: 2,
                         focusNode: dayFocus,
@@ -193,6 +193,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           if (value.length >= 2) {
                             focusNextField(monthFocus, yearFocus);
                           }
+                          saveData();
                         },
                         maxLength: 2,
                         focusNode: monthFocus,
@@ -218,6 +219,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
                       child: TextFormField(
                         validator: (value) {
                           return feildValidation(value, "yyyy");
+                        },
+                        onChanged: (value) {
+                          saveData();
                         },
                         onTap: () => _removeFocusFromAll("year"),
                         autovalidateMode: AutovalidateMode.onUserInteraction,

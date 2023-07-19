@@ -127,8 +127,9 @@ class _TextBoxControlState extends State<TextBoxControl> {
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                                 initialValue: _getDataFromMap(lang),
-                            onSaved: (value) {
+                            onChanged: (value) {
                               _saveDataToMap(value, lang);
+                              saveData(value, lang);
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -137,7 +138,6 @@ class _TextBoxControlState extends State<TextBoxControl> {
                               if (!widget.validation.hasMatch(value)) {
                                 return 'Invalid input';
                               }
-                              saveData(value, lang);
                               return null;
                             },
                             textAlign: (lang == 'ara')

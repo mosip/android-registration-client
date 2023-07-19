@@ -29,21 +29,22 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   @override
   void initState() {
-    if(context.read<GlobalProvider>().feildDemographicsValues.containsKey(widget.id)) {
+    if (context
+        .read<GlobalProvider>()
+        .feildDemographicsValues
+        .containsKey(widget.id)) {
       _getSelectedValueFromMap("eng");
     }
     super.initState();
   }
 
   void saveData(value) {
-    if (widget.type == 'simpleType') {
-      if (value != null) {
+    if (value != null) {
+      if (widget.type == 'simpleType') {
         context
             .read<RegistrationTaskProvider>()
             .addSimpleTypeDemographicField(widget.id, value, "eng");
-      }
-    } else {
-      if (value != null) {
+      } else {
         context
             .read<RegistrationTaskProvider>()
             .addDemographicField(widget.id, value);
@@ -52,33 +53,32 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   void _saveDataToMap(value) {
-    if (widget.type == 'simpleType') {
-      if (value != null) {
+    if (value != null) {
+      if (widget.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
-          widget.id,
-          value!,
-          "eng",
-          context.read<GlobalProvider>().feildDemographicsValues,
-        );
-      }
-    } else {
-      if (value != null) {
+              widget.id,
+              value!,
+              "eng",
+              context.read<GlobalProvider>().feildDemographicsValues,
+            );
+      } else {
         context.read<GlobalProvider>().setInputMapValue(
-          widget.id,
-          value!,
-          context.read<GlobalProvider>().feildDemographicsValues,
-        );
+              widget.id,
+              value!,
+              context.read<GlobalProvider>().feildDemographicsValues,
+            );
       }
     }
   }
 
   void _getSelectedValueFromMap(String lang) {
     String response = "";
-    if(widget.type == 'simpleType') {
-      response = 
-          context.read<GlobalProvider>().feildDemographicsValues[widget.id][lang]['value'];
+    if (widget.type == 'simpleType') {
+      response = context
+          .read<GlobalProvider>()
+          .feildDemographicsValues[widget.id][lang]['value'];
     } else {
-      response = 
+      response =
           context.read<GlobalProvider>().feildDemographicsValues[widget.id];
     }
     setState(() {
@@ -121,12 +121,10 @@ class _CustomDropDownState extends State<DropDownControl> {
       },
       onChanged: (value) {
         saveData(value);
+        _saveDataToMap(value);
         setState(() {
           selected = value!;
         });
-      },
-      onSaved: (value) {
-        _saveDataToMap(value);
       },
     );
   }
