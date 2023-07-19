@@ -78,6 +78,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 RadioButtonControl(
                   id: e.id ?? "",
                   values: values[e.subType] ?? [],
+                  type: e.type ?? "",
                 ),
               ],
             ),

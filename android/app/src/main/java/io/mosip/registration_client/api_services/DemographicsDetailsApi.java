@@ -28,7 +28,6 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     public void addDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
             this.registrationService.getRegistrationDto().addDemographicField(fieldId, value);
-            Log.e(getClass().getSimpleName(), "Add field failed!" + this.registrationService.getRegistrationDto().getDemographics());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add field failed!" + Arrays.toString(e.getStackTrace()));
         }
@@ -57,7 +56,6 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     public void addSimpleTypeDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull String language, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
             this.registrationService.getRegistrationDto().addDemographicField(fieldId, value, language);
-            Log.e(getClass().getSimpleName(), "Add field failed!" + this.registrationService.getRegistrationDto().getDemographics());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add simple type field failed!" + Arrays.toString(e.getStackTrace()));
         }

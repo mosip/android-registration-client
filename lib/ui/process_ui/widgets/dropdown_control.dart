@@ -25,7 +25,15 @@ class DropDownControl extends StatefulWidget {
 }
 
 class _CustomDropDownState extends State<DropDownControl> {
-  String selected = "Select feild";
+  String? selected;
+
+  @override
+  void initState() {
+    if(context.read<GlobalProvider>().feildDemographicsValues.containsKey(widget.id)) {
+      _getSelectedValueFromMap("eng");
+    }
+    super.initState();
+  }
 
   void saveData(value) {
     if (widget.type == 'simpleType') {
@@ -43,6 +51,41 @@ class _CustomDropDownState extends State<DropDownControl> {
     }
   }
 
+  void _saveDataToMap(value) {
+    if (widget.type == 'simpleType') {
+      if (value != null) {
+        context.read<GlobalProvider>().setLanguageSpecificValue(
+          widget.id,
+          value!,
+          "eng",
+          context.read<GlobalProvider>().feildDemographicsValues,
+        );
+      }
+    } else {
+      if (value != null) {
+        context.read<GlobalProvider>().setInputMapValue(
+          widget.id,
+          value!,
+          context.read<GlobalProvider>().feildDemographicsValues,
+        );
+      }
+    }
+  }
+
+  void _getSelectedValueFromMap(String lang) {
+    String response = "";
+    if(widget.type == 'simpleType') {
+      response = 
+          context.read<GlobalProvider>().feildDemographicsValues[widget.id][lang]['value'];
+    } else {
+      response = 
+          context.read<GlobalProvider>().feildDemographicsValues[widget.id];
+    }
+    setState(() {
+      selected = response;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField(
@@ -56,7 +99,7 @@ class _CustomDropDownState extends State<DropDownControl> {
             width: 1.0,
           ),
         ),
-        hintText: selected,
+        hintText: "Select Option",
         hintStyle: const TextStyle(color: Color(0xff999999)),
       ),
       items: widget.options
@@ -66,6 +109,7 @@ class _CustomDropDownState extends State<DropDownControl> {
               ))
           .toList(),
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      value: selected,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter a value';
@@ -80,6 +124,9 @@ class _CustomDropDownState extends State<DropDownControl> {
         setState(() {
           selected = value!;
         });
+      },
+      onSaved: (value) {
+        _saveDataToMap(value);
       },
     );
   }

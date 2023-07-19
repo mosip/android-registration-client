@@ -33,6 +33,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
   final yearFocus = FocusNode();
 
   @override
+  void initState() {
+    _getSavedDate();
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _dayController.dispose();
     _monthController.dispose();
@@ -91,11 +97,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
   }
 
   void saveData() {
-    // String targetDateString = widget.field.format ??
-    //     "yyyy/MM/dd"
-    //         .replaceAll('dd', _dayController.text.padLeft(2, '0'))
-    //         .replaceAll('MM', _monthController.text.padLeft(2, '0'))
-    //         .replaceAll('yyyy', _yearController.text);
+    String targetDateString = widget.field.format ??
+        "yyyy/MM/dd"
+            .replaceAll('dd', _dayController.text.padLeft(2, '0'))
+            .replaceAll('MM', _monthController.text.padLeft(2, '0'))
+            .replaceAll('yyyy', _yearController.text);
 
     context.read<RegistrationTaskProvider>().setDateField(
           widget.field.id ?? "",
@@ -104,6 +110,24 @@ class _AgeDateControlState extends State<AgeDateControl> {
           _monthController.text.padLeft(2, '0'),
           _yearController.text,
         );
+    context.read<GlobalProvider>().setInputMapValue(
+          widget.field.id!,
+          targetDateString,
+          context.read<GlobalProvider>().feildDemographicsValues,
+        );
+  }
+  
+  void _getSavedDate() {
+    if(context.read<GlobalProvider>().feildDemographicsValues.containsKey(widget.field.id)) {
+      String targetDateFormat = widget.field.format ??
+        "yyyy/MM/dd";
+            
+      String savedDate = context.read<GlobalProvider>().feildDemographicsValues[widget.field.id];
+      DateTime parsedDate = DateFormat(targetDateFormat).parse(savedDate);
+      _dayController.text = parsedDate.day.toString().padLeft(2, '0');
+      _monthController.text = parsedDate.month.toString().padLeft(2, '0');
+      _yearController.text = parsedDate.year.toString();
+    }
   }
 
   @override

@@ -59,6 +59,35 @@ class _TextBoxControlState extends State<TextBoxControl> {
     }
   }
 
+  void _saveDataToMap(value, lang) {
+    if (widget.e.type == 'simpleType') {
+      context.read<GlobalProvider>().setLanguageSpecificValue(
+            widget.e.id!,
+            value!,
+            lang,
+            context.read<GlobalProvider>().feildDemographicsValues,
+          );
+    } else {
+      context.read<GlobalProvider>().setInputMapValue(
+            widget.e.id!,
+            value!,
+            context.read<GlobalProvider>().feildDemographicsValues,
+          );
+    }
+  }
+
+  String _getDataFromMap(String lang) {
+    String response = "";
+    if(context.read<GlobalProvider>().feildDemographicsValues.containsKey(widget.e.id)) {
+      if(widget.e.type == 'simpleType') {
+        response = context.read<GlobalProvider>().feildDemographicsValues[widget.e.id][lang]['value'];
+      } else {
+        response = context.read<GlobalProvider>().feildDemographicsValues[widget.e.id];
+      }
+    }
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
@@ -97,6 +126,10 @@ class _TextBoxControlState extends State<TextBoxControl> {
                           child: TextFormField(
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
+                                initialValue: _getDataFromMap(lang),
+                            onSaved: (value) {
+                              _saveDataToMap(value, lang);
+                            },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a value';

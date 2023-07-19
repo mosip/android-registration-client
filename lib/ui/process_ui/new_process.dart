@@ -153,6 +153,11 @@ class NewProcess extends StatelessWidget {
                       context
                           .read<GlobalProvider>()
                           .formKey
+                          .currentState!
+                          .save();
+                      context
+                          .read<GlobalProvider>()
+                          .formKey
                           .currentState
                           ?.save();
                       if (context.read<GlobalProvider>().newProcessTabIndex ==
@@ -195,6 +200,11 @@ class NewProcess extends StatelessWidget {
                             .formKey
                             .currentState!
                             .validate()) {
+                          context
+                              .read<GlobalProvider>()
+                              .formKey
+                              .currentState!
+                              .save();
                           if (context
                                   .read<GlobalProvider>()
                                   .newProcessTabIndex ==
@@ -209,8 +219,6 @@ class NewProcess extends StatelessWidget {
                                       .read<GlobalProvider>()
                                       .newProcessTabIndex +
                                   1;
-                        } else {
-                          log("Not Validated");
                         }
                       } else {
                         if (context.read<GlobalProvider>().newProcessTabIndex ==
