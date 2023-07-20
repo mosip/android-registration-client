@@ -34,6 +34,11 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _feildConsentValues = {};
   Map<String, dynamic> _feildDemographicsValues = {};
 
+  Map<String, dynamic> _fieldBiometricsValue={};
+ 
+ 
+ 
+
   //GettersSetters
 
   int get currentIndex => _currentIndex;
@@ -76,6 +81,12 @@ class GlobalProvider with ChangeNotifier {
 
   set fieldDisplayValues(Map<String, dynamic> value) {
     _fieldDisplayValues = value;
+    notifyListeners();
+  }
+  Map<String, dynamic> get fieldBiometricsValue => _fieldBiometricsValue;
+
+  set fieldBiometricsValue(Map<String, dynamic> value) {
+    _fieldBiometricsValue = value;
     notifyListeners();
   }
 

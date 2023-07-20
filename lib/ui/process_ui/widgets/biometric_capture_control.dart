@@ -140,7 +140,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   initialize() async {
     List<String?> checkingValue = [];
-
+    BiometricsDto biometricsDto = BiometricsDto();
     await BiometricsApi()
         .getBestBiometrics(widget.field.id!, "Iris")
         .then((value) async {
@@ -150,8 +150,17 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     if (checkingValue.isNotEmpty) {
       widget.iris.isScanned = true;
       for (var e in checkingValue) {
-        widget.iris.listOfBiometricsDto
-            .add(BiometricsDto.fromJson(json.decode(e!)));
+        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
+        if (biometricsDto.bioSubType == "Left") {
+          widget.iris.exceptions[0] = true;
+        }
+        if (biometricsDto.bioSubType == "Right") {
+          widget.iris.exceptions[1] = true;
+        }
+        widget.iris.listOfBiometricsDto.add(biometricsDto);
+      }
+      for (int i = 0; i < widget.iris.exceptions.length; i++) {
+        widget.iris.exceptions[i] = !widget.iris.exceptions[i];
       }
       await BiometricsApi()
           .extractImageValues(widget.field.id!, "Iris")
@@ -169,6 +178,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   initialize1() async {
     List<String?> checkingValue = [];
+    BiometricsDto biometricsDto = BiometricsDto();
     await BiometricsApi()
         .getBestBiometrics(widget.field.id!, "RightHand")
         .then((value) async {
@@ -177,9 +187,27 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     if (checkingValue.isNotEmpty) {
       widget.rightHand.isScanned = true;
       for (var e in checkingValue) {
-        widget.rightHand.listOfBiometricsDto
-            .add(BiometricsDto.fromJson(json.decode(e!)));
+        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
+        
+        if (biometricsDto.bioSubType == "Right IndexFinger") {
+          widget.rightHand.exceptions[0] = true;
+        }
+        if (biometricsDto.bioSubType == "Right MiddleFinger") {
+          widget.rightHand.exceptions[1] = true;
+        }
+        if (biometricsDto.bioSubType == "Right RingFinger") {
+          widget.rightHand.exceptions[2] = true;
+        }
+        if (biometricsDto.bioSubType == "Right LittleFinger") {
+          widget.rightHand.exceptions[3] = true;
+        }
+        widget.rightHand.listOfBiometricsDto.add(biometricsDto);
       }
+      
+      for (int i = 0; i < widget.rightHand.exceptions.length; i++) {
+        widget.rightHand.exceptions[i] = !widget.rightHand.exceptions[i];
+      }
+      
       await BiometricsApi()
           .extractImageValues(widget.field.id!, "RightHand")
           .then((value) {
@@ -195,6 +223,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   initialize2() async {
     List<String?> checkingValue = [];
+    BiometricsDto biometricsDto = BiometricsDto();
     await BiometricsApi()
         .getBestBiometrics(widget.field.id!, "LeftHand")
         .then((value) async {
@@ -203,9 +232,28 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     if (checkingValue.isNotEmpty) {
       widget.leftHand.isScanned = true;
       for (var e in checkingValue) {
-        widget.leftHand.listOfBiometricsDto
-            .add(BiometricsDto.fromJson(json.decode(e!)));
+        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
+        print(biometricsDto.bioSubType);
+
+        if (biometricsDto.bioSubType == "Left IndexFinger") {
+          widget.leftHand.exceptions[0] = true;
+        }
+        if (biometricsDto.bioSubType == "Left MiddleFinger") {
+          widget.leftHand.exceptions[1] = true;
+        }
+        if (biometricsDto.bioSubType == "Left RingFinger") {
+          widget.leftHand.exceptions[2] = true;
+        }
+        if (biometricsDto.bioSubType == "Left LittleFinger") {
+          widget.leftHand.exceptions[3] = true;
+        }
+        widget.leftHand.listOfBiometricsDto.add(biometricsDto);
       }
+      print(widget.leftHand.exceptions);
+      for (int i = 0; i < widget.leftHand.exceptions.length; i++) {
+        widget.leftHand.exceptions[i] = !widget.leftHand.exceptions[i];
+      }
+      print(widget.leftHand.exceptions);
       await BiometricsApi()
           .extractImageValues(widget.field.id!, "LeftHand")
           .then((value) {
@@ -221,6 +269,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   initialize3() async {
     List<String?> checkingValue = [];
+    BiometricsDto biometricsDto = BiometricsDto();
     await BiometricsApi()
         .getBestBiometrics(widget.field.id!, "Face")
         .then((value) async {
@@ -229,8 +278,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     if (checkingValue.isNotEmpty) {
       widget.face.isScanned = true;
       for (var e in checkingValue) {
-        widget.face.listOfBiometricsDto
-            .add(BiometricsDto.fromJson(json.decode(e!)));
+        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
+
+        widget.face.listOfBiometricsDto.add(biometricsDto);
       }
       await BiometricsApi()
           .extractImageValues(widget.field.id!, "Face")
@@ -247,6 +297,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   initialize4() async {
     List<String?> checkingValue = [];
+    BiometricsDto biometricsDto = BiometricsDto();
     await BiometricsApi()
         .getBestBiometrics(widget.field.id!, "Thumbs")
         .then((value) async {
@@ -255,8 +306,17 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     if (checkingValue.isNotEmpty) {
       widget.thumbs.isScanned = true;
       for (var e in checkingValue) {
-        widget.thumbs.listOfBiometricsDto
-            .add(BiometricsDto.fromJson(json.decode(e!)));
+        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
+        if (biometricsDto.bioSubType == "Left Thumb") {
+          widget.thumbs.exceptions[0] = true;
+        }
+        if (biometricsDto.bioSubType == "Right Thumb") {
+          widget.thumbs.exceptions[1] = true;
+        }
+        widget.thumbs.listOfBiometricsDto.add(biometricsDto);
+      }
+      for (int i = 0; i < widget.thumbs.exceptions.length; i++) {
+        widget.thumbs.exceptions[i] = !widget.thumbs.exceptions[i];
       }
       await BiometricsApi()
           .extractImageValues(widget.field.id!, "Thumbs")
@@ -273,6 +333,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   initialize5() async {
     List<String?> checkingValue = [];
+    BiometricsDto biometricsDto = BiometricsDto();
     await BiometricsApi()
         .getBestBiometrics(widget.field.id!, "Exception")
         .then((value) async {
@@ -281,8 +342,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     if (checkingValue.isNotEmpty) {
       widget.exception.isScanned = true;
       for (var e in checkingValue) {
-        widget.exception.listOfBiometricsDto
-            .add(BiometricsDto.fromJson(json.decode(e!)));
+        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
+
+        widget.exception.listOfBiometricsDto.add(biometricsDto);
       }
       await BiometricsApi()
           .extractImageValues(widget.field.id!, "Exception")
@@ -299,24 +361,24 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.once <= 0) {
-      initialize();
-    }
+    // if (widget.once <= 0) {
+    //   initialize();
+    // }
     if (widget.once1 <= 0) {
       initialize1();
     }
     if (widget.once2 <= 0) {
       initialize2();
     }
-    if (widget.once3 <= 0) {
-      initialize3();
-    }
-    if (widget.once4 <= 0) {
-      initialize4();
-    }
-    if (widget.once5 <= 0) {
-      initialize5();
-    }
+    // if (widget.once3 <= 0) {
+    //   initialize3();
+    // }
+    // if (widget.once4 <= 0) {
+    //   initialize4();
+    // }
+    // if (widget.once5 <= 0) {
+    //   initialize5();
+    // }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -882,7 +944,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               await BiometricsApi()
                                   .invokeDiscoverSbi(widget.field.id!, "Iris");
                               await BiometricsApi()
-                                  .getBestBiometrics(widget.field.id!, "Iris");
+                                  .getBestBiometrics(widget.field.id!, "Iris")
+                                  .then((value) {
+                                Clipboard.setData(
+                                    ClipboardData(text: value.toString()));
+                              });
                               await BiometricsApi()
                                   .extractImageValues(widget.field.id!, "Iris")
                                   .then((value) {
@@ -2490,7 +2556,21 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                 Stack(
                                   children: [
                                     InkWell(
-                                      onTap: () {
+                                      onTap: () async {
+                                        if (!(widget.iris.exceptions
+                                                .elementAt(0)) ==
+                                            true) {
+                                          await BiometricsApi().addBioException(
+                                              widget.field.id!,
+                                              "Iris",
+                                              "leftEye");
+                                        } else {
+                                          await BiometricsApi()
+                                              .removeBioException(
+                                                  widget.field.id!,
+                                                  "Iris",
+                                                  "leftEye");
+                                        }
                                         setState(() {
                                           widget.iris.exceptions[0] = !(widget
                                               .iris.exceptions
@@ -2544,7 +2624,21 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                 Stack(
                                   children: [
                                     InkWell(
-                                      onTap: () {
+                                      onTap: () async {
+                                        if (!(widget.iris.exceptions
+                                                .elementAt(1)) ==
+                                            true) {
+                                          await BiometricsApi().addBioException(
+                                              widget.field.id!,
+                                              "Iris",
+                                              "rightEye");
+                                        } else {
+                                          await BiometricsApi()
+                                              .removeBioException(
+                                                  widget.field.id!,
+                                                  "Iris",
+                                                  "rightEye");
+                                        }
                                         setState(() {
                                           widget.iris.exceptions[1] = !(widget
                                               .iris.exceptions
@@ -2615,7 +2709,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 11,
                                       left: 25,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.rightHand.exceptions
+                                                  .elementAt(0)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightIndex");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightIndex");
+                                          }
                                           setState(() {
                                             widget.rightHand.exceptions[0] =
                                                 !(widget.rightHand.exceptions
@@ -2649,7 +2758,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 1,
                                       left: 40,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.rightHand.exceptions
+                                                  .elementAt(1)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightMiddle");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightMiddle");
+                                          }
                                           setState(() {
                                             widget.rightHand.exceptions[1] =
                                                 !(widget.rightHand.exceptions
@@ -2683,7 +2807,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 17,
                                       right: 16,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.rightHand.exceptions
+                                                  .elementAt(2)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightRing");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightRing");
+                                          }
                                           setState(() {
                                             widget.rightHand.exceptions[2] =
                                                 !(widget.rightHand.exceptions
@@ -2717,7 +2856,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 33,
                                       right: 5,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.rightHand.exceptions
+                                                  .elementAt(3)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightLittle");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightLittle");
+                                          }
                                           setState(() {
                                             widget.rightHand.exceptions[3] =
                                                 !(widget.rightHand.exceptions
@@ -2784,7 +2938,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 11,
                                       right: 25,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.leftHand.exceptions
+                                                  .elementAt(0)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftIndex");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftIndex");
+                                          }
                                           setState(() {
                                             widget.leftHand.exceptions[0] =
                                                 !(widget.leftHand.exceptions
@@ -2818,7 +2987,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 1,
                                       right: 40,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.leftHand.exceptions
+                                                  .elementAt(1)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftMiddle");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftMiddle");
+                                          }
                                           setState(() {
                                             widget.leftHand.exceptions[1] =
                                                 !(widget.leftHand.exceptions
@@ -2852,7 +3036,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 17,
                                       left: 16,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.leftHand.exceptions
+                                                  .elementAt(2)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftRing");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftRing");
+                                          }
                                           setState(() {
                                             widget.leftHand.exceptions[2] =
                                                 !(widget.leftHand.exceptions
@@ -2886,7 +3085,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 33,
                                       left: 5,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.leftHand.exceptions
+                                                  .elementAt(3)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftLittle");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "LeftHand",
+                                                    "leftLittle");
+                                          }
                                           setState(() {
                                             widget.leftHand.exceptions[3] =
                                                 !(widget.leftHand.exceptions
@@ -2953,7 +3167,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 22,
                                       left: 25,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.thumbs.exceptions
+                                                  .elementAt(0)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "Thumbs",
+                                                    "leftThumb");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "Thumbs",
+                                                    "leftThumb");
+                                          }
                                           setState(() {
                                             widget.thumbs.exceptions[0] =
                                                 !(widget.thumbs.exceptions
@@ -2985,7 +3214,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       top: 22,
                                       right: 25,
                                       child: InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          if (!(widget.thumbs.exceptions
+                                                  .elementAt(1)) ==
+                                              true) {
+                                            await BiometricsApi()
+                                                .addBioException(
+                                                    widget.field.id!,
+                                                    "Thumbs",
+                                                    "rightThumb");
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "Thumbs",
+                                                    "rightThumb");
+                                          }
                                           setState(() {
                                             widget.thumbs.exceptions[1] =
                                                 !(widget.thumbs.exceptions

@@ -212,6 +212,28 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         }
     }
 
+    @Override
+    public void addBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute, @NonNull BiometricsPigeon.Result<String> result) {
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+            registrationDto.addBioException(fieldId,getModality(modality),attribute);
+            result.success("ok");
+        }catch(Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
+    @Override
+    public void removeBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute, @NonNull BiometricsPigeon.Result<String> result) {
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+            registrationDto.addBioException(fieldId,getModality(modality),attribute);
+            result.success("ok");
+        }catch(Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
 
     public static Map<String, String> objectToMap(Object object) {
         Map<String, String> map = new HashMap<>();
