@@ -138,247 +138,137 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     return avg;
   }
 
-  initialize() async {
-    List<String?> checkingValue = [];
-    BiometricsDto biometricsDto = BiometricsDto();
-    await BiometricsApi()
-        .getBestBiometrics(widget.field.id!, "Iris")
-        .then((value) async {
-      checkingValue = value;
-    });
+  generateList(BuildContext context, String key, BiometricAttributeData data) {
+    List<BiometricAttributeData> list = [];
 
-    if (checkingValue.isNotEmpty) {
-      widget.iris.isScanned = true;
-      for (var e in checkingValue) {
-        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
-        if (biometricsDto.bioSubType == "Left") {
-          widget.iris.exceptions[0] = true;
-        }
-        if (biometricsDto.bioSubType == "Right") {
-          widget.iris.exceptions[1] = true;
-        }
-        widget.iris.listOfBiometricsDto.add(biometricsDto);
+    if (context.read<GlobalProvider>().fieldBiometricsValue.containsKey(key)) {
+      print(context.read<GlobalProvider>().fieldBiometricsValue[key]);
+      if (getElementPosition(
+              context.read<GlobalProvider>().fieldBiometricsValue[key],
+              data.title) ==
+          -1) {
+        context.read<GlobalProvider>().fieldBiometricsValue[key].add(data);
+      } else {
+        context.read<GlobalProvider>().fieldBiometricsValue[key].removeAt(
+            getElementPosition(
+                context.read<GlobalProvider>().fieldBiometricsValue[key],
+                data.title));
+        context.read<GlobalProvider>().fieldBiometricsValue[key].add(data);
       }
-      for (int i = 0; i < widget.iris.exceptions.length; i++) {
-        widget.iris.exceptions[i] = !widget.iris.exceptions[i];
-      }
-      await BiometricsApi()
-          .extractImageValues(widget.field.id!, "Iris")
-          .then((value) {
-        widget.iris.listofImages = value;
-      });
-      setState(() {
-        widget.iris.qualityPercentage =
-            avgScore(widget.iris.listOfBiometricsDto);
-      });
+    } else {
+      list.add(data);
+      context.read<GlobalProvider>().fieldBiometricsValue[key] = list;
     }
-
-    widget.once = widget.once + 1;
   }
 
-  initialize1() async {
-    List<String?> checkingValue = [];
-    BiometricsDto biometricsDto = BiometricsDto();
-    await BiometricsApi()
-        .getBestBiometrics(widget.field.id!, "RightHand")
-        .then((value) async {
-      checkingValue = value;
-    });
-    if (checkingValue.isNotEmpty) {
-      widget.rightHand.isScanned = true;
-      for (var e in checkingValue) {
-        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
-        
-        if (biometricsDto.bioSubType == "Right IndexFinger") {
-          widget.rightHand.exceptions[0] = true;
-        }
-        if (biometricsDto.bioSubType == "Right MiddleFinger") {
-          widget.rightHand.exceptions[1] = true;
-        }
-        if (biometricsDto.bioSubType == "Right RingFinger") {
-          widget.rightHand.exceptions[2] = true;
-        }
-        if (biometricsDto.bioSubType == "Right LittleFinger") {
-          widget.rightHand.exceptions[3] = true;
-        }
-        widget.rightHand.listOfBiometricsDto.add(biometricsDto);
+  getElementPosition(List<BiometricAttributeData> list, String title) {
+    for (int i = 0; i < list.length; i++) {
+      if (list.elementAt(i).title.compareTo(title) == 0) {
+        return i;
       }
-      
-      for (int i = 0; i < widget.rightHand.exceptions.length; i++) {
-        widget.rightHand.exceptions[i] = !widget.rightHand.exceptions[i];
-      }
-      
-      await BiometricsApi()
-          .extractImageValues(widget.field.id!, "RightHand")
-          .then((value) {
-        widget.rightHand.listofImages = value;
-      });
-      setState(() {
-        widget.rightHand.qualityPercentage =
-            avgScore(widget.rightHand.listOfBiometricsDto);
-      });
     }
-    widget.once1 = widget.once1 + 1;
-  }
-
-  initialize2() async {
-    List<String?> checkingValue = [];
-    BiometricsDto biometricsDto = BiometricsDto();
-    await BiometricsApi()
-        .getBestBiometrics(widget.field.id!, "LeftHand")
-        .then((value) async {
-      checkingValue = value;
-    });
-    if (checkingValue.isNotEmpty) {
-      widget.leftHand.isScanned = true;
-      for (var e in checkingValue) {
-        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
-        print(biometricsDto.bioSubType);
-
-        if (biometricsDto.bioSubType == "Left IndexFinger") {
-          widget.leftHand.exceptions[0] = true;
-        }
-        if (biometricsDto.bioSubType == "Left MiddleFinger") {
-          widget.leftHand.exceptions[1] = true;
-        }
-        if (biometricsDto.bioSubType == "Left RingFinger") {
-          widget.leftHand.exceptions[2] = true;
-        }
-        if (biometricsDto.bioSubType == "Left LittleFinger") {
-          widget.leftHand.exceptions[3] = true;
-        }
-        widget.leftHand.listOfBiometricsDto.add(biometricsDto);
-      }
-      print(widget.leftHand.exceptions);
-      for (int i = 0; i < widget.leftHand.exceptions.length; i++) {
-        widget.leftHand.exceptions[i] = !widget.leftHand.exceptions[i];
-      }
-      print(widget.leftHand.exceptions);
-      await BiometricsApi()
-          .extractImageValues(widget.field.id!, "LeftHand")
-          .then((value) {
-        widget.leftHand.listofImages = value;
-      });
-      setState(() {
-        widget.leftHand.qualityPercentage =
-            avgScore(widget.leftHand.listOfBiometricsDto);
-      });
-    }
-    widget.once2 = widget.once2 + 1;
-  }
-
-  initialize3() async {
-    List<String?> checkingValue = [];
-    BiometricsDto biometricsDto = BiometricsDto();
-    await BiometricsApi()
-        .getBestBiometrics(widget.field.id!, "Face")
-        .then((value) async {
-      checkingValue = value;
-    });
-    if (checkingValue.isNotEmpty) {
-      widget.face.isScanned = true;
-      for (var e in checkingValue) {
-        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
-
-        widget.face.listOfBiometricsDto.add(biometricsDto);
-      }
-      await BiometricsApi()
-          .extractImageValues(widget.field.id!, "Face")
-          .then((value) {
-        widget.face.listofImages = value;
-      });
-      setState(() {
-        widget.face.qualityPercentage =
-            avgScore(widget.face.listOfBiometricsDto);
-      });
-    }
-    widget.once3 = widget.once3 + 1;
-  }
-
-  initialize4() async {
-    List<String?> checkingValue = [];
-    BiometricsDto biometricsDto = BiometricsDto();
-    await BiometricsApi()
-        .getBestBiometrics(widget.field.id!, "Thumbs")
-        .then((value) async {
-      checkingValue = value;
-    });
-    if (checkingValue.isNotEmpty) {
-      widget.thumbs.isScanned = true;
-      for (var e in checkingValue) {
-        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
-        if (biometricsDto.bioSubType == "Left Thumb") {
-          widget.thumbs.exceptions[0] = true;
-        }
-        if (biometricsDto.bioSubType == "Right Thumb") {
-          widget.thumbs.exceptions[1] = true;
-        }
-        widget.thumbs.listOfBiometricsDto.add(biometricsDto);
-      }
-      for (int i = 0; i < widget.thumbs.exceptions.length; i++) {
-        widget.thumbs.exceptions[i] = !widget.thumbs.exceptions[i];
-      }
-      await BiometricsApi()
-          .extractImageValues(widget.field.id!, "Thumbs")
-          .then((value) {
-        widget.thumbs.listofImages = value;
-      });
-      setState(() {
-        widget.thumbs.qualityPercentage =
-            avgScore(widget.thumbs.listOfBiometricsDto);
-      });
-    }
-    widget.once4 = widget.once4 + 1;
-  }
-
-  initialize5() async {
-    List<String?> checkingValue = [];
-    BiometricsDto biometricsDto = BiometricsDto();
-    await BiometricsApi()
-        .getBestBiometrics(widget.field.id!, "Exception")
-        .then((value) async {
-      checkingValue = value;
-    });
-    if (checkingValue.isNotEmpty) {
-      widget.exception.isScanned = true;
-      for (var e in checkingValue) {
-        biometricsDto = BiometricsDto.fromJson(json.decode(e!));
-
-        widget.exception.listOfBiometricsDto.add(biometricsDto);
-      }
-      await BiometricsApi()
-          .extractImageValues(widget.field.id!, "Exception")
-          .then((value) {
-        widget.exception.listofImages = value;
-      });
-      setState(() {
-        widget.exception.qualityPercentage =
-            avgScore(widget.exception.listOfBiometricsDto);
-      });
-    }
-    widget.once5 = widget.once5 + 1;
+    return -1;
   }
 
   @override
   Widget build(BuildContext context) {
-    // if (widget.once <= 0) {
-    //   initialize();
-    // }
-    if (widget.once1 <= 0) {
-      initialize1();
+    if(context.read<GlobalProvider>().fieldBiometricsValue.containsKey("${widget.field.id}")){
+      if (context
+        .read<GlobalProvider>()
+        .fieldBiometricsValue[widget.field.id]
+        .isNotEmpty) {
+      if (getElementPosition(
+              context
+                  .read<GlobalProvider>()
+                  .fieldBiometricsValue[widget.field.id],
+              "Iris") !=
+          -1) {
+        widget.iris = context
+            .read<GlobalProvider>()
+            .fieldBiometricsValue[widget.field.id]
+            .elementAt(getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Iris"));
+      }
+      if (getElementPosition(
+              context
+                  .read<GlobalProvider>()
+                  .fieldBiometricsValue[widget.field.id],
+              "Right Hand") !=
+          -1) {
+        widget.rightHand = context
+            .read<GlobalProvider>()
+            .fieldBiometricsValue[widget.field.id]
+            .elementAt(getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Right Hand"));
+      }
+      if (getElementPosition(
+              context
+                  .read<GlobalProvider>()
+                  .fieldBiometricsValue[widget.field.id],
+              "Left Hand") !=
+          -1) {
+        widget.leftHand = context
+            .read<GlobalProvider>()
+            .fieldBiometricsValue[widget.field.id]
+            .elementAt(getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Left Hand"));
+      }
+      if (getElementPosition(
+              context
+                  .read<GlobalProvider>()
+                  .fieldBiometricsValue[widget.field.id],
+              "Thumbs") !=
+          -1) {
+        widget.thumbs = context
+            .read<GlobalProvider>()
+            .fieldBiometricsValue[widget.field.id]
+            .elementAt(getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Thumbs"));
+      }
+      if (getElementPosition(
+              context
+                  .read<GlobalProvider>()
+                  .fieldBiometricsValue[widget.field.id],
+              "Face") !=
+          -1) {
+        widget.face = context
+            .read<GlobalProvider>()
+            .fieldBiometricsValue[widget.field.id]
+            .elementAt(getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Face"));
+      }
+      if (getElementPosition(
+              context
+                  .read<GlobalProvider>()
+                  .fieldBiometricsValue[widget.field.id],
+              "Exception") !=
+          -1) {
+        widget.exception = context
+            .read<GlobalProvider>()
+            .fieldBiometricsValue[widget.field.id]
+            .elementAt(getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Exception"));
+      }
     }
-    if (widget.once2 <= 0) {
-      initialize2();
     }
-    // if (widget.once3 <= 0) {
-    //   initialize3();
-    // }
-    // if (widget.once4 <= 0) {
-    //   initialize4();
-    // }
-    // if (widget.once5 <= 0) {
-    //   initialize5();
-    // }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -412,9 +302,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       if (widget.field.bioAttributes!.contains("leftEye") &&
                           widget.field.bioAttributes!.contains("rightEye"))
                         InkWell(
-                          onTap: () {
-                            print(widget.iris.title);
-                            print(widget.iris.listofImages);
+                          onTap: () async {
+                            print(context
+                                .read<GlobalProvider>()
+                                .fieldBiometricsValue[widget.field.id]
+                                .length);
                             setState(() {
                               widget.biometricAttribute = "Iris";
                             });
@@ -496,8 +388,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           widget.field.bioAttributes!.contains("rightMiddle"))
                         InkWell(
                             onTap: () async {
-                              print(widget.rightHand.title);
-                              print(widget.rightHand.listofImages);
                               setState(() {
                                 widget.biometricAttribute = "Right Hand";
                               });
@@ -582,8 +472,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           widget.field.bioAttributes!.contains("leftMiddle"))
                         InkWell(
                             onTap: () {
-                              print(widget.leftHand.title);
-                              print(widget.leftHand.listofImages);
                               setState(() {
                                 widget.biometricAttribute = "Left Hand";
                               });
@@ -1070,6 +958,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         value;
                                                   });
                                                   widget.iris.isScanned = true;
+                                                  generateList(
+                                                      context,
+                                                      "${widget.field.id}",
+                                                      widget.iris);
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -1341,6 +1233,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   });
                                                   widget.rightHand.isScanned =
                                                       true;
+                                                  generateList(
+                                                      context,
+                                                      "${widget.field.id}",
+                                                      widget.rightHand);
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -1613,6 +1509,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   });
                                                   widget.leftHand.isScanned =
                                                       true;
+                                                  generateList(
+                                                      context,
+                                                      "${widget.field.id}",
+                                                      widget.leftHand);
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -1884,6 +1784,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   });
                                                   widget.thumbs.isScanned =
                                                       true;
+                                                  generateList(
+                                                      context,
+                                                      "${widget.field.id}",
+                                                      widget.thumbs);
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -2152,6 +2056,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         value;
                                                   });
                                                   widget.face.isScanned = true;
+                                                  generateList(
+                                                      context,
+                                                      "${widget.field.id}",
+                                                      widget.face);
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -2423,6 +2331,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   });
                                                   widget.exception.isScanned =
                                                       true;
+                                                  generateList(
+                                                      context,
+                                                      "${widget.field.id}",
+                                                      widget.exception);
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
