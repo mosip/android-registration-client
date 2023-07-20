@@ -17,10 +17,11 @@ abstract class AppStyle {
   static const Color appBackButtonBorder = Color(0xFF2A4EA7);
   static const Color buttonDisabled = Color(0XFFCCCCCC);
   static const Color mandatoryField = Color(0XFFD32D2D);
-  static const previewHeaderColor = Color(0XFF666666);
-  static const previewHeaderComponentColor = Color(0XFFF5F5F5);
-  static const authIconBackground = Color(0XFFF8FCFF);
-  static const authIconBorder = Color(0XFFE1EDF5);
+  static const Color previewHeaderColor = Color(0XFF666666);
+  static const Color previewHeaderComponentColor = Color(0XFFF5F5F5);
+  static const Color authIconBackground = Color(0XFFF8FCFF);
+  static const Color authIconBorder = Color(0XFFE1EDF5);
+  static const Color dividerColor = Color(0XFFE5EBFA);
 
   static TextStyle mobileHelpText = TextStyle(
     fontWeight: FontWeight.w500,

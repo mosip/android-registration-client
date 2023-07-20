@@ -19,7 +19,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: must_be_immutable
 class MachineKeys extends StatelessWidget {
-  MachineKeys({super.key});
+  final VoidCallback onCloseComponent;
+
+  MachineKeys({
+    super.key,
+    required this.onCloseComponent,
+  });
 
   String machineDetails = '';
   bool isMobile = true;
@@ -37,38 +42,53 @@ class MachineKeys extends StatelessWidget {
     }
 
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.device_credentials,
+
+    return Container(
+      width: isMobile ? 358.w : 670.w,
+      padding: EdgeInsets.only(left: 20.w, right: 19.w),
+      decoration: const BoxDecoration(
+        color: AppStyle.appWhite,
+        borderRadius: BorderRadius.all(
+          Radius.circular(12),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.close_rounded,
-              color: AppStyle.appWhite,
-            ),
-          )
-        ],
-        backgroundColor: AppStyle.appSolidPrimary,
-        automaticallyImplyLeading: false,
       ),
-      body: Container(
-        height: ScreenUtil().screenHeight,
-        width: ScreenUtil().screenWidth,
-        padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 16.w : 80.w,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10.h,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 20.h,
               ),
-              SelectableText(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.device_credentials,
+                    style: TextStyle(
+                      color: AppStyle.appBlack,
+                      fontSize: 16.spMin,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: onCloseComponent,
+                    icon: const Icon(
+                      Icons.close,
+                      color: AppStyle.appBlack,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(
+              color: AppStyle.dividerColor,
+              height: 1.h,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 20.h,
+              ),
+              child: SelectableText(
                 machineDetails,
                 textDirection: TextDirection.ltr,
                 style: TextStyle(
@@ -76,12 +96,19 @@ class MachineKeys extends StatelessWidget {
                   fontSize: 16.sp,
                 ),
               ),
-              SizedBox(
-                height: 10.h,
-              ),
-              isMobile ? _mobileView() : _tabletView(),
-            ],
-          ),
+            ),
+            Divider(
+              color: AppStyle.dividerColor,
+              height: 1.h,
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            isMobile ? _mobileView() : _tabletView(),
+            SizedBox(
+              height: 20.h,
+            ),
+          ],
         ),
       ),
     );
@@ -95,26 +122,41 @@ class MachineKeys extends StatelessWidget {
     );
   }
 
+  Widget _buttonRow() {
+    return Row(
+      children: [
+        Expanded(child: _downloadButton()),
+        SizedBox(
+          width: 10.w,
+        ),
+        Expanded(child: _copyButton()),
+      ],
+    );
+  }
+
   Widget _mobileView() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _copyButton(),
+        _buttonRow(),
         SizedBox(
-          height: 10.h,
+          height: 29.h,
         ),
-        _downloadButton(),
+        _shareButton(),
       ],
     );
   }
 
   Widget _tabletView() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(child: _copyButton()),
-        SizedBox(
-          width: 25.w,
+        Expanded(
+          child: _shareButton(),
         ),
-        Expanded(child: _downloadButton()),
+        Expanded(
+          child: _buttonRow(),
+        ),
       ],
     );
   }
@@ -128,6 +170,7 @@ class MachineKeys extends StatelessWidget {
       },
       child: Container(
         height: 48.h,
+        width: 150.w,
         decoration: BoxDecoration(
           color: AppStyle.appSolidPrimary,
           border: Border.all(
@@ -157,9 +200,9 @@ class MachineKeys extends StatelessWidget {
         });
       },
       child: Container(
-        height: 48.h,
+        height: 42.h,
         decoration: BoxDecoration(
-          color: isMobile ? AppStyle.appWhite : AppStyle.appSolidPrimary,
+          color: AppStyle.appWhite,
           border: Border.all(
             width: 1.w,
             color: AppStyle.appBlueShade1,
@@ -171,11 +214,33 @@ class MachineKeys extends StatelessWidget {
         child: Center(
           child: Text(
             AppLocalizations.of(_context)!.download_json,
-            style: isMobile
-                ? AppStyle.mobileBackButtonText
-                : AppStyle.mobileButtonText,
+            style: AppStyle.mobileBackButtonText,
           ),
         ),
+      ),
+    );
+  }
+
+  _shareButton() {
+    return InkWell(
+      child: Row(
+        children: [
+          const Icon(
+            Icons.share,
+            color: AppStyle.appSolidPrimary,
+          ),
+          SizedBox(
+            width: 5.w,
+          ),
+          Text(
+            'SHARE',
+            style: TextStyle(
+              color: AppStyle.appSolidPrimary,
+              fontSize: 14.spMin,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
