@@ -78,11 +78,21 @@ class _TextBoxControlState extends State<TextBoxControl> {
 
   String _getDataFromMap(String lang) {
     String response = "";
-    if(context.read<GlobalProvider>().feildDemographicsValues.containsKey(widget.e.id)) {
-      if(widget.e.type == 'simpleType') {
-        response = context.read<GlobalProvider>().feildDemographicsValues[widget.e.id][lang]['value'];
+    if (context
+        .read<GlobalProvider>()
+        .feildDemographicsValues
+        .containsKey(widget.e.id)) {
+      if (widget.e.type == 'simpleType') {
+        if ((context.read<GlobalProvider>().feildDemographicsValues[widget.e.id]
+                as Map<String, dynamic>)
+            .containsKey(lang)) {
+          response = context
+              .read<GlobalProvider>()
+              .feildDemographicsValues[widget.e.id][lang];
+        }
       } else {
-        response = context.read<GlobalProvider>().feildDemographicsValues[widget.e.id];
+        response =
+            context.read<GlobalProvider>().feildDemographicsValues[widget.e.id];
       }
     }
     return response;
@@ -126,7 +136,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                           child: TextFormField(
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
-                                initialValue: _getDataFromMap(lang),
+                            initialValue: _getDataFromMap(lang),
                             onChanged: (value) {
                               _saveDataToMap(value, lang);
                               saveData(value, lang);

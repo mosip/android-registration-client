@@ -74,9 +74,13 @@ class _CustomDropDownState extends State<DropDownControl> {
   void _getSelectedValueFromMap(String lang) {
     String response = "";
     if (widget.type == 'simpleType') {
-      response = context
-          .read<GlobalProvider>()
-          .feildDemographicsValues[widget.id][lang]['value'];
+      if ((context.read<GlobalProvider>().feildDemographicsValues[widget.id]
+              as Map<String, dynamic>)
+          .containsKey(lang)) {
+        response = context
+            .read<GlobalProvider>()
+            .feildDemographicsValues[widget.id][lang];
+      }
     } else {
       response =
           context.read<GlobalProvider>().feildDemographicsValues[widget.id];

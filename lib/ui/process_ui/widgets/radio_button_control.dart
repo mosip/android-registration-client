@@ -33,27 +33,28 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     } else {
       _getSelectedValueFromMap("eng");
     }
-      super.initState();
+    super.initState();
   }
-  
+
   void _setInitialValueToMap() {
     context
-          .read<RegistrationTaskProvider>()
-          .addSimpleTypeDemographicField(widget.id, widget.values[0], "eng");
-      context.read<GlobalProvider>().setLanguageSpecificValue(
-            widget.id,
-            widget.values[0],
-            "eng",
-            context.read<GlobalProvider>().feildDemographicsValues,
-          );
-      setState(() {
-        selectedOption = widget.values[0].toLowerCase();
-      });
+        .read<RegistrationTaskProvider>()
+        .addSimpleTypeDemographicField(widget.id, widget.values[0], "eng");
+    context.read<GlobalProvider>().setLanguageSpecificValue(
+          widget.id,
+          widget.values[0],
+          "eng",
+          context.read<GlobalProvider>().feildDemographicsValues,
+        );
+    setState(() {
+      selectedOption = widget.values[0].toLowerCase();
+    });
   }
 
   void _getSelectedValueFromMap(String lang) {
     String response = "";
-    response = context.read<GlobalProvider>().feildDemographicsValues[widget.id][lang]['value'];
+    response =
+        context.read<GlobalProvider>().feildDemographicsValues[widget.id][lang];
     setState(() {
       selectedOption = response.toLowerCase();
     });

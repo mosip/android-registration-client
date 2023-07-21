@@ -145,11 +145,11 @@ class NewProcess extends StatelessWidget {
                 onPressed: () async {
                   if (context.read<GlobalProvider>().newProcessTabIndex <
                       size) {
-                    // if (context
-                    //     .read<GlobalProvider>()
-                    //     .formKey
-                    //     .currentState!
-                    //     .validate()) {
+                    if (context
+                        .read<GlobalProvider>()
+                        .formKey
+                        .currentState!
+                        .validate()) {
                       if (context.read<GlobalProvider>().newProcessTabIndex ==
                           newProcess.screens!.length - 1) {
                         context
@@ -160,8 +160,7 @@ class NewProcess extends StatelessWidget {
                       context.read<GlobalProvider>().newProcessTabIndex =
                           context.read<GlobalProvider>().newProcessTabIndex + 1;
                     }
-                  // } 
-                  else {
+                  } else {
                     if (context.read<GlobalProvider>().newProcessTabIndex ==
                         size + 1) {
                       bool isPacketAuthenticated =
@@ -188,13 +187,11 @@ class NewProcess extends StatelessWidget {
                     onPressed: () async {
                       if (context.read<GlobalProvider>().newProcessTabIndex <
                           size) {
-
-                        // if (context
-                        //     .read<GlobalProvider>()
-                        //     .formKey
-                        //     .currentState!
-                        //     .validate()) {
-
+                        if (context
+                            .read<GlobalProvider>()
+                            .formKey
+                            .currentState!
+                            .validate()) {
                           if (context
                                   .read<GlobalProvider>()
                                   .newProcessTabIndex ==
@@ -209,9 +206,8 @@ class NewProcess extends StatelessWidget {
                                       .read<GlobalProvider>()
                                       .newProcessTabIndex +
                                   1;
-                            }
-                      // } 
-                      else {
+                        }
+                      } else {
                         if (context.read<GlobalProvider>().newProcessTabIndex ==
                             size + 1) {
                           bool isPacketAuthenticated =

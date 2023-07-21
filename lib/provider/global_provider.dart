@@ -34,10 +34,7 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _feildConsentValues = {};
   Map<String, dynamic> _feildDemographicsValues = {};
 
-  Map<String, dynamic> _fieldBiometricsValue={};
- 
- 
- 
+  Map<String, dynamic> _fieldBiometricsValue = {};
 
   //GettersSetters
 
@@ -83,6 +80,7 @@ class GlobalProvider with ChangeNotifier {
     _fieldDisplayValues = value;
     notifyListeners();
   }
+
   Map<String, dynamic> get fieldBiometricsValue => _fieldBiometricsValue;
 
   set fieldBiometricsValue(Map<String, dynamic> value) {
@@ -172,13 +170,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setLanguageSpecificValue(String key, dynamic value, String language,
+  setLanguageSpecificValue(String key, String value, String language,
       Map<String, dynamic> commonMap) {
-    Map<String, dynamic> simpleType = {"value": value, "language": language};
     if (!commonMap.containsKey(key)) {
-      commonMap[key] = <String, dynamic>{language: simpleType};
+      commonMap[key] = <String, String>{language: value};
     } else {
-      commonMap[key][language] = simpleType;
+      commonMap[key][language] = value;
     }
 
     notifyListeners();
