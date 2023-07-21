@@ -187,15 +187,15 @@ class LanguageSelector extends StatelessWidget {
                         .read<RegistrationTaskProvider>()
                         .startRegistration(
                             context.read<GlobalProvider>().chosenLang);
-                    bool isRegistrationStartSuccess = context.read<RegistrationTaskProvider>().isRegistrationStartSuccess;
+                    String registrationStartError = context.read<RegistrationTaskProvider>().registrationStartError;
 
-                    if (isRegistrationStartSuccess) {
+                    if (registrationStartError.isEmpty) {
                       Navigator.pushNamed(context, NewProcess.routeName,
                           arguments: {"process": newProcess});
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Some Error occurred!'),
+                          content: Text(registrationStartError),
                         ),
                       );
                     }

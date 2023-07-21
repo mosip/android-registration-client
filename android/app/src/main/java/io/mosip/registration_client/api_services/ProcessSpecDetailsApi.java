@@ -47,9 +47,11 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
             String schemaJson = identitySchemaRepository.getSchemaJson(context,
                     identitySchemaRepository.getLatestSchemaVersion());
             result.success(schemaJson);
+            return;
         }catch (Exception e){
             Log.e(getClass().getSimpleName(), "Error in getUISchema", e);
         }
+        result.success("");
     }
 
     @Override
@@ -57,24 +59,28 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         try{
             String cachedString = globalParamRepository.getCachedStringGlobalParam(key);
             result.success(cachedString);
+            return;
         }catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getStringValueGlobalParam", e);
         }
+        result.success("");
     }
 
     @Override
     public void getNewProcessSpec(@NonNull ProcessSpecPigeon.Result<List<String>> result) {
         ObjectWriter ow;
+        List<String> processSpecList=new ArrayList<>();
         try{
             ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(context,
                     identitySchemaRepository.getLatestSchemaVersion());
             ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            String json = ow.writeValueAsString(processSpecDto);
-            List<String> processSpecList=new ArrayList<String>();
-            processSpecList.add(json);
-            result.success(processSpecList);
+            if(processSpecDto != null) {
+                String json = ow.writeValueAsString(processSpecDto);
+                processSpecList.add(json);
+            }
         }catch (Exception e){
             Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
         }
+        result.success(processSpecList);
     }
 }

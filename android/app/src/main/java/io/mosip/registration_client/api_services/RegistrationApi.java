@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +13,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
+import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
 
 @Singleton
@@ -26,26 +31,30 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         this.registrationService = registrationService;
         this.templateService = templateService;
     }
-
     @Override
-    public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<String> result) {
+        String response = "";
         try {
             this.registrationDto = registrationService.startRegistration(languages);
-            result.success(true);
+            result.success(response);
             return;
         } catch (Exception e) {
+            response = e.getMessage();
             Log.e(getClass().getSimpleName(), "Registration start failed");
         }
-        result.success(false);
+        result.success(response);
     }
 
     @Override
-    public void checkMVEL(@NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void evaluateMVEL(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
-            result.success(true);
+            FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {});
+            this.registrationDto = this.registrationService.getRegistrationDto();
+            boolean isFieldVisible = UserInterfaceHelperService.isFieldVisible(fieldSpecDto, this.registrationDto.getMVELDataContext());
+            result.success(isFieldVisible);
             return;
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Mvel Evaluation failed!" + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), "Object Mapping error: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(false);
     }
@@ -55,7 +64,6 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
             String template = this.templateService.getTemplate(this.registrationDto, true);
-            Log.e(getClass().getSimpleName(), "Template: " + template);
             result.success("");
             return;
         } catch (Exception e) {

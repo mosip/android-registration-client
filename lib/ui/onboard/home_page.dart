@@ -22,12 +22,24 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import 'widgets/home_page_card.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const route = "/home-page";
   const HomePage({super.key});
 
   static const platform =
       MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    _fetchProcessSpec();
+    super.initState();
+  }
 
   void syncData(BuildContext context) async {
     await _masterDataSync();
@@ -35,10 +47,15 @@ class HomePage extends StatelessWidget {
     await _getCenterNameAction(context);
   }
 
+  void _fetchProcessSpec() async {
+    await _getNewProcessSpecAction(context);
+    await _getCenterNameAction(context);
+  }
+
   Future<void> _masterDataSync() async {
     String result;
     try {
-      result = await platform.invokeMethod("masterDataSync");
+      result = await HomePage.platform.invokeMethod("masterDataSync");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }

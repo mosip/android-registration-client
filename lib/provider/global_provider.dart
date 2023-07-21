@@ -174,14 +174,11 @@ class GlobalProvider with ChangeNotifier {
 
   setLanguageSpecificValue(String key, dynamic value, String language,
       Map<String, dynamic> commonMap) {
-    log(language);
+    Map<String, dynamic> simpleType = {"value": value, "language": language};
     if (!commonMap.containsKey(key)) {
-      commonMap[key] = [
-        {"value": value, "language": language}
-      ];
+      commonMap[key] = <String, dynamic>{language: simpleType};
     } else {
-      List<dynamic> feild = commonMap[key] as List<dynamic>;
-      feild.add({"value": value, "language": language});
+      commonMap[key][language] = simpleType;
     }
 
     notifyListeners();

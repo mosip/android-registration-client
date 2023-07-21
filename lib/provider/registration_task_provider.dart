@@ -11,18 +11,18 @@ class RegistrationTaskProvider with ChangeNotifier {
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
-  bool _isRegistrationStartSuccess = false;
+  String _registrationStartError = '';
 
   String _previewTemplate = "";
 
-  List<Object?> get listOfProcesses => this._listOfProcesses;
+  List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
-  bool get isRegistrationStartSuccess => _isRegistrationStartSuccess;
   String get previewTemplate => _previewTemplate;
+  String get registrationStartError => _registrationStartError;
 
   set listOfProcesses(List<Object?> value) {
-    this._listOfProcesses = value;
+    _listOfProcesses = value;
     notifyListeners();
   }
 
@@ -72,8 +72,12 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   startRegistration(List<String> languages) async {
-    _isRegistrationStartSuccess = await registration.startRegistration(languages);
+    _registrationStartError = await registration.startRegistration(languages);
     notifyListeners();
+  }
+
+  evaluateMVEL(String fieldData, String expression) async {
+    return await registration.evaluateMVEL(fieldData, expression);
   }
 
   getPreviewTemplate(bool isPreview) async {
@@ -85,18 +89,28 @@ class RegistrationTaskProvider with ChangeNotifier {
     await demographics.addDemographicField(fieldId, value);
   }
 
-  addSimpleTypeDemographicField(String fieldId, String value, String language) async {
+  getDemographicField(String fieldId) async {
+    return await demographics.getDemographicField(fieldId);
+  }
+
+  addSimpleTypeDemographicField(
+      String fieldId, String value, String language) async {
     await demographics.addSimpleTypeDemographicField(fieldId, value, language);
   }
-  
-  setDateField(String fieldId, String subType, String day, String month, String year) async {
+
+  getSimpleTypeDemographicField(String fieldId, String language) async {
+    return await demographics.getSimpleTypeDemographicField(fieldId, language);
+  }
+
+  setDateField(String fieldId, String subType, String day, String month,
+      String year) async {
     await demographics.setDateField(fieldId, subType, day, month, year);
   }
 
   removeDemographicField(String fieldId) async {
     await demographics.removeDemographicField(fieldId);
   }
-  
+
   addConsentField(String consentData) async {
     await demographics.setConsentField(consentData);
   }

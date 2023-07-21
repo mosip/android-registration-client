@@ -34,6 +34,13 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoggingIn = false;
   String username = '';
   String password = '';
+  bool isMachineKeysDialogOpen = false;
+
+  _toggleMachineKeysDialog() {
+    setState(() {
+      isMachineKeysDialogOpen = false;
+    });
+  }
 
   final List<String> _languages = ['eng', 'ara', 'fra'];
 
@@ -96,6 +103,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+                  isMachineKeysDialogOpen
+                      ? Container(
+                        color: Colors.transparent.withOpacity(0.5),
+                        child: Center(
+                            child: MachineKeys(
+                              onCloseComponent: () {
+                                _toggleMachineKeysDialog();
+                              },
+                            ),
+                          ),
+                      )
+                      : const SizedBox(),
                 ],
               ),
             ),
@@ -244,12 +263,9 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           InkWell(
             onLongPress: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MachineKeys(),
-                ),
-              );
+              setState(() {
+                isMachineKeysDialogOpen = true;
+              });
             },
             child: Container(
               height: isMobile ? 46.h : 54.h,

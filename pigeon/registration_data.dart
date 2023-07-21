@@ -3,10 +3,10 @@ import 'package:pigeon/pigeon.dart';
 @HostApi()
 abstract class RegistrationDataApi {
   @async
-  bool startRegistration(List<String> languages);
+  String startRegistration(List<String> languages);
 
   @async
-  bool checkMVEL(String expression);
+  bool evaluateMVEL(String fieldData, String expression);
 
   @async
   String getPreviewTemplate(bool isPreview);

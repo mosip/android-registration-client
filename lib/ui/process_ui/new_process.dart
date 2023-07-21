@@ -7,12 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-// <<<<<<< HEAD
+
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
-// =======
+
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
-// >>>>>>> preview-integration
+
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -145,23 +145,23 @@ class NewProcess extends StatelessWidget {
                 onPressed: () async {
                   if (context.read<GlobalProvider>().newProcessTabIndex <
                       size) {
-                    if (context
-                        .read<GlobalProvider>()
-                        .formKey
-                        .currentState!
-                        .validate()) {
-                      context
-                          .read<GlobalProvider>()
-                          .formKey
-                          .currentState
-                          ?.save();
+                    // if (context
+                    //     .read<GlobalProvider>()
+                    //     .formKey
+                    //     .currentState!
+                    //     .validate()) {
                       if (context.read<GlobalProvider>().newProcessTabIndex ==
-                          newProcess.screens!.length - 1) {}
+                          newProcess.screens!.length - 1) {
+                        context
+                            .read<RegistrationTaskProvider>()
+                            .getPreviewTemplate(true);
+                      }
 
                       context.read<GlobalProvider>().newProcessTabIndex =
                           context.read<GlobalProvider>().newProcessTabIndex + 1;
                     }
-                  } else {
+                  // } 
+                  else {
                     if (context.read<GlobalProvider>().newProcessTabIndex ==
                         size + 1) {
                       bool isPacketAuthenticated =
@@ -188,16 +188,13 @@ class NewProcess extends StatelessWidget {
                     onPressed: () async {
                       if (context.read<GlobalProvider>().newProcessTabIndex <
                           size) {
+
                         // if (context
                         //     .read<GlobalProvider>()
                         //     .formKey
                         //     .currentState!
                         //     .validate()) {
-                          context
-                              .read<GlobalProvider>()
-                              .formKey
-                              .currentState
-                              ?.save();
+
                           if (context
                                   .read<GlobalProvider>()
                                   .newProcessTabIndex ==
@@ -206,13 +203,15 @@ class NewProcess extends StatelessWidget {
                                 .read<RegistrationTaskProvider>()
                                 .getPreviewTemplate(true);
                           }
+
                           context.read<GlobalProvider>().newProcessTabIndex =
                               context
                                       .read<GlobalProvider>()
                                       .newProcessTabIndex +
                                   1;
-                        // }
-                      } else {
+                            }
+                      // } 
+                      else {
                         if (context.read<GlobalProvider>().newProcessTabIndex ==
                             size + 1) {
                           bool isPacketAuthenticated =
