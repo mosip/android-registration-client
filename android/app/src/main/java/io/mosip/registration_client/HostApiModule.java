@@ -12,8 +12,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.clientmanager.dao.LocationDao;
-import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -30,7 +28,7 @@ import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
-import io.mosip.registration_client.api_services.LocationDetailsApi;
+import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
@@ -110,13 +108,6 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    LocationDetailsApi getLocationDetailsApi(LocationHierarchyDao locationHierarchyDao, LocationDao locationDao) {
-        return new LocationDetailsApi(locationHierarchyDao, locationDao);
-
-    }
-
-    @Provides
-    @Singleton
     RegistrationApi getRegistrationDataApi(RegistrationService registrationService, TemplateService templateService) {
         return new RegistrationApi(registrationService, templateService);
 
@@ -133,5 +124,11 @@ public class HostApiModule {
     @Singleton
     DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService) {
         return new DemographicsDetailsApi(registrationService);
+    }
+
+    @Provides
+    @Singleton
+    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService) {
+        return new DynamicDetailsApi(masterDataService);
     }
 }

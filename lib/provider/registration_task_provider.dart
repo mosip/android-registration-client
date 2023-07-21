@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/demographics.dart';
+import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:registration_client/platform_spi/registration.dart';
 
@@ -8,6 +9,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   final Registration registration = Registration();
   final ProcessSpec processSpec = ProcessSpec();
   final Demographics demographics = Demographics();
+  DynamicResponseService dynamicResponseService = DynamicResponseService();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
@@ -113,5 +115,13 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   addConsentField(String consentData) async {
     await demographics.setConsentField(consentData);
+  }
+
+  Future<List<String?>> getFieldValues(String fieldName, String langCode) async {
+    return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
+  }
+
+  Future<List<String?>> getLocationValues(String fieldName, String langCode) async {
+    return await dynamicResponseService.fetchLocationValues(fieldName, langCode);
   }
 }

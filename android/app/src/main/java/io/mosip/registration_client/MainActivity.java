@@ -42,7 +42,7 @@ import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
-import io.mosip.registration_client.api_services.LocationDetailsApi;
+import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
@@ -52,7 +52,7 @@ import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.BiometricsPigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 import io.mosip.registration_client.model.DemographicsDataPigeon;
-import io.mosip.registration_client.model.LocationResponsePigeon;
+import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
@@ -115,15 +115,14 @@ public class MainActivity extends FlutterActivity {
     @Inject
     PacketAuthenticationApi packetAuthenticationApi;
 
-
-    @Inject
-    LocationDetailsApi locationDetailsApi;
-
     @Inject
     RegistrationApi registrationApi;
 
     @Inject
     DemographicsDetailsApi demographicsDetailsApi;
+
+    @Inject
+    DynamicDetailsApi dynamicDetailsApi;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -155,10 +154,10 @@ public class MainActivity extends FlutterActivity {
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
         BiometricsPigeon.BiometricsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),biometricsDetailsApi);
         biometricsDetailsApi.setCallbackActivity(this);
-        LocationResponsePigeon.LocationResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), locationDetailsApi);
         RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
+        DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(

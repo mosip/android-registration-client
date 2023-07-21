@@ -4,9 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
-import 'package:registration_client/pigeon/location_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/provider/location_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
@@ -33,8 +31,15 @@ class NewProcessScreenContent extends StatefulWidget {
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   @override
   void initState() {
-    context.read<LocationProvider>().setLocationResponse("eng");
     super.initState();
+  }
+  
+  Future<List<String?>> _getFieldValues(String fieldName, String langCode) async {
+    return await context.read<RegistrationTaskProvider>().getFieldValues(fieldName, langCode);
+  }
+
+  Future<List<String?>> _getLocationValues(String hierarchyLevelName, String langCode) async {
+    return await context.read<RegistrationTaskProvider>().getLocationValues(hierarchyLevelName, langCode);
   }
 
   Widget widgetType(Field e) {
@@ -50,94 +55,82 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     if (e.controlType == "checkbox") {
       return CheckboxControl(field: e);
     }
+
     if (e.controlType == "html") {
       return HtmlBoxControl(field: e);
     }
+
     if (e.controlType == "biometrics") {
       return BiometricCaptureControl(field: e);
     }
+
     if (e.controlType == "button") {
       if (e.subType == "preferredLang") {
         return ButtonControl(field: e);
       }
 
       if (e.subType == "gender" || e.subType == "residenceStatus") {
-        Map<String, List<String>> values = {
-          'gender': ["Female", "Male", "Others"],
-          'residenceStatus': ["Permanent", "Temporary"],
-        };
-        return Card(
-          elevation: 0,
-          margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomLabel(feild: e),
-                RadioButtonControl(
-                  id: e.id ?? "",
-                  values: values[e.subType] ?? [],
-                  type: e.type ?? "",
+        return FutureBuilder(
+          future: _getFieldValues(e.subType!, "eng"),
+          builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+            return Card(
+              elevation: 0,
+              margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomLabel(feild: e),
+                    snapshot.hasData ? RadioButtonControl(
+                      id: e.id ?? "",
+                      values: snapshot.data!,
+                      type: e.type ?? "",
+                    ) : const SizedBox.shrink(),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }
         );
       }
       return Text("${e.controlType}");
     }
+
     if (e.controlType == "textbox") {
       return TextBoxControl(e: e, validation: regexPattern);
     }
-    if (e.controlType == "dropdown") {
-      List<String?> options = [];
-      LocationResponse? locationResponse =
-          context.watch<LocationProvider>().locationResponse;
-      if (locationResponse != null) {
-        switch (e.subType) {
-          case "Region":
-            options = locationResponse.regionList;
-            break;
-          case "Province":
-            options = locationResponse.provinceList;
-            break;
-          case "City":
-            options = locationResponse.cityList;
-            break;
-          case "Zone":
-            options = locationResponse.zoneList;
-            break;
-          case "Postal Code":
-            options = locationResponse.postalCodeList;
-            break;
-          default:
-        }
-      }
 
-      return Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(feild: e),
-              const SizedBox(
-                height: 10,
+    if (e.controlType == "dropdown") {
+      return FutureBuilder(
+        future: _getLocationValues(e.subType!, "eng"),
+        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+          return Card(
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomLabel(feild: e),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  snapshot.hasData ? DropDownControl(
+                    validation: regexPattern,
+                    id: e.id ?? "",
+                    options: snapshot.data!,
+                    type: e.type ?? "",
+                  ) : const SizedBox.shrink(),
+                ],
               ),
-              DropDownControl(
-                validation: regexPattern,
-                id: e.id ?? "",
-                options: options,
-                type: e.type ?? "",
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       );
     }
+
     if (e.controlType == "ageDate") {
       return AgeDateControl(
         field: e,
