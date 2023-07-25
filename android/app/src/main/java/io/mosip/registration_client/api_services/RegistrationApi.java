@@ -63,11 +63,16 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getDemographics());
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getSelectedLanguages());
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getRId());
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getProcess());
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getSchemaVersion());
             String template = this.templateService.getTemplate(this.registrationDto, true);
-            result.success("");
+            result.success(template);
             return;
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Fetch template failed: " + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), "Fetch template failed: ", e);
         }
         Log.e(getClass().getSimpleName(), "Empty template!");
         result.success("");

@@ -196,9 +196,12 @@ class NewProcess extends StatelessWidget {
                                   .read<GlobalProvider>()
                                   .newProcessTabIndex ==
                               newProcess.screens!.length - 1) {
-                            context
+                            await context
                                 .read<RegistrationTaskProvider>()
                                 .getPreviewTemplate(true);
+                                String temp = context.read<RegistrationTaskProvider>().previewTemplate;
+                                log("Preview Template: ");
+                                log(temp);
                           }
 
                           context.read<GlobalProvider>().newProcessTabIndex =
