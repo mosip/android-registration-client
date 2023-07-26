@@ -15,6 +15,7 @@ import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
+import '../../../platform_spi/registration.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -33,14 +34,6 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   void initState() {
     super.initState();
   }
-  
-  Future<List<String?>> _getFieldValues(String fieldName, String langCode) async {
-    return await context.read<RegistrationTaskProvider>().getFieldValues(fieldName, langCode);
-  }
-
-  Future<List<String?>> _getLocationValues(String hierarchyLevelName, String langCode) async {
-    return await context.read<RegistrationTaskProvider>().getLocationValues(hierarchyLevelName, langCode);
-  }
 
   Widget widgetType(Field e) {
     RegExp regexPattern = RegExp(r'^.*$');
@@ -52,93 +45,36 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       }
     }
 
-    if (e.controlType == "checkbox") {
-      return CheckboxControl(field: e);
-    }
-
-    if (e.controlType == "html") {
-      return HtmlBoxControl(field: e);
-    }
-
-    if (e.controlType == "biometrics") {
-      return BiometricCaptureControl(field: e);
-    }
-
-    if (e.controlType == "button") {
-      if (e.subType == "preferredLang") {
-        return ButtonControl(field: e);
-      }
-
-      if (e.subType == "gender" || e.subType == "residenceStatus") {
-        return FutureBuilder(
-          future: _getFieldValues(e.subType!, "eng"),
-          builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
-            return Card(
-              elevation: 0,
-              margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomLabel(feild: e),
-                    snapshot.hasData ? RadioButtonControl(
-                      id: e.id ?? "",
-                      values: snapshot.data!,
-                      type: e.type ?? "",
-                    ) : const SizedBox.shrink(),
-                  ],
-                ),
-              ),
-            );
-          }
-        );
-      }
-      return Text("${e.controlType}");
-    }
-
-    if (e.controlType == "textbox") {
-      return TextBoxControl(e: e, validation: regexPattern);
-    }
-
-    if (e.controlType == "dropdown") {
-      return FutureBuilder(
-        future: _getLocationValues(e.subType!, "eng"),
-        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
-          return Card(
-            elevation: 0,
-            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomLabel(feild: e),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  snapshot.hasData ? DropDownControl(
-                    validation: regexPattern,
-                    id: e.id ?? "",
-                    options: snapshot.data!,
-                    type: e.type ?? "",
-                  ) : const SizedBox.shrink(),
-                ],
-              ),
-            ),
-          );
+    switch (e.controlType) {
+      case "checkbox":
+        return CheckboxControl(field: e);
+      case "html":
+        return HtmlBoxControl(field: e);
+      case "biometrics":
+        return BiometricCaptureControl(field: e);
+      case "button":
+        if (e.subType == "preferredLang") {
+          return ButtonControl(field: e);
         }
-      );
+        if (e.subType == "gender" || e.subType == "residenceStatus") {
+          return RadioButtonControl(field: e);
+        }
+        return Text("${e.controlType}");
+      case "textbox":
+        return TextBoxControl(e: e, validation: regexPattern);
+      case "dropdown":
+        return DropDownControl(
+          validation: regexPattern,
+          field: e,
+        );
+      case "ageDate":
+        return AgeDateControl(
+          field: e,
+          validation: regexPattern,
+        );
+      default:
+        return Text("${e.controlType}");
     }
-
-    if (e.controlType == "ageDate") {
-      return AgeDateControl(
-        field: e,
-        validation: regexPattern,
-      );
-    }
-
-    return Text("${e.controlType}");
   }
 
   @override

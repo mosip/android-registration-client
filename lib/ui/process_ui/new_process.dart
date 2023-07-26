@@ -199,9 +199,11 @@ class NewProcess extends StatelessWidget {
                             await context
                                 .read<RegistrationTaskProvider>()
                                 .getPreviewTemplate(true);
-                                String temp = context.read<RegistrationTaskProvider>().previewTemplate;
-                                log("Preview Template: ");
-                                log(temp);
+                            String temp = context
+                                .read<RegistrationTaskProvider>()
+                                .previewTemplate;
+                            log("Preview Template: ");
+                            log(temp);
                           }
 
                           context.read<GlobalProvider>().newProcessTabIndex =
@@ -218,15 +220,18 @@ class NewProcess extends StatelessWidget {
                           if (!isPacketAuthenticated) {
                             return;
                           }
-                          await context.read<RegistrationTaskProvider>().submitRegistrationDto(username);
-                          bool isRegistrationSaved = context.read<RegistrationTaskProvider>().isRegistrationSaved;
+                          await context
+                              .read<RegistrationTaskProvider>()
+                              .submitRegistrationDto(username);
+                          bool isRegistrationSaved = context
+                              .read<RegistrationTaskProvider>()
+                              .isRegistrationSaved;
 
-                          if(!isRegistrationSaved) {
+                          if (!isRegistrationSaved) {
                             return;
                           }
                         }
-                        
-                        
+
                         context.read<GlobalProvider>().newProcessTabIndex =
                             context.read<GlobalProvider>().newProcessTabIndex +
                                 1;

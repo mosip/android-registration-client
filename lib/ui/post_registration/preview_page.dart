@@ -7,17 +7,15 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 class PreviewPage extends StatelessWidget {
   const PreviewPage({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 400.h,
-        width: 864.w,
-        padding: EdgeInsets.only(top: 33.h),
-        child: InAppWebView(
-          initialData: InAppWebViewInitialData(data: context.watch<RegistrationTaskProvider>().previewTemplate),
-        ),
-      );
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: InAppWebView(
+        initialData: InAppWebViewInitialData(
+            data: context.watch<RegistrationTaskProvider>().previewTemplate),
+      ),
+    );
   }
 }
