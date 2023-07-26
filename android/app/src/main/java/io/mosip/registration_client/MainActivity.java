@@ -39,14 +39,14 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
-import io.mosip.registration_client.api_services.SyncResponseApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 import io.mosip.registration_client.model.MachinePigeon;
+import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
-import io.mosip.registration_client.model.SyncPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 
 public class MainActivity extends FlutterActivity {
@@ -98,7 +98,8 @@ public class MainActivity extends FlutterActivity {
     @Inject
     ProcessSpecDetailsApi processSpecDetailsApi;
 
-    SyncResponseApi syncResponseApi;
+    @Inject
+    MasterDataSyncApi masterDataSyncApi;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -128,7 +129,7 @@ public class MainActivity extends FlutterActivity {
         AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
 
-        SyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),syncResponseApi);
+        MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(

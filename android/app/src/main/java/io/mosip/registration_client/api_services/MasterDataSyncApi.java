@@ -4,9 +4,7 @@ import static android.content.ContentValues.TAG;
 import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.REG_APP_ID;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -54,7 +52,6 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
-import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -65,14 +62,14 @@ import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.JsonUtils;
-import io.mosip.registration_client.model.SyncPigeon;
+import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
-public class SyncResponseApi implements SyncPigeon.SyncApi {
+public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
     private final int master_data_recursive_sync_max_retry = 3;
     SyncRestService syncRestService;
@@ -80,7 +77,6 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
     RegistrationCenterRepository registrationCenterRepository;
     MachineRepository machineRepository;
     ClientCryptoManagerService clientCryptoManagerService;
-    MasterDataServiceImpl masterDataService;
     GlobalParamRepository globalParamRepository;
     ObjectMapper objectMapper;
     UserDetailRepository userDetailRepository;
@@ -96,19 +92,16 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
     JobManagerService jobManagerService;
     Context context;
 
-    SyncPigeon.Sync sync;
-
     @Inject
-    public SyncResponseApi(MasterDataServiceImpl masterDataService, ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository, SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository, IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
-    ApplicantValidDocRepository applicantValidDocRepository,
-    TemplateRepository templateRepository,
-    DynamicFieldRepository dynamicFieldRepository,
-    LocationRepository locationRepository,
-    BlocklistedWordRepository blocklistedWordRepository,
-    SyncJobDefRepository syncJobDefRepository,
-    LanguageRepository languageRepository,
-    JobManagerService jobManagerService) {
-        this.masterDataService = masterDataService;
+    public MasterDataSyncApi(ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository, SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository, IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
+                             ApplicantValidDocRepository applicantValidDocRepository,
+                             TemplateRepository templateRepository,
+                             DynamicFieldRepository dynamicFieldRepository,
+                             LocationRepository locationRepository,
+                             BlocklistedWordRepository blocklistedWordRepository,
+                             SyncJobDefRepository syncJobDefRepository,
+                             LanguageRepository languageRepository,
+                             JobManagerService jobManagerService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -131,12 +124,12 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
     }
 
 
-    private void syncCertificate(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) {
+    private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null)
             return;
 
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getCertificate(REG_APP_ID,
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
                 centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
@@ -149,42 +142,28 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
                         certificateRequestDto.setReferenceId(centerMachineDto.getMachineRefId());
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("CertificateSync")
-                                .setSyncProgress(Long.valueOf(1))
-                                .setErrorCode("").build();
-
-                        result.success(sync);
+                        Log.i(TAG, "Policy Sync");
+                        result.success(syncResult("PolicyKeySync", 1, ""));
                         return;
-                    } else
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("CertificateSync")
-                                .setSyncProgress(Long.valueOf(1))
-                                .setErrorCode("Policy key Sync failed").build();
-                    result.success(sync);
+                    }
+                    Log.e(TAG, "Policy Sync Failed:" + error.toString());
+                    result.success(syncResult("PolicyKeySync", 1, "policy_key_sync_failed"));
                     return;
-                } else
-                    sync = new SyncPigeon.Sync.Builder()
-                            .setSyncType("CertificateSync")
-                            .setSyncProgress(Long.valueOf(1))
-                            .setErrorCode("Policy key Sync failed").build();
-                result.success(sync);
+                }
+                result.success(syncResult("PolicyKeySync", 1, "policy_key_sync_failed"));
                 return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CertificateResponse>> call, Throwable t) {
-                sync = new SyncPigeon.Sync.Builder()
-                        .setSyncType("CertificateSync")
-                        .setSyncProgress(Long.valueOf(1))
-                        .setErrorCode("Policy key Sync failed").build();
-                result.success(sync);
+                Log.e(TAG,"Policy Sync Failed:", t);
+                result.success(syncResult("PolicyKeySync", 1, "policy_key_sync_failed"));
                 return;
             }
         });
     }
 
-    private void syncGlobalParamsData(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) throws Exception {
+    private void syncGlobalParamsData(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) throws Exception {
         Log.i(TAG, "config data sync is started");
         Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(
                 clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
@@ -195,39 +174,19 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveGlobalParams(response.body().getResponse());
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("GlobalParamsSync")
-                                .setSyncProgress(Long.valueOf(2))
-                                .setErrorCode("")
-                                .build();
-                        result.success(sync);
+                        result.success(syncResult("GlobalParamsSync", 2, ""));
                         return;
                     } else
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("GlobalParamsSync")
-                                .setSyncProgress(Long.valueOf(2))
-                                .setErrorCode("GlobalParamsSync Failed")
-                                .build();
-                    result.success(sync);
+                    result.success(syncResult("GlobalParamsSync", 2, "global_params_sync_failed"));
                     return;
                 } else
-                    sync = new SyncPigeon.Sync.Builder()
-                            .setSyncType("GlobalParamsSync")
-                            .setSyncProgress(Long.valueOf(2))
-                            .setErrorCode("GlobalParamsSync Failed")
-                            .build();
-                result.success(sync);
+                result.success(syncResult("GlobalParamsSync", 2, "global_params_sync_failed"));
                 return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
-                sync = new SyncPigeon.Sync.Builder()
-                        .setSyncType("GlobalParamsSync")
-                        .setSyncProgress(Long.valueOf(2))
-                        .setErrorCode("GlobalParamsSync Failed")
-                        .build();
-                result.success(sync);
+                result.success(syncResult("GlobalParamsSync", 2, "global_params_sync_failed"));
                 return;
             }
         });
@@ -285,7 +244,7 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
         return Collections.EMPTY_MAP;
     }
 
-    private void syncUserDetails(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) throws Exception {
+    private void syncUserDetails(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) throws Exception {
         Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(
                 this.clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
@@ -295,40 +254,21 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveUserDetails(response.body().getResponse().getUserDetails());
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("UserDetailsSync")
-                                .setSyncProgress(Long.valueOf(3))
-                                .setErrorCode("")
-                                .build();
-                        result.success(sync);
+                        MasterDataSyncPigeon.Sync sync = syncResult("UserDetailsSync", 3, "");
+                        result.success(syncResult("UserDetailsSync", 3, ""));
                         return;
-//                        Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
                     } else
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("UserDetailsSync")
-                                .setSyncProgress(Long.valueOf(3))
-                                .setErrorCode("UserDetailsSync Failed")
-                                .build();
-                    result.success(sync);
+                    result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
                     return;
                 } else
-                    sync = new SyncPigeon.Sync.Builder()
-                            .setSyncType("UserDetailsSync")
-                            .setSyncProgress(Long.valueOf(3))
-                            .setErrorCode("UserDetailsSync Failed")
-                            .build();
-                result.success(sync);
+                result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
                 return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<UserDetailResponse>> call, Throwable t) {
-                sync = new SyncPigeon.Sync.Builder()
-                        .setSyncType("UserDetailsSync")
-                        .setSyncProgress(Long.valueOf(3))
-                        .setErrorCode("UserDetailsSync Failed")
-                        .build();
-                result.success(sync);
+
+                result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
                 return;
             }
         });
@@ -343,7 +283,7 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
     }
 
 
-    private void syncLatestIdSchema(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result, Context context) {
+    private void syncLatestIdSchema(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Context context) {
         Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseBody>() {
 
@@ -356,47 +296,27 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
                                 new TypeReference<ResponseWrapper<IdSchemaResponse>>() {
                                 });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("LatestIDSchemaSync")
-                                .setSyncProgress(Long.valueOf(4))
-                                .setErrorCode("")
-                                .build();
-                        result.success(sync);
+                        result.success(syncResult("LatestIDSchemaSync", 4, ""));
                         return;
 
                     } catch (Exception e) {
-                        sync = new SyncPigeon.Sync.Builder()
-                                .setSyncType("LatestIDSchemaSync")
-                                .setSyncProgress(Long.valueOf(4))
-                                .setErrorCode("LatestIDSchemaSync Failed")
-                                .build();
-                        result.success(sync);
+                        result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
                         Log.e(TAG, "Failed to save IDSchema", e);
                     }
                 } else
-                    sync = new SyncPigeon.Sync.Builder()
-                            .setSyncType("LatestIDSchemaSync")
-                            .setSyncProgress(Long.valueOf(4))
-                            .setErrorCode("LatestIDSchemaSync Failed with code: " + response.code())
-                            .build();
-                result.success(sync);
+                result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(TAG, "Failed to sync schema", t);
-                sync = new SyncPigeon.Sync.Builder()
-                        .setSyncType("LatestIDSchemaSync")
-                        .setSyncProgress(Long.valueOf(4))
-                        .setErrorCode("LatestIDSchemaSync Failed ")
-                        .build();
-                result.success(sync);
+                result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
             }
         });
     }
 
-    private void syncMasterData(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result, int retryNo) {
+    private void syncMasterData(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
 
         Map<String, String> queryParams = new HashMap<>();
@@ -405,12 +325,7 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
             Log.e(TAG, "MasterData : not able to get client key index", e);
-            sync = new SyncPigeon.Sync.Builder()
-                    .setSyncType("MasterDataSync")
-                    .setSyncProgress(Long.valueOf(5))
-                    .setErrorCode("MasterDataSync Failed!not able to get client key index ")
-                    .build();
-            result.success(sync);
+            result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
             return;
         }
 
@@ -438,47 +353,24 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
                                 //rerunning master data to sync completed master data
                                 syncMasterData(result, retryNo + 1);
                             } else {
-                                sync = new SyncPigeon.Sync.Builder()
-                                        .setSyncType("MasterDataSync")
-                                        .setSyncProgress(Long.valueOf(5))
-                                        .setErrorCode("MasterDataSync Failed! Please try again in some time")
-                                        .build();
-                                result.success(sync);
+                                result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
                                 return;
                             }
                         } else {
-                            sync = new SyncPigeon.Sync.Builder()
-                                    .setSyncType("MasterDataSync")
-                                    .setSyncProgress(Long.valueOf(5))
-                                    .setErrorCode("")
-                                    .build();
-                            result.success(sync);
+                            result.success(syncResult("MasterDataSync", 5, ""));
                             return;
                         }
                     } else
-                    sync = new SyncPigeon.Sync.Builder()
-                            .setSyncType("MasterDataSync")
-                            .setSyncProgress(Long.valueOf(5))
-                            .setErrorCode("MasterDataSync Failed! ")
-                            .build();
-                    result.success(sync);
+                    result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
+                    return;
                 } else
-                sync = new SyncPigeon.Sync.Builder()
-                        .setSyncType("MasterDataSync")
-                        .setSyncProgress(Long.valueOf(5))
-                        .setErrorCode("MasterDataSync Failed! ")
-                        .build();
-                result.success(sync);
+                result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
+                return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
-                sync = new SyncPigeon.Sync.Builder()
-                        .setSyncType("MasterDataSync")
-                        .setSyncProgress(Long.valueOf(5))
-                        .setErrorCode("MasterDataSync Failed!")
-                        .build();
-                result.success(sync);
+                result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
             }
         });
     }
@@ -620,29 +512,29 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
     }
 
     @Override
-    public void getLastSyncTime(@NonNull SyncPigeon.Result<SyncPigeon.SyncTime> result){
-        SyncPigeon.SyncTime syncTime;
+    public void getLastSyncTime(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.SyncTime> result) {
+        MasterDataSyncPigeon.SyncTime syncTime;
         String globalParamSyncTime;
         if(globalParamRepository.getGlobalParamValue("masterdata_last_sync_datetime") == null){
             globalParamSyncTime = "LastSyncTimeIsNull";
         }
         else
             globalParamSyncTime = globalParamRepository.getGlobalParamValue("masterdata_last_sync_datetime");
-        syncTime = new SyncPigeon.SyncTime.Builder()
+        syncTime = new MasterDataSyncPigeon.SyncTime.Builder()
                 .setSyncTime(globalParamSyncTime)
-                        .build();
+                .build();
         result.success(syncTime);
         return;
     }
 
     @Override
-    public void getCertificateSync(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) {
-        syncCertificate(result);
+    public void getPolicyKeySync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        syncPolicyKey(result);
         return;
     }
 
     @Override
-    public void getGlobalParamsSync(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) {
+    public void getGlobalParamsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
             syncGlobalParamsData(result);
         } catch (Exception e) {
@@ -652,7 +544,7 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
     }
 
     @Override
-    public void getUserDetailsSync(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) {
+    public void getUserDetailsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
             syncUserDetails(result);
         } catch (Exception e) {
@@ -662,15 +554,20 @@ public class SyncResponseApi implements SyncPigeon.SyncApi {
     }
 
     @Override
-    public void getIDSchemaSync(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) {
+    public void getIDSchemaSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         syncLatestIdSchema(result, context);
         return;
     }
 
     @Override
-    public void getMasterDataSync(@NonNull SyncPigeon.Result<SyncPigeon.Sync> result) {
+    public void getMasterDataSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         syncMasterData(result, 0);
     }
-
-
+    private MasterDataSyncPigeon.Sync syncResult(String syncType, int progress, String errorCode){
+        return  new MasterDataSyncPigeon.Sync.Builder()
+                .setSyncType(syncType)
+                .setSyncProgress(Long.valueOf(progress))
+                .setErrorCode(errorCode)
+                .build();
+    }
 }

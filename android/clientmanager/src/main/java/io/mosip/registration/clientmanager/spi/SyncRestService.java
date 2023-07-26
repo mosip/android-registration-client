@@ -20,9 +20,9 @@ public interface SyncRestService {
     Call<ResponseWrapper<ClientSettingDto>> fetchMasterData(@QueryMap Map<String, String> params);
 
     @GET("/v1/syncdata/getCertificate")
-    Call<ResponseWrapper<CertificateResponse>> getCertificate(@Query("applicationId") String applicationId,
-                                                              @Query("referenceId") String referenceId,
-                                                              @Query("version") String version);
+    Call<ResponseWrapper<CertificateResponse>> getPolicyKey(@Query("applicationId") String applicationId,
+                                                            @Query("referenceId") String referenceId,
+                                                            @Query("version") String version);
 
     @GET("/v1/syncdata/latestidschema")
     Call<ResponseBody> getLatestIdSchema(@Query("version") String version);

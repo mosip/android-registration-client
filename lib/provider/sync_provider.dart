@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:flutter/widgets.dart';
-import 'package:registration_client/pigeon/sync_pigeon.dart';
+import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_android/sync_response_impl.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SyncProvider with ChangeNotifier {
   String _lastSuccessfulSyncTime = "";
   int _currentSyncProgress = 0;
@@ -14,7 +13,7 @@ class SyncProvider with ChangeNotifier {
   bool _isSyncing = false;
   bool _isGlobalSyncInProgress = false;
 
-  bool _certificateSyncSuccess = false;
+  bool _policyKeySyncSuccess = false;
   bool _globalParamsSyncSuccess = false;
   bool _userDetailsSyncSuccess = false;
   bool _idSchemaSyncSuccess = false;
@@ -25,7 +24,7 @@ class SyncProvider with ChangeNotifier {
   String get currentProgressType => _currentProgressType;
   bool get isSyncing => _isSyncing;
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
-  bool get certificateSyncSuccess => _certificateSyncSuccess;
+  bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
   bool get idSchemaSyncSuccess => _idSchemaSyncSuccess;
@@ -56,18 +55,19 @@ class SyncProvider with ChangeNotifier {
     _isGlobalSyncInProgress = isGlobalSyncInProgress;
   }
 
-  autoSync() async {
+
+  autoSync(BuildContext context) async {
+    await SyncResponseImpl().getLastSyncTime();
     await SyncResponseImpl()
-        .getCertificateSync()
+        .getPolicyKeySync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
-        _certificateSyncSuccess = true;
+        _policyKeySyncSuccess = true;
         _currentSyncProgress = getAutoSync.syncProgress!;
         notifyListeners();
       } else {
-        _certificateSyncSuccess = false;
-        log(getAutoSync.errorCode!);
+        log(AppLocalizations.of(context)!.policy_key_sync_failed);
       }
       notifyListeners();
       await SyncResponseImpl()
@@ -80,7 +80,7 @@ class SyncProvider with ChangeNotifier {
           notifyListeners();
 
           } else {
-          log(getAutoSync.errorCode!);
+          log(AppLocalizations.of(context)!.global_params_sync_failed);
         }
         notifyListeners();
         await SyncResponseImpl()
@@ -93,7 +93,7 @@ class SyncProvider with ChangeNotifier {
             notifyListeners();
   
               } else {
-            log(getAutoSync.errorCode!);
+            log(AppLocalizations.of(context)!.user_details_sync_failed);
           }
           notifyListeners();
           await SyncResponseImpl()
@@ -104,9 +104,8 @@ class SyncProvider with ChangeNotifier {
               _idSchemaSyncSuccess = true;
               _currentSyncProgress = getAutoSync.syncProgress!;
               notifyListeners();
-    
                   } else {
-              log(getAutoSync.errorCode!);
+              log(AppLocalizations.of(context)!.id_schema_sync_failed);
             }
             notifyListeners();
             await SyncResponseImpl()
@@ -119,7 +118,7 @@ class SyncProvider with ChangeNotifier {
                 notifyListeners();
       
                       } else {
-                log(getAutoSync.errorCode!);
+                log(AppLocalizations.of(context)!.master_data_sync_failed);
               }
               notifyListeners();
             });
@@ -130,7 +129,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   bool isAllSyncSuccessful() {
-    if (_certificateSyncSuccess &&
+    if (_policyKeySyncSuccess &&
         _globalParamsSyncSuccess &&
         _masterDataSyncSuccess &&
         _userDetailsSyncSuccess &&

@@ -18,14 +18,12 @@
   "forgot_password": "Mot de passe oublié?",
   "login_button": "CONNECTEZ-VOUS",
   "back_button": "PRÉCÉDENT",
-  "login_failed": "",
   "user_validated": "Utilisateur validé !",
   "username_required": "Le nom d’utilisateur est requis!",
   "password_required": "Le mot de passe est requis!",
   "username_exceed": "Le nom d’utilisateur ne doit pas dépasser 50 caractères!",
   "password_exceed": "Le mot de passe ne doit pas dépasser 50 caractères!",
   "username_incorrect": "Utilisateur introuvable !",
-  "password_incorrect": "Mot de passe incorrect!",
   "device_credentials": "Informations d’identification de l’appareil",
   "copy_text": "Copier le texte",
   "download_json": "Télécharger JSON",
@@ -41,5 +39,10 @@
   "sync_completed_succesfully": "Synchro. Complété avec succès",
   "sync_completed_message": "Le système redémarrera dans quelques secondes et vous serez redirigé vers la page de connexion.",
   "sync_failed": "Synchro. Échoué",
-  "sync_failed_message": "Veuillez contacter l'administrateur système ou le superviseur pour obtenir de l'aide."
+  "sync_failed_message": "Veuillez contacter l'administrateur système ou le superviseur pour obtenir de l'aide.",
+  "policy_key_sync_failed":"Échec de la synchronisation de la clé de stratégie",
+  "global_params_sync_failed":"Échec de la synchronisation globale des paramètres",
+  "user_details_sync_failed":"Échec de la synchronisation des détails de l'utilisateur",
+  "id_schema_sync_failed":"Échec de la synchronisation IDSchema",
+  "master_data_sync_failed":"Échec de la synchronisation des données principales"
 }

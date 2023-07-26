@@ -17,7 +17,7 @@ abstract class SyncApi{
   @async
   SyncTime getLastSyncTime();
   @async
-  Sync getCertificateSync();
+  Sync getPolicyKeySync();
   @async
   Sync getGlobalParamsSync();
   @async

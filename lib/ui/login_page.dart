@@ -13,7 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/machine_pigeon.dart';
-import 'package:registration_client/pigeon/sync_pigeon.dart';
+import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_android/auth_impl.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
@@ -180,15 +180,14 @@ class _LoginPageState extends State<LoginPage> {
     bool isTrue = context.read<AuthProvider>().isLoggedIn;
     if (!isTrue) {
       authProvider.setIsSyncing(false);
-     _showErrorInSnackbar();
-    } 
-    else {
+      _showErrorInSnackbar();
+    } else {
       authProvider.setIsSyncing(false);
       syncProvider.setIsGlobalSyncInProgress(true);
       if (syncProvider.isGlobalSyncInProgress) {
         showLoadingDialog(context);
-        await syncProvider.autoSync().then((value) {
-          //syncProvider.setIsGlobalSyncInProgress(false);
+        await syncProvider.autoSync(context).then((value) {
+          // syncProvider.setIsGlobalSyncInProgress(false);
         });
       }
       showSyncResultDialog(context);
@@ -199,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         }
       });
-      //_navigateToHomePage();
+      // _navigateToHomePage();
     }
 
     setState(() {
@@ -586,12 +585,15 @@ class _LoginPageState extends State<LoginPage> {
                         height: isMobile ? 40.h : 250.h,
                         width: isMobile ? 40.w : 250.w,
                       ),
-                      Center(
-                        child: ColorfulCircularProgressIndicator(
-                          colors: app_colors,
-                          strokeWidth: 2.2,
-                          duration: const Duration(milliseconds: 500),
-                          initialColor: app_colors[0],
+                      Transform.scale(
+                        scale: isMobile ? 1.2 : 9,
+                        child: Center(
+                          child: ColorfulCircularProgressIndicator(
+                            colors: app_colors,
+                            strokeWidth: isMobile ? 2.2 : 4.0,
+                            duration: const Duration(milliseconds: 500),
+                            initialColor: app_colors[0],
+                          ),
                         ),
                       ),
                     ],
@@ -609,8 +611,7 @@ class _LoginPageState extends State<LoginPage> {
                           return Text(
                               "Sync ${syncP.currentSyncProgress.toString()} of 5 ");
                         },
-                      )
-                      ),
+                      )),
                 ],
               ),
             ),

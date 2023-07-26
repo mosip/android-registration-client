@@ -1,17 +1,19 @@
+import 'dart:math';
+
 import 'package:flutter/services.dart';
-import 'package:registration_client/pigeon/sync_pigeon.dart';
+import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 import 'package:registration_client/platform_spi/sync_response.dart';
 
-class SyncResponseImpl extends SyncResponse {
+class SyncResponseImpl implements SyncResponse {
   @override
-  Future<Sync> getCertificateSync() async {
+  Future<Sync> getPolicyKeySync() async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getCertificateSync();
+      syncResponse = await SyncApi().getPolicyKeySync();
     } on PlatformException {
-      print('CertificateSync Api call failed');
+      print('PolicyKeySync Api call failed, PlatformException');
     } catch (e) {
-      print('CertificateSync has failed! ${e.toString()}');
+      print('PolicyKeySync has failed! ${e.toString()}');
     }
     return syncResponse;
   }
@@ -22,7 +24,7 @@ class SyncResponseImpl extends SyncResponse {
     try {
       syncResponse = await SyncApi().getGlobalParamsSync();
     } on PlatformException {
-      print('GlobalParamsSync Api call failed');
+      print('GlobalParamsSync Api call failed, PlatformException');
     } catch (e) {
       print('GlobalParamsSync has failed! ${e.toString()}');
     }
@@ -35,7 +37,7 @@ class SyncResponseImpl extends SyncResponse {
     try {
       syncResponse = await SyncApi().getUserDetailsSync();
     } on PlatformException {
-      print('UserDetailsSync Api call failed');
+      print('UserDetailsSync Api call failed, PlatformException');
     } catch (e) {
       print('UserDetailsSync has failed! ${e.toString()}');
     }
@@ -48,7 +50,7 @@ class SyncResponseImpl extends SyncResponse {
     try {
       syncResponse = await SyncApi().getIDSchemaSync();
     } on PlatformException {
-      print('IDSchemaSync Api call failed');
+      print('IDSchemaSync Api call failed, PlatformException');
     } catch (e) {
       print('IDSchemaSync has failed! ${e.toString()}');
     }
@@ -61,7 +63,7 @@ class SyncResponseImpl extends SyncResponse {
     try {
       syncResponse = await SyncApi().getMasterDataSync();
     } on PlatformException {
-      print('MasterDataSync Api call failed');
+      print('MasterDataSync Api call failed, PlatformException');
     } catch (e) {
       print('MasterDataSync has failed! ${e.toString()}');
     }
