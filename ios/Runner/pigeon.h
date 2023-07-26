@@ -11,14 +11,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by DynamicResponseApi.
-NSObject<FlutterMessageCodec> *DynamicResponseApiGetCodec(void);
+/// The codec used by RegistrationDataApi.
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
 
-@protocol DynamicResponseApi
-- (void)getFieldValuesFieldName:(NSString *)fieldName langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getLocationValuesHierarchyLevelName:(NSString *)hierarchyLevelName langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+@protocol RegistrationDataApi
+- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)evaluateMVELFieldData:(NSString *)fieldData expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)submitRegistrationDtoMakerName:(NSString *)makerName completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void DynamicResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DynamicResponseApi> *_Nullable api);
+extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

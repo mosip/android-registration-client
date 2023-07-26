@@ -4,10 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
-class PreviewPage extends StatelessWidget {
-  const PreviewPage({super.key});
-
-
+class AcknowledgementPage extends StatelessWidget {
+  const AcknowledgementPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,7 @@ class PreviewPage extends StatelessWidget {
         width: 864.w,
         padding: EdgeInsets.only(top: 33.h),
         child: InAppWebView(
-          initialData: InAppWebViewInitialData(data: context.watch<RegistrationTaskProvider>().previewTemplate),
+          initialData: InAppWebViewInitialData(data: context.watch<RegistrationTaskProvider>().previewTemplate,),
         ),
       );
   }

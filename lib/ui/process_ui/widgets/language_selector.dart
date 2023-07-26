@@ -186,7 +186,7 @@ class LanguageSelector extends StatelessWidget {
                     List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
                       return context.read<GlobalProvider>().langToCode(e) as String;
                     }).toList();
-                    print(langList);
+                    // print(langList);
                     await context
                         .read<RegistrationTaskProvider>()
                         .startRegistration(langList);

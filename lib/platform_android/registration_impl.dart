@@ -47,6 +47,21 @@ class RegistrationImpl implements Registration {
     return previewTemplate;
   }
   
+  @override
+  Future<String> submitRegistrationDto(String makerName) async {
+    String registrationSaveError = "";
+    try {
+      registrationSaveError =  await RegistrationDataApi().submitRegistrationDto(makerName);
+    } on PlatformException {
+      debugPrint('Registration API submit registration call failed');
+      registrationSaveError = "REG_SAVE_API_CALL_FAILED";
+    } catch (e) {
+      debugPrint('RegistrationDto not submitted: ${e.toString()}');
+      registrationSaveError = "REG_DTO_NOT_SUBMITTED";
+    }
+    return registrationSaveError;
+  }
+  
 }
 
 Registration getRegistrationImpl() => RegistrationImpl();

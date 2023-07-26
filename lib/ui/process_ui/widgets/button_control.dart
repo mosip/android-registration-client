@@ -9,9 +9,7 @@ class ButtonControl extends StatelessWidget {
   const ButtonControl({super.key, required this.field});
   final Field field;
 
-  @override
-  Widget build(BuildContext context) {
-    generateList(BuildContext context, int index) {
+  generateList(BuildContext context, int index) {
       List temp = List.generate(
           context.read<GlobalProvider>().fieldDisplayValues[field.id] == null
               ? 0
@@ -25,6 +23,9 @@ class ButtonControl extends StatelessWidget {
           field.id!, temp, context.read<GlobalProvider>().feildConsentValues);
       return false;
     }
+
+  @override
+  Widget build(BuildContext context) {
 
     return Card(
       color: pure_white,

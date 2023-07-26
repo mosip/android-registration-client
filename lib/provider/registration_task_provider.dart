@@ -14,6 +14,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
   String _registrationStartError = '';
+  bool _isRegistrationSaved = false;
 
   String _previewTemplate = "";
 
@@ -22,6 +23,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get uiSchema => _uiSchema;
   String get previewTemplate => _previewTemplate;
   String get registrationStartError => _registrationStartError;
+  bool get isRegistrationSaved => _isRegistrationSaved;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
@@ -84,6 +86,16 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   getPreviewTemplate(bool isPreview) async {
     _previewTemplate = await registration.getPreviewTemplate(isPreview);
+    notifyListeners();
+  }
+
+  submitRegistrationDto(String makerName) async {
+    String regSaveError = await registration.submitRegistrationDto(makerName);
+    if(regSaveError.isEmpty) {
+      _isRegistrationSaved = true;
+    } else {
+      _isRegistrationSaved = false;
+    }
     notifyListeners();
   }
 

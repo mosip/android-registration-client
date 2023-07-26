@@ -74,7 +74,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
     }
   }
 
-  String? feildValidation(value, message) {
+  int calculateYearDifference(DateTime date1, DateTime date2) {
+    int yearDifference = date2.year - date1.year;
+    if (date1.month > date2.month || (date1.month == date2.month && date1.day > date2.day)) {
+      yearDifference--;
+    }
+    return yearDifference;
+  }
+
+  String? fieldValidation(value, message) {
     try {
       String targetDateString = widget.field.format ??
           "yyyy/MM/dd"
@@ -154,7 +162,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         onTap: () => _removeFocusFromAll("day"),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
-                          return feildValidation(value, "dd");
+                          return fieldValidation(value, "dd");
                         },
                         onChanged: (value) {
                           if (value.length >= 2) {
@@ -187,7 +195,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         onTap: () => _removeFocusFromAll("month"),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
-                          return feildValidation(value, "MM");
+                          return fieldValidation(value, "MM");
                         },
                         onChanged: (value) {
                           if (value.length >= 2) {
@@ -218,10 +226,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
                     Flexible(
                       child: TextFormField(
                         validator: (value) {
-                          return feildValidation(value, "yyyy");
+                          return fieldValidation(value, "yyyy");
                         },
                         onChanged: (value) {
                           saveData();
+                          if(fieldValidation(value, 'yyyy') == null) {
+                            _ageController.text = calculateYearDifference(DateTime.parse(
+                            "${_yearController.text}-${_monthController.text}-${_dayController.text}"
+                          ), DateTime.now()).abs().toString();
+                          }
                         },
                         onTap: () => _removeFocusFromAll("year"),
                         autovalidateMode: AutovalidateMode.onUserInteraction,

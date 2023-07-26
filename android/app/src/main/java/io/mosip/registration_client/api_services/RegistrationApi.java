@@ -31,6 +31,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         this.registrationService = registrationService;
         this.templateService = templateService;
     }
+
     @Override
     public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<String> result) {
         String response = "";
@@ -48,7 +49,8 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     @Override
     public void evaluateMVEL(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
-            FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {});
+            FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {
+            });
             this.registrationDto = this.registrationService.getRegistrationDto();
             boolean isFieldVisible = UserInterfaceHelperService.isFieldVisible(fieldSpecDto, this.registrationDto.getMVELDataContext());
             result.success(isFieldVisible);
@@ -63,11 +65,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getDemographics());
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getSelectedLanguages());
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getRId());
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getProcess());
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getSchemaVersion());
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.AGE_GROUPS);
             String template = this.templateService.getTemplate(this.registrationDto, true);
             result.success(template);
             return;
@@ -76,6 +74,20 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         }
         Log.e(getClass().getSimpleName(), "Empty template!");
         result.success("");
+    }
+
+    @Override
+    public void submitRegistrationDto(@NonNull String makerName, @NonNull RegistrationDataPigeon.Result<String> result) {
+        try {
+            String rId = this.registrationService.getRegistrationDto().getRId();
+            registrationService.submitRegistrationDto(makerName);
+            Log.e(getClass().getSimpleName(), "Registration saved successfully");
+            result.success("");
+            return;
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Failed on registration submission", e);
+        }
+        result.success("REGISTRATION_SAVE_FAILED");
     }
 }
 

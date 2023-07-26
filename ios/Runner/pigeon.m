@@ -26,26 +26,25 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-NSObject<FlutterMessageCodec> *DynamicResponseApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
-void DynamicResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DynamicResponseApi> *api) {
+void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.DynamicResponseApi.getFieldValues"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.startRegistration"
         binaryMessenger:binaryMessenger
-        codec:DynamicResponseApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getFieldValuesFieldName:langCode:completion:)], @"DynamicResponseApi api (%@) doesn't respond to @selector(getFieldValuesFieldName:langCode:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(startRegistrationLanguages:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(startRegistrationLanguages:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_fieldName = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
-        [api getFieldValuesFieldName:arg_fieldName langCode:arg_langCode completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+        NSArray<NSString *> *arg_languages = GetNullableObjectAtIndex(args, 0);
+        [api startRegistrationLanguages:arg_languages completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -56,16 +55,54 @@ void DynamicResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.DynamicResponseApi.getLocationValues"
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.evaluateMVEL"
         binaryMessenger:binaryMessenger
-        codec:DynamicResponseApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getLocationValuesHierarchyLevelName:langCode:completion:)], @"DynamicResponseApi api (%@) doesn't respond to @selector(getLocationValuesHierarchyLevelName:langCode:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(evaluateMVELFieldData:expression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(evaluateMVELFieldData:expression:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_hierarchyLevelName = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
-        [api getLocationValuesHierarchyLevelName:arg_hierarchyLevelName langCode:arg_langCode completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_fieldData = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_expression = GetNullableObjectAtIndex(args, 1);
+        [api evaluateMVELFieldData:arg_fieldData expression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.getPreviewTemplate"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateIsPreview:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateIsPreview:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 0);
+        [api getPreviewTemplateIsPreview:arg_isPreview completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.RegistrationDataApi.submitRegistrationDto"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(submitRegistrationDtoMakerName:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(submitRegistrationDtoMakerName:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_makerName = GetNullableObjectAtIndex(args, 0);
+        [api submitRegistrationDtoMakerName:arg_makerName completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
