@@ -569,8 +569,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 105.h : 300.h,
-              width: isMobile ? 105.w : 300.w,
+              height: isMobile ? 105.h : 200.h,
+              width: isMobile ? 105.w : 200.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Column(
@@ -582,15 +582,15 @@ class _LoginPageState extends State<LoginPage> {
                       Image.asset(
                         appIconLogoOnly,
                         fit: BoxFit.scaleDown,
-                        height: isMobile ? 40.h : 250.h,
-                        width: isMobile ? 40.w : 250.w,
+                        height: isMobile ? 40.h : 100.h,
+                        width: isMobile ? 40.w : 100.w,
                       ),
                       Transform.scale(
-                        scale: isMobile ? 1.2 : 9,
+                        scale: isMobile? 1.4 : 2.8,
                         child: Center(
                           child: ColorfulCircularProgressIndicator(
                             colors: app_colors,
-                            strokeWidth: isMobile ? 2.2 : 4.0,
+                            strokeWidth: 2.2,
                             duration: const Duration(milliseconds: 500),
                             initialColor: app_colors[0],
                           ),
