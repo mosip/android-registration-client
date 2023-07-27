@@ -11,22 +11,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by BiometricsApi.
-NSObject<FlutterMessageCodec> *BiometricsApiGetCodec(void);
+/// The codec used by RegistrationDataApi.
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
 
-@protocol BiometricsApi
-- (void)invokeDiscoverSbiFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getBestBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)extractImageValuesFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)extractImageValuesByAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)incrementBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)addBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)removeBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getThresholdValueKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol RegistrationDataApi
+- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)evaluateMVELFieldData:(NSString *)fieldData expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)submitRegistrationDtoMakerName:(NSString *)makerName completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<BiometricsApi> *_Nullable api);
+extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
