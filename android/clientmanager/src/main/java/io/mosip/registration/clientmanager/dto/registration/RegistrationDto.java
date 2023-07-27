@@ -206,12 +206,15 @@ public class RegistrationDto extends Observable {
     }
 
     public List<BiometricsDto> getBiometrics(String fieldId, Modality modality, int attempt) {
+
         List<BiometricsDto> list = new ArrayList<>();
         for(String attribute : modality.getAttributes()) {
             String key = String.format(BIO_KEY_ATTEMPT, fieldId, attribute, attempt);
+
             if(this.biometrics.containsKey(key))
                 list.add(this.biometrics.get(key));
         }
+
         return list;
     }
 

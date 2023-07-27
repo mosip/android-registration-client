@@ -178,6 +178,7 @@ class LanguageSelector extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                   onPressed: () async {
+                    context.read<GlobalProvider>().getThresholdValues();
                     context.read<GlobalProvider>().fieldDisplayValues = {};
 
                     context.read<GlobalProvider>().fieldValues(newProcess);

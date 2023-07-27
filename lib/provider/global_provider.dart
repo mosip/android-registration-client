@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
@@ -29,6 +30,13 @@ class GlobalProvider with ChangeNotifier {
     'Arabic': false,
     'French': false,
   };
+  Map<String, String> _thresholdValuesMap = {
+    'mosip.registration.leftslap_fingerprint_threshold':'0',
+    'mosip.registration.rightslap_fingerprint_threshold': '0',
+    'mosip.registration.thumbs_fingerprint_threshold': '0',
+    'mosip.registration.iris_threshold':'0',
+    'mosip.registration.face_threshold':'0',
+  };
   Map<String, dynamic> _fieldDisplayValues = {};
 
   Map<String, dynamic> _feildConsentValues = {};
@@ -48,12 +56,13 @@ class GlobalProvider with ChangeNotifier {
   Process? get currentProcess => _currentProcess;
 
   Map<String, bool> get languageMap => _languageMap;
-
+Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
   List<String> get chosenLang => _chosenLang;
 
   set chosenLang(List<String> value) => _chosenLang = value;
 
   set languageMap(Map<String, bool> value) => _languageMap = value;
+  set thresholdValuesMap(Map<String, String> value) => _thresholdValuesMap = value;
 
   set currentProcess(Process? value) {
     _currentProcess = value;
@@ -179,6 +188,12 @@ class GlobalProvider with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  getThresholdValues() async {
+    for (var e in thresholdValuesMap.keys) {
+      thresholdValuesMap[e]=await BiometricsApi().getThresholdValue(e);
+    }
   }
 
   chooseLanguage(Map<String, String> label) {

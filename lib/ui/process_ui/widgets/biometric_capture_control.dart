@@ -20,15 +20,11 @@ import 'package:registration_client/utils/app_config.dart';
 class BiometricCaptureControl extends StatefulWidget {
   BiometricCaptureControl({super.key, required this.field});
   final Field field;
-  int once = 0;
-  int once1 = 0;
-  int once2 = 0;
-  int once3 = 0;
-  int once4 = 0;
-  int once5 = 0;
+
   String biometricAttribute = "Iris";
   BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
+      attemptNo: 0,
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
@@ -37,47 +33,58 @@ class BiometricCaptureControl extends StatefulWidget {
         "assets/images/Right Eye@2x.png"
       ],
       listOfBiometricsDto: [],
-      qualityPercentage: 0);
+      qualityPercentage: 0,
+      thresholdPercentage: "0");
   BiometricAttributeData rightHand = BiometricAttributeData(
       title: "Right Hand",
+      attemptNo: 0,
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
       listofImages: ["assets/images/Right Hand@2x.png"],
       listOfBiometricsDto: [],
-      qualityPercentage: 0);
+      qualityPercentage: 0,
+      thresholdPercentage: "0");
   BiometricAttributeData leftHand = BiometricAttributeData(
       title: "Left Hand",
+      attemptNo: 0,
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
       listofImages: ["assets/images/Left Hand@2x.png"],
       listOfBiometricsDto: [],
-      qualityPercentage: 0);
+      qualityPercentage: 0,
+      thresholdPercentage: "0");
   BiometricAttributeData thumbs = BiometricAttributeData(
       title: "Thumbs",
+      attemptNo: 0,
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
       listofImages: ["assets/images/Thumbs@2x.png"],
       listOfBiometricsDto: [],
-      qualityPercentage: 0);
+      qualityPercentage: 0,
+      thresholdPercentage: "0");
   BiometricAttributeData face = BiometricAttributeData(
       title: "Face",
+      attemptNo: 0,
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
       listofImages: ["assets/images/Face@2x.png"],
       listOfBiometricsDto: [],
-      qualityPercentage: 0);
+      qualityPercentage: 0,
+      thresholdPercentage: "0");
   BiometricAttributeData exception = BiometricAttributeData(
       title: "Exception",
+      attemptNo: 0,
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
       listofImages: ["assets/images/Person@2x.png"],
       listOfBiometricsDto: [],
-      qualityPercentage: 0);
+      qualityPercentage: 0,
+      thresholdPercentage: "0");
 
   @override
   State<BiometricCaptureControl> createState() =>
@@ -142,7 +149,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     List<BiometricAttributeData> list = [];
 
     if (context.read<GlobalProvider>().fieldBiometricsValue.containsKey(key)) {
-      print(context.read<GlobalProvider>().fieldBiometricsValue[key]);
       if (getElementPosition(
               context.read<GlobalProvider>().fieldBiometricsValue[key],
               data.title) ==
@@ -170,104 +176,132 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     return -1;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if(context.read<GlobalProvider>().fieldBiometricsValue.containsKey("${widget.field.id}")){
-      if (context
-        .read<GlobalProvider>()
-        .fieldBiometricsValue[widget.field.id]
-        .isNotEmpty) {
-      if (getElementPosition(
-              context
-                  .read<GlobalProvider>()
-                  .fieldBiometricsValue[widget.field.id],
-              "Iris") !=
-          -1) {
-        widget.iris = context
-            .read<GlobalProvider>()
-            .fieldBiometricsValue[widget.field.id]
-            .elementAt(getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
-                "Iris"));
-      }
-      if (getElementPosition(
-              context
-                  .read<GlobalProvider>()
-                  .fieldBiometricsValue[widget.field.id],
-              "Right Hand") !=
-          -1) {
-        widget.rightHand = context
-            .read<GlobalProvider>()
-            .fieldBiometricsValue[widget.field.id]
-            .elementAt(getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
-                "Right Hand"));
-      }
-      if (getElementPosition(
-              context
-                  .read<GlobalProvider>()
-                  .fieldBiometricsValue[widget.field.id],
-              "Left Hand") !=
-          -1) {
-        widget.leftHand = context
-            .read<GlobalProvider>()
-            .fieldBiometricsValue[widget.field.id]
-            .elementAt(getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
-                "Left Hand"));
-      }
-      if (getElementPosition(
-              context
-                  .read<GlobalProvider>()
-                  .fieldBiometricsValue[widget.field.id],
-              "Thumbs") !=
-          -1) {
-        widget.thumbs = context
-            .read<GlobalProvider>()
-            .fieldBiometricsValue[widget.field.id]
-            .elementAt(getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
-                "Thumbs"));
-      }
-      if (getElementPosition(
-              context
-                  .read<GlobalProvider>()
-                  .fieldBiometricsValue[widget.field.id],
-              "Face") !=
-          -1) {
-        widget.face = context
-            .read<GlobalProvider>()
-            .fieldBiometricsValue[widget.field.id]
-            .elementAt(getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
-                "Face"));
-      }
-      if (getElementPosition(
-              context
-                  .read<GlobalProvider>()
-                  .fieldBiometricsValue[widget.field.id],
-              "Exception") !=
-          -1) {
-        widget.exception = context
-            .read<GlobalProvider>()
-            .fieldBiometricsValue[widget.field.id]
-            .elementAt(getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
-                "Exception"));
+  noOfTrue(List<bool> list) {
+    int i = 0;
+    for (var e in list) {
+      if (e == true) {
+        i++;
       }
     }
+    return i;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    widget.leftHand.thresholdPercentage =
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.leftslap_fingerprint_threshold"]!;
+    widget.rightHand.thresholdPercentage =
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.rightslap_fingerprint_threshold"]!;
+    widget.iris.thresholdPercentage =
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.iris_threshold"]!;
+    widget.thumbs.thresholdPercentage =
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.thumbs_fingerprint_threshold"]!;
+    widget.face.thresholdPercentage =
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.face_threshold"]!;
+    if (context
+        .read<GlobalProvider>()
+        .fieldBiometricsValue
+        .containsKey("${widget.field.id}")) {
+      if (context
+          .read<GlobalProvider>()
+          .fieldBiometricsValue[widget.field.id]
+          .isNotEmpty) {
+        if (getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Iris") !=
+            -1) {
+          widget.iris = context
+              .read<GlobalProvider>()
+              .fieldBiometricsValue[widget.field.id]
+              .elementAt(getElementPosition(
+                  context
+                      .read<GlobalProvider>()
+                      .fieldBiometricsValue[widget.field.id],
+                  "Iris"));
+        }
+        if (getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Right Hand") !=
+            -1) {
+          widget.rightHand = context
+              .read<GlobalProvider>()
+              .fieldBiometricsValue[widget.field.id]
+              .elementAt(getElementPosition(
+                  context
+                      .read<GlobalProvider>()
+                      .fieldBiometricsValue[widget.field.id],
+                  "Right Hand"));
+        }
+        if (getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Left Hand") !=
+            -1) {
+          widget.leftHand = context
+              .read<GlobalProvider>()
+              .fieldBiometricsValue[widget.field.id]
+              .elementAt(getElementPosition(
+                  context
+                      .read<GlobalProvider>()
+                      .fieldBiometricsValue[widget.field.id],
+                  "Left Hand"));
+        }
+        if (getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Thumbs") !=
+            -1) {
+          widget.thumbs = context
+              .read<GlobalProvider>()
+              .fieldBiometricsValue[widget.field.id]
+              .elementAt(getElementPosition(
+                  context
+                      .read<GlobalProvider>()
+                      .fieldBiometricsValue[widget.field.id],
+                  "Thumbs"));
+        }
+        if (getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Face") !=
+            -1) {
+          widget.face = context
+              .read<GlobalProvider>()
+              .fieldBiometricsValue[widget.field.id]
+              .elementAt(getElementPosition(
+                  context
+                      .read<GlobalProvider>()
+                      .fieldBiometricsValue[widget.field.id],
+                  "Face"));
+        }
+        if (getElementPosition(
+                context
+                    .read<GlobalProvider>()
+                    .fieldBiometricsValue[widget.field.id],
+                "Exception") !=
+            -1) {
+          widget.exception = context
+              .read<GlobalProvider>()
+              .fieldBiometricsValue[widget.field.id]
+              .elementAt(getElementPosition(
+                  context
+                      .read<GlobalProvider>()
+                      .fieldBiometricsValue[widget.field.id],
+                  "Exception"));
+        }
+      }
     }
 
     return Column(
@@ -276,6 +310,15 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         SizedBox(
           width: double.infinity,
         ),
+        // ElevatedButton(
+        //     child: Text("temp"),
+        //     onPressed: () async {
+        //       await BiometricsApi()
+        //           .getThresholdValue("mosip.registration.iris_threshold")
+        //           .then((value) {
+        //         print(value);
+        //       });
+        //     }),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: Text(
@@ -303,10 +346,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           widget.field.bioAttributes!.contains("rightEye"))
                         InkWell(
                           onTap: () async {
-                            print(context
-                                .read<GlobalProvider>()
-                                .fieldBiometricsValue[widget.field.id]
-                                .length);
                             setState(() {
                               widget.biometricAttribute = "Iris";
                             });
@@ -755,8 +794,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .map((e) => Flexible(
                                                         child: Image.memory(
                                                           e,
-                                                          height: 18.h,
-                                                          width: 64.h,
+                                                          fit: BoxFit.fill,
                                                         ),
                                                       )),
                                             ],
@@ -833,15 +871,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   .invokeDiscoverSbi(widget.field.id!, "Iris");
                               await BiometricsApi()
                                   .getBestBiometrics(widget.field.id!, "Iris")
-                                  .then((value) {
-                                Clipboard.setData(
-                                    ClipboardData(text: value.toString()));
-                              });
+                                  .then((value) {});
                               await BiometricsApi()
                                   .extractImageValues(widget.field.id!, "Iris")
                                   .then((value) {
                                 temp = value;
                               });
+                              await BiometricsApi().incrementBioAttempt(
+                                  widget.field.id!, "Iris");
+                              widget.iris.attemptNo = await BiometricsApi()
+                                  .getBioAttempt(widget.field.id!, "Iris");
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -920,6 +959,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         .then((value) {
                                                       temp = value;
                                                     });
+                                                    await BiometricsApi()
+                                                        .incrementBioAttempt(
+                                                            widget.field.id!,
+                                                            "Iris");
+                                                    widget.iris.attemptNo =
+                                                        await BiometricsApi()
+                                                            .getBioAttempt(
+                                                                widget
+                                                                    .field.id!,
+                                                                "Iris");
                                                   },
                                                   child: Text("RESCAN")),
                                               SizedBox(
@@ -932,6 +981,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
+                                                  widget
+                                                      .iris.listOfBiometricsDto
+                                                      .clear();
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
                                                           widget.field.id!,
@@ -962,6 +1014,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                       context,
                                                       "${widget.field.id}",
                                                       widget.iris);
+
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
@@ -997,6 +1050,59 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             ),
                           ),
                           Container(
+                              height: 67.h,
+                              width: 162.w,
+                              decoration: BoxDecoration(
+                                color: pure_white,
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(14),
+                                ),
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Attempts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text("${widget.iris.attemptNo}"),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Exceptions",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                          "${noOfTrue(widget.iris.exceptions)}"),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Container(
                             height: 157.h,
                             width: 338.h,
                             decoration: BoxDecoration(
@@ -1006,10 +1112,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               ),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                SizedBox(
-                                  height: 20.h,
-                                ),
                                 Text(
                                   "Quality",
                                   style: Theme.of(context)
@@ -1020,11 +1124,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           fontWeight: semiBold,
                                           color: black_shade_1),
                                 ),
-                                SizedBox(
-                                  height: 42.h,
-                                ),
                                 Text(
-                                  "Threshold ${widget.iris.qualityPercentage.toInt()}%",
+                                  "Threshold ${widget.iris.thresholdPercentage}%",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -1033,9 +1134,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         fontWeight: regular,
                                         color: secondaryColors.elementAt(1),
                                       ),
-                                ),
-                                SizedBox(
-                                  height: 16.h,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1065,6 +1163,216 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     ),
                                   ],
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Attempts",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                              fontSize: 12,
+                                              color: black_shade_1),
+                                    ),
+                                    SizedBox(
+                                      width: 13.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.iris.attemptNo >= 1) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Iris", 1)
+                                              .then((value) {
+                                            widget.iris.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.iris.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+
+                                          setState(() {
+                                            widget.iris.qualityPercentage =
+                                                avgScore(widget
+                                                    .iris.listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Iris", 1)
+                                              .then((value) {
+                                            widget.iris.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.iris.attemptNo < 1)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "1",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.iris.attemptNo <
+                                                              1)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.iris.attemptNo >= 2) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Iris", 2)
+                                              .then((value) {
+                                            widget.iris.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.iris.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.iris.qualityPercentage =
+                                                avgScore(widget
+                                                    .iris.listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Iris", 2)
+                                              .then((value) {
+                                            widget.iris.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.iris.attemptNo < 2)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "2",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.iris.attemptNo <
+                                                              2)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.iris.attemptNo >= 3) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Iris", 3)
+                                              .then((value) {
+                                            widget.iris.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.iris.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.iris.qualityPercentage =
+                                                avgScore(widget
+                                                    .iris.listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Iris", 3)
+                                              .then((value) {
+                                            widget.iris.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.iris.attemptNo < 3)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "3",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.iris.attemptNo <
+                                                              3)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),
@@ -1116,6 +1424,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   .then((value) {
                                 temp = value;
                               });
+                              await BiometricsApi().incrementBioAttempt(
+                                  widget.field.id!, "RightHand");
+                              widget.rightHand.attemptNo = await BiometricsApi()
+                                  .getBioAttempt(widget.field.id!, "RightHand");
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -1194,6 +1506,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         .then((value) {
                                                       temp = value;
                                                     });
+                                                    await BiometricsApi()
+                                                        .incrementBioAttempt(
+                                                            widget.field.id!,
+                                                            "RightHand");
+                                                    widget.rightHand.attemptNo =
+                                                        await BiometricsApi()
+                                                            .getBioAttempt(
+                                                                widget
+                                                                    .field.id!,
+                                                                "RightHand");
                                                   },
                                                   child: Text("RESCAN")),
                                               SizedBox(
@@ -1206,6 +1528,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
+                                                  widget
+                                                      .rightHand
+                                                      .listOfBiometricsDto
+                                                      .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
                                                           widget.field.id!,
@@ -1272,6 +1598,59 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             ),
                           ),
                           Container(
+                              height: 67.h,
+                              width: 162.w,
+                              decoration: BoxDecoration(
+                                color: pure_white,
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(14),
+                                ),
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Attempts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text("${widget.rightHand.attemptNo}"),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Exceptions",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                          "${noOfTrue(widget.rightHand.exceptions)}"),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Container(
                             height: 157.h,
                             width: 338.h,
                             decoration: BoxDecoration(
@@ -1281,10 +1660,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               ),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                SizedBox(
-                                  height: 20.h,
-                                ),
                                 Text(
                                   "Quality",
                                   style: Theme.of(context)
@@ -1295,11 +1672,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           fontWeight: semiBold,
                                           color: black_shade_1),
                                 ),
-                                SizedBox(
-                                  height: 42.h,
-                                ),
                                 Text(
-                                  "Threshold ${widget.rightHand.qualityPercentage.toInt()}%",
+                                  "Threshold ${widget.rightHand.thresholdPercentage}%",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -1308,9 +1682,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         fontWeight: regular,
                                         color: secondaryColors.elementAt(1),
                                       ),
-                                ),
-                                SizedBox(
-                                  height: 16.h,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1341,6 +1712,231 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     ),
                                   ],
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Attempts",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                              fontSize: 12,
+                                              color: black_shade_1),
+                                    ),
+                                    SizedBox(
+                                      width: 13.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.rightHand.attemptNo >= 1) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "RightHand", 1)
+                                              .then((value) {
+                                            widget.rightHand.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .rightHand.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+
+                                          setState(() {
+                                            widget.rightHand.qualityPercentage =
+                                                avgScore(widget.rightHand
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "RightHand",
+                                                  1)
+                                              .then((value) {
+                                            widget.rightHand.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.rightHand.attemptNo <
+                                                  1)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "1",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.rightHand
+                                                              .attemptNo <
+                                                          1)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.rightHand.attemptNo >= 2) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "RightHand", 2)
+                                              .then((value) {
+                                            widget.rightHand.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .rightHand.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.rightHand.qualityPercentage =
+                                                avgScore(widget.rightHand
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "RightHand",
+                                                  2)
+                                              .then((value) {
+                                            widget.rightHand.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.rightHand.attemptNo <
+                                                  2)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "2",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.rightHand
+                                                              .attemptNo <
+                                                          2)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.rightHand.attemptNo >= 3) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "RightHand", 3)
+                                              .then((value) {
+                                            widget.rightHand.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .rightHand.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.rightHand.qualityPercentage =
+                                                avgScore(widget.rightHand
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "RightHand",
+                                                  3)
+                                              .then((value) {
+                                            widget.rightHand.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.rightHand.attemptNo <
+                                                  3)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "3",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.rightHand
+                                                              .attemptNo <
+                                                          3)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),
@@ -1392,6 +1988,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   .then((value) {
                                 temp = value;
                               });
+                              await BiometricsApi().incrementBioAttempt(
+                                  widget.field.id!, "LeftHand");
+                              widget.leftHand.attemptNo = await BiometricsApi()
+                                  .getBioAttempt(widget.field.id!, "LeftHand");
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -1470,6 +2070,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         .then((value) {
                                                       temp = value;
                                                     });
+                                                    await BiometricsApi()
+                                                        .incrementBioAttempt(
+                                                            widget.field.id!,
+                                                            "LeftHand");
+                                                    widget.leftHand.attemptNo =
+                                                        await BiometricsApi()
+                                                            .getBioAttempt(
+                                                                widget
+                                                                    .field.id!,
+                                                                "LeftHand");
                                                   },
                                                   child: Text("RESCAN")),
                                               SizedBox(
@@ -1482,6 +2092,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
+                                                  widget
+                                                      .leftHand
+                                                      .listOfBiometricsDto
+                                                      .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
                                                           widget.field.id!,
@@ -1548,6 +2162,59 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             ),
                           ),
                           Container(
+                              height: 67.h,
+                              width: 162.w,
+                              decoration: BoxDecoration(
+                                color: pure_white,
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(14),
+                                ),
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Attempts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text("${widget.leftHand.attemptNo}"),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Exceptions",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                          "${noOfTrue(widget.leftHand.exceptions)}"),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Container(
                             height: 157.h,
                             width: 338.h,
                             decoration: BoxDecoration(
@@ -1557,10 +2224,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               ),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                SizedBox(
-                                  height: 20.h,
-                                ),
                                 Text(
                                   "Quality",
                                   style: Theme.of(context)
@@ -1571,11 +2236,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           fontWeight: semiBold,
                                           color: black_shade_1),
                                 ),
-                                SizedBox(
-                                  height: 42.h,
-                                ),
                                 Text(
-                                  "Threshold ${widget.leftHand.qualityPercentage.toInt()}%",
+                                  "Threshold ${widget.leftHand.thresholdPercentage}%",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -1584,9 +2246,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         fontWeight: regular,
                                         color: secondaryColors.elementAt(1),
                                       ),
-                                ),
-                                SizedBox(
-                                  height: 16.h,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1617,6 +2276,227 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     ),
                                   ],
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Attempts",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                              fontSize: 12,
+                                              color: black_shade_1),
+                                    ),
+                                    SizedBox(
+                                      width: 13.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.leftHand.attemptNo >= 1) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "LeftHand", 1)
+                                              .then((value) {
+                                            widget.leftHand.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .leftHand.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.leftHand.qualityPercentage =
+                                                avgScore(widget.leftHand
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "LeftHand",
+                                                  1)
+                                              .then((value) {
+                                            widget.leftHand.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.leftHand.attemptNo < 1)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "1",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.leftHand
+                                                              .attemptNo <
+                                                          1)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.leftHand.attemptNo >= 2) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "LeftHand", 2)
+                                              .then((value) {
+                                            widget.leftHand.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .leftHand.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.leftHand.qualityPercentage =
+                                                avgScore(widget.leftHand
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "LeftHand",
+                                                  2)
+                                              .then((value) {
+                                            widget.leftHand.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.leftHand.attemptNo < 2)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "2",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.leftHand
+                                                              .attemptNo <
+                                                          2)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.leftHand.attemptNo >= 3) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "LeftHand", 3)
+                                              .then((value) {
+                                            widget.leftHand.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .leftHand.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.leftHand.qualityPercentage =
+                                                avgScore(widget.leftHand
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "LeftHand",
+                                                  3)
+                                              .then((value) {
+                                            widget.leftHand.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.leftHand.attemptNo < 3)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "3",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.leftHand
+                                                              .attemptNo <
+                                                          3)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),
@@ -1667,6 +2547,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   .then((value) {
                                 temp = value;
                               });
+                              await BiometricsApi().incrementBioAttempt(
+                                  widget.field.id!, "Thumbs");
+                              widget.thumbs.attemptNo = await BiometricsApi()
+                                  .getBioAttempt(widget.field.id!, "Thumbs");
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -1745,6 +2629,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         .then((value) {
                                                       temp = value;
                                                     });
+                                                    await BiometricsApi()
+                                                        .incrementBioAttempt(
+                                                            widget.field.id!,
+                                                            "Thumbs");
+                                                    widget.thumbs.attemptNo =
+                                                        await BiometricsApi()
+                                                            .getBioAttempt(
+                                                                widget
+                                                                    .field.id!,
+                                                                "Thumbs");
                                                   },
                                                   child: Text("RESCAN")),
                                               SizedBox(
@@ -1757,6 +2651,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
+                                                  widget
+                                                      .thumbs
+                                                      .listOfBiometricsDto
+                                                      .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
                                                           widget.field.id!,
@@ -1823,6 +2721,59 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             ),
                           ),
                           Container(
+                              height: 67.h,
+                              width: 162.w,
+                              decoration: BoxDecoration(
+                                color: pure_white,
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(14),
+                                ),
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Attempts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text("${widget.thumbs.attemptNo}"),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Exceptions",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                          "${noOfTrue(widget.thumbs.exceptions)}"),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Container(
                             height: 157.h,
                             width: 338.h,
                             decoration: BoxDecoration(
@@ -1832,10 +2783,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               ),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                SizedBox(
-                                  height: 20.h,
-                                ),
                                 Text(
                                   "Quality",
                                   style: Theme.of(context)
@@ -1846,11 +2795,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           fontWeight: semiBold,
                                           color: black_shade_1),
                                 ),
-                                SizedBox(
-                                  height: 42.h,
-                                ),
                                 Text(
-                                  "Threshold ${widget.thumbs.qualityPercentage.toInt()}%",
+                                  "Threshold ${widget.thumbs.thresholdPercentage}%",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -1859,9 +2805,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         fontWeight: regular,
                                         color: secondaryColors.elementAt(1),
                                       ),
-                                ),
-                                SizedBox(
-                                  height: 16.h,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1891,6 +2834,215 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     ),
                                   ],
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Attempts",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                              fontSize: 12,
+                                              color: black_shade_1),
+                                    ),
+                                    SizedBox(
+                                      width: 13.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.thumbs.attemptNo >= 1) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Thumbs", 1)
+                                              .then((value) {
+                                            widget.thumbs.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.thumbs.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.thumbs.qualityPercentage =
+                                                avgScore(widget.thumbs
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Thumbs", 1)
+                                              .then((value) {
+                                            widget.thumbs.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.thumbs.attemptNo < 1)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "1",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.thumbs.attemptNo <
+                                                              1)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.thumbs.attemptNo >= 2) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Thumbs", 2)
+                                              .then((value) {
+                                            widget.thumbs.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.thumbs.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.thumbs.qualityPercentage =
+                                                avgScore(widget.thumbs
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Thumbs", 2)
+                                              .then((value) {
+                                            widget.thumbs.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.thumbs.attemptNo < 2)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "2",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.thumbs.attemptNo <
+                                                              2)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.thumbs.attemptNo >= 3) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Thumbs", 3)
+                                              .then((value) {
+                                            widget.thumbs.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.thumbs.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.thumbs.qualityPercentage =
+                                                avgScore(widget.thumbs
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Thumbs", 3)
+                                              .then((value) {
+                                            widget.thumbs.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.thumbs.attemptNo < 3)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "3",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.thumbs.attemptNo <
+                                                              3)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),
@@ -1940,6 +3092,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   .then((value) {
                                 temp = value;
                               });
+                              await BiometricsApi().incrementBioAttempt(
+                                  widget.field.id!, "Face");
+                              widget.face.attemptNo = await BiometricsApi()
+                                  .getBioAttempt(widget.field.id!, "Face");
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -2018,6 +3174,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         .then((value) {
                                                       temp = value;
                                                     });
+                                                    await BiometricsApi()
+                                                        .incrementBioAttempt(
+                                                            widget.field.id!,
+                                                            "Face");
+                                                    widget.face.attemptNo =
+                                                        await BiometricsApi()
+                                                            .getBioAttempt(
+                                                                widget
+                                                                    .field.id!,
+                                                                "Face");
                                                   },
                                                   child: Text("RESCAN")),
                                               SizedBox(
@@ -2030,6 +3196,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
+                                                  widget
+                                                      .face
+                                                      .listOfBiometricsDto
+                                                      .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
                                                           widget.field.id!,
@@ -2095,6 +3265,76 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             ),
                           ),
                           Container(
+                              height: 67.h,
+                              width: 162.w,
+                              decoration: BoxDecoration(
+                                color: pure_white,
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(14),
+                                ),
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Attempts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                        "${widget.face.attemptNo}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                                fontSize: 16,
+                                                color: black_shade_1,
+                                                fontWeight: semiBold),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Exceptions",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                        "-",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                                fontSize: 16,
+                                                color: black_shade_1,
+                                                fontWeight: semiBold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Container(
                             height: 157.h,
                             width: 338.h,
                             decoration: BoxDecoration(
@@ -2104,10 +3344,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               ),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                SizedBox(
-                                  height: 20.h,
-                                ),
                                 Text(
                                   "Quality",
                                   style: Theme.of(context)
@@ -2118,11 +3356,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           fontWeight: semiBold,
                                           color: black_shade_1),
                                 ),
-                                SizedBox(
-                                  height: 42.h,
-                                ),
                                 Text(
-                                  "Threshold ${widget.face.qualityPercentage.toInt()}%",
+                                  "Threshold ${widget.face.thresholdPercentage}%",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -2131,9 +3366,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         fontWeight: regular,
                                         color: secondaryColors.elementAt(1),
                                       ),
-                                ),
-                                SizedBox(
-                                  height: 16.h,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -2163,6 +3395,215 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     ),
                                   ],
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Attempts",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                              fontSize: 12,
+                                              color: black_shade_1),
+                                    ),
+                                    SizedBox(
+                                      width: 13.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.face.attemptNo >= 1) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Face", 1)
+                                              .then((value) {
+                                            widget.face.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.face.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.face.qualityPercentage =
+                                                avgScore(widget
+                                                    .face.listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Face", 1)
+                                              .then((value) {
+                                            widget.face.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.face.attemptNo < 1)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "1",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.face.attemptNo <
+                                                              1)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.face.attemptNo >= 2) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Face", 2)
+                                              .then((value) {
+                                            widget.face.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.face.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.face.qualityPercentage =
+                                                avgScore(widget
+                                                    .face.listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Face", 2)
+                                              .then((value) {
+                                            widget.face.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.face.attemptNo < 2)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "2",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.face.attemptNo <
+                                                              2)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.face.attemptNo >= 3) {
+                                          await BiometricsApi()
+                                              .getBiometrics(
+                                                  widget.field.id!, "Face", 3)
+                                              .then((value) {
+                                            widget.face.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget.face.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.face.qualityPercentage =
+                                                avgScore(widget
+                                                    .face.listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!, "Face", 3)
+                                              .then((value) {
+                                            widget.face.listofImages = value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.face.attemptNo < 3)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "3",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color:
+                                                      (widget.face.attemptNo <
+                                                              3)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),
@@ -2214,6 +3655,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   .then((value) {
                                 temp = value;
                               });
+                              await BiometricsApi().incrementBioAttempt(
+                                  widget.field.id!, "Exception");
+                              widget.exception.attemptNo = await BiometricsApi()
+                                  .getBioAttempt(widget.field.id!, "Exception");
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -2292,6 +3737,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                         .then((value) {
                                                       temp = value;
                                                     });
+                                                    await BiometricsApi()
+                                                        .incrementBioAttempt(
+                                                            widget.field.id!,
+                                                            "Exception");
+                                                    widget.exception.attemptNo =
+                                                        await BiometricsApi()
+                                                            .getBioAttempt(
+                                                                widget
+                                                                    .field.id!,
+                                                                "Exception");
                                                   },
                                                   child: Text("RESCAN")),
                                               SizedBox(
@@ -2304,6 +3759,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
+                                                  widget
+                                                      .exception
+                                                      .listOfBiometricsDto
+                                                      .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
                                                           widget.field.id!,
@@ -2370,6 +3829,76 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                             ),
                           ),
                           Container(
+                              height: 67.h,
+                              width: 162.w,
+                              decoration: BoxDecoration(
+                                color: pure_white,
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(14),
+                                ),
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Attempts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                        "${widget.exception.attemptNo}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                                fontSize: 16,
+                                                color: black_shade_1,
+                                                fontWeight: semiBold),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Exceptions",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color:
+                                                  secondaryColors.elementAt(1),
+                                            ),
+                                      ),
+                                      Text(
+                                        "-",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                                fontSize: 16,
+                                                color: black_shade_1,
+                                                fontWeight: semiBold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                          Container(
                             height: 157.h,
                             width: 338.h,
                             decoration: BoxDecoration(
@@ -2379,10 +3908,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                               ),
                             ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                SizedBox(
-                                  height: 20.h,
-                                ),
                                 Text(
                                   "Quality",
                                   style: Theme.of(context)
@@ -2393,11 +3920,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           fontWeight: semiBold,
                                           color: black_shade_1),
                                 ),
-                                SizedBox(
-                                  height: 42.h,
-                                ),
                                 Text(
-                                  "Threshold ${widget.exception.qualityPercentage.toInt()}%",
+                                  "Threshold NA%",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -2406,9 +3930,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         fontWeight: regular,
                                         color: secondaryColors.elementAt(1),
                                       ),
-                                ),
-                                SizedBox(
-                                  height: 16.h,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -2439,6 +3960,230 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     ),
                                   ],
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Attempts",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                              fontSize: 12,
+                                              color: black_shade_1),
+                                    ),
+                                    SizedBox(
+                                      width: 13.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.exception.attemptNo >= 1) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "Exception", 1)
+                                              .then((value) {
+                                            widget.exception.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .exception.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.exception.qualityPercentage =
+                                                avgScore(widget.exception
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "Exception",
+                                                  1)
+                                              .then((value) {
+                                            widget.exception.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.exception.attemptNo <
+                                                  1)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "1",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.exception
+                                                              .attemptNo <
+                                                          1)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.exception.attemptNo >= 2) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "Exception", 2)
+                                              .then((value) {
+                                            widget.exception.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .exception.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.exception.qualityPercentage =
+                                                avgScore(widget.exception
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "Exception",
+                                                  2)
+                                              .then((value) {
+                                            widget.exception.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.exception.attemptNo <
+                                                  2)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "2",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.exception
+                                                              .attemptNo <
+                                                          2)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 9.5.w,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (widget.exception.attemptNo >= 3) {
+                                          await BiometricsApi()
+                                              .getBiometrics(widget.field.id!,
+                                                  "Exception", 3)
+                                              .then((value) {
+                                            widget.exception.listOfBiometricsDto
+                                                .clear();
+                                            for (var e in value) {
+                                              widget
+                                                  .exception.listOfBiometricsDto
+                                                  .add(BiometricsDto.fromJson(
+                                                      json.decode(e!)));
+                                            }
+                                          });
+                                          setState(() {
+                                            widget.exception.qualityPercentage =
+                                                avgScore(widget.exception
+                                                    .listOfBiometricsDto);
+                                          });
+                                          await BiometricsApi()
+                                              .extractImageValuesByAttempt(
+                                                  widget.field.id!,
+                                                  "Exception",
+                                                  3)
+                                              .then((value) {
+                                            widget.exception.listofImages =
+                                                value;
+                                          });
+                                          setState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 0,
+                                          horizontal: 11,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                secondaryColors.elementAt(17),
+                                          ),
+                                          color: (widget.exception.attemptNo <
+                                                  3)
+                                              ? secondaryColors.elementAt(18)
+                                              : secondaryColors.elementAt(11),
+                                        ),
+                                        child: Text(
+                                          "3",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontSize: 12,
+                                                  color: (widget.exception
+                                                              .attemptNo <
+                                                          3)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
+                                                  fontWeight: semiBold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),

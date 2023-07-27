@@ -103,8 +103,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService) {
-        return new BiometricsDetailsApi(auditManagerService, objectMapper,biometrics095Service,registrationService);
+    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService,GlobalParamRepository globalParamRepository) {
+        return new BiometricsDetailsApi(auditManagerService, objectMapper,biometrics095Service,registrationService,globalParamRepository);
 
     }
 

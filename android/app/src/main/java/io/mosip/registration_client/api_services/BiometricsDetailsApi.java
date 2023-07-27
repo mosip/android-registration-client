@@ -41,6 +41,7 @@ import io.mosip.registration.clientmanager.dto.sbi.CaptureRequest;
 import io.mosip.registration.clientmanager.dto.sbi.DiscoverRequest;
 import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -62,6 +63,8 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private final Biometrics095Service biometricsService;
 
     private final RegistrationService registrationService;
+
+    private final GlobalParamRepository globalParamRepository;
 
 
 
@@ -85,11 +88,12 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     BiometricsPigeon.Result<String> result1;
 
     @Inject
-        public BiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService) {
+        public BiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService,GlobalParamRepository globalParamRepository) {
         this.auditManagerService = auditManagerService;
         this.objectMapper = objectMapper;
         this.biometricsService=biometrics095Service;
         this.registrationService=registrationService;
+        this.globalParamRepository=globalParamRepository;
 
     }
 
@@ -131,6 +135,27 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     }
 
     @Override
+    public void getBiometrics(@NonNull String fieldId, @NonNull String modality, @NonNull Long attempt, @NonNull BiometricsPigeon.Result<List<String>> result) {
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            String json;
+            List<String> jsonList=new ArrayList<>();
+            biometricsDtoList=registrationDto.getBiometrics(fieldId,getModality(modality),attempt.intValue()-1);
+
+            for(int i=0;i<biometricsDtoList.size();i++){
+                json=ow.writeValueAsString(biometricsDtoList.get(i));
+                jsonList.add(json);
+
+            }
+
+            result.success(jsonList);
+        }catch(Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
+    @Override
     public void extractImageValues(@NonNull String fieldId, @NonNull String modality, @NonNull BiometricsPigeon.Result<List<byte[]>> result) {
         List<Bitmap> listBitmaps=new ArrayList<>();
         List<byte[]> listByteArrayTester=new ArrayList<>();
@@ -143,6 +168,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
             switch (getModality(modality)) {
                 case FACE:
+                case EXCEPTION_PHOTO:
                 {
                     try{
                         Bitmap var5;
@@ -193,9 +219,9 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                     }
                 }
                 break;
-                case EXCEPTION_PHOTO:
-
-                    break;
+//                case EXCEPTION_PHOTO:
+//
+//                    break;
             }
             for (int i = 0; i < listBitmaps.size(); i++) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -208,6 +234,112 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             listByteArrayTester1=listByteArrayTester;
             result.success(listByteArrayTester1);
         }catch (Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
+    @Override
+    public void extractImageValuesByAttempt(@NonNull String fieldId, @NonNull String modality, @NonNull Long attempt, @NonNull BiometricsPigeon.Result<List<byte[]>> result) {
+        List<Bitmap> listBitmaps=new ArrayList<>();
+        List<byte[]> listByteArrayTester=new ArrayList<>();
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            String json;
+            List<String> jsonList=new ArrayList<>();
+
+            switch (getModality(modality)) {
+                case FACE:
+                case EXCEPTION_PHOTO:
+                {
+                    try{
+                        Bitmap var5;
+                        ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(registrationDto.getBiometrics(fieldId,getModality(modality),attempt.intValue()-1).get(0).getBioValue()));
+                        DataInputStream inputStream = new DataInputStream(bais);
+                        FaceBDIR faceBDIR = new FaceBDIR(inputStream);
+                        byte[] bytes = faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
+                        var5 = (new JP2Decoder(bytes)).decode();
+                        listBitmaps.add(var5);
+                    }catch(Exception e){
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+                break;
+                case FINGERPRINT_SLAB_LEFT:
+                case FINGERPRINT_SLAB_THUMBS:
+                case FINGERPRINT_SLAB_RIGHT:
+                {
+                    try{
+                        Bitmap var5;
+                        for (int i = 0; i < registrationDto.getBiometrics(fieldId,getModality(modality),attempt.intValue()-1).size(); i++) {
+                            ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(registrationDto.getBiometrics(fieldId,getModality(modality),attempt.intValue()-1).get(i).getBioValue()));
+                            DataInputStream inputStream = new DataInputStream(bais);
+                            FingerBDIR fingerBDIR = new FingerBDIR(inputStream);
+                            byte[] bytes = fingerBDIR.getRepresentation().getRepresentationBody().getImageData().getImage();
+                            var5 = (new JP2Decoder(bytes)).decode();
+                            listBitmaps.add(var5);
+                        }
+                    }catch (Exception e){
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+                break;
+                case IRIS_DOUBLE:
+                {
+                    try{
+                        Bitmap var5;
+                        for (int i = 0; i < registrationDto.getBiometrics(fieldId,getModality(modality),attempt.intValue()-1).size(); i++){
+                            ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(registrationDto.getBiometrics(fieldId,getModality(modality),attempt.intValue()-1).get(0).getBioValue()));
+                            DataInputStream inputStream = new DataInputStream(bais);
+                            IrisBDIR irisBDIR = new IrisBDIR(inputStream);
+                            byte[] bytes = irisBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
+                            var5 = (new JP2Decoder(bytes)).decode();
+                            listBitmaps.add(var5);
+                        }
+                    }catch (Exception e){
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+                break;
+//                case EXCEPTION_PHOTO:
+//
+//                    break;
+            }
+            for (int i = 0; i < listBitmaps.size(); i++) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                listBitmaps.get(i).compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byteArrayTester= stream.toByteArray();
+                listByteArrayTester.add(byteArrayTester);
+            }
+
+
+            listByteArrayTester1=listByteArrayTester;
+            result.success(listByteArrayTester1);
+        }catch (Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
+
+    @Override
+    public void incrementBioAttempt(@NonNull String fieldId, @NonNull String modality, @NonNull BiometricsPigeon.Result<Long> result) {
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+           int i=registrationDto.incrementBioAttempt(fieldId,getModality(modality));
+            result.success(Long.valueOf(i));
+        }catch(Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
+    @Override
+    public void getBioAttempt(@NonNull String fieldId, @NonNull String modality, @NonNull BiometricsPigeon.Result<Long> result) {
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+            int i=registrationDto.getBioAttempt(fieldId,getModality(modality));
+            result.success(Long.valueOf(i));
+        }catch(Exception e){
             Log.e(TAG,e.getMessage());
         }
     }
@@ -227,11 +359,17 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void removeBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute, @NonNull BiometricsPigeon.Result<String> result) {
         try{
             RegistrationDto registrationDto=registrationService.getRegistrationDto();
-            registrationDto.addBioException(fieldId,getModality(modality),attribute);
+            registrationDto.removeBioException(fieldId,getModality(modality),attribute);
             result.success("ok");
         }catch(Exception e){
             Log.e(TAG,e.getMessage());
         }
+    }
+
+    @Override
+    public void getThresholdValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
+      String response=globalParamRepository.getCachedStringGlobalParam(key);
+      result.success(response);
     }
 
 
@@ -381,7 +519,8 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
                     getExceptionAttributes());
             //if attempts is zero, there is no need to maintain the counter
-            currentAttempt = allowedAttempts <= 0 ? 0 : this.registrationService.getRegistrationDto().incrementBioAttempt(fieldId, currentModality);
+            currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId,currentModality);
+
             biometricsDtoList.forEach( dto -> {
                 try {
                     this.registrationService.getRegistrationDto().addBiometric(fieldId,
