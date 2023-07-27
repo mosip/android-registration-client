@@ -76,9 +76,6 @@ class NewProcess extends StatelessWidget {
           AppLocalizations.of(context)!.password_incorrect, context);
       return false;
     }
-
-    username = '';
-    password = '';
     return true;
   }
 
@@ -117,6 +114,12 @@ class NewProcess extends StatelessWidget {
       return false;
     }
     return true;
+  }
+
+  _onTabBackNavigate(int index, BuildContext context) {
+    if (index < context.read<GlobalProvider>().newProcessTabIndex) {
+        context.read<GlobalProvider>().newProcessTabIndex = index;
+      }
   }
 
   @override
@@ -168,6 +171,19 @@ class NewProcess extends StatelessWidget {
                       if (!isPacketAuthenticated) {
                         return;
                       }
+                      await context
+                              .read<RegistrationTaskProvider>()
+                              .submitRegistrationDto(username);
+                          bool isRegistrationSaved = context
+                              .read<RegistrationTaskProvider>()
+                              .isRegistrationSaved;
+
+                          if (!isRegistrationSaved) {
+                            _showInSnackBar("Registration save failed!", context);
+                            username = '';
+                            password = '';
+                            return;
+                          }
                     }
                     context.read<GlobalProvider>().newProcessTabIndex =
                         context.read<GlobalProvider>().newProcessTabIndex + 1;
@@ -228,6 +244,9 @@ class NewProcess extends StatelessWidget {
                               .isRegistrationSaved;
 
                           if (!isRegistrationSaved) {
+                            _showInSnackBar("Registration save failed!", context);
+                            username = '';
+                            password = '';
                             return;
                           }
                         }

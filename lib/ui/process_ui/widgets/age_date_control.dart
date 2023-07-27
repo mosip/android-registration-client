@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/platform_spi/registration.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../model/field.dart';
@@ -141,14 +139,13 @@ class _AgeDateControlState extends State<AgeDateControl> {
       _dayController.text = parsedDate.day.toString().padLeft(2, '0');
       _monthController.text = parsedDate.month.toString().padLeft(2, '0');
       _yearController.text = parsedDate.year.toString();
+      _ageController.text = calculateYearDifference(
+                                    DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
+                                    DateTime.now())
+                                .abs()
+                                .toString();
     }
-
-    if(context.read<GlobalProvider>()
-        .feildDemographicsValues.containsKey("age")) {
-          _ageController.text = context
-                .read<GlobalProvider>()
-                .feildDemographicsValues["age"];
-        }
   }
 
   @override
@@ -184,8 +181,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
                                     DateTime.now())
                                 .abs()
                                 .toString();
-                            context.read<GlobalProvider>().setInputMapValue("age", _ageController.text, 
-                                context.read<GlobalProvider>().feildDemographicsValues);
                           } else {
                             _ageController = TextEditingController();
                           }
@@ -230,9 +225,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
                                     DateTime.now())
                                 .abs()
                                 .toString();
-                                context.read<GlobalProvider>().setInputMapValue("age", _ageController.text, 
-                context.read<GlobalProvider>().feildDemographicsValues);
-                log(context.read<GlobalProvider>().feildDemographicsValues.toString());
                           } else {
                             _ageController = TextEditingController();
                           }
@@ -275,9 +267,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
                                     DateTime.now())
                                 .abs()
                                 .toString();
-                                context.read<GlobalProvider>().setInputMapValue("age", _ageController.text, 
-                context.read<GlobalProvider>().feildDemographicsValues);
-                log(context.read<GlobalProvider>().feildDemographicsValues.toString());
                           } else {
                             _ageController = TextEditingController();
                           }
