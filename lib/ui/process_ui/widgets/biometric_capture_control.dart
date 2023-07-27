@@ -21,16 +21,14 @@ class BiometricCaptureControl extends StatefulWidget {
   BiometricCaptureControl({super.key, required this.field});
   final Field field;
 
- 
-  
   @override
   State<BiometricCaptureControl> createState() =>
       _BiometricCaptureControlState();
 }
 
 class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
-   String biometricAttribute = "Iris";
-   BiometricAttributeData iris = BiometricAttributeData(
+  String biometricAttribute = "Iris";
+  BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
       attemptNo: 0,
       exceptionType: "",
@@ -312,9 +310,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         SizedBox(
           width: double.infinity,
         ),
-        ElevatedButton(child:Text("temp"),onPressed: (){
-          print(biometricAttribute);
-        }),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: Text(
@@ -357,14 +352,12 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                           color: (iris.isScanned == true)
-                                              ? (iris.exceptions
-                                                      .contains(true))
+                                              ? (iris.exceptions.contains(true))
                                                   ? secondaryColors
                                                       .elementAt(16)
                                                   : secondaryColors
                                                       .elementAt(11)
-                                              : (biometricAttribute ==
-                                                      "Iris")
+                                              : (biometricAttribute == "Iris")
                                                   ? secondaryColors
                                                       .elementAt(12)
                                                   : secondaryColors
@@ -398,8 +391,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                 Positioned(
                                     top: 14,
                                     left: 14,
-                                    child: (iris.exceptions
-                                            .contains(true))
+                                    child: (iris.exceptions.contains(true))
                                         ? Image.asset(
                                             "assets/images/Ellipse 1183.png")
                                         : Image.asset(
@@ -408,8 +400,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                 Positioned(
                                     top: 6,
                                     right: 6,
-                                    child: (iris.exceptions
-                                            .contains(true))
+                                    child: (iris.exceptions.contains(true))
                                         ? Image.asset(
                                             "assets/images/Group 57548.png")
                                         : Image.asset(
@@ -437,8 +428,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     width: 78.h,
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: (rightHand.isScanned ==
-                                                    true)
+                                            color: (rightHand.isScanned == true)
                                                 ? (rightHand.exceptions
                                                         .contains(true))
                                                     ? secondaryColors
@@ -520,8 +510,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     width: 78.h,
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: (leftHand.isScanned ==
-                                                    true)
+                                            color: (leftHand.isScanned == true)
                                                 ? (leftHand.exceptions
                                                         .contains(true))
                                                     ? secondaryColors
@@ -601,8 +590,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     width: 78.h,
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: (thumbs.isScanned ==
-                                                    true)
+                                            color: (thumbs.isScanned == true)
                                                 ? (thumbs.exceptions
                                                         .contains(true))
                                                     ? secondaryColors
@@ -645,8 +633,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   Positioned(
                                       top: 14,
                                       left: 14,
-                                      child: (thumbs.exceptions
-                                              .contains(true))
+                                      child: (thumbs.exceptions.contains(true))
                                           ? Image.asset(
                                               "assets/images/Ellipse 1183.png")
                                           : Image.asset(
@@ -655,8 +642,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   Positioned(
                                       top: 6,
                                       right: 6,
-                                      child: (thumbs.exceptions
-                                              .contains(true))
+                                      child: (thumbs.exceptions.contains(true))
                                           ? Image.asset(
                                               "assets/images/Group 57548.png")
                                           : Image.asset(
@@ -680,16 +666,14 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     width: 78.h,
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: (face.isScanned ==
-                                                    true)
+                                            color: (face.isScanned == true)
                                                 ? (face.exceptions
                                                         .contains(true))
                                                     ? secondaryColors
                                                         .elementAt(16)
                                                     : secondaryColors
                                                         .elementAt(11)
-                                                : (biometricAttribute ==
-                                                        "Face")
+                                                : (biometricAttribute == "Face")
                                                     ? secondaryColors
                                                         .elementAt(12)
                                                     : secondaryColors
@@ -724,8 +708,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   Positioned(
                                       top: 14,
                                       left: 14,
-                                      child: (face.exceptions
-                                              .contains(true))
+                                      child: (face.exceptions.contains(true))
                                           ? Image.asset(
                                               "assets/images/Ellipse 1183.png")
                                           : Image.asset(
@@ -734,8 +717,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   Positioned(
                                       top: 6,
                                       right: 6,
-                                      child: (face.exceptions
-                                              .contains(true))
+                                      child: (face.exceptions.contains(true))
                                           ? Image.asset(
                                               "assets/images/Group 57548.png")
                                           : Image.asset(
@@ -763,8 +745,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     width: 78.h,
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: (exception.isScanned ==
-                                                    true)
+                                            color: (exception.isScanned == true)
                                                 ? (exception.exceptions
                                                         .contains(true))
                                                     ? secondaryColors
@@ -841,8 +822,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfImages(iris.listofImages)
-                                        .map(
+                                    ...listOfImages(iris.listofImages).map(
                                       (e) => e,
                                     ),
                                   ],
@@ -851,8 +831,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfResultImages(
-                                            iris.listofImages)
+                                    ...listOfResultImages(iris.listofImages)
                                         .map(
                                       (e) => e,
                                     ),
@@ -983,15 +962,13 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           "Iris")
                                                       .then((value) async {
                                                     for (var e in value) {
-                                                      iris
-                                                          .listOfBiometricsDto
+                                                      iris.listOfBiometricsDto
                                                           .add(BiometricsDto
                                                               .fromJson(json
                                                                   .decode(e!)));
                                                     }
                                                   });
-                                                  iris
-                                                          .qualityPercentage =
+                                                  iris.qualityPercentage =
                                                       avgScore(iris
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
@@ -999,8 +976,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           widget.field.id!,
                                                           "Iris")
                                                       .then((value) {
-                                                    iris.listofImages =
-                                                        value;
+                                                    iris.listofImages = value;
                                                   });
                                                   iris.isScanned = true;
                                                   generateList(
@@ -1089,8 +1065,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   secondaryColors.elementAt(1),
                                             ),
                                       ),
-                                      Text(
-                                          "${noOfTrue(iris.exceptions)}"),
+                                      Text("${noOfTrue(iris.exceptions)}"),
                                     ],
                                   ),
                                 ],
@@ -1134,8 +1109,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     LinearPercentIndicator(
                                       width: 260.h,
                                       lineHeight: 8,
-                                      percent:
-                                          iris.qualityPercentage / 100,
+                                      percent: iris.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
                                           secondaryColors.elementAt(11),
@@ -1178,18 +1152,17 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Iris", 1)
                                               .then((value) {
-                                            iris.listOfBiometricsDto
-                                                .clear();
+                                            iris.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              iris.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              iris.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
 
                                           setState(() {
-                                            iris.qualityPercentage =
-                                                avgScore(iris.listOfBiometricsDto);
+                                            iris.qualityPercentage = avgScore(
+                                                iris.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -1223,12 +1196,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (iris.attemptNo <
-                                                              1)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (iris.attemptNo < 1)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -1243,18 +1214,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Iris", 2)
                                               .then((value) {
-                                            iris.listOfBiometricsDto
-                                                .clear();
+                                            iris.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              iris.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              iris.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            iris.qualityPercentage =
-                                                avgScore(
-                                                    iris.listOfBiometricsDto);
+                                            iris.qualityPercentage = avgScore(
+                                                iris.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -1288,12 +1257,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (iris.attemptNo <
-                                                              2)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (iris.attemptNo < 2)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -1308,17 +1275,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Iris", 3)
                                               .then((value) {
-                                            iris.listOfBiometricsDto
-                                                .clear();
+                                            iris.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              iris.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              iris.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            iris.qualityPercentage =
-                                                avgScore(iris.listOfBiometricsDto);
+                                            iris.qualityPercentage = avgScore(
+                                                iris.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -1352,12 +1318,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (iris.attemptNo <
-                                                              3)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (iris.attemptNo < 3)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -1384,9 +1348,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfImages(
-                                            rightHand.listofImages)
-                                        .map(
+                                    ...listOfImages(rightHand.listofImages).map(
                                       (e) => e,
                                     ),
                                   ],
@@ -1519,8 +1481,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
-                                                 rightHand
-                                                      .listOfBiometricsDto
+                                                  rightHand.listOfBiometricsDto
                                                       .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
@@ -1535,8 +1496,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                                   .decode(e!)));
                                                     }
                                                   });
-                                                  rightHand
-                                                          .qualityPercentage =
+                                                  rightHand.qualityPercentage =
                                                       avgScore(rightHand
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
@@ -1544,11 +1504,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           widget.field.id!,
                                                           "RightHand")
                                                       .then((value) {
-                                                    rightHand
-                                                        .listofImages = value;
+                                                    rightHand.listofImages =
+                                                        value;
                                                   });
-                                                  rightHand.isScanned =
-                                                      true;
+                                                  rightHand.isScanned = true;
                                                   generateList(
                                                       context,
                                                       "${widget.field.id}",
@@ -1634,8 +1593,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   secondaryColors.elementAt(1),
                                             ),
                                       ),
-                                      Text(
-                                          "${noOfTrue(rightHand.exceptions)}"),
+                                      Text("${noOfTrue(rightHand.exceptions)}"),
                                     ],
                                   ),
                                 ],
@@ -1680,8 +1638,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       width: 260.h,
                                       lineHeight: 8,
                                       percent:
-                                          rightHand.qualityPercentage /
-                                              100,
+                                          rightHand.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
                                           secondaryColors.elementAt(11),
@@ -1727,8 +1684,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             rightHand.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              rightHand.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              rightHand.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -1744,8 +1701,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "RightHand",
                                                   1)
                                               .then((value) {
-                                            rightHand.listofImages =
-                                                value;
+                                            rightHand.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -1762,8 +1718,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color:
                                                 secondaryColors.elementAt(17),
                                           ),
-                                          color: (rightHand.attemptNo <
-                                                  1)
+                                          color: (rightHand.attemptNo < 1)
                                               ? secondaryColors.elementAt(18)
                                               : secondaryColors.elementAt(11),
                                         ),
@@ -1774,12 +1729,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (rightHand
-                                                              .attemptNo <
-                                                          1)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (rightHand.attemptNo < 1)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -1797,8 +1751,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             rightHand.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              rightHand.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              rightHand.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -1813,8 +1767,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "RightHand",
                                                   2)
                                               .then((value) {
-                                            rightHand.listofImages =
-                                                value;
+                                            rightHand.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -1831,8 +1784,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color:
                                                 secondaryColors.elementAt(17),
                                           ),
-                                          color: (rightHand.attemptNo <
-                                                  2)
+                                          color: (rightHand.attemptNo < 2)
                                               ? secondaryColors.elementAt(18)
                                               : secondaryColors.elementAt(11),
                                         ),
@@ -1843,12 +1795,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (rightHand
-                                                              .attemptNo <
-                                                          2)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (rightHand.attemptNo < 2)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -1866,8 +1817,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             rightHand.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              rightHand.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              rightHand.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -1882,8 +1833,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "RightHand",
                                                   3)
                                               .then((value) {
-                                            rightHand.listofImages =
-                                                value;
+                                            rightHand.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -1900,8 +1850,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color:
                                                 secondaryColors.elementAt(17),
                                           ),
-                                          color: (rightHand.attemptNo <
-                                                  3)
+                                          color: (rightHand.attemptNo < 3)
                                               ? secondaryColors.elementAt(18)
                                               : secondaryColors.elementAt(11),
                                         ),
@@ -1912,12 +1861,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (rightHand
-                                                              .attemptNo <
-                                                          3)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (rightHand.attemptNo < 3)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -1944,9 +1892,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfImages(
-                                            leftHand.listofImages)
-                                        .map(
+                                    ...listOfImages(leftHand.listofImages).map(
                                       (e) => e,
                                     ),
                                   ],
@@ -1955,8 +1901,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfResultImages(
-                                            leftHand.listofImages)
+                                    ...listOfResultImages(leftHand.listofImages)
                                         .map(
                                       (e) => e,
                                     ),
@@ -2079,8 +2024,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
-                                                 leftHand
-                                                      .listOfBiometricsDto
+                                                  leftHand.listOfBiometricsDto
                                                       .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
@@ -2095,8 +2039,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                                   .decode(e!)));
                                                     }
                                                   });
-                                                  leftHand
-                                                          .qualityPercentage =
+                                                  leftHand.qualityPercentage =
                                                       avgScore(leftHand
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
@@ -2104,11 +2047,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           widget.field.id!,
                                                           "LeftHand")
                                                       .then((value) {
-                                                    leftHand
-                                                        .listofImages = value;
+                                                    leftHand.listofImages =
+                                                        value;
                                                   });
-                                                  leftHand.isScanned =
-                                                      true;
+                                                  leftHand.isScanned = true;
                                                   generateList(
                                                       context,
                                                       "${widget.field.id}",
@@ -2194,8 +2136,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   secondaryColors.elementAt(1),
                                             ),
                                       ),
-                                      Text(
-                                          "${noOfTrue(leftHand.exceptions)}"),
+                                      Text("${noOfTrue(leftHand.exceptions)}"),
                                     ],
                                   ),
                                 ],
@@ -2239,9 +2180,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     LinearPercentIndicator(
                                       width: 260.h,
                                       lineHeight: 8,
-                                      percent:
-                                          leftHand.qualityPercentage /
-                                              100,
+                                      percent: leftHand.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
                                           secondaryColors.elementAt(11),
@@ -2287,8 +2226,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             leftHand.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              leftHand.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              leftHand.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -2303,8 +2242,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "LeftHand",
                                                   1)
                                               .then((value) {
-                                            leftHand.listofImages =
-                                                value;
+                                            leftHand.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -2332,12 +2270,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (leftHand
-                                                              .attemptNo <
-                                                          1)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (leftHand.attemptNo < 1)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -2355,8 +2292,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             leftHand.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              leftHand.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              leftHand.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -2371,8 +2308,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "LeftHand",
                                                   2)
                                               .then((value) {
-                                            leftHand.listofImages =
-                                                value;
+                                            leftHand.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -2400,12 +2336,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (leftHand
-                                                              .attemptNo <
-                                                          2)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (leftHand.attemptNo < 2)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -2423,8 +2358,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             leftHand.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              leftHand.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              leftHand.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -2439,8 +2374,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "LeftHand",
                                                   3)
                                               .then((value) {
-                                            leftHand.listofImages =
-                                                value;
+                                            leftHand.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -2468,12 +2402,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (leftHand
-                                                              .attemptNo <
-                                                          3)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (leftHand.attemptNo < 3)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -2500,8 +2433,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfImages(thumbs.listofImages)
-                                        .map(
+                                    ...listOfImages(thumbs.listofImages).map(
                                       (e) => e,
                                     ),
                                   ],
@@ -2510,8 +2442,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfResultImages(
-                                            thumbs.listofImages)
+                                    ...listOfResultImages(thumbs.listofImages)
                                         .map(
                                       (e) => e,
                                     ),
@@ -2634,8 +2565,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
-                                                  thumbs
-                                                      .listOfBiometricsDto
+                                                  thumbs.listOfBiometricsDto
                                                       .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
@@ -2643,15 +2573,13 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           "Thumbs")
                                                       .then((value) async {
                                                     for (var e in value) {
-                                                      thumbs
-                                                          .listOfBiometricsDto
+                                                      thumbs.listOfBiometricsDto
                                                           .add(BiometricsDto
                                                               .fromJson(json
                                                                   .decode(e!)));
                                                     }
                                                   });
-                                                  thumbs
-                                                          .qualityPercentage =
+                                                  thumbs.qualityPercentage =
                                                       avgScore(thumbs
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
@@ -2659,11 +2587,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           widget.field.id!,
                                                           "Thumbs")
                                                       .then((value) {
-                                                    thumbs.listofImages =
-                                                        value;
+                                                    thumbs.listofImages = value;
                                                   });
-                                                  thumbs.isScanned =
-                                                      true;
+                                                  thumbs.isScanned = true;
                                                   generateList(
                                                       context,
                                                       "${widget.field.id}",
@@ -2749,8 +2675,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   secondaryColors.elementAt(1),
                                             ),
                                       ),
-                                      Text(
-                                          "${noOfTrue(thumbs.exceptions)}"),
+                                      Text("${noOfTrue(thumbs.exceptions)}"),
                                     ],
                                   ),
                                 ],
@@ -2794,8 +2719,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     LinearPercentIndicator(
                                       width: 260.h,
                                       lineHeight: 8,
-                                      percent:
-                                          thumbs.qualityPercentage / 100,
+                                      percent: thumbs.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
                                           secondaryColors.elementAt(11),
@@ -2838,18 +2762,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Thumbs", 1)
                                               .then((value) {
-                                            thumbs.listOfBiometricsDto
-                                                .clear();
+                                            thumbs.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              thumbs.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              thumbs.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            thumbs.qualityPercentage =
-                                                avgScore(thumbs
-                                                    .listOfBiometricsDto);
+                                            thumbs.qualityPercentage = avgScore(
+                                                thumbs.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -2883,12 +2805,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (thumbs.attemptNo <
-                                                              1)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (thumbs.attemptNo < 1)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -2903,18 +2823,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Thumbs", 2)
                                               .then((value) {
-                                            thumbs.listOfBiometricsDto
-                                                .clear();
+                                            thumbs.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              thumbs.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              thumbs.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            thumbs.qualityPercentage =
-                                                avgScore(thumbs
-                                                    .listOfBiometricsDto);
+                                            thumbs.qualityPercentage = avgScore(
+                                                thumbs.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -2948,12 +2866,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (thumbs.attemptNo <
-                                                              2)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (thumbs.attemptNo < 2)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -2968,18 +2884,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Thumbs", 3)
                                               .then((value) {
-                                            thumbs.listOfBiometricsDto
-                                                .clear();
+                                            thumbs.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              thumbs.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              thumbs.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            thumbs.qualityPercentage =
-                                                avgScore(thumbs
-                                                    .listOfBiometricsDto);
+                                            thumbs.qualityPercentage = avgScore(
+                                                thumbs.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -3013,12 +2927,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (thumbs.attemptNo <
-                                                              3)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (thumbs.attemptNo < 3)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -3045,8 +2957,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfImages(face.listofImages)
-                                        .map(
+                                    ...listOfImages(face.listofImages).map(
                                       (e) => e,
                                     ),
                                   ],
@@ -3055,8 +2966,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfResultImages(
-                                            face.listofImages)
+                                    ...listOfResultImages(face.listofImages)
                                         .map(
                                       (e) => e,
                                     ),
@@ -3178,8 +3088,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
-                                                  face
-                                                      .listOfBiometricsDto
+                                                  face.listOfBiometricsDto
                                                       .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
@@ -3187,15 +3096,13 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           "Face")
                                                       .then((value) async {
                                                     for (var e in value) {
-                                                      face
-                                                          .listOfBiometricsDto
+                                                      face.listOfBiometricsDto
                                                           .add(BiometricsDto
                                                               .fromJson(json
                                                                   .decode(e!)));
                                                     }
                                                   });
-                                                  face
-                                                          .qualityPercentage =
+                                                  face.qualityPercentage =
                                                       avgScore(face
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
@@ -3203,8 +3110,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           widget.field.id!,
                                                           "Face")
                                                       .then((value) {
-                                                    face.listofImages =
-                                                        value;
+                                                    face.listofImages = value;
                                                   });
                                                   face.isScanned = true;
                                                   generateList(
@@ -3354,8 +3260,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                     LinearPercentIndicator(
                                       width: 260.h,
                                       lineHeight: 8,
-                                      percent:
-                                          face.qualityPercentage / 100,
+                                      percent: face.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
                                           secondaryColors.elementAt(11),
@@ -3398,17 +3303,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Face", 1)
                                               .then((value) {
-                                            face.listOfBiometricsDto
-                                                .clear();
+                                            face.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              face.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              face.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            face.qualityPercentage =
-                                                avgScore(face.listOfBiometricsDto);
+                                            face.qualityPercentage = avgScore(
+                                                face.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -3442,12 +3346,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (face.attemptNo <
-                                                              1)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (face.attemptNo < 1)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -3462,17 +3364,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Face", 2)
                                               .then((value) {
-                                            face.listOfBiometricsDto
-                                                .clear();
+                                            face.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              face.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              face.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            face.qualityPercentage =
-                                                avgScore(face.listOfBiometricsDto);
+                                            face.qualityPercentage = avgScore(
+                                                face.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -3506,12 +3407,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (face.attemptNo <
-                                                              2)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (face.attemptNo < 2)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -3526,17 +3425,16 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .getBiometrics(
                                                   widget.field.id!, "Face", 3)
                                               .then((value) {
-                                            face.listOfBiometricsDto
-                                                .clear();
+                                            face.listOfBiometricsDto.clear();
                                             for (var e in value) {
-                                              face.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              face.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
                                           setState(() {
-                                            face.qualityPercentage =
-                                                avgScore(face.listOfBiometricsDto);
+                                            face.qualityPercentage = avgScore(
+                                                face.listOfBiometricsDto);
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
@@ -3570,12 +3468,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color:
-                                                      (face.attemptNo <
-                                                              3)
-                                                          ? secondaryColors
-                                                              .elementAt(19)
-                                                          : pure_white,
+                                                  color: (face.attemptNo < 3)
+                                                      ? secondaryColors
+                                                          .elementAt(19)
+                                                      : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -3602,9 +3498,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ...listOfImages(
-                                            exception.listofImages)
-                                        .map(
+                                    ...listOfImages(exception.listofImages).map(
                                       (e) => e,
                                     ),
                                   ],
@@ -3737,8 +3631,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     minimumSize:
                                                         Size(160.w, 42.h)),
                                                 onPressed: () async {
-                                                  exception
-                                                      .listOfBiometricsDto
+                                                  exception.listOfBiometricsDto
                                                       .clear;
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
@@ -3753,8 +3646,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                                   .decode(e!)));
                                                     }
                                                   });
-                                                  exception
-                                                          .qualityPercentage =
+                                                  exception.qualityPercentage =
                                                       avgScore(exception
                                                           .listOfBiometricsDto);
                                                   await BiometricsApi()
@@ -3762,11 +3654,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                           widget.field.id!,
                                                           "Exception")
                                                       .then((value) {
-                                                    exception
-                                                        .listofImages = value;
+                                                    exception.listofImages =
+                                                        value;
                                                   });
-                                                  exception.isScanned =
-                                                      true;
+                                                  exception.isScanned = true;
                                                   generateList(
                                                       context,
                                                       "${widget.field.id}",
@@ -3915,8 +3806,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       width: 260.h,
                                       lineHeight: 8,
                                       percent:
-                                          exception.qualityPercentage /
-                                              100,
+                                          exception.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
                                           secondaryColors.elementAt(11),
@@ -3962,8 +3852,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             exception.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              exception.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              exception.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -3978,8 +3868,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "Exception",
                                                   1)
                                               .then((value) {
-                                            exception.listofImages =
-                                                value;
+                                            exception.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -3996,8 +3885,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color:
                                                 secondaryColors.elementAt(17),
                                           ),
-                                          color: (exception.attemptNo <
-                                                  1)
+                                          color: (exception.attemptNo < 1)
                                               ? secondaryColors.elementAt(18)
                                               : secondaryColors.elementAt(11),
                                         ),
@@ -4008,12 +3896,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (exception
-                                                              .attemptNo <
-                                                          1)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (exception.attemptNo < 1)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -4031,8 +3918,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             exception.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                              exception.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              exception.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -4047,8 +3934,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "Exception",
                                                   2)
                                               .then((value) {
-                                            exception.listofImages =
-                                                value;
+                                            exception.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -4065,8 +3951,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color:
                                                 secondaryColors.elementAt(17),
                                           ),
-                                          color: (exception.attemptNo <
-                                                  2)
+                                          color: (exception.attemptNo < 2)
                                               ? secondaryColors.elementAt(18)
                                               : secondaryColors.elementAt(11),
                                         ),
@@ -4077,12 +3962,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (exception
-                                                              .attemptNo <
-                                                          2)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (exception.attemptNo < 2)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -4100,8 +3984,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             exception.listOfBiometricsDto
                                                 .clear();
                                             for (var e in value) {
-                                             exception.listOfBiometricsDto
-                                                  .add(BiometricsDto.fromJson(
+                                              exception.listOfBiometricsDto.add(
+                                                  BiometricsDto.fromJson(
                                                       json.decode(e!)));
                                             }
                                           });
@@ -4116,8 +4000,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "Exception",
                                                   3)
                                               .then((value) {
-                                            exception.listofImages =
-                                                value;
+                                            exception.listofImages = value;
                                           });
                                           setState(() {});
                                         }
@@ -4134,8 +4017,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             color:
                                                 secondaryColors.elementAt(17),
                                           ),
-                                          color: (exception.attemptNo <
-                                                  3)
+                                          color: (exception.attemptNo < 3)
                                               ? secondaryColors.elementAt(18)
                                               : secondaryColors.elementAt(11),
                                         ),
@@ -4146,12 +4028,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               .bodyLarge
                                               ?.copyWith(
                                                   fontSize: 12,
-                                                  color: (exception
-                                                              .attemptNo <
-                                                          3)
-                                                      ? secondaryColors
-                                                          .elementAt(19)
-                                                      : pure_white,
+                                                  color:
+                                                      (exception.attemptNo < 3)
+                                                          ? secondaryColors
+                                                              .elementAt(19)
+                                                          : pure_white,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -4188,8 +4069,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   children: [
                                     InkWell(
                                       onTap: () async {
-                                        if (!(iris.exceptions
-                                                .elementAt(0)) ==
+                                        if (!(iris.exceptions.elementAt(0)) ==
                                             true) {
                                           await BiometricsApi().addBioException(
                                               widget.field.id!,
@@ -4203,18 +4083,15 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "leftEye");
                                         }
                                         setState(() {
-                                          iris.exceptions[0] = !(iris.exceptions
-                                              .elementAt(0));
+                                          iris.exceptions[0] =
+                                              !(iris.exceptions.elementAt(0));
 
-                                          if (iris.exceptions
-                                              .contains(true)) {
+                                          if (iris.exceptions.contains(true)) {
                                             if (iris.exceptionType.isEmpty) {
-                                              iris.exceptionType =
-                                                  "Permanent";
+                                              iris.exceptionType = "Permanent";
                                             }
                                           }
-                                          if (!iris.exceptions
-                                              .contains(true)) {
+                                          if (!iris.exceptions.contains(true)) {
                                             iris.exceptionType = "";
                                           }
                                         });
@@ -4254,8 +4131,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                   children: [
                                     InkWell(
                                       onTap: () async {
-                                        if (!(iris.exceptions
-                                                .elementAt(1)) ==
+                                        if (!(iris.exceptions.elementAt(1)) ==
                                             true) {
                                           await BiometricsApi().addBioException(
                                               widget.field.id!,
@@ -4269,17 +4145,14 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   "rightEye");
                                         }
                                         setState(() {
-                                          iris.exceptions[1] = !(iris.exceptions
-                                              .elementAt(1));
-                                          if (iris.exceptions
-                                              .contains(true)) {
+                                          iris.exceptions[1] =
+                                              !(iris.exceptions.elementAt(1));
+                                          if (iris.exceptions.contains(true)) {
                                             if (iris.exceptionType.isEmpty) {
-                                              iris.exceptionType =
-                                                  "Permanent";
+                                              iris.exceptionType = "Permanent";
                                             }
                                           }
-                                          if (!iris.exceptions
-                                              .contains(true)) {
+                                          if (!iris.exceptions.contains(true)) {
                                             iris.exceptionType = "";
                                           }
                                         });
@@ -4358,23 +4231,21 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     .elementAt(0));
                                             if (rightHand.exceptions
                                                 .contains(true)) {
-                                              if (rightHand.exceptionType
-                                                  .isEmpty) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
                                                 rightHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!rightHand.exceptions
                                                 .contains(true)) {
-                                              rightHand.exceptionType =
-                                                  "";
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand
-                                                      .exceptions[0] ==
+                                          color: (rightHand.exceptions[0] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -4407,23 +4278,21 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     .elementAt(1));
                                             if (rightHand.exceptions
                                                 .contains(true)) {
-                                              if (rightHand.exceptionType
-                                                  .isEmpty) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
                                                 rightHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!rightHand.exceptions
                                                 .contains(true)) {
-                                              rightHand.exceptionType =
-                                                  "";
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand
-                                                      .exceptions[1] ==
+                                          color: (rightHand.exceptions[1] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -4456,23 +4325,21 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     .elementAt(2));
                                             if (rightHand.exceptions
                                                 .contains(true)) {
-                                              if (rightHand.exceptionType
-                                                  .isEmpty) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
                                                 rightHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!rightHand.exceptions
                                                 .contains(true)) {
-                                              rightHand.exceptionType =
-                                                  "";
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand
-                                                      .exceptions[2] ==
+                                          color: (rightHand.exceptions[2] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -4505,23 +4372,21 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     .elementAt(3));
                                             if (rightHand.exceptions
                                                 .contains(true)) {
-                                              if (rightHand.exceptionType
-                                                  .isEmpty) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
                                                 rightHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!rightHand.exceptions
                                                 .contains(true)) {
-                                              rightHand.exceptionType =
-                                                  "";
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand
-                                                      .exceptions[3] ==
+                                          color: (rightHand.exceptions[3] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -4582,21 +4447,20 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     "leftIndex");
                                           }
                                           setState(() {
-                                            leftHand.exceptions[0] =
-                                                !(leftHand.exceptions
-                                                    .elementAt(0));
+                                            leftHand.exceptions[0] = !(leftHand
+                                                .exceptions
+                                                .elementAt(0));
                                             if (leftHand.exceptions
                                                 .contains(true)) {
-                                              if (leftHand.exceptionType
-                                                  .isEmpty) {
+                                              if (leftHand
+                                                  .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
-                                              leftHand.exceptionType =
-                                                  "";
+                                              leftHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -4630,21 +4494,20 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     "leftMiddle");
                                           }
                                           setState(() {
-                                            leftHand.exceptions[1] =
-                                                !(leftHand.exceptions
-                                                    .elementAt(1));
+                                            leftHand.exceptions[1] = !(leftHand
+                                                .exceptions
+                                                .elementAt(1));
                                             if (leftHand.exceptions
                                                 .contains(true)) {
-                                              if (leftHand.exceptionType
-                                                  .isEmpty) {
+                                              if (leftHand
+                                                  .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
-                                              leftHand.exceptionType =
-                                                  "";
+                                              leftHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -4678,21 +4541,20 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     "leftRing");
                                           }
                                           setState(() {
-                                            leftHand.exceptions[2] =
-                                                !(leftHand.exceptions
-                                                    .elementAt(2));
+                                            leftHand.exceptions[2] = !(leftHand
+                                                .exceptions
+                                                .elementAt(2));
                                             if (leftHand.exceptions
                                                 .contains(true)) {
-                                              if (leftHand.exceptionType
-                                                  .isEmpty) {
+                                              if (leftHand
+                                                  .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
-                                              leftHand.exceptionType =
-                                                  "";
+                                              leftHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -4726,21 +4588,20 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     "leftLittle");
                                           }
                                           setState(() {
-                                            leftHand.exceptions[3] =
-                                                !(leftHand.exceptions
-                                                    .elementAt(3));
+                                            leftHand.exceptions[3] = !(leftHand
+                                                .exceptions
+                                                .elementAt(3));
                                             if (leftHand.exceptions
                                                 .contains(true)) {
-                                              if (leftHand.exceptionType
-                                                  .isEmpty) {
+                                              if (leftHand
+                                                  .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
-                                              leftHand.exceptionType =
-                                                  "";
+                                              leftHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -4807,13 +4668,13 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     "leftThumb");
                                           }
                                           setState(() {
-                                            thumbs.exceptions[0] =
-                                                !(thumbs.exceptions
-                                                    .elementAt(0));
+                                            thumbs.exceptions[0] = !(thumbs
+                                                .exceptions
+                                                .elementAt(0));
                                             if (thumbs.exceptions
                                                 .contains(true)) {
-                                              if (thumbs.exceptionType
-                                                  .isEmpty) {
+                                              if (thumbs
+                                                  .exceptionType.isEmpty) {
                                                 thumbs.exceptionType =
                                                     "Permanent";
                                               }
@@ -4826,8 +4687,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (thumbs.exceptions[0] ==
-                                                  true)
+                                          color: (thumbs.exceptions[0] == true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
                                           size: 20,
@@ -4854,13 +4714,13 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     "rightThumb");
                                           }
                                           setState(() {
-                                            thumbs.exceptions[1] =
-                                                !(thumbs.exceptions
-                                                    .elementAt(1));
+                                            thumbs.exceptions[1] = !(thumbs
+                                                .exceptions
+                                                .elementAt(1));
                                             if (thumbs.exceptions
                                                 .contains(true)) {
-                                              if (thumbs.exceptionType
-                                                  .isEmpty) {
+                                              if (thumbs
+                                                  .exceptionType.isEmpty) {
                                                 thumbs.exceptionType =
                                                     "Permanent";
                                               }
@@ -4873,8 +4733,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (thumbs.exceptions[1] ==
-                                                  true)
+                                          color: (thumbs.exceptions[1] == true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
                                           size: 20,
