@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/platform_spi/registration.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../model/field.dart';
@@ -22,11 +24,11 @@ class AgeDateControl extends StatefulWidget {
 }
 
 class _AgeDateControlState extends State<AgeDateControl> {
-  final TextEditingController _dayController = TextEditingController();
+  TextEditingController _dayController = TextEditingController();
 
-  final TextEditingController _monthController = TextEditingController();
-  final TextEditingController _yearController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
+  TextEditingController _monthController = TextEditingController();
+  TextEditingController _yearController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
 
   final dayFocus = FocusNode();
   final monthFocus = FocusNode();
@@ -140,6 +142,13 @@ class _AgeDateControlState extends State<AgeDateControl> {
       _monthController.text = parsedDate.month.toString().padLeft(2, '0');
       _yearController.text = parsedDate.year.toString();
     }
+
+    if(context.read<GlobalProvider>()
+        .feildDemographicsValues.containsKey("age")) {
+          _ageController.text = context
+                .read<GlobalProvider>()
+                .feildDemographicsValues["age"];
+        }
   }
 
   @override
@@ -175,8 +184,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
                                     DateTime.now())
                                 .abs()
                                 .toString();
+                            context.read<GlobalProvider>().setInputMapValue("age", _ageController.text, 
+                                context.read<GlobalProvider>().feildDemographicsValues);
                           } else {
-                            _ageController.clear();
+                            _ageController = TextEditingController();
                           }
                           return valid;
                         },
@@ -219,8 +230,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                                     DateTime.now())
                                 .abs()
                                 .toString();
+                                context.read<GlobalProvider>().setInputMapValue("age", _ageController.text, 
+                context.read<GlobalProvider>().feildDemographicsValues);
+                log(context.read<GlobalProvider>().feildDemographicsValues.toString());
                           } else {
-                            _ageController.clear();
+                            _ageController = TextEditingController();
                           }
                           return valid;
                         },
@@ -261,8 +275,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                                     DateTime.now())
                                 .abs()
                                 .toString();
+                                context.read<GlobalProvider>().setInputMapValue("age", _ageController.text, 
+                context.read<GlobalProvider>().feildDemographicsValues);
+                log(context.read<GlobalProvider>().feildDemographicsValues.toString());
                           } else {
-                            _ageController.clear();
+                            _ageController = TextEditingController();
                           }
                           return valid;
                         },

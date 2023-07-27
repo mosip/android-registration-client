@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -77,6 +80,26 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     }
   }
 
+  evaluateMVEL(String fieldData, String? engine, String? expression, Field e) async {
+    final Registration registration = Registration();
+    registration.evaluateMVEL(fieldData, expression!).then((value) {
+      context.read<GlobalProvider>().setMvelValues(e.id!, value);
+    });
+  }
+
+  _checkMvel(Field e) {
+    if (e.required == false) {
+      if (e.requiredOn!.isNotEmpty) {
+        evaluateMVEL(
+          jsonEncode(e.toJson()),
+          e.requiredOn?[0]?.engine,
+          e.requiredOn?[0]?.expr,
+          e
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -84,8 +107,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       child: Column(
         children: [
           ...widget.screen.fields!.map((e) {
-            if (e!.inputRequired == true) {
-              return widgetType(e);
+            _checkMvel(e!);
+            if (e.inputRequired == true) {
+              return context.watch<GlobalProvider>().mvelvalues[e.id] ?? true ? widgetType(e) : Container();
             }
             return Container();
           }).toList(),

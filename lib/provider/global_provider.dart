@@ -35,6 +35,14 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _feildDemographicsValues = {};
 
   Map<String, dynamic> _fieldBiometricsValue = {};
+  Map<String, bool> _mvelvalues = {};
+
+  Map<String, bool> get mvelvalues => _mvelvalues;
+
+  setMvelValues(String field, bool value) {
+    _mvelvalues[field] = value;
+    notifyListeners();
+  }
 
   //GettersSetters
 

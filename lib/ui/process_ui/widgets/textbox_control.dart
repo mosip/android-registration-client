@@ -27,15 +27,6 @@ class _TextBoxControlState extends State<TextBoxControl> {
 
   @override
   void initState() {
-    if (widget.e.required == false) {
-      if (widget.e.requiredOn!.isNotEmpty) {
-        evaluateMVEL(
-          jsonEncode(widget.e.toJson()),
-          widget.e.requiredOn?[0]?.engine,
-          widget.e.requiredOn?[0]?.expr,
-        );
-      }
-    }
     super.initState();
   }
 
@@ -90,15 +81,6 @@ class _TextBoxControlState extends State<TextBoxControl> {
     return response;
   }
 
-  evaluateMVEL(String fieldData, String? engine, String? expression) async {
-    final Registration registration = Registration();
-    registration.evaluateMVEL(fieldData, expression!).then((value) {
-      setState(() {
-        isMvelValid = value;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
@@ -106,8 +88,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
       choosenLang = ["English"];
     }
 
-    return isMvelValid
-        ? Card(
+    return Card(
             elevation: 0,
             margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
             child: Padding(
@@ -180,7 +161,6 @@ class _TextBoxControlState extends State<TextBoxControl> {
                     ),
                   ]),
             ),
-          )
-        : const SizedBox.shrink();
+          );
   }
 }
