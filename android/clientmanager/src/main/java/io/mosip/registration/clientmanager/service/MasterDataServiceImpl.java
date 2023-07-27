@@ -603,7 +603,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                     syncJobDef.setIsActive(jsonObject.getBoolean("isActive"));
 
                     syncJobDefRepository.saveSyncJobDef(syncJobDef);
-                    jobManagerService.refreshJobStatus(syncJobDef);
+//                    jobManagerService.refreshJobStatus(syncJobDef);
                 }
                 break;
             case "Language":

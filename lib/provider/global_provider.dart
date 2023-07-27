@@ -43,6 +43,7 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _feildDemographicsValues = {};
 
   Map<String, dynamic> _fieldBiometricsValue = {};
+  Map<String, bool> _mvelvalues = {};
 
   //GettersSetters
 
@@ -52,6 +53,13 @@ class GlobalProvider with ChangeNotifier {
   String get centerName => _centerName;
   String get machineName => _machineName;
   Map<String?, String?> get machineDetails => _machineDetails;
+
+  Map<String, bool> get mvelvalues => _mvelvalues;
+
+  setMvelValues(String field, bool value) {
+    _mvelvalues[field] = value;
+    notifyListeners();
+  }
 
   Process? get currentProcess => _currentProcess;
 
@@ -187,6 +195,16 @@ Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
       commonMap[key][language] = value;
     }
 
+    notifyListeners();
+  }
+  
+  removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
+    commonMap.remove(key);
+    notifyListeners();
+  }
+
+  clearMapValue(Map<String, dynamic> commonMap) {
+    commonMap = {};
     notifyListeners();
   }
 

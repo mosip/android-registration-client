@@ -5,19 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
+import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
+import 'custom_label.dart';
 
 class DropDownControl extends StatefulWidget {
   const DropDownControl(
-      {super.key,
-      required this.id,
-      required this.options,
-      required this.type,
-      required this.validation});
+      {super.key, required this.field, required this.validation});
 
-  final String id;
-  final List<String?> options;
-  final String type;
+  final Field field;
   final RegExp validation;
 
   @override
@@ -32,7 +28,7 @@ class _CustomDropDownState extends State<DropDownControl> {
     if (context
         .read<GlobalProvider>()
         .feildDemographicsValues
-        .containsKey(widget.id)) {
+        .containsKey(widget.field.id ?? "")) {
       _getSelectedValueFromMap("eng");
     }
     super.initState();
@@ -40,30 +36,30 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   void saveData(value) {
     if (value != null) {
-      if (widget.type == 'simpleType') {
+      if (widget.field.type == 'simpleType') {
         context
             .read<RegistrationTaskProvider>()
-            .addSimpleTypeDemographicField(widget.id, value, "eng");
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
       } else {
         context
             .read<RegistrationTaskProvider>()
-            .addDemographicField(widget.id, value);
+            .addDemographicField(widget.field.id ?? "", value);
       }
     }
   }
 
   void _saveDataToMap(value) {
     if (value != null) {
-      if (widget.type == 'simpleType') {
+      if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.id,
+              widget.field.id ?? "",
               value!,
               "eng",
               context.read<GlobalProvider>().feildDemographicsValues,
             );
       } else {
         context.read<GlobalProvider>().setInputMapValue(
-              widget.id,
+              widget.field.id ?? "",
               value!,
               context.read<GlobalProvider>().feildDemographicsValues,
             );
@@ -73,63 +69,97 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   void _getSelectedValueFromMap(String lang) {
     String response = "";
-    if (widget.type == 'simpleType') {
-      if ((context.read<GlobalProvider>().feildDemographicsValues[widget.id]
+    if (widget.field.type == 'simpleType') {
+      if ((context
+                  .read<GlobalProvider>()
+                  .feildDemographicsValues[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
         response = context
             .read<GlobalProvider>()
-            .feildDemographicsValues[widget.id][lang];
+            .feildDemographicsValues[widget.field.id ?? ""][lang];
       }
     } else {
-      response =
-          context.read<GlobalProvider>().feildDemographicsValues[widget.id];
+      response = context
+          .read<GlobalProvider>()
+          .feildDemographicsValues[widget.field.id ?? ""];
     }
     setState(() {
       selected = response;
     });
   }
 
+  Future<List<String?>> _getLocationValues(
+      String hierarchyLevelName, String langCode) async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getLocationValues(hierarchyLevelName, langCode);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
-      icon: const Icon(null),
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        hintText: "Select Option",
-        hintStyle: const TextStyle(color: Color(0xff999999)),
-      ),
-      items: widget.options
-          .map((option) => DropdownMenuItem(
-                value: option,
-                child: Text(option!),
-              ))
-          .toList(),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      value: selected,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a value';
-        }
-        if (!widget.validation.hasMatch(value)) {
-          return 'Invalid input';
-        }
-        return null;
-      },
-      onChanged: (value) {
-        saveData(value);
-        _saveDataToMap(value);
-        setState(() {
-          selected = value!;
+    return FutureBuilder(
+        future: _getLocationValues(widget.field.subType!, "eng"),
+        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+          return Card(
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomLabel(feild: widget.field),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  snapshot.hasData
+                      ? DropdownButtonFormField(
+                          icon: const Icon(null),
+                          decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                            ),
+                            hintText: "Select Option",
+                            hintStyle:
+                                const TextStyle(color: Color(0xff999999)),
+                          ),
+                          items: snapshot.data!
+                              .map((option) => DropdownMenuItem(
+                                    value: option,
+                                    child: Text(option!),
+                                  ))
+                              .toList(),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          value: selected,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a value';
+                            }
+                            if (!widget.validation.hasMatch(value)) {
+                              return 'Invalid input';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            saveData(value);
+                            _saveDataToMap(value);
+                            setState(() {
+                              selected = value!;
+                            });
+                          },
+                        )
+                      : const SizedBox.shrink(),
+                ],
+              ),
+            ),
+          );
         });
-      },
-    );
   }
 }

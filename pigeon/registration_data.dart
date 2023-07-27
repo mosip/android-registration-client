@@ -10,4 +10,7 @@ abstract class RegistrationDataApi {
 
   @async
   String getPreviewTemplate(bool isPreview);
+
+  @async
+  String submitRegistrationDto(String makerName);
 }

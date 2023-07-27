@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/demographics.dart';
+import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:registration_client/platform_spi/registration.dart';
 
@@ -8,10 +9,12 @@ class RegistrationTaskProvider with ChangeNotifier {
   final Registration registration = Registration();
   final ProcessSpec processSpec = ProcessSpec();
   final Demographics demographics = Demographics();
+  DynamicResponseService dynamicResponseService = DynamicResponseService();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
   String _registrationStartError = '';
+  bool _isRegistrationSaved = false;
 
   String _previewTemplate = "";
 
@@ -20,6 +23,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get uiSchema => _uiSchema;
   String get previewTemplate => _previewTemplate;
   String get registrationStartError => _registrationStartError;
+  bool get isRegistrationSaved => _isRegistrationSaved;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
@@ -85,6 +89,16 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  submitRegistrationDto(String makerName) async {
+    String regSaveError = await registration.submitRegistrationDto(makerName);
+    if(regSaveError.isEmpty) {
+      _isRegistrationSaved = true;
+    } else {
+      _isRegistrationSaved = false;
+    }
+    notifyListeners();
+  }
+
   addDemographicField(String fieldId, String value) async {
     await demographics.addDemographicField(fieldId, value);
   }
@@ -113,5 +127,13 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   addConsentField(String consentData) async {
     await demographics.setConsentField(consentData);
+  }
+
+  Future<List<String?>> getFieldValues(String fieldName, String langCode) async {
+    return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
+  }
+
+  Future<List<String?>> getLocationValues(String fieldName, String langCode) async {
+    return await dynamicResponseService.fetchLocationValues(fieldName, langCode);
   }
 }

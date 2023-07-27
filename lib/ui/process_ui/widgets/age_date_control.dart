@@ -22,11 +22,11 @@ class AgeDateControl extends StatefulWidget {
 }
 
 class _AgeDateControlState extends State<AgeDateControl> {
-  final TextEditingController _dayController = TextEditingController();
+  TextEditingController _dayController = TextEditingController();
 
-  final TextEditingController _monthController = TextEditingController();
-  final TextEditingController _yearController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
+  TextEditingController _monthController = TextEditingController();
+  TextEditingController _yearController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
 
   final dayFocus = FocusNode();
   final monthFocus = FocusNode();
@@ -74,7 +74,16 @@ class _AgeDateControlState extends State<AgeDateControl> {
     }
   }
 
-  String? feildValidation(value, message) {
+  int calculateYearDifference(DateTime date1, DateTime date2) {
+    int yearDifference = date2.year - date1.year;
+    if (date1.month > date2.month ||
+        (date1.month == date2.month && date1.day > date2.day)) {
+      yearDifference--;
+    }
+    return yearDifference;
+  }
+
+  String? fieldValidation(value, message) {
     try {
       String targetDateString = widget.field.format ??
           "yyyy/MM/dd"
@@ -115,17 +124,27 @@ class _AgeDateControlState extends State<AgeDateControl> {
           context.read<GlobalProvider>().feildDemographicsValues,
         );
   }
-  
+
   void _getSavedDate() {
-    if(context.read<GlobalProvider>().feildDemographicsValues.containsKey(widget.field.id)) {
-      String targetDateFormat = widget.field.format ??
-        "yyyy/MM/dd";
-            
-      String savedDate = context.read<GlobalProvider>().feildDemographicsValues[widget.field.id];
+    if (context
+        .read<GlobalProvider>()
+        .feildDemographicsValues
+        .containsKey(widget.field.id)) {
+      String targetDateFormat = widget.field.format ?? "yyyy/MM/dd";
+
+      String savedDate = context
+          .read<GlobalProvider>()
+          .feildDemographicsValues[widget.field.id];
       DateTime parsedDate = DateFormat(targetDateFormat).parse(savedDate);
       _dayController.text = parsedDate.day.toString().padLeft(2, '0');
       _monthController.text = parsedDate.month.toString().padLeft(2, '0');
       _yearController.text = parsedDate.year.toString();
+      _ageController.text = calculateYearDifference(
+                                    DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
+                                    DateTime.now())
+                                .abs()
+                                .toString();
     }
   }
 
@@ -154,7 +173,18 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         onTap: () => _removeFocusFromAll("day"),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
-                          return feildValidation(value, "dd");
+                          String? valid = fieldValidation(value, "dd");
+                          if (valid == null) {
+                            _ageController.text = calculateYearDifference(
+                                    DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
+                                    DateTime.now())
+                                .abs()
+                                .toString();
+                          } else {
+                            _ageController = TextEditingController();
+                          }
+                          return valid;
                         },
                         onChanged: (value) {
                           if (value.length >= 2) {
@@ -187,7 +217,18 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         onTap: () => _removeFocusFromAll("month"),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
-                          return feildValidation(value, "MM");
+                          String? valid = fieldValidation(value, "MM");
+                          if (valid == null) {
+                            _ageController.text = calculateYearDifference(
+                                    DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
+                                    DateTime.now())
+                                .abs()
+                                .toString();
+                          } else {
+                            _ageController = TextEditingController();
+                          }
+                          return valid;
                         },
                         onChanged: (value) {
                           if (value.length >= 2) {
@@ -218,7 +259,18 @@ class _AgeDateControlState extends State<AgeDateControl> {
                     Flexible(
                       child: TextFormField(
                         validator: (value) {
-                          return feildValidation(value, "yyyy");
+                          String? valid = fieldValidation(value, "yyyy");
+                          if (valid == null) {
+                            _ageController.text = calculateYearDifference(
+                                    DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
+                                    DateTime.now())
+                                .abs()
+                                .toString();
+                          } else {
+                            _ageController = TextEditingController();
+                          }
+                          return valid;
                         },
                         onChanged: (value) {
                           saveData();
@@ -249,6 +301,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                     const SizedBox(width: 12),
                     Flexible(
                       child: TextFormField(
+                        readOnly: true,
                         controller: _ageController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(

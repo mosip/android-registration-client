@@ -21,7 +21,7 @@ class BiometricCaptureControl extends StatefulWidget {
   BiometricCaptureControl({super.key, required this.field});
   final Field field;
 
-  String biometricAttribute = "Iris";
+  String biometricAttribute = "Left Hand";
   BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
       attemptNo: 0,
@@ -194,15 +194,15 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     widget.rightHand.thresholdPercentage =
         context.read<GlobalProvider>().thresholdValuesMap[
             "mosip.registration.rightslap_fingerprint_threshold"]!;
-    widget.iris.thresholdPercentage =
-        context.read<GlobalProvider>().thresholdValuesMap[
-            "mosip.registration.iris_threshold"]!;
-    widget.thumbs.thresholdPercentage =
-        context.read<GlobalProvider>().thresholdValuesMap[
-            "mosip.registration.thumbs_fingerprint_threshold"]!;
-    widget.face.thresholdPercentage =
-        context.read<GlobalProvider>().thresholdValuesMap[
-            "mosip.registration.face_threshold"]!;
+    widget.iris.thresholdPercentage = context
+        .read<GlobalProvider>()
+        .thresholdValuesMap["mosip.registration.iris_threshold"]!;
+    widget.thumbs.thresholdPercentage = context
+        .read<GlobalProvider>()
+        .thresholdValuesMap["mosip.registration.thumbs_fingerprint_threshold"]!;
+    widget.face.thresholdPercentage = context
+        .read<GlobalProvider>()
+        .thresholdValuesMap["mosip.registration.face_threshold"]!;
     if (context
         .read<GlobalProvider>()
         .fieldBiometricsValue
@@ -310,15 +310,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         SizedBox(
           width: double.infinity,
         ),
-        // ElevatedButton(
-        //     child: Text("temp"),
-        //     onPressed: () async {
-        //       await BiometricsApi()
-        //           .getThresholdValue("mosip.registration.iris_threshold")
-        //           .then((value) {
-        //         print(value);
-        //       });
-        //     }),
+        
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: Text(
@@ -346,6 +338,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           widget.field.bioAttributes!.contains("rightEye"))
                         InkWell(
                           onTap: () async {
+                            
                             setState(() {
                               widget.biometricAttribute = "Iris";
                             });
@@ -842,7 +835,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          (widget.iris.listOfBiometricsDto.isEmpty)
+                          (widget.iris.isScanned==false)
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -1388,7 +1381,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          (widget.rightHand.listOfBiometricsDto.isEmpty)
+                          (widget.rightHand.isScanned==false)
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -1952,7 +1945,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          (widget.leftHand.listOfBiometricsDto.isEmpty)
+                          (widget.leftHand.isScanned==false)
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -2512,7 +2505,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          (widget.thumbs.listOfBiometricsDto.isEmpty)
+                          (widget.thumbs.isScanned==false)
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -3058,7 +3051,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          (widget.face.listOfBiometricsDto.isEmpty)
+                          (widget.face.isScanned=false)
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -3619,7 +3612,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          (widget.exception.listOfBiometricsDto.isEmpty)
+                          (widget.exception.isScanned==false)
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,

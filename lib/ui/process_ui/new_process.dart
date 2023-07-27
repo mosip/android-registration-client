@@ -76,9 +76,6 @@ class NewProcess extends StatelessWidget {
           AppLocalizations.of(context)!.password_incorrect, context);
       return false;
     }
-
-    username = '';
-    password = '';
     return true;
   }
 
@@ -119,6 +116,12 @@ class NewProcess extends StatelessWidget {
     return true;
   }
 
+  _onTabBackNavigate(int index, BuildContext context) {
+    if (index < context.read<GlobalProvider>().newProcessTabIndex) {
+        context.read<GlobalProvider>().newProcessTabIndex = index;
+      }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
@@ -145,11 +148,11 @@ class NewProcess extends StatelessWidget {
                 onPressed: () async {
                   if (context.read<GlobalProvider>().newProcessTabIndex <
                       size) {
-                    if (context
-                        .read<GlobalProvider>()
-                        .formKey
-                        .currentState!
-                        .validate()) {
+                    // if (context
+                    //     .read<GlobalProvider>()
+                    //     .formKey
+                    //     .currentState!
+                    //     .validate()) {
                       if (context.read<GlobalProvider>().newProcessTabIndex ==
                           newProcess.screens!.length - 1) {
                         context
@@ -160,7 +163,7 @@ class NewProcess extends StatelessWidget {
                       context.read<GlobalProvider>().newProcessTabIndex =
                           context.read<GlobalProvider>().newProcessTabIndex + 1;
                     }
-                  } 
+                  // } 
                   else {
                     if (context.read<GlobalProvider>().newProcessTabIndex ==
                         size + 1) {
@@ -169,6 +172,19 @@ class NewProcess extends StatelessWidget {
                       if (!isPacketAuthenticated) {
                         return;
                       }
+                      await context
+                              .read<RegistrationTaskProvider>()
+                              .submitRegistrationDto(username);
+                          bool isRegistrationSaved = context
+                              .read<RegistrationTaskProvider>()
+                              .isRegistrationSaved;
+
+                          if (!isRegistrationSaved) {
+                            _showInSnackBar("Registration save failed!", context);
+                            username = '';
+                            password = '';
+                            return;
+                          }
                     }
                     context.read<GlobalProvider>().newProcessTabIndex =
                         context.read<GlobalProvider>().newProcessTabIndex + 1;
@@ -188,18 +204,23 @@ class NewProcess extends StatelessWidget {
                     onPressed: () async {
                       if (context.read<GlobalProvider>().newProcessTabIndex <
                           size) {
-                        if (context
-                            .read<GlobalProvider>()
-                            .formKey
-                            .currentState!
-                            .validate()) {
+                        // if (context
+                        //     .read<GlobalProvider>()
+                        //     .formKey
+                        //     .currentState!
+                        //     .validate()) {
                           if (context
                                   .read<GlobalProvider>()
                                   .newProcessTabIndex ==
                               newProcess.screens!.length - 1) {
-                            context
+                            await context
                                 .read<RegistrationTaskProvider>()
                                 .getPreviewTemplate(true);
+                            String temp = context
+                                .read<RegistrationTaskProvider>()
+                                .previewTemplate;
+                            log("Preview Template: ");
+                            log(temp);
                           }
 
                           context.read<GlobalProvider>().newProcessTabIndex =
@@ -208,7 +229,7 @@ class NewProcess extends StatelessWidget {
                                       .newProcessTabIndex +
                                   1;
                         }
-                      }
+                      // }
                        else {
                         if (context.read<GlobalProvider>().newProcessTabIndex ==
                             size + 1) {
@@ -217,7 +238,21 @@ class NewProcess extends StatelessWidget {
                           if (!isPacketAuthenticated) {
                             return;
                           }
+                          await context
+                              .read<RegistrationTaskProvider>()
+                              .submitRegistrationDto(username);
+                          bool isRegistrationSaved = context
+                              .read<RegistrationTaskProvider>()
+                              .isRegistrationSaved;
+
+                          if (!isRegistrationSaved) {
+                            _showInSnackBar("Registration save failed!", context);
+                            username = '';
+                            password = '';
+                            return;
+                          }
                         }
+
                         context.read<GlobalProvider>().newProcessTabIndex =
                             context.read<GlobalProvider>().newProcessTabIndex +
                                 1;

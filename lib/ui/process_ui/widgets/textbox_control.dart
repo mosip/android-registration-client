@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import '../../../model/field.dart';
 import '../../../platform_spi/registration.dart';
@@ -24,26 +25,8 @@ class TextBoxControl extends StatefulWidget {
 class _TextBoxControlState extends State<TextBoxControl> {
   bool isMvelValid = true;
 
-  evaluateMVEL(String fieldData, String? engine, String? expression) async {
-    final Registration registration = Registration();
-    registration.evaluateMVEL(fieldData, expression!).then((value) {
-      setState(() {
-        isMvelValid = value;
-      });
-    });
-  }
-
   @override
   void initState() {
-    if (widget.e.required == false) {
-      if (widget.e.requiredOn!.isNotEmpty) {
-        evaluateMVEL(
-          jsonEncode(widget.e.toJson()),
-          widget.e.requiredOn?[0]?.engine,
-          widget.e.requiredOn?[0]?.expr,
-        );
-      }
-    }
     super.initState();
   }
 
@@ -101,21 +84,11 @@ class _TextBoxControlState extends State<TextBoxControl> {
   @override
   Widget build(BuildContext context) {
     List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
-
-    List<String> singleTextBox = [
-      "Phone",
-      "Email",
-      "introducerName",
-      "RID",
-      "UIN",
-      "none"
-    ];
-    if (singleTextBox.contains(widget.e.subType)) {
+    if (!(widget.e.type == "simpleType")) {
       choosenLang = ["English"];
     }
 
-    return isMvelValid
-        ? Card(
+    return Card(
             elevation: 0,
             margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
             child: Padding(
@@ -127,10 +100,15 @@ class _TextBoxControlState extends State<TextBoxControl> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Column(
+                    ResponsiveGridList(
+                      shrinkWrap: true,
+                      minItemWidth: 400,
+                      horizontalGridSpacing: 16,
+                      verticalGridSpacing: 12,
                       children: choosenLang.map((code) {
                         String lang =
                             context.read<GlobalProvider>().langToCode(code);
+
                         return Container(
                           margin: const EdgeInsets.only(bottom: 8),
                           child: TextFormField(
@@ -183,7 +161,6 @@ class _TextBoxControlState extends State<TextBoxControl> {
                     ),
                   ]),
             ),
-          )
-        : const SizedBox.shrink();
+          );
   }
 }
