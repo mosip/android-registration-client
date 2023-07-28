@@ -33,6 +33,7 @@ List<Color> secondaryColors = [
   Color(0xFFE0E0E0),
   Color(0xFFF8F8F8),
   Color(0xFF848484),
+  Color(0xFFC11717),
 ];
 FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;

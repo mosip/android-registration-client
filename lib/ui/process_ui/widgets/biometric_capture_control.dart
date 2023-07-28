@@ -1111,8 +1111,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       lineHeight: 8,
                                       percent: iris.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
-                                      progressColor:
-                                          secondaryColors.elementAt(11),
+                                      progressColor:(iris.qualityPercentage.toInt()>int.parse(iris.thresholdPercentage))?
+                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -1641,7 +1641,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           rightHand.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          secondaryColors.elementAt(11),
+                                          (rightHand.qualityPercentage.toInt()>int.parse(rightHand.thresholdPercentage))?
+                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -2183,7 +2184,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       percent: leftHand.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          secondaryColors.elementAt(11),
+                                          (leftHand.qualityPercentage.toInt()>int.parse(leftHand.thresholdPercentage))?
+                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -2722,7 +2724,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       percent: thumbs.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          secondaryColors.elementAt(11),
+                                          (thumbs.qualityPercentage.toInt()>int.parse(thumbs.thresholdPercentage))?
+                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -3263,7 +3266,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       percent: face.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          secondaryColors.elementAt(11),
+                                          (face.qualityPercentage.toInt()>int.parse(face.thresholdPercentage))?
+                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -3809,7 +3813,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           exception.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          secondaryColors.elementAt(11),
+                                          (exception.qualityPercentage.toInt()>int.parse(exception.thresholdPercentage))?
+                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
