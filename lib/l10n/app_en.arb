@@ -36,5 +36,14 @@
   "network_error": "Login failed. Check network connection!",
   "cred_expired": "Credentials not found or are expired. Please try online login!",
   "not_initialized": "Machine could not be initialized!",
-  "invalid_user": "Username invalid!"
+  "invalid_user": "Username invalid!",
+  "sync_completed_succesfully": "Sync Completed Successfully",
+  "sync_completed_message": "System will restart in a few seconds and you will be redirected to login page.",
+  "sync_failed": "Sync. Failed",
+  "sync_failed_message": "Please connect with the system admin or supervisor for help.",
+  "policy_key_sync_failed":"Policy Key Sync Failed",
+  "global_params_sync_failed":"Global Params Sync Failed",
+  "user_details_sync_failed":"User Details Sync Failed",
+  "id_schema_sync_failed":"IDSchena Sync Failed",
+  "master_data_sync_failed":"Master Data Sync Failed"
 }

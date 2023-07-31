@@ -30,3 +30,5 @@ flutter pub run pigeon --input pigeon/demographics_data.dart --dart_out lib/pige
 
 # Generate dynamic_response pigeon files
 flutter pub run pigeon --input pigeon/dynamic_response.dart --dart_out lib/pigeon/dynamic_response_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/DynamicResponsePigeon.java --java_package "io.mosip.registration_client.model"
+# Generate machine pigeon files
+flutter pub run pigeon --input pigeon/master_data_sync.dart --dart_out lib/pigeon/master_data_sync_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/MasterDataSyncPigeon.java --java_package "io.mosip.registration_client.model"

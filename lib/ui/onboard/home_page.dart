@@ -16,7 +16,7 @@ import 'package:registration_client/ui/post_registration/preview_page.dart';
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
-
+import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void syncData(BuildContext context) async {
-    await _masterDataSync();
+    await SyncProvider().autoSync(context);
     await _getNewProcessSpecAction(context);
     await _getCenterNameAction(context);
   }

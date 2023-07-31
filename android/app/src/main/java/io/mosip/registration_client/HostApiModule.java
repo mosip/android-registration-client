@@ -23,6 +23,19 @@ import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
+import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
+import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
+import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
+import io.mosip.registration.clientmanager.repository.DynamicFieldRepository;
+import io.mosip.registration.clientmanager.repository.LanguageRepository;
+import io.mosip.registration.clientmanager.repository.LocationRepository;
+import io.mosip.registration.clientmanager.repository.MachineRepository;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
+import io.mosip.registration.clientmanager.repository.TemplateRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
@@ -31,6 +44,7 @@ import io.mosip.registration_client.api_services.DemographicsDetailsApi;
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
+import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
@@ -131,4 +145,31 @@ public class HostApiModule {
     DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService) {
         return new DynamicDetailsApi(masterDataService);
     }
+
+    @Provides
+    @Singleton
+    MasterDataSyncApi getSyncResponseApi(
+            ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository,
+            SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository,
+            IdentitySchemaRepository identitySchemaRepository, DocumentTypeRepository documentTypeRepository,
+            ApplicantValidDocRepository applicantValidDocRepository,
+            TemplateRepository templateRepository,
+            DynamicFieldRepository dynamicFieldRepository,
+            LocationRepository locationRepository,
+            BlocklistedWordRepository blocklistedWordRepository,
+            SyncJobDefRepository syncJobDefRepository,
+            LanguageRepository languageRepository,
+            JobManagerService jobManagerService) {
+        return new MasterDataSyncApi( clientCryptoManagerService,
+                machineRepository, registrationCenterRepository,
+                syncRestService, certificateManagerService,
+                globalParamRepository, objectMapper, userDetailRepository,
+                identitySchemaRepository, appContext,
+                documentTypeRepository, applicantValidDocRepository,
+                templateRepository, dynamicFieldRepository,
+                locationRepository, blocklistedWordRepository,
+                syncJobDefRepository, languageRepository,jobManagerService
+                );
+    }
 }
+

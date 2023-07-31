@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -24,7 +25,7 @@ void main() async {
   final AppLanguageProvider appLanguage = AppLanguageProvider();
   await appLanguage.fetchLocale();
   runApp(
-    const RegistrationClientApp(),
+    RestartWidget(child: const RegistrationClientApp()),
   );
 }
 
@@ -46,6 +47,10 @@ class RegistrationClientApp extends StatelessWidget {
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => GlobalProvider(),
+        ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => SyncProvider(),
         ),
         ChangeNotifierProvider(
           lazy: false,
@@ -111,5 +116,36 @@ class _RegistrationClientSplashPageState
     );
     context.read<GlobalProvider>().setMachineDetails();
     return const LoginPage();
+  }
+}
+
+class RestartWidget extends StatefulWidget {
+  RestartWidget({required this.child});
+
+  final Widget child;
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_RestartWidgetState>()?.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: widget.child,
+    );
   }
 }
