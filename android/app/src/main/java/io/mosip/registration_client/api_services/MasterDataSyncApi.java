@@ -469,7 +469,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     syncJobDef.setIsActive(jsonObject.getBoolean("isActive"));
 
                     syncJobDefRepository.saveSyncJobDef(syncJobDef);
-                    jobManagerService.refreshJobStatus(syncJobDef);
+//                    jobManagerService.refreshJobStatus(syncJobDef);
                 }
                 break;
             case "Language":

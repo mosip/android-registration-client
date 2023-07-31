@@ -516,8 +516,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 200.h : 500.h,
-              width: isMobile ? 200.h : 500.h,
+              height: isMobile ? 105.h : 200.h,
+              width: isMobile ? 105.w : 200.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Padding(
@@ -527,8 +527,8 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: isMobile ? 65.h : 500.h,
-                      width: isMobile ? 65.w : 500.w,
+                      height: isMobile ? 40.h : 100.h,
+                      width: isMobile ? 40.w : 100.w,
                       child: syncProvider.isAllSyncSuccessful()
                           ? SvgPicture.asset(
                               "assets/svg/Success Message Icon.svg")
