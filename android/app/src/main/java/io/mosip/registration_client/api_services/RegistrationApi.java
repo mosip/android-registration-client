@@ -65,7 +65,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.AGE_GROUPS);
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getBiometrics());
             String template = this.templateService.getTemplate(this.registrationDto, true);
             result.success(template);
             return;
