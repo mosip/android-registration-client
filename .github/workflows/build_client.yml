@@ -20,10 +20,11 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install
-      - name: Updating serverBaseURL.
+      - name: Updating libs-snapshot-local to libs-release local for artifactory URL's.
         run: |
           find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
           find . -type f -name "*gradle.properties" -print0 | xargs -0 sed -i "s/sqp_19c9702eb9f5ddfebbfc36eaa6edf39d22280a49/${{ secrets.SONAR_TOKEN }}/g"
+
       - name: Build Android Registration-Client
         run: |
           cd client
@@ -36,4 +37,4 @@ jobs:
         with:
           name: apk-output
           path: ./client/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 5
+          retention-days: 7

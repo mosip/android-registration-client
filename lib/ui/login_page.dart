@@ -4,10 +4,23 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/main.dart';
+import 'package:registration_client/pigeon/machine_pigeon.dart';
+import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
+import 'package:registration_client/pigeon/user_pigeon.dart';
+import 'package:registration_client/platform_android/auth_impl.dart';
+import 'package:registration_client/platform_android/machine_key_impl.dart';
+import 'package:registration_client/platform_android/sync_response_impl.dart';
+import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/provider/auth_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -19,6 +32,7 @@ import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
 import 'package:registration_client/ui/widgets/username_component.dart';
+import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
 
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";
@@ -38,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Map<String, String> mp = {};
   late AuthProvider authProvider;
+  late SyncProvider syncProvider;
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -56,7 +71,9 @@ class _LoginPageState extends State<LoginPage> {
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
     authProvider = Provider.of<AuthProvider>(context, listen: false);
-    return authProvider.isLoggedIn
+    syncProvider = Provider.of<SyncProvider>(context, listen: false);
+
+    return authProvider.isLoggedIn && !syncProvider.isGlobalSyncInProgress
         ? Responsive(
             mobile: DashBoardMobileView(),
             desktop: DashBoardTabletView(),
@@ -113,7 +130,6 @@ class _LoginPageState extends State<LoginPage> {
 
     await context.read<AuthProvider>().validateUser(username);
     bool isValid = context.read<AuthProvider>().isValidUser;
-
     if (!isValid) {
       _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
       return;
@@ -154,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     setState(() {
-      isLoggingIn = true;
+      authProvider.setIsSyncing(true);
     });
     bool isConnected = context.read<ConnectivityProvider>().isConnected;
     await context
@@ -163,9 +179,26 @@ class _LoginPageState extends State<LoginPage> {
 
     bool isTrue = context.read<AuthProvider>().isLoggedIn;
     if (!isTrue) {
+      authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
     } else {
-      _navigateToHomePage();
+      authProvider.setIsSyncing(false);
+      syncProvider.setIsGlobalSyncInProgress(true);
+      if (syncProvider.isGlobalSyncInProgress) {
+        showLoadingDialog(context);
+        await syncProvider.autoSync(context).then((value) {
+          // syncProvider.setIsGlobalSyncInProgress(false);
+        });
+      }
+      showSyncResultDialog(context);
+      Timer(const Duration(seconds: 5), () {
+        if (syncProvider.isAllSyncSuccessful()) {
+          RestartWidget.restartApp(context);
+        } else {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        }
+      });
+      // _navigateToHomePage();
     }
 
     setState(() {
@@ -397,7 +430,7 @@ class _LoginPageState extends State<LoginPage> {
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
                       username = '';
-                      isLoggingIn = false;
+                      authProvider.setIsSyncing(false);
                     });
                   },
                   onChanged: (v) {
@@ -405,7 +438,7 @@ class _LoginPageState extends State<LoginPage> {
                       password = v;
                     });
                   },
-                  isLoggingIn: isLoggingIn,
+                  isLoggingIn: authProvider.isSyncing,
                 )
               : const SizedBox(),
         ],
@@ -453,6 +486,138 @@ class _LoginPageState extends State<LoginPage> {
         isMobile ? buildingsX : buildingsXX,
         fit: BoxFit.fill,
       ),
+    );
+  }
+
+  showSyncResultDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      pageBuilder: (_, __, ___) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: isMobile ? 200.h : 500.h,
+              width: isMobile ? 200.h : 500.h,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15), color: pure_white),
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: isMobile ? 65.h : 500.h,
+                      width: isMobile ? 65.w : 500.w,
+                      child: syncProvider.isAllSyncSuccessful()
+                          ? SvgPicture.asset(
+                              "assets/svg/Success Message Icon.svg")
+                          : SvgPicture.asset(
+                              "assets/svg/Failed Message Icon.svg"),
+                    ),
+                    SizedBox(
+                      height: isMobile ? 2.h : 5.h,
+                    ),
+                    DefaultTextStyle(
+                      style: TextStyle(
+                          fontSize: isMobile ? 12 : 18,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold),
+                      child: Text(
+                        syncProvider.isAllSyncSuccessful()
+                            ? AppLocalizations.of(context)!
+                                .sync_completed_succesfully
+                            : AppLocalizations.of(context)!.sync_failed,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(),
+                    DefaultTextStyle(
+                      style: TextStyle(
+                          fontSize: isMobile ? 7 : 12,
+                          color: const Color.fromARGB(221, 80, 79, 79),
+                          fontWeight: FontWeight.w900),
+                      child: Text(
+                        syncProvider.isAllSyncSuccessful()
+                            ? AppLocalizations.of(context)!
+                                .sync_completed_message
+                            : AppLocalizations.of(context)!.sync_failed_message,
+                        softWrap: true,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  showLoadingDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      pageBuilder: (_, __, ___) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: isMobile ? 105.h : 200.h,
+              width: isMobile ? 105.w : 200.w,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15), color: pure_white),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        appIconLogoOnly,
+                        fit: BoxFit.scaleDown,
+                        height: isMobile ? 40.h : 100.h,
+                        width: isMobile ? 40.w : 100.w,
+                      ),
+                      Transform.scale(
+                        scale: isMobile? 1.4 : 2.8,
+                        child: Center(
+                          child: ColorfulCircularProgressIndicator(
+                            colors: app_colors,
+                            strokeWidth: 2.2,
+                            duration: const Duration(milliseconds: 500),
+                            initialColor: app_colors[0],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: isMobile ? 10.h : 20.h,
+                  ),
+                  DefaultTextStyle(
+                      style: TextStyle(
+                          fontSize: isMobile ? 9 : 15,
+                          color: const Color.fromARGB(221, 80, 79, 79),
+                          fontWeight: FontWeight.w900),
+                      child: Consumer<SyncProvider>(
+                        builder: (context, syncP, child) {
+                          return Text(
+                              "Sync ${syncP.currentSyncProgress.toString()} of 5 ");
+                        },
+                      )),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

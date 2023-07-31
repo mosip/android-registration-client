@@ -85,6 +85,6 @@ app.*.map.json
 /android/app/src/main/java/io/mosip/registration_client/model
 
 # IOS Pigeon generated files
-/ios/pigeon.h
-/ios/pigeon.m
+/ios/Runner/pigeon.h
+/ios/Runner/pigeon.m
 
