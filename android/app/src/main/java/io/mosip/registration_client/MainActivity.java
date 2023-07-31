@@ -42,6 +42,7 @@ import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
+import io.mosip.registration_client.api_services.DocumentDetailsApi;
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
@@ -58,6 +59,7 @@ import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.UserPigeon;
+import io.mosip.registration_client.model.DocumentDataPigeon;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
@@ -122,6 +124,10 @@ public class MainActivity extends FlutterActivity {
     DemographicsDetailsApi demographicsDetailsApi;
 
     @Inject
+    DocumentDetailsApi documentDetailsApi;
+
+
+    @Inject
     DynamicDetailsApi dynamicDetailsApi;
 
     @Override
@@ -157,6 +163,8 @@ public class MainActivity extends FlutterActivity {
         RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
+        DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
+        
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)

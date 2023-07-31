@@ -8,4 +8,8 @@ abstract class DynamicResponseApi {
 
   @async
   List<String> getLocationValues(String hierarchyLevelName, String langCode);
+
+  @async
+  List<String> getDocumentValues(
+      String categoryCode, String? applicantType, String langCode);
 }

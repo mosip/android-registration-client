@@ -52,4 +52,17 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
         }
         result.success(locationResponse);
     }
+    @Override
+    public void getDocumentValues(@NonNull String categoryCode, String applicantType,@NonNull String langCode,@NonNull DynamicResponsePigeon.Result<List<String>> result){
+
+        List<String> documentResponse=new ArrayList<>();
+        try{
+            documentResponse=this.masterDataService.getDocumentTypes(categoryCode,applicantType,langCode);
+            Log.e(getClass().getSimpleName(), "Fetch Document values: " + documentResponse);
+        }catch(Exception e){
+            Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(documentResponse);
+
+    }
 }
