@@ -12,6 +12,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/document_upload_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
@@ -75,12 +76,18 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           field: e,
           validation: regexPattern,
         );
+      case "fileupload":
+        return DocumentUploadControl(
+          field: e,
+          validation: regexPattern,
+        );
       default:
         return Text("${e.controlType}");
     }
   }
 
-  evaluateMVEL(String fieldData, String? engine, String? expression, Field e) async {
+  evaluateMVEL(
+      String fieldData, String? engine, String? expression, Field e) async {
     final Registration registration = Registration();
     registration.evaluateMVEL(fieldData, expression!).then((value) {
       context.read<GlobalProvider>().setMvelValues(e.id!, value);
@@ -90,12 +97,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   _checkMvel(Field e) {
     if (e.required == false) {
       if (e.requiredOn!.isNotEmpty) {
-        evaluateMVEL(
-          jsonEncode(e.toJson()),
-          e.requiredOn?[0]?.engine,
-          e.requiredOn?[0]?.expr,
-          e
-        );
+        evaluateMVEL(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
+            e.requiredOn?[0]?.expr, e);
       }
     }
   }
@@ -109,7 +112,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           ...widget.screen.fields!.map((e) {
             _checkMvel(e!);
             if (e.inputRequired == true) {
-              return context.watch<GlobalProvider>().mvelvalues[e.id] ?? true ? widgetType(e) : Container();
+              return context.watch<GlobalProvider>().mvelvalues[e.id] ?? true
+                  ? widgetType(e)
+                  : Container();
             }
             return Container();
           }).toList(),
