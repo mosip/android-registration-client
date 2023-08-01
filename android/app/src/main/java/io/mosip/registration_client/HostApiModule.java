@@ -28,6 +28,8 @@ import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
+import io.mosip.registration_client.api_services.DocumentDetailsApi;
+
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
@@ -130,5 +132,11 @@ public class HostApiModule {
     @Singleton
     DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService) {
         return new DynamicDetailsApi(masterDataService);
+    }
+
+    @Provides
+    @Singleton
+    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService) {
+        return new DocumentDetailsApi(registrationService);
     }
 }
