@@ -213,12 +213,12 @@ class _LoginPageState extends State<LoginPage> {
       showSyncResultDialog(context);
       Timer(const Duration(seconds: 5), () {
         if (syncProvider.isAllSyncSuccessful()) {
-          RestartWidget.restartApp(context);
+          // RestartWidget.restartApp(context);
+          _navigateToHomePage();
         } else {
           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         }
       });
-      // _navigateToHomePage();
     }
 
     setState(() {
@@ -516,8 +516,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 105.h : 200.h,
-              width: isMobile ? 105.w : 200.w,
+              height: isMobile ? 125.h : 220.h,
+              width: isMobile ? 125.w : 220.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Padding(
@@ -586,8 +586,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 105.h : 200.h,
-              width: isMobile ? 105.w : 200.w,
+              height: isMobile ? 125.h : 220.h,
+              width: isMobile ? 125.w : 220.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Column(
@@ -599,8 +599,8 @@ class _LoginPageState extends State<LoginPage> {
                       Image.asset(
                         appIconLogoOnly,
                         fit: BoxFit.scaleDown,
-                        height: isMobile ? 40.h : 100.h,
-                        width: isMobile ? 40.w : 100.w,
+                        height: isMobile ? 35.h : 90.h,
+                        width: isMobile ? 35.w : 90.w,
                       ),
                       Transform.scale(
                         scale: isMobile? 1.4 : 2.8,
