@@ -90,13 +90,15 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   submitRegistrationDto(String makerName) async {
-    String regSaveError = await registration.submitRegistrationDto(makerName);
-    if(regSaveError.isEmpty) {
-      _isRegistrationSaved = true;
-    } else {
-      _isRegistrationSaved = false;
-    }
-    notifyListeners();
+    String regId = await registration.submitRegistrationDto(makerName);
+    // if (regId.isEmpty) {
+    //   _isRegistrationSaved = false;
+    // } else {
+    //   _isRegistrationSaved = true;
+    // }
+
+    // notifyListeners();
+    return regId;
   }
 
   addDemographicField(String fieldId, String value) async {
@@ -129,11 +131,14 @@ class RegistrationTaskProvider with ChangeNotifier {
     await demographics.setConsentField(consentData);
   }
 
-  Future<List<String?>> getFieldValues(String fieldName, String langCode) async {
+  Future<List<String?>> getFieldValues(
+      String fieldName, String langCode) async {
     return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
   }
 
-  Future<List<String?>> getLocationValues(String fieldName, String langCode) async {
-    return await dynamicResponseService.fetchLocationValues(fieldName, langCode);
+  Future<List<String?>> getLocationValues(
+      String fieldName, String langCode) async {
+    return await dynamicResponseService.fetchLocationValues(
+        fieldName, langCode);
   }
 }

@@ -14,4 +14,7 @@ class PacketAuth {
 abstract class PacketAuthApi {
   @async
   PacketAuth authenticate(String username, String password, bool isConnected);
+
+  @async
+  void syncPacket(String packetId);
 }

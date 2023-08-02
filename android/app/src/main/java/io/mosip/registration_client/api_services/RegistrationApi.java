@@ -80,14 +80,15 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void submitRegistrationDto(@NonNull String makerName, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             String rId = this.registrationService.getRegistrationDto().getRId();
+            Log.e(getClass().getSimpleName(), rId);
             registrationService.submitRegistrationDto(makerName);
             Log.e(getClass().getSimpleName(), "Registration saved successfully");
-            result.success("");
+            result.success(rId);
             return;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Failed on registration submission", e);
         }
-        result.success("REGISTRATION_SAVE_FAILED");
+        result.success("");
     }
 }
 

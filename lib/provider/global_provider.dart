@@ -6,10 +6,14 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
+import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/ui/process_ui/new_process.dart';
 
 class GlobalProvider with ChangeNotifier {
   final MachineKey machineKey = MachineKey();
+
+  final PacketService packetService = PacketService();
+
   //Variables
   int _currentIndex = 0;
   String _name = "";
@@ -31,11 +35,11 @@ class GlobalProvider with ChangeNotifier {
     'French': false,
   };
   Map<String, String> _thresholdValuesMap = {
-    'mosip.registration.leftslap_fingerprint_threshold':'0',
+    'mosip.registration.leftslap_fingerprint_threshold': '0',
     'mosip.registration.rightslap_fingerprint_threshold': '0',
     'mosip.registration.thumbs_fingerprint_threshold': '0',
-    'mosip.registration.iris_threshold':'0',
-    'mosip.registration.face_threshold':'0',
+    'mosip.registration.iris_threshold': '0',
+    'mosip.registration.face_threshold': '0',
   };
   Map<String, dynamic> _fieldDisplayValues = {};
 
@@ -44,6 +48,7 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, dynamic> _fieldBiometricsValue = {};
   Map<String, bool> _mvelvalues = {};
+  String _regId = "";
 
   //GettersSetters
 
@@ -53,8 +58,14 @@ class GlobalProvider with ChangeNotifier {
   String get centerName => _centerName;
   String get machineName => _machineName;
   Map<String?, String?> get machineDetails => _machineDetails;
+  String get regId => _regId;
 
   Map<String, bool> get mvelvalues => _mvelvalues;
+
+  setRegId(String value) {
+    _regId = value;
+    notifyListeners();
+  }
 
   setMvelValues(String field, bool value) {
     _mvelvalues[field] = value;
@@ -64,13 +75,14 @@ class GlobalProvider with ChangeNotifier {
   Process? get currentProcess => _currentProcess;
 
   Map<String, bool> get languageMap => _languageMap;
-Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
+  Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
   List<String> get chosenLang => _chosenLang;
 
   set chosenLang(List<String> value) => _chosenLang = value;
 
   set languageMap(Map<String, bool> value) => _languageMap = value;
-  set thresholdValuesMap(Map<String, String> value) => _thresholdValuesMap = value;
+  set thresholdValuesMap(Map<String, String> value) =>
+      _thresholdValuesMap = value;
 
   set currentProcess(Process? value) {
     _currentProcess = value;
@@ -197,7 +209,7 @@ Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
 
     notifyListeners();
   }
-  
+
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
     notifyListeners();
@@ -210,7 +222,7 @@ Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
 
   getThresholdValues() async {
     for (var e in thresholdValuesMap.keys) {
-      thresholdValuesMap[e]=await BiometricsApi().getThresholdValue(e);
+      thresholdValuesMap[e] = await BiometricsApi().getThresholdValue(e);
     }
   }
 
@@ -272,5 +284,10 @@ Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
 
     _centerName = regCenterName;
     notifyListeners();
+  }
+
+  syncPacket(String packetId) async {
+    await packetService.packetSync(packetId);
+    log("provider sync packet Sucess");
   }
 }

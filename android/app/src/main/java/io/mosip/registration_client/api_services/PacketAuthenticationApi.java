@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration_client.model.PacketAuthPigeon;
@@ -23,12 +24,15 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     SyncRestUtil syncRestFactory;
     LoginService loginService;
 
+    PacketService packetService;
+
     @Inject
     public PacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                   LoginService loginService) {
+                                   LoginService loginService, PacketService packetService) {
         this.syncRestService = syncRestService;
         this.syncRestFactory = syncRestFactory;
         this.loginService = loginService;
+        this.packetService = packetService;
     }
 
     private PacketAuthPigeon.PacketAuth getAuthErrorResponse(String errorCode) {
@@ -90,5 +94,15 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
             return;
         }
         onlineAuthentication(username, password, result);
+    }
+
+    @Override
+    public void syncPacket(@NonNull String packetId, @NonNull PacketAuthPigeon.Result<Void> result) {
+        try{
+            packetService.syncRegistration(packetId);
+            Log.e(getClass().getSimpleName(), "success");
+        }catch(Exception e){
+            Log.e(getClass().getSimpleName(), "Error packet Sync", e);
+        }
     }
 }

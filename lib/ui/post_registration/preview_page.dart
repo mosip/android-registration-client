@@ -1,20 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/provider/registration_task_provider.dart';
 
-class PreviewPage extends StatelessWidget {
+import '../../provider/registration_task_provider.dart';
+
+class PreviewPage extends StatefulWidget {
   const PreviewPage({super.key});
+
+  @override
+  _PreviewPageState createState() => _PreviewPageState();
+}
+
+class _PreviewPageState extends State<PreviewPage> {
+  bool isLoading = true;
+  InAppWebViewController? webViewController;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      child: InAppWebView(
-        initialData: InAppWebViewInitialData(
-            data: context.watch<RegistrationTaskProvider>().previewTemplate),
+      child: Stack(
+        children: [
+          InAppWebView(
+            initialData: InAppWebViewInitialData(
+                data:
+                    context.watch<RegistrationTaskProvider>().previewTemplate),
+            initialOptions: InAppWebViewGroupOptions(
+              android: AndroidInAppWebViewOptions(
+                builtInZoomControls: true,
+              ),
+              ios: IOSInAppWebViewOptions(
+                allowsInlineMediaPlayback: true,
+              ),
+            ),
+            onWebViewCreated: (controller) {
+              webViewController = controller;
+            },
+            onLoadStart: (controller, url) {
+              setState(() {
+                isLoading = true;
+              });
+            },
+            onLoadStop: (controller, url) {
+              setState(() {
+                isLoading = false;
+              });
+            },
+          ),
+          if (isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }

@@ -1,14 +1,9 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-
-import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -19,15 +14,12 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
 
-import 'package:registration_client/ui/common/tablet_header.dart';
-import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/authentication_page.dart';
 import 'package:registration_client/ui/post_registration/preview_page.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewProcess extends StatelessWidget {
@@ -49,6 +41,17 @@ class NewProcess extends StatelessWidget {
         content: Text(value),
       ),
     );
+  }
+
+  _submitRegistration(BuildContext context) async {
+    String regId = await context
+        .read<RegistrationTaskProvider>()
+        .submitRegistrationDto(username);
+
+    bool isRegistrationSaved =
+        context.read<RegistrationTaskProvider>().isRegistrationSaved;
+
+    return regId;
   }
 
   _authenticatePacket(BuildContext context) async {
@@ -118,8 +121,39 @@ class NewProcess extends StatelessWidget {
 
   _onTabBackNavigate(int index, BuildContext context) {
     if (index < context.read<GlobalProvider>().newProcessTabIndex) {
-        context.read<GlobalProvider>().newProcessTabIndex = index;
+      context.read<GlobalProvider>().newProcessTabIndex = index;
+    }
+  }
+
+  _continueButtonTap(BuildContext context, int size, newProcess) async {
+    if (context.read<GlobalProvider>().newProcessTabIndex < size) {
+      if (context.read<GlobalProvider>().formKey.currentState!.validate()) {
+        if (context.read<GlobalProvider>().newProcessTabIndex ==
+            newProcess.screens!.length - 1) {
+          context.read<RegistrationTaskProvider>().getPreviewTemplate(true);
+        }
+
+        context.read<GlobalProvider>().newProcessTabIndex =
+            context.read<GlobalProvider>().newProcessTabIndex + 1;
       }
+    } else {
+      if (context.read<GlobalProvider>().newProcessTabIndex == size + 1) {
+        bool isPacketAuthenticated = await _authenticatePacket(context);
+        if (!isPacketAuthenticated) {
+          return;
+        }
+        String regId = await _submitRegistration(context);
+        if (regId.isEmpty) {
+          _showInSnackBar("Registration save failed!", context);
+          username = '';
+          password = '';
+          return;
+        }
+        context.read<GlobalProvider>().setRegId(regId);
+      }
+      context.read<GlobalProvider>().newProcessTabIndex =
+          context.read<GlobalProvider>().newProcessTabIndex + 1;
+    }
   }
 
   @override
@@ -145,50 +179,8 @@ class NewProcess extends StatelessWidget {
                                 size + 1
                             ? "AUTHENTICATE"
                             : "COMPLETE"),
-                onPressed: () async {
-                  if (context.read<GlobalProvider>().newProcessTabIndex <
-                      size) {
-                    if (context
-                        .read<GlobalProvider>()
-                        .formKey
-                        .currentState!
-                        .validate()) {
-                      if (context.read<GlobalProvider>().newProcessTabIndex ==
-                          newProcess.screens!.length - 1) {
-                        context
-                            .read<RegistrationTaskProvider>()
-                            .getPreviewTemplate(true);
-                      }
-
-                      context.read<GlobalProvider>().newProcessTabIndex =
-                          context.read<GlobalProvider>().newProcessTabIndex + 1;
-                    }
-                  } 
-                  else {
-                    if (context.read<GlobalProvider>().newProcessTabIndex ==
-                        size + 1) {
-                      bool isPacketAuthenticated =
-                          await _authenticatePacket(context);
-                      if (!isPacketAuthenticated) {
-                        return;
-                      }
-                      await context
-                              .read<RegistrationTaskProvider>()
-                              .submitRegistrationDto(username);
-                          bool isRegistrationSaved = context
-                              .read<RegistrationTaskProvider>()
-                              .isRegistrationSaved;
-
-                          if (!isRegistrationSaved) {
-                            _showInSnackBar("Registration save failed!", context);
-                            username = '';
-                            password = '';
-                            return;
-                          }
-                    }
-                    context.read<GlobalProvider>().newProcessTabIndex =
-                        context.read<GlobalProvider>().newProcessTabIndex + 1;
-                  }
+                onPressed: () {
+                  _continueButtonTap(context, size, newProcess);
                 },
               )
             : Row(
@@ -201,62 +193,8 @@ class NewProcess extends StatelessWidget {
                       minimumSize:
                           MaterialStateProperty.all<Size>(Size(209, 52)),
                     ),
-                    onPressed: () async {
-                      if (context.read<GlobalProvider>().newProcessTabIndex <
-                          size) {
-                        if (context
-                            .read<GlobalProvider>()
-                            .formKey
-                            .currentState!
-                            .validate()) {
-                          if (context
-                                  .read<GlobalProvider>()
-                                  .newProcessTabIndex ==
-                              newProcess.screens!.length - 1) {
-                            await context
-                                .read<RegistrationTaskProvider>()
-                                .getPreviewTemplate(true);
-                            String temp = context
-                                .read<RegistrationTaskProvider>()
-                                .previewTemplate;
-                            log("Preview Template: ");
-                            log(temp);
-                          }
-
-                          context.read<GlobalProvider>().newProcessTabIndex =
-                              context
-                                      .read<GlobalProvider>()
-                                      .newProcessTabIndex +
-                                  1;
-                        }
-                      }
-                       else {
-                        if (context.read<GlobalProvider>().newProcessTabIndex ==
-                            size + 1) {
-                          bool isPacketAuthenticated =
-                              await _authenticatePacket(context);
-                          if (!isPacketAuthenticated) {
-                            return;
-                          }
-                          await context
-                              .read<RegistrationTaskProvider>()
-                              .submitRegistrationDto(username);
-                          bool isRegistrationSaved = context
-                              .read<RegistrationTaskProvider>()
-                              .isRegistrationSaved;
-
-                          if (!isRegistrationSaved) {
-                            _showInSnackBar("Registration save failed!", context);
-                            username = '';
-                            password = '';
-                            return;
-                          }
-                        }
-
-                        context.read<GlobalProvider>().newProcessTabIndex =
-                            context.read<GlobalProvider>().newProcessTabIndex +
-                                1;
-                      }
+                    onPressed: () {
+                      _continueButtonTap(context, size, newProcess);
                     },
                     child: Text(context
                                 .read<GlobalProvider>()
@@ -267,7 +205,16 @@ class NewProcess extends StatelessWidget {
                                 size + 1
                             ? "AUTHENTICATE"
                             : "COMPLETE"),
-                  )
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<GlobalProvider>()
+                            .syncPacket(context.read<GlobalProvider>().regId);
+                      },
+                      child: const Text("Sync Packet")),
+                  ElevatedButton(
+                      onPressed: () {}, child: const Text("Upload Packet")),
                 ],
               ),
       ),
@@ -280,8 +227,8 @@ class NewProcess extends StatelessWidget {
             children: [
               isMobile
                   ? SizedBox()
-                  : Column(
-                      children: const [
+                  : const Column(
+                      children: [
                         TabletHeader(),
                         TabletNavbar(),
                       ],

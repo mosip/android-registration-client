@@ -20,6 +20,7 @@ import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -130,8 +131,8 @@ public class HostApiModule {
     @Provides
     @Singleton
     PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                                       LoginService loginService) {
-        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService);
+                                                       LoginService loginService, PacketService packetService) {
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService);
     }
 
     @Provides

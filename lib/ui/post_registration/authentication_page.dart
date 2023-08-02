@@ -18,9 +18,6 @@ class AuthenticationPage extends StatefulWidget {
 }
 
 class _AuthenticationPageState extends State<AuthenticationPage> {
-  String username = '';
-  String password = '';
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -101,7 +98,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       ],
     );
   }
-  
+
   _getAuthIcon() {
     return Container(
       height: 80.w,
