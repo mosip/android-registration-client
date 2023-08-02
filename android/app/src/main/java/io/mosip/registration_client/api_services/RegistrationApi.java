@@ -65,7 +65,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.AGE_GROUPS);
+            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getBiometrics());
             String template = this.templateService.getTemplate(this.registrationDto, true);
             result.success(template);
             return;
@@ -80,14 +80,15 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     public void submitRegistrationDto(@NonNull String makerName, @NonNull RegistrationDataPigeon.Result<String> result) {
         try {
             String rId = this.registrationService.getRegistrationDto().getRId();
+            Log.e(getClass().getSimpleName(), rId);
             registrationService.submitRegistrationDto(makerName);
             Log.e(getClass().getSimpleName(), "Registration saved successfully");
-            result.success("");
+            result.success(rId);
             return;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Failed on registration submission", e);
         }
-        result.success("REGISTRATION_SAVE_FAILED");
+        result.success("");
     }
 }
 

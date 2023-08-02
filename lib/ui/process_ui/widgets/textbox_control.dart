@@ -48,13 +48,13 @@ class _TextBoxControlState extends State<TextBoxControl> {
             widget.e.id!,
             value!,
             lang,
-            context.read<GlobalProvider>().feildDemographicsValues,
+            context.read<GlobalProvider>().fieldInputValue,
           );
     } else {
       context.read<GlobalProvider>().setInputMapValue(
             widget.e.id!,
             value!,
-            context.read<GlobalProvider>().feildDemographicsValues,
+            context.read<GlobalProvider>().fieldInputValue,
           );
     }
   }
@@ -63,19 +63,19 @@ class _TextBoxControlState extends State<TextBoxControl> {
     String response = "";
     if (context
         .read<GlobalProvider>()
-        .feildDemographicsValues
+        .fieldInputValue
         .containsKey(widget.e.id)) {
       if (widget.e.type == 'simpleType') {
-        if ((context.read<GlobalProvider>().feildDemographicsValues[widget.e.id]
+        if ((context.read<GlobalProvider>().fieldInputValue[widget.e.id]
                 as Map<String, dynamic>)
             .containsKey(lang)) {
           response = context
               .read<GlobalProvider>()
-              .feildDemographicsValues[widget.e.id][lang];
+              .fieldInputValue[widget.e.id][lang];
         }
       } else {
         response =
-            context.read<GlobalProvider>().feildDemographicsValues[widget.e.id];
+            context.read<GlobalProvider>().fieldInputValue[widget.e.id];
       }
     }
     return response;

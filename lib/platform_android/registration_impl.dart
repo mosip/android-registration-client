@@ -8,7 +8,8 @@ class RegistrationImpl implements Registration {
   Future<String> startRegistration(List<String> langauages) async {
     String registrationStartResponse = '';
     try {
-      registrationStartResponse = await RegistrationDataApi().startRegistration(langauages);
+      registrationStartResponse =
+          await RegistrationDataApi().startRegistration(langauages);
     } on PlatformException {
       registrationStartResponse = "Something went wrong!";
       debugPrint('RegApi call failed');
@@ -24,7 +25,8 @@ class RegistrationImpl implements Registration {
   Future<bool> evaluateMVEL(String fieldData, String expression) async {
     bool isMvelValid = false;
     try {
-      isMvelValid = await RegistrationDataApi().evaluateMVEL(fieldData, expression);
+      isMvelValid =
+          await RegistrationDataApi().evaluateMVEL(fieldData, expression);
     } on PlatformException {
       debugPrint('RegApi mvel call failed');
     } catch (e) {
@@ -32,12 +34,13 @@ class RegistrationImpl implements Registration {
     }
     return isMvelValid;
   }
-  
+
   @override
   Future<String> getPreviewTemplate(bool isPreview) async {
     String previewTemplate = '';
     try {
-      previewTemplate = await RegistrationDataApi().getPreviewTemplate(isPreview);
+      previewTemplate =
+          await RegistrationDataApi().getPreviewTemplate(isPreview);
     } on PlatformException {
       debugPrint('Registration API template call failed');
     } catch (e) {
@@ -46,22 +49,22 @@ class RegistrationImpl implements Registration {
 
     return previewTemplate;
   }
-  
+
   @override
   Future<String> submitRegistrationDto(String makerName) async {
-    String registrationSaveError = "";
+    String registrationId = "";
     try {
-      registrationSaveError =  await RegistrationDataApi().submitRegistrationDto(makerName);
+      registrationId =
+          await RegistrationDataApi().submitRegistrationDto(makerName);
     } on PlatformException {
       debugPrint('Registration API submit registration call failed');
-      registrationSaveError = "REG_SAVE_API_CALL_FAILED";
+      registrationId = "";
     } catch (e) {
       debugPrint('RegistrationDto not submitted: ${e.toString()}');
-      registrationSaveError = "REG_DTO_NOT_SUBMITTED";
+      registrationId = "";
     }
-    return registrationSaveError;
+    return registrationId;
   }
-  
 }
 
 Registration getRegistrationImpl() => RegistrationImpl();

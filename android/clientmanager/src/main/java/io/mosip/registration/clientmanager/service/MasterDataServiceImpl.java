@@ -27,7 +27,6 @@ import io.mosip.registration.keymanager.dto.CertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
-import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
@@ -188,7 +187,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (centerMachineDto == null)
             return;
 
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getCertificate(REG_APP_ID,
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
                 centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override

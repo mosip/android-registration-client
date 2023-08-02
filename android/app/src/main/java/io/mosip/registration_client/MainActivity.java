@@ -46,6 +46,7 @@ import io.mosip.registration_client.api_services.DocumentDetailsApi;
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
+import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
@@ -56,6 +57,7 @@ import io.mosip.registration_client.model.DemographicsDataPigeon;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.PacketAuthPigeon;
+import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.UserPigeon;
@@ -130,6 +132,9 @@ public class MainActivity extends FlutterActivity {
     @Inject
     DynamicDetailsApi dynamicDetailsApi;
 
+    @Inject
+    MasterDataSyncApi masterDataSyncApi;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,6 +171,7 @@ public class MainActivity extends FlutterActivity {
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
         
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
+        MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
                 .setMethodCallHandler(

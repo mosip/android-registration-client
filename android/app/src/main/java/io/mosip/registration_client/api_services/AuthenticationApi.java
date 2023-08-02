@@ -115,7 +115,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                Log.e(getClass().getSimpleName(), "Login Failure! ");
+                Log.e(getClass().getSimpleName(), "Login Failure! ", t);
                 AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_NETWORK_ERROR");
                 result.success(authResponse);
             }

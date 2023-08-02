@@ -20,7 +20,7 @@ class ButtonControl extends StatelessWidget {
           (index) => false);
       temp[index] = false;
       context.read<GlobalProvider>().setInputMapValue(
-          field.id!, temp, context.read<GlobalProvider>().feildConsentValues);
+          field.id!, temp, context.read<GlobalProvider>().fieldInputValue);
       return false;
     }
 
@@ -76,23 +76,23 @@ class ButtonControl extends StatelessWidget {
                           activeColor: solid_primary,
                           value: (context
                                   .watch<GlobalProvider>()
-                                  .feildConsentValues
+                                  .fieldInputValue
                                   .containsKey(field.id))
                               ? context
                                   .watch<GlobalProvider>()
-                                  .feildConsentValues[field.id][i]
+                                  .fieldInputValue[field.id][i]
                               : generateList(context, i),
                           onChanged: (value) {
                             List temp = context
                                 .read<GlobalProvider>()
-                                .feildConsentValues[field.id];
+                                .fieldInputValue[field.id];
                             temp[i] = value;
                             context.read<GlobalProvider>().setInputMapValue(
                                 field.id!,
                                 temp,
                                 context
                                     .read<GlobalProvider>()
-                                    .feildConsentValues);
+                                    .fieldInputValue);
                           },
                         ),
                       ),

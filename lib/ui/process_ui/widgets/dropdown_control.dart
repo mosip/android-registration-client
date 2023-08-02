@@ -27,7 +27,7 @@ class _CustomDropDownState extends State<DropDownControl> {
   void initState() {
     if (context
         .read<GlobalProvider>()
-        .feildDemographicsValues
+        .fieldInputValue
         .containsKey(widget.field.id ?? "")) {
       _getSelectedValueFromMap("eng");
     }
@@ -55,13 +55,13 @@ class _CustomDropDownState extends State<DropDownControl> {
               widget.field.id ?? "",
               value!,
               "eng",
-              context.read<GlobalProvider>().feildDemographicsValues,
+              context.read<GlobalProvider>().fieldInputValue,
             );
       } else {
         context.read<GlobalProvider>().setInputMapValue(
               widget.field.id ?? "",
               value!,
-              context.read<GlobalProvider>().feildDemographicsValues,
+              context.read<GlobalProvider>().fieldInputValue,
             );
       }
     }
@@ -72,17 +72,17 @@ class _CustomDropDownState extends State<DropDownControl> {
     if (widget.field.type == 'simpleType') {
       if ((context
                   .read<GlobalProvider>()
-                  .feildDemographicsValues[widget.field.id ?? ""]
+                  .fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
         response = context
             .read<GlobalProvider>()
-            .feildDemographicsValues[widget.field.id ?? ""][lang];
+            .fieldInputValue[widget.field.id ?? ""][lang];
       }
     } else {
       response = context
           .read<GlobalProvider>()
-          .feildDemographicsValues[widget.field.id ?? ""];
+          .fieldInputValue[widget.field.id ?? ""];
     }
     setState(() {
       selected = response;

@@ -158,7 +158,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException(context, R.string.err_004);
         }
 
-        try {
+//        try {
             this.registrationDto.getAllDemographicFields().forEach(entry -> {
                 packetWriterService.setField(this.registrationDto.getRId(), entry.getKey(), entry.getValue());
             });
@@ -204,9 +204,9 @@ public class RegistrationServiceImpl implements RegistrationService {
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
                     centerMachineDto.getCenterId(), "NEW", additionalInfo);
 
-        } finally {
+//        } finally {
             clearRegistration();
-        }
+//        }
     }
 
     @Override

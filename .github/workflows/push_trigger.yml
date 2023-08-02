@@ -22,7 +22,6 @@ jobs:
       - name: Updating serverBaseURL.
         run: |
           find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
-          find . -type f -name "*gradle.properties" -print0 | xargs -0 sed -i "s/sqp_19c9702eb9f5ddfebbfc36eaa6edf39d22280a49/${{ secrets.SONAR_TOKEN }}/g"
       - name: Build Android Registration-Client
         run: |
           cd client
@@ -64,8 +63,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_ORGANIZATION: ${{ secrets.ORG_KEY }}
         run: |
           cd client
           chmod +x gradlew
           ./gradlew build test testDebugUnitTestCoverage sonarqube --info --warning-mode all
+          ./gradlew build sonarqube --info --warning-mode all

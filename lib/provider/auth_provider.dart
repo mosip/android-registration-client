@@ -6,6 +6,7 @@ import 'package:registration_client/platform_spi/auth.dart';
 class AuthProvider with ChangeNotifier {
   final Auth auth = Auth();
   bool _isLoggedIn = false;
+  bool _isSyncing = false;
   bool _isOnboarded = false;
   bool _isDefault = false;
   bool _isSupervisor = false;
@@ -17,6 +18,7 @@ class AuthProvider with ChangeNotifier {
   bool _isPacketAuthenticated = false;
 
   bool get isLoggedIn => _isLoggedIn;
+  bool get isSyncing => _isSyncing;
   bool get isOnboarded => _isOnboarded;
   bool get isDefault => _isDefault;
   bool get isSupervisor => _isSupervisor;
@@ -29,6 +31,11 @@ class AuthProvider with ChangeNotifier {
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
+    notifyListeners();
+  }
+
+  setIsSyncing(bool value){
+    _isSyncing = value;
     notifyListeners();
   }
 

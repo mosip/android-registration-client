@@ -57,20 +57,20 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     // context.read<GlobalProvider>().setInputMapValue(
     //       widget.field.id!,
     //       targetDateString,
-    //       context.read<GlobalProvider>().feildDemographicsValues,
+    //       context.read<GlobalProvider>().fieldInputValue,
     //     );
   }
 
   void _getSavedDate() {
     // if (context
     //     .read<GlobalProvider>()
-    //     .feildDemographicsValues
+    //     .fieldInputValue
     //     .containsKey(widget.field.id)) {
     //   String targetDateFormat = widget.field.format ?? "yyyy/MM/dd";
 
     //   String savedDate = context
     //       .read<GlobalProvider>()
-    //       .feildDemographicsValues[widget.field.id];
+    //       .fieldInputValue[widget.field.id];
     //   DateTime parsedDate = DateFormat(targetDateFormat).parse(savedDate);
     //   _dayController.text = parsedDate.day.toString().padLeft(2, '0');
     //   _monthController.text = parsedDate.month.toString().padLeft(2, '0');

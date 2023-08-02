@@ -32,7 +32,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   void initState() {
     if (context
         .read<GlobalProvider>()
-        .feildDemographicsValues
+        .fieldInputValue
         .containsKey(widget.field.id)) {
       _getSelectedValueFromMap("eng");
     }
@@ -43,7 +43,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     String response = "";
     response = context
         .read<GlobalProvider>()
-        .feildDemographicsValues[widget.field.id][lang];
+        .fieldInputValue[widget.field.id][lang];
     setState(() {
       selectedOption = response.toLowerCase();
     });
@@ -59,7 +59,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
           widget.field.id ?? "",
           value,
           "eng",
-          context.read<GlobalProvider>().feildDemographicsValues,
+          context.read<GlobalProvider>().fieldInputValue,
         );
     setState(() {
       selectedOption = value;

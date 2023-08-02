@@ -148,22 +148,22 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
   generateList(BuildContext context, String key, BiometricAttributeData data) {
     List<BiometricAttributeData> list = [];
 
-    if (context.read<GlobalProvider>().fieldBiometricsValue.containsKey(key)) {
+    if (context.read<GlobalProvider>().fieldInputValue.containsKey(key)) {
       if (getElementPosition(
-              context.read<GlobalProvider>().fieldBiometricsValue[key],
+              context.read<GlobalProvider>().fieldInputValue[key],
               data.title) ==
           -1) {
-        context.read<GlobalProvider>().fieldBiometricsValue[key].add(data);
+        context.read<GlobalProvider>().fieldInputValue[key].add(data);
       } else {
-        context.read<GlobalProvider>().fieldBiometricsValue[key].removeAt(
+        context.read<GlobalProvider>().fieldInputValue[key].removeAt(
             getElementPosition(
-                context.read<GlobalProvider>().fieldBiometricsValue[key],
+                context.read<GlobalProvider>().fieldInputValue[key],
                 data.title));
-        context.read<GlobalProvider>().fieldBiometricsValue[key].add(data);
+        context.read<GlobalProvider>().fieldInputValue[key].add(data);
       }
     } else {
       list.add(data);
-      context.read<GlobalProvider>().fieldBiometricsValue[key] = list;
+      context.read<GlobalProvider>().fieldInputValue[key] = list;
     }
   }
 
@@ -205,100 +205,100 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         .thresholdValuesMap["mosip.registration.face_threshold"]!;
     if (context
         .read<GlobalProvider>()
-        .fieldBiometricsValue
+        .fieldInputValue
         .containsKey("${widget.field.id}")) {
       if (context
           .read<GlobalProvider>()
-          .fieldBiometricsValue[widget.field.id]
+          .fieldInputValue[widget.field.id]
           .isNotEmpty) {
         if (getElementPosition(
                 context
                     .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
+                    .fieldInputValue[widget.field.id],
                 "Iris") !=
             -1) {
           iris = context
               .read<GlobalProvider>()
-              .fieldBiometricsValue[widget.field.id]
+              .fieldInputValue[widget.field.id]
               .elementAt(getElementPosition(
                   context
                       .read<GlobalProvider>()
-                      .fieldBiometricsValue[widget.field.id],
+                      .fieldInputValue[widget.field.id],
                   "Iris"));
         }
         if (getElementPosition(
                 context
                     .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
+                    .fieldInputValue[widget.field.id],
                 "Right Hand") !=
             -1) {
           rightHand = context
               .read<GlobalProvider>()
-              .fieldBiometricsValue[widget.field.id]
+              .fieldInputValue[widget.field.id]
               .elementAt(getElementPosition(
                   context
                       .read<GlobalProvider>()
-                      .fieldBiometricsValue[widget.field.id],
+                      .fieldInputValue[widget.field.id],
                   "Right Hand"));
         }
         if (getElementPosition(
                 context
                     .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
+                    .fieldInputValue[widget.field.id],
                 "Left Hand") !=
             -1) {
           leftHand = context
               .read<GlobalProvider>()
-              .fieldBiometricsValue[widget.field.id]
+              .fieldInputValue[widget.field.id]
               .elementAt(getElementPosition(
                   context
                       .read<GlobalProvider>()
-                      .fieldBiometricsValue[widget.field.id],
+                      .fieldInputValue[widget.field.id],
                   "Left Hand"));
         }
         if (getElementPosition(
                 context
                     .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
+                    .fieldInputValue[widget.field.id],
                 "Thumbs") !=
             -1) {
           thumbs = context
               .read<GlobalProvider>()
-              .fieldBiometricsValue[widget.field.id]
+              .fieldInputValue[widget.field.id]
               .elementAt(getElementPosition(
                   context
                       .read<GlobalProvider>()
-                      .fieldBiometricsValue[widget.field.id],
+                      .fieldInputValue[widget.field.id],
                   "Thumbs"));
         }
         if (getElementPosition(
                 context
                     .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
+                    .fieldInputValue[widget.field.id],
                 "Face") !=
             -1) {
           face = context
               .read<GlobalProvider>()
-              .fieldBiometricsValue[widget.field.id]
+              .fieldInputValue[widget.field.id]
               .elementAt(getElementPosition(
                   context
                       .read<GlobalProvider>()
-                      .fieldBiometricsValue[widget.field.id],
+                      .fieldInputValue[widget.field.id],
                   "Face"));
         }
         if (getElementPosition(
                 context
                     .read<GlobalProvider>()
-                    .fieldBiometricsValue[widget.field.id],
+                    .fieldInputValue[widget.field.id],
                 "Exception") !=
             -1) {
           exception = context
               .read<GlobalProvider>()
-              .fieldBiometricsValue[widget.field.id]
+              .fieldInputValue[widget.field.id]
               .elementAt(getElementPosition(
                   context
                       .read<GlobalProvider>()
-                      .fieldBiometricsValue[widget.field.id],
+                      .fieldInputValue[widget.field.id],
                   "Exception"));
         }
       }
