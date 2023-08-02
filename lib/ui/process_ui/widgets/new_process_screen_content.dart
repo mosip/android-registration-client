@@ -90,6 +90,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       String fieldData, String? engine, String? expression, Field e) async {
     final Registration registration = Registration();
     registration.evaluateMVEL(fieldData, expression!).then((value) {
+      if(!value) {
+        context.read<GlobalProvider>().removeFieldFromMap(e.id!, context.read<GlobalProvider>().fieldInputValue);
+        context.read<RegistrationTaskProvider>().removeDemographicField(e.id!);
+      }
       context.read<GlobalProvider>().setMvelValues(e.id!, value);
     });
   }
