@@ -290,4 +290,13 @@ class GlobalProvider with ChangeNotifier {
     await packetService.packetSync(packetId);
     log("provider sync packet Sucess");
   }
+
+  clearMap() {
+    _feildConsentValues = {};
+    _feildDemographicsValues = {};
+    _fieldBiometricsValue = {};
+    _fieldDisplayValues = {};
+    log(_feildDemographicsValues.toString());
+    notifyListeners();
+  }
 }

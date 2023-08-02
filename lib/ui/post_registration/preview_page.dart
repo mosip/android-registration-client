@@ -26,14 +26,6 @@ class _PreviewPageState extends State<PreviewPage> {
             initialData: InAppWebViewInitialData(
                 data:
                     context.watch<RegistrationTaskProvider>().previewTemplate),
-            initialOptions: InAppWebViewGroupOptions(
-              android: AndroidInAppWebViewOptions(
-                builtInZoomControls: true,
-              ),
-              ios: IOSInAppWebViewOptions(
-                allowsInlineMediaPlayback: true,
-              ),
-            ),
             onWebViewCreated: (controller) {
               webViewController = controller;
             },

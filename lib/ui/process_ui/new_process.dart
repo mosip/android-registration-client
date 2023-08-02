@@ -151,6 +151,13 @@ class NewProcess extends StatelessWidget {
         }
         context.read<GlobalProvider>().setRegId(regId);
       }
+      if (context.read<GlobalProvider>().newProcessTabIndex == size + 2) {
+        Navigator.of(context).pop();
+        context.read<GlobalProvider>().newProcessTabIndex = 0;
+        context.read<GlobalProvider>().clearMap();
+        context.read<GlobalProvider>().setRegId("");
+        return;
+      }
       context.read<GlobalProvider>().newProcessTabIndex =
           context.read<GlobalProvider>().newProcessTabIndex + 1;
     }
@@ -291,6 +298,13 @@ class NewProcess extends StatelessWidget {
                                       (BuildContext context, int index) {
                                     return GestureDetector(
                                       onTap: () {
+                                        if (context
+                                                .read<GlobalProvider>()
+                                                .newProcessTabIndex ==
+                                            size + 2) {
+                                          return;
+                                        }
+
                                         if (index <
                                             context
                                                 .read<GlobalProvider>()

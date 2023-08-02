@@ -5,8 +5,18 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
-class AcknowledgementPage extends StatelessWidget {
+class AcknowledgementPage extends StatefulWidget {
   const AcknowledgementPage({super.key});
+
+  @override
+  State<AcknowledgementPage> createState() => _AcknowledgementPageState();
+}
+
+class _AcknowledgementPageState extends State<AcknowledgementPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
