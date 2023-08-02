@@ -4,7 +4,7 @@ import 'package:pigeon/pigeon.dart';
 abstract class DocumentApi {
   @async
   void addDocument(String fieldId, String docType, String reference,
-      List<String> bytes); //byte[] bytes
+      Uint8List bytes); //byte[] bytes
 
   @async
   void removeDocument(String fieldId, int pageIndex);

@@ -10,35 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Sync;
-@class SyncTime;
 
-@interface Sync : NSObject
-+ (instancetype)makeWithSyncType:(nullable NSString *)syncType
-    syncProgress:(nullable NSNumber *)syncProgress
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy, nullable) NSString * syncType;
-@property(nonatomic, strong, nullable) NSNumber * syncProgress;
-@property(nonatomic, copy, nullable) NSString * errorCode;
+/// The codec used by DocumentApi.
+NSObject<FlutterMessageCodec> *DocumentApiGetCodec(void);
+
+@protocol DocumentApi
+- (void)addDocumentFieldId:(NSString *)fieldId docType:(NSString *)docType reference:(NSString *)reference bytes:(FlutterStandardTypedData *)bytes completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)removeDocumentFieldId:(NSString *)fieldId pageIndex:(NSNumber *)pageIndex completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)getScannedPagesFieldId:(NSString *)fieldId completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)hasDocumentFieldId:(NSString *)fieldId completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)removeDocumentFieldFieldId:(NSString *)fieldId completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-@interface SyncTime : NSObject
-+ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
-@property(nonatomic, copy, nullable) NSString * syncTime;
-@end
-
-/// The codec used by SyncApi.
-NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
-
-@protocol SyncApi
-- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
+extern void DocumentApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DocumentApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

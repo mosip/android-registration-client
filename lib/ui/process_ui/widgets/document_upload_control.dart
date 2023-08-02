@@ -84,7 +84,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
     context
         .read<RegistrationTaskProvider>()
-        .addDocument(e.id!, e.type!, "reference", poaList);
+        .addDocument(e.id!, e.type!, "reference", Uint8List(100));
   }
 
   @override

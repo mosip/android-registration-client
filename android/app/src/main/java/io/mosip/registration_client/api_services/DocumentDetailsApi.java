@@ -25,15 +25,25 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
     }
 
 
-    @Override
-    public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String reference, @NonNull List<String> bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
-        byte[] byteArray = new byte[0];
-for (String str : bytes) {
-    byteArray = ArrayUtils.addAll(byteArray, str.getBytes());
-}
-        try {
+//    @Override
+//    public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String reference, @NonNull List<String> bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
+//        byte[] byteArray = new byte[0];
+//for (String str : bytes) {
+//    byteArray = ArrayUtils.addAll(byteArray, str.getBytes());
+//}
+//        try {
+//
+//            this.registrationService.getRegistrationDto().addDocument(fieldId, docType,reference,byteArray);
+//            Log.e(getClass().getSimpleName(), "Document Added!"+this.registrationService.getRegistrationDto().getDocuments() );
+//        } catch (Exception e) {
+//            Log.e(getClass().getSimpleName(), "Add Document failed!" + Arrays.toString(e.getStackTrace()));
+//        }
+//    }
 
-            this.registrationService.getRegistrationDto().addDocument(fieldId, docType,reference,byteArray);
+    @Override
+    public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String reference, @NonNull byte[] bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
+        try {
+            this.registrationService.getRegistrationDto().addDocument(fieldId, docType,reference,bytes);
             Log.e(getClass().getSimpleName(), "Document Added!"+this.registrationService.getRegistrationDto().getDocuments() );
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add Document failed!" + Arrays.toString(e.getStackTrace()));

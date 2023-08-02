@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/demographics.dart';
@@ -151,8 +153,8 @@ class RegistrationTaskProvider with ChangeNotifier {
     //String categoryCode, String applicantType, String langCode
   }
 
-  addDocument(String fieldId, String docType, String reference,
-      List<String> bytes) async {
+  addDocument(
+      String fieldId, String docType, String reference, Uint8List bytes) async {
     await document.addDocument(fieldId, docType, reference, bytes);
   }
 }

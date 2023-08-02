@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:registration_client/platform_android/document_impl.dart';
 
 abstract class Document {
   Future<void> addDocument(
-      String fieldId, String docType, String reference, List<String> bytes);
+      String fieldId, String docType, String reference, Uint8List bytes);
   Future<void> removeDocument(String fieldId, int pageIndex);
 
   Future<List<String?>> getScannedPages(String fieldId);

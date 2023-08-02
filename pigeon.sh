@@ -1,6 +1,12 @@
 # Create pigeon folder inside the lib folder
 # Create model package/folder inside the android/app/src/main/java/io/mosip/registration_client
 
+# Get dependencies
+flutter pub get
+
+# Run Build Runner
+flutter pub run build_runner build
+
 # Generate user pigeon files
 flutter pub run pigeon --input pigeon/user.dart --dart_out lib/pigeon/user_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/UserPigeon.java --java_package "io.mosip.registration_client.model"
 
@@ -33,5 +39,6 @@ flutter pub run pigeon --input pigeon/document.dart --dart_out lib/pigeon/docume
 
 # Generate dynamic_response pigeon files
 flutter pub run pigeon --input pigeon/dynamic_response.dart --dart_out lib/pigeon/dynamic_response_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/DynamicResponsePigeon.java --java_package "io.mosip.registration_client.model"
+
 # Generate master data sync files
 flutter pub run pigeon --input pigeon/master_data_sync.dart --dart_out lib/pigeon/master_data_sync_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/MasterDataSyncPigeon.java --java_package "io.mosip.registration_client.model"
