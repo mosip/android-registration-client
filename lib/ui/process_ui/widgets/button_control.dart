@@ -35,7 +35,22 @@ class ButtonControl extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+           (field.required!)
+              ? RichText(
+                  text: TextSpan(
+                  text: context
+                      .read<GlobalProvider>()
+                      .chooseLanguage(field.label!),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 14, color: black_shade_1, fontWeight: semiBold),
+                  children: [
+                    TextSpan(
+                      text: " *",
+                      style: TextStyle(color: Colors.red, fontSize: 15),
+                    )
+                  ],
+                ))
+              : Text(
               context.read<GlobalProvider>().chooseLanguage(field.label!),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 14, color: black_shade_1, fontWeight: semiBold),

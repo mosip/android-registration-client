@@ -47,9 +47,25 @@ class CheckboxControl extends StatelessWidget {
             ),
             Flexible(
               // width: 300.w,
-              child: Text(
-                context.read<GlobalProvider>().chooseLanguage(field.label!),
-              ),
+              child: (field.required!)
+                  ? RichText(
+                      text: TextSpan(
+                      text: context
+                          .read<GlobalProvider>()
+                          .chooseLanguage(field.label!),
+                          style: TextStyle(color: black_shade_1),
+                      children: [
+                        TextSpan(
+                          text: " *",
+                          style: TextStyle(color: Colors.red, fontSize: 15),
+                        )
+                      ],
+                    ))
+                  : Text(
+                      context
+                          .read<GlobalProvider>()
+                          .chooseLanguage(field.label!),
+                    ),
             ),
           ],
         ),

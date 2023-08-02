@@ -312,11 +312,28 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
-          child: Text(
-            context.read<GlobalProvider>().chooseLanguage(widget.field.label!),
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontSize: 20, color: black_shade_1, fontWeight: semiBold),
-          ),
+          child: (widget.field.required!)
+              ? RichText(
+                  text: TextSpan(
+                  text: context
+                      .read<GlobalProvider>()
+                      .chooseLanguage(widget.field.label!),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontSize: 20, color: black_shade_1, fontWeight: semiBold),
+                  children: [
+                    TextSpan(
+                      text: " *",
+                      style: TextStyle(color: Colors.red, fontSize: 15),
+                    )
+                  ],
+                ))
+              : Text(
+                  context
+                      .read<GlobalProvider>()
+                      .chooseLanguage(widget.field.label!),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontSize: 20, color: black_shade_1, fontWeight: semiBold),
+                ),
         ),
         Card(
           child: Padding(
@@ -1111,8 +1128,12 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       lineHeight: 8,
                                       percent: iris.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
-                                      progressColor:(iris.qualityPercentage.toInt()>int.parse(iris.thresholdPercentage))?
-                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
+                                      progressColor:
+                                          (iris.qualityPercentage.toInt() >
+                                                  int.parse(
+                                                      iris.thresholdPercentage))
+                                              ? secondaryColors.elementAt(11)
+                                              : secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -1641,8 +1662,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           rightHand.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          (rightHand.qualityPercentage.toInt()>int.parse(rightHand.thresholdPercentage))?
-                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
+                                          (rightHand.qualityPercentage.toInt() >
+                                                  int.parse(rightHand
+                                                      .thresholdPercentage))
+                                              ? secondaryColors.elementAt(11)
+                                              : secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -2183,9 +2207,12 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       lineHeight: 8,
                                       percent: leftHand.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
-                                      progressColor:
-                                          (leftHand.qualityPercentage.toInt()>int.parse(leftHand.thresholdPercentage))?
-                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
+                                      progressColor: (leftHand.qualityPercentage
+                                                  .toInt() >
+                                              int.parse(
+                                                  leftHand.thresholdPercentage))
+                                          ? secondaryColors.elementAt(11)
+                                          : secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -2723,9 +2750,12 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       lineHeight: 8,
                                       percent: thumbs.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
-                                      progressColor:
-                                          (thumbs.qualityPercentage.toInt()>int.parse(thumbs.thresholdPercentage))?
-                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
+                                      progressColor: (thumbs.qualityPercentage
+                                                  .toInt() >
+                                              int.parse(
+                                                  thumbs.thresholdPercentage))
+                                          ? secondaryColors.elementAt(11)
+                                          : secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -3266,8 +3296,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       percent: face.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          (face.qualityPercentage.toInt()>int.parse(face.thresholdPercentage))?
-                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
+                                          (face.qualityPercentage.toInt() >
+                                                  int.parse(
+                                                      face.thresholdPercentage))
+                                              ? secondaryColors.elementAt(11)
+                                              : secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
@@ -3813,8 +3846,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                           exception.qualityPercentage / 100,
                                       backgroundColor: Colors.grey,
                                       progressColor:
-                                          (exception.qualityPercentage.toInt()>int.parse(exception.thresholdPercentage))?
-                                          secondaryColors.elementAt(11):secondaryColors.elementAt(20),
+                                          (exception.qualityPercentage.toInt() >
+                                                  int.parse(exception
+                                                      .thresholdPercentage))
+                                              ? secondaryColors.elementAt(11)
+                                              : secondaryColors.elementAt(20),
                                     ),
                                     SizedBox(
                                       width: 16.h,
