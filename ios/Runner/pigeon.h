@@ -10,35 +10,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Sync;
-@class SyncTime;
 
-@interface Sync : NSObject
-+ (instancetype)makeWithSyncType:(nullable NSString *)syncType
-    syncProgress:(nullable NSNumber *)syncProgress
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy, nullable) NSString * syncType;
-@property(nonatomic, strong, nullable) NSNumber * syncProgress;
-@property(nonatomic, copy, nullable) NSString * errorCode;
+/// The codec used by DemographicsApi.
+NSObject<FlutterMessageCodec> *DemographicsApiGetCodec(void);
+
+@protocol DemographicsApi
+- (void)addDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)addSimpleTypeDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value language:(NSString *)language completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)getSimpleTypeDemographicFieldFieldId:(NSString *)fieldId language:(NSString *)language completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)setDateFieldFieldId:(NSString *)fieldId subType:(NSString *)subType day:(NSString *)day month:(NSString *)month year:(NSString *)year completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)removeDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setConsentFieldConsentData:(NSString *)consentData completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-@interface SyncTime : NSObject
-+ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
-@property(nonatomic, copy, nullable) NSString * syncTime;
-@end
-
-/// The codec used by SyncApi.
-NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
-
-@protocol SyncApi
-- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
+extern void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DemographicsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
