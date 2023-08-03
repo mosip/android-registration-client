@@ -52,7 +52,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
             FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {
             });
             this.registrationDto = this.registrationService.getRegistrationDto();
-            boolean isFieldVisible = UserInterfaceHelperService.isFieldVisible(fieldSpecDto, this.registrationDto.getMVELDataContext());
+            boolean isFieldVisible = UserInterfaceHelperService.isRequiredField(fieldSpecDto, this.registrationDto.getMVELDataContext());
             result.success(isFieldVisible);
             return;
         } catch (Exception e) {
