@@ -24,10 +24,12 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
         this.registrationService = registrationService;
     }
 
+
     @Override
-    public void addDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull DemographicsDataPigeon.Result<Void> result) {
+    public void addDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
             this.registrationService.getRegistrationDto().addDemographicField(fieldId, value);
+            result.success("Ok");
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add field failed!" + Arrays.toString(e.getStackTrace()));
         }

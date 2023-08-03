@@ -11,6 +11,8 @@ import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/biometrics_dto.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/process_spec_pigeon.dart';
+import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_exception_block.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_scan_block.dart';
@@ -212,9 +214,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
           .fieldInputValue[widget.field.id]
           .isNotEmpty) {
         if (getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldInputValue[widget.field.id],
+                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
                 "Iris") !=
             -1) {
           iris = context
@@ -227,9 +227,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                   "Iris"));
         }
         if (getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldInputValue[widget.field.id],
+                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
                 "Right Hand") !=
             -1) {
           rightHand = context
@@ -242,9 +240,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                   "Right Hand"));
         }
         if (getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldInputValue[widget.field.id],
+                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
                 "Left Hand") !=
             -1) {
           leftHand = context
@@ -257,9 +253,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                   "Left Hand"));
         }
         if (getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldInputValue[widget.field.id],
+                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
                 "Thumbs") !=
             -1) {
           thumbs = context
@@ -272,9 +266,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                   "Thumbs"));
         }
         if (getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldInputValue[widget.field.id],
+                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
                 "Face") !=
             -1) {
           face = context
@@ -287,9 +279,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                   "Face"));
         }
         if (getElementPosition(
-                context
-                    .read<GlobalProvider>()
-                    .fieldInputValue[widget.field.id],
+                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
                 "Exception") !=
             -1) {
           exception = context
@@ -310,6 +300,21 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         SizedBox(
           width: double.infinity,
         ),
+        ElevatedButton(
+            child: Text("temp"),
+            onPressed: () async {
+              print(context.read<GlobalProvider>().mvelvalues);
+
+              print(widget.field.requiredOn.toString());
+              print(widget.field.requiredOn![0]!.expr!);
+              await RegistrationDataApi()
+                  .evaluateMVEL(jsonEncode(widget.field.toJson()),
+                      widget.field.requiredOn![0]!.expr!)
+                  .then((value) {
+                print(widget.field.id);
+                print(value);
+              });
+            }),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: (widget.field.required!)

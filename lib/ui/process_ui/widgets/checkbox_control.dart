@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -33,7 +34,7 @@ class CheckboxControl extends StatelessWidget {
                             .watch<GlobalProvider>()
                             .fieldInputValue[field.id]
                         : false,
-                    onChanged: (value) {
+                    onChanged: (value) async{
                       context.read<GlobalProvider>().setInputMapValue(
                           field.id!,
                           value,
@@ -41,6 +42,7 @@ class CheckboxControl extends StatelessWidget {
                       context
                           .read<RegistrationTaskProvider>()
                           .addConsentField(value != null && value ? 'Y' : 'N');
+                          await DemographicsApi().addDemographicField(field.id!, value!.toString());
                     })),
             SizedBox(
               width: 8,

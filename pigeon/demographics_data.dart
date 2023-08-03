@@ -3,7 +3,7 @@ import 'package:pigeon/pigeon.dart';
 @HostApi()
 abstract class DemographicsApi {
   @async
-  void addDemographicField(String fieldId, String value);
+  String addDemographicField(String fieldId, String value);
 
   @async
   String getDemographicField(String fieldId);

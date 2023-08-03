@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -9,7 +10,9 @@ class ButtonControl extends StatelessWidget {
   const ButtonControl({super.key, required this.field});
   final Field field;
 
-  generateList(BuildContext context, int index) {
+  @override
+  Widget build(BuildContext context) {
+    generateList(BuildContext context, int index) {
       List temp = List.generate(
           context.read<GlobalProvider>().fieldDisplayValues[field.id] == null
               ? 0
@@ -24,8 +27,23 @@ class ButtonControl extends StatelessWidget {
       return false;
     }
 
-  @override
-  Widget build(BuildContext context) {
+    formList(List temp) {
+      String str = "";
+      for (int i = 0;
+          i <
+              context
+                  .read<GlobalProvider>()
+                  .fieldDisplayValues[field.id]
+                  .length;
+          i++) {
+        if (temp[i] == true) {
+          str = str +
+              context.read<GlobalProvider>().fieldDisplayValues[field.id][i] +
+              ",";
+        }
+      }
+      return str.substring(0, str.length - 1);
+    }
 
     return Card(
       color: pure_white,
@@ -35,26 +53,30 @@ class ButtonControl extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           (field.required!)
-              ? RichText(
-                  text: TextSpan(
-                  text: context
-                      .read<GlobalProvider>()
-                      .chooseLanguage(field.label!),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 14, color: black_shade_1, fontWeight: semiBold),
-                  children: [
-                    TextSpan(
-                      text: " *",
-                      style: TextStyle(color: Colors.red, fontSize: 15),
-                    )
-                  ],
-                ))
-              : Text(
-              context.read<GlobalProvider>().chooseLanguage(field.label!),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 14, color: black_shade_1, fontWeight: semiBold),
-            ),
+            (field.required!)
+                ? RichText(
+                    text: TextSpan(
+                    text: context
+                        .read<GlobalProvider>()
+                        .chooseLanguage(field.label!),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: 14,
+                        color: black_shade_1,
+                        fontWeight: semiBold),
+                    children: [
+                      TextSpan(
+                        text: " *",
+                        style: TextStyle(color: Colors.red, fontSize: 15),
+                      )
+                    ],
+                  ))
+                : Text(
+                    context.read<GlobalProvider>().chooseLanguage(field.label!),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: 14,
+                        color: black_shade_1,
+                        fontWeight: semiBold),
+                  ),
             const SizedBox(
               height: 15,
             ),
@@ -82,17 +104,18 @@ class ButtonControl extends StatelessWidget {
                                   .watch<GlobalProvider>()
                                   .fieldInputValue[field.id][i]
                               : generateList(context, i),
-                          onChanged: (value) {
+                          onChanged: (value) async {
                             List temp = context
                                 .read<GlobalProvider>()
                                 .fieldInputValue[field.id];
                             temp[i] = value;
+
                             context.read<GlobalProvider>().setInputMapValue(
                                 field.id!,
                                 temp,
-                                context
-                                    .read<GlobalProvider>()
-                                    .fieldInputValue);
+                                context.read<GlobalProvider>().fieldInputValue);
+                            await DemographicsApi()
+                                .addDemographicField(field.id!, formList(temp));
                           },
                         ),
                       ),
