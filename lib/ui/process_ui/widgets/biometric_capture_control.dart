@@ -301,27 +301,6 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         SizedBox(
           width: double.infinity,
         ),
-        ElevatedButton(
-            child: Text("temp"),
-            onPressed: () async {
-              print(context.read<GlobalProvider>().mvelvalues);
-
-              print(widget.field.requiredOn.toString());
-              print(widget.field.requiredOn![0]!.expr!);
-              await DemographicsApi()
-                  .getDemographicField("preferredLang")
-                  .then((value) {
-                    print("HEY");
-                print(value);
-              });
-              await RegistrationDataApi()
-                  .evaluateMVEL(jsonEncode(widget.field.toJson()),
-                      widget.field.requiredOn![0]!.expr!)
-                  .then((value) {
-                print(widget.field.id);
-                print(value);
-              });
-            }),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: (widget.field.required!)
