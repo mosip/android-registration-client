@@ -49,6 +49,20 @@ class DynamicResponseServiceImpl implements DynamicResponseService {
     }
     return documentValuesList;
   }
+  
+  @override
+  Future<List<GenericData?>> fetchLocationValuesBasedOnParent(String parentCode, String hierarchyLevelName, String langCode) async {
+    List<GenericData?> genericDataList = [];
+    try {
+      genericDataList = await DynamicResponseApi()
+          .getLocationValuesBasedOnParent(parentCode, hierarchyLevelName, langCode);
+    } on PlatformException {
+      debugPrint('DynamicServiceResponseApi call failed!');
+    } catch (e) {
+      debugPrint('Document Values not fetched! ${e.toString()}');
+    }
+    return genericDataList;
+  }
 }
 
 DynamicResponseService getDynamicResponseServiceImpl() =>

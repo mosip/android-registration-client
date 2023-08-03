@@ -26,92 +26,63 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface Sync ()
-+ (Sync *)fromList:(NSArray *)list;
-+ (nullable Sync *)nullableFromList:(NSArray *)list;
+@interface GenericData ()
++ (GenericData *)fromList:(NSArray *)list;
++ (nullable GenericData *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@interface SyncTime ()
-+ (SyncTime *)fromList:(NSArray *)list;
-+ (nullable SyncTime *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@implementation Sync
-+ (instancetype)makeWithSyncType:(nullable NSString *)syncType
-    syncProgress:(nullable NSNumber *)syncProgress
-    errorCode:(nullable NSString *)errorCode {
-  Sync* pigeonResult = [[Sync alloc] init];
-  pigeonResult.syncType = syncType;
-  pigeonResult.syncProgress = syncProgress;
-  pigeonResult.errorCode = errorCode;
+@implementation GenericData
++ (instancetype)makeWithName:(NSString *)name
+    code:(NSString *)code
+    langCode:(NSString *)langCode {
+  GenericData* pigeonResult = [[GenericData alloc] init];
+  pigeonResult.name = name;
+  pigeonResult.code = code;
+  pigeonResult.langCode = langCode;
   return pigeonResult;
 }
-+ (Sync *)fromList:(NSArray *)list {
-  Sync *pigeonResult = [[Sync alloc] init];
-  pigeonResult.syncType = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.syncProgress = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 2);
++ (GenericData *)fromList:(NSArray *)list {
+  GenericData *pigeonResult = [[GenericData alloc] init];
+  pigeonResult.name = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.name != nil, @"");
+  pigeonResult.code = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.code != nil, @"");
+  pigeonResult.langCode = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.langCode != nil, @"");
   return pigeonResult;
 }
-+ (nullable Sync *)nullableFromList:(NSArray *)list {
-  return (list) ? [Sync fromList:list] : nil;
++ (nullable GenericData *)nullableFromList:(NSArray *)list {
+  return (list) ? [GenericData fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.syncType ?: [NSNull null]),
-    (self.syncProgress ?: [NSNull null]),
-    (self.errorCode ?: [NSNull null]),
+    (self.name ?: [NSNull null]),
+    (self.code ?: [NSNull null]),
+    (self.langCode ?: [NSNull null]),
   ];
 }
 @end
 
-@implementation SyncTime
-+ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime {
-  SyncTime* pigeonResult = [[SyncTime alloc] init];
-  pigeonResult.syncTime = syncTime;
-  return pigeonResult;
-}
-+ (SyncTime *)fromList:(NSArray *)list {
-  SyncTime *pigeonResult = [[SyncTime alloc] init];
-  pigeonResult.syncTime = GetNullableObjectAtIndex(list, 0);
-  return pigeonResult;
-}
-+ (nullable SyncTime *)nullableFromList:(NSArray *)list {
-  return (list) ? [SyncTime fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    (self.syncTime ?: [NSNull null]),
-  ];
-}
+@interface DynamicResponseApiCodecReader : FlutterStandardReader
 @end
-
-@interface SyncApiCodecReader : FlutterStandardReader
-@end
-@implementation SyncApiCodecReader
+@implementation DynamicResponseApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [Sync fromList:[self readValue]];
-    case 129: 
-      return [SyncTime fromList:[self readValue]];
+      return [GenericData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface SyncApiCodecWriter : FlutterStandardWriter
+@interface DynamicResponseApiCodecWriter : FlutterStandardWriter
 @end
-@implementation SyncApiCodecWriter
+@implementation DynamicResponseApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[Sync class]]) {
+  if ([value isKindOfClass:[GenericData class]]) {
     [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SyncTime class]]) {
-    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -119,38 +90,41 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface SyncApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface DynamicResponseApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation SyncApiCodecReaderWriter
+@implementation DynamicResponseApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[SyncApiCodecWriter alloc] initWithData:data];
+  return [[DynamicResponseApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[SyncApiCodecReader alloc] initWithData:data];
+  return [[DynamicResponseApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *SyncApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *DynamicResponseApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    SyncApiCodecReaderWriter *readerWriter = [[SyncApiCodecReaderWriter alloc] init];
+    DynamicResponseApiCodecReaderWriter *readerWriter = [[DynamicResponseApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *api) {
+void DynamicResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DynamicResponseApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getLastSyncTime"
+        initWithName:@"dev.flutter.pigeon.registration_client.DynamicResponseApi.getFieldValues"
         binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
+        codec:DynamicResponseApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getLastSyncTimeWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getLastSyncTimeWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getFieldValuesFieldName:langCode:completion:)], @"DynamicResponseApi api (%@) doesn't respond to @selector(getFieldValuesFieldName:langCode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getLastSyncTimeWithCompletion:^(SyncTime *_Nullable output, FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSString *arg_fieldName = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
+        [api getFieldValuesFieldName:arg_fieldName langCode:arg_langCode completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -161,13 +135,16 @@ void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> 
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getPolicyKeySync"
+        initWithName:@"dev.flutter.pigeon.registration_client.DynamicResponseApi.getLocationValues"
         binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
+        codec:DynamicResponseApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getPolicyKeySyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getPolicyKeySyncWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getLocationValuesHierarchyLevelName:langCode:completion:)], @"DynamicResponseApi api (%@) doesn't respond to @selector(getLocationValuesHierarchyLevelName:langCode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getPolicyKeySyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSString *arg_hierarchyLevelName = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
+        [api getLocationValuesHierarchyLevelName:arg_hierarchyLevelName langCode:arg_langCode completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -178,13 +155,17 @@ void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> 
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getGlobalParamsSync"
+        initWithName:@"dev.flutter.pigeon.registration_client.DynamicResponseApi.getDocumentValues"
         binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
+        codec:DynamicResponseApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getGlobalParamsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getGlobalParamsSyncWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getDocumentValuesCategoryCode:applicantType:langCode:completion:)], @"DynamicResponseApi api (%@) doesn't respond to @selector(getDocumentValuesCategoryCode:applicantType:langCode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getGlobalParamsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSString *arg_categoryCode = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_applicantType = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 2);
+        [api getDocumentValuesCategoryCode:arg_categoryCode applicantType:arg_applicantType langCode:arg_langCode completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -195,47 +176,17 @@ void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> 
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getUserDetailsSync"
+        initWithName:@"dev.flutter.pigeon.registration_client.DynamicResponseApi.getLocationValuesBasedOnParent"
         binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
+        codec:DynamicResponseApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getUserDetailsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getUserDetailsSyncWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getLocationValuesBasedOnParentParentCode:hierarchyLevelName:langCode:completion:)], @"DynamicResponseApi api (%@) doesn't respond to @selector(getLocationValuesBasedOnParentParentCode:hierarchyLevelName:langCode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getUserDetailsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getIDSchemaSync"
-        binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getIDSchemaSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getIDSchemaSyncWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getIDSchemaSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getMasterDataSync"
-        binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMasterDataSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getMasterDataSyncWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getMasterDataSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSString *arg_parentCode = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_hierarchyLevelName = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 2);
+        [api getLocationValuesBasedOnParentParentCode:arg_parentCode hierarchyLevelName:arg_hierarchyLevelName langCode:arg_langCode completion:^(NSArray<GenericData *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

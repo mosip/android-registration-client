@@ -27,7 +27,7 @@ public class LocationRepository {
         return this.locationHierarchyDao.getHierarchyLevelFromName(levelName);
     }
 
-    public List<String> getLocations(String parentLocCode, String langCode) {
+    public List<GenericValueDto> getLocations(String parentLocCode, String langCode) {
         if(parentLocCode == null) {
             return this.locationDao.findParentLocation(langCode);
         }
@@ -51,6 +51,7 @@ public class LocationRepository {
         location.setHierarchyName(locationJson.getString("hierarchyName"));
         location.setIsActive(locationJson.getBoolean("isActive"));
         location.setIsDeleted(locationJson.getBoolean("isDeleted"));
+        location.setParentLocCode(locationJson.getString("parentLocCode"));
         this.locationDao.insert(location);
     }
 

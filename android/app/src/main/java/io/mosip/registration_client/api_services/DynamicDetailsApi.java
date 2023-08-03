@@ -3,6 +3,7 @@ package io.mosip.registration_client.api_services;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,11 +59,29 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
         List<String> documentResponse=new ArrayList<>();
         try{
             documentResponse=this.masterDataService.getDocumentTypes(categoryCode,applicantType,langCode);
-            Log.e(getClass().getSimpleName(), "Fetch Document values: " + documentResponse);
         }catch(Exception e){
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(documentResponse);
 
+    }
+
+    @Override
+    public void getLocationValuesBasedOnParent(@Nullable String parentCode, @NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
+        List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
+        try {
+            List<GenericValueDto> genericValueList = this.masterDataService.findLocationByParentHierarchyCode(parentCode, langCode);
+            genericValueList.forEach((v) -> {
+                DynamicResponsePigeon.GenericData location = new DynamicResponsePigeon.GenericData.Builder()
+                        .setCode(v.getCode())
+                        .setName(v.getName())
+                        .setLangCode(v.getLangCode())
+                        .build();
+                locationList.add(location);
+            });
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Fetch location values: " + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(locationList);
     }
 }

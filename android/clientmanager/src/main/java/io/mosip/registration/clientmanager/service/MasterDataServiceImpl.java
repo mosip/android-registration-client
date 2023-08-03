@@ -648,7 +648,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
 
     @Override
-    public List<String> findLocationByParentHierarchyCode(String parentCode, String langCode) {
+    public List<GenericValueDto> findLocationByParentHierarchyCode(String parentCode, String langCode) {
         return this.locationRepository.getLocations(parentCode, langCode);
     }
 

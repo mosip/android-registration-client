@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/demographics.dart';
 import 'package:registration_client/platform_spi/document.dart';
@@ -151,6 +153,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     return await dynamicResponseService.fetchDocumentValues(
         fieldName, applicantType, langCode);
     //String categoryCode, String applicantType, String langCode
+  }
+
+  Future<List<GenericData?>> getLocationValuesBasedOnParent(String parentCode, String fieldName, String langCode) async {
+    return await dynamicResponseService.fetchLocationValuesBasedOnParent(parentCode, fieldName, langCode); 
   }
 
   addDocument(

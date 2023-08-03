@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../model/field.dart';
@@ -90,8 +91,10 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   Future<List<String?>> _getLocationValues(
-      String hierarchyLevelName, String langCode) async {
-    return await context
+    String hierarchyLevelName, String langCode) async {
+      List<GenericData?> list = await context.read<RegistrationTaskProvider>().getLocationValuesBasedOnParent("MOR", hierarchyLevelName, langCode);
+
+      return await context
         .read<RegistrationTaskProvider>()
         .getLocationValues(hierarchyLevelName, langCode);
   }
