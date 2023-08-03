@@ -71,9 +71,7 @@ class _CustomDropDownState extends State<DropDownControl> {
   void _getSelectedValueFromMap(String lang) {
     String response = "";
     if (widget.field.type == 'simpleType') {
-      if ((context
-                  .read<GlobalProvider>()
-                  .fieldInputValue[widget.field.id ?? ""]
+      if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
         response = context
@@ -81,9 +79,8 @@ class _CustomDropDownState extends State<DropDownControl> {
             .fieldInputValue[widget.field.id ?? ""][lang];
       }
     } else {
-      response = context
-          .read<GlobalProvider>()
-          .fieldInputValue[widget.field.id ?? ""];
+      response =
+          context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
     }
     setState(() {
       selected = response;
@@ -91,10 +88,18 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   Future<List<String?>> _getLocationValues(
-    String hierarchyLevelName, String langCode) async {
-      return await context
+      String hierarchyLevelName, String langCode) async {
+    return await context
         .read<RegistrationTaskProvider>()
         .getLocationValues(hierarchyLevelName, langCode);
+  }
+
+  Future<List<GenericData?>> _getLocationValuesBasedOnParent(
+      String parentCode, String hierarchyLevelName, String langCode) async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getLocationValuesBasedOnParent(
+            parentCode, hierarchyLevelName, langCode);
   }
 
   @override

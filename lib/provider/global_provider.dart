@@ -45,7 +45,11 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, dynamic> _fieldInputValue = {};
 
-  Map<String, bool> _mvelvalues = {};
+  Map<String, bool> _mvelValues = {};
+
+  Map<int, String> _hierarchyValues = {};
+
+
   String _regId = "";
 
   //GettersSetters
@@ -58,7 +62,8 @@ class GlobalProvider with ChangeNotifier {
   Map<String?, String?> get machineDetails => _machineDetails;
   String get regId => _regId;
 
-  Map<String, bool> get mvelvalues => _mvelvalues;
+  Map<String, bool> get mvelValues => _mvelValues;
+  Map<int, String> get hierarchyValues => _hierarchyValues;
 
   setRegId(String value) {
     _regId = value;
@@ -66,7 +71,17 @@ class GlobalProvider with ChangeNotifier {
   }
 
   setMvelValues(String field, bool value) {
-    _mvelvalues[field] = value;
+    _mvelValues[field] = value;
+    notifyListeners();
+  }
+
+  setHierarchyValues(int hierarchyLevel, String value) {
+    _hierarchyValues[hierarchyLevel] = value;
+    notifyListeners();
+  }
+  
+  removeKeysFromHierarchy(int hierarchyLevel) {
+    hierarchyValues.removeWhere((key, value) => key > hierarchyLevel);
     notifyListeners();
   }
 
@@ -112,6 +127,16 @@ class GlobalProvider with ChangeNotifier {
 
   set fieldInputValue(Map<String, dynamic> value) {
     _fieldInputValue = value;
+    notifyListeners();
+  }
+
+  set mvelValues(Map<String, bool> value) {
+    _mvelValues = value;
+    notifyListeners();
+  }
+
+  set hierarchyValues(Map<int, String> value) {
+    _hierarchyValues = value;
     notifyListeners();
   }
 
