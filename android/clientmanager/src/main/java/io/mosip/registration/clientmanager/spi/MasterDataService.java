@@ -83,7 +83,7 @@ public interface MasterDataService {
      * @param langCode
      * @return
      */
-    List<String> findLocationByParentHierarchyCode(String parentCode, String langCode);
+    List<GenericValueDto> findLocationByParentHierarchyCode(String parentCode, String langCode);
 
     /**
      * Returns the list of immediate children for the provided hierarchy Level
