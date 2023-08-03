@@ -117,7 +117,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           ...widget.screen.fields!.map((e) {
             _checkMvel(e!);
             if (e.inputRequired == true) {
-              if(context.read<GlobalProvider>().mvelValues[e.id] ?? true) {
+              if (context.read<GlobalProvider>().mvelValues[e.id] ?? true) {
                 return widgetType(e);
               }
               // return context.watch<GlobalProvider>().mvelvalues[e.id] ?? true

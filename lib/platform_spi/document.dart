@@ -7,7 +7,7 @@ abstract class Document {
       String fieldId, String docType, String reference, Uint8List bytes);
   Future<void> removeDocument(String fieldId, int pageIndex);
 
-  Future<List<String?>> getScannedPages(String fieldId);
+  Future<List<Uint8List?>> getScannedPages(String fieldId);
 
   Future<bool?> hasDocument(String fieldId);
 

@@ -155,12 +155,18 @@ class RegistrationTaskProvider with ChangeNotifier {
     //String categoryCode, String applicantType, String langCode
   }
 
-  Future<List<GenericData?>> getLocationValuesBasedOnParent(String parentCode, String fieldName, String langCode) async {
-    return await dynamicResponseService.fetchLocationValuesBasedOnParent(parentCode, fieldName, langCode); 
+  Future<List<GenericData?>> getLocationValuesBasedOnParent(
+      String parentCode, String fieldName, String langCode) async {
+    return await dynamicResponseService.fetchLocationValuesBasedOnParent(
+        parentCode, fieldName, langCode);
   }
 
   addDocument(
       String fieldId, String docType, String reference, Uint8List bytes) async {
     await document.addDocument(fieldId, docType, reference, bytes);
+  }
+
+  getScannedDocument(String fieldId) async {
+    return document.getScannedPages(fieldId);
   }
 }

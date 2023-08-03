@@ -10,7 +10,7 @@ abstract class DocumentApi {
   void removeDocument(String fieldId, int pageIndex);
 
   @async
-  List<String> getScannedPages(String fieldId); //List<byte[]>
+  List<Uint8List> getScannedPages(String fieldId); //List<byte[]>
 
   @async
   bool hasDocument(String fieldId);
