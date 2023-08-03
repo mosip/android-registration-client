@@ -240,7 +240,7 @@ class NewProcess extends StatelessWidget {
             children: [
               isMobile
                   ? const SizedBox()
-                  : const Column(
+                  : Column(
                       children: [
                         TabletHeader(),
                         TabletNavbar(),
