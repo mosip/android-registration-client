@@ -17,10 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithName:(NSString *)name
     code:(NSString *)code
-    langCode:(NSString *)langCode;
+    langCode:(NSString *)langCode
+    hierarchyLevel:(NSNumber *)hierarchyLevel;
 @property(nonatomic, copy) NSString * name;
 @property(nonatomic, copy) NSString * code;
 @property(nonatomic, copy) NSString * langCode;
+@property(nonatomic, strong) NSNumber * hierarchyLevel;
 @end
 
 /// The codec used by DynamicResponseApi.

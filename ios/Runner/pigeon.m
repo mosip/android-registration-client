@@ -35,11 +35,13 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation GenericData
 + (instancetype)makeWithName:(NSString *)name
     code:(NSString *)code
-    langCode:(NSString *)langCode {
+    langCode:(NSString *)langCode
+    hierarchyLevel:(NSNumber *)hierarchyLevel {
   GenericData* pigeonResult = [[GenericData alloc] init];
   pigeonResult.name = name;
   pigeonResult.code = code;
   pigeonResult.langCode = langCode;
+  pigeonResult.hierarchyLevel = hierarchyLevel;
   return pigeonResult;
 }
 + (GenericData *)fromList:(NSArray *)list {
@@ -50,6 +52,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   NSAssert(pigeonResult.code != nil, @"");
   pigeonResult.langCode = GetNullableObjectAtIndex(list, 2);
   NSAssert(pigeonResult.langCode != nil, @"");
+  pigeonResult.hierarchyLevel = GetNullableObjectAtIndex(list, 3);
+  NSAssert(pigeonResult.hierarchyLevel != nil, @"");
   return pigeonResult;
 }
 + (nullable GenericData *)nullableFromList:(NSArray *)list {
@@ -60,6 +64,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.name ?: [NSNull null]),
     (self.code ?: [NSNull null]),
     (self.langCode ?: [NSNull null]),
+    (self.hierarchyLevel ?: [NSNull null]),
   ];
 }
 @end

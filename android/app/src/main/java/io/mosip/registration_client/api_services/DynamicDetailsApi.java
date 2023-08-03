@@ -70,12 +70,14 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     public void getLocationValuesBasedOnParent(@Nullable String parentCode, @NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
         List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
         try {
+            int hierarchyLevel = this.masterDataService.getHierarchyLevel(hierarchyLevelName);
             List<GenericValueDto> genericValueList = this.masterDataService.findLocationByParentHierarchyCode(parentCode, langCode);
             genericValueList.forEach((v) -> {
                 DynamicResponsePigeon.GenericData location = new DynamicResponsePigeon.GenericData.Builder()
                         .setCode(v.getCode())
                         .setName(v.getName())
                         .setLangCode(v.getLangCode())
+                        .setHierarchyLevel((long)hierarchyLevel)
                         .build();
                 locationList.add(location);
             });
