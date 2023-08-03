@@ -10,35 +10,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Sync;
-@class SyncTime;
+@class PacketAuth;
 
-@interface Sync : NSObject
-+ (instancetype)makeWithSyncType:(nullable NSString *)syncType
-    syncProgress:(nullable NSNumber *)syncProgress
+@interface PacketAuth : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithResponse:(NSString *)response
     errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy, nullable) NSString * syncType;
-@property(nonatomic, strong, nullable) NSNumber * syncProgress;
+@property(nonatomic, copy) NSString * response;
 @property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-@interface SyncTime : NSObject
-+ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
-@property(nonatomic, copy, nullable) NSString * syncTime;
+/// The codec used by PacketAuthApi.
+NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void);
+
+@protocol PacketAuthApi
+- (void)authenticateUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(PacketAuth *_Nullable, FlutterError *_Nullable))completion;
+- (void)syncPacketPacketId:(NSString *)packetId completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)uploadPacketPacketId:(NSString *)packetId completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by SyncApi.
-NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
-
-@protocol SyncApi
-- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
+extern void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

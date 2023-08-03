@@ -275,6 +275,11 @@ class GlobalProvider with ChangeNotifier {
     log("provider sync packet Sucess");
   }
 
+  uploadPacket(String packetId) async {
+    await packetService.packetUpload(packetId);
+    log("provider upload packet Sucess");
+  }
+
   clearMap() {
     _fieldInputValue = {};
     _fieldInputValue = {};

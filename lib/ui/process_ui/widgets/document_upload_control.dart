@@ -82,6 +82,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       poaList.add(item);
     });
 
+    log(poaList.toString());
+
     context
         .read<RegistrationTaskProvider>()
         .addDocument(e.id!, e.type!, "reference", Uint8List(100));

@@ -19,6 +19,18 @@ class PacketServiceImpl implements PacketService {
       debugPrint(e.toString());
     }
   }
+
+  @override
+  Future<void> packetUpload(String packetId) async {
+    try {
+      await PacketAuthApi().uploadPacket(packetId);
+      log("Sucess Upload packet");
+    } on PlatformException {
+      debugPrint('PacketAuthenticationApi call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }
 
 PacketService getPacketServiceImpl() => PacketServiceImpl();

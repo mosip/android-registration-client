@@ -42,11 +42,14 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     @Override
     public void getLocationValues(@NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<String>> result) {
         List<String> locationResponse = new ArrayList<>();
+
         try {
             List<GenericValueDto> genericValueDtoList = this.masterDataService.findLocationByHierarchyLevel(hierarchyLevelName, langCode);
             genericValueDtoList.forEach((dto) -> {
                 locationResponse.add(dto.getName());
+                List<String> loc = this.masterDataService.findLocationByParentHierarchyCode("RSk","eng");
             });
+
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch field values: " + Arrays.toString(e.getStackTrace()));
         }

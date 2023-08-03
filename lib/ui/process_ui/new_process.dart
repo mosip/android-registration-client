@@ -154,6 +154,7 @@ class NewProcess extends StatelessWidget {
       if (context.read<GlobalProvider>().newProcessTabIndex == size + 2) {
         Navigator.of(context).pop();
         context.read<GlobalProvider>().newProcessTabIndex = 0;
+        context.read<GlobalProvider>().htmlBoxTabIndex = 0;
         context.read<GlobalProvider>().clearMap();
         context.read<GlobalProvider>().setRegId("");
         return;
@@ -175,7 +176,7 @@ class NewProcess extends StatelessWidget {
       backgroundColor: secondaryColors.elementAt(10),
       bottomNavigationBar: Container(
         color: pure_white,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         height: 84.h,
         child: isMobile
             ? ElevatedButton(
@@ -196,9 +197,9 @@ class NewProcess extends StatelessWidget {
                   ElevatedButton(
                     style: ButtonStyle(
                       maximumSize:
-                          MaterialStateProperty.all<Size>(Size(209, 52)),
+                          MaterialStateProperty.all<Size>(const Size(209, 52)),
                       minimumSize:
-                          MaterialStateProperty.all<Size>(Size(209, 52)),
+                          MaterialStateProperty.all<Size>(const Size(209, 52)),
                     ),
                     onPressed: () {
                       _continueButtonTap(context, size, newProcess);
@@ -221,7 +222,12 @@ class NewProcess extends StatelessWidget {
                       },
                       child: const Text("Sync Packet")),
                   ElevatedButton(
-                      onPressed: () {}, child: const Text("Upload Packet")),
+                      onPressed: () {
+                        context
+                            .read<GlobalProvider>()
+                            .uploadPacket(context.read<GlobalProvider>().regId);
+                      },
+                      child: const Text("Upload Packet")),
                 ],
               ),
       ),
@@ -233,8 +239,8 @@ class NewProcess extends StatelessWidget {
           child: Column(
             children: [
               isMobile
-                  ? SizedBox()
-                  : Column(
+                  ? const SizedBox()
+                  : const Column(
                       children: [
                         TabletHeader(),
                         TabletNavbar(),
@@ -242,8 +248,8 @@ class NewProcess extends StatelessWidget {
                     ),
               Container(
                 padding: isMobile
-                    ? EdgeInsets.fromLTRB(0, 46, 0, 0)
-                    : EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
+                    : const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -260,8 +266,8 @@ class NewProcess extends StatelessWidget {
                     ),
                     Padding(
                       padding: isMobile
-                          ? EdgeInsets.fromLTRB(16, 0, 0, 0)
-                          : EdgeInsets.fromLTRB(60, 0, 60, 0),
+                          ? const EdgeInsets.fromLTRB(16, 0, 0, 0)
+                          : const EdgeInsets.fromLTRB(60, 0, 60, 0),
                       child: Text(newProcess.label!["eng"]!,
                           style: Theme.of(context)
                               .textTheme
@@ -281,8 +287,8 @@ class NewProcess extends StatelessWidget {
                     ),
                     Padding(
                       padding: isMobile
-                          ? EdgeInsets.all(0)
-                          : EdgeInsets.fromLTRB(60, 0, 60, 0),
+                          ? const EdgeInsets.all(0)
+                          : const EdgeInsets.fromLTRB(60, 0, 60, 0),
                       child: Stack(
                         alignment: FractionalOffset.centerRight,
                         children: [
@@ -291,7 +297,7 @@ class NewProcess extends StatelessWidget {
                             child: SizedBox(
                               height: 36.h,
                               child: ListView.builder(
-                                  padding: EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                   scrollDirection: Axis.horizontal,
                                   itemCount: newProcess.screens!.length + 3,
                                   itemBuilder:
@@ -317,8 +323,8 @@ class NewProcess extends StatelessWidget {
                                       child: Row(
                                         children: [
                                           Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 0, 0, 8),
                                             decoration: BoxDecoration(
                                               border: Border(
                                                 bottom: BorderSide(
@@ -404,7 +410,7 @@ class NewProcess extends StatelessWidget {
                           Container(
                             height: 36.h,
                             width: 25.w,
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             color: solid_primary,
                             child: Icon(
                               Icons.arrow_forward_ios_outlined,
@@ -423,8 +429,8 @@ class NewProcess extends StatelessWidget {
               ),
               Padding(
                 padding: isMobile
-                    ? EdgeInsets.all(0)
-                    : EdgeInsets.fromLTRB(60, 0, 60, 0),
+                    ? const EdgeInsets.all(0)
+                    : const EdgeInsets.fromLTRB(60, 0, 60, 0),
                 child: context.watch<GlobalProvider>().newProcessTabIndex < size
                     ? NewProcessScreenContent(
                         context: context,

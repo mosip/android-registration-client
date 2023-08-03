@@ -22,24 +22,27 @@ class _PreviewPageState extends State<PreviewPage> {
       height: MediaQuery.of(context).size.height,
       child: Stack(
         children: [
-          InAppWebView(
-            initialData: InAppWebViewInitialData(
-                data:
-                    context.watch<RegistrationTaskProvider>().previewTemplate),
-            onWebViewCreated: (controller) {
-              webViewController = controller;
-            },
-            onLoadStart: (controller, url) {
-              setState(() {
-                isLoading = true;
-              });
-            },
-            onLoadStop: (controller, url) {
-              setState(() {
-                isLoading = false;
-              });
-            },
-          ),
+          context.watch<RegistrationTaskProvider>().previewTemplate == ""
+              ? SizedBox.shrink()
+              : InAppWebView(
+                  initialData: InAppWebViewInitialData(
+                      data: context
+                          .watch<RegistrationTaskProvider>()
+                          .previewTemplate),
+                  onWebViewCreated: (controller) {
+                    webViewController = controller;
+                  },
+                  onLoadStart: (controller, url) {
+                    setState(() {
+                      isLoading = true;
+                    });
+                  },
+                  onLoadStop: (controller, url) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  },
+                ),
           if (isLoading)
             const Center(
               child: CircularProgressIndicator(),

@@ -17,4 +17,7 @@ abstract class PacketAuthApi {
 
   @async
   void syncPacket(String packetId);
+
+  @async
+  void uploadPacket(String packetId);
 }

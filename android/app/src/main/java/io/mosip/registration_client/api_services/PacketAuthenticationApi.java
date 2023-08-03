@@ -105,4 +105,14 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
             Log.e(getClass().getSimpleName(), "Error packet Sync", e);
         }
     }
+
+    @Override
+    public void uploadPacket(@NonNull String packetId, @NonNull PacketAuthPigeon.Result<Void> result) {
+        try{
+            packetService.uploadRegistration(packetId);
+            Log.e(getClass().getSimpleName(), "success");
+        }catch(Exception e){
+            Log.e(getClass().getSimpleName(), "Error packet Upload", e);
+        }
+    }
 }
