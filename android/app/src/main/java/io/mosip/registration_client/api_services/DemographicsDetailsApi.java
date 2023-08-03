@@ -39,15 +39,17 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     public void getDemographicField(@NonNull String fieldId, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
             RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
+
             registrationDto.getDemographics().forEach((k,v) -> {
-                if(k == fieldId){
+                if(k.equals(fieldId)){
                     if(v instanceof String){
                         result.success((String) v);
                         return;
                     }
                 }
             });
-            Log.e(getClass().getSimpleName(), "Get field failed!" + this.registrationService.getRegistrationDto().getDemographics());
+
+//            Log.e(getClass().getSimpleName(), "Get field failed!" + this.registrationService.getRegistrationDto().getDemographics());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Get field failed!" + Arrays.toString(e.getStackTrace()));
         }
