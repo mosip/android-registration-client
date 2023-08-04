@@ -38,11 +38,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _fetchProcessSpec();
+    context.read<GlobalProvider>().clearMap();
+    context.read<GlobalProvider>().newProcessTabIndex = 0;
+    context.read<GlobalProvider>().htmlBoxTabIndex = 0;
+    context.read<GlobalProvider>().setRegId("");
     super.initState();
   }
 
   void syncData(BuildContext context) async {
-    await SyncProvider().autoSync(context);
+    // await SyncProvider().autoSync(context);
+    await _masterDataSync();
     await _getNewProcessSpecAction(context);
     await _getCenterNameAction(context);
   }

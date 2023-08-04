@@ -265,7 +265,8 @@ class _LoginPageState extends State<LoginPage> {
   _navigateToHomePage() {
     if (context.read<AuthProvider>().isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (context.read<AuthProvider>().isOnboarded ||
+      if (context.read<AuthProvider>().isOnboarded || 
+          context.read<AuthProvider>().isDefault ||
           (context.read<AuthProvider>().isSupervisor &&
               context.read<AuthProvider>().isOfficer)) {
         context.read<GlobalProvider>().setCurrentIndex(1);

@@ -165,7 +165,6 @@ class _NewProcessState extends State<NewProcess> {
         Navigator.of(context).pop();
         context.read<GlobalProvider>().newProcessTabIndex = 0;
         context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-        context.read<GlobalProvider>().clearMap();
         context.read<GlobalProvider>().setRegId("");
         return;
       }
@@ -186,7 +185,10 @@ class _NewProcessState extends State<NewProcess> {
       backgroundColor: secondaryColors.elementAt(10),
       bottomNavigationBar: Container(
         color: pure_white,
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.symmetric(
+          horizontal: 80.w,
+          vertical: 16.h,
+        ),
         height: 84.h,
         child: isMobile
             ? ElevatedButton(
@@ -202,8 +204,28 @@ class _NewProcessState extends State<NewProcess> {
                 },
               )
             : Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  context.read<GlobalProvider>().newProcessTabIndex == size + 2 ? ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<GlobalProvider>()
+                            .syncPacket(context.read<GlobalProvider>().regId);
+                      },
+                      child: const Text("Sync Packet")) : const SizedBox.shrink(),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                  context.read<GlobalProvider>().newProcessTabIndex == size + 2 ? ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<GlobalProvider>()
+                            .uploadPacket(context.read<GlobalProvider>().regId);
+                      },
+                      child: const Text("Upload Packet")) : const SizedBox.shrink(),
+                      const Expanded(
+                        child: SizedBox(),
+                      ),
                   ElevatedButton(
                     style: ButtonStyle(
                       maximumSize:
@@ -224,20 +246,6 @@ class _NewProcessState extends State<NewProcess> {
                             ? "AUTHENTICATE"
                             : "COMPLETE"),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        context
-                            .read<GlobalProvider>()
-                            .syncPacket(context.read<GlobalProvider>().regId);
-                      },
-                      child: const Text("Sync Packet")),
-                  ElevatedButton(
-                      onPressed: () {
-                        context
-                            .read<GlobalProvider>()
-                            .uploadPacket(context.read<GlobalProvider>().regId);
-                      },
-                      child: const Text("Upload Packet")),
                 ],
               ),
       ),
