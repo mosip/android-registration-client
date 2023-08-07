@@ -9,6 +9,9 @@ abstract class DemographicsApi {
   String getDemographicField(String fieldId);
 
   @async
+  String getHashValue(Uint8List bytes);
+
+  @async
   void addSimpleTypeDemographicField(
       String fieldId, String value, String language);
 

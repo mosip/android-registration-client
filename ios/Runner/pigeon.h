@@ -11,23 +11,20 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// The codec used by BiometricsApi.
-NSObject<FlutterMessageCodec> *BiometricsApiGetCodec(void);
+/// The codec used by DemographicsApi.
+NSObject<FlutterMessageCodec> *DemographicsApiGetCodec(void);
 
-@protocol BiometricsApi
-- (void)invokeDiscoverSbiFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getBestBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)extractImageValuesFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)extractImageValuesByAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)incrementBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)addBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)removeBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getThresholdValueKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getAgeGroupWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol DemographicsApi
+- (void)addDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getHashValueBytes:(FlutterStandardTypedData *)bytes completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)addSimpleTypeDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value language:(NSString *)language completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)getSimpleTypeDemographicFieldFieldId:(NSString *)fieldId language:(NSString *)language completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)setDateFieldFieldId:(NSString *)fieldId subType:(NSString *)subType day:(NSString *)day month:(NSString *)month year:(NSString *)year completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)removeDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setConsentFieldConsentData:(NSString *)consentData completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-extern void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<BiometricsApi> *_Nullable api);
+extern void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DemographicsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

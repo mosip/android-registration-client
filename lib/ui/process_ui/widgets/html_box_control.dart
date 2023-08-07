@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -140,10 +142,19 @@ class _HtmlRendererState extends State<HtmlRenderer> {
   @override
   Widget build(BuildContext context) {
     for (int i = 0;
-        i < context.watch<GlobalProvider>().chosenLang.length;
+        i < context.read<GlobalProvider>().chosenLang.length;
         i++) {
           
-      List<int> bytes = utf8.encode(context.read<GlobalProvider>().fieldDisplayValues[widget.field.id][i]);
+      List<int> bytes = utf8.encode(context
+          .read<GlobalProvider>()
+          .fieldDisplayValues[widget.field.id][i]);
+      Uint8List unit8List = Uint8List.fromList(bytes);
+      String? hash;
+      DemographicsApi().getHashValue(unit8List).then((value) {
+        hash = value;
+        DemographicsApi().addSimpleTypeDemographicField(widget.field.id!, value, context.read<GlobalProvider>().langToCode(context.read<GlobalProvider>().chosenLang[i]));
+      });
+      
     }
     return SingleChildScrollView(
       child: Html(
