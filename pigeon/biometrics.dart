@@ -31,4 +31,7 @@ abstract class BiometricsApi {
 
   @async
   String getThresholdValue(String key);
+
+  @async
+  String getAgeGroup();
 }

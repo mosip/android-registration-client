@@ -372,6 +372,17 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
       result.success(response);
     }
 
+    @Override
+    public void getAgeGroup(@NonNull BiometricsPigeon.Result<String> result) {
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+            Map<String,Object> age_group=registrationDto.getAgeGroup();
+            result.success((String) age_group.get("ageGroup"));
+        }catch(Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
 
     public static Map<String, String> objectToMap(Object object) {
         Map<String, String> map = new HashMap<>();

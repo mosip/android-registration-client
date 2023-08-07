@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter/src/widgets/framework.dart';
@@ -126,16 +128,28 @@ class HtmlBoxControl extends StatelessWidget {
   }
 }
 
-class HtmlRenderer extends StatelessWidget {
+class HtmlRenderer extends StatefulWidget {
   const HtmlRenderer({super.key, required this.field});
   final Field field;
 
   @override
+  State<HtmlRenderer> createState() => _HtmlRendererState();
+}
+
+class _HtmlRendererState extends State<HtmlRenderer> {
+  @override
   Widget build(BuildContext context) {
+    for (int i = 0;
+        i < context.watch<GlobalProvider>().chosenLang.length;
+        i++) {
+          
+      List<int> bytes = utf8.encode(context.read<GlobalProvider>().fieldDisplayValues[widget.field.id][i]);
+    }
     return SingleChildScrollView(
       child: Html(
-        data: context.watch<GlobalProvider>().fieldDisplayValues[field.id]
-            [context.watch<GlobalProvider>().htmlBoxTabIndex],
+        data:
+            context.watch<GlobalProvider>().fieldDisplayValues[widget.field.id]
+                [context.watch<GlobalProvider>().htmlBoxTabIndex],
       ),
       // Text(context.watch<GlobalProvider>().fieldDisplayValues[field.id][context.watch<GlobalProvider>().htmlBoxTabIndex])
     );

@@ -132,6 +132,10 @@ public class RegistrationDto extends Observable {
         clearAndNotifyAllObservers();
     }
 
+    public Map<String, Object> getAgeGroup(){
+        return AGE_GROUPS;
+    }
+
     public void addDemographicField(String fieldId, String value) {
         if(isValidValue(value))
             this.demographics.put(fieldId, value);

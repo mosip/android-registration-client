@@ -12,39 +12,6 @@ class ButtonControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    generateList(BuildContext context, int index) {
-      List temp = List.generate(
-          context.read<GlobalProvider>().fieldDisplayValues[field.id] == null
-              ? 0
-              : context
-                  .read<GlobalProvider>()
-                  .fieldDisplayValues[field.id]
-                  .length,
-          (index) => false);
-      temp[index] = false;
-      context.read<GlobalProvider>().setInputMapValue(
-          field.id!, temp, context.read<GlobalProvider>().fieldInputValue);
-      return false;
-    }
-
-    formList(List temp) {
-      String str = "";
-      for (int i = 0;
-          i <
-              context
-                  .read<GlobalProvider>()
-                  .fieldDisplayValues[field.id]
-                  .length;
-          i++) {
-        if (temp[i] == true) {
-          str = str +
-              context.read<GlobalProvider>().fieldDisplayValues[field.id][i] +
-              ",";
-        }
-      }
-      return str.substring(0, str.length - 1);
-    }
-
     return Card(
       color: pure_white,
       margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -100,22 +67,24 @@ class ButtonControl extends StatelessWidget {
                                   .watch<GlobalProvider>()
                                   .fieldInputValue
                                   .containsKey(field.id))
-                              ? context
+                              ? (context
                                   .watch<GlobalProvider>()
-                                  .fieldInputValue[field.id][i]
-                              : generateList(context, i),
+                                  .fieldInputValue[field.id]==context
+                          .read<GlobalProvider>()
+                          .fieldDisplayValues[field.id][i])?true:false
+                              : false,
                           onChanged: (value) async {
-                            List temp = context
-                                .read<GlobalProvider>()
-                                .fieldInputValue[field.id];
-                            temp[i] = value;
-
                             context.read<GlobalProvider>().setInputMapValue(
                                 field.id!,
-                                temp,
+                                context
+                          .read<GlobalProvider>()
+                          .fieldDisplayValues[field.id][i],
                                 context.read<GlobalProvider>().fieldInputValue);
-                            await DemographicsApi()
-                                .addDemographicField(field.id!, formList(temp));
+                                
+                            await DemographicsApi().addDemographicField(
+                                field.id!, context
+                          .read<GlobalProvider>()
+                          .fieldDisplayValues[field.id][i]);
                           },
                         ),
                       ),

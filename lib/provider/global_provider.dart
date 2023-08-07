@@ -49,10 +49,16 @@ class GlobalProvider with ChangeNotifier {
 
   Map<int, String> _hierarchyValues = {};
 
-
   String _regId = "";
+  String _ageGroup = "";
 
   //GettersSetters
+  String get ageGroup => this._ageGroup;
+
+  set ageGroup(String value) {
+    this._ageGroup = value;
+    notifyListeners();
+  }
 
   int get currentIndex => _currentIndex;
   String get name => _name;
@@ -79,7 +85,7 @@ class GlobalProvider with ChangeNotifier {
     _hierarchyValues[hierarchyLevel] = value;
     notifyListeners();
   }
-  
+
   removeKeysFromHierarchy(int hierarchyLevel) {
     hierarchyValues.removeWhere((key, value) => key > hierarchyLevel);
     notifyListeners();
