@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration_client.model.DemographicsDataPigeon;
 
@@ -19,9 +20,12 @@ import io.mosip.registration_client.model.DemographicsDataPigeon;
 public class DemographicsDetailsApi implements DemographicsDataPigeon.DemographicsApi {
     private final RegistrationService registrationService;
 
+
+
     @Inject
     public DemographicsDetailsApi(RegistrationService registrationService) {
         this.registrationService = registrationService;
+
     }
 
 
@@ -55,6 +59,14 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
         }
         result.success("");
     }
+
+    @Override
+    public void getHashValue(@NonNull byte[] bytes, @NonNull DemographicsDataPigeon.Result<String> result) {
+        String hashValue=CryptoUtil.computeFingerPrint(bytes,null);
+        
+        result.success(hashValue);
+    }
+
 
     @Override
     public void addSimpleTypeDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull String language, @NonNull DemographicsDataPigeon.Result<Void> result) {

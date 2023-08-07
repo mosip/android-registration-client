@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../model/field.dart';
@@ -123,6 +124,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
           targetDateString,
           context.read<GlobalProvider>().fieldInputValue,
         );
+        BiometricsApi().getAgeGroup().then((value) {context.read<GlobalProvider>().ageGroup=value;});
   }
 
   void _getSavedDate() {

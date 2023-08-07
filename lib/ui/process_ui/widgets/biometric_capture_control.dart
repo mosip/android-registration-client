@@ -191,6 +191,41 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.field.conditionalBioAttributes!.first!.ageGroup!
+            .compareTo(context.read<GlobalProvider>().ageGroup) ==
+        0) {
+      if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("leftEye") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("rightEye")) {
+        biometricAttribute = "Iris";
+      } else if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("rightIndex") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("rightLittle") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("rightRing") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("rightMiddle")) {
+        biometricAttribute = "Right Hand";
+      } else if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("leftIndex") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("leftLittle") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("leftRing") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("leftMiddle")) {
+        biometricAttribute = "Left Hand";
+      } else if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("leftThumb") &&
+          widget.field.conditionalBioAttributes!.first!.bioAttributes!
+              .contains("rightThumb")) {
+        biometricAttribute = "Thumbs";
+      } else {
+        biometricAttribute = "Face";
+      }
+    }
     leftHand.thresholdPercentage =
         context.read<GlobalProvider>().thresholdValuesMap[
             "mosip.registration.leftslap_fingerprint_threshold"]!;
@@ -339,483 +374,1061 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                           color: secondaryColors.elementAt(13), width: 1)),
-                  child: Column(
-                    children: [
-                      if (widget.field.bioAttributes!.contains("leftEye") &&
-                          widget.field.bioAttributes!.contains("rightEye"))
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              biometricAttribute = "Iris";
-                            });
-                          },
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                                child: Container(
-                                  height: 78.h,
-                                  width: 78.h,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: (iris.isScanned == true)
-                                              ? (iris.exceptions.contains(true))
-                                                  ? secondaryColors
-                                                      .elementAt(16)
-                                                  : secondaryColors
-                                                      .elementAt(11)
-                                              : (biometricAttribute == "Iris")
-                                                  ? secondaryColors
-                                                      .elementAt(12)
-                                                  : secondaryColors
-                                                      .elementAt(14)),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: (iris.isScanned == true)
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            ...iris.listofImages
-                                                .map((e) => Flexible(
-                                                      child: Image.memory(
-                                                        e,
-                                                        fit: BoxFit.fill,
-                                                      ),
-                                                    )),
-                                          ],
-                                        )
-                                      : Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Image.asset(
-                                            "assets/images/Eye@2x.png",
-                                            height: 18.h,
-                                            width: 64.h,
-                                          ),
-                                        ),
+                  child: (widget
+                              .field.conditionalBioAttributes!.first!.ageGroup!
+                              .compareTo(
+                                  context.read<GlobalProvider>().ageGroup) ==
+                          0)
+                      ? Column(
+                          children: [
+                            if (widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("leftEye") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("rightEye"))
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    biometricAttribute = "Iris";
+                                  });
+                                },
+                                child: Stack(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 10, 10, 5),
+                                      child: Container(
+                                        height: 78.h,
+                                        width: 78.h,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: (iris.isScanned == true)
+                                                    ? (iris.exceptions
+                                                            .contains(true))
+                                                        ? secondaryColors
+                                                            .elementAt(16)
+                                                        : secondaryColors
+                                                            .elementAt(11)
+                                                    : (biometricAttribute ==
+                                                            "Iris")
+                                                        ? secondaryColors
+                                                            .elementAt(12)
+                                                        : secondaryColors
+                                                            .elementAt(14)),
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: (iris.isScanned == true)
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  ...iris.listofImages
+                                                      .map((e) => Flexible(
+                                                            child: Image.memory(
+                                                              e,
+                                                              fit: BoxFit.fill,
+                                                            ),
+                                                          )),
+                                                ],
+                                              )
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Image.asset(
+                                                  "assets/images/Eye@2x.png",
+                                                  height: 18.h,
+                                                  width: 64.h,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                    if (iris.isScanned == true)
+                                      Positioned(
+                                          top: 14,
+                                          left: 14,
+                                          child: (iris.exceptions
+                                                  .contains(true))
+                                              ? Image.asset(
+                                                  "assets/images/Ellipse 1183.png")
+                                              : Image.asset(
+                                                  "assets/images/Ellipse 1181.png")),
+                                    if (iris.isScanned == true)
+                                      Positioned(
+                                          top: 6,
+                                          right: 6,
+                                          child: (iris.exceptions
+                                                  .contains(true))
+                                              ? Image.asset(
+                                                  "assets/images/Group 57548.png")
+                                              : Image.asset(
+                                                  "assets/images/Group 57745.png")),
+                                  ],
                                 ),
                               ),
-                              if (iris.isScanned == true)
-                                Positioned(
-                                    top: 14,
-                                    left: 14,
-                                    child: (iris.exceptions.contains(true))
-                                        ? Image.asset(
-                                            "assets/images/Ellipse 1183.png")
-                                        : Image.asset(
-                                            "assets/images/Ellipse 1181.png")),
-                              if (iris.isScanned == true)
-                                Positioned(
-                                    top: 6,
-                                    right: 6,
-                                    child: (iris.exceptions.contains(true))
-                                        ? Image.asset(
-                                            "assets/images/Group 57548.png")
-                                        : Image.asset(
-                                            "assets/images/Group 57745.png")),
-                            ],
-                          ),
+                            if (widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("rightIndex") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("rightLittle") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("rightRing") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("rightMiddle"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Right Hand";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (rightHand.isScanned ==
+                                                          true)
+                                                      ? (rightHand.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Right Hand")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (rightHand.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...rightHand.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                height: 18.h,
+                                                                width: 64.h,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Right Hand@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (rightHand.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (rightHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (rightHand.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (rightHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("leftIndex") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("leftLittle") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("leftRing") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("leftMiddle"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Left Hand";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (leftHand.isScanned ==
+                                                          true)
+                                                      ? (leftHand.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Left Hand")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (leftHand.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...leftHand.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                height: 18.h,
+                                                                width: 64.h,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Left Hand@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (leftHand.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (leftHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (leftHand.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (leftHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("leftThumb") &&
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!
+                                    .contains("rightThumb"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Thumbs";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (thumbs.isScanned ==
+                                                          true)
+                                                      ? (thumbs.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Thumbs")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (thumbs.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...thumbs.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Thumbs@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (thumbs.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (thumbs.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (thumbs.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (thumbs.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("face"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Face";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (face.isScanned ==
+                                                          true)
+                                                      ? (face.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Face")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (face.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...face.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Face@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (face.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (face.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (face.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (face.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (iris.exceptions.contains(true) ||
+                                rightHand.exceptions.contains(true) ||
+                                leftHand.exceptions.contains(true) ||
+                                thumbs.exceptions.contains(true) ||
+                                face.exceptions.contains(true))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Exception";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 10),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (exception.isScanned ==
+                                                          true)
+                                                      ? (exception.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Exception")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (exception.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...exception.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Person@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (exception.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (exception.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (exception.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (exception.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            if (widget.field.bioAttributes!
+                                    .contains("leftEye") &&
+                                widget.field.bioAttributes!
+                                    .contains("rightEye"))
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    biometricAttribute = "Iris";
+                                  });
+                                },
+                                child: Stack(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 10, 10, 5),
+                                      child: Container(
+                                        height: 78.h,
+                                        width: 78.h,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: (iris.isScanned == true)
+                                                    ? (iris.exceptions
+                                                            .contains(true))
+                                                        ? secondaryColors
+                                                            .elementAt(16)
+                                                        : secondaryColors
+                                                            .elementAt(11)
+                                                    : (biometricAttribute ==
+                                                            "Iris")
+                                                        ? secondaryColors
+                                                            .elementAt(12)
+                                                        : secondaryColors
+                                                            .elementAt(14)),
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: (iris.isScanned == true)
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  ...iris.listofImages
+                                                      .map((e) => Flexible(
+                                                            child: Image.memory(
+                                                              e,
+                                                              fit: BoxFit.fill,
+                                                            ),
+                                                          )),
+                                                ],
+                                              )
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Image.asset(
+                                                  "assets/images/Eye@2x.png",
+                                                  height: 18.h,
+                                                  width: 64.h,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                    if (iris.isScanned == true)
+                                      Positioned(
+                                          top: 14,
+                                          left: 14,
+                                          child: (iris.exceptions
+                                                  .contains(true))
+                                              ? Image.asset(
+                                                  "assets/images/Ellipse 1183.png")
+                                              : Image.asset(
+                                                  "assets/images/Ellipse 1181.png")),
+                                    if (iris.isScanned == true)
+                                      Positioned(
+                                          top: 6,
+                                          right: 6,
+                                          child: (iris.exceptions
+                                                  .contains(true))
+                                              ? Image.asset(
+                                                  "assets/images/Group 57548.png")
+                                              : Image.asset(
+                                                  "assets/images/Group 57745.png")),
+                                  ],
+                                ),
+                              ),
+                            if (widget.field.bioAttributes!
+                                    .contains("rightIndex") &&
+                                widget.field.bioAttributes!
+                                    .contains("rightLittle") &&
+                                widget.field.bioAttributes!
+                                    .contains("rightRing") &&
+                                widget.field.bioAttributes!
+                                    .contains("rightMiddle"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Right Hand";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (rightHand.isScanned ==
+                                                          true)
+                                                      ? (rightHand.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Right Hand")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (rightHand.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...rightHand.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                height: 18.h,
+                                                                width: 64.h,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Right Hand@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (rightHand.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (rightHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (rightHand.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (rightHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (widget.field.bioAttributes!
+                                    .contains("leftIndex") &&
+                                widget.field.bioAttributes!
+                                    .contains("leftLittle") &&
+                                widget.field.bioAttributes!
+                                    .contains("leftRing") &&
+                                widget.field.bioAttributes!
+                                    .contains("leftMiddle"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Left Hand";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (leftHand.isScanned ==
+                                                          true)
+                                                      ? (leftHand.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Left Hand")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (leftHand.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...leftHand.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                height: 18.h,
+                                                                width: 64.h,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Left Hand@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (leftHand.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (leftHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (leftHand.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (leftHand.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (widget.field.bioAttributes!
+                                    .contains("leftThumb") &&
+                                widget.field.bioAttributes!
+                                    .contains("rightThumb"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Thumbs";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (thumbs.isScanned ==
+                                                          true)
+                                                      ? (thumbs.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Thumbs")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (thumbs.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...thumbs.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Thumbs@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (thumbs.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (thumbs.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (thumbs.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (thumbs.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (widget.field.bioAttributes!.contains("face"))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Face";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (face.isScanned ==
+                                                          true)
+                                                      ? (face.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Face")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (face.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...face.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Face@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (face.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (face.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (face.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (face.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                            if (iris.exceptions.contains(true) ||
+                                rightHand.exceptions.contains(true) ||
+                                leftHand.exceptions.contains(true) ||
+                                thumbs.exceptions.contains(true) ||
+                                face.exceptions.contains(true))
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      biometricAttribute = "Exception";
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 10),
+                                        child: Container(
+                                          height: 78.h,
+                                          width: 78.h,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (exception.isScanned ==
+                                                          true)
+                                                      ? (exception.exceptions
+                                                              .contains(true))
+                                                          ? secondaryColors
+                                                              .elementAt(16)
+                                                          : secondaryColors
+                                                              .elementAt(11)
+                                                      : (biometricAttribute ==
+                                                              "Exception")
+                                                          ? secondaryColors
+                                                              .elementAt(12)
+                                                          : secondaryColors
+                                                              .elementAt(14)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: (exception.isScanned == true)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ...exception.listofImages
+                                                        .map((e) => Flexible(
+                                                              child:
+                                                                  Image.memory(
+                                                                e,
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                              ),
+                                                            )),
+                                                  ],
+                                                )
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Image.asset(
+                                                    "assets/images/Person@2x.png",
+                                                    height: 18.h,
+                                                    width: 64.h,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      if (exception.isScanned == true)
+                                        Positioned(
+                                            top: 14,
+                                            left: 14,
+                                            child: (exception.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Ellipse 1183.png")
+                                                : Image.asset(
+                                                    "assets/images/Ellipse 1181.png")),
+                                      if (exception.isScanned == true)
+                                        Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: (exception.exceptions
+                                                    .contains(true))
+                                                ? Image.asset(
+                                                    "assets/images/Group 57548.png")
+                                                : Image.asset(
+                                                    "assets/images/Group 57745.png")),
+                                    ],
+                                  )),
+                          ],
                         ),
-                      if (widget.field.bioAttributes!.contains("rightIndex") &&
-                          widget.field.bioAttributes!.contains("rightLittle") &&
-                          widget.field.bioAttributes!.contains("rightRing") &&
-                          widget.field.bioAttributes!.contains("rightMiddle"))
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                biometricAttribute = "Right Hand";
-                              });
-                            },
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                  child: Container(
-                                    height: 78.h,
-                                    width: 78.h,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (rightHand.isScanned == true)
-                                                ? (rightHand.exceptions
-                                                        .contains(true))
-                                                    ? secondaryColors
-                                                        .elementAt(16)
-                                                    : secondaryColors
-                                                        .elementAt(11)
-                                                : (biometricAttribute ==
-                                                        "Right Hand")
-                                                    ? secondaryColors
-                                                        .elementAt(12)
-                                                    : secondaryColors
-                                                        .elementAt(14)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: (rightHand.isScanned == true)
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ...rightHand.listofImages
-                                                  .map((e) => Flexible(
-                                                        child: Image.memory(
-                                                          e,
-                                                          height: 18.h,
-                                                          width: 64.h,
-                                                        ),
-                                                      )),
-                                            ],
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Image.asset(
-                                              "assets/images/Right Hand@2x.png",
-                                              height: 18.h,
-                                              width: 64.h,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                if (rightHand.isScanned == true)
-                                  Positioned(
-                                      top: 14,
-                                      left: 14,
-                                      child: (rightHand.exceptions
-                                              .contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Ellipse 1183.png")
-                                          : Image.asset(
-                                              "assets/images/Ellipse 1181.png")),
-                                if (rightHand.isScanned == true)
-                                  Positioned(
-                                      top: 6,
-                                      right: 6,
-                                      child: (rightHand.exceptions
-                                              .contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Group 57548.png")
-                                          : Image.asset(
-                                              "assets/images/Group 57745.png")),
-                              ],
-                            )),
-                      if (widget.field.bioAttributes!.contains("leftIndex") &&
-                          widget.field.bioAttributes!.contains("leftLittle") &&
-                          widget.field.bioAttributes!.contains("leftRing") &&
-                          widget.field.bioAttributes!.contains("leftMiddle"))
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                biometricAttribute = "Left Hand";
-                              });
-                            },
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                  child: Container(
-                                    height: 78.h,
-                                    width: 78.h,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (leftHand.isScanned == true)
-                                                ? (leftHand.exceptions
-                                                        .contains(true))
-                                                    ? secondaryColors
-                                                        .elementAt(16)
-                                                    : secondaryColors
-                                                        .elementAt(11)
-                                                : (biometricAttribute ==
-                                                        "Left Hand")
-                                                    ? secondaryColors
-                                                        .elementAt(12)
-                                                    : secondaryColors
-                                                        .elementAt(14)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: (leftHand.isScanned == true)
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ...leftHand.listofImages
-                                                  .map((e) => Flexible(
-                                                        child: Image.memory(
-                                                          e,
-                                                          height: 18.h,
-                                                          width: 64.h,
-                                                        ),
-                                                      )),
-                                            ],
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Image.asset(
-                                              "assets/images/Left Hand@2x.png",
-                                              height: 18.h,
-                                              width: 64.h,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                if (leftHand.isScanned == true)
-                                  Positioned(
-                                      top: 14,
-                                      left: 14,
-                                      child: (leftHand.exceptions
-                                              .contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Ellipse 1183.png")
-                                          : Image.asset(
-                                              "assets/images/Ellipse 1181.png")),
-                                if (leftHand.isScanned == true)
-                                  Positioned(
-                                      top: 6,
-                                      right: 6,
-                                      child: (leftHand.exceptions
-                                              .contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Group 57548.png")
-                                          : Image.asset(
-                                              "assets/images/Group 57745.png")),
-                              ],
-                            )),
-                      if (widget.field.bioAttributes!.contains("leftThumb") &&
-                          widget.field.bioAttributes!.contains("rightThumb"))
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                biometricAttribute = "Thumbs";
-                              });
-                            },
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                  child: Container(
-                                    height: 78.h,
-                                    width: 78.h,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (thumbs.isScanned == true)
-                                                ? (thumbs.exceptions
-                                                        .contains(true))
-                                                    ? secondaryColors
-                                                        .elementAt(16)
-                                                    : secondaryColors
-                                                        .elementAt(11)
-                                                : (biometricAttribute ==
-                                                        "Thumbs")
-                                                    ? secondaryColors
-                                                        .elementAt(12)
-                                                    : secondaryColors
-                                                        .elementAt(14)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: (thumbs.isScanned == true)
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ...thumbs.listofImages
-                                                  .map((e) => Flexible(
-                                                        child: Image.memory(
-                                                          e,
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      )),
-                                            ],
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Image.asset(
-                                              "assets/images/Thumbs@2x.png",
-                                              height: 18.h,
-                                              width: 64.h,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                if (thumbs.isScanned == true)
-                                  Positioned(
-                                      top: 14,
-                                      left: 14,
-                                      child: (thumbs.exceptions.contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Ellipse 1183.png")
-                                          : Image.asset(
-                                              "assets/images/Ellipse 1181.png")),
-                                if (thumbs.isScanned == true)
-                                  Positioned(
-                                      top: 6,
-                                      right: 6,
-                                      child: (thumbs.exceptions.contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Group 57548.png")
-                                          : Image.asset(
-                                              "assets/images/Group 57745.png")),
-                              ],
-                            )),
-                      if (widget.field.bioAttributes!.contains("face"))
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                biometricAttribute = "Face";
-                              });
-                            },
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                  child: Container(
-                                    height: 78.h,
-                                    width: 78.h,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (face.isScanned == true)
-                                                ? (face.exceptions
-                                                        .contains(true))
-                                                    ? secondaryColors
-                                                        .elementAt(16)
-                                                    : secondaryColors
-                                                        .elementAt(11)
-                                                : (biometricAttribute == "Face")
-                                                    ? secondaryColors
-                                                        .elementAt(12)
-                                                    : secondaryColors
-                                                        .elementAt(14)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: (face.isScanned == true)
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ...face.listofImages
-                                                  .map((e) => Flexible(
-                                                        child: Image.memory(
-                                                          e,
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      )),
-                                            ],
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Image.asset(
-                                              "assets/images/Face@2x.png",
-                                              height: 18.h,
-                                              width: 64.h,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                if (face.isScanned == true)
-                                  Positioned(
-                                      top: 14,
-                                      left: 14,
-                                      child: (face.exceptions.contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Ellipse 1183.png")
-                                          : Image.asset(
-                                              "assets/images/Ellipse 1181.png")),
-                                if (face.isScanned == true)
-                                  Positioned(
-                                      top: 6,
-                                      right: 6,
-                                      child: (face.exceptions.contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Group 57548.png")
-                                          : Image.asset(
-                                              "assets/images/Group 57745.png")),
-                              ],
-                            )),
-                      if (iris.exceptions.contains(true) ||
-                          rightHand.exceptions.contains(true) ||
-                          leftHand.exceptions.contains(true) ||
-                          thumbs.exceptions.contains(true) ||
-                          face.exceptions.contains(true))
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                biometricAttribute = "Exception";
-                              });
-                            },
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                  child: Container(
-                                    height: 78.h,
-                                    width: 78.h,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (exception.isScanned == true)
-                                                ? (exception.exceptions
-                                                        .contains(true))
-                                                    ? secondaryColors
-                                                        .elementAt(16)
-                                                    : secondaryColors
-                                                        .elementAt(11)
-                                                : (biometricAttribute ==
-                                                        "Exception")
-                                                    ? secondaryColors
-                                                        .elementAt(12)
-                                                    : secondaryColors
-                                                        .elementAt(14)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: (exception.isScanned == true)
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ...exception.listofImages
-                                                  .map((e) => Flexible(
-                                                        child: Image.memory(
-                                                          e,
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      )),
-                                            ],
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Image.asset(
-                                              "assets/images/Person@2x.png",
-                                              height: 18.h,
-                                              width: 64.h,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                if (exception.isScanned == true)
-                                  Positioned(
-                                      top: 14,
-                                      left: 14,
-                                      child: (exception.exceptions
-                                              .contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Ellipse 1183.png")
-                                          : Image.asset(
-                                              "assets/images/Ellipse 1181.png")),
-                                if (exception.isScanned == true)
-                                  Positioned(
-                                      top: 6,
-                                      right: 6,
-                                      child: (exception.exceptions
-                                              .contains(true))
-                                          ? Image.asset(
-                                              "assets/images/Group 57548.png")
-                                          : Image.asset(
-                                              "assets/images/Group 57745.png")),
-                              ],
-                            )),
-                    ],
-                  ),
                 ),
                 if (biometricAttribute == "Iris")
                   BiometricCaptureScanBlock(
