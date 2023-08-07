@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,10 +39,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _fetchProcessSpec();
-    context.read<GlobalProvider>().clearMap();
-    context.read<GlobalProvider>().newProcessTabIndex = 0;
-    context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-    context.read<GlobalProvider>().setRegId("");
     super.initState();
   }
 
@@ -69,6 +66,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
+      context.read<GlobalProvider>().clearMap();
+      context.read<GlobalProvider>().newProcessTabIndex = 0;
+      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
+      context.read<GlobalProvider>().setRegId("");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
