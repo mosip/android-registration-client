@@ -138,6 +138,7 @@ class _NewProcessState extends State<NewProcess> {
       if (context.read<GlobalProvider>().formKey.currentState!.validate()) {
         if (context.read<GlobalProvider>().newProcessTabIndex ==
             newProcess.screens!.length - 1) {
+              context.read<RegistrationTaskProvider>().setPreviewTemplate("");
           context.read<RegistrationTaskProvider>().getPreviewTemplate(true);
         }
 

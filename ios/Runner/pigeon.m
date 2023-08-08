@@ -26,26 +26,131 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-NSObject<FlutterMessageCodec> *DemographicsApiGetCodec(void) {
+@interface Sync ()
++ (Sync *)fromList:(NSArray *)list;
++ (nullable Sync *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface SyncTime ()
++ (SyncTime *)fromList:(NSArray *)list;
++ (nullable SyncTime *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@implementation Sync
++ (instancetype)makeWithSyncType:(nullable NSString *)syncType
+    syncProgress:(nullable NSNumber *)syncProgress
+    errorCode:(nullable NSString *)errorCode {
+  Sync* pigeonResult = [[Sync alloc] init];
+  pigeonResult.syncType = syncType;
+  pigeonResult.syncProgress = syncProgress;
+  pigeonResult.errorCode = errorCode;
+  return pigeonResult;
+}
++ (Sync *)fromList:(NSArray *)list {
+  Sync *pigeonResult = [[Sync alloc] init];
+  pigeonResult.syncType = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.syncProgress = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 2);
+  return pigeonResult;
+}
++ (nullable Sync *)nullableFromList:(NSArray *)list {
+  return (list) ? [Sync fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.syncType ?: [NSNull null]),
+    (self.syncProgress ?: [NSNull null]),
+    (self.errorCode ?: [NSNull null]),
+  ];
+}
+@end
+
+@implementation SyncTime
++ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime {
+  SyncTime* pigeonResult = [[SyncTime alloc] init];
+  pigeonResult.syncTime = syncTime;
+  return pigeonResult;
+}
++ (SyncTime *)fromList:(NSArray *)list {
+  SyncTime *pigeonResult = [[SyncTime alloc] init];
+  pigeonResult.syncTime = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable SyncTime *)nullableFromList:(NSArray *)list {
+  return (list) ? [SyncTime fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.syncTime ?: [NSNull null]),
+  ];
+}
+@end
+
+@interface SyncApiCodecReader : FlutterStandardReader
+@end
+@implementation SyncApiCodecReader
+- (nullable id)readValueOfType:(UInt8)type {
+  switch (type) {
+    case 128: 
+      return [Sync fromList:[self readValue]];
+    case 129: 
+      return [SyncTime fromList:[self readValue]];
+    default:
+      return [super readValueOfType:type];
+  }
+}
+@end
+
+@interface SyncApiCodecWriter : FlutterStandardWriter
+@end
+@implementation SyncApiCodecWriter
+- (void)writeValue:(id)value {
+  if ([value isKindOfClass:[Sync class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[SyncTime class]]) {
+    [self writeByte:129];
+    [self writeValue:[value toList]];
+  } else {
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface SyncApiCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation SyncApiCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[SyncApiCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[SyncApiCodecReader alloc] initWithData:data];
+}
+@end
+
+NSObject<FlutterMessageCodec> *SyncApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    SyncApiCodecReaderWriter *readerWriter = [[SyncApiCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
   return sSharedObject;
 }
 
-void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DemographicsApi> *api) {
+void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.addDemographicField"
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getLastSyncTime"
         binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
+        codec:SyncApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(addDemographicFieldFieldId:value:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(addDemographicFieldFieldId:value:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getLastSyncTimeWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getLastSyncTimeWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_value = GetNullableObjectAtIndex(args, 1);
-        [api addDemographicFieldFieldId:arg_fieldId value:arg_value completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getLastSyncTimeWithCompletion:^(SyncTime *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -56,15 +161,13 @@ void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<D
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.getDemographicField"
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getPolicyKeySync"
         binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
+        codec:SyncApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getDemographicFieldFieldId:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(getDemographicFieldFieldId:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getPolicyKeySyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getPolicyKeySyncWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        [api getDemographicFieldFieldId:arg_fieldId completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getPolicyKeySyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -75,15 +178,13 @@ void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<D
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.getHashValue"
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getGlobalParamsSync"
         binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
+        codec:SyncApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getHashValueBytes:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(getHashValueBytes:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getGlobalParamsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getGlobalParamsSyncWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        FlutterStandardTypedData *arg_bytes = GetNullableObjectAtIndex(args, 0);
-        [api getHashValueBytes:arg_bytes completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getGlobalParamsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -94,37 +195,13 @@ void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<D
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.addSimpleTypeDemographicField"
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getUserDetailsSync"
         binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
+        codec:SyncApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(addSimpleTypeDemographicFieldFieldId:value:language:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(addSimpleTypeDemographicFieldFieldId:value:language:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getUserDetailsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getUserDetailsSyncWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_value = GetNullableObjectAtIndex(args, 1);
-        NSString *arg_language = GetNullableObjectAtIndex(args, 2);
-        [api addSimpleTypeDemographicFieldFieldId:arg_fieldId value:arg_value language:arg_language completion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.getSimpleTypeDemographicField"
-        binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getSimpleTypeDemographicFieldFieldId:language:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(getSimpleTypeDemographicFieldFieldId:language:completion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_language = GetNullableObjectAtIndex(args, 1);
-        [api getSimpleTypeDemographicFieldFieldId:arg_fieldId language:arg_language completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getUserDetailsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -135,20 +212,14 @@ void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<D
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.setDateField"
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getIDSchemaSync"
         binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
+        codec:SyncApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setDateFieldFieldId:subType:day:month:year:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(setDateFieldFieldId:subType:day:month:year:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getIDSchemaSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getIDSchemaSyncWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_subType = GetNullableObjectAtIndex(args, 1);
-        NSString *arg_day = GetNullableObjectAtIndex(args, 2);
-        NSString *arg_month = GetNullableObjectAtIndex(args, 3);
-        NSString *arg_year = GetNullableObjectAtIndex(args, 4);
-        [api setDateFieldFieldId:arg_fieldId subType:arg_subType day:arg_day month:arg_month year:arg_year completion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
+        [api getIDSchemaSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
         }];
       }];
     } else {
@@ -158,35 +229,14 @@ void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<D
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.removeDemographicField"
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getMasterDataSync"
         binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
+        codec:SyncApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(removeDemographicFieldFieldId:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(removeDemographicFieldFieldId:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getMasterDataSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getMasterDataSyncWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
-        [api removeDemographicFieldFieldId:arg_fieldId completion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DemographicsApi.setConsentField"
-        binaryMessenger:binaryMessenger
-        codec:DemographicsApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(setConsentFieldConsentData:completion:)], @"DemographicsApi api (%@) doesn't respond to @selector(setConsentFieldConsentData:completion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_consentData = GetNullableObjectAtIndex(args, 0);
-        [api setConsentFieldConsentData:arg_consentData completion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
+        [api getMasterDataSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
         }];
       }];
     } else {
