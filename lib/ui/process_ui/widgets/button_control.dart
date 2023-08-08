@@ -20,7 +20,7 @@ class ButtonControl extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            (field.required!)
+            (field.inputRequired!)
                 ? RichText(
                     text: TextSpan(
                     text: context

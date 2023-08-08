@@ -30,7 +30,7 @@ class BiometricCaptureControl extends StatefulWidget {
 }
 
 class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
-  String biometricAttribute = "Iris";
+  
   BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
       attemptNo: 0,
@@ -188,9 +188,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     }
     return i;
   }
-
-  @override
-  Widget build(BuildContext context) {
+  int i=0;
+String biometricAttribute = "Iris";
+  setInitialBioAttribute(){
     if (widget.field.conditionalBioAttributes!.first!.ageGroup!
             .compareTo(context.read<GlobalProvider>().ageGroup) ==
         0) {
@@ -225,6 +225,48 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
       } else {
         biometricAttribute = "Face";
       }
+    }
+    else{
+      if (widget.field.bioAttributes!
+              .contains("leftEye") &&
+          widget.field.bioAttributes!
+              .contains("rightEye")) {
+        biometricAttribute = "Iris";
+      } else if (widget.field.bioAttributes!
+              .contains("rightIndex") &&
+          widget.field.bioAttributes!
+              .contains("rightLittle") &&
+          widget.field.bioAttributes!
+              .contains("rightRing") &&
+          widget.field.bioAttributes!
+              .contains("rightMiddle")) {
+        biometricAttribute = "Right Hand";
+      } else if (widget.field.bioAttributes!
+              .contains("leftIndex") &&
+          widget.field.bioAttributes!
+              .contains("leftLittle") &&
+          widget.field.bioAttributes!
+              .contains("leftRing") &&
+          widget.field.bioAttributes!
+              .contains("leftMiddle")) {
+        biometricAttribute = "Left Hand";
+      } else if (widget.field.bioAttributes!
+              .contains("leftThumb") &&
+          widget.field.bioAttributes!
+              .contains("rightThumb")) {
+        biometricAttribute = "Thumbs";
+      } else {
+        biometricAttribute = "Face";
+      }
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    if(i<=0){
+      setInitialBioAttribute();
+      i++;
     }
     leftHand.thresholdPercentage =
         context.read<GlobalProvider>().thresholdValuesMap[
@@ -338,7 +380,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
-          child: (widget.field.required!)
+          child: (widget.field.inputRequired!)
               ? RichText(
                   text: TextSpan(
                   text: context

@@ -50,7 +50,7 @@ class CheckboxControl extends StatelessWidget {
             ),
             Flexible(
               // width: 300.w,
-              child: (field.required!)
+              child: (field.inputRequired!)
                   ? RichText(
                       text: TextSpan(
                       text: context
