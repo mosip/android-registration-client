@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_style.dart';
 
 class AcknowledgementPage extends StatefulWidget {
   const AcknowledgementPage({super.key});
@@ -20,17 +21,60 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 400.h,
-      width: 864.w,
-      padding: EdgeInsets.only(top: 33.h),
+    return SizedBox(
+      height: ScreenUtil().screenHeight,
+      width: ScreenUtil().screenWidth,
       child: Column(
         children: [
-          InAppWebView(
-            initialData: InAppWebViewInitialData(
-              data: context.watch<RegistrationTaskProvider>().previewTemplate,
-            ),
+          SizedBox(
+            height: 23.h,
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Registration Acknowledgement',
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppStyle.appBlackShade1,
+                ),
+              ),
+              InkWell(
+                onTap: () {},
+                child: Container(
+                  height: 42.h,
+                  width: 170.w,
+                  decoration: BoxDecoration(
+                    color: AppStyle.appSolidPrimary,
+                    border: Border.all(
+                      width: 1.w,
+                      color: AppStyle.appBlueShade1,
+                    ),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(5),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'PRINT',
+                      style: AppStyle.mobileButtonText,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 33.h,
+          ),
+          Expanded(
+            child: InAppWebView(
+              initialData: InAppWebViewInitialData(
+                data: context.watch<RegistrationTaskProvider>().previewTemplate,
+              ),
+            ),
+          ),  
         ],
       ),
     );

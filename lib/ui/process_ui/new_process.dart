@@ -13,6 +13,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
+import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
 import 'package:registration_client/ui/post_registration/authentication_page.dart';
 import 'package:registration_client/ui/post_registration/preview_page.dart';
@@ -461,7 +462,7 @@ class _NewProcessState extends State<NewProcess> {
                         : context.watch<GlobalProvider>().newProcessTabIndex ==
                                 size + 1
                             ? _getPacketAuthComponent()
-                            : const PreviewPage(),
+                            : const AcknowledgementPage(),
               ),
             ],
           ),
