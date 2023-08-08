@@ -1,53 +1,171 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
-class DropDownControl extends StatefulWidget {
-  const DropDownControl({
-    super.key,
-    required this.onChanged,
-  });
+import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
-  final Function(String) onChanged;
+import '../../../model/field.dart';
+import '../../../provider/global_provider.dart';
+import 'custom_label.dart';
+
+class DropDownControl extends StatefulWidget {
+  const DropDownControl(
+      {super.key, required this.field, required this.validation});
+
+  final Field field;
+  final RegExp validation;
 
   @override
   State<DropDownControl> createState() => _CustomDropDownState();
 }
 
 class _CustomDropDownState extends State<DropDownControl> {
-  String selected = "Select feild";
+  String? selected;
+
+  @override
+  void initState() {
+    if (context
+        .read<GlobalProvider>()
+        .fieldInputValue
+        .containsKey(widget.field.id ?? "")) {
+      _getSelectedValueFromMap("eng");
+    }
+    super.initState();
+  }
+
+  void saveData(value) {
+    if (value != null) {
+      if (widget.field.type == 'simpleType') {
+        context
+            .read<RegistrationTaskProvider>()
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
+      } else {
+        context
+            .read<RegistrationTaskProvider>()
+            .addDemographicField(widget.field.id ?? "", value);
+      }
+    }
+  }
+
+  void _saveDataToMap(value) {
+    if (value != null) {
+      if (widget.field.type == 'simpleType') {
+        context.read<GlobalProvider>().setLanguageSpecificValue(
+              widget.field.id ?? "",
+              value!,
+              "eng",
+              context.read<GlobalProvider>().fieldInputValue,
+            );
+      } else {
+        context.read<GlobalProvider>().setInputMapValue(
+              widget.field.id ?? "",
+              value!,
+              context.read<GlobalProvider>().fieldInputValue,
+            );
+      }
+    }
+  }
+
+  void _getSelectedValueFromMap(String lang) {
+    String response = "";
+    if (widget.field.type == 'simpleType') {
+      if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
+              as Map<String, dynamic>)
+          .containsKey(lang)) {
+        response = context
+            .read<GlobalProvider>()
+            .fieldInputValue[widget.field.id ?? ""][lang];
+      }
+    } else {
+      response =
+          context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
+    }
+    setState(() {
+      selected = response;
+    });
+  }
+
+  Future<List<String?>> _getLocationValues(
+      String hierarchyLevelName, String langCode) async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getLocationValues(hierarchyLevelName, langCode);
+  }
+
+  Future<List<GenericData?>> _getLocationValuesBasedOnParent(
+      String parentCode, String hierarchyLevelName, String langCode) async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getLocationValuesBasedOnParent(
+            parentCode, hierarchyLevelName, langCode);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final options = [""];
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: Colors.grey,
-          width: 1.0,
-        ),
-      ),
-      child: DropdownButtonFormField(
-        icon: Icon(null),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: selected,
-          hintStyle: const TextStyle(color: Color(0xff999999)),
-        ),
-        items: options
-            .map((option) => DropdownMenuItem(
-                  value: option,
-                  child: Text(option),
-                ))
-            .toList(),
-        onChanged: (value) {
-          widget.onChanged(value.toString());
-          setState(() {
-            selected = value!;
-          });
-        },
-      ),
-    );
+    return FutureBuilder(
+        future: _getLocationValues(widget.field.subType!, "eng"),
+        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+          return Card(
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomLabel(feild: widget.field),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  snapshot.hasData
+                      ? DropdownButtonFormField(
+                          icon: const Icon(null),
+                          decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                            ),
+                            hintText: "Select Option",
+                            hintStyle:
+                                const TextStyle(color: Color(0xff999999)),
+                          ),
+                          items: snapshot.data!
+                              .map((option) => DropdownMenuItem(
+                                    value: option,
+                                    child: Text(option!),
+                                  ))
+                              .toList(),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          value: selected,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a value';
+                            }
+                            if (!widget.validation.hasMatch(value)) {
+                              return 'Invalid input';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            saveData(value);
+                            _saveDataToMap(value);
+                            setState(() {
+                              selected = value!;
+                            });
+                          },
+                        )
+                      : const SizedBox.shrink(),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

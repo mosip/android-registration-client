@@ -284,7 +284,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
 
     private void syncLatestIdSchema(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Context context) {
-        Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION);
+        Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION, "registration-client");
         call.enqueue(new Callback<ResponseBody>() {
 
             @Override
@@ -469,7 +469,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     syncJobDef.setIsActive(jsonObject.getBoolean("isActive"));
 
                     syncJobDefRepository.saveSyncJobDef(syncJobDef);
-                    jobManagerService.refreshJobStatus(syncJobDef);
+//                    jobManagerService.refreshJobStatus(syncJobDef);
                 }
                 break;
             case "Language":

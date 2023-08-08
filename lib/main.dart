@@ -96,10 +96,12 @@ class RegistrationClientSplashPage extends StatefulWidget {
   const RegistrationClientSplashPage({super.key});
 
   @override
-  State<RegistrationClientSplashPage> createState() => _RegistrationClientSplashPageState();
+  State<RegistrationClientSplashPage> createState() =>
+      _RegistrationClientSplashPageState();
 }
 
-class _RegistrationClientSplashPageState extends State<RegistrationClientSplashPage> {
+class _RegistrationClientSplashPageState
+    extends State<RegistrationClientSplashPage> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);

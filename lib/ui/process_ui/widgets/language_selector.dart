@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/pigeon/process_spec_pigeon.dart';
+import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -174,13 +177,32 @@ class LanguageSelector extends StatelessWidget {
             ),
             Expanded(
               child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    context.read<GlobalProvider>().getThresholdValues();
                     context.read<GlobalProvider>().fieldDisplayValues = {};
 
                     context.read<GlobalProvider>().fieldValues(newProcess);
+
                     Navigator.of(context).pop();
-                    Navigator.pushNamed(context, NewProcess.routeName,
-                        arguments: {"process": newProcess});
+                    List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
+                      return context.read<GlobalProvider>().langToCode(e) as String;
+                    }).toList();
+                    // print(langList);
+                    await context
+                        .read<RegistrationTaskProvider>()
+                        .startRegistration(langList);
+                    String registrationStartError = context.read<RegistrationTaskProvider>().registrationStartError;
+
+                    if (registrationStartError.isEmpty) {
+                      Navigator.pushNamed(context, NewProcess.routeName,
+                          arguments: {"process": newProcess});
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(registrationStartError),
+                        ),
+                      );
+                    }
                   },
                   child: const Text("SUBMIT")),
             )

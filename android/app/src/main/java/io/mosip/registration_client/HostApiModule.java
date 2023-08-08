@@ -15,9 +15,13 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
+import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
@@ -35,10 +39,17 @@ import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
+import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.DemographicsDetailsApi;
+import io.mosip.registration_client.api_services.DocumentDetailsApi;
+
+import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
+import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 
 @Module
@@ -95,13 +106,54 @@ public class HostApiModule {
         return new CommonDetailsApi(masterDataService);
     }
     
+
     @Provides
     @Singleton
     ProcessSpecDetailsApi getProcessSpecDetailsApi(IdentitySchemaRepository identitySchemaRepository,
-                                                   GlobalParamRepository globalParamRepository) {
+                                                   GlobalParamRepository globalParamRepository,RegistrationService registrationService) {
         return new ProcessSpecDetailsApi(appContext, identitySchemaRepository,
-                        globalParamRepository);
-                                                   }
+                        globalParamRepository,registrationService);
+
+    }
+
+    @Provides
+    @Singleton
+    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService,GlobalParamRepository globalParamRepository) {
+        return new BiometricsDetailsApi(auditManagerService, objectMapper,biometrics095Service,registrationService,globalParamRepository);
+
+    }
+
+    @Provides
+    @Singleton
+    RegistrationApi getRegistrationDataApi(RegistrationService registrationService, TemplateService templateService) {
+        return new RegistrationApi(registrationService, templateService);
+
+    }
+
+    @Provides
+    @Singleton
+    PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
+                                                       LoginService loginService, PacketService packetService) {
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService);
+    }
+
+    @Provides
+    @Singleton
+    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService) {
+        return new DemographicsDetailsApi(registrationService);
+    }
+
+    @Provides
+    @Singleton
+    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService) {
+        return new DynamicDetailsApi(masterDataService);
+    }
+
+    @Provides
+    @Singleton
+    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService) {
+        return new DocumentDetailsApi(registrationService);
+    }
     @Provides
     @Singleton
     MasterDataSyncApi getSyncResponseApi(
@@ -127,6 +179,5 @@ public class HostApiModule {
                 syncJobDefRepository, languageRepository,jobManagerService
                 );
     }
-
 }
 

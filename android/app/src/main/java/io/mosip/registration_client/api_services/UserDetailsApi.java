@@ -63,7 +63,6 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .build();
             result.success(user);
         } else {
-
             UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
                     .setIsActive(userDetail.getIsActive())
@@ -71,12 +70,9 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .setEmail(userDetail.getEmail())
                     .setCenterId(userDetail.getRegCenterId())
                     .setIsOnboarded(userDetail.isOnboarded())
-
                     .setCenterName("")
-
                     .build();
             result.success(user);
         }
     }
-
 }

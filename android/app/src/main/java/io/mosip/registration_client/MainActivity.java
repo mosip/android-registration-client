@@ -6,6 +6,8 @@
 
 package io.mosip.registration_client;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -37,17 +39,29 @@ import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.api_services.AuthenticationApi;
+import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.DemographicsDetailsApi;
+import io.mosip.registration_client.api_services.DocumentDetailsApi;
+import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
+import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
+import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuthResponsePigeon;
+import io.mosip.registration_client.model.BiometricsPigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
+import io.mosip.registration_client.model.DemographicsDataPigeon;
+import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
+import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
+import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.UserPigeon;
+import io.mosip.registration_client.model.DocumentDataPigeon;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
@@ -65,6 +79,7 @@ public class MainActivity extends FlutterActivity {
     AuditManagerService auditManagerService;
     @Inject
     MasterDataService masterDataService;
+
     @Inject
     RegistrationService registrationService;
     @Inject
@@ -99,6 +114,25 @@ public class MainActivity extends FlutterActivity {
     ProcessSpecDetailsApi processSpecDetailsApi;
 
     @Inject
+    BiometricsDetailsApi biometricsDetailsApi;
+    
+    @Inject
+    PacketAuthenticationApi packetAuthenticationApi;
+
+    @Inject
+    RegistrationApi registrationApi;
+
+    @Inject
+    DemographicsDetailsApi demographicsDetailsApi;
+
+    @Inject
+    DocumentDetailsApi documentDetailsApi;
+
+
+    @Inject
+    DynamicDetailsApi dynamicDetailsApi;
+
+    @Inject
     MasterDataSyncApi masterDataSyncApi;
 
     @Override
@@ -118,6 +152,7 @@ public class MainActivity extends FlutterActivity {
         appComponent.inject(this);
     }
 
+
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
@@ -128,7 +163,14 @@ public class MainActivity extends FlutterActivity {
         CommonDetailsPigeon.CommonDetailsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),commonDetailsApi);
         AuthResponsePigeon.AuthResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), authenticationApi);
         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
-
+        BiometricsPigeon.BiometricsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),biometricsDetailsApi);
+        biometricsDetailsApi.setCallbackActivity(this);
+        RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
+        PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
+        DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
+        DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
+        
+        DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
@@ -138,6 +180,7 @@ public class MainActivity extends FlutterActivity {
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
+
                                     break;
 
                                 default:
@@ -146,5 +189,23 @@ public class MainActivity extends FlutterActivity {
                             }
                         }
                 );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    biometricsDetailsApi.parseDiscoverResponse(data.getExtras());
+                    break;
+                case 2:
+                    biometricsDetailsApi.parseDeviceInfoResponse(data.getExtras());
+                    break;
+                case 3:
+                    biometricsDetailsApi.parseRCaptureResponse(data.getExtras());
+                    break;
+            }
+        }
     }
 }

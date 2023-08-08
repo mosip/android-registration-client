@@ -197,7 +197,7 @@ void main() {
     await tester.pumpWidget(
       testableWidget(
         child: SizedWidget(
-          child: MachineKeys(),
+          child: MachineKeys(onCloseComponent: () {  },),
         ),
       ),
     );

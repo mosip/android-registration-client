@@ -15,6 +15,7 @@ class AuthProvider with ChangeNotifier {
   late User _currentUser;
   String _loginError = "";
   bool _isLoggingIn = false;
+  bool _isPacketAuthenticated = false;
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isSyncing => _isSyncing;
@@ -26,6 +27,7 @@ class AuthProvider with ChangeNotifier {
   User get currentUser => _currentUser;
   String get loginError => _loginError;
   bool get isLoggingIn => _isLoggingIn;
+  bool get isPacketAuthenticated => _isPacketAuthenticated;
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -77,6 +79,11 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  setIsPacketAuthenticated(bool value) {
+    _isPacketAuthenticated = value;
+    notifyListeners();
+  }
+
   validateUser(String username) async {
     final user = await auth.validateUser(username);
 
@@ -105,6 +112,18 @@ class AuthProvider with ChangeNotifier {
       _isLoggedIn = true;
     }
     setIsLoggingIn(false);
+
+    notifyListeners();
+  }
+  
+  authenticatePacket(String username, String password, bool isConnected) async {
+    final packetAuth = await auth.packetAuthentication(username, password, isConnected);
+
+    if(packetAuth.errorCode != null) {
+      _isPacketAuthenticated = false;
+    } else {
+      _isPacketAuthenticated = true;
+    }
 
     notifyListeners();
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,9 +8,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/app_language_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/post_registration/authentication_page.dart';
+import 'package:registration_client/ui/post_registration/preview_page.dart';
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -19,15 +23,33 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import 'widgets/home_page_card.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const route = "/home-page";
   const HomePage({super.key});
 
   static const platform =
       MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    _fetchProcessSpec();
+    super.initState();
+  }
+
   void syncData(BuildContext context) async {
-    await SyncProvider().autoSync(context);
+    // await SyncProvider().autoSync(context);
+    await _masterDataSync();
+    await _getNewProcessSpecAction(context);
+    await _getCenterNameAction(context);
+  }
+
+  void _fetchProcessSpec() async {
     await _getNewProcessSpecAction(context);
     await _getCenterNameAction(context);
   }
@@ -35,7 +57,7 @@ class HomePage extends StatelessWidget {
   Future<void> _masterDataSync() async {
     String result;
     try {
-      result = await platform.invokeMethod("masterDataSync");
+      result = await HomePage.platform.invokeMethod("masterDataSync");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }
@@ -44,6 +66,10 @@ class HomePage extends StatelessWidget {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
+      context.read<GlobalProvider>().clearMap();
+      context.read<GlobalProvider>().newProcessTabIndex = 0;
+      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
+      context.read<GlobalProvider>().setRegId("");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -189,7 +215,7 @@ class HomePage extends StatelessWidget {
                                 .length,
                             (index) => HomePageCard(
                                   icon: Image.asset(
-                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon!}",
+                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon??""}",
                                     width: 20,
                                     height: 20,
                                   ),

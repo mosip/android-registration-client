@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/machine_pigeon.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
@@ -47,6 +48,13 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoggingIn = false;
   String username = '';
   String password = '';
+  bool isMachineKeysDialogOpen = false;
+
+  _toggleMachineKeysDialog() {
+    setState(() {
+      isMachineKeysDialogOpen = false;
+    });
+  }
 
   final List<String> _languages = ['eng', 'ara', 'fra'];
 
@@ -112,6 +120,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+                  isMachineKeysDialogOpen
+                      ? Container(
+                        color: Colors.transparent.withOpacity(0.5),
+                        child: Center(
+                            child: MachineKeys(
+                              onCloseComponent: () {
+                                _toggleMachineKeysDialog();
+                              },
+                            ),
+                          ),
+                      )
+                      : const SizedBox(),
                 ],
               ),
             ),
@@ -181,25 +201,29 @@ class _LoginPageState extends State<LoginPage> {
     if (!isTrue) {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
-    } else {
-      authProvider.setIsSyncing(false);
-      syncProvider.setIsGlobalSyncInProgress(true);
-      if (syncProvider.isGlobalSyncInProgress) {
-        showLoadingDialog(context);
-        await syncProvider.autoSync(context).then((value) {
-          // syncProvider.setIsGlobalSyncInProgress(false);
-        });
-      }
-      showSyncResultDialog(context);
-      Timer(const Duration(seconds: 5), () {
-        if (syncProvider.isAllSyncSuccessful()) {
-          RestartWidget.restartApp(context);
-        } else {
-          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-        }
-      });
-      // _navigateToHomePage();
-    }
+      return;
+    } 
+    // else {
+    //   authProvider.setIsSyncing(false);
+    //   syncProvider.setIsGlobalSyncInProgress(true);
+    //   if (syncProvider.isGlobalSyncInProgress) {
+    //     showLoadingDialog(context);
+    //     await syncProvider.autoSync(context).then((value) {
+    //       // syncProvider.setIsGlobalSyncInProgress(false);
+    //     });
+    //   }
+    //   showSyncResultDialog(context);
+    //   Timer(const Duration(seconds: 5), () {
+    //     if (syncProvider.isAllSyncSuccessful()) {
+    //       // RestartWidget.restartApp(context);
+    //       _navigateToHomePage();
+    //     } else {
+    //       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    //     }
+    //   });
+    // }
+
+    _navigateToHomePage();
 
     setState(() {
       isLoggingIn = false;
@@ -245,7 +269,8 @@ class _LoginPageState extends State<LoginPage> {
   _navigateToHomePage() {
     if (context.read<AuthProvider>().isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (context.read<AuthProvider>().isOnboarded ||
+      if (context.read<AuthProvider>().isOnboarded || 
+          context.read<AuthProvider>().isDefault ||
           (context.read<AuthProvider>().isSupervisor &&
               context.read<AuthProvider>().isOfficer)) {
         context.read<GlobalProvider>().setCurrentIndex(1);
@@ -276,12 +301,9 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           InkWell(
             onLongPress: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MachineKeys(),
-                ),
-              );
+              setState(() {
+                isMachineKeysDialogOpen = true;
+              });
             },
             child: Container(
               height: isMobile ? 46.h : 54.h,
@@ -499,8 +521,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 200.h : 500.h,
-              width: isMobile ? 200.h : 500.h,
+              height: isMobile ? 125.h : 220.h,
+              width: isMobile ? 125.w : 220.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Padding(
@@ -510,8 +532,8 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: isMobile ? 65.h : 500.h,
-                      width: isMobile ? 65.w : 500.w,
+                      height: isMobile ? 40.h : 100.h,
+                      width: isMobile ? 40.w : 100.w,
                       child: syncProvider.isAllSyncSuccessful()
                           ? SvgPicture.asset(
                               "assets/svg/Success Message Icon.svg")
@@ -569,8 +591,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 105.h : 200.h,
-              width: isMobile ? 105.w : 200.w,
+              height: isMobile ? 125.h : 220.h,
+              width: isMobile ? 125.w : 220.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Column(
@@ -582,8 +604,8 @@ class _LoginPageState extends State<LoginPage> {
                       Image.asset(
                         appIconLogoOnly,
                         fit: BoxFit.scaleDown,
-                        height: isMobile ? 40.h : 100.h,
-                        width: isMobile ? 40.w : 100.w,
+                        height: isMobile ? 35.h : 90.h,
+                        width: isMobile ? 35.w : 90.w,
                       ),
                       Transform.scale(
                         scale: isMobile? 1.4 : 2.8,

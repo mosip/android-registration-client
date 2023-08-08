@@ -20,6 +20,8 @@ List<Color> app_colors = [
   Color(0xFFFEC401)
 ];
 
+
+
 List<Color> secondaryColors = [
   Color(0xFF214FBF),
   Color(0xFF6F6E6E),
@@ -33,6 +35,15 @@ List<Color> secondaryColors = [
   Color(0xFF0C0CAE3),
   Color(0xFFFAFBFF),
   Color(0xFF4B9D20),
+  Color(0xFF1C429F),
+  Color(0xFFE1EDF5),
+  Color(0xFFE5EBFA),
+  Color(0xFFFF0000),
+  Color(0xFFF29D1C),
+  Color(0xFFE0E0E0),
+  Color(0xFFF8F8F8),
+  Color(0xFF848484),
+  Color(0xFFC11717),
 ];
 FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;

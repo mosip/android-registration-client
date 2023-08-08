@@ -33,6 +33,8 @@ import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.sbi.DigitalId;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.util.JsonUtils;
+
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -130,6 +132,10 @@ public class RegistrationDto extends Observable {
         clearAndNotifyAllObservers();
     }
 
+    public Map<String, Object> getAgeGroup(){
+        return AGE_GROUPS;
+    }
+
     public void addDemographicField(String fieldId, String value) {
         if(isValidValue(value))
             this.demographics.put(fieldId, value);
@@ -204,12 +210,15 @@ public class RegistrationDto extends Observable {
     }
 
     public List<BiometricsDto> getBiometrics(String fieldId, Modality modality, int attempt) {
+
         List<BiometricsDto> list = new ArrayList<>();
         for(String attribute : modality.getAttributes()) {
             String key = String.format(BIO_KEY_ATTEMPT, fieldId, attribute, attempt);
+
             if(this.biometrics.containsKey(key))
                 list.add(this.biometrics.get(key));
         }
+
         return list;
     }
 

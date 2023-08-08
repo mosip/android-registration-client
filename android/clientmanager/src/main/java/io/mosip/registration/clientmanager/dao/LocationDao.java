@@ -13,11 +13,11 @@ import java.util.List;
 @Dao
 public interface LocationDao {
 
-    @Query("select name from location where parent_loc_code=:parentLocCode and lang_code=:langCode and is_active=1")
-    List<String> findAllLocationByParentLocCode(String parentLocCode, String langCode);
+    @Query("select name, code, lang_code from location where parent_loc_code=:parentLocCode and lang_code=:langCode and is_active=1")
+    List<GenericValueDto> findAllLocationByParentLocCode(String parentLocCode, String langCode);
 
-    @Query("select name from location where parent_loc_code is null and lang_code=:langCode and is_active=1")
-    List<String> findParentLocation(String langCode);
+    @Query("select name, code, lang_code from location where parent_loc_code is null and lang_code=:langCode and is_active=1")
+    List<GenericValueDto> findParentLocation(String langCode);
 
     @Query("select name, code, lang_code from location where hierarchy_level = :level and lang_code=:langCode and is_active=1")
     List<GenericValueDto> findAllLocationByHierarchyLevel(int level, String langCode);

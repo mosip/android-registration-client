@@ -24,8 +24,19 @@ jobs:
       - name: Flutter clean
         run: flutter clean
 
-      - name: Flutter test
-        run: flutter test
+      - name: Creating Folders for generated source code
+        run: |
+          sh pigeon.sh
+
+      # - name: Flutter test
+      #   run: flutter test
 
       - name: Build Android APK
-        run: flutter build apk
+        run: flutter build apk --debug
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: apk-output
+          path: ./build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 10

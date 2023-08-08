@@ -30,7 +30,7 @@ class Field with _$Field {
     String? fieldType,
     String? format,
     Map<String, String>? visible,
-    // List<Map<String, String>?>? conditionalBioAttributes,
+    List<ConditionalBioAttributes?>? conditionalBioAttributes,
     String? alignmentGroup,
     List<String?>? bioAttributes,
     List<Validator?>? validators,
@@ -49,4 +49,17 @@ class RequiredOn with _$RequiredOn {
 
   factory RequiredOn.fromJson(Map<String, Object?> json) =>
       _$RequiredOnFromJson(json);
+}
+
+@freezed
+class ConditionalBioAttributes with _$ConditionalBioAttributes {
+  const factory ConditionalBioAttributes({
+    String? ageGroup,
+    List<String?>? bioAttributes,
+    String? process,
+    String? validationExpr,
+  }) = _ConditionalBioAttributes;
+
+  factory ConditionalBioAttributes.fromJson(Map<String, Object?> json) =>
+      _$ConditionalBioAttributesFromJson(json);
 }

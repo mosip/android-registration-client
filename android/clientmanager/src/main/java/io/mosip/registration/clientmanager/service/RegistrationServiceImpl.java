@@ -158,7 +158,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException(context, R.string.err_004);
         }
 
-        try {
+//        try {
             this.registrationDto.getAllDemographicFields().forEach(entry -> {
                 packetWriterService.setField(this.registrationDto.getRId(), entry.getKey(), entry.getValue());
             });
@@ -204,9 +204,9 @@ public class RegistrationServiceImpl implements RegistrationService {
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
                     centerMachineDto.getCenterId(), "NEW", additionalInfo);
 
-        } finally {
+//        } finally {
             clearRegistration();
-        }
+//        }
     }
 
     @Override
@@ -417,6 +417,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         qualityType.setAlgorithm(birAlgorithm);
         qualityType.setScore((long) biometricsDto.getQualityScore());
         VersionType versionType = new VersionType(1, 1);
+
 
         String payLoad = null;
         if (iso != null) {

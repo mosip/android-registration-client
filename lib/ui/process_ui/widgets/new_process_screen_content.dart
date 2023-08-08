@@ -1,21 +1,25 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/document_upload_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
-import 'package:registration_client/ui/process_ui/widgets/preferred_lang_button_control.dart';
-import 'dart:developer';
 
-import 'package:registration_client/utils/app_config.dart';
-
+import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
-
+import '../../../platform_spi/registration.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -30,7 +34,10 @@ class NewProcessScreenContent extends StatefulWidget {
 }
 
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
-  Map<String, dynamic> formValues = {};
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Widget widgetType(Field e) {
     RegExp regexPattern = RegExp(r'^.*$');
@@ -42,143 +49,85 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       }
     }
 
-    if (e.controlType == "checkbox") {
-      return CheckboxControl(field: e);
-    }
-    if (e.controlType == "html") {
-      return HtmlBoxControl(field: e);
-    }
-    if (e.controlType == "button") {
-      if (e.subType == "preferredLang") {
-        return PreferredLangButtonControl(field: e);
-      }
-
-      if (e.subType == "gender" || e.subType == "residenceStatus") {
-        Map<String, List<String>> values = {
-          'gender': ["Female", "Male", "Others"],
-          'residenceStatus': ["Permanent", "Temporary"],
-        };
-        return Card(
-          elevation: 0,
-          margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomLabel(feild: e),
-                RadioButtonControl(
-                  onChanged: (value) => formValues[e.label!["eng"]!] = value,
-                  values: values[e.subType] ?? [],
-                ),
-              ],
-            ),
-          ),
+    switch (e.controlType) {
+      case "checkbox":
+        return CheckboxControl(field: e);
+      case "html":
+        return HtmlBoxControl(field: e);
+      case "biometrics":
+        return BiometricCaptureControl(field: e);
+      case "button":
+        if (e.subType == "preferredLang") {
+          return ButtonControl(field: e);
+        }
+        if (e.subType == "gender" || e.subType == "residenceStatus") {
+          return RadioButtonControl(field: e);
+        }
+        return Text("${e.controlType}");
+      case "textbox":
+        return TextBoxControl(e: e, validation: regexPattern);
+      case "dropdown":
+        return DropDownControl(
+          validation: regexPattern,
+          field: e,
         );
-      }
-      return Text("${e.controlType}");
+      case "ageDate":
+        return AgeDateControl(
+          field: e,
+          validation: regexPattern,
+        );
+      case "fileupload":
+        return DocumentUploadControl(
+          field: e,
+          validation: regexPattern,
+        );
+      default:
+        return Text("${e.controlType}");
     }
-    if (e.controlType == "textbox") {
-      List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
-      List<String> singleTextBox = [
-        "Phone",
-        "Email",
-        "introducerName",
-        "RID",
-        "UIN",
-        "none"
-      ];
-      if (singleTextBox.contains(e.subType)) {
-        choosenLang = ["English"];
-      }
+  }
 
-      return Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(feild: e),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                children: choosenLang.map((code) {
-                  String newCode =
-                      context.read<GlobalProvider>().langToCode(code);
-                  return TextBoxControl(
-                      onChanged: (value) =>
-                          formValues[e.label![newCode]!] = value,
-                      label: e.label![newCode]!.toString(),
-                      lang: newCode,
-                      validation: regexPattern);
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    if (e.controlType == "dropdown") {
-      return Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(feild: e),
-              const SizedBox(
-                height: 10,
-              ),
-              DropDownControl(
-                onChanged: (value) => formValues[e.label!["eng"]!] = value,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    if (e.controlType == "ageDate") {
-      return Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(feild: e),
-              const SizedBox(
-                height: 10,
-              ),
-              AgeDateControl(
-                onChanged: (value) => formValues[e.label!["eng"]!] = value,
-                validation: regexPattern,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+  evaluateMVEL(
+      String fieldData, String? engine, String? expression, Field e) async {
+    final Registration registration = Registration();
+    registration.evaluateMVEL(fieldData, expression!).then((value) {
+      if (!value) {
+        context.read<GlobalProvider>().removeFieldFromMap(
+            e.id!, context.read<GlobalProvider>().fieldInputValue);
+        context.read<RegistrationTaskProvider>().removeDemographicField(e.id!);
+      }
+      context.read<GlobalProvider>().setMvelValues(e.id!, value);
+    });
+  }
 
-    return Text("${e.controlType}");
+  _checkMvel(Field e) {
+    if (e.required == false) {
+      if (e.requiredOn!.isNotEmpty) {
+        evaluateMVEL(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
+            e.requiredOn?[0]?.expr, e);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ...widget.screen.fields!.map((e) {
-          if (e!.inputRequired == true) {
-            return widgetType(e);
-          }
-          return Container();
-        }).toList(),
-      ],
+    return Form(
+      key: context.watch<GlobalProvider>().formKey,
+      child: Column(
+        children: [
+          ...widget.screen.fields!.map((e) {
+            _checkMvel(e!);
+            if (e.inputRequired == true) {
+              if (context.read<GlobalProvider>().mvelValues[e.id] ?? true) {
+                return widgetType(e);
+              }
+              // return context.watch<GlobalProvider>().mvelvalues[e.id] ?? true
+              //     ? widgetType(e)
+              //     : Container();
+            }
+            return Container();
+          }).toList(),
+        ],
+      ),
     );
   }
 }

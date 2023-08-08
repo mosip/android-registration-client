@@ -136,7 +136,6 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
         }
 
         try {
-
             String token = loginService.saveUserAuthTokenOffline(username);
             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse(token)

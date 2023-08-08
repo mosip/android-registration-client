@@ -136,7 +136,6 @@ public class UserDetailRepository {
         userPasswordDao.insertUserPassword(userPassword);
     }
 
-
     public void saveUserAuthToken(String userId, String token, String refreshToken,
                                      long tExpiry, long rExpiry) {
         UserToken userToken = userTokenDao.findByUsername(userId);
@@ -153,6 +152,7 @@ public class UserDetailRepository {
 
     public String getUserAuthToken(String userId) {
         UserToken userToken = userTokenDao.findByUsername(userId);
+
         if(userToken == null) {
             return "";
         }
