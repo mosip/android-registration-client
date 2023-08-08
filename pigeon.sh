@@ -5,7 +5,10 @@
 flutter pub get
 
 # Run Build Runner
-flutter pub run build_runner build
+flutter pub run build_runner build --delete-conflicting-outputs
+
+mkdir -p ./android/app/src/main/java/io/mosip/registration_client/model
+mkdir -p lib/pigeon
 
 # Generate user pigeon files
 flutter pub run pigeon --input pigeon/user.dart --dart_out lib/pigeon/user_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/UserPigeon.java --java_package "io.mosip.registration_client.model"

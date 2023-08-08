@@ -201,25 +201,29 @@ class _LoginPageState extends State<LoginPage> {
     if (!isTrue) {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
-    } else {
-      authProvider.setIsSyncing(false);
-      syncProvider.setIsGlobalSyncInProgress(true);
-      if (syncProvider.isGlobalSyncInProgress) {
-        showLoadingDialog(context);
-        await syncProvider.autoSync(context).then((value) {
-          // syncProvider.setIsGlobalSyncInProgress(false);
-        });
-      }
-      showSyncResultDialog(context);
-      Timer(const Duration(seconds: 5), () {
-        if (syncProvider.isAllSyncSuccessful()) {
-          // RestartWidget.restartApp(context);
-          _navigateToHomePage();
-        } else {
-          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-        }
-      });
-    }
+      return;
+    } 
+    // else {
+    //   authProvider.setIsSyncing(false);
+    //   syncProvider.setIsGlobalSyncInProgress(true);
+    //   if (syncProvider.isGlobalSyncInProgress) {
+    //     showLoadingDialog(context);
+    //     await syncProvider.autoSync(context).then((value) {
+    //       // syncProvider.setIsGlobalSyncInProgress(false);
+    //     });
+    //   }
+    //   showSyncResultDialog(context);
+    //   Timer(const Duration(seconds: 5), () {
+    //     if (syncProvider.isAllSyncSuccessful()) {
+    //       // RestartWidget.restartApp(context);
+    //       _navigateToHomePage();
+    //     } else {
+    //       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    //     }
+    //   });
+    // }
+
+    _navigateToHomePage();
 
     setState(() {
       isLoggingIn = false;
