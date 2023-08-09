@@ -92,7 +92,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          CustomLabel(feild: widget.e),
+          CustomLabel(field: widget.e),
           const SizedBox(
             height: 10,
           ),

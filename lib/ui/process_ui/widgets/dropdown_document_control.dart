@@ -118,7 +118,7 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomLabel(feild: widget.field),
+                  CustomLabel(field: widget.field),
                   const SizedBox(
                     height: 10,
                   ),

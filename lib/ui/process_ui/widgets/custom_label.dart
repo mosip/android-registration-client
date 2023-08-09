@@ -5,9 +5,9 @@ import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 
 class CustomLabel extends StatelessWidget {
-  final Field feild;
+  final Field field;
 
-  const CustomLabel({super.key, required this.feild});
+  const CustomLabel({super.key, required this.field});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +16,12 @@ class CustomLabel extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            context.read<GlobalProvider>().chooseLanguage(feild.label!),
+            context.read<GlobalProvider>().chooseLanguage(field.label!),
           ),
           const SizedBox(
             width: 5,
           ),
-          if (feild.inputRequired! && feild.required!)
+          if (field.inputRequired! && field.required!)
             const Text(
               "*",
               style: TextStyle(color: Colors.red, fontSize: 15),

@@ -123,7 +123,7 @@ class _CustomDropDownState extends State<DropDownControl> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomLabel(feild: widget.field),
+                  CustomLabel(field: widget.field),
                   const SizedBox(
                     height: 10,
                   ),
