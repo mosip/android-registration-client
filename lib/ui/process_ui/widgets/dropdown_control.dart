@@ -212,6 +212,8 @@ class _CustomDropDownState extends State<DropDownControl> {
                       .read<GlobalProvider>()
                       .locationHierarchy
                       .toString());
+
+                  log("commited on feature flutter error");
                 },
               ),
             ],
