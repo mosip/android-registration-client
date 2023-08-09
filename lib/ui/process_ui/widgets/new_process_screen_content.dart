@@ -67,10 +67,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "textbox":
         return TextBoxControl(e: e, validation: regexPattern);
       case "dropdown":
-        return DropDownControl(
-          validation: regexPattern,
-          field: e,
-        );
+        return DropDownControl(validation: regexPattern, field: e);
       case "ageDate":
         return AgeDateControl(
           field: e,

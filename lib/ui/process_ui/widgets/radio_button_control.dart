@@ -41,9 +41,8 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   void _getSelectedValueFromMap(String lang) {
     String response = "";
-    response = context
-        .read<GlobalProvider>()
-        .fieldInputValue[widget.field.id][lang];
+    response =
+        context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang];
     setState(() {
       selectedOption = response.toLowerCase();
     });
@@ -71,67 +70,69 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     return FutureBuilder(
       future: _getFieldValues(widget.field.subType!, "eng"),
       builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
-        return Card(
-          elevation: 0,
-          margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomLabel(feild: widget.field),
-                const SizedBox(
-                  height: 16,
-                ),
-                SizedBox(
-                  width: 0,
-                  height: 0,
-                  child: TextFormField(
-                      readOnly: true,
-                      validator: (value) {
-                        if (selectedOption == null) {
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Card(
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomLabel(feild: widget.field),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  SizedBox(
+                    width: 0,
+                    height: 0,
+                    child: TextFormField(
+                        readOnly: true,
+                        validator: (value) {
+                          if (selectedOption == null) {
+                            setState(() {
+                              showError = true;
+                            });
+                            return "Select option";
+                          }
                           setState(() {
-                            showError = true;
+                            showError = false;
                           });
-                          return "Select option";
-                        }
-                        setState(() {
-                          showError = false;
-                        });
-                        return null;
-                      }),
-                ),
-                snapshot.hasData
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: snapshot.data!
-                            .map(
-                              (e) => Row(
-                                children: [
-                                  SelectableCard(
+                          return null;
+                        }),
+                  ),
+                  snapshot.hasData
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: snapshot.data!
+                                .map(
+                                  (e) => SelectableCard(
                                     title: e!,
                                     value: e.toLowerCase(),
                                     groupValue: selectedOption,
                                     onChanged: handleOptionChange,
-                                  )
-                                ],
-                              ),
-                            )
-                            .toList(),
-                      )
-                    : const SizedBox.shrink(),
-                const SizedBox(
-                  height: 10,
-                ),
-                showError
-                    ? const Text(
-                        "* Select Option",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 159, 21, 11),
-                            fontSize: 12),
-                      )
-                    : const SizedBox.shrink(),
-              ],
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  showError
+                      ? const Text(
+                          "* Select Option",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 159, 21, 11),
+                              fontSize: 12),
+                        )
+                      : const SizedBox.shrink(),
+                ],
+              ),
             ),
           ),
         );
