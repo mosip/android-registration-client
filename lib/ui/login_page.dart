@@ -122,15 +122,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   isMachineKeysDialogOpen
                       ? Container(
-                        color: Colors.transparent.withOpacity(0.5),
-                        child: Center(
+                          color: Colors.transparent.withOpacity(0.5),
+                          child: Center(
                             child: MachineKeys(
                               onCloseComponent: () {
                                 _toggleMachineKeysDialog();
                               },
                             ),
                           ),
-                      )
+                        )
                       : const SizedBox(),
                 ],
               ),
@@ -202,29 +202,20 @@ class _LoginPageState extends State<LoginPage> {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
       return;
+    }
+    
+    await syncProvider.getLastSyncTime();
+    debugPrint(syncProvider.lastSuccessfulSyncTime);
+    if (isTrue && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
+      syncProvider.setIsGlobalSyncInProgress(true);
+      await _autoSyncHandler();
     } 
-    // else {
-    //   authProvider.setIsSyncing(false);
-    //   syncProvider.setIsGlobalSyncInProgress(true);
-    //   if (syncProvider.isGlobalSyncInProgress) {
-    //     showLoadingDialog(context);
-    //     await syncProvider.autoSync(context).then((value) {
-    //       // syncProvider.setIsGlobalSyncInProgress(false);
-    //     });
-    //   }
-    //   showSyncResultDialog(context);
-    //   Timer(const Duration(seconds: 5), () {
-    //     if (syncProvider.isAllSyncSuccessful()) {
-    //       // RestartWidget.restartApp(context);
-    //       _navigateToHomePage();
-    //     } else {
-    //       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-    //     }
-    //   });
-    // }
-
-    _navigateToHomePage();
-
+    else
+     {
+      authProvider.setIsSyncing(false);
+      _navigateToHomePage();
+    }
+    // _navigateToHomePage();
     setState(() {
       isLoggingIn = false;
     });
@@ -269,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
   _navigateToHomePage() {
     if (context.read<AuthProvider>().isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (context.read<AuthProvider>().isOnboarded || 
+      if (context.read<AuthProvider>().isOnboarded ||
           context.read<AuthProvider>().isDefault ||
           (context.read<AuthProvider>().isSupervisor &&
               context.read<AuthProvider>().isOfficer)) {
@@ -511,6 +502,26 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  _autoSyncHandler() async {
+   
+    if (syncProvider.isGlobalSyncInProgress) {
+      authProvider.setIsSyncing(false);
+      showLoadingDialog(context);
+      await syncProvider.autoSync(context).then((value) {
+        // syncProvider.setIsGlobalSyncInProgress(false);
+      });
+      showSyncResultDialog(context);
+    }
+
+    Timer(const Duration(seconds: 5), () {
+      if (syncProvider.isAllSyncSuccessful()) {
+        RestartWidget.restartApp(context);
+      } else {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      }
+    });
+  }
+
   showSyncResultDialog(BuildContext context) {
     showGeneralDialog(
       context: context,
@@ -521,8 +532,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 125.h : 220.h,
-              width: isMobile ? 125.w : 220.w,
+              height: isMobile ? 125.h : 280.h,
+              width: isMobile ? 125.w : 280.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Padding(
@@ -591,8 +602,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 125.h : 220.h,
-              width: isMobile ? 125.w : 220.w,
+              height: isMobile ? 125.h : 280.h,
+              width: isMobile ? 125.w : 280.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pure_white),
               child: Column(
@@ -608,7 +619,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: isMobile ? 35.w : 90.w,
                       ),
                       Transform.scale(
-                        scale: isMobile? 1.4 : 2.8,
+                        scale: isMobile ? 1.4 : 2.8,
                         child: Center(
                           child: ColorfulCircularProgressIndicator(
                             colors: app_colors,
