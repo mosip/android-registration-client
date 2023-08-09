@@ -166,6 +166,7 @@ class _NewProcessState extends State<NewProcess> {
               .containsKey(screen.fields!.elementAt(i)!.id))) {
             isValid = false;
             print("i: ${i}");
+            print("id: ${screen.fields!.elementAt(i)!.id}");
             break;
           }
         }
