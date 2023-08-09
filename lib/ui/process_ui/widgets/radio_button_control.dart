@@ -79,7 +79,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomLabel(feild: widget.field),
+                CustomLabel(field: widget.field),
                 const SizedBox(
                   height: 16,
                 ),
@@ -89,6 +89,9 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                   child: TextFormField(
                       readOnly: true,
                       validator: (value) {
+                        if(!widget.field.inputRequired! || !widget.field.required!) {
+                              return null;
+                            }
                         if (selectedOption == null) {
                           setState(() {
                             showError = true;

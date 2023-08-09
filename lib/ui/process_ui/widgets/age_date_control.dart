@@ -160,7 +160,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomLabel(feild: widget.field),
+            CustomLabel(field: widget.field),
             const SizedBox(
               height: 10,
             ),

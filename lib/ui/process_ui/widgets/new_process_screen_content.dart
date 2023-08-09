@@ -76,6 +76,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           field: e,
           validation: regexPattern,
         );
+      case "date":
+        return TextBoxControl(validation: regexPattern, e: e);
       case "fileupload":
         return DocumentUploadControl(
           field: e,

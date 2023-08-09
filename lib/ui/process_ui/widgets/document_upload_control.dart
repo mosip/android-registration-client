@@ -101,7 +101,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomLabel(feild: widget.field),
+                    CustomLabel(field: widget.field),
                     const SizedBox(
                       height: 10,
                     ),
@@ -181,7 +181,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CustomLabel(feild: widget.field),
+                        CustomLabel(field: widget.field),
                       ],
                     ),
                     const SizedBox(
