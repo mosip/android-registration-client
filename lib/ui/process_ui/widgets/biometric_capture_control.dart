@@ -851,11 +851,12 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     "assets/images/Group 57745.png")),
                                     ],
                                   )),
-                            if (iris.exceptions.contains(true) ||
+                            if( (iris.exceptions.contains(true) ||
                                 rightHand.exceptions.contains(true) ||
                                 leftHand.exceptions.contains(true) ||
                                 thumbs.exceptions.contains(true) ||
-                                face.exceptions.contains(true))
+                                face.exceptions.contains(true) )||((iris.qualityPercentage.toInt()<int.parse(iris.thresholdPercentage) && iris.qualityPercentage.toInt()>0)|| (rightHand.qualityPercentage.toInt()<int.parse(rightHand.thresholdPercentage) && rightHand.qualityPercentage.toInt()>0) || (leftHand.qualityPercentage.toInt()<int.parse(leftHand.thresholdPercentage) && leftHand.qualityPercentage.toInt()>0) || (thumbs.qualityPercentage.toInt()<int.parse(thumbs.thresholdPercentage) && thumbs.qualityPercentage.toInt()>0) || (face.qualityPercentage.toInt()<int.parse(face.thresholdPercentage) && face.qualityPercentage.toInt()>0) ))
+                                
                               InkWell(
                                   onTap: () {
                                     setState(() {
