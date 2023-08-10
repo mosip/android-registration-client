@@ -78,8 +78,9 @@ public class HostApiModule {
     @Provides
     @Singleton
     UserDetailsApi getLoginActivityApi(LoginService loginService,
-                                       RegistrationCenterRepository registrationCenterRepository) {
-        return new UserDetailsApi(loginService, registrationCenterRepository);
+                                       RegistrationCenterRepository registrationCenterRepository,
+                                       MasterDataService masterDataService) {
+        return new UserDetailsApi(loginService, registrationCenterRepository, masterDataService);
     }
 
     @Provides

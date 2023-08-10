@@ -10,35 +10,48 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Sync;
-@class SyncTime;
+@class User;
 
-@interface Sync : NSObject
-+ (instancetype)makeWithSyncType:(nullable NSString *)syncType
-    syncProgress:(nullable NSNumber *)syncProgress
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy, nullable) NSString * syncType;
-@property(nonatomic, strong, nullable) NSNumber * syncProgress;
+@interface User : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithUserId:(NSString *)userId
+    name:(nullable NSString *)name
+    email:(nullable NSString *)email
+    isActive:(nullable NSNumber *)isActive
+    isLocked:(nullable NSNumber *)isLocked
+    isOnboarded:(NSNumber *)isOnboarded
+    centerName:(nullable NSString *)centerName
+    centerId:(nullable NSString *)centerId
+    machineName:(nullable NSString *)machineName
+    machineId:(nullable NSString *)machineId
+    failedAttempts:(nullable NSString *)failedAttempts
+    errorCode:(nullable NSString *)errorCode
+    machineStatus:(NSNumber *)machineStatus
+    centerStatus:(NSNumber *)centerStatus;
+@property(nonatomic, copy) NSString * userId;
+@property(nonatomic, copy, nullable) NSString * name;
+@property(nonatomic, copy, nullable) NSString * email;
+@property(nonatomic, strong, nullable) NSNumber * isActive;
+@property(nonatomic, strong, nullable) NSNumber * isLocked;
+@property(nonatomic, strong) NSNumber * isOnboarded;
+@property(nonatomic, copy, nullable) NSString * centerName;
+@property(nonatomic, copy, nullable) NSString * centerId;
+@property(nonatomic, copy, nullable) NSString * machineName;
+@property(nonatomic, copy, nullable) NSString * machineId;
+@property(nonatomic, copy, nullable) NSString * failedAttempts;
 @property(nonatomic, copy, nullable) NSString * errorCode;
+@property(nonatomic, strong) NSNumber * machineStatus;
+@property(nonatomic, strong) NSNumber * centerStatus;
 @end
 
-@interface SyncTime : NSObject
-+ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
-@property(nonatomic, copy, nullable) NSString * syncTime;
+/// The codec used by UserApi.
+NSObject<FlutterMessageCodec> *UserApiGetCodec(void);
+
+@protocol UserApi
+- (void)validateUserUsername:(NSString *)username langCode:(NSString *)langCode completion:(void (^)(User *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by SyncApi.
-NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
-
-@protocol SyncApi
-- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
+extern void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

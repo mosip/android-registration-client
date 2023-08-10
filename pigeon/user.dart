@@ -13,6 +13,8 @@ class User {
   final String? machineId;
   final String? failedAttempts;
   final String? errorCode;
+  final bool machineStatus;
+  final bool centerStatus;
 
   User({
     required this.userId,
@@ -27,11 +29,13 @@ class User {
     this.machineId,
     this.failedAttempts,
     this.errorCode,
+    required this.machineStatus, 
+    required this.centerStatus,
   });
 }
 
 @HostApi()
 abstract class UserApi {
   @async
-  User validateUser(String username);
+  User validateUser(String username, String langCode);
 }

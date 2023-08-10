@@ -26,92 +26,108 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface Sync ()
-+ (Sync *)fromList:(NSArray *)list;
-+ (nullable Sync *)nullableFromList:(NSArray *)list;
+@interface User ()
++ (User *)fromList:(NSArray *)list;
++ (nullable User *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@interface SyncTime ()
-+ (SyncTime *)fromList:(NSArray *)list;
-+ (nullable SyncTime *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@implementation Sync
-+ (instancetype)makeWithSyncType:(nullable NSString *)syncType
-    syncProgress:(nullable NSNumber *)syncProgress
-    errorCode:(nullable NSString *)errorCode {
-  Sync* pigeonResult = [[Sync alloc] init];
-  pigeonResult.syncType = syncType;
-  pigeonResult.syncProgress = syncProgress;
+@implementation User
++ (instancetype)makeWithUserId:(NSString *)userId
+    name:(nullable NSString *)name
+    email:(nullable NSString *)email
+    isActive:(nullable NSNumber *)isActive
+    isLocked:(nullable NSNumber *)isLocked
+    isOnboarded:(NSNumber *)isOnboarded
+    centerName:(nullable NSString *)centerName
+    centerId:(nullable NSString *)centerId
+    machineName:(nullable NSString *)machineName
+    machineId:(nullable NSString *)machineId
+    failedAttempts:(nullable NSString *)failedAttempts
+    errorCode:(nullable NSString *)errorCode
+    machineStatus:(NSNumber *)machineStatus
+    centerStatus:(NSNumber *)centerStatus {
+  User* pigeonResult = [[User alloc] init];
+  pigeonResult.userId = userId;
+  pigeonResult.name = name;
+  pigeonResult.email = email;
+  pigeonResult.isActive = isActive;
+  pigeonResult.isLocked = isLocked;
+  pigeonResult.isOnboarded = isOnboarded;
+  pigeonResult.centerName = centerName;
+  pigeonResult.centerId = centerId;
+  pigeonResult.machineName = machineName;
+  pigeonResult.machineId = machineId;
+  pigeonResult.failedAttempts = failedAttempts;
   pigeonResult.errorCode = errorCode;
+  pigeonResult.machineStatus = machineStatus;
+  pigeonResult.centerStatus = centerStatus;
   return pigeonResult;
 }
-+ (Sync *)fromList:(NSArray *)list {
-  Sync *pigeonResult = [[Sync alloc] init];
-  pigeonResult.syncType = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.syncProgress = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 2);
++ (User *)fromList:(NSArray *)list {
+  User *pigeonResult = [[User alloc] init];
+  pigeonResult.userId = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.userId != nil, @"");
+  pigeonResult.name = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.email = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.isActive = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.isLocked = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.isOnboarded = GetNullableObjectAtIndex(list, 5);
+  NSAssert(pigeonResult.isOnboarded != nil, @"");
+  pigeonResult.centerName = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.centerId = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.machineName = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.machineId = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.failedAttempts = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.machineStatus = GetNullableObjectAtIndex(list, 12);
+  NSAssert(pigeonResult.machineStatus != nil, @"");
+  pigeonResult.centerStatus = GetNullableObjectAtIndex(list, 13);
+  NSAssert(pigeonResult.centerStatus != nil, @"");
   return pigeonResult;
 }
-+ (nullable Sync *)nullableFromList:(NSArray *)list {
-  return (list) ? [Sync fromList:list] : nil;
++ (nullable User *)nullableFromList:(NSArray *)list {
+  return (list) ? [User fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.syncType ?: [NSNull null]),
-    (self.syncProgress ?: [NSNull null]),
+    (self.userId ?: [NSNull null]),
+    (self.name ?: [NSNull null]),
+    (self.email ?: [NSNull null]),
+    (self.isActive ?: [NSNull null]),
+    (self.isLocked ?: [NSNull null]),
+    (self.isOnboarded ?: [NSNull null]),
+    (self.centerName ?: [NSNull null]),
+    (self.centerId ?: [NSNull null]),
+    (self.machineName ?: [NSNull null]),
+    (self.machineId ?: [NSNull null]),
+    (self.failedAttempts ?: [NSNull null]),
     (self.errorCode ?: [NSNull null]),
+    (self.machineStatus ?: [NSNull null]),
+    (self.centerStatus ?: [NSNull null]),
   ];
 }
 @end
 
-@implementation SyncTime
-+ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime {
-  SyncTime* pigeonResult = [[SyncTime alloc] init];
-  pigeonResult.syncTime = syncTime;
-  return pigeonResult;
-}
-+ (SyncTime *)fromList:(NSArray *)list {
-  SyncTime *pigeonResult = [[SyncTime alloc] init];
-  pigeonResult.syncTime = GetNullableObjectAtIndex(list, 0);
-  return pigeonResult;
-}
-+ (nullable SyncTime *)nullableFromList:(NSArray *)list {
-  return (list) ? [SyncTime fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    (self.syncTime ?: [NSNull null]),
-  ];
-}
+@interface UserApiCodecReader : FlutterStandardReader
 @end
-
-@interface SyncApiCodecReader : FlutterStandardReader
-@end
-@implementation SyncApiCodecReader
+@implementation UserApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [Sync fromList:[self readValue]];
-    case 129: 
-      return [SyncTime fromList:[self readValue]];
+      return [User fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface SyncApiCodecWriter : FlutterStandardWriter
+@interface UserApiCodecWriter : FlutterStandardWriter
 @end
-@implementation SyncApiCodecWriter
+@implementation UserApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[Sync class]]) {
+  if ([value isKindOfClass:[User class]]) {
     [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[SyncTime class]]) {
-    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -119,123 +135,41 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface SyncApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface UserApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation SyncApiCodecReaderWriter
+@implementation UserApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[SyncApiCodecWriter alloc] initWithData:data];
+  return [[UserApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[SyncApiCodecReader alloc] initWithData:data];
+  return [[UserApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *SyncApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *UserApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    SyncApiCodecReaderWriter *readerWriter = [[SyncApiCodecReaderWriter alloc] init];
+    UserApiCodecReaderWriter *readerWriter = [[UserApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *api) {
+void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getLastSyncTime"
+        initWithName:@"dev.flutter.pigeon.registration_client.UserApi.validateUser"
         binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
+        codec:UserApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getLastSyncTimeWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getLastSyncTimeWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(validateUserUsername:langCode:completion:)], @"UserApi api (%@) doesn't respond to @selector(validateUserUsername:langCode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getLastSyncTimeWithCompletion:^(SyncTime *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getPolicyKeySync"
-        binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getPolicyKeySyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getPolicyKeySyncWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getPolicyKeySyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getGlobalParamsSync"
-        binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getGlobalParamsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getGlobalParamsSyncWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getGlobalParamsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getUserDetailsSync"
-        binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getUserDetailsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getUserDetailsSyncWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getUserDetailsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getIDSchemaSync"
-        binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getIDSchemaSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getIDSchemaSyncWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getIDSchemaSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getMasterDataSync"
-        binaryMessenger:binaryMessenger
-        codec:SyncApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMasterDataSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getMasterDataSyncWithCompletion:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getMasterDataSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
+        [api validateUserUsername:arg_username langCode:arg_langCode completion:^(User *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
