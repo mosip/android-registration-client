@@ -138,10 +138,14 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           value: selected,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if(!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                              return null;
+                            }
+                            if ((value == null ||
+                                value.isEmpty )&& widget.field.inputRequired!) {
                               return 'Please enter a value';
                             }
-                            if (!widget.validation.hasMatch(value)) {
+                            if (!widget.validation.hasMatch(value!)) {
                               return 'Invalid input';
                             }
                             return null;

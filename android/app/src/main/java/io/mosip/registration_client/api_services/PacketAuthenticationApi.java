@@ -89,11 +89,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void authenticate(@NonNull String username, @NonNull String password, @NonNull Boolean isConnected, @NonNull PacketAuthPigeon.Result<PacketAuthPigeon.PacketAuth> result) {
-        if(!isConnected) {
-            offlineAuthentication(username, password, result);
-            return;
-        }
-        onlineAuthentication(username, password, result);
+        offlineAuthentication(username, password, result);
     }
 
     @Override

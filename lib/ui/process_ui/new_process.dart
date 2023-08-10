@@ -189,7 +189,7 @@ class _NewProcessState extends State<NewProcess> {
             }
           }
         }
-        if (screen.fields!.elementAt(i)!.conditionalBioAttributes!=null) {
+        if (screen.fields!.elementAt(i)!.conditionalBioAttributes!=null && screen.fields!.elementAt(i)!.conditionalBioAttributes!.isNotEmpty) {
           bool valid = await BiometricsApi().conditionalBioAttributeValidation(
               screen.fields!.elementAt(i)!.id!,
               screen.fields!
