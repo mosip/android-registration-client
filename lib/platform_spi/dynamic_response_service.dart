@@ -4,12 +4,14 @@ import 'package:registration_client/platform_android/dynamic_response_service_im
 abstract class DynamicResponseService {
   Future<List<String?>> fetchFieldValues(String fieldName, String langCode);
 
-  Future<List<String?>> fetchLocationValues(
+  Future<List<GenericData?>> fetchLocationValues(
       String hierarchyLevelName, String langCode);
+
   Future<List<String?>> fetchDocumentValues(
       String categoryCode, String? applicantType, String langCode);
 
-  Future<List<GenericData?>> fetchLocationValuesBasedOnParent(String parentCode, String hierarchyLevelName, String langCode);
+  Future<List<GenericData?>> fetchLocationValuesBasedOnParent(
+      String? parentCode, String hierarchyLevelName, String langCode);
 
   factory DynamicResponseService() => getDynamicResponseServiceImpl();
 }

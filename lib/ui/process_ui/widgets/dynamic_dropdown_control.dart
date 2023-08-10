@@ -136,7 +136,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           value: selected,
                           validator: (value) {
-                            if(!widget.field.inputRequired! || !widget.field.required!) {
+                            if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
                               return null;
                             }
                             if (value == null || value.isEmpty) {

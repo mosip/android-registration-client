@@ -147,7 +147,7 @@ class RegistrationTaskProvider with ChangeNotifier {
     return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
   }
 
-  Future<List<String?>> getLocationValues(
+  Future<List<GenericData?>> getLocationValues(
       String fieldName, String langCode) async {
     return await dynamicResponseService.fetchLocationValues(
         fieldName, langCode);
@@ -161,7 +161,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   Future<List<GenericData?>> getLocationValuesBasedOnParent(
-      String parentCode, String fieldName, String langCode) async {
+      String? parentCode, String fieldName, String langCode) async {
     return await dynamicResponseService.fetchLocationValuesBasedOnParent(
         parentCode, fieldName, langCode);
   }

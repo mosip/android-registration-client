@@ -21,7 +21,8 @@ abstract class DynamicResponseApi {
   List<String> getFieldValues(String fieldName, String langCode);
 
   @async
-  List<String> getLocationValues(String hierarchyLevelName, String langCode);
+  List<GenericData> getLocationValues(
+      String hierarchyLevelName, String langCode);
 
   @async
   List<String> getDocumentValues(

@@ -75,6 +75,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           validation: regexPattern,
           field: e,
         );
+
       case "ageDate":
         return AgeDateControl(
           field: e,
