@@ -10,18 +10,18 @@ import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
-class DropDownControl extends StatefulWidget {
-  const DropDownControl(
+class DynamicDropDownControl extends StatefulWidget {
+  const DynamicDropDownControl(
       {super.key, required this.field, required this.validation});
 
   final Field field;
   final RegExp validation;
 
   @override
-  State<DropDownControl> createState() => _CustomDropDownState();
+  State<DynamicDropDownControl> createState() => _CustomDynamicDropDownState();
 }
 
-class _CustomDropDownState extends State<DropDownControl> {
+class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   String? selected;
 
   @override
@@ -87,25 +87,16 @@ class _CustomDropDownState extends State<DropDownControl> {
     });
   }
 
-  Future<List<String?>> _getLocationValues(
-      String hierarchyLevelName, String langCode) async {
+  Future<List<String?>> _getFieldValues(String fieldId, String langCode) async {
     return await context
         .read<RegistrationTaskProvider>()
-        .getLocationValues(hierarchyLevelName, langCode);
-  }
-
-  Future<List<GenericData?>> _getLocationValuesBasedOnParent(
-      String parentCode, String hierarchyLevelName, String langCode) async {
-    return await context
-        .read<RegistrationTaskProvider>()
-        .getLocationValuesBasedOnParent(
-            parentCode, hierarchyLevelName, langCode);
+        .getFieldValues(fieldId, langCode);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getLocationValues(widget.field.subType!, "eng"),
+        future: _getFieldValues(widget.field.subType!, "eng"),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
             elevation: 0,
