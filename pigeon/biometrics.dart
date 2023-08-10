@@ -15,7 +15,8 @@ abstract class BiometricsApi {
   List<Uint8List> extractImageValues(String fieldId, String modality);
 
   @async
-  List<Uint8List> extractImageValuesByAttempt(String fieldId, String modality,int attempt);
+  List<Uint8List> extractImageValuesByAttempt(
+      String fieldId, String modality, int attempt);
 
   @async
   int incrementBioAttempt(String fieldId, String modality);
@@ -34,4 +35,7 @@ abstract class BiometricsApi {
 
   @async
   String getAgeGroup();
+
+  @async
+  bool conditionalBioAttributeValidation(String fieldId, String expression);
 }

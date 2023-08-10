@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -46,6 +48,7 @@ import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
 import io.mosip.registration_client.MainActivity;
@@ -381,6 +384,83 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         }catch(Exception e){
             Log.e(TAG,e.getMessage());
         }
+    }
+
+    @Override
+    public void conditionalBioAttributeValidation(@NonNull String fieldId, @NonNull String expression, @NonNull BiometricsPigeon.Result<Boolean> result) {
+        try{
+            RegistrationDto registrationDto=registrationService.getRegistrationDto();
+            List<BiometricsDto> biometricsDtoList=new ArrayList<>();
+
+            for (Modality modality : Modality.values()) {
+               List<BiometricsDto> temp= registrationDto.getBestBiometrics(fieldId,modality);
+               biometricsDtoList.addAll(temp);
+            }
+            Map<String,Boolean> dataContext=new HashMap<String,Boolean>();
+            Pattern REGEX_PATTERN =
+                    Pattern.compile("[a-zA-Z]+");
+            Matcher matcher=REGEX_PATTERN.matcher(expression);
+
+            while (matcher.find()) {
+
+                dataContext.put(matcher.group(),false);
+                for (BiometricsDto dto:biometricsDtoList
+                     ) {
+                    if(dto.getBioSubType()!=null){
+                        if(customMatcher(dto.getBioSubType(),matcher.group())){
+                            dataContext.put(matcher.group(),true);
+                            break;
+                        }
+                    }
+                    else{
+                        if(dto.getModality().matches(matcher.group().toUpperCase())){
+                            dataContext.put(matcher.group(),true);
+                            break;
+                        }
+                    }
+
+                }
+            }
+            System.out.println("Printing Map");
+            System.out.println(dataContext);
+            Boolean response=UserInterfaceHelperService.evaluateValidationExpression(expression,dataContext);
+            result.success(response);
+        }catch(Exception e){
+            Log.e(TAG,e.getMessage());
+        }
+    }
+
+    public static Boolean customMatcher(String str1,String str2){
+        Boolean result=false;
+        if(str1.matches("Left IndexFinger") && str2.matches("leftIndex")){
+            result=true;
+        }
+        if(str1.matches("Left MiddleFinger") && str2.matches("leftMiddle")){
+            result=true;
+        }if(str1.matches("Left RingFinger") && str2.matches("leftRing")){
+            result=true;
+        }if(str1.matches("Left LittleFinger") && str2.matches("leftLittle")){
+            result=true;
+        }if(str1.matches("Right IndexFinger") && str2.matches("rightIndex")){
+            result=true;
+        }if(str1.matches("Right MiddleFinger") && str2.matches("rightMiddle")){
+            result=true;
+        }if(str1.matches("Right RingFinger") && str2.matches("rightRing")){
+            result=true;
+        }if(str1.matches("Right LittleFinger") && str2.matches("rightLittle")){
+            result=true;
+        }if(str1.matches("Left Thumb") && str2.matches("leftThumb")){
+            result=true;
+        }if(str1.matches("Right Thumb") && str2.matches("rightThumb")){
+            result=true;
+        }if(str1.matches("Left") && str2.matches("leftEye")){
+            result=true;
+        }if(str1.matches("Right") && str2.matches("rightEye")){
+            result=true;
+        }if(str1==null && str2.matches("face")){
+            result=true;
+        }
+        return result;
     }
 
 

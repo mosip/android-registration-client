@@ -103,6 +103,16 @@ public class UserInterfaceHelperService {
         return false;
     }
 
+    public static boolean evaluateValidationExpression(String expression,  Map<String, Boolean> dataContext) {
+        try {
+
+            return MVEL.evalToBoolean(expression, dataContext);
+        } catch (Throwable t) {
+            Log.e(TAG, "Failed to evaluate mvel expression", t);
+        }
+        return false;
+    }
+
 
     public static Bitmap getFaceBitMap(BiometricsDto biometricsDto) {
         if(biometricsDto == null)
