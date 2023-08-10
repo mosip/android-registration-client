@@ -35,6 +35,7 @@ class _CustomDropDownState extends State<DropDownControl> {
     "postalCode"
   ];
   int? index;
+  List<GenericData?> list = [];
 
   @override
   void initState() {
@@ -129,15 +130,19 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   _getOptionsList() async {
+    log("message");
     List<GenericData?> temp;
     if (index == 0) {
       temp = await _getLocationValues(widget.field.subType!, "eng");
     } else {
       var parentCode =
-          context.read<GlobalProvider>().locationHierarchy[index! - 1];
+          context.watch<GlobalProvider>().locationHierarchy[index! - 1];
       temp = await _getLocationValuesBasedOnParent(
           parentCode, widget.field.subType!, "eng");
     }
+    setState(() {
+      selected = null;
+    });
     setState(() {
       list = temp;
     });
@@ -149,10 +154,9 @@ class _CustomDropDownState extends State<DropDownControl> {
     }
   }
 
-  List<GenericData?> list = [];
-
   @override
   Widget build(BuildContext context) {
+    _getOptionsList();
     return Column(children: [
       Card(
         elevation: 0,
@@ -204,16 +208,14 @@ class _CustomDropDownState extends State<DropDownControl> {
                     context
                         .read<GlobalProvider>()
                         .setLocationHierarchy(value.code, index!);
-                    setState(() {
-                      selected = value;
-                    });
+                    _getSelectedValueFromMap("eng", list);
                   }
                   log(context
                       .read<GlobalProvider>()
                       .locationHierarchy
                       .toString());
 
-                  log("commited on feature flutter error");
+                  // log("commited on feature flutter error");
                 },
               ),
             ],

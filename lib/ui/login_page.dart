@@ -122,15 +122,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   isMachineKeysDialogOpen
                       ? Container(
-                        color: Colors.transparent.withOpacity(0.5),
-                        child: Center(
+                          color: Colors.transparent.withOpacity(0.5),
+                          child: Center(
                             child: MachineKeys(
                               onCloseComponent: () {
                                 _toggleMachineKeysDialog();
                               },
                             ),
                           ),
-                      )
+                        )
                       : const SizedBox(),
                 ],
               ),
@@ -265,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
   _navigateToHomePage() {
     if (context.read<AuthProvider>().isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
-      if (context.read<AuthProvider>().isOnboarded || 
+      if (context.read<AuthProvider>().isOnboarded ||
           context.read<AuthProvider>().isDefault ||
           (context.read<AuthProvider>().isSupervisor &&
               context.read<AuthProvider>().isOfficer)) {
@@ -604,7 +604,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: isMobile ? 35.w : 90.w,
                       ),
                       Transform.scale(
-                        scale: isMobile? 1.4 : 2.8,
+                        scale: isMobile ? 1.4 : 2.8,
                         child: Center(
                           child: ColorfulCircularProgressIndicator(
                             colors: app_colors,
