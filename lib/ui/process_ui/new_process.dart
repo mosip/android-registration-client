@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/platform_spi/registration.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -165,8 +166,7 @@ class _NewProcessState extends State<NewProcess> {
               .fieldInputValue
               .containsKey(screen.fields!.elementAt(i)!.id))) {
             isValid = false;
-            print("i: ${i}");
-            print("id: ${screen.fields!.elementAt(i)!.id}");
+
             break;
           }
         }
@@ -183,10 +183,24 @@ class _NewProcessState extends State<NewProcess> {
                   .fieldInputValue
                   .containsKey(screen.fields!.elementAt(i)!.id))) {
                 isValid = false;
-                print("i: ${i}");
+
                 break;
               }
             }
+          }
+        }
+        if (screen.fields!.elementAt(i)!.conditionalBioAttributes!=null) {
+          bool valid = await BiometricsApi().conditionalBioAttributeValidation(
+              screen.fields!.elementAt(i)!.id!,
+              screen.fields!
+                  .elementAt(i)!
+                  .conditionalBioAttributes!
+                  .first!
+                  .validationExpr!);
+          if (!valid) {
+            isValid = false;
+
+            break;
           }
         }
       }

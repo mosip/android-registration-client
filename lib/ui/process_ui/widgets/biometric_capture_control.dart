@@ -30,7 +30,6 @@ class BiometricCaptureControl extends StatefulWidget {
 }
 
 class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
-  
   BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
       attemptNo: 0,
@@ -188,9 +187,10 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     }
     return i;
   }
-  int i=0;
-String biometricAttribute = "Iris";
-  setInitialBioAttribute(){
+
+  int i = 0;
+  String biometricAttribute = "Iris";
+  setInitialBioAttribute() {
     if (widget.field.conditionalBioAttributes!.first!.ageGroup!
             .compareTo(context.read<GlobalProvider>().ageGroup) ==
         0) {
@@ -225,35 +225,22 @@ String biometricAttribute = "Iris";
       } else {
         biometricAttribute = "Face";
       }
-    }
-    else{
-      if (widget.field.bioAttributes!
-              .contains("leftEye") &&
-          widget.field.bioAttributes!
-              .contains("rightEye")) {
+    } else {
+      if (widget.field.bioAttributes!.contains("leftEye") &&
+          widget.field.bioAttributes!.contains("rightEye")) {
         biometricAttribute = "Iris";
-      } else if (widget.field.bioAttributes!
-              .contains("rightIndex") &&
-          widget.field.bioAttributes!
-              .contains("rightLittle") &&
-          widget.field.bioAttributes!
-              .contains("rightRing") &&
-          widget.field.bioAttributes!
-              .contains("rightMiddle")) {
+      } else if (widget.field.bioAttributes!.contains("rightIndex") &&
+          widget.field.bioAttributes!.contains("rightLittle") &&
+          widget.field.bioAttributes!.contains("rightRing") &&
+          widget.field.bioAttributes!.contains("rightMiddle")) {
         biometricAttribute = "Right Hand";
-      } else if (widget.field.bioAttributes!
-              .contains("leftIndex") &&
-          widget.field.bioAttributes!
-              .contains("leftLittle") &&
-          widget.field.bioAttributes!
-              .contains("leftRing") &&
-          widget.field.bioAttributes!
-              .contains("leftMiddle")) {
+      } else if (widget.field.bioAttributes!.contains("leftIndex") &&
+          widget.field.bioAttributes!.contains("leftLittle") &&
+          widget.field.bioAttributes!.contains("leftRing") &&
+          widget.field.bioAttributes!.contains("leftMiddle")) {
         biometricAttribute = "Left Hand";
-      } else if (widget.field.bioAttributes!
-              .contains("leftThumb") &&
-          widget.field.bioAttributes!
-              .contains("rightThumb")) {
+      } else if (widget.field.bioAttributes!.contains("leftThumb") &&
+          widget.field.bioAttributes!.contains("rightThumb")) {
         biometricAttribute = "Thumbs";
       } else {
         biometricAttribute = "Face";
@@ -261,10 +248,9 @@ String biometricAttribute = "Iris";
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if(i<=0){
+    if (i <= 0) {
       setInitialBioAttribute();
       i++;
     }
@@ -865,11 +851,12 @@ String biometricAttribute = "Iris";
                                                     "assets/images/Group 57745.png")),
                                     ],
                                   )),
-                            if (iris.exceptions.contains(true) ||
+                            if( iris.exceptions.contains(true) ||
                                 rightHand.exceptions.contains(true) ||
                                 leftHand.exceptions.contains(true) ||
                                 thumbs.exceptions.contains(true) ||
-                                face.exceptions.contains(true))
+                                face.exceptions.contains(true) )
+                                
                               InkWell(
                                   onTap: () {
                                     setState(() {
