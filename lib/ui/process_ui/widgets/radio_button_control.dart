@@ -89,7 +89,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                   child: TextFormField(
                       readOnly: true,
                       validator: (value) {
-                        if(!widget.field.inputRequired! || !widget.field.required!) {
+                        if(!widget.field.required! && widget.field.requiredOn!.isEmpty) {
                               return null;
                             }
                         if (selectedOption == null) {
