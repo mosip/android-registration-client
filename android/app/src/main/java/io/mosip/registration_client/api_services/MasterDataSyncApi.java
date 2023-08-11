@@ -143,21 +143,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         Log.i(TAG, "Policy Sync");
-                        result.success(syncResult("PolicyKeySync", 1, ""));
+                        result.success(syncResult("PolicyKeySync", 5, ""));
                         return;
                     }
                     Log.e(TAG, "Policy Sync Failed:" + error.toString());
-                    result.success(syncResult("PolicyKeySync", 1, "policy_key_sync_failed"));
+                    result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
                     return;
                 }
-                result.success(syncResult("PolicyKeySync", 1, "policy_key_sync_failed"));
+                result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
                 return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CertificateResponse>> call, Throwable t) {
                 Log.e(TAG,"Policy Sync Failed:", t);
-                result.success(syncResult("PolicyKeySync", 1, "policy_key_sync_failed"));
+                result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
                 return;
             }
         });
@@ -174,19 +174,19 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveGlobalParams(response.body().getResponse());
-                        result.success(syncResult("GlobalParamsSync", 2, ""));
+                        result.success(syncResult("GlobalParamsSync", 1, ""));
                         return;
                     } else
-                    result.success(syncResult("GlobalParamsSync", 2, "global_params_sync_failed"));
+                    result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
                     return;
                 } else
-                result.success(syncResult("GlobalParamsSync", 2, "global_params_sync_failed"));
+                result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
                 return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
-                result.success(syncResult("GlobalParamsSync", 2, "global_params_sync_failed"));
+                result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
                 return;
             }
         });
@@ -325,7 +325,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
             Log.e(TAG, "MasterData : not able to get client key index", e);
-            result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
+            result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
             return;
         }
 
@@ -353,24 +353,24 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 //rerunning master data to sync completed master data
                                 syncMasterData(result, retryNo + 1);
                             } else {
-                                result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
+                                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
                                 return;
                             }
                         } else {
-                            result.success(syncResult("MasterDataSync", 5, ""));
+                            result.success(syncResult("MasterDataSync", 2, ""));
                             return;
                         }
                     } else
-                    result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
+                    result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
                     return;
                 } else
-                result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
+                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
                 return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
-                result.success(syncResult("MasterDataSync", 5, "master_data_sync_failed"));
+                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
             }
         });
     }
@@ -515,11 +515,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     public void getLastSyncTime(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.SyncTime> result) {
         MasterDataSyncPigeon.SyncTime syncTime;
         String globalParamSyncTime;
-        if(globalParamRepository.getGlobalParamValue("masterdata_last_sync_datetime") == null){
+        if(globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED) == null){
             globalParamSyncTime = "LastSyncTimeIsNull";
         }
         else
-            globalParamSyncTime = globalParamRepository.getGlobalParamValue("masterdata_last_sync_datetime");
+            globalParamSyncTime = globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
         syncTime = new MasterDataSyncPigeon.SyncTime.Builder()
                 .setSyncTime(globalParamSyncTime)
                 .build();

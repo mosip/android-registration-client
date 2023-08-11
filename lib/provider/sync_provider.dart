@@ -59,7 +59,7 @@ class SyncProvider with ChangeNotifier {
   autoSync(BuildContext context) async {
     await SyncResponseImpl().getLastSyncTime();
     await SyncResponseImpl()
-        .getPolicyKeySync()
+        .getGlobalParamsSync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -67,11 +67,11 @@ class SyncProvider with ChangeNotifier {
         _currentSyncProgress = getAutoSync.syncProgress!;
         notifyListeners();
       } else {
-        log(AppLocalizations.of(context)!.policy_key_sync_failed);
+        log(AppLocalizations.of(context)!.global_params_sync_failed);
       }
       notifyListeners();
       await SyncResponseImpl()
-          .getGlobalParamsSync()
+          .getMasterDataSync()
           .then((Sync getAutoSync) async {
         setCurrentProgressType(getAutoSync.syncType!);
         if (getAutoSync.errorCode == "") {
@@ -80,7 +80,7 @@ class SyncProvider with ChangeNotifier {
           notifyListeners();
 
           } else {
-          log(AppLocalizations.of(context)!.global_params_sync_failed);
+          log(AppLocalizations.of(context)!.master_data_sync_failed);
         }
         notifyListeners();
         await SyncResponseImpl()
@@ -109,7 +109,7 @@ class SyncProvider with ChangeNotifier {
             }
             notifyListeners();
             await SyncResponseImpl()
-                .getMasterDataSync()
+                .getPolicyKeySync()
                 .then((Sync getAutoSync) {
               setCurrentProgressType(getAutoSync.syncType!);
               if (getAutoSync.errorCode == "") {
@@ -118,7 +118,7 @@ class SyncProvider with ChangeNotifier {
                 notifyListeners();
       
                       } else {
-                log(AppLocalizations.of(context)!.master_data_sync_failed);
+                log(AppLocalizations.of(context)!.policy_key_sync_failed);
               }
               notifyListeners();
             });
