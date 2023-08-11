@@ -189,18 +189,28 @@ class _NewProcessState extends State<NewProcess> {
             }
           }
         }
-        if (screen.fields!.elementAt(i)!.conditionalBioAttributes!=null && screen.fields!.elementAt(i)!.conditionalBioAttributes!.isNotEmpty) {
-          bool valid = await BiometricsApi().conditionalBioAttributeValidation(
-              screen.fields!.elementAt(i)!.id!,
-              screen.fields!
+        if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+            screen.fields!.elementAt(i)!.conditionalBioAttributes!.isNotEmpty) {
+          String response = await BiometricsApi().getAgeGroup();
+          if (response.compareTo(screen.fields!
                   .elementAt(i)!
                   .conditionalBioAttributes!
                   .first!
-                  .validationExpr!);
-          if (!valid) {
-            isValid = false;
+                  .ageGroup!) ==
+              0) {
+            bool valid = await BiometricsApi()
+                .conditionalBioAttributeValidation(
+                    screen.fields!.elementAt(i)!.id!,
+                    screen.fields!
+                        .elementAt(i)!
+                        .conditionalBioAttributes!
+                        .first!
+                        .validationExpr!);
+            if (!valid) {
+              isValid = false;
 
-            break;
+              break;
+            }
           }
         }
       }
