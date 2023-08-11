@@ -9,10 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthImpl implements Auth {
   @override
-  Future<User> validateUser(String username) async {
+  Future<User> validateUser(String username, String langCode) async {
     late User user;
     try {
-      user = await UserApi().validateUser(username);
+      user = await UserApi().validateUser(username, langCode);
     } on PlatformException {
       debugPrint('UserApi call failed');
     } catch (e) {

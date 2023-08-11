@@ -59,10 +59,20 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                         return;
                     }
                     Log.e(getClass().getSimpleName(), response.raw().toString());
-                    PacketAuthPigeon.PacketAuth packetAuth = getAuthErrorResponse(error.getMessage());
+                    String errorCode = "";
+                    if(error == null) {
+                        errorCode = "REG_TRY_AGAIN";
+                    } else if(error.getMessage().equals("Invalid Request")) {
+                        errorCode = "REG_INVALID_REQUEST";
+                    } else {
+                        errorCode = error.getMessage();
+                    }
+                    PacketAuthPigeon.PacketAuth packetAuth = getAuthErrorResponse(errorCode);
                     result.success(packetAuth);
                     return;
                 }
+                PacketAuthPigeon.PacketAuth packetAuth = getAuthErrorResponse("REG_TRY_AGAIN");
+                result.success(packetAuth);
             }
 
             @Override

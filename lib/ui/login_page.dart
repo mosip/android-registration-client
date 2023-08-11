@@ -20,6 +20,7 @@ import 'package:registration_client/platform_android/auth_impl.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_android/sync_response_impl.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
+import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -148,7 +149,8 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    await context.read<AuthProvider>().validateUser(username);
+    String langCode = context.read<AppLanguageProvider>().selectedLanguage;
+    await context.read<AuthProvider>().validateUser(username, langCode);
     bool isValid = context.read<AuthProvider>().isValidUser;
     if (!isValid) {
       _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
