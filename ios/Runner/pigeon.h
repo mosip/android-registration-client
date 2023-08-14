@@ -10,48 +10,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class User;
+@class RegistrationSubmitResponse;
 
-@interface User : NSObject
+@interface RegistrationSubmitResponse : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithUserId:(NSString *)userId
-    name:(nullable NSString *)name
-    email:(nullable NSString *)email
-    isActive:(nullable NSNumber *)isActive
-    isLocked:(nullable NSNumber *)isLocked
-    isOnboarded:(NSNumber *)isOnboarded
-    centerName:(nullable NSString *)centerName
-    centerId:(nullable NSString *)centerId
-    machineName:(nullable NSString *)machineName
-    machineId:(nullable NSString *)machineId
-    failedAttempts:(nullable NSString *)failedAttempts
-    errorCode:(nullable NSString *)errorCode
-    machineStatus:(nullable NSNumber *)machineStatus
-    centerStatus:(nullable NSNumber *)centerStatus;
-@property(nonatomic, copy) NSString * userId;
-@property(nonatomic, copy, nullable) NSString * name;
-@property(nonatomic, copy, nullable) NSString * email;
-@property(nonatomic, strong, nullable) NSNumber * isActive;
-@property(nonatomic, strong, nullable) NSNumber * isLocked;
-@property(nonatomic, strong) NSNumber * isOnboarded;
-@property(nonatomic, copy, nullable) NSString * centerName;
-@property(nonatomic, copy, nullable) NSString * centerId;
-@property(nonatomic, copy, nullable) NSString * machineName;
-@property(nonatomic, copy, nullable) NSString * machineId;
-@property(nonatomic, copy, nullable) NSString * failedAttempts;
++ (instancetype)makeWithRId:(NSString *)rId
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy) NSString * rId;
 @property(nonatomic, copy, nullable) NSString * errorCode;
-@property(nonatomic, strong, nullable) NSNumber * machineStatus;
-@property(nonatomic, strong, nullable) NSNumber * centerStatus;
 @end
 
-/// The codec used by UserApi.
-NSObject<FlutterMessageCodec> *UserApiGetCodec(void);
+/// The codec used by RegistrationDataApi.
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
 
-@protocol UserApi
-- (void)validateUserUsername:(NSString *)username langCode:(NSString *)langCode completion:(void (^)(User *_Nullable, FlutterError *_Nullable))completion;
+@protocol RegistrationDataApi
+- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)evaluateMVELFieldData:(NSString *)fieldData expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)submitRegistrationDtoMakerName:(NSString *)makerName completion:(void (^)(RegistrationSubmitResponse *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *_Nullable api);
+extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

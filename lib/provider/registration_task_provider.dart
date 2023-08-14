@@ -100,16 +100,21 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  setIsRegistrationSaved(bool value) {
+    _isRegistrationSaved = value;
+    notifyListeners();
+  }
+
   submitRegistrationDto(String makerName) async {
-    String regId = await registration.submitRegistrationDto(makerName);
-    // if (regId.isEmpty) {
+    RegistrationSubmitResponse registrationSubmitResponse = await registration.submitRegistrationDto(makerName);
+    // if (resgistrationSubmitResponse.errorCode!.isEmpty) {
     //   _isRegistrationSaved = false;
     // } else {
     //   _isRegistrationSaved = true;
     // }
-
     // notifyListeners();
-    return regId;
+
+    return registrationSubmitResponse;
   }
 
   addDemographicField(String fieldId, String value) async {

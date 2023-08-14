@@ -26,105 +26,56 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface User ()
-+ (User *)fromList:(NSArray *)list;
-+ (nullable User *)nullableFromList:(NSArray *)list;
+@interface RegistrationSubmitResponse ()
++ (RegistrationSubmitResponse *)fromList:(NSArray *)list;
++ (nullable RegistrationSubmitResponse *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation User
-+ (instancetype)makeWithUserId:(NSString *)userId
-    name:(nullable NSString *)name
-    email:(nullable NSString *)email
-    isActive:(nullable NSNumber *)isActive
-    isLocked:(nullable NSNumber *)isLocked
-    isOnboarded:(NSNumber *)isOnboarded
-    centerName:(nullable NSString *)centerName
-    centerId:(nullable NSString *)centerId
-    machineName:(nullable NSString *)machineName
-    machineId:(nullable NSString *)machineId
-    failedAttempts:(nullable NSString *)failedAttempts
-    errorCode:(nullable NSString *)errorCode
-    machineStatus:(nullable NSNumber *)machineStatus
-    centerStatus:(nullable NSNumber *)centerStatus {
-  User* pigeonResult = [[User alloc] init];
-  pigeonResult.userId = userId;
-  pigeonResult.name = name;
-  pigeonResult.email = email;
-  pigeonResult.isActive = isActive;
-  pigeonResult.isLocked = isLocked;
-  pigeonResult.isOnboarded = isOnboarded;
-  pigeonResult.centerName = centerName;
-  pigeonResult.centerId = centerId;
-  pigeonResult.machineName = machineName;
-  pigeonResult.machineId = machineId;
-  pigeonResult.failedAttempts = failedAttempts;
+@implementation RegistrationSubmitResponse
++ (instancetype)makeWithRId:(NSString *)rId
+    errorCode:(nullable NSString *)errorCode {
+  RegistrationSubmitResponse* pigeonResult = [[RegistrationSubmitResponse alloc] init];
+  pigeonResult.rId = rId;
   pigeonResult.errorCode = errorCode;
-  pigeonResult.machineStatus = machineStatus;
-  pigeonResult.centerStatus = centerStatus;
   return pigeonResult;
 }
-+ (User *)fromList:(NSArray *)list {
-  User *pigeonResult = [[User alloc] init];
-  pigeonResult.userId = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.userId != nil, @"");
-  pigeonResult.name = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.email = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.isActive = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.isLocked = GetNullableObjectAtIndex(list, 4);
-  pigeonResult.isOnboarded = GetNullableObjectAtIndex(list, 5);
-  NSAssert(pigeonResult.isOnboarded != nil, @"");
-  pigeonResult.centerName = GetNullableObjectAtIndex(list, 6);
-  pigeonResult.centerId = GetNullableObjectAtIndex(list, 7);
-  pigeonResult.machineName = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.machineId = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.failedAttempts = GetNullableObjectAtIndex(list, 10);
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.machineStatus = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.centerStatus = GetNullableObjectAtIndex(list, 13);
++ (RegistrationSubmitResponse *)fromList:(NSArray *)list {
+  RegistrationSubmitResponse *pigeonResult = [[RegistrationSubmitResponse alloc] init];
+  pigeonResult.rId = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.rId != nil, @"");
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
-+ (nullable User *)nullableFromList:(NSArray *)list {
-  return (list) ? [User fromList:list] : nil;
++ (nullable RegistrationSubmitResponse *)nullableFromList:(NSArray *)list {
+  return (list) ? [RegistrationSubmitResponse fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.userId ?: [NSNull null]),
-    (self.name ?: [NSNull null]),
-    (self.email ?: [NSNull null]),
-    (self.isActive ?: [NSNull null]),
-    (self.isLocked ?: [NSNull null]),
-    (self.isOnboarded ?: [NSNull null]),
-    (self.centerName ?: [NSNull null]),
-    (self.centerId ?: [NSNull null]),
-    (self.machineName ?: [NSNull null]),
-    (self.machineId ?: [NSNull null]),
-    (self.failedAttempts ?: [NSNull null]),
+    (self.rId ?: [NSNull null]),
     (self.errorCode ?: [NSNull null]),
-    (self.machineStatus ?: [NSNull null]),
-    (self.centerStatus ?: [NSNull null]),
   ];
 }
 @end
 
-@interface UserApiCodecReader : FlutterStandardReader
+@interface RegistrationDataApiCodecReader : FlutterStandardReader
 @end
-@implementation UserApiCodecReader
+@implementation RegistrationDataApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [User fromList:[self readValue]];
+      return [RegistrationSubmitResponse fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface UserApiCodecWriter : FlutterStandardWriter
+@interface RegistrationDataApiCodecWriter : FlutterStandardWriter
 @end
-@implementation UserApiCodecWriter
+@implementation RegistrationDataApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[User class]]) {
+  if ([value isKindOfClass:[RegistrationSubmitResponse class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else {
@@ -133,41 +84,98 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface UserApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface RegistrationDataApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation UserApiCodecReaderWriter
+@implementation RegistrationDataApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[UserApiCodecWriter alloc] initWithData:data];
+  return [[RegistrationDataApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[UserApiCodecReader alloc] initWithData:data];
+  return [[RegistrationDataApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *UserApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    UserApiCodecReaderWriter *readerWriter = [[UserApiCodecReaderWriter alloc] init];
+    RegistrationDataApiCodecReaderWriter *readerWriter = [[RegistrationDataApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void UserApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<UserApi> *api) {
+void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.UserApi.validateUser"
+        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.startRegistration"
         binaryMessenger:binaryMessenger
-        codec:UserApiGetCodec()];
+        codec:RegistrationDataApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(validateUserUsername:langCode:completion:)], @"UserApi api (%@) doesn't respond to @selector(validateUserUsername:langCode:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(startRegistrationLanguages:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(startRegistrationLanguages:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_langCode = GetNullableObjectAtIndex(args, 1);
-        [api validateUserUsername:arg_username langCode:arg_langCode completion:^(User *_Nullable output, FlutterError *_Nullable error) {
+        NSArray<NSString *> *arg_languages = GetNullableObjectAtIndex(args, 0);
+        [api startRegistrationLanguages:arg_languages completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.evaluateMVEL"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(evaluateMVELFieldData:expression:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(evaluateMVELFieldData:expression:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldData = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_expression = GetNullableObjectAtIndex(args, 1);
+        [api evaluateMVELFieldData:arg_fieldData expression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.getPreviewTemplate"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateIsPreview:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateIsPreview:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 0);
+        [api getPreviewTemplateIsPreview:arg_isPreview completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.submitRegistrationDto"
+        binaryMessenger:binaryMessenger
+        codec:RegistrationDataApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(submitRegistrationDtoMakerName:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(submitRegistrationDtoMakerName:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_makerName = GetNullableObjectAtIndex(args, 0);
+        [api submitRegistrationDtoMakerName:arg_makerName completion:^(RegistrationSubmitResponse *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

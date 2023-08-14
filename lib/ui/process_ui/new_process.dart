@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/registration.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -59,14 +61,14 @@ class _NewProcessState extends State<NewProcess> {
   }
 
   _submitRegistration(BuildContext context) async {
-    String regId = await context
+    RegistrationSubmitResponse registrationSubmitResponse = await context
         .read<RegistrationTaskProvider>()
         .submitRegistrationDto(username);
 
     bool isRegistrationSaved =
         context.read<RegistrationTaskProvider>().isRegistrationSaved;
 
-    return regId;
+    return registrationSubmitResponse;
   }
 
   _authenticatePacket(BuildContext context) async {
@@ -266,12 +268,13 @@ class _NewProcessState extends State<NewProcess> {
           if (!isPacketAuthenticated) {
             return;
           }
-          String regId = await _submitRegistration(context);
-          if (regId.isEmpty) {
-            _showInSnackBar("Registration save failed!");
+          RegistrationSubmitResponse registrationSubmitResponse = await _submitRegistration(context);
+          if (registrationSubmitResponse.errorCode!.isNotEmpty) {
+            log("registrationSubmitResponse ${registrationSubmitResponse.errorCode}");
+            _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }
-          context.read<GlobalProvider>().setRegId(regId);
+          context.read<GlobalProvider>().setRegId(registrationSubmitResponse.rId);
           setState(() {
             username = '';
             password = '';

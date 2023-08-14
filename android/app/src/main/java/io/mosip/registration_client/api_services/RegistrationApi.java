@@ -37,8 +37,6 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         String response = "";
         try {
             this.registrationDto = registrationService.startRegistration(languages);
-            result.success(response);
-            return;
         } catch (Exception e) {
             response = e.getMessage();
             Log.e(getClass().getSimpleName(), "Registration start failed");
@@ -63,32 +61,34 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
 
     @Override
     public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
+        String template = "";
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            Log.e(getClass().getSimpleName(), "reg dto: " + this.registrationDto.getBiometrics());
-            String template = this.templateService.getTemplate(this.registrationDto, true);
-            result.success(template);
-            return;
+            template = this.templateService.getTemplate(this.registrationDto, true);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch template failed: ", e);
         }
-        Log.e(getClass().getSimpleName(), "Empty template!");
-        result.success("");
+        result.success(template);
     }
 
     @Override
-    public void submitRegistrationDto(@NonNull String makerName, @NonNull RegistrationDataPigeon.Result<String> result) {
+    public void submitRegistrationDto(@NonNull String makerName, @NonNull RegistrationDataPigeon.Result<RegistrationDataPigeon.RegistrationSubmitResponse> result) {
+        String response = "";
+        String errorCode = "";
         try {
-            String rId = this.registrationService.getRegistrationDto().getRId();
-            Log.e(getClass().getSimpleName(), rId);
+            response = this.registrationService.getRegistrationDto().getRId();
             registrationService.submitRegistrationDto(makerName);
-            Log.e(getClass().getSimpleName(), "Registration saved successfully");
-            result.success(rId);
-            return;
         } catch (Exception e) {
+            errorCode = e.getMessage();
             Log.e(getClass().getSimpleName(), "Failed on registration submission", e);
         }
-        result.success("");
+        RegistrationDataPigeon.RegistrationSubmitResponse registrationSubmitResponse =
+                new RegistrationDataPigeon.RegistrationSubmitResponse
+                        .Builder()
+                        .setRId(response)
+                        .setErrorCode(errorCode)
+                        .build();
+        result.success(registrationSubmitResponse);
     }
 }
 

@@ -1,5 +1,15 @@
 import 'package:pigeon/pigeon.dart';
 
+class RegistrationSubmitResponse {
+  final String rId;
+  final String? errorCode;
+
+  RegistrationSubmitResponse({
+    required this.rId,
+    this.errorCode,
+  });
+}
+
 @HostApi()
 abstract class RegistrationDataApi {
   @async
@@ -12,5 +22,5 @@ abstract class RegistrationDataApi {
   String getPreviewTemplate(bool isPreview);
 
   @async
-  String submitRegistrationDto(String makerName);
+  RegistrationSubmitResponse submitRegistrationDto(String makerName);
 }

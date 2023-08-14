@@ -51,19 +51,17 @@ class RegistrationImpl implements Registration {
   }
 
   @override
-  Future<String> submitRegistrationDto(String makerName) async {
-    String registrationId = "";
+  Future<RegistrationSubmitResponse> submitRegistrationDto(String makerName) async {
+    late RegistrationSubmitResponse registrationSubmitResponse;
     try {
-      registrationId =
+      registrationSubmitResponse =
           await RegistrationDataApi().submitRegistrationDto(makerName);
     } on PlatformException {
       debugPrint('Registration API submit registration call failed');
-      registrationId = "";
     } catch (e) {
       debugPrint('RegistrationDto not submitted: ${e.toString()}');
-      registrationId = "";
     }
-    return registrationId;
+    return registrationSubmitResponse;
   }
 }
 

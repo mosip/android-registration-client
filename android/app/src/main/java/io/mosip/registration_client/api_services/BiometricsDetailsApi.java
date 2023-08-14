@@ -222,9 +222,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                     }
                 }
                 break;
-//                case EXCEPTION_PHOTO:
-//
-//                    break;
             }
             for (int i = 0; i < listBitmaps.size(); i++) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -305,9 +302,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                     }
                 }
                 break;
-//                case EXCEPTION_PHOTO:
-//
-//                    break;
             }
             for (int i = 0; i < listBitmaps.size(); i++) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -402,7 +396,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             Matcher matcher=REGEX_PATTERN.matcher(expression);
 
             while (matcher.find()) {
-
                 dataContext.put(matcher.group(),false);
                 for (BiometricsDto dto:biometricsDtoList
                      ) {
@@ -421,8 +414,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
                 }
             }
-            System.out.println("Printing Map");
-            System.out.println(dataContext);
+            Log.i(TAG, "Printing Map: " + dataContext);
             Boolean response=UserInterfaceHelperService.evaluateValidationExpression(expression,dataContext);
             result.success(response);
         }catch(Exception e){
@@ -533,7 +525,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private void info(String callbackId) {
         if (callbackId == null) {
             Log.e(TAG,"No SBI found");
-//            Toast.makeText(this, "No SBI found!", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -541,19 +532,15 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             Intent intent = new Intent();
             intent.setAction(callbackId + RegistrationConstants.D_INFO_INTENT_ACTION);
             queryPackage(intent);
-//            Toast.makeText(getApplicationContext(), "Initiating Device info request : " + callbackId,
-//                    Toast.LENGTH_LONG).show();
             activity.startActivityForResult(intent, 2);
         } catch (ClientCheckedException ex) {
             auditManagerService.audit(AuditEvent.DEVICE_INFO_FAILED, Components.REGISTRATION, ex.getMessage());
             Log.e(TAG, ex.getMessage(), ex);
-//            Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     private void rcapture(String callbackId, String deviceId) {
         if (deviceId == null || callbackId == null) {
-//            Toast.makeText(this, "No SBI found!", Toast.LENGTH_LONG).show();
             Log.e(TAG,"No SBI found!");
             return;
         }
@@ -564,7 +551,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             intent.setAction(callbackId + RegistrationConstants.R_CAPTURE_INTENT_ACTION);
             queryPackage(intent);
             Log.e(TAG,"Initiating capture request : ");
-//            Toast.makeText(this, "Initiating capture request : " + callbackId, Toast.LENGTH_LONG).show();
             CaptureRequest captureRequest = biometricsService.getRCaptureRequest(currentModality, deviceId,
                     getExceptionAttributes());
             intent.putExtra("input", objectMapper.writeValueAsBytes(captureRequest));
@@ -572,7 +558,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         } catch (Exception ex) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_FAILED, Components.REGISTRATION, ex.getMessage());
             Log.e(TAG, ex.getMessage(), ex);
-//            Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -626,7 +611,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         } catch (Exception e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse rcapture response", e);
-//            Toast.makeText(this, "Failed parsing Capture response : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
     }
