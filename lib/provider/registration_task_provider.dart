@@ -107,13 +107,6 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   submitRegistrationDto(String makerName) async {
     RegistrationSubmitResponse registrationSubmitResponse = await registration.submitRegistrationDto(makerName);
-    // if (resgistrationSubmitResponse.errorCode!.isEmpty) {
-    //   _isRegistrationSaved = false;
-    // } else {
-    //   _isRegistrationSaved = true;
-    // }
-    // notifyListeners();
-
     return registrationSubmitResponse;
   }
 
@@ -162,7 +155,6 @@ class RegistrationTaskProvider with ChangeNotifier {
       String fieldName, String langCode, String? applicantType) async {
     return await dynamicResponseService.fetchDocumentValues(
         fieldName, applicantType, langCode);
-    //String categoryCode, String applicantType, String langCode
   }
 
   Future<List<GenericData?>> getLocationValuesBasedOnParent(

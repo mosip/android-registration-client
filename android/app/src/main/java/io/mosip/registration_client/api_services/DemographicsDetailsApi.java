@@ -52,8 +52,6 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
                     }
                 }
             });
-
-//            Log.e(getClass().getSimpleName(), "Get field failed!" + this.registrationService.getRegistrationDto().getDemographics());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Get field failed!" + Arrays.toString(e.getStackTrace()));
         }
