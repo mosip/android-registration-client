@@ -114,8 +114,8 @@ class AuthProvider with ChangeNotifier {
       _isValidUser = true;
       _currentUser = user;
       _isOnboarded = user.isOnboarded;
-      _isMachineActive = user.machineStatus;
-      _isCenterActive = user.centerStatus;
+      _isMachineActive = user.machineStatus!;
+      _isCenterActive = user.centerStatus!;
     }
 
     notifyListeners();
