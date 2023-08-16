@@ -114,7 +114,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                     saveData(value, lang);
                   },
                   validator: (value) {
-                    if (!widget.e.inputRequired! || !widget.e.required!) {
+                    if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
                       return null;
                     }
                     if (value == null || value.isEmpty) {

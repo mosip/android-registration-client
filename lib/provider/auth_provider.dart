@@ -16,6 +16,9 @@ class AuthProvider with ChangeNotifier {
   String _loginError = "";
   bool _isLoggingIn = false;
   bool _isPacketAuthenticated = false;
+  String _packetError = "";
+  bool _isMachineActive = false;
+  bool _isCenterActive = false;
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isSyncing => _isSyncing;
@@ -28,6 +31,9 @@ class AuthProvider with ChangeNotifier {
   String get loginError => _loginError;
   bool get isLoggingIn => _isLoggingIn;
   bool get isPacketAuthenticated => _isPacketAuthenticated;
+  bool get isMachineActive => _isMachineActive;
+  bool get isCenterActive => _isCenterActive;
+  String get packetError => _packetError;
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -84,8 +90,23 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  validateUser(String username) async {
-    final user = await auth.validateUser(username);
+  setIsMachineActive(bool value) {
+    _isMachineActive = value;
+    notifyListeners();
+  }
+
+  setIsCenterActive(bool value) {
+    _isCenterActive = value;
+    notifyListeners();
+  }
+
+  setPacketError(String value) {
+    _packetError = value;
+    notifyListeners();
+  }
+
+  validateUser(String username, String langCode) async {
+    final user = await auth.validateUser(username, langCode);
 
     if (user.errorCode != null) {
       _isValidUser = false;
@@ -93,6 +114,8 @@ class AuthProvider with ChangeNotifier {
       _isValidUser = true;
       _currentUser = user;
       _isOnboarded = user.isOnboarded;
+      _isMachineActive = user.machineStatus!;
+      _isCenterActive = user.centerStatus!;
     }
 
     notifyListeners();
@@ -120,6 +143,7 @@ class AuthProvider with ChangeNotifier {
     final packetAuth = await auth.packetAuthentication(username, password, isConnected);
 
     if(packetAuth.errorCode != null) {
+      _packetError = packetAuth.errorCode!;
       _isPacketAuthenticated = false;
     } else {
       _isPacketAuthenticated = true;

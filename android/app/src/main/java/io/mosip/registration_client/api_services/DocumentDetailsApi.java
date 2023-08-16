@@ -26,15 +26,8 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
 
     @Override
     public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String reference, @NonNull byte[] bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
-//         List<String> stringList = bytes;
-// byte[] byteArray = new byte[0];
-// for (String str : stringList) {
-//     byteArray = ArrayUtils.addAll(byteArray, str.getBytes());
-// }
         try {
-
             this.registrationService.getRegistrationDto().addDocument(fieldId, docType,reference,bytes);
-            Log.e(getClass().getSimpleName(), "Document Added!"+this.registrationService.getRegistrationDto().getDocuments() );
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add Document failed!" + Arrays.toString(e.getStackTrace()));
         }
@@ -51,8 +44,6 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
         try {
 
             scannedPages = this.registrationService.getRegistrationDto().getScannedPages(fieldId);
-            //addDocument(fieldId, docType,reference,bytes);
-            Log.e(getClass().getSimpleName(), "Getting ScannedPages" + this.registrationService.getRegistrationDto().getScannedPages(fieldId));
             result.success(scannedPages);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Getting ScannedPages failed!" + Arrays.toString(e.getStackTrace()));

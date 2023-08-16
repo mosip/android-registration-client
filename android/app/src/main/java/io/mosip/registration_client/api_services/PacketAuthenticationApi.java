@@ -43,37 +43,6 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
         return packetAuth;
     }
 
-    private void onlineAuthentication(String username, String password, PacketAuthPigeon.Result<PacketAuthPigeon.PacketAuth> result) {
-        Call<ResponseWrapper<String>> call = syncRestService.login(syncRestFactory.getAuthRequest(username, password));
-        call.enqueue(new Callback<ResponseWrapper<String>>() {
-            @Override
-            public void onResponse(Call call, Response response) {
-                ResponseWrapper<String> wrapper = (ResponseWrapper<String>) response.body();
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(wrapper);
-                    if (error == null) {
-                        PacketAuthPigeon.PacketAuth packetAuth = new PacketAuthPigeon.PacketAuth.Builder()
-                                .setResponse(wrapper.getResponse())
-                                .build();
-                        result.success(packetAuth);
-                        return;
-                    }
-                    Log.e(getClass().getSimpleName(), response.raw().toString());
-                    PacketAuthPigeon.PacketAuth packetAuth = getAuthErrorResponse(error.getMessage());
-                    result.success(packetAuth);
-                    return;
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                Log.e(getClass().getSimpleName(), "Authentication Failed!");
-                PacketAuthPigeon.PacketAuth packetAuth = getAuthErrorResponse("REG_NETWORK_ERROR");
-                result.success(packetAuth);
-            }
-        });
-    }
-
     private void offlineAuthentication(String username, String password, PacketAuthPigeon.Result<PacketAuthPigeon.PacketAuth> result) {
         if (!loginService.validatePassword(username, password)) {
             PacketAuthPigeon.PacketAuth packetAuth = getAuthErrorResponse("REG_INVALID_REQUEST");
@@ -89,18 +58,13 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void authenticate(@NonNull String username, @NonNull String password, @NonNull Boolean isConnected, @NonNull PacketAuthPigeon.Result<PacketAuthPigeon.PacketAuth> result) {
-        if(!isConnected) {
-            offlineAuthentication(username, password, result);
-            return;
-        }
-        onlineAuthentication(username, password, result);
+        offlineAuthentication(username, password, result);
     }
 
     @Override
     public void syncPacket(@NonNull String packetId, @NonNull PacketAuthPigeon.Result<Void> result) {
         try{
             packetService.syncRegistration(packetId);
-            Log.e(getClass().getSimpleName(), "success");
         }catch(Exception e){
             Log.e(getClass().getSimpleName(), "Error packet Sync", e);
         }
@@ -110,7 +74,6 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     public void uploadPacket(@NonNull String packetId, @NonNull PacketAuthPigeon.Result<Void> result) {
         try{
             packetService.uploadRegistration(packetId);
-            Log.e(getClass().getSimpleName(), "success");
         }catch(Exception e){
             Log.e(getClass().getSimpleName(), "Error packet Upload", e);
         }

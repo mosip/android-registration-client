@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/registration.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -49,7 +52,7 @@ class _NewProcessState extends State<NewProcess> {
 
   String password = '';
 
-  void _showInSnackBar(String value, BuildContext context) {
+  void _showInSnackBar(String value) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(value),
@@ -58,14 +61,14 @@ class _NewProcessState extends State<NewProcess> {
   }
 
   _submitRegistration(BuildContext context) async {
-    String regId = await context
+    RegistrationSubmitResponse registrationSubmitResponse = await context
         .read<RegistrationTaskProvider>()
         .submitRegistrationDto(username);
 
     bool isRegistrationSaved =
         context.read<RegistrationTaskProvider>().isRegistrationSaved;
 
-    return regId;
+    return registrationSubmitResponse;
   }
 
   _authenticatePacket(BuildContext context) async {
@@ -89,21 +92,48 @@ class _NewProcessState extends State<NewProcess> {
         context.read<AuthProvider>().isPacketAuthenticated;
 
     if (!isPacketAuthenticated) {
-      _showInSnackBar(
-          AppLocalizations.of(context)!.password_incorrect, context);
+      _showErrorInSnackbar();
       return false;
     }
     return true;
   }
 
+  _showErrorInSnackbar() {
+    String errorMsg = context.read<AuthProvider>().packetError;
+    String snackbarText = "";
+
+    switch (errorMsg) {
+      case "REG_TRY_AGAIN":
+        snackbarText = AppLocalizations.of(context)!.login_failed;
+        break;
+
+      case "REG_INVALID_REQUEST":
+        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        break;
+
+      case "REG_NETWORK_ERROR":
+        snackbarText = AppLocalizations.of(context)!.network_error;
+        break;
+
+      case "":
+        return;
+
+      default:
+        snackbarText = errorMsg;
+        break;
+    }
+
+    _showInSnackBar(snackbarText);
+  }
+
   bool _validateUsername(BuildContext context) {
-    if (username.isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_required, context);
+    if (username.trim().isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_required);
       return false;
     }
 
-    if (username.length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_exceed, context);
+    if (username.trim().length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
       return false;
     }
 
@@ -111,13 +141,13 @@ class _NewProcessState extends State<NewProcess> {
   }
 
   bool _validatePassword(BuildContext context) {
-    if (password.isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_required, context);
+    if (password.trim().isEmpty) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_required);
       return false;
     }
 
-    if (password.length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_exceed, context);
+    if (password.trim().length > 50) {
+      _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
       return false;
     }
 
@@ -127,7 +157,7 @@ class _NewProcessState extends State<NewProcess> {
   bool _isUserLoggedInUser(BuildContext context) {
     final user = context.read<AuthProvider>().currentUser;
     if (user.userId != username) {
-      _showInSnackBar(AppLocalizations.of(context)!.invalid_user, context);
+      _showInSnackBar(AppLocalizations.of(context)!.invalid_user);
       return false;
     }
     return true;
@@ -165,8 +195,7 @@ class _NewProcessState extends State<NewProcess> {
               .fieldInputValue
               .containsKey(screen.fields!.elementAt(i)!.id))) {
             isValid = false;
-            print("i: ${i}");
-            print("id: ${screen.fields!.elementAt(i)!.id}");
+
             break;
           }
         }
@@ -183,9 +212,32 @@ class _NewProcessState extends State<NewProcess> {
                   .fieldInputValue
                   .containsKey(screen.fields!.elementAt(i)!.id))) {
                 isValid = false;
-                print("i: ${i}");
                 break;
               }
+            }
+          }
+        }
+        if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+            screen.fields!.elementAt(i)!.conditionalBioAttributes!.isNotEmpty) {
+          String response = await BiometricsApi().getAgeGroup();
+          if (response.compareTo(screen.fields!
+                  .elementAt(i)!
+                  .conditionalBioAttributes!
+                  .first!
+                  .ageGroup!) ==
+              0) {
+            bool valid = await BiometricsApi()
+                .conditionalBioAttributeValidation(
+                    screen.fields!.elementAt(i)!.id!,
+                    screen.fields!
+                        .elementAt(i)!
+                        .conditionalBioAttributes!
+                        .first!
+                        .validationExpr!);
+            if (!valid) {
+              isValid = false;
+
+              break;
             }
           }
         }
@@ -216,12 +268,13 @@ class _NewProcessState extends State<NewProcess> {
           if (!isPacketAuthenticated) {
             return;
           }
-          String regId = await _submitRegistration(context);
-          if (regId.isEmpty) {
-            _showInSnackBar("Registration save failed!", context);
+          RegistrationSubmitResponse registrationSubmitResponse = await _submitRegistration(context);
+          if (registrationSubmitResponse.errorCode!.isNotEmpty) {
+            log("registrationSubmitResponse ${registrationSubmitResponse.errorCode}");
+            _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }
-          context.read<GlobalProvider>().setRegId(regId);
+          context.read<GlobalProvider>().setRegId(registrationSubmitResponse.rId);
           setState(() {
             username = '';
             password = '';

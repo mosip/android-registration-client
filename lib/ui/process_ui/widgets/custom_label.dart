@@ -21,7 +21,7 @@ class CustomLabel extends StatelessWidget {
           const SizedBox(
             width: 5,
           ),
-          if (field.inputRequired! && field.required!)
+          if (field.required! || field.requiredOn!.isNotEmpty)
             const Text(
               "*",
               style: TextStyle(color: Colors.red, fontSize: 15),

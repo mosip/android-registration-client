@@ -41,20 +41,26 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     }
 
     @Override
-    public void getLocationValues(@NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<String>> result) {
-        List<String> locationResponse = new ArrayList<>();
-
+    public void getLocationValues(@NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
+        List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
         try {
-            List<GenericValueDto> genericValueDtoList = this.masterDataService.findLocationByHierarchyLevel(hierarchyLevelName, langCode);
-            genericValueDtoList.forEach((dto) -> {
-                locationResponse.add(dto.getName());
+            int hierarchyLevel = this.masterDataService.getHierarchyLevel(hierarchyLevelName);
+            List<GenericValueDto> genericValueList = this.masterDataService.findLocationByHierarchyLevel(hierarchyLevelName, langCode);
+            genericValueList.forEach((v) -> {
+                DynamicResponsePigeon.GenericData location = new DynamicResponsePigeon.GenericData.Builder()
+                        .setCode(v.getCode())
+                        .setName(v.getName())
+                        .setLangCode(v.getLangCode())
+                        .setHierarchyLevel((long)hierarchyLevel)
+                        .build();
+                locationList.add(location);
             });
-
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Fetch field values: " + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), "Fetch location values: " + Arrays.toString(e.getStackTrace()));
         }
-        result.success(locationResponse);
+        result.success(locationList);
     }
+
     @Override
     public void getDocumentValues(@NonNull String categoryCode, String applicantType,@NonNull String langCode,@NonNull DynamicResponsePigeon.Result<List<String>> result){
 
@@ -88,4 +94,6 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
         }
         result.success(locationList);
     }
+
+
 }

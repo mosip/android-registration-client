@@ -100,16 +100,14 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  submitRegistrationDto(String makerName) async {
-    String regId = await registration.submitRegistrationDto(makerName);
-    // if (regId.isEmpty) {
-    //   _isRegistrationSaved = false;
-    // } else {
-    //   _isRegistrationSaved = true;
-    // }
+  setIsRegistrationSaved(bool value) {
+    _isRegistrationSaved = value;
+    notifyListeners();
+  }
 
-    // notifyListeners();
-    return regId;
+  submitRegistrationDto(String makerName) async {
+    RegistrationSubmitResponse registrationSubmitResponse = await registration.submitRegistrationDto(makerName);
+    return registrationSubmitResponse;
   }
 
   addDemographicField(String fieldId, String value) async {
@@ -147,7 +145,7 @@ class RegistrationTaskProvider with ChangeNotifier {
     return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
   }
 
-  Future<List<String?>> getLocationValues(
+  Future<List<GenericData?>> getLocationValues(
       String fieldName, String langCode) async {
     return await dynamicResponseService.fetchLocationValues(
         fieldName, langCode);
@@ -157,11 +155,10 @@ class RegistrationTaskProvider with ChangeNotifier {
       String fieldName, String langCode, String? applicantType) async {
     return await dynamicResponseService.fetchDocumentValues(
         fieldName, applicantType, langCode);
-    //String categoryCode, String applicantType, String langCode
   }
 
   Future<List<GenericData?>> getLocationValuesBasedOnParent(
-      String parentCode, String fieldName, String langCode) async {
+      String? parentCode, String fieldName, String langCode) async {
     return await dynamicResponseService.fetchLocationValuesBasedOnParent(
         parentCode, fieldName, langCode);
   }

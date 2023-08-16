@@ -56,23 +56,16 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     final bytes = await getImageBytes(item);
 
     Uint8List myBytes = Uint8List.fromList(bytes);
-    // setState(() {
-    //   poaList.add(item);
-    // });
     context
         .read<RegistrationTaskProvider>()
         .addDocument(e.id!, e.type!, "reference", myBytes);
   }
 
   Future<void> getScannedDocuments(Field e) async {
-    // final listofscannedDoc = await context
-    //     .read<RegistrationTaskProvider>()
-    //     .getScannedDocument(e.id!);
     try {
       final listofscannedDoc = await DocumentApi().getScannedPages(e.id!);
       setState(() {
         imageBytesList = listofscannedDoc;
-        //imageBytesList = bytes;
       });
     } catch (e) {
       print("Error while getting scanned pages ${e}");
@@ -107,11 +100,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     ),
                     DropDownDocumentControl(
                       field: widget.field,
-                      // id: e.id ?? "",
-                      // type: e.type ?? "",
                       validation: widget.validation,
-                      // //onChanged: (value) => formValues[e.label!["eng"]!] = value,
-                      // options: [],
                     ),
                     const SizedBox(
                       height: 10,
@@ -159,12 +148,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                         Container(
                                           height: 70,
                                           width: 90,
-                                          // child: kIsWeb
-                                          //     ? Image.network(item)
-                                          //     : Image.file(File(item)),
                                           child: Image.memory(item!),
                                         )
-                                        //Text(fileuploadFile ?? 'No text'),
                                       ],
                                     ),
                                   ),
@@ -188,19 +173,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       height: 10,
                     ),
                     Row(
-                      //direction: Axis.horizontal,
-                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Expanded(
-                          //child: Container(
-                          //width: 400,
                           child: DropDownDocumentControl(
                             field: widget.field,
-                            // id: e.id ?? "",
-                            // type: e.type ?? "",
                             validation: widget.validation,
-                            // //onChanged: (value) => formValues[e.label!["eng"]!] = value,
-                            // options: [],
                           ),
                         ),
                         // ),
@@ -250,24 +227,16 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               children: imageBytesList
                                   .map(
                                     (item) => Card(
-                                      child:
-                                          //Row(
-                                          //crossAxisAlignment: CrossAxisAlignment.start,
-                                          //children: [
-                                          Flexible(
+                                      child: Flexible(
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            //Text(item),
                                             Container(
-                                                height: 70,
-                                                width: 90,
-                                                // child: kIsWeb
-                                                //     ? Image.network(item)
-                                                //     : Image.file(File(item)),
-                                                child: Image.memory(item!))
-                                            //Text(fileuploadFile ?? 'No text'),
+                                              height: 70,
+                                              width: 90,
+                                              child: Image.memory(item!),
+                                            ),
                                           ],
                                         ),
                                       ),

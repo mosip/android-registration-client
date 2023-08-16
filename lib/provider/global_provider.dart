@@ -52,11 +52,23 @@ class GlobalProvider with ChangeNotifier {
   String _regId = "";
   String _ageGroup = "";
 
+  List<String?> _locationHierarchy = [null, null, null, null, null];
+
   //GettersSetters
   String get ageGroup => this._ageGroup;
+  List<String?> get locationHierarchy => this._locationHierarchy;
 
   set ageGroup(String value) {
     this._ageGroup = value;
+    notifyListeners();
+  }
+
+  void setLocationHierarchy(String? value, int index) {
+    _locationHierarchy[index] = value;
+    for (int i = index + 1; i < 5; i++) {
+      _locationHierarchy[i] = null;
+    }
+    log(_locationHierarchy.toString());
     notifyListeners();
   }
 
@@ -214,10 +226,10 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setLanguageSpecificValue(String key, String value, String language,
+  setLanguageSpecificValue(String key, dynamic value, String language,
       Map<String, dynamic> commonMap) {
     if (!commonMap.containsKey(key)) {
-      commonMap[key] = <String, String>{language: value};
+      commonMap[key] = <String, dynamic>{language: value};
     } else {
       commonMap[key][language] = value;
     }

@@ -5,6 +5,7 @@
 */
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ import 'package:registration_client/platform_android/auth_impl.dart';
 import 'package:registration_client/platform_android/machine_key_impl.dart';
 import 'package:registration_client/platform_android/sync_response_impl.dart';
 import 'package:registration_client/platform_spi/machine_key.dart';
+import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -148,7 +150,8 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    await context.read<AuthProvider>().validateUser(username);
+    String langCode = context.read<AppLanguageProvider>().selectedLanguage;
+    await context.read<AuthProvider>().validateUser(username, langCode);
     bool isValid = context.read<AuthProvider>().isValidUser;
     if (!isValid) {
       _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
@@ -215,7 +218,6 @@ class _LoginPageState extends State<LoginPage> {
       authProvider.setIsSyncing(false);
       _navigateToHomePage();
     }
-    // _navigateToHomePage();
     setState(() {
       isLoggingIn = false;
     });
@@ -298,7 +300,6 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: Container(
               height: isMobile ? 46.h : 54.h,
-              // width: isMobile ? 115.39.w : 135.46.w,
               child: Image.asset(
                 appIcon,
                 fit: BoxFit.fill,
@@ -307,7 +308,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
           InkWell(
             child: Container(
-              // width: 129.w,
               height: 46.h,
               padding: EdgeInsets.only(
                 left: 46.w,
@@ -411,7 +411,6 @@ class _LoginPageState extends State<LoginPage> {
             height: 34.h,
           ),
           Container(
-            // height: 34.h,
             child: Text(
               AppLocalizations.of(context)!.login_text,
               style: AppStyle.mobileHeaderText,

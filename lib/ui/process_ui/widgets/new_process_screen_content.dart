@@ -14,6 +14,7 @@ import 'package:registration_client/ui/process_ui/widgets/biometric_capture_cont
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/document_upload_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/dynamic_dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 
@@ -67,10 +68,14 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "textbox":
         return TextBoxControl(e: e, validation: regexPattern);
       case "dropdown":
+        if(e.fieldType == "dynamic") {
+          return DynamicDropDownControl(field: e, validation: regexPattern);
+        }
         return DropDownControl(
           validation: regexPattern,
           field: e,
         );
+
       case "ageDate":
         return AgeDateControl(
           field: e,

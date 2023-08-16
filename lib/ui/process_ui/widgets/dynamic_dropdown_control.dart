@@ -3,24 +3,25 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
-class DropDownDocumentControl extends StatefulWidget {
-  const DropDownDocumentControl(
+class DynamicDropDownControl extends StatefulWidget {
+  const DynamicDropDownControl(
       {super.key, required this.field, required this.validation});
 
   final Field field;
   final RegExp validation;
 
   @override
-  State<DropDownDocumentControl> createState() => _CustomDropDownState();
+  State<DynamicDropDownControl> createState() => _CustomDynamicDropDownState();
 }
 
-class _CustomDropDownState extends State<DropDownDocumentControl> {
+class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   String? selected;
 
   @override
@@ -86,19 +87,16 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
     });
   }
 
-  Future<List<String?>> _getDocumentValues(
-      String fieldName, String langCode, String? applicantType) async {
-    //String fieldName, String langCode, String applicantType
+  Future<List<String?>> _getFieldValues(String fieldId, String langCode) async {
     return await context
         .read<RegistrationTaskProvider>()
-        .getDocumentValues(fieldName, langCode, applicantType);
+        .getFieldValues(fieldId, langCode);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getDocumentValues(widget.field.subType!, "eng",
-            null), //TODO: drive the applicant type
+        future: _getFieldValues(widget.field.subType!, "eng"),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
             elevation: 0,
@@ -138,14 +136,13 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           value: selected,
                           validator: (value) {
-                            if(!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                            if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
                               return null;
                             }
-                            if ((value == null ||
-                                value.isEmpty )&& widget.field.inputRequired!) {
+                            if (value == null || value.isEmpty) {
                               return 'Please enter a value';
                             }
-                            if (!widget.validation.hasMatch(value!)) {
+                            if (!widget.validation.hasMatch(value)) {
                               return 'Invalid input';
                             }
                             return null;
