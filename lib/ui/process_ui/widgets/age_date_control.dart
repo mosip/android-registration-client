@@ -143,7 +143,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
       _yearController.text = parsedDate.year.toString();
       _ageController.text = calculateYearDifference(
                                     DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
+                                        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}"),
                                     DateTime.now())
                                 .abs()
                                 .toString();
@@ -177,10 +177,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           String? valid = fieldValidation(value, "dd");
                           if (valid == null) {
+                            DateTime date = DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}");
+                            DateTime currentDate = DateTime.now();
+                            if(date.compareTo(currentDate) > 0) {
+                              return "Invalid date!";
+                            }
                             _ageController.text = calculateYearDifference(
-                                    DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
-                                    DateTime.now())
+                                    date,
+                                    currentDate)
                                 .abs()
                                 .toString();
                           } else {
@@ -221,10 +226,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           String? valid = fieldValidation(value, "MM");
                           if (valid == null) {
+                            DateTime date = DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}");
+                            DateTime currentDate = DateTime.now();
+                            if(date.compareTo(currentDate) > 0) {
+                              return "Invalid date!";
+                            }
                             _ageController.text = calculateYearDifference(
-                                    DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
-                                    DateTime.now())
+                                    date,
+                                    currentDate)
                                 .abs()
                                 .toString();
                           } else {
@@ -263,10 +273,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           String? valid = fieldValidation(value, "yyyy");
                           if (valid == null) {
+                            DateTime date = DateTime.parse(
+                                        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}");
+                            DateTime currentDate = DateTime.now();
+                            if(date.compareTo(currentDate) > 0) {
+                              return "Invalid date!";
+                            }
                             _ageController.text = calculateYearDifference(
-                                    DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
-                                    DateTime.now())
+                                    date,
+                                    currentDate)
                                 .abs()
                                 .toString();
                           } else {
