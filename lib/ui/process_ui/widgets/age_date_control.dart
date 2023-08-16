@@ -337,12 +337,19 @@ class _AgeDateControlState extends State<AgeDateControl> {
                     const SizedBox(width: 12),
                     Flexible(
                       child: TextFormField(
-                        readOnly: true,
+                        // readOnly: true,
                         controller: _ageController,
                         keyboardType: TextInputType.number,
-                        // onChanged: (value) {
-                        //   _getDateFromAge(value);
-                        // },
+                        onChanged: (value) {
+                          if(value != "") {
+                            _getDateFromAge(value);
+                            saveData();
+                          } else {
+                            _dayController.text = "";
+                            _monthController.text = "";
+                            _yearController.text = "";
+                          }
+                        },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
