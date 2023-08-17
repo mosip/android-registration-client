@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 import '../../provider/registration_task_provider.dart';
 
@@ -13,40 +15,41 @@ class PreviewPage extends StatefulWidget {
 
 class _PreviewPageState extends State<PreviewPage> {
   bool isLoading = true;
-  InAppWebViewController? webViewController;
+  WebViewPlusController? _controller;
+  double _height = 1;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      child: Stack(
+      child: ListView(
         children: [
-          context.watch<RegistrationTaskProvider>().previewTemplate == ""
-              ? SizedBox.shrink()
-              : InAppWebView(
-                  initialData: InAppWebViewInitialData(
-                      data: context
-                          .watch<RegistrationTaskProvider>()
-                          .previewTemplate),
-                  onWebViewCreated: (controller) {
-                    webViewController = controller;
-                  },
-                  onLoadStart: (controller, url) {
-                    setState(() {
-                      isLoading = true;
-                    });
-                  },
-                  onLoadStop: (controller, url) {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                ),
-          if (isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
+          SizedBox(
+            height: _height + 150.h,
+            child:
+                context.watch<RegistrationTaskProvider>().previewTemplate == ""
+                    ? const Center(child: CircularProgressIndicator(),)
+                    : WebViewPlus(
+                        onWebViewCreated: (controller) {
+                          _controller = controller;
+                          controller.loadString(context
+                              .read<RegistrationTaskProvider>()
+                              .previewTemplate);
+                        },
+                        onPageFinished: (url) {
+                          _controller!.getHeight().then((double height) {
+                            setState(() {
+                              _height = height;
+                            });
+                          });
+                        },
+                        javascriptMode: JavascriptMode.unrestricted,
+                      ),
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
         ],
       ),
     );
