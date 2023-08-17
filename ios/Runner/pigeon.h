@@ -10,27 +10,31 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RegistrationSubmitResponse;
+@class GenericData;
 
-@interface RegistrationSubmitResponse : NSObject
+@interface GenericData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithRId:(NSString *)rId
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * rId;
-@property(nonatomic, copy, nullable) NSString * errorCode;
++ (instancetype)makeWithName:(NSString *)name
+    code:(NSString *)code
+    langCode:(NSString *)langCode
+    hierarchyLevel:(NSNumber *)hierarchyLevel;
+@property(nonatomic, copy) NSString * name;
+@property(nonatomic, copy) NSString * code;
+@property(nonatomic, copy) NSString * langCode;
+@property(nonatomic, strong) NSNumber * hierarchyLevel;
 @end
 
-/// The codec used by RegistrationDataApi.
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
+/// The codec used by DynamicResponseApi.
+NSObject<FlutterMessageCodec> *DynamicResponseApiGetCodec(void);
 
-@protocol RegistrationDataApi
-- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)evaluateMVELFieldData:(NSString *)fieldData expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)submitRegistrationDtoMakerName:(NSString *)makerName completion:(void (^)(RegistrationSubmitResponse *_Nullable, FlutterError *_Nullable))completion;
+@protocol DynamicResponseApi
+- (void)getFieldValuesFieldName:(NSString *)fieldName langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getLocationValuesHierarchyLevelName:(NSString *)hierarchyLevelName langCode:(NSString *)langCode completion:(void (^)(NSArray<GenericData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getDocumentValuesCategoryCode:(NSString *)categoryCode applicantType:(nullable NSString *)applicantType langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getLocationValuesBasedOnParentParentCode:(nullable NSString *)parentCode hierarchyLevelName:(NSString *)hierarchyLevelName langCode:(NSString *)langCode completion:(void (^)(NSArray<GenericData *> *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
+extern void DynamicResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DynamicResponseApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
