@@ -130,7 +130,7 @@ public class TemplateService {
 
         bioData.put("FingerCount", capturedFingers.stream().filter(b -> b.getBioValue() != null).count());
         bioData.put("IrisCount", capturedIris.stream().filter(b -> b.getBioValue() != null).count());
-        bioData.put("FaceCount", 1); //TODO check this
+        bioData.put("FaceCount", capturedFace.stream().filter(b -> b.getBioValue() != null).count()); //TODO check this
         bioData.put("subType", field.getSubType());
         bioData.put("label", getFieldLabel(field, registrationDto));
 
@@ -154,45 +154,58 @@ public class TemplateService {
         }
 
         if (!capturedFingers.isEmpty()) {
-            setFingerRankings(capturedFingers, Modality.FINGERPRINT_SLAB_LEFT.getAttributes(), bioData);
-            BiometricsDto lLittleFinger = capturedFingers.stream().filter(dto -> "Left LittleFinger".equals(dto.getBioSubType())).findFirst().get();
-            BiometricsDto lRingFinger = capturedFingers.stream().filter(dto -> "Left RingFinger".equals(dto.getBioSubType())).findFirst().get();
-            BiometricsDto lMiddleFinger = capturedFingers.stream().filter(dto -> "Left MiddleFinger".equals(dto.getBioSubType())).findFirst().get();
-            BiometricsDto lIndexFinger = capturedFingers.stream().filter(dto -> "Left IndexFinger".equals(dto.getBioSubType())).findFirst().get();
+            List<String> leftFingers = Modality.FINGERPRINT_SLAB_LEFT.getAttributes();
+            List<BiometricsDto> leftHandFingersDtoList = capturedFingers.stream().filter(b -> leftFingers.contains(Modality.getBioAttribute(b.getBioSubType()))).collect(Collectors.toList());
+            if(!leftHandFingersDtoList.isEmpty()) {
+                setFingerRankings(leftHandFingersDtoList, leftFingers, bioData);
+                BiometricsDto lLittleFinger = leftHandFingersDtoList.stream().filter(dto -> "Left LittleFinger".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto lRingFinger = leftHandFingersDtoList.stream().filter(dto -> "Left RingFinger".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto lMiddleFinger = leftHandFingersDtoList.stream().filter(dto -> "Left MiddleFinger".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto lIndexFinger = leftHandFingersDtoList.stream().filter(dto -> "Left IndexFinger".equals(dto.getBioSubType())).findFirst().get();
 
-            Bitmap leftHandBitmaps = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                    UserInterfaceHelperService.getFingerBitMap(lLittleFinger),
-                    UserInterfaceHelperService.getFingerBitMap(lRingFinger),
-                    UserInterfaceHelperService.getFingerBitMap(lMiddleFinger),
-                    UserInterfaceHelperService.getFingerBitMap(lIndexFinger)), missingImage);
-            setBiometricImage(bioData, "CapturedLeftSlap", isPreview ? 0 : R.drawable.left_palm,
-                    isPreview ? leftHandBitmaps : null);
+                Bitmap leftHandBitmaps = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                        UserInterfaceHelperService.getFingerBitMap(lLittleFinger),
+                        UserInterfaceHelperService.getFingerBitMap(lRingFinger),
+                        UserInterfaceHelperService.getFingerBitMap(lMiddleFinger),
+                        UserInterfaceHelperService.getFingerBitMap(lIndexFinger)), missingImage);
+                setBiometricImage(bioData, "CapturedLeftSlap", isPreview ? 0 : R.drawable.left_palm,
+                        isPreview ? leftHandBitmaps : null);
+            }
 
-            setFingerRankings(capturedFingers, Modality.FINGERPRINT_SLAB_RIGHT.getAttributes(), bioData);
+            List<String> rightFingers = Modality.FINGERPRINT_SLAB_RIGHT.getAttributes();
+            List<BiometricsDto> rightHandFingersDtoList = capturedFingers.stream().filter(b -> rightFingers.contains(Modality.getBioAttribute(b.getBioSubType()))).collect(Collectors.toList());
+            if(!rightHandFingersDtoList.isEmpty()) {
+                setFingerRankings(rightHandFingersDtoList, Modality.FINGERPRINT_SLAB_RIGHT.getAttributes(), bioData);
+                BiometricsDto rIndexFinger = rightHandFingersDtoList.stream().filter(dto -> "Right IndexFinger".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto rMiddleFinger = rightHandFingersDtoList.stream().filter(dto -> "Right MiddleFinger".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto rRingFinger = rightHandFingersDtoList.stream().filter(dto -> "Right RingFinger".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto rLittleFinger = rightHandFingersDtoList.stream().filter(dto -> "Right LittleFinger".equals(dto.getBioSubType())).findFirst().get();
 
-            BiometricsDto rIndexFinger = capturedFingers.stream().filter(dto -> "Right IndexFinger".equals(dto.getBioSubType())).findFirst().get();
-            BiometricsDto rMiddleFinger = capturedFingers.stream().filter(dto -> "Right MiddleFinger".equals(dto.getBioSubType())).findFirst().get();
-            BiometricsDto rRingFinger = capturedFingers.stream().filter(dto -> "Right RingFinger".equals(dto.getBioSubType())).findFirst().get();
-            BiometricsDto rLittleFinger = capturedFingers.stream().filter(dto -> "Right LittleFinger".equals(dto.getBioSubType())).findFirst().get();
+                Bitmap rightHandBitmaps = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                        UserInterfaceHelperService.getFingerBitMap(rIndexFinger),
+                        UserInterfaceHelperService.getFingerBitMap(rMiddleFinger),
+                        UserInterfaceHelperService.getFingerBitMap(rRingFinger),
+                        UserInterfaceHelperService.getFingerBitMap(rLittleFinger)), missingImage);
+                setBiometricImage(bioData, "CapturedRightSlap", isPreview ? 0 : R.drawable.right_palm,
+                        isPreview ? rightHandBitmaps : null);
+            }
 
-            Bitmap rightHandBitmaps = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                    UserInterfaceHelperService.getFingerBitMap(rIndexFinger),
-                    UserInterfaceHelperService.getFingerBitMap(rMiddleFinger),
-                    UserInterfaceHelperService.getFingerBitMap(rRingFinger),
-                    UserInterfaceHelperService.getFingerBitMap(rLittleFinger)), missingImage);
-            setBiometricImage(bioData, "CapturedRightSlap", isPreview ? 0 : R.drawable.right_palm,
-                    isPreview ? rightHandBitmaps : null);
 
-            setFingerRankings(capturedFingers, Modality.FINGERPRINT_SLAB_THUMBS.getAttributes(), bioData);
+            List<String> thumbs = Modality.FINGERPRINT_SLAB_THUMBS.getAttributes();
+            List<BiometricsDto> thumbsDtoList = capturedFingers.stream().filter(b -> thumbs.contains(Modality.getBioAttribute(b.getBioSubType()))).collect(Collectors.toList());
+            if(!thumbsDtoList.isEmpty()) {
+                setFingerRankings(thumbsDtoList, Modality.FINGERPRINT_SLAB_THUMBS.getAttributes(), bioData);
 
-            BiometricsDto lThumb = capturedFingers.stream().filter(dto -> "Left Thumb".equals(dto.getBioSubType())).findFirst().get();
-            BiometricsDto rThumb = capturedFingers.stream().filter(dto -> "Right Thumb".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto lThumb = thumbsDtoList.stream().filter(dto -> "Left Thumb".equals(dto.getBioSubType())).findFirst().get();
+                BiometricsDto rThumb = thumbsDtoList.stream().filter(dto -> "Right Thumb".equals(dto.getBioSubType())).findFirst().get();
 
-            Bitmap thumbsBitmap = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                    UserInterfaceHelperService.getFingerBitMap(lThumb),
-                    UserInterfaceHelperService.getFingerBitMap(rThumb)), missingImage);
-            setBiometricImage(bioData, "CapturedThumbs", isPreview ? 0 : R.drawable.thumbs,
-                    isPreview ? thumbsBitmap : null);
+                Bitmap thumbsBitmap = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
+                        UserInterfaceHelperService.getFingerBitMap(lThumb),
+                        UserInterfaceHelperService.getFingerBitMap(rThumb)), missingImage);
+                setBiometricImage(bioData, "CapturedThumbs", isPreview ? 0 : R.drawable.thumbs,
+                        isPreview ? thumbsBitmap : null);
+            }
+
         }
 
         if (!capturedFace.isEmpty()) {
@@ -211,10 +224,10 @@ public class TemplateService {
     private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap) {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                templateValues.put(key, "\"data:image/png;base64," + encodedBytes + "\"");
+                templateValues.put(key, "\"data:image/jpeg;base64," + encodedBytes + "\"");
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);
             }
@@ -226,10 +239,10 @@ public class TemplateService {
     private void setBiometricImage(VelocityContext velocityContext, String key, Bitmap bitmap) {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                velocityContext.put(key, "data:image/png;base64," + encodedBytes);
+                velocityContext.put(key, "data:image/jpeg;base64," + encodedBytes);
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);
             }
@@ -239,7 +252,7 @@ public class TemplateService {
 
     private void setFingerRankings(List<BiometricsDto> capturedFingers, List<String> fingers, Map<String, Object> data) {
         Map<String, Float> sortedValues = capturedFingers.stream()
-                .filter(b -> fingers.contains(b.getBioSubType().replaceAll("\\s+", "")) && b.getBioValue() != null)
+                .filter(b -> b.getBioValue() != null)
                 .sorted(Comparator.comparing(BiometricsDto::getQualityScore))
                 .collect(Collectors.toMap(BiometricsDto::getBioSubType, BiometricsDto::getQualityScore));
 
@@ -265,10 +278,10 @@ public class TemplateService {
     private String getImage(int imagePath) {
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
             Bitmap bitmap = BitmapFactory.decodeResource(appContext.getResources(), imagePath);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream);
             byte[] byteArray = byteStream.toByteArray();
             String imageEncodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            return "data:image/png;base64," + imageEncodedBytes;
+            return "data:image/jpeg;base64," + imageEncodedBytes;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
         }
