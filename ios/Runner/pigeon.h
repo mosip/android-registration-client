@@ -10,31 +10,35 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class GenericData;
+@class Sync;
+@class SyncTime;
 
-@interface GenericData : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithName:(NSString *)name
-    code:(NSString *)code
-    langCode:(NSString *)langCode
-    hierarchyLevel:(NSNumber *)hierarchyLevel;
-@property(nonatomic, copy) NSString * name;
-@property(nonatomic, copy) NSString * code;
-@property(nonatomic, copy) NSString * langCode;
-@property(nonatomic, strong) NSNumber * hierarchyLevel;
+@interface Sync : NSObject
++ (instancetype)makeWithSyncType:(nullable NSString *)syncType
+    syncProgress:(nullable NSNumber *)syncProgress
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy, nullable) NSString * syncType;
+@property(nonatomic, strong, nullable) NSNumber * syncProgress;
+@property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by DynamicResponseApi.
-NSObject<FlutterMessageCodec> *DynamicResponseApiGetCodec(void);
-
-@protocol DynamicResponseApi
-- (void)getFieldValuesFieldName:(NSString *)fieldName langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getLocationValuesHierarchyLevelName:(NSString *)hierarchyLevelName langCode:(NSString *)langCode completion:(void (^)(NSArray<GenericData *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getDocumentValuesCategoryCode:(NSString *)categoryCode applicantType:(nullable NSString *)applicantType langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getLocationValuesBasedOnParentParentCode:(nullable NSString *)parentCode hierarchyLevelName:(NSString *)hierarchyLevelName langCode:(NSString *)langCode completion:(void (^)(NSArray<GenericData *> *_Nullable, FlutterError *_Nullable))completion;
+@interface SyncTime : NSObject
++ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
+@property(nonatomic, copy, nullable) NSString * syncTime;
 @end
 
-extern void DynamicResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DynamicResponseApi> *_Nullable api);
+/// The codec used by SyncApi.
+NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
+
+@protocol SyncApi
+- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
