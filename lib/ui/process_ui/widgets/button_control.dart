@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -33,14 +34,14 @@ class ButtonControl extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: " *",
-                        style: TextStyle(color: Colors.red, fontSize: 15),
+                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
                       )
                     ],
                   ))
                 : Text(
                     context.read<GlobalProvider>().chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         color: black_shade_1,
                         fontWeight: semiBold),
                   ),

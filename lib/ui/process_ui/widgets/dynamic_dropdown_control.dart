@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
-import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -124,8 +123,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                               ),
                             ),
                             hintText: "Select Option",
-                            hintStyle:
-                                const TextStyle(color: Color(0xff999999)),
+                            hintStyle: const TextStyle(
+                              color: AppStyle.appBlackShade3,
+                            ),
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
@@ -136,7 +136,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           value: selected,
                           validator: (value) {
-                            if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                            if (!widget.field.required! &&
+                                widget.field.requiredOn!.isEmpty) {
                               return null;
                             }
                             if (value == null || value.isEmpty) {

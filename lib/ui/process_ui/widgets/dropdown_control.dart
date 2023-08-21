@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -186,7 +187,9 @@ class _CustomDropDownState extends State<DropDownControl> {
                     ),
                   ),
                   hintText: "Select Option",
-                  hintStyle: const TextStyle(color: Color(0xff999999)),
+                  hintStyle: const TextStyle(
+                    color: AppStyle.appBlackShade3,
+                  ),
                 ),
                 items: list
                     .map((option) => DropdownMenuItem(
@@ -197,9 +200,10 @@ class _CustomDropDownState extends State<DropDownControl> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 value: selected,
                 validator: (value) {
-                  if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
-                      return null;
-                    }
+                  if (!widget.field.required! &&
+                      widget.field.requiredOn!.isEmpty) {
+                    return null;
+                  }
                   if (value == null) {
                     return 'Please enter a value';
                   }

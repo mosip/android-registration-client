@@ -67,6 +67,7 @@ public class TemplateService {
 
         String templateText = this.masterDataService.getPreviewTemplateContent(TEMPLATE_TYPE_CODE,
                 registrationDto.getSelectedLanguages().get(0));
+        Log.e(getClass().getSimpleName(), "prev: " + templateText);
 
         InputStream is = new ByteArrayInputStream(templateText.getBytes(StandardCharsets.UTF_8));
 
@@ -213,9 +214,9 @@ public class TemplateService {
             setBiometricImage(bioData, "FaceImageSource", isPreview ? 0 : R.drawable.face,
                     isPreview ? faceBitmap : null);
 
-            if ("applicant".equalsIgnoreCase(field.getSubType())) {
+//            if ("applicant".equalsIgnoreCase(field.getSubType())) {
                 setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap);
-            }
+//            }
         }
         return bioData;
     }
