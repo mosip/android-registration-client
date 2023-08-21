@@ -330,7 +330,6 @@ public class TemplateService {
             data.put("label", getFieldLabel(field, registrationDto));
             data.put("value", getFieldValue(field, registrationDto));
         }
-        Log.e(getClass().getSimpleName(), "Field: " + field.getId() + " Value: " + value);
         return data;
     }
 
