@@ -270,7 +270,6 @@ class _NewProcessState extends State<NewProcess> {
           }
           RegistrationSubmitResponse registrationSubmitResponse = await _submitRegistration(context);
           if (registrationSubmitResponse.errorCode!.isNotEmpty) {
-            log("registrationSubmitResponse ${registrationSubmitResponse.errorCode}");
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }

@@ -84,7 +84,6 @@ class GlobalProvider with ChangeNotifier {
     for (int i = index + 1; i < 5; i++) {
       _locationHierarchy[i] = null;
     }
-    log(_locationHierarchy.toString());
     notifyListeners();
   }
 

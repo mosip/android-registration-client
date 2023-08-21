@@ -180,8 +180,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
     _dayController.text = calculatedDate.day.toString().padLeft(2, '0');
     _monthController.text = calculatedDate.month.toString().padLeft(2, '0');
     _yearController.text = calculatedDate.year.toString();
-
-    log("Calculated date: $calculatedDate");
   }
 
   @override

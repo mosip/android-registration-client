@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage> {
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
       context.read<GlobalProvider>().clearMap();
+      context.read<GlobalProvider>().clearScannedPages();
       context.read<GlobalProvider>().newProcessTabIndex = 0;
       context.read<GlobalProvider>().htmlBoxTabIndex = 0;
       context.read<GlobalProvider>().setRegId("");
