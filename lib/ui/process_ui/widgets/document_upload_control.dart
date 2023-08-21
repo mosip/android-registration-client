@@ -30,7 +30,15 @@ class DocumentUploadControl extends StatefulWidget {
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
   @override
   void initState() {
-    _getSavedDocument();
+    //load from the map
+    final scannedPagesMap =
+        context.read<GlobalProvider>().scannedPages[widget.field.id];
+
+    if (scannedPagesMap != null) {
+      setState(() {
+        imageBytesList = scannedPagesMap;
+      });
+    }
 
     super.initState();
   }
@@ -55,15 +63,17 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   Future<void> addDocument(String item, Field e) async {
     final bytes = await getImageBytes(item);
 
+    print("The selected value for dropdown for ${e.id!} is ${selectedValue}");
     Uint8List myBytes = Uint8List.fromList(bytes);
     context
         .read<RegistrationTaskProvider>()
-        .addDocument(e.id!, e.type!, "reference", myBytes);
+        .addDocument(e.id!, selectedValue, "reference", myBytes);
   }
 
   Future<void> getScannedDocuments(Field e) async {
     try {
       final listofscannedDoc = await DocumentApi().getScannedPages(e.id!);
+      context.read<GlobalProvider>().setScannedPages(e.id!, listofscannedDoc);
       setState(() {
         imageBytesList = listofscannedDoc;
       });
@@ -80,6 +90,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     return await imageFile.readAsBytes();
   }
 
+  String selectedValue = '';
+  void onDropDownChanged(String value) {
+    setState(() {
+      selectedValue = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
@@ -94,13 +111,14 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomLabel(field: widget.field),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    // CustomLabel(field: widget.field),
+                    // const SizedBox(
+                    //   height: 10,
+                    // ),
                     DropDownDocumentControl(
                       field: widget.field,
                       validation: widget.validation,
+                      onChanged: onDropDownChanged,
                     ),
                     const SizedBox(
                       height: 10,
@@ -116,8 +134,9 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     builder: (context) =>
                                         Scanner(title: "Scan Document")),
                               );
-                              //print('fileuploadFile $doc');
-                              addDocument(doc, widget.field);
+
+                              await addDocument(doc, widget.field);
+                              await getScannedDocuments(widget.field);
                             },
                             child: Text(
                               "Scan",
@@ -127,60 +146,47 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         ),
                       ],
                     ),
-                    Container(
-                        height: 80,
-                        //width: 60,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: imageBytesList
-                              .map(
-                                (item) => Card(
-                                  child:
-                                      //Row(
-                                      //crossAxisAlignment: CrossAxisAlignment.start,
-                                      //children: [
-                                      Flexible(
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        //Text(item),
-                                        Container(
-                                          height: 70,
-                                          width: 90,
-                                          child: Image.memory(item!),
-                                        )
-                                      ],
-                                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    imageBytesList.isNotEmpty
+                        ? Container(
+                            height: 80,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: imageBytesList.map((item) {
+                                return Card(
+                                  child: Container(
+                                    height: 70,
+                                    width: 90,
+                                    child: Image.memory(item!),
                                   ),
-                                  //],
-                                  //),
-                                ),
-                              )
-                              .toList(),
-                        )),
+                                );
+                              }).toList(),
+                            ))
+                        : Container(),
                   ],
                 )
               : Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        CustomLabel(field: widget.field),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.start,
+                    //   children: [
+                    //     CustomLabel(field: widget.field),
+                    //   ],
+                    // ),
+                    // const SizedBox(
+                    //   height: 10,
+                    // ),
                     Row(
                       children: [
                         Expanded(
                           child: DropDownDocumentControl(
                             field: widget.field,
                             validation: widget.validation,
+                            onChanged: onDropDownChanged,
                           ),
                         ),
-                        // ),
                         const SizedBox(
                           width: 50,
                         ),
@@ -216,35 +222,20 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     const SizedBox(
                       height: 10,
                     ),
-                    //poaList.isNotEmpty
                     imageBytesList.isNotEmpty
                         ? Container(
                             height: 80,
-                            //width: 60,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
-                              //children: poaList
-                              children: imageBytesList
-                                  .map(
-                                    (item) => Card(
-                                      child: Flexible(
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: 70,
-                                              width: 90,
-                                              child: Image.memory(item!),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      //],
-                                      //),
-                                    ),
-                                  )
-                                  .toList(),
+                              children: imageBytesList.map((item) {
+                                return Card(
+                                  child: Container(
+                                    height: 70,
+                                    width: 90,
+                                    child: Image.memory(item!),
+                                  ),
+                                );
+                              }).toList(),
                             ))
                         : Container(),
                   ],
