@@ -206,15 +206,13 @@ class _LoginPageState extends State<LoginPage> {
       _showErrorInSnackbar();
       return;
     }
-    
+
     await syncProvider.getLastSyncTime();
     debugPrint(syncProvider.lastSuccessfulSyncTime);
     if (isTrue && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
       syncProvider.setIsGlobalSyncInProgress(true);
       await _autoSyncHandler();
-    } 
-    else
-     {
+    } else {
       authProvider.setIsSyncing(false);
       _navigateToHomePage();
     }
@@ -502,7 +500,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _autoSyncHandler() async {
-   
     if (syncProvider.isGlobalSyncInProgress) {
       authProvider.setIsSyncing(false);
       showLoadingDialog(context);

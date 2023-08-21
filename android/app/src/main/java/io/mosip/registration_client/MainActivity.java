@@ -7,8 +7,13 @@
 package io.mosip.registration_client;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -138,6 +143,38 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent serviceIntent = new Intent(this, MyBackgroundService.class);
+
+        // Create a PendingIntent with the appropriate flags
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getForegroundService(
+                    this,
+                    0,  // Request code
+                    serviceIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+            );
+        } else {
+            pendingIntent = PendingIntent.getService(
+                    this,
+                    0,  // Request code
+                    serviceIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+        }
+
+        // Get an instance of AlarmManager
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        // Set the alarm to trigger your PendingIntent after a certain interval
+        long delayMillis = 5000;  // Example delay of 5 seconds
+        long triggerAtMillis = SystemClock.elapsedRealtime() + delayMillis;
+        alarmManager.setRepeating(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                triggerAtMillis,
+                delayMillis,
+                pendingIntent
+        );
     }
 
     public void initializeAppComponent() {

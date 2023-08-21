@@ -31,6 +31,20 @@ class PacketServiceImpl implements PacketService {
       debugPrint(e.toString());
     }
   }
+
+  @override
+  Future<List<String?>> getAllRegistrationPacket() async {
+    List<String?> packetStatus = [];
+
+    try {
+      packetStatus = await PacketAuthApi().getAllRegistrationPacket();
+    } on PlatformException {
+      debugPrint('PacketAuthenticationApi call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return packetStatus;
+  }
 }
 
 PacketService getPacketServiceImpl() => PacketServiceImpl();

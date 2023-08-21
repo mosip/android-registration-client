@@ -4,10 +4,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+import 'dart:isolate';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
-
+import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -19,6 +25,40 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/utils/app_config.dart';
+
+// @pragma('vm:entry-point')
+// void printHello() {
+//   final DateTime now = DateTime.now();
+//   final int isolateId = Isolate.current.hashCode;
+//   log("[$now] Hello, world! isolate=$isolateId");
+// }
+
+// @pragma('vm:entry-point')
+// Future<void> getAllRegistrationPacket() async {
+//   log("Getting all packets");
+//   List<String?> packets = await PacketService().getAllRegistrationPacket();
+//   log(packets.toString());
+// }
+
+// @pragma('vm:entry-point')
+// Future<void> makeApiCall() async {
+//   const String apiUrl = 'https://jsonplaceholder.typicode.com/todos/1';
+//   final client = HttpClient();
+//   try {
+//     final request = await client.getUrl(Uri.parse(apiUrl));
+//     final response = await request.close();
+//     if (response.statusCode == HttpStatus.ok) {
+//       final responseBody = await response.transform(utf8.decoder).join();
+//       log('API call successful: $responseBody');
+//     } else {
+//       log('API call failed with status code: ${response.statusCode}');
+//     }
+//   } catch (e) {
+//     log('API call error: $e');
+//   } finally {
+//     client.close();
+//   }
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

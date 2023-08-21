@@ -20,4 +20,7 @@ abstract class PacketAuthApi {
 
   @async
   void uploadPacket(String packetId);
+
+  @async
+  List<String> getAllRegistrationPacket();
 }
