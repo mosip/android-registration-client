@@ -9,8 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/upload_document_data.dart';
 import 'package:registration_client/pigeon/document_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
-//import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
-//import 'package:registration_client/ui/process_ui/widgets/dropdown_document_control.dart';
 import 'package:registration_client/ui/scanner/scanner.dart';
 
 import '../../../model/field.dart';
@@ -23,9 +21,6 @@ class DocumentUploadControl extends StatefulWidget {
 
   final RegExp validation;
   final Field field;
-  //  final Field field;
-  // final RegExp validation;
-  // final Function(String) onChanged;
 
   @override
   State<DocumentUploadControl> createState() => _DocumentUploadControlState();
@@ -48,7 +43,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id ?? "")) {
-      // _getSelectedValueFromMap("eng");
       selected = context
           .read<GlobalProvider>()
           .fieldInputValue[widget.field.id]
@@ -109,21 +103,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     return await imageFile.readAsBytes();
   }
 
-  //String selectedValue = '';
   UploadDocumentData doc = UploadDocumentData(
-    title: "", //update this when ever the dropdown button value changes
-
-    listofImages: [
-      // "assets/images/Left Eye@2x.png",
-      // "assets/images/Right Eye@2x.png" //update this whenever image is added
-    ],
+    title: "",
+    listofImages: [],
   );
   String? selected;
-  // void onDropDownChanged(String value) {
-  //   setState(() {
-  //     selectedValue = value;
-  //   });
-  // }
 
   void saveData(value) {
     if (value != null) {
@@ -157,25 +141,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       }
     }
   }
-
-  //void _getSelectedValueFromMap(String lang) {
-  //  String response = "";
-  // if (widget.field.type == 'simpleType') {
-  //   if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
-  //           as Map<String, dynamic>)
-  //       .containsKey(lang)) {
-  //     response = context
-  //         .read<GlobalProvider>()
-  //         .fieldInputValue[widget.field.id ?? ""][lang];
-  //   }
-  // } else {
-  //   response =
-  //       context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
-  // }
-  //   setState(() {
-  //     selected = response;
-  //   });
-  // }
 
   Future<List<String?>> _getDocumentValues(
       String fieldName, String langCode, String? applicantType) async {
@@ -258,7 +223,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                             if ((value == null ||
                                                     value.isEmpty) &&
                                                 widget.field.inputRequired!) {
-                                              return 'Please enter a value';
+                                              return 'Please select a value';
                                             }
                                             if (!widget.validation
                                                 .hasMatch(value!)) {
@@ -268,15 +233,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           },
                                           onChanged: (value) {
                                             saveData(value);
-                                            //_saveDataToMap(value);
-                                            //create object for uploadDocument
-                                            //update the title value with the  value
 
                                             setState(() {
                                               selected = value!;
                                               doc.title = value;
-                                              // widget.onChanged(
-                                              //     selected!); // Call the callback function
                                             });
                                           },
                                         )
@@ -348,11 +308,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     Row(
                       children: [
                         Expanded(
-                            // child: DropDownDocumentControl(
-                            //   field: widget.field,
-                            //   validation: widget.validation,
-                            //   onChanged: onDropDownChanged,
-                            // ),
                             child: FutureBuilder(
                                 future: _getDocumentValues(
                                     widget.field.subType!,
@@ -431,15 +386,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                   },
                                                   onChanged: (value) {
                                                     saveData(value);
-                                                    //_saveDataToMap(value);
-                                                    //create object for uploadDocument
-                                                    //update the title value with the  value
 
                                                     setState(() {
                                                       selected = value!;
                                                       doc.title = value;
-                                                      // widget.onChanged(
-                                                      //     selected!); // Call the callback function
                                                     });
                                                   },
                                                 )
@@ -507,102 +457,3 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     );
   }
 }
-
-// class DropDownDocumentControl extends StatefulWidget {
-//   const DropDownDocumentControl({
-//     super.key,
-//     required this.field,
-//     required this.validation,
-//     required this.onChanged,
-//   });
-
-//   @override
-//   State<DropDownDocumentControl> createState() => _CustomDropDownState();
-// }
-
-// class _CustomDropDownState extends State<DropDownDocumentControl> {
-//   String? selected;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return FutureBuilder(
-//         future: _getDocumentValues(widget.field.subType!, "eng",
-//             null), //TODO: drive the applicant type
-//         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
-//           return Card(
-//             elevation: 0,
-//             margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   CustomLabel(field: widget.field),
-//                   const SizedBox(
-//                     height: 10,
-//                   ),
-//                   snapshot.hasData
-//                       ? DropdownButtonFormField(
-//                           icon: const Icon(null),
-//                           decoration: InputDecoration(
-//                             contentPadding:
-//                                 const EdgeInsets.symmetric(horizontal: 16.0),
-//                             border: OutlineInputBorder(
-//                               borderRadius: BorderRadius.circular(8.0),
-//                               borderSide: const BorderSide(
-//                                 color: Colors.grey,
-//                                 width: 1.0,
-//                               ),
-//                             ),
-//                             hintText: "Select Option",
-//                             hintStyle:
-//                                 const TextStyle(color: Color(0xff999999)),
-//                           ),
-//                           items: snapshot.data!
-//                               .map((option) => DropdownMenuItem(
-//                                     value: option,
-//                                     child: Text(option!),
-//                                   ))
-//                               .toList(),
-//                           autovalidateMode: AutovalidateMode.onUserInteraction,
-//                           value: selected,
-//                           validator: (value) {
-//                             if (!widget.field.required! &&
-//                                 widget.field.requiredOn!.isEmpty) {
-//                               return null;
-//                             }
-//                             if ((value == null || value.isEmpty) &&
-//                                 widget.field.inputRequired!) {
-//                               return 'Please enter a value';
-//                             }
-//                             if (!widget.validation.hasMatch(value!)) {
-//                               return 'Invalid input';
-//                             }
-//                             return null;
-//                           },
-//                           onChanged: (value) {
-//                             saveData(value);
-//                             //_saveDataToMap(value);
-//                             //create object for uploadDocument
-//                             //update the title value with the  value
-
-//                             setState(() {
-//                               selected = value!;
-//                               widget.onChanged(
-//                                   selected!); // Call the callback function
-//                             });
-//                           },
-//                         )
-//                       : const SizedBox.shrink(),
-//                 ],
-//               ),
-//             ),
-//           );
-//         });
-//   }
-// }
