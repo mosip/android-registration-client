@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:document_scanner/document_scanner.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/upload_document_data.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
 import '../../../model/field.dart';
@@ -26,6 +28,14 @@ class DropDownDocumentControl extends StatefulWidget {
 }
 
 class _CustomDropDownState extends State<DropDownDocumentControl> {
+  UploadDocumentData doc = UploadDocumentData(
+    title: "Iris", //update this when ever the dropdown button value changes
+
+    listofImages: [
+      // "assets/images/Left Eye@2x.png",
+      // "assets/images/Right Eye@2x.png" //update this whenever image
+    ],
+  );
   String? selected;
 
   @override
@@ -157,7 +167,10 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
                           },
                           onChanged: (value) {
                             saveData(value);
-                            _saveDataToMap(value);
+                            //_saveDataToMap(value);
+                            //create object for uploadDocument
+                            //update the title value with the  value
+
                             setState(() {
                               selected = value!;
                               widget.onChanged(
