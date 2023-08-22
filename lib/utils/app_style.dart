@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 abstract class AppStyle {
@@ -25,173 +24,173 @@ abstract class AppStyle {
 
   static TextStyle mobileHelpText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appHelpText,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileHeaderText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 28.spMin,
+    fontSize: 28,
     color: appBlackShade1,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileTextfieldHeader = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appBlackShade1,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileDropdownText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appBlackShade1,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileTextfieldHintText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appBlackShade3,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileButtonText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appWhite,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileWelcomeText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 18.spMin,
+    fontSize: 26,
     color: appWhite,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
   
   static TextStyle mobileCommunityRegClientText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 18.spMin,
+    fontSize: 26,
     color: appWhite,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileInfoText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 16,
     color: appInfoText,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileForgotPasswordText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appSolidPrimary,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileBackButtonText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appHelpText,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle tabletHelpText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appHelpText,
     letterSpacing: 0,
   );
 
   static TextStyle tabletHeaderText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 28.spMin,
+    fontSize: 28,
     color: appBlackShade1,
     letterSpacing: 0,
   );
 
   static TextStyle tabletTextfieldHeader = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appBlackShade1,
     letterSpacing: 0,
   );
 
   static TextStyle tabletDropdownText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appBlackShade1,
     letterSpacing: 0,
   );
 
   static TextStyle tabletTextfieldHintText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appBlackShade3,
     letterSpacing: 0,
   );
 
   static TextStyle tabletButtonText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appWhite,
     letterSpacing: 0,
   );
 
   static TextStyle tabletWelcomeText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 26.spMin,
+    fontSize: 26,
     color: appWhite,
     letterSpacing: 0,
   );
 
   static TextStyle tabletCommunityRegClientText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 26.spMin,
+    fontSize: 26,
     color: appWhite,
     letterSpacing: 0,
   );
 
   static TextStyle tabletInfoText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 16.spMin,
+    fontSize: 16,
     color: appInfoText,
     letterSpacing: 0,
   );
 
   static TextStyle tabletForgotPasswordText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appSolidPrimary,
     letterSpacing: 0,
   );
 
   static TextStyle tabletBackButtonText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 14.spMin,
+    fontSize: 14,
     color: appHelpText,
     letterSpacing: 0,
   );
 
   static TextStyle previewHeaderText = TextStyle(
     fontWeight: regular,
-    fontSize: 14.spMax,
+    fontSize: 14,
     color: previewHeaderColor,
   );
 
   static TextStyle previewHeaderResponseText = TextStyle(
     fontWeight: semiBold,
-    fontSize: 16.spMax,
+    fontSize: 16,
     color: appBlackShade1,
   );
 
   static TextStyle previewComponentHeaderText = TextStyle(
     fontWeight: semiBold,
-    fontSize: 20.spMax,
+    fontSize: 20,
     color: appBlack
   );
 }

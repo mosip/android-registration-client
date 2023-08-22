@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -49,7 +50,6 @@ class CheckboxControl extends StatelessWidget {
               width: 8,
             ),
             Flexible(
-              // width: 300.w,
               child: (field.inputRequired!)
                   ? RichText(
                       text: TextSpan(
@@ -60,7 +60,7 @@ class CheckboxControl extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: " *",
-                          style: TextStyle(color: Colors.red, fontSize: 15),
+                          style: TextStyle(color: Colors.red, fontSize: 14),
                         )
                       ],
                     ))

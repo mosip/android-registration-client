@@ -37,7 +37,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
               Text(
                 'Registration Acknowledgement',
                 style: TextStyle(
-                  fontSize: 20.sp,
+                  fontSize: 20,
                   fontWeight: FontWeight.w500,
                   color: AppStyle.appBlackShade1,
                 ),

@@ -48,7 +48,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
               Text(
                 'Authentication using Password',
                 style: TextStyle(
-                    fontSize: 18.spMax,
+                    fontSize: 18,
                     fontWeight: semiBold,
                     color: AppStyle.appBlack),
               ),
