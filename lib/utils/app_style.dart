@@ -25,79 +25,79 @@ abstract class AppStyle {
 
   static TextStyle mobileHelpText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14.sp,
     color: appHelpText,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileHeaderText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 28.spMin,
+    fontSize: 28.sp,
     color: appBlackShade1,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileTextfieldHeader = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14.sp,
     color: appBlackShade1,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileDropdownText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 14.sp,
     color: appBlackShade1,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileTextfieldHintText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 14.sp,
     color: appBlackShade3,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileButtonText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 14.spMin,
+    fontSize: 14.sp,
     color: appWhite,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileWelcomeText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 18.spMin,
+    fontSize: 26.sp,
     color: appWhite,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
   
   static TextStyle mobileCommunityRegClientText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 18.spMin,
+    fontSize: 26.sp,
     color: appWhite,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileInfoText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 14.spMin,
+    fontSize: 16.sp,
     color: appInfoText,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileForgotPasswordText = TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 14.spMin,
+    fontSize: 14.sp,
     color: appSolidPrimary,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle mobileBackButtonText = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 14.spMin,
+    fontSize: 14.sp,
     color: appHelpText,
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   );
 
   static TextStyle tabletHelpText = TextStyle(

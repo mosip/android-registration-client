@@ -477,9 +477,16 @@ class _LoginPageState extends State<LoginPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            width: 399.w,
-            child: _appCombinedTextComponent(),
+          Column(
+            children: [
+              SizedBox(
+                width: 399.w,
+                child: _appCombinedTextComponent(),
+              ),
+              SizedBox(
+                height: 100.h,
+              ),
+            ],
           ),
           SizedBox(
             width: 41.w,
