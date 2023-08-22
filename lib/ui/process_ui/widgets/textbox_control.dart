@@ -138,7 +138,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                         vertical: 14, horizontal: 16),
                     hintText: widget.e.label![lang],
                     hintStyle:
-                        TextStyle(color: AppStyle.appBlackShade3, fontSize: 14.sp),
+                        TextStyle(color: AppStyle.appBlackShade3, fontSize: 14),
                     prefixIcon: (lang == 'ara')
                         ? const Icon(
                             Icons.keyboard_outlined,

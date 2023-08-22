@@ -19,7 +19,7 @@ class CustomLabel extends StatelessWidget {
         children: [
           Text(
             context.read<GlobalProvider>().chooseLanguage(field.label!),
-            style: TextStyle(fontSize: 14.sp, fontWeight: semiBold),
+            style: TextStyle(fontSize: 14, fontWeight: semiBold),
           ),
           const SizedBox(
             width: 5,
@@ -27,7 +27,7 @@ class CustomLabel extends StatelessWidget {
           if (field.required! || field.requiredOn!.isNotEmpty)
             Text(
               "*",
-              style: TextStyle(color: Colors.red, fontSize: 14.sp),
+              style: TextStyle(color: Colors.red, fontSize: 14),
             )
         ],
       ),

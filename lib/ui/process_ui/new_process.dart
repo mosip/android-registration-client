@@ -610,7 +610,7 @@ class _NewProcessState extends State<NewProcess> {
               Text(
                 'Authentication using Password',
                 style: TextStyle(
-                    fontSize: 18.spMax,
+                    fontSize: 18,
                     fontWeight: semiBold,
                     color: AppStyle.appBlack),
               ),

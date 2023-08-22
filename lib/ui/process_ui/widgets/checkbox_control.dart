@@ -60,7 +60,7 @@ class CheckboxControl extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: " *",
-                          style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                          style: TextStyle(color: Colors.red, fontSize: 14),
                         )
                       ],
                     ))

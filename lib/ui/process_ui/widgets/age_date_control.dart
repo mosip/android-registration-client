@@ -236,7 +236,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           hintStyle: TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14.sp),
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'DD',
                           border: OutlineInputBorder(
@@ -280,7 +280,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           hintStyle: TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14.sp),
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'MM',
                           border: OutlineInputBorder(
@@ -321,7 +321,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           hintStyle: TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14.sp),
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'YYYY',
                           border: OutlineInputBorder(
@@ -354,7 +354,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           hintStyle: TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14.sp),
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           hintText: 'Age',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),

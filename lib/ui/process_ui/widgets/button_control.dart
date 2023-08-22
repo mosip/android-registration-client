@@ -34,14 +34,14 @@ class ButtonControl extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: " *",
-                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                        style: TextStyle(color: Colors.red, fontSize: 14),
                       )
                     ],
                   ))
                 : Text(
                     context.read<GlobalProvider>().chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         color: black_shade_1,
                         fontWeight: semiBold),
                   ),

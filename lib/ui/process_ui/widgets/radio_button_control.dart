@@ -185,7 +185,7 @@ class SelectableCard extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   color: value == groupValue
                       ? Colors.white
                       : AppStyle.appBlackShade1,

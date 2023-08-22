@@ -66,7 +66,7 @@ class MachineKeys extends StatelessWidget {
                     AppLocalizations.of(context)!.device_credentials,
                     style: TextStyle(
                       color: AppStyle.appBlack,
-                      fontSize: 16.spMin,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -93,7 +93,7 @@ class MachineKeys extends StatelessWidget {
                 textDirection: TextDirection.ltr,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -236,7 +236,7 @@ class MachineKeys extends StatelessWidget {
             'SHARE',
             style: TextStyle(
               color: AppStyle.appSolidPrimary,
-              fontSize: 14.spMin,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
