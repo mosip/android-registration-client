@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:registration_client/ui/post_registration/authentication_page.dart';
-import 'package:registration_client/ui/post_registration/preview_page.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 

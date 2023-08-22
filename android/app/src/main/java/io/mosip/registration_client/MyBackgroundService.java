@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import io.mosip.registration.clientmanager.spi.PacketService;
 
 public class MyBackgroundService extends Service {
 
@@ -28,8 +27,9 @@ public class MyBackgroundService extends Service {
         Notification notification = createNotification();
         startForeground(NOTIFICATION_ID, notification);
 
-        Log.d(getClass().getSimpleName(), "Fetching Packets");
-
+        Log.d(getClass().getSimpleName(), "Fetching Packets in background activity");
+        Intent broadcastIntent = new Intent("BACKGROUND_TASK_COMPLETE");
+        sendBroadcast(broadcastIntent);
         return START_STICKY;
     }
 
