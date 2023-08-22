@@ -6,10 +6,9 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/upload_document_data.dart';
 import 'package:registration_client/pigeon/document_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
-import 'package:registration_client/ui/process_ui/widgets/dropdown_document_control.dart';
 import 'package:registration_client/ui/scanner/scanner.dart';
 
 import '../../../model/field.dart';
@@ -40,6 +39,16 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       });
     }
 
+    if (context
+        .read<GlobalProvider>()
+        .fieldInputValue
+        .containsKey(widget.field.id ?? "")) {
+      selected = context
+          .read<GlobalProvider>()
+          .fieldInputValue[widget.field.id]
+          .title!;
+    }
+
     super.initState();
   }
 
@@ -63,11 +72,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   Future<void> addDocument(String item, Field e) async {
     final bytes = await getImageBytes(item);
 
-    print("The selected value for dropdown for ${e.id!} is ${selectedValue}");
+    print("The selected value for dropdown for ${e.id!} is ${selected}");
     Uint8List myBytes = Uint8List.fromList(bytes);
     context
         .read<RegistrationTaskProvider>()
-        .addDocument(e.id!, selectedValue, "reference", myBytes);
+        .addDocument(e.id!, selected!, "reference", myBytes);
   }
 
   Future<void> getScannedDocuments(Field e) async {
@@ -76,7 +85,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       context.read<GlobalProvider>().setScannedPages(e.id!, listofscannedDoc);
       setState(() {
         imageBytesList = listofscannedDoc;
+        doc.listofImages = imageBytesList;
       });
+      if (doc.title.isNotEmpty && doc.title != null) {
+        context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
+      }
     } catch (e) {
       print("Error while getting scanned pages ${e}");
     }
@@ -90,11 +103,50 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     return await imageFile.readAsBytes();
   }
 
-  String selectedValue = '';
-  void onDropDownChanged(String value) {
-    setState(() {
-      selectedValue = value;
-    });
+  UploadDocumentData doc = UploadDocumentData(
+    title: "",
+    listofImages: [],
+  );
+  String? selected;
+
+  void saveData(value) {
+    if (value != null) {
+      if (widget.field.type == 'simpleType') {
+        context
+            .read<RegistrationTaskProvider>()
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
+      } else {
+        context
+            .read<RegistrationTaskProvider>()
+            .addDemographicField(widget.field.id ?? "", value);
+      }
+    }
+  }
+
+  void _saveDataToMap(value) {
+    if (value != null) {
+      if (widget.field.type == 'simpleType') {
+        context.read<GlobalProvider>().setLanguageSpecificValue(
+              widget.field.id ?? "",
+              value!,
+              "eng",
+              context.read<GlobalProvider>().fieldInputValue,
+            );
+      } else {
+        context.read<GlobalProvider>().setInputMapValue(
+              widget.field.id ?? "",
+              value!,
+              context.read<GlobalProvider>().fieldInputValue,
+            );
+      }
+    }
+  }
+
+  Future<List<String?>> _getDocumentValues(
+      String fieldName, String langCode, String? applicantType) async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getDocumentValues(fieldName, langCode, applicantType);
   }
 
   @override
@@ -115,11 +167,86 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     // const SizedBox(
                     //   height: 10,
                     // ),
-                    DropDownDocumentControl(
-                      field: widget.field,
-                      validation: widget.validation,
-                      onChanged: onDropDownChanged,
-                    ),
+                    FutureBuilder(
+                        future: _getDocumentValues(widget.field.subType!, "eng",
+                            null), //TODO: drive the applicant type
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<String?>> snapshot) {
+                          return Card(
+                            elevation: 0,
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 1, horizontal: 12),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 24, horizontal: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomLabel(field: widget.field),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  snapshot.hasData
+                                      ? DropdownButtonFormField(
+                                          icon: const Icon(null),
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16.0),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              borderSide: const BorderSide(
+                                                color: Colors.grey,
+                                                width: 1.0,
+                                              ),
+                                            ),
+                                            hintText: "Select Option",
+                                            hintStyle: const TextStyle(
+                                                color: Color(0xff999999)),
+                                          ),
+                                          items: snapshot.data!
+                                              .map((option) => DropdownMenuItem(
+                                                    value: option,
+                                                    child: Text(option!),
+                                                  ))
+                                              .toList(),
+                                          autovalidateMode: AutovalidateMode
+                                              .onUserInteraction,
+                                          value: selected,
+                                          validator: (value) {
+                                            if (!widget.field.required! &&
+                                                widget.field.requiredOn!
+                                                    .isEmpty) {
+                                              return null;
+                                            }
+                                            if ((value == null ||
+                                                    value.isEmpty) &&
+                                                widget.field.inputRequired!) {
+                                              return 'Please select a value';
+                                            }
+                                            if (!widget.validation
+                                                .hasMatch(value!)) {
+                                              return 'Invalid input';
+                                            }
+                                            return null;
+                                          },
+                                          onChanged: (value) {
+                                            saveData(value);
+
+                                            setState(() {
+                                              selected = value!;
+                                              doc.title = value;
+                                            });
+                                          },
+                                        )
+                                      : const SizedBox.shrink(),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+
                     const SizedBox(
                       height: 10,
                     ),
@@ -181,12 +308,97 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     Row(
                       children: [
                         Expanded(
-                          child: DropDownDocumentControl(
-                            field: widget.field,
-                            validation: widget.validation,
-                            onChanged: onDropDownChanged,
-                          ),
-                        ),
+                            child: FutureBuilder(
+                                future: _getDocumentValues(
+                                    widget.field.subType!,
+                                    "eng",
+                                    null), //TODO: drive the applicant type
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<String?>> snapshot) {
+                                  return Card(
+                                    elevation: 0,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 1, horizontal: 12),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 24, horizontal: 16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CustomLabel(field: widget.field),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          snapshot.hasData
+                                              ? DropdownButtonFormField(
+                                                  icon: const Icon(null),
+                                                  decoration: InputDecoration(
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                                .symmetric(
+                                                            horizontal: 16.0),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                        color: Colors.grey,
+                                                        width: 1.0,
+                                                      ),
+                                                    ),
+                                                    hintText: "Select Option",
+                                                    hintStyle: const TextStyle(
+                                                        color:
+                                                            Color(0xff999999)),
+                                                  ),
+                                                  items: snapshot.data!
+                                                      .map((option) =>
+                                                          DropdownMenuItem(
+                                                            value: option,
+                                                            child:
+                                                                Text(option!),
+                                                          ))
+                                                      .toList(),
+                                                  autovalidateMode:
+                                                      AutovalidateMode
+                                                          .onUserInteraction,
+                                                  value: selected,
+                                                  validator: (value) {
+                                                    if (!widget
+                                                            .field.required! &&
+                                                        widget.field.requiredOn!
+                                                            .isEmpty) {
+                                                      return null;
+                                                    }
+                                                    if ((value == null ||
+                                                            value.isEmpty) &&
+                                                        widget.field
+                                                            .inputRequired!) {
+                                                      return 'Please select a value';
+                                                    }
+                                                    if (!widget.validation
+                                                        .hasMatch(value!)) {
+                                                      return 'Invalid input';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  onChanged: (value) {
+                                                    saveData(value);
+
+                                                    setState(() {
+                                                      selected = value!;
+                                                      doc.title = value;
+                                                    });
+                                                  },
+                                                )
+                                              : const SizedBox.shrink(),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                })),
                         const SizedBox(
                           width: 50,
                         ),
