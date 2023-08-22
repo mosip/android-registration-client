@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
@@ -49,12 +50,27 @@ class GlobalProvider with ChangeNotifier {
 
   Map<int, String> _hierarchyValues = {};
 
+  Map<String, List<Uint8List?>> _scannedPages = {};
+
   String _regId = "";
   String _ageGroup = "";
 
   List<String?> _locationHierarchy = [null, null, null, null, null];
 
   //GettersSetters
+  setScannedPages(String field, List<Uint8List?> value) {
+    _scannedPages[field] = value;
+
+    notifyListeners();
+  }
+
+  void clearScannedPages() {
+    _scannedPages.clear();
+    notifyListeners();
+  }
+
+  Map<String, List<Uint8List?>> get scannedPages => _scannedPages;
+
   String get ageGroup => this._ageGroup;
   List<String?> get locationHierarchy => this._locationHierarchy;
 
@@ -68,7 +84,6 @@ class GlobalProvider with ChangeNotifier {
     for (int i = index + 1; i < 5; i++) {
       _locationHierarchy[i] = null;
     }
-    log(_locationHierarchy.toString());
     notifyListeners();
   }
 

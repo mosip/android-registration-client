@@ -84,6 +84,18 @@ class _AgeDateControlState extends State<AgeDateControl> {
     return yearDifference;
   }
 
+  _calculateAgeFromDOB() {
+    DateTime date = DateTime.parse(
+        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}");
+    DateTime currentDate = DateTime.now();
+    if (date.compareTo(currentDate) < 0) {
+      _ageController.text =
+          calculateYearDifference(date, currentDate).abs().toString();
+    } else {
+      _ageController.text = "";
+    }
+  }
+
   String? fieldValidation(value, message) {
     try {
       String targetDateString = widget.field.format ??
@@ -105,6 +117,16 @@ class _AgeDateControlState extends State<AgeDateControl> {
     }
   }
 
+  _invalidDateText() {
+    DateTime date = DateTime.parse(
+        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}");
+    DateTime currentDate = DateTime.now();
+    if (date.compareTo(currentDate) > 0) {
+      return "Invalid date!";
+    }
+    return null;
+  }
+
   void saveData() {
     String targetDateString = widget.field.format ??
         "yyyy/MM/dd"
@@ -124,7 +146,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
           targetDateString,
           context.read<GlobalProvider>().fieldInputValue,
         );
-        BiometricsApi().getAgeGroup().then((value) {context.read<GlobalProvider>().ageGroup=value;});
+    BiometricsApi().getAgeGroup().then((value) {
+      context.read<GlobalProvider>().ageGroup = value;
+    });
   }
 
   void _getSavedDate() {
@@ -134,20 +158,28 @@ class _AgeDateControlState extends State<AgeDateControl> {
         .containsKey(widget.field.id)) {
       String targetDateFormat = widget.field.format ?? "yyyy/MM/dd";
 
-      String savedDate = context
-          .read<GlobalProvider>()
-          .fieldInputValue[widget.field.id];
+      String savedDate =
+          context.read<GlobalProvider>().fieldInputValue[widget.field.id];
       DateTime parsedDate = DateFormat(targetDateFormat).parse(savedDate);
       _dayController.text = parsedDate.day.toString().padLeft(2, '0');
       _monthController.text = parsedDate.month.toString().padLeft(2, '0');
       _yearController.text = parsedDate.year.toString();
       _ageController.text = calculateYearDifference(
-                                    DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
-                                    DateTime.now())
-                                .abs()
-                                .toString();
+              DateTime.parse(
+                  "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}"),
+              DateTime.now())
+          .abs()
+          .toString();
     }
+  }
+
+  void _getDateFromAge(String value) {
+    int age = int.parse(value);
+    DateTime currentDate = DateTime.now();
+    DateTime calculatedDate = DateTime(currentDate.year - age, 1, 1);
+    _dayController.text = calculatedDate.day.toString().padLeft(2, '0');
+    _monthController.text = calculatedDate.month.toString().padLeft(2, '0');
+    _yearController.text = calculatedDate.year.toString();
   }
 
   @override
@@ -177,18 +209,18 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           String? valid = fieldValidation(value, "dd");
                           if (valid == null) {
-                            _ageController.text = calculateYearDifference(
-                                    DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
-                                    DateTime.now())
-                                .abs()
-                                .toString();
-                          } else {
-                            _ageController = TextEditingController();
+                            return _invalidDateText();
                           }
                           return valid;
                         },
                         onChanged: (value) {
+                          if (value.length == 2 &&
+                              _monthController.text.length == 2 &&
+                              _yearController.text.length == 4) {
+                            _calculateAgeFromDOB();
+                          } else {
+                            _ageController.text = "";
+                          }
                           if (value.length >= 2) {
                             focusNextField(dayFocus, monthFocus);
                           }
@@ -221,18 +253,18 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           String? valid = fieldValidation(value, "MM");
                           if (valid == null) {
-                            _ageController.text = calculateYearDifference(
-                                    DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
-                                    DateTime.now())
-                                .abs()
-                                .toString();
-                          } else {
-                            _ageController = TextEditingController();
+                            return _invalidDateText();
                           }
                           return valid;
                         },
                         onChanged: (value) {
+                          if (value.length == 2 &&
+                              _monthController.text.length == 2 &&
+                              _yearController.text.length == 4) {
+                            _calculateAgeFromDOB();
+                          } else {
+                            _ageController.text = "";
+                          }
                           if (value.length >= 2) {
                             focusNextField(monthFocus, yearFocus);
                           }
@@ -263,18 +295,18 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           String? valid = fieldValidation(value, "yyyy");
                           if (valid == null) {
-                            _ageController.text = calculateYearDifference(
-                                    DateTime.parse(
-                                        "${_yearController.text}-${_monthController.text}-${_dayController.text}"),
-                                    DateTime.now())
-                                .abs()
-                                .toString();
-                          } else {
-                            _ageController = TextEditingController();
+                            return _invalidDateText();
                           }
                           return valid;
                         },
                         onChanged: (value) {
+                          if (value.length == 4 &&
+                              _dayController.text.length == 2 &&
+                              _monthController.text.length == 2) {
+                            _calculateAgeFromDOB();
+                          } else {
+                            _ageController.text = "";
+                          }
                           saveData();
                         },
                         onTap: () => _removeFocusFromAll("year"),
@@ -303,9 +335,19 @@ class _AgeDateControlState extends State<AgeDateControl> {
                     const SizedBox(width: 12),
                     Flexible(
                       child: TextFormField(
-                        readOnly: true,
+                        // readOnly: true,
                         controller: _ageController,
                         keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          if(value != "") {
+                            _getDateFromAge(value);
+                            saveData();
+                          } else {
+                            _dayController.text = "";
+                            _monthController.text = "";
+                            _yearController.text = "";
+                          }
+                        },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),

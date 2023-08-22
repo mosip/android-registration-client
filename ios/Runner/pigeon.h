@@ -10,27 +10,35 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RegistrationSubmitResponse;
+@class Sync;
+@class SyncTime;
 
-@interface RegistrationSubmitResponse : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithRId:(NSString *)rId
+@interface Sync : NSObject
++ (instancetype)makeWithSyncType:(nullable NSString *)syncType
+    syncProgress:(nullable NSNumber *)syncProgress
     errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * rId;
+@property(nonatomic, copy, nullable) NSString * syncType;
+@property(nonatomic, strong, nullable) NSNumber * syncProgress;
 @property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by RegistrationDataApi.
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
-
-@protocol RegistrationDataApi
-- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)evaluateMVELFieldData:(NSString *)fieldData expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)submitRegistrationDtoMakerName:(NSString *)makerName completion:(void (^)(RegistrationSubmitResponse *_Nullable, FlutterError *_Nullable))completion;
+@interface SyncTime : NSObject
++ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
+@property(nonatomic, copy, nullable) NSString * syncTime;
 @end
 
-extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
+/// The codec used by SyncApi.
+NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
+
+@protocol SyncApi
+- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

@@ -10,11 +10,16 @@ import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
 class DropDownDocumentControl extends StatefulWidget {
-  const DropDownDocumentControl(
-      {super.key, required this.field, required this.validation});
+  const DropDownDocumentControl({
+    super.key,
+    required this.field,
+    required this.validation,
+    required this.onChanged,
+  });
 
   final Field field;
   final RegExp validation;
+  final Function(String) onChanged;
 
   @override
   State<DropDownDocumentControl> createState() => _CustomDropDownState();
@@ -88,7 +93,6 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
 
   Future<List<String?>> _getDocumentValues(
       String fieldName, String langCode, String? applicantType) async {
-    //String fieldName, String langCode, String applicantType
     return await context
         .read<RegistrationTaskProvider>()
         .getDocumentValues(fieldName, langCode, applicantType);
@@ -138,11 +142,12 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           value: selected,
                           validator: (value) {
-                            if(!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                            if (!widget.field.required! &&
+                                widget.field.requiredOn!.isEmpty) {
                               return null;
                             }
-                            if ((value == null ||
-                                value.isEmpty )&& widget.field.inputRequired!) {
+                            if ((value == null || value.isEmpty) &&
+                                widget.field.inputRequired!) {
                               return 'Please enter a value';
                             }
                             if (!widget.validation.hasMatch(value!)) {
@@ -155,6 +160,8 @@ class _CustomDropDownState extends State<DropDownDocumentControl> {
                             _saveDataToMap(value);
                             setState(() {
                               selected = value!;
+                              widget.onChanged(
+                                  selected!); // Call the callback function
                             });
                           },
                         )

@@ -10,9 +10,41 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class LanguageSelector extends StatelessWidget {
+class LanguageSelector extends StatefulWidget {
   const LanguageSelector({super.key, required this.newProcess});
   final Process newProcess;
+
+  @override
+  State<LanguageSelector> createState() => _LanguageSelectorState();
+}
+
+class _LanguageSelectorState extends State<LanguageSelector> {
+  _navigateToConsentPage() async {
+    context.read<GlobalProvider>().getThresholdValues();
+    context.read<GlobalProvider>().fieldDisplayValues = {};
+
+    context.read<GlobalProvider>().fieldValues(widget.newProcess);
+
+    Navigator.of(context).pop();
+    List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
+      return context.read<GlobalProvider>().langToCode(e) as String;
+    }).toList();
+    // print(langList);
+    await context.read<RegistrationTaskProvider>().startRegistration(langList);
+    String registrationStartError =
+        context.read<RegistrationTaskProvider>().registrationStartError;
+
+    if (registrationStartError.isEmpty) {
+      Navigator.pushNamed(context, NewProcess.routeName,
+          arguments: {"process": widget.newProcess});
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(registrationStartError),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,34 +209,11 @@ class LanguageSelector extends StatelessWidget {
             ),
             Expanded(
               child: ElevatedButton(
-                  onPressed: () async {
-                    context.read<GlobalProvider>().getThresholdValues();
-                    context.read<GlobalProvider>().fieldDisplayValues = {};
-
-                    context.read<GlobalProvider>().fieldValues(newProcess);
-
-                    Navigator.of(context).pop();
-                    List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
-                      return context.read<GlobalProvider>().langToCode(e) as String;
-                    }).toList();
-                    // print(langList);
-                    await context
-                        .read<RegistrationTaskProvider>()
-                        .startRegistration(langList);
-                    String registrationStartError = context.read<RegistrationTaskProvider>().registrationStartError;
-
-                    if (registrationStartError.isEmpty) {
-                      Navigator.pushNamed(context, NewProcess.routeName,
-                          arguments: {"process": newProcess});
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(registrationStartError),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text("SUBMIT")),
+                onPressed: () {
+                  _navigateToConsentPage();
+                },
+                child: const Text("SUBMIT"),
+              ),
             )
           ],
         )

@@ -39,11 +39,16 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   @override
   void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     setState(() {
       index = hierarchyReverse.indexOf(widget.field.id!);
     });
     _getOptionsList();
-    super.initState();
   }
 
   void saveData(value) {
@@ -130,7 +135,6 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   _getOptionsList() async {
-    log("message");
     List<GenericData?> temp;
     if (index == 0) {
       temp = await _getLocationValues(widget.field.subType!, "eng");
@@ -217,8 +221,6 @@ class _CustomDropDownState extends State<DropDownControl> {
                       .read<GlobalProvider>()
                       .locationHierarchy
                       .toString());
-
-                  // log("commited on feature flutter error");
                 },
               ),
             ],

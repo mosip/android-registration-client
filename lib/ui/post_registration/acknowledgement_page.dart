@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
+import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 class AcknowledgementPage extends StatefulWidget {
   const AcknowledgementPage({super.key});
@@ -14,6 +13,9 @@ class AcknowledgementPage extends StatefulWidget {
 }
 
 class _AcknowledgementPageState extends State<AcknowledgementPage> {
+  WebViewPlusController? _controller;
+  double _height = 1;
+
   @override
   void initState() {
     super.initState();
@@ -69,12 +71,33 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
             height: 33.h,
           ),
           Expanded(
-            child: InAppWebView(
-              initialData: InAppWebViewInitialData(
-                data: context.watch<RegistrationTaskProvider>().previewTemplate,
-              ),
+            child: ListView(
+              children: [
+                SizedBox(
+                  height: _height + 150.h,
+                  child: WebViewPlus(
+                    onWebViewCreated: (controller) {
+                      _controller = controller;
+                      controller.loadString(context
+                          .read<RegistrationTaskProvider>()
+                          .previewTemplate);
+                    },
+                    onPageFinished: (url) {
+                      _controller!.getHeight().then((double height) {
+                        setState(() {
+                          _height = height;
+                        });
+                      });
+                    },
+                    javascriptMode: JavascriptMode.unrestricted,
+                  ),
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+              ],
             ),
-          ),  
+          ),
         ],
       ),
     );
