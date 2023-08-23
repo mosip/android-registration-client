@@ -232,7 +232,7 @@ class MachineKeys extends StatelessWidget {
           SizedBox(
             width: 5.w,
           ),
-          Text(
+          const Text(
             'SHARE',
             style: TextStyle(
               color: AppStyle.appSolidPrimary,
