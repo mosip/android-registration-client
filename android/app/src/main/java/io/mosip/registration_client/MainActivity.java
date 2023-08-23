@@ -34,6 +34,7 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
@@ -198,7 +199,7 @@ public class MainActivity extends FlutterActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // Set the alarm to trigger your PendingIntent after a certain interval
-        long delayMillis = 5000;  // Example delay of 5 seconds
+        long delayMillis = 60000;  // Example delay of 5 seconds
         long triggerAtMillis = SystemClock.elapsedRealtime() + delayMillis;
         alarmManager.setRepeating(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -211,7 +212,27 @@ public class MainActivity extends FlutterActivity {
     private void fetchRegistrationPackets() {
         Log.d(getClass().getSimpleName(), "Fetching Packets in main activity");
         List<Registration> registrationList = packetService.getAllRegistrations(1,5);
-        Log.e(getClass().getSimpleName(), "Registration List" + registrationList);
+        Log.e(getClass().getSimpleName(), "Registration : "+ registrationList);
+
+        registrationList = packetService.getRegistrationsByStatus("CREATED");
+        registrationList.forEach(value->{
+            try {
+                Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
+                packetService.syncRegistration(value.getPacketId());
+            }catch (Exception e){
+                Log.e(getClass().getSimpleName(), e.getMessage());
+            }
+        });
+
+        registrationList = packetService.getRegistrationsByStatus("SYNCED");
+        registrationList.forEach(value->{
+            try {
+                Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                packetService.uploadRegistration(value.getPacketId());
+            }catch (Exception e){
+                Log.e(getClass().getSimpleName(), e.getMessage());
+            }
+        });
     }
 
     public void initializeAppComponent() {

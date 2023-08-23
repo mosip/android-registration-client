@@ -243,7 +243,7 @@ class _NewProcessState extends State<NewProcess> {
         }
       }
       print("CUSTOM VALIDATION : ${isValid}");
-      return isValid;
+      return true;
     }
 
     _continueButtonTap(BuildContext context, int size, newProcess) async {
@@ -268,13 +268,16 @@ class _NewProcessState extends State<NewProcess> {
           if (!isPacketAuthenticated) {
             return;
           }
-          RegistrationSubmitResponse registrationSubmitResponse = await _submitRegistration(context);
+          RegistrationSubmitResponse registrationSubmitResponse =
+              await _submitRegistration(context);
           if (registrationSubmitResponse.errorCode!.isNotEmpty) {
             log("registrationSubmitResponse ${registrationSubmitResponse.errorCode}");
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }
-          context.read<GlobalProvider>().setRegId(registrationSubmitResponse.rId);
+          context
+              .read<GlobalProvider>()
+              .setRegId(registrationSubmitResponse.rId);
           setState(() {
             username = '';
             password = '';

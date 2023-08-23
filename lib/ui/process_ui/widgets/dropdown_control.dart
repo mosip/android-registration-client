@@ -130,7 +130,6 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   _getOptionsList() async {
-    log("message");
     List<GenericData?> temp;
     if (index == 0) {
       temp = await _getLocationValues(widget.field.subType!, "eng");
@@ -193,9 +192,10 @@ class _CustomDropDownState extends State<DropDownControl> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 value: selected,
                 validator: (value) {
-                  if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
-                      return null;
-                    }
+                  if (!widget.field.required! &&
+                      widget.field.requiredOn!.isEmpty) {
+                    return null;
+                  }
                   if (value == null) {
                     return 'Please enter a value';
                   }
