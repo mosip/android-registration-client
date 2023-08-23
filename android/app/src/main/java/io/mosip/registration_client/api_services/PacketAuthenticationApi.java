@@ -3,12 +3,15 @@ package io.mosip.registration_client.api_services;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
+import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -77,5 +80,18 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
         }catch(Exception e){
             Log.e(getClass().getSimpleName(), "Error packet Upload", e);
         }
+    }
+
+    @Override
+    public void getAllRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
+        try{
+            List<Registration> allRegistration = packetService.getAllRegistrations(1,5);
+            allRegistration.forEach(value-> {
+                Log.e(getClass().getSimpleName(), value.toString());
+            });
+        }catch(Exception e){
+            Log.e(getClass().getSimpleName(), "Unable to get packets", e);
+        }
+        result.success(Arrays.asList("Welcome", "to", "my", "list"));
     }
 }
