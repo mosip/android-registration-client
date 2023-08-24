@@ -151,7 +151,7 @@ public class MainActivity extends FlutterActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("BACKGROUND_TASK_COMPLETE")) {
-                fetchRegistrationPackets();
+                fetchRegistrationPackets(context);
             }
         }
     };
@@ -199,7 +199,7 @@ public class MainActivity extends FlutterActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // Set the alarm to trigger your PendingIntent after a certain interval
-        long delayMillis = 60000;  // Example delay of 5 seconds
+        long delayMillis = 60000;  // Example delay of 60 seconds
         long triggerAtMillis = SystemClock.elapsedRealtime() + delayMillis;
         alarmManager.setRepeating(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -209,30 +209,32 @@ public class MainActivity extends FlutterActivity {
         );
     }
 
-    private void fetchRegistrationPackets() {
-        Log.d(getClass().getSimpleName(), "Fetching Packets in main activity");
-        List<Registration> registrationList = packetService.getAllRegistrations(1,5);
-        Log.e(getClass().getSimpleName(), "Registration : "+ registrationList);
+    private void fetchRegistrationPackets(Context context) {
+        if(NetworkUtils.isNetworkConnected(context)){
+            Log.d(getClass().getSimpleName(), "Fetching Packets in main activity");
+            List<Registration> registrationList = packetService.getAllRegistrations(1,5);
+            Log.e(getClass().getSimpleName(), "Registration : "+ registrationList);
 
-        registrationList = packetService.getRegistrationsByStatus("CREATED");
-        registrationList.forEach(value->{
-            try {
-                Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
-                packetService.syncRegistration(value.getPacketId());
-            }catch (Exception e){
-                Log.e(getClass().getSimpleName(), e.getMessage());
-            }
-        });
+            registrationList = packetService.getRegistrationsByStatus("CREATED");
+            registrationList.forEach(value->{
+                try {
+                    Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
+                    packetService.syncRegistration(value.getPacketId());
+                }catch (Exception e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+            });
 
-        registrationList = packetService.getRegistrationsByStatus("SYNCED");
-        registrationList.forEach(value->{
-            try {
-                Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
-                packetService.uploadRegistration(value.getPacketId());
-            }catch (Exception e){
-                Log.e(getClass().getSimpleName(), e.getMessage());
-            }
-        });
+            registrationList = packetService.getRegistrationsByStatus("SYNCED");
+            registrationList.forEach(value->{
+                try {
+                    Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                    packetService.uploadRegistration(value.getPacketId());
+                }catch (Exception e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+            });
+        }
     }
 
     public void initializeAppComponent() {
