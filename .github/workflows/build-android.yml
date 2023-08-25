@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: apk-output
-          path: ./build/app/outputs/flutter-apk/app-debug.apk
+          path: ./build/app/outputs/flutter-apk/app-release.apk
           retention-days: 10
