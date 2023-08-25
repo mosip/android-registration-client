@@ -32,7 +32,7 @@ jobs:
       #   run: flutter test
 
       - name: Build Android APK
-        run: flutter build apk --debug
+        run: flutter build apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
