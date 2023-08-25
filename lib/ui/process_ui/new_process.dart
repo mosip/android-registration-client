@@ -224,23 +224,34 @@ class _NewProcessState extends State<NewProcess> {
 
             break;
           }
-          if (screen.fields!.elementAt(i)!.controlType == "biometrics" ) {
-              
-              
-          
-          int count = returnBiometricListLength(
-              screen.fields!.elementAt(i)!.bioAttributes);
-          
-          if (context
-                  .read<GlobalProvider>()
-                  .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                  .length <
-              count) {
-            isValid = false;
+          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+              screen.fields!
+                  .elementAt(i)!
+                  .conditionalBioAttributes!
+                  .isNotEmpty) {
+            String response = await BiometricsApi().getAgeGroup();
+            if (!(response.compareTo(screen.fields!
+                    .elementAt(i)!
+                    .conditionalBioAttributes!
+                    .first!
+                    .ageGroup!) ==
+                0)) {
+              if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                int count = returnBiometricListLength(
+                    screen.fields!.elementAt(i)!.bioAttributes);
 
-            break;
+                if (context
+                        .read<GlobalProvider>()
+                        .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                        .length <
+                    count) {
+                  isValid = false;
+
+                  break;
+                }
+              }
+            }
           }
-        }
         }
         if (screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
           bool required = await evaluateMVEL(
@@ -255,6 +266,7 @@ class _NewProcessState extends State<NewProcess> {
                   .fieldInputValue
                   .containsKey(screen.fields!.elementAt(i)!.id))) {
                 isValid = false;
+
                 break;
               }
             }
@@ -283,7 +295,6 @@ class _NewProcessState extends State<NewProcess> {
             }
           }
         }
-        
       }
       print("CUSTOM VALIDATION : ${isValid}");
       return isValid;
