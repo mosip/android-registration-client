@@ -242,7 +242,7 @@ public class TemplateService {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                velocityContext.put(key, "data:image/jpeg;base64," + encodedBytes);
+                velocityContext.put(key, "\"data:image/jpeg;base64," + encodedBytes + "\"");
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);
             }

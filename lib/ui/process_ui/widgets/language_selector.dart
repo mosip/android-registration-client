@@ -9,6 +9,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/app_style.dart';
 
 class LanguageSelector extends StatefulWidget {
   const LanguageSelector({super.key, required this.newProcess});
@@ -165,9 +166,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                       .textTheme
                                       .titleSmall
                                       ?.copyWith(
-                                          color: e.key == "English"
-                                              ? Colors.grey
-                                              : Color(0xff333333)),
+                                        color: e.key == "English"
+                                            ? Colors.grey
+                                            : AppStyle.appBlackShade1,
+                                      ),
                                 )
                               ],
                             ),

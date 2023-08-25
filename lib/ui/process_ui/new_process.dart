@@ -184,6 +184,32 @@ class _NewProcessState extends State<NewProcess> {
       return required;
     }
 
+    returnBiometricListLength(List<String?>? list) {
+      int i = 0;
+      if (list!.contains("leftEye") && list.contains("rightEye")) {
+        i++;
+      }
+      if (list.contains("rightIndex") &&
+          list.contains("rightLittle") &&
+          list.contains("rightRing") &&
+          list.contains("rightMiddle")) {
+        i++;
+      }
+      if (list.contains("leftIndex") &&
+          list.contains("leftLittle") &&
+          list.contains("leftRing") &&
+          list.contains("leftMiddle")) {
+        i++;
+      }
+      if (list.contains("rightThumb") && list.contains("rightThumb")) {
+        i++;
+      }
+      if (list.contains("face")) {
+        i++;
+      }
+      return i;
+    }
+
     customValidation(int currentIndex) async {
       bool isValid = true;
       Screen screen = newProcess.screens!.elementAt(currentIndex)!;
@@ -198,6 +224,23 @@ class _NewProcessState extends State<NewProcess> {
 
             break;
           }
+          if (screen.fields!.elementAt(i)!.controlType == "biometrics" ) {
+              
+              
+          
+          int count = returnBiometricListLength(
+              screen.fields!.elementAt(i)!.bioAttributes);
+          
+          if (context
+                  .read<GlobalProvider>()
+                  .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                  .length <
+              count) {
+            isValid = false;
+
+            break;
+          }
+        }
         }
         if (screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
           bool required = await evaluateMVEL(
@@ -236,11 +279,11 @@ class _NewProcessState extends State<NewProcess> {
                         .validationExpr!);
             if (!valid) {
               isValid = false;
-
               break;
             }
           }
         }
+        
       }
       print("CUSTOM VALIDATION : ${isValid}");
       return isValid;
@@ -268,12 +311,15 @@ class _NewProcessState extends State<NewProcess> {
           if (!isPacketAuthenticated) {
             return;
           }
-          RegistrationSubmitResponse registrationSubmitResponse = await _submitRegistration(context);
+          RegistrationSubmitResponse registrationSubmitResponse =
+              await _submitRegistration(context);
           if (registrationSubmitResponse.errorCode!.isNotEmpty) {
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }
-          context.read<GlobalProvider>().setRegId(registrationSubmitResponse.rId);
+          context
+              .read<GlobalProvider>()
+              .setRegId(registrationSubmitResponse.rId);
           setState(() {
             username = '';
             password = '';
@@ -610,7 +656,7 @@ class _NewProcessState extends State<NewProcess> {
               Text(
                 'Authentication using Password',
                 style: TextStyle(
-                    fontSize: 18.spMax,
+                    fontSize: 18,
                     fontWeight: semiBold,
                     color: AppStyle.appBlack),
               ),

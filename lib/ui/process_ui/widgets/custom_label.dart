@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -17,14 +19,15 @@ class CustomLabel extends StatelessWidget {
         children: [
           Text(
             context.read<GlobalProvider>().chooseLanguage(field.label!),
+            style: TextStyle(fontSize: 14, fontWeight: semiBold),
           ),
           const SizedBox(
             width: 5,
           ),
           if (field.required! || field.requiredOn!.isNotEmpty)
-            const Text(
+            Text(
               "*",
-              style: TextStyle(color: Colors.red, fontSize: 15),
+              style: TextStyle(color: Colors.red, fontSize: 14),
             )
         ],
       ),

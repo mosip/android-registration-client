@@ -87,35 +87,22 @@ class BuildApp extends StatelessWidget {
           ),
           elevatedButtonTheme:
               const ElevatedButtonThemeData(style: ButtonStyle())),
-      home: const RegistrationClientSplashPage(),
+      builder: (context, child) {
+        MediaQueryData mediaQueryData = MediaQuery.of(context);
+        Orientation orientation = mediaQueryData.orientation;
+        ScreenUtil.init(
+          context,
+          designSize: orientation == Orientation.portrait
+              ? const Size(390, 844)
+              : const Size(1024, 768),
+          minTextAdapt: true,
+          splitScreenMode: true,
+        );
+        context.read<GlobalProvider>().setMachineDetails();
+        return child!;
+      },
+      home: LoginPage(),
     );
-  }
-}
-
-class RegistrationClientSplashPage extends StatefulWidget {
-  const RegistrationClientSplashPage({super.key});
-
-  @override
-  State<RegistrationClientSplashPage> createState() =>
-      _RegistrationClientSplashPageState();
-}
-
-class _RegistrationClientSplashPageState
-    extends State<RegistrationClientSplashPage> {
-  @override
-  Widget build(BuildContext context) {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
-    Orientation orientation = mediaQueryData.orientation;
-    ScreenUtil.init(
-      context,
-      designSize: orientation == Orientation.portrait
-          ? const Size(390, 844)
-          : const Size(1024, 768),
-      minTextAdapt: true,
-      splitScreenMode: true,
-    );
-    context.read<GlobalProvider>().setMachineDetails();
-    return const LoginPage();
   }
 }
 

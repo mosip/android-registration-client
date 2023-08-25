@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -233,8 +235,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: const TextStyle(
-                              color: Color(0xff999999), fontSize: 14),
+                          hintStyle: TextStyle(
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'DD',
                           border: OutlineInputBorder(
@@ -277,8 +279,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: const TextStyle(
-                              color: Color(0xff999999), fontSize: 14),
+                          hintStyle: TextStyle(
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'MM',
                           border: OutlineInputBorder(
@@ -318,8 +320,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: const TextStyle(
-                              color: Color(0xff999999), fontSize: 14),
+                          hintStyle: TextStyle(
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'YYYY',
                           border: OutlineInputBorder(
@@ -351,8 +353,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: const TextStyle(
-                              color: Color(0xff999999), fontSize: 14),
+                          hintStyle: TextStyle(
+                              color: AppStyle.appBlackShade3, fontSize: 14),
                           hintText: 'Age',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
