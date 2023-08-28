@@ -64,7 +64,7 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3
   colorful_progress_indicators: ^1.0.2
   webview_flutter_plus: ^0.3.0+2
-  printing: ^5.10.4
+  printing: ^5.11.0
 
 dev_dependencies:
   flutter_test:

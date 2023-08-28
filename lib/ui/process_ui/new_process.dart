@@ -158,11 +158,11 @@ class _NewProcessState extends State<NewProcess> {
     return true;
   }
 
-  _onTabBackNavigate(int index, BuildContext context) {
-    if (index < context.read<GlobalProvider>().newProcessTabIndex) {
-      context.read<GlobalProvider>().newProcessTabIndex = index;
-    }
-  }
+  // _onTabBackNavigate(int index, BuildContext context) {
+  //   if (index < context.read<GlobalProvider>().newProcessTabIndex) {
+  //     context.read<GlobalProvider>().newProcessTabIndex = index;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
