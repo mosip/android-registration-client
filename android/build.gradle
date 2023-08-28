@@ -39,7 +39,7 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-    serverBaseURL = "\"https://api-internal.dev1.mosip.net/\""
+    serverBaseURL = "\"https://api-internal.qa-triad.mosip.net/\""
 }
 
 
