@@ -25,7 +25,7 @@ class CustomLabel extends StatelessWidget {
             width: 5,
           ),
           if (field.required! || field.requiredOn!.isNotEmpty)
-            Text(
+            const Text(
               "*",
               style: TextStyle(color: Colors.red, fontSize: 14),
             )

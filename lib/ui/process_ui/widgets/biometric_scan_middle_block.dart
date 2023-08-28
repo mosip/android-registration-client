@@ -164,7 +164,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
-                                    content: Container(
+                                    content: SizedBox(
                                   height: 539.h,
                                   width: 768.w,
                                   child: Column(
