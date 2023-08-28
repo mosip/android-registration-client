@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -43,14 +42,5 @@ class FileStorage {
 
     // Write the data in the file you have created
     return file.writeAsString(bytes);
-  }
-
-  static Future<String> htmlToPDF(String htmlContent, String name) async {  // Name is File Name that you want to give the file
-    var targetPath = await _localPath;
-    var targetFileName = name;
-
-    var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-        htmlContent, targetPath, targetFileName);
-    return generatedPdfFile.path;
   }
 }
