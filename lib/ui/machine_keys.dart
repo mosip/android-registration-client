@@ -64,7 +64,7 @@ class MachineKeys extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.device_credentials,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppStyle.appBlack,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -91,7 +91,7 @@ class MachineKeys extends StatelessWidget {
               child: SelectableText(
                 machineDetails,
                 textDirection: TextDirection.ltr,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
@@ -232,7 +232,7 @@ class MachineKeys extends StatelessWidget {
           SizedBox(
             width: 5.w,
           ),
-          Text(
+          const Text(
             'SHARE',
             style: TextStyle(
               color: AppStyle.appSolidPrimary,

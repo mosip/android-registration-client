@@ -5,10 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
-import 'package:registration_client/platform_android/machine_key_impl.dart';
+
 import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
-import 'package:registration_client/ui/process_ui/new_process.dart';
 
 class GlobalProvider with ChangeNotifier {
   final MachineKey machineKey = MachineKey();
@@ -71,11 +70,11 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, List<Uint8List?>> get scannedPages => _scannedPages;
 
-  String get ageGroup => this._ageGroup;
-  List<String?> get locationHierarchy => this._locationHierarchy;
+  String get ageGroup => _ageGroup;
+  List<String?> get locationHierarchy => _locationHierarchy;
 
   set ageGroup(String value) {
-    this._ageGroup = value;
+    _ageGroup = value;
     notifyListeners();
   }
 
@@ -272,13 +271,13 @@ class GlobalProvider with ChangeNotifier {
     String x = '';
     for (var i in chosenLang) {
       if (i == "English") {
-        x = x + label["eng"]! + "/";
+        x = "$x${label["eng"]!}/";
       }
       if (i == "Arabic") {
-        x = x + label["ara"]! + "/";
+        x = "$x${label["ara"]!}/";
       }
       if (i == "French") {
-        x = x + label["fra"]! + "/";
+        x = "$x${label["fra"]!}/";
       }
     }
     x = x.substring(0, x.length - 1);

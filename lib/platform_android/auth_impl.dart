@@ -5,7 +5,6 @@ import 'package:registration_client/pigeon/packet_auth_pigeon.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/platform_spi/auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthImpl implements Auth {
   @override
@@ -37,11 +36,12 @@ class AuthImpl implements Auth {
   }
 
   @override
-  Future<PacketAuth> packetAuthentication(String username, String password, 
-                                          bool isConnected) async {
+  Future<PacketAuth> packetAuthentication(
+      String username, String password, bool isConnected) async {
     late PacketAuth packetAuth;
     try {
-      packetAuth = await PacketAuthApi().authenticate(username, password, isConnected);
+      packetAuth =
+          await PacketAuthApi().authenticate(username, password, isConnected);
     } on PlatformException {
       debugPrint('PacketAuthenticationApi call failed!');
     } catch (e) {

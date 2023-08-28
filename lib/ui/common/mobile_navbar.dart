@@ -11,7 +11,7 @@ class MobileNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80.h,
-      color: pure_white,
+      color: pureWhite,
       child: Padding(
         padding: EdgeInsets.fromLTRB(17.w, 12.h, 30.w, 17.h),
         child: Row(
@@ -20,14 +20,14 @@ class MobileNavbar extends StatelessWidget {
             OnboardLandingPageNavbarIcon(
                 icon: Icon(
                   Icons.home,
-                  color: solid_primary,
+                  color: solidPrimary,
                 ),
                 title: Text(
                   "Home",
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
-                      ?.copyWith(color: solid_primary),
+                      ?.copyWith(color: solidPrimary),
                 ),
                 ontap: () {}),
             OnboardLandingPageNavbarIcon(

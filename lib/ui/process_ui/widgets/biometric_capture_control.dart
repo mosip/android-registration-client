@@ -1,19 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
-import 'package:registration_client/model/biometrics_dto.dart';
+
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
-import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
-import 'package:registration_client/pigeon/process_spec_pigeon.dart';
-import 'package:registration_client/pigeon/registration_data_pigeon.dart';
+
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_exception_block.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_scan_block.dart';
@@ -22,7 +16,7 @@ import 'package:registration_client/ui/process_ui/widgets/biometric_scan_middle_
 import 'package:registration_client/utils/app_config.dart';
 
 class BiometricCaptureControl extends StatefulWidget {
-  BiometricCaptureControl({super.key, required this.field});
+  const BiometricCaptureControl({super.key, required this.field});
   final Field field;
 
   @override
@@ -169,7 +163,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     return InkWell(
         onTap: () {
           setState(() {
-            biometricAttribute = "${biometricAttributeData.title}";
+            biometricAttribute = biometricAttributeData.title;
           });
         },
         child: Stack(
@@ -186,7 +180,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                 ? secondaryColors.elementAt(16)
                                 : secondaryColors.elementAt(11)
                             : (biometricAttribute ==
-                                    "${biometricAttributeData.title}")
+                                    biometricAttributeData.title)
                                 ? secondaryColors.elementAt(12)
                                 : secondaryColors.elementAt(14)),
                     borderRadius: BorderRadius.circular(10)),
@@ -344,7 +338,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           width: double.infinity,
         ),
         Padding(
@@ -356,8 +350,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       .read<GlobalProvider>()
                       .chooseLanguage(widget.field.label!),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 20, color: black_shade_1, fontWeight: semiBold),
-                  children: [
+                      fontSize: 20, color: blackShade1, fontWeight: semiBold),
+                  children: const [
                     TextSpan(
                       text: " *",
                       style: TextStyle(color: Colors.red, fontSize: 15),
@@ -369,7 +363,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                       .read<GlobalProvider>()
                       .chooseLanguage(widget.field.label!),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 20, color: black_shade_1, fontWeight: semiBold),
+                      fontSize: 20, color: blackShade1, fontWeight: semiBold),
                 ),
         ),
         Card(
@@ -392,7 +386,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                           0)
                       ? Column(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             if (widget.field.conditionalBioAttributes!.first!
@@ -445,14 +439,14 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                 thumbs.exceptions.contains(true) ||
                                 face.exceptions.contains(true))
                               _getBiometricCaptureSelectionBlock(exception),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                           ],
                         )
                       : Column(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             if (widget.field.bioAttributes!
@@ -491,7 +485,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                 thumbs.exceptions.contains(true) ||
                                 face.exceptions.contains(true))
                               _getBiometricCaptureSelectionBlock(exception),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                           ],
@@ -575,7 +569,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         ?.copyWith(
                                             fontSize: 14,
                                             fontWeight: semiBold,
-                                            color: black_shade_1)),
+                                            color: blackShade1)),
                                 Stack(
                                   children: [
                                     InkWell(
@@ -637,7 +631,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                         ?.copyWith(
                                             fontSize: 14,
                                             fontWeight: semiBold,
-                                            color: black_shade_1)),
+                                            color: blackShade1)),
                                 Stack(
                                   children: [
                                     InkWell(
@@ -709,7 +703,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       ?.copyWith(
                                           fontSize: 14,
                                           fontWeight: semiBold,
-                                          color: black_shade_1)),
+                                          color: blackShade1)),
                               Stack(
                                 children: [
                                   Image.asset(
@@ -930,7 +924,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       ?.copyWith(
                                           fontSize: 14,
                                           fontWeight: semiBold,
-                                          color: black_shade_1)),
+                                          color: blackShade1)),
                               Stack(
                                 children: [
                                   Image.asset(
@@ -1151,7 +1145,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       ?.copyWith(
                                           fontSize: 14,
                                           fontWeight: semiBold,
-                                          color: black_shade_1)),
+                                          color: blackShade1)),
                               Stack(
                                 children: [
                                   Image.asset(
@@ -1276,7 +1270,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       ?.copyWith(
                                           fontSize: 14,
                                           fontWeight: semiBold,
-                                          color: black_shade_1)),
+                                          color: blackShade1)),
                               SizedBox(
                                 height: 64.h,
                               ),
@@ -1308,7 +1302,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                       ?.copyWith(
                                           fontSize: 14,
                                           fontWeight: semiBold,
-                                          color: black_shade_1)),
+                                          color: blackShade1)),
                               SizedBox(
                                 height: 64.h,
                               ),

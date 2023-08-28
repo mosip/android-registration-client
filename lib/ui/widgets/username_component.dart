@@ -29,7 +29,7 @@ class UsernameComponent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           height: 17.h,
           child: Text(
             AppLocalizations.of(context)!.language,
@@ -43,20 +43,17 @@ class UsernameComponent extends StatelessWidget {
         SizedBox(
           height: 30.h,
         ),
-        Container(
-          // height: 17.h,
-          child: Row(
-            children: [
-              Text(
-                AppLocalizations.of(context)!.username,
-                style: AppStyle.mobileTextfieldHeader,
-              ),
-              const Text(
-                ' *',
-                style: TextStyle(color: AppStyle.mandatoryField),
-              ),
-            ],
-          ),
+        Row(
+          children: [
+            Text(
+              AppLocalizations.of(context)!.username,
+              style: AppStyle.mobileTextfieldHeader,
+            ),
+            const Text(
+              ' *',
+              style: TextStyle(color: AppStyle.mandatoryField),
+            ),
+          ],
         ),
         SizedBox(
           height: 11.h,

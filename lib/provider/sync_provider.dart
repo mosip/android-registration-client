@@ -1,9 +1,9 @@
-import 'dart:async';
+
 import 'dart:developer';
-import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
-import 'package:registration_client/platform_android/machine_key_impl.dart';
+
 import 'package:registration_client/platform_android/sync_response_impl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SyncProvider with ChangeNotifier {
@@ -29,6 +29,10 @@ class SyncProvider with ChangeNotifier {
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
   bool get idSchemaSyncSuccess => _idSchemaSyncSuccess;
   bool get masterDataSyncSuccess => _masterDataSyncSuccess;
+  set isSyncing(bool value) {
+    _isSyncing=value;
+    notifyListeners();
+  }
 
   getLastSyncTime() async {
     SyncTime lastSyncTime = await SyncResponseImpl().getLastSyncTime();

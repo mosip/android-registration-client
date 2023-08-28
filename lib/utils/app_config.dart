@@ -6,44 +6,44 @@ String appIconLogoOnly = 'assets/images/MOSIP Logo Only.png';
 String buildingsX = 'assets/images/buildings.png';
 String buildingsXX = 'assets/images/buildings@2x.png';
 double appIconScale = 8;
-Color solid_primary = Color(0xFF1C43A1);
+Color solidPrimary = const Color(0xFF1C43A1);
 
 Color backgroundColor = const Color(0xFFF8FCFF);
-Color pure_white = const Color(0xFFFFFFFF);
+Color pureWhite = const Color(0xFFFFFFFF);
 
-Color black_shade_1 = const Color(0xFF333333);
+Color blackShade1 = const Color(0xFF333333);
 
-List<Color> app_colors = [
-  Color(0xFF014DAF),
-  Color(0xFFF97707),
-  Color(0xFF01A2FD),
-  Color(0xFFFEC401)
+List<Color> appColors = [
+  const Color(0xFF014DAF),
+  const Color(0xFFF97707),
+  const Color(0xFF01A2FD),
+  const Color(0xFFFEC401)
 ];
 
 
 
 List<Color> secondaryColors = [
-  Color(0xFF214FBF),
-  Color(0xFF6F6E6E),
-  Color(0xFF999999),
-  Color(0xFFFAFBFF),
-  Color(0xFFF4F7FF),
-  Color(0xFF7F7F7F),
-  Color(0xFF1A9B42),
-  Color(0xFF4E4E4E),
-  Color(0xFF0000000),
-  Color(0xFF0C0CAE3),
-  Color(0xFFFAFBFF),
-  Color(0xFF4B9D20),
-  Color(0xFF1C429F),
-  Color(0xFFE1EDF5),
-  Color(0xFFE5EBFA),
-  Color(0xFFFF0000),
-  Color(0xFFF29D1C),
-  Color(0xFFE0E0E0),
-  Color(0xFFF8F8F8),
-  Color(0xFF848484),
-  Color(0xFFC11717),
+  const Color(0xFF214FBF),
+  const Color(0xFF6F6E6E),
+  const Color(0xFF999999),
+  const Color(0xFFFAFBFF),
+  const Color(0xFFF4F7FF),
+  const Color(0xFF7F7F7F),
+  const Color(0xFF1A9B42),
+  const Color(0xFF4E4E4E),
+  const Color(0xFF000000),
+  const Color(0xFFC0CAE3),
+  const Color(0xFFFAFBFF),
+  const Color(0xFF4B9D20),
+  const Color(0xFF1C429F),
+  const Color(0xFFE1EDF5),
+  const Color(0xFFE5EBFA),
+  const Color(0xFFFF0000),
+  const Color(0xFFF29D1C),
+  const Color(0xFFE0E0E0),
+  const Color(0xFFF8F8F8),
+  const Color(0xFF848484),
+  const Color(0xFFC11717),
 ];
 FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;

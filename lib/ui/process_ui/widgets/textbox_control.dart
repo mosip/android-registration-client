@@ -1,9 +1,4 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -11,7 +6,7 @@ import 'package:registration_client/utils/app_style.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import '../../../model/field.dart';
-import '../../../platform_spi/registration.dart';
+
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
@@ -131,14 +126,14 @@ class _TextBoxControlState extends State<TextBoxControl> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          const BorderSide(color: AppStyle.appGreyShade, width: 1),
+                      borderSide: const BorderSide(
+                          color: AppStyle.appGreyShade, width: 1),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 14, horizontal: 16),
                     hintText: widget.e.label![lang],
                     hintStyle:
-                        TextStyle(color: AppStyle.appBlackShade3, fontSize: 14),
+                        const TextStyle(color: AppStyle.appBlackShade3, fontSize: 14),
                     prefixIcon: (lang == 'ara')
                         ? const Icon(
                             Icons.keyboard_outlined,

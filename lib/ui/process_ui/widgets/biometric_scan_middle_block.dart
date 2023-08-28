@@ -42,7 +42,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
           height: 164.h,
           width: 164.h,
           decoration: BoxDecoration(
-            color: pure_white,
+            color: pureWhite,
             border: Border.all(
               color: secondaryColors.elementAt(14),
             ),
@@ -119,7 +119,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return  SizedBox(
                       height: 460.h,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -148,19 +148,19 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                             onPressed: () async {
                               List<Uint8List?> temp = [];
                               await BiometricsApi()
-                                  .invokeDiscoverSbi(widget.field.id!, "${widget.parameterTitle}");
+                                  .invokeDiscoverSbi(widget.field.id!, widget.parameterTitle);
                               await BiometricsApi()
-                                  .getBestBiometrics(widget.field.id!, "${widget.parameterTitle}")
+                                  .getBestBiometrics(widget.field.id!, widget.parameterTitle)
                                   .then((value) {});
                               await BiometricsApi()
-                                  .extractImageValues(widget.field.id!, "${widget.parameterTitle}")
+                                  .extractImageValues(widget.field.id!, widget.parameterTitle)
                                   .then((value) {
                                 temp = value;
                               });
                               await BiometricsApi().incrementBioAttempt(
-                                  widget.field.id!, "${widget.parameterTitle}");
+                                  widget.field.id!, widget.parameterTitle);
                               widget.biometricAttributeData.attemptNo = await BiometricsApi()
-                                  .getBioAttempt(widget.field.id!, "${widget.parameterTitle}");
+                                  .getBioAttempt(widget.field.id!, widget.parameterTitle);
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -183,20 +183,20 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                   ?.copyWith(
                                                       fontSize: 18,
                                                       fontWeight: bold,
-                                                      color: black_shade_1),
+                                                      color: blackShade1),
                                             ),
                                             IconButton(
                                                 onPressed: () {
                                                   Navigator.pop(context);
                                                 },
-                                                icon: Icon(
+                                                icon: const Icon(
                                                   Icons.close,
                                                 )),
                                           ],
                                         ),
-                                        Divider(),
+                                        const Divider(),
                                         Padding(
-                                          padding: EdgeInsets.all(0),
+                                          padding: const EdgeInsets.all(0),
                                           // EdgeInsets.fromLTRB(
                                           //     60.w, 35.h, 60.w, 35.h),
                                           child: Row(
@@ -211,7 +211,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                             ],
                                           ),
                                         ),
-                                        Divider(),
+                                        const Divider(),
                                         Padding(
                                           padding: const EdgeInsets.all(0.0),
                                           child: Row(
@@ -226,31 +226,31 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                           Size(160.w, 42.h),
                                                       side: BorderSide(
                                                           color:
-                                                              solid_primary)),
+                                                              solidPrimary)),
                                                   onPressed: () async {
                                                     await BiometricsApi()
                                                         .invokeDiscoverSbi(
                                                             widget.field.id!,
-                                                            "${widget.parameterTitle}");
+                                                            widget.parameterTitle);
                                                     await BiometricsApi()
                                                         .extractImageValues(
                                                             widget.field.id!,
-                                                            "${widget.parameterTitle}")
+                                                            widget.parameterTitle)
                                                         .then((value) {
                                                       temp = value;
                                                     });
                                                     await BiometricsApi()
                                                         .incrementBioAttempt(
                                                             widget.field.id!,
-                                                            "${widget.parameterTitle}");
+                                                            widget.parameterTitle);
                                                     widget.biometricAttributeData.attemptNo =
                                                         await BiometricsApi()
                                                             .getBioAttempt(
                                                                 widget
                                                                     .field.id!,
-                                                                "${widget.parameterTitle}");
+                                                                widget.parameterTitle);
                                                   },
-                                                  child: Text("RESCAN")),
+                                                  child: const Text("RESCAN")),
                                               SizedBox(
                                                 width: 10.w,
                                               ),
@@ -266,7 +266,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                   await BiometricsApi()
                                                       .getBestBiometrics(
                                                           widget.field.id!,
-                                                          "${widget.parameterTitle}")
+                                                          widget.parameterTitle)
                                                       .then((value) async {
                                                     for (var e in value) {
                                                       widget.biometricAttributeData.listOfBiometricsDto
@@ -281,7 +281,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                   await BiometricsApi()
                                                       .extractImageValues(
                                                           widget.field.id!,
-                                                          "${widget.parameterTitle}")
+                                                          widget.parameterTitle)
                                                       .then((value) {
                                                     widget.biometricAttributeData.listofImages = value;
                                                   });
@@ -294,7 +294,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                   setState(() {});
                                                   Navigator.pop(context);
                                                 },
-                                                child: Text("SAVE"),
+                                                child: const Text("SAVE"),
                                               )
                                             ],
                                           ),
@@ -305,7 +305,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                             },
                             icon: Icon(
                               Icons.crop_free,
-                              color: solid_primary,
+                              color: solidPrimary,
                               size: 14,
                             ),
                             label: Text(
@@ -316,10 +316,10 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                   ?.copyWith(
                                       fontSize: 14,
                                       fontWeight: bold,
-                                      color: solid_primary),
+                                      color: solidPrimary),
                             ),
                             style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: solid_primary, width: 1),
+                              side: BorderSide(color: solidPrimary, width: 1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
                               ),
@@ -329,12 +329,12 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                               height: 67.h,
                               width: 162.w,
                               decoration: BoxDecoration(
-                                color: pure_white,
+                                color: pureWhite,
                                 border: Border.all(
                                   color: secondaryColors.elementAt(14),
                                 ),
                               ),
-                              padding: EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(12),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -381,7 +381,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                             height: 157.h,
                             width: 338.h,
                             decoration: BoxDecoration(
-                              color: pure_white,
+                              color: pureWhite,
                               border: Border.all(
                                 color: secondaryColors.elementAt(14),
                               ),
@@ -397,7 +397,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                       ?.copyWith(
                                           fontSize: 14,
                                           fontWeight: semiBold,
-                                          color: black_shade_1),
+                                          color: blackShade1),
                                 ),
                                 Text(
                                   "Threshold ${widget.biometricAttributeData.thresholdPercentage}%",
@@ -436,7 +436,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                           ?.copyWith(
                                             fontSize: 14,
                                             fontWeight: regular,
-                                            color: black_shade_1,
+                                            color: blackShade1,
                                           ),
                                     ),
                                   ],
@@ -451,7 +451,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                           .bodyLarge
                                           ?.copyWith(
                                               fontSize: 12,
-                                              color: black_shade_1),
+                                              color: blackShade1),
                                     ),
                                     SizedBox(
                                       width: 13.w,
@@ -461,7 +461,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                         if (widget.biometricAttributeData.attemptNo >= 1) {
                                           await BiometricsApi()
                                               .getBiometrics(
-                                                  widget.field.id!, "${widget.parameterTitle}", 1)
+                                                  widget.field.id!, widget.parameterTitle, 1)
                                               .then((value) {
                                             widget.biometricAttributeData.listOfBiometricsDto.clear();
                                             for (var e in value) {
@@ -477,7 +477,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
-                                                  widget.field.id!, "${widget.parameterTitle}", 1)
+                                                  widget.field.id!, widget.parameterTitle, 1)
                                               .then((value) {
                                             widget.biometricAttributeData.listofImages = value;
                                           });
@@ -485,7 +485,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                         }
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           vertical: 0,
                                           horizontal: 11,
                                         ),
@@ -510,7 +510,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                   color: (widget.biometricAttributeData.attemptNo < 1)
                                                       ? secondaryColors
                                                           .elementAt(19)
-                                                      : pure_white,
+                                                      : pureWhite,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -523,7 +523,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                         if (widget.biometricAttributeData.attemptNo >= 2) {
                                           await BiometricsApi()
                                               .getBiometrics(
-                                                  widget.field.id!, "${widget.parameterTitle}", 2)
+                                                  widget.field.id!, widget.parameterTitle, 2)
                                               .then((value) {
                                             widget.biometricAttributeData.listOfBiometricsDto.clear();
                                             for (var e in value) {
@@ -538,7 +538,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
-                                                  widget.field.id!, "${widget.parameterTitle}", 2)
+                                                  widget.field.id!, widget.parameterTitle, 2)
                                               .then((value) {
                                             widget.biometricAttributeData.listofImages = value;
                                           });
@@ -546,7 +546,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                         }
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           vertical: 0,
                                           horizontal: 11,
                                         ),
@@ -571,7 +571,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                   color: (widget.biometricAttributeData.attemptNo < 2)
                                                       ? secondaryColors
                                                           .elementAt(19)
-                                                      : pure_white,
+                                                      : pureWhite,
                                                   fontWeight: semiBold),
                                         ),
                                       ),
@@ -584,7 +584,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                         if (widget.biometricAttributeData.attemptNo >= 3) {
                                           await BiometricsApi()
                                               .getBiometrics(
-                                                  widget.field.id!, "${widget.parameterTitle}", 3)
+                                                  widget.field.id!, widget.parameterTitle, 3)
                                               .then((value) {
                                             widget.biometricAttributeData.listOfBiometricsDto.clear();
                                             for (var e in value) {
@@ -599,7 +599,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                           });
                                           await BiometricsApi()
                                               .extractImageValuesByAttempt(
-                                                  widget.field.id!, "${widget.parameterTitle}", 3)
+                                                  widget.field.id!, widget.parameterTitle, 3)
                                               .then((value) {
                                             widget.biometricAttributeData.listofImages = value;
                                           });
@@ -607,7 +607,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                         }
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           vertical: 0,
                                           horizontal: 11,
                                         ),
@@ -632,7 +632,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                                   color: (widget.biometricAttributeData.attemptNo < 3)
                                                       ? secondaryColors
                                                           .elementAt(19)
-                                                      : pure_white,
+                                                      : pureWhite,
                                                   fontWeight: semiBold),
                                         ),
                                       ),

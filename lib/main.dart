@@ -25,7 +25,7 @@ void main() async {
   final AppLanguageProvider appLanguage = AppLanguageProvider();
   await appLanguage.fetchLocale();
   runApp(
-    RestartWidget(child: const RegistrationClientApp()),
+    const RestartWidget(child: RegistrationClientApp()),
   );
 }
 
@@ -79,8 +79,8 @@ class BuildApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Provider.of<AppLanguageProvider>(context).appLocal,
       theme: ThemeData(
-          colorScheme: ColorScheme.light(primary: solid_primary),
-          primaryColor: solid_primary,
+          colorScheme: ColorScheme.light(primary: solidPrimary),
+          primaryColor: solidPrimary,
           textTheme: const TextTheme(
             titleLarge: TextStyle(fontSize: 24),
             bodyLarge: TextStyle(fontSize: 18),
@@ -101,13 +101,13 @@ class BuildApp extends StatelessWidget {
         context.read<GlobalProvider>().setMachineDetails();
         return child!;
       },
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
 
 class RestartWidget extends StatefulWidget {
-  RestartWidget({required this.child});
+  const RestartWidget({super.key, required this.child});
 
   final Widget child;
 

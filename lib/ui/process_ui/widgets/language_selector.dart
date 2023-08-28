@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/pigeon/process_spec_pigeon.dart';
-import 'package:registration_client/platform_spi/process_spec.dart';
+
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -111,7 +110,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                         .contains(MaterialState.disabled)) {
                                       return Colors.grey;
                                     }
-                                    return solid_primary;
+                                    return solidPrimary;
                                   })),
                               Text(
                                 e.key,
@@ -158,7 +157,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                           .contains(MaterialState.disabled)) {
                                         return Colors.grey;
                                       }
-                                      return solid_primary;
+                                      return solidPrimary;
                                     })),
                                 Text(
                                   e.key,

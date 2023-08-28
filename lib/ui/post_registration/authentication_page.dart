@@ -37,7 +37,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             borderRadius: const BorderRadius.all(
               Radius.circular(6),
             ),
-            color: pure_white,
+            color: pureWhite,
           ),
           child: Column(
             children: [

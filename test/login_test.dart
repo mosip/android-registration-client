@@ -3,8 +3,6 @@ import 'package:mockito/annotations.dart';
 import 'validator.dart';
 import 'login.dart';
 
-import 'login_test.mocks.dart';
-
 @GenerateMocks([Login])
 void main() {
   var loginTest = Login();
@@ -149,7 +147,8 @@ void main() {
       "userId": "tester1",
       "password": "secret",
     };
-    expect(loginTest.isPasswordValid(passwordData, "tester1", "secret123"), false);
+    expect(
+        loginTest.isPasswordValid(passwordData, "tester1", "secret123"), false);
   });
 
   test("check password hash valid for current user", () {
@@ -162,7 +161,8 @@ void main() {
 
   test("check offline login failed for empty table", () {
     Map<String, dynamic> passwordData = {};
-    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"), "Credentials not found. Try online login.");
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"),
+        "Credentials not found. Try online login.");
   });
 
   test("check offline login failed for current user", () {
@@ -170,7 +170,8 @@ void main() {
       "userId": "tester2",
       "password": "secret",
     };
-    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"), "Credentials not found. Try online login.");
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"),
+        "Credentials not found. Try online login.");
   });
 
   test("check offline login failed for incorrect user password", () {
@@ -178,7 +179,8 @@ void main() {
       "userId": "tester1",
       "password": "secret",
     };
-    expect(loginTest.offlineLogin(passwordData, "tester1", "secret123"), "Password Incorrect");
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret123"),
+        "Password Incorrect");
   });
 
   test("check offline login successful for current user", () {
@@ -186,6 +188,7 @@ void main() {
       "userId": "tester1",
       "password": "secret",
     };
-    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"), "Offline Login Successful!");
+    expect(loginTest.offlineLogin(passwordData, "tester1", "secret"),
+        "Offline Login Successful!");
   });
 }

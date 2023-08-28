@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -106,7 +105,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   submitRegistrationDto(String makerName) async {
-    RegistrationSubmitResponse registrationSubmitResponse = await registration.submitRegistrationDto(makerName);
+    RegistrationSubmitResponse registrationSubmitResponse =
+        await registration.submitRegistrationDto(makerName);
     return registrationSubmitResponse;
   }
 

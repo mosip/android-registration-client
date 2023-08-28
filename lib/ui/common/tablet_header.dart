@@ -38,7 +38,7 @@ class TabletHeader extends StatelessWidget {
             ),
             Icon(
               Icons.location_pin,
-              color: solid_primary,
+              color: solidPrimary,
               size: 16,
             ),
             SizedBox(
@@ -64,7 +64,7 @@ class TabletHeader extends StatelessWidget {
             ),
             Icon(
               Icons.desktop_mac_outlined,
-              color: solid_primary,
+              color: solidPrimary,
               size: 16,
             ),
             SizedBox(

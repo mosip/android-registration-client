@@ -5,22 +5,15 @@
 */
 
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+
 import 'package:registration_client/main.dart';
-import 'package:registration_client/pigeon/machine_pigeon.dart';
-import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
-import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_android/auth_impl.dart';
-import 'package:registration_client/platform_android/machine_key_impl.dart';
-import 'package:registration_client/platform_android/sync_response_impl.dart';
-import 'package:registration_client/platform_spi/machine_key.dart';
+
 import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
@@ -99,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                     left: 16.w,
                     child: _getBuildingsImage(),
                   ),
-                  Container(
+                  SizedBox(
                     height: h,
                     width: w,
                     child: SingleChildScrollView(
@@ -206,15 +199,13 @@ class _LoginPageState extends State<LoginPage> {
       _showErrorInSnackbar();
       return;
     }
-    
+
     await syncProvider.getLastSyncTime();
     debugPrint(syncProvider.lastSuccessfulSyncTime);
     if (isTrue && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
       syncProvider.setIsGlobalSyncInProgress(true);
       await _autoSyncHandler();
-    } 
-    else
-     {
+    } else {
       authProvider.setIsSyncing(false);
       _navigateToHomePage();
     }
@@ -298,7 +289,7 @@ class _LoginPageState extends State<LoginPage> {
                 isMachineKeysDialogOpen = true;
               });
             },
-            child: Container(
+            child: SizedBox(
               height: isMobile ? 46.h : 54.h,
               child: Image.asset(
                 appIcon,
@@ -410,11 +401,9 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 34.h,
           ),
-          Container(
-            child: Text(
-              AppLocalizations.of(context)!.login_text,
-              style: AppStyle.mobileHeaderText,
-            ),
+          Text(
+            AppLocalizations.of(context)!.login_text,
+            style: AppStyle.mobileHeaderText,
           ),
           SizedBox(
             height: context.watch<AuthProvider>().isValidUser ? 41.h : 38.h,
@@ -498,7 +487,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _getBuildingsImage() {
-    return Container(
+    return SizedBox(
       height: isMobile ? (162.48).h : (293.48).h,
       width: isMobile ? (222.28).w : (400.28).w,
       child: Image.asset(
@@ -509,7 +498,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _autoSyncHandler() async {
-   
     if (syncProvider.isGlobalSyncInProgress) {
       authProvider.setIsSyncing(false);
       showLoadingDialog(context);
@@ -541,7 +529,7 @@ class _LoginPageState extends State<LoginPage> {
               height: isMobile ? 125.h : 280.h,
               width: isMobile ? 125.w : 280.w,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15), color: pure_white),
+                  borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: Column(
@@ -611,7 +599,7 @@ class _LoginPageState extends State<LoginPage> {
               height: isMobile ? 125.h : 280.h,
               width: isMobile ? 125.w : 280.w,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15), color: pure_white),
+                  borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -628,10 +616,10 @@ class _LoginPageState extends State<LoginPage> {
                         scale: isMobile ? 1.4 : 2.8,
                         child: Center(
                           child: ColorfulCircularProgressIndicator(
-                            colors: app_colors,
+                            colors: appColors,
                             strokeWidth: 2.2,
                             duration: const Duration(milliseconds: 500),
-                            initialColor: app_colors[0],
+                            initialColor: appColors[0],
                           ),
                         ),
                       ),
