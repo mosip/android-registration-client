@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/document_pigeon.dart';
@@ -57,14 +55,15 @@ class DocumentImpl implements Document {
 
   @override
   Future<bool?> removeDocumentField(String fieldId) async {
-    bool removeDocument = false;
     try {
       await DocumentApi().removeDocumentField(fieldId);
+      return true;
     } on PlatformException {
       debugPrint('DocumentApi call failed');
     } catch (e) {
       debugPrint('remove document field failed ${e.toString()}');
     }
+    return false;
   }
 }
 

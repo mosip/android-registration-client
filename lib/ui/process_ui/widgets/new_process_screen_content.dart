@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -16,7 +14,6 @@ import 'package:registration_client/ui/process_ui/widgets/document_upload_contro
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dynamic_dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
-import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
@@ -68,7 +65,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "textbox":
         return TextBoxControl(e: e, validation: regexPattern);
       case "dropdown":
-        if(e.fieldType == "dynamic") {
+        if (e.fieldType == "dynamic") {
           return DynamicDropDownControl(field: e, validation: regexPattern);
         }
         return DropDownControl(

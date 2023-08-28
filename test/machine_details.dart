@@ -1,16 +1,16 @@
 enum MachineAction {
-  copy_text,
-  download_json,
+  copyText,
+  downloadJson,
   error,
 }
 
 extension MachineActionExtension on MachineAction {
   String get value {
     switch(this) {
-      case MachineAction.copy_text:
+      case MachineAction.copyText:
         return "Text Copied to clipboard.";
 
-      case MachineAction.download_json:
+      case MachineAction.downloadJson:
         return "File saved to downloads.";
 
       case MachineAction.error:
@@ -25,11 +25,11 @@ extension MachineActionExtension on MachineAction {
 class MachineDetails {
   String performAction(String action) {
     if(action == 'Copy Text') {
-      return MachineAction.copy_text.value;
+      return MachineAction.copyText.value;
     }
 
     if(action == "Download JSON") {
-      return MachineAction.download_json.value;
+      return MachineAction.downloadJson.value;
     }
 
     return MachineAction.error.value;

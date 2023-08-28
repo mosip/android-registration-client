@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -31,12 +31,12 @@ class _BiometricCaptureExceptionBlockState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 16, 0, 36),
+            padding: const EdgeInsets.fromLTRB(0, 16, 0, 36),
             child: Center(
               child: Text(
                 "Mark Exception",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 18, fontWeight: semiBold, color: black_shade_1),
+                    fontSize: 18, fontWeight: semiBold, color: blackShade1),
               ),
             ),
           ),
@@ -49,7 +49,7 @@ class _BiometricCaptureExceptionBlockState
               child: Text(
                 "Marking exceptions on ${widget.attribute.title.toLowerCase()} are not allowed",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 14, fontWeight: regular, color: black_shade_1),
+                    fontSize: 14, fontWeight: regular, color: blackShade1),
               ),
             )),
           (widget.attribute.title != "Face" &&
@@ -64,7 +64,7 @@ class _BiometricCaptureExceptionBlockState
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontSize: 14,
                             fontWeight: semiBold,
-                            color: black_shade_1),
+                            color: blackShade1),
                       ),
                       SizedBox(
                         height: 17.h,
@@ -77,7 +77,7 @@ class _BiometricCaptureExceptionBlockState
                                 height: 10.h,
                                 width: 10.h,
                                 child: Radio(
-                                  activeColor: solid_primary,
+                                  activeColor: solidPrimary,
                                   value: "Permanent",
                                   groupValue: widget.attribute.exceptionType,
                                   onChanged: ((value) {
@@ -98,7 +98,7 @@ class _BiometricCaptureExceptionBlockState
                                     ?.copyWith(
                                         fontSize: 14,
                                         fontWeight: regular,
-                                        color: black_shade_1),
+                                        color: blackShade1),
                               ),
                             ],
                           ),
@@ -111,7 +111,7 @@ class _BiometricCaptureExceptionBlockState
                                 height: 10.h,
                                 width: 10.h,
                                 child: Radio(
-                                  activeColor: solid_primary,
+                                  activeColor: solidPrimary,
                                   value: "Temporary",
                                   groupValue: widget.attribute.exceptionType,
                                   onChanged: ((value) {
@@ -132,7 +132,7 @@ class _BiometricCaptureExceptionBlockState
                                     ?.copyWith(
                                         fontSize: 14,
                                         fontWeight: regular,
-                                        color: black_shade_1),
+                                        color: blackShade1),
                               ),
                             ],
                           ),
@@ -141,7 +141,7 @@ class _BiometricCaptureExceptionBlockState
                     ],
                   ),
                 )
-              : Spacer(),
+              : const Spacer(),
           (widget.attribute.title != "Face" &&
                   widget.attribute.title != "Exception")
               ? Padding(
@@ -154,7 +154,7 @@ class _BiometricCaptureExceptionBlockState
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontSize: 14,
                             fontWeight: semiBold,
-                            color: black_shade_1),
+                            color: blackShade1),
                       ),
                       SizedBox(
                         height: 11.h,
@@ -185,7 +185,7 @@ class _BiometricCaptureExceptionBlockState
                     ],
                   ),
                 )
-              : Spacer(),
+              : const Spacer(),
         ],
       ),
     );

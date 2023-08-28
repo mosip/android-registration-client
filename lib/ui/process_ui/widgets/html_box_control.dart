@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,8 +21,8 @@ class HtmlBoxControl extends StatelessWidget {
     bool isMobile = MediaQuery.of(context).size.width < 750;
 
     return Card(
-      color: pure_white,
-      margin: EdgeInsets.fromLTRB(16, 24, 16, 8),
+      color: pureWhite,
+      margin: const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Column(
         children: [
           const SizedBox(
@@ -46,10 +43,10 @@ class HtmlBoxControl extends StatelessWidget {
                                     i;
                               },
                               child: Container(
-                                padding: EdgeInsets.only(top: 10),
+                                padding: const EdgeInsets.only(top: 10),
                                 height: 40.h,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
+                                  borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8),
                                     topRight: Radius.circular(8),
                                   ),
@@ -57,11 +54,11 @@ class HtmlBoxControl extends StatelessWidget {
                                               .watch<GlobalProvider>()
                                               .htmlBoxTabIndex ==
                                           i)
-                                      ? solid_primary
-                                      : pure_white,
+                                      ? solidPrimary
+                                      : pureWhite,
                                 ),
                                 child: Text(
-                                  "${context.read<GlobalProvider>().chosenLang.elementAt(i)}",
+                                  context.read<GlobalProvider>().chosenLang.elementAt(i),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -69,8 +66,8 @@ class HtmlBoxControl extends StatelessWidget {
                                                   .watch<GlobalProvider>()
                                                   .htmlBoxTabIndex ==
                                               i)
-                                          ? pure_white
-                                          : black_shade_1,
+                                          ? pureWhite
+                                          : blackShade1,
                                       fontWeight: semiBold),
                                 ),
                               ),
@@ -82,11 +79,11 @@ class HtmlBoxControl extends StatelessWidget {
                                   i;
                             },
                             child: Container(
-                              padding: EdgeInsets.only(top: 10),
+                              padding: const EdgeInsets.only(top: 10),
                               height: 40.h,
                               width: 116,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(8),
                                   topRight: Radius.circular(8),
                                 ),
@@ -94,11 +91,11 @@ class HtmlBoxControl extends StatelessWidget {
                                             .watch<GlobalProvider>()
                                             .htmlBoxTabIndex ==
                                         i)
-                                    ? solid_primary
-                                    : pure_white,
+                                    ? solidPrimary
+                                    : pureWhite,
                               ),
                               child: Text(
-                                "${context.read<GlobalProvider>().chosenLang.elementAt(i)}",
+                                context.read<GlobalProvider>().chosenLang.elementAt(i),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 14,
@@ -106,8 +103,8 @@ class HtmlBoxControl extends StatelessWidget {
                                                 .watch<GlobalProvider>()
                                                 .htmlBoxTabIndex ==
                                             i)
-                                        ? pure_white
-                                        : black_shade_1,
+                                        ? pureWhite
+                                        : blackShade1,
                                     fontWeight: semiBold),
                               ),
                             ),
@@ -116,12 +113,12 @@ class HtmlBoxControl extends StatelessWidget {
               )),
           Divider(
             thickness: 3,
-            color: solid_primary,
+            color: solidPrimary,
             height: 0,
           ),
           Container(
             height: 341.h,
-            padding: EdgeInsets.all(18),
+            padding: const EdgeInsets.all(18),
             child: HtmlRenderer(field: field),
           ),
         ],
@@ -141,10 +138,7 @@ class HtmlRenderer extends StatefulWidget {
 class _HtmlRendererState extends State<HtmlRenderer> {
   @override
   Widget build(BuildContext context) {
-    for (int i = 0;
-        i < context.read<GlobalProvider>().chosenLang.length;
-        i++) {
-          
+    for (int i = 0; i < context.read<GlobalProvider>().chosenLang.length; i++) {
       List<int> bytes = utf8.encode(context
           .read<GlobalProvider>()
           .fieldDisplayValues[widget.field.id][i]);
@@ -153,10 +147,14 @@ class _HtmlRendererState extends State<HtmlRenderer> {
       DemographicsApi().getHashValue(unit8List).then((value) {
         hash = value;
         context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = hash;
-        print("ID : ${widget.field.id!}");
-        DemographicsApi().addSimpleTypeDemographicField(widget.field.id!, value, context.read<GlobalProvider>().langToCode(context.read<GlobalProvider>().chosenLang[i]));
+        debugPrint("ID : ${widget.field.id!}");
+        DemographicsApi().addSimpleTypeDemographicField(
+            widget.field.id!,
+            value,
+            context
+                .read<GlobalProvider>()
+                .langToCode(context.read<GlobalProvider>().chosenLang[i]));
       });
-      
     }
     return SingleChildScrollView(
       child: Html(
@@ -182,19 +180,19 @@ class _HtmlRendererState extends State<HtmlRenderer> {
 //                       BoxDecoration(borderRadius: BorderRadius.circular(10)),
 //                   // color:
 //                   //     (context.watch<GlobalProvider>().htmlBoxTabIndex == index)
-//                   //         ? solid_primary
-//                   //         : pure_white,
+//                   //         ? solidPrimary
+//                   //         : pureWhite,
 //                   child: Text(
 //                       "${context.read<GlobalProvider>().chosenLang.elementAt(index)}",
 //                       style: TextStyle(
 //                         fontSize: 14,
 //                         fontWeight: semiBold,
-//                         color: black_shade_1,
+//                         color: blackShade1,
 //                       )
 //                       // (context.watch<GlobalProvider>().htmlBoxTabIndex ==
 //                       //         index)
-//                       //     ? pure_white
-//                       //     : black_shade_1),
+//                       //     ? pureWhite
+//                       //     : blackShade1),
 //                       ),
 //                 );
 //               },

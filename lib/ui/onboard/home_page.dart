@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,16 +7,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/model/screen.dart';
+
 import 'package:registration_client/provider/app_language_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/post_registration/authentication_page.dart';
-import 'package:registration_client/ui/post_registration/preview_page.dart';
+
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
-import 'package:registration_client/provider/sync_provider.dart';
+
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
@@ -35,7 +33,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     _fetchProcessSpec();
@@ -85,9 +82,9 @@ class _HomePageState extends State<HomePage> {
     await context.read<RegistrationTaskProvider>().getListOfProcesses();
   }
 
-  _getUiSchemaAction(BuildContext context) async {
-    await context.read<RegistrationTaskProvider>().getUISchema();
-  }
+  // _getUiSchemaAction(BuildContext context) async {
+  //   await context.read<RegistrationTaskProvider>().getUISchema();
+  // }
 
   _getCenterNameAction(BuildContext context) async {
     String regCenterId = context.read<GlobalProvider>().centerId;
@@ -216,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                                 .length,
                             (index) => HomePageCard(
                                   icon: Image.asset(
-                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon??""}",
+                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon ?? ""}",
                                     width: 20,
                                     height: 20,
                                   ),

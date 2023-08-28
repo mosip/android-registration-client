@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,7 +22,6 @@ import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
-import 'package:registration_client/ui/post_registration/authentication_page.dart';
 import 'package:registration_client/ui/post_registration/preview_page.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
@@ -33,7 +31,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class NewProcess extends StatefulWidget {
-  NewProcess({super.key});
+  const NewProcess({super.key});
 
   static const routeName = '/new_process';
 
@@ -64,9 +62,6 @@ class _NewProcessState extends State<NewProcess> {
     RegistrationSubmitResponse registrationSubmitResponse = await context
         .read<RegistrationTaskProvider>()
         .submitRegistrationDto(username);
-
-    bool isRegistrationSaved =
-        context.read<RegistrationTaskProvider>().isRegistrationSaved;
 
     return registrationSubmitResponse;
   }
@@ -296,11 +291,11 @@ class _NewProcessState extends State<NewProcess> {
           }
         }
       }
-      print("CUSTOM VALIDATION : ${isValid}");
+
       return isValid;
     }
 
-    _continueButtonTap(BuildContext context, int size, newProcess) async {
+    continueButtonTap(BuildContext context, int size, newProcess) async {
       if (context.read<GlobalProvider>().newProcessTabIndex < size) {
         if (context.read<GlobalProvider>().formKey.currentState!.validate()) {
           bool customValidator = await customValidation(
@@ -351,7 +346,7 @@ class _NewProcessState extends State<NewProcess> {
     return Scaffold(
       backgroundColor: secondaryColors.elementAt(10),
       bottomNavigationBar: Container(
-        color: pure_white,
+        color: pureWhite,
         padding: EdgeInsets.symmetric(
           horizontal: 80.w,
           vertical: 16.h,
@@ -367,7 +362,7 @@ class _NewProcessState extends State<NewProcess> {
                             ? "AUTHENTICATE"
                             : "COMPLETE"),
                 onPressed: () {
-                  _continueButtonTap(context, size, newProcess);
+                  continueButtonTap(context, size, newProcess);
                 },
               )
             : Row(
@@ -403,7 +398,7 @@ class _NewProcessState extends State<NewProcess> {
                           MaterialStateProperty.all<Size>(const Size(209, 52)),
                     ),
                     onPressed: () {
-                      _continueButtonTap(context, size, newProcess);
+                      continueButtonTap(context, size, newProcess);
                     },
                     child: Text(context
                                 .read<GlobalProvider>()
@@ -427,7 +422,7 @@ class _NewProcessState extends State<NewProcess> {
             children: [
               isMobile
                   ? const SizedBox()
-                  : Column(
+                  : const Column(
                       children: [
                         TabletHeader(),
                         TabletNavbar(),
@@ -460,7 +455,7 @@ class _NewProcessState extends State<NewProcess> {
                               .textTheme
                               .titleMedium
                               ?.copyWith(
-                                  color: pure_white,
+                                  color: pureWhite,
                                   fontWeight: semiBold,
                                   fontSize: 21)),
                     ),
@@ -520,7 +515,7 @@ class _NewProcessState extends State<NewProcess> {
                                                                     GlobalProvider>()
                                                                 .newProcessTabIndex ==
                                                             index)
-                                                        ? pure_white
+                                                        ? pureWhite
                                                         : Colors.transparent,
                                                     width: 3),
                                               ),
@@ -545,7 +540,7 @@ class _NewProcessState extends State<NewProcess> {
                                                             index)
                                                         ? Icon(
                                                             Icons.circle,
-                                                            color: pure_white,
+                                                            color: pureWhite,
                                                             size: 17,
                                                           )
                                                         : Icon(
@@ -576,7 +571,7 @@ class _NewProcessState extends State<NewProcess> {
                                                                           GlobalProvider>()
                                                                       .newProcessTabIndex ==
                                                                   index)
-                                                              ? pure_white
+                                                              ? pureWhite
                                                               : secondaryColors
                                                                   .elementAt(9),
                                                           fontWeight: semiBold,
@@ -598,10 +593,10 @@ class _NewProcessState extends State<NewProcess> {
                             height: 36.h,
                             width: 25.w,
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            color: solid_primary,
+                            color: solidPrimary,
                             child: Icon(
                               Icons.arrow_forward_ios_outlined,
-                              color: pure_white,
+                              color: pureWhite,
                               size: 17,
                             ),
                           ),
@@ -656,7 +651,7 @@ class _NewProcessState extends State<NewProcess> {
             borderRadius: const BorderRadius.all(
               Radius.circular(6),
             ),
-            color: pure_white,
+            color: pureWhite,
           ),
           child: Column(
             children: [

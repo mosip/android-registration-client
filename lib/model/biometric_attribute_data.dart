@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:registration_client/model/biometrics_dto.dart';
 
 class BiometricAttributeData {
