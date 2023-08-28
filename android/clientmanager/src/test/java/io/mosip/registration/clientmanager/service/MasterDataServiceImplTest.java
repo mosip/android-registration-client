@@ -137,7 +137,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , globalParamRepository, null, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -175,7 +175,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , globalParamRepository, null, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -209,7 +209,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , globalParamRepository, null, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -240,7 +240,7 @@ public class MasterDataServiceImplTest {
                 , null, null, null
                 , globalParamRepository, null, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -267,7 +267,7 @@ public class MasterDataServiceImplTest {
                 , templateRepository, null, null
                 , globalParamRepository, null, null
                 , null, null, null
-                , null, null);
+                , null, null, null);
 
         assertNotNull(masterDataService.getPreviewTemplateContent("reg-android-preview-template", "eng"));
     }

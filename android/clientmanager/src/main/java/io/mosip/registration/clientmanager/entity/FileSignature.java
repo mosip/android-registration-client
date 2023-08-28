@@ -6,6 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Anshul vanawat
@@ -13,6 +14,7 @@ import lombok.Data;
 
 @Entity(tableName = "file_signature")
 @Data
+@NoArgsConstructor
 public class FileSignature {
 
     @NonNull

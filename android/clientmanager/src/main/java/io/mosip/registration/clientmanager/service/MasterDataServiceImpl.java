@@ -9,9 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
@@ -34,6 +36,7 @@ import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import okhttp3.ResponseBody;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,10 +48,15 @@ import retrofit2.Response;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -81,6 +89,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private CertificateManagerService certificateManagerService;
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
+    private FileSignatureDao fileSignatureDao;
 
     @Inject
     public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
@@ -99,7 +108,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  UserDetailRepository userDetailRepository,
                                  CertificateManagerService certificateManagerService,
                                  LanguageRepository languageRepository,
-                                 JobManagerService jobManagerService) {
+                                 JobManagerService jobManagerService,
+                                 FileSignatureDao fileSignatureDao) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -119,6 +129,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.certificateManagerService = certificateManagerService;
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
+        this.fileSignatureDao = fileSignatureDao;
     }
 
     @Override
@@ -518,6 +529,14 @@ public class MasterDataServiceImpl implements MasterDataService {
                         break;
                     case "dynamic":
                         saveDynamicData(masterData.getData());
+                        break;
+                    case "script":
+                        CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
+                        cryptoRequestDto.setValue(masterData.getData());
+                        CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
+                        byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
+                        downloadUrlData(Paths.get(context.getFilesDir().getAbsolutePath(), masterData.getEntityName()), new JSONObject(new String(data)));
+                        break;
                 }
             } catch (Throwable e) {
                 foundErrors = true;
@@ -529,6 +548,89 @@ public class MasterDataServiceImpl implements MasterDataService {
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
         }
+    }
+
+    private void downloadUrlData(Path path, JSONObject jsonObject) {
+        Log.i(TAG, "Started downloading mvel script: " + path.toString());
+        try {
+            String headers = jsonObject.getString("headers");
+            Map<String, String> map = new HashMap<>();
+            if (headers != null && !headers.trim().isEmpty()) {
+                String[] header = headers.split(",");
+                for (String subHeader : header) {
+                    if (subHeader.trim().isEmpty())
+                        continue;
+                    String[] headerValues = subHeader.split(":");
+                    map.put(headerValues[0], headerValues[1]);
+                }
+            }
+            long[] range = getFileRange(path);
+            map.put("Range", String.format("bytes=%s-%s", (range == null) ? 0 :
+                    range[0], (range == null) ? "" : range[1]));
+
+            syncScript(() -> {
+            }, path, jsonObject.getBoolean("encrypted"), jsonObject.getString("url"),
+                    map, this.clientCryptoManagerService.getClientKeyIndex());
+        } catch (Exception e) {
+            Log.e("Failed to download entity file", path.toString(), e);
+        }
+    }
+
+    private void syncScript(Runnable onFinish, Path path, boolean isFileEncrypted, String url, Map<String, String> map, String keyIndex) throws Exception {
+        AtomicReference<Integer> contentLength = new AtomicReference<>();
+        AtomicReference<String> fileSignature = new AtomicReference<String>();
+
+        Call<ResponseBody> call = syncRestService.downloadScript(url, map, keyIndex);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        long[] range = getFileRange(path);
+                        try(FileOutputStream fileOutputStream = new FileOutputStream(path.toFile(),
+                                (range == null) ? false : true)) {
+                            fileSignature.set(response.headers().get("file-signature"));
+                            contentLength.set(Integer.valueOf(response.headers().get("content-length")));
+                            IOUtils.copy(response.body().byteStream(), fileOutputStream);
+                            saveFileSignature(path, isFileEncrypted, fileSignature.get(), contentLength.get());
+                            Toast.makeText(context, "Script Sync Completed", Toast.LENGTH_LONG).show();
+                            onFinish.run();
+                        } catch (Exception e) {
+                            Log.e(TAG,"Error in downloading script", e);
+                        }
+                    } else
+                        Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(context, "Script Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, "Script Sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void saveFileSignature(Path path, boolean isFileEncrypted, String signature, Integer contentLength) {
+        if(signature == null)
+            return;
+        FileSignature fileSignature = new FileSignature();
+        fileSignature.setSignature(signature);
+        fileSignature.setFileName(path.toFile().getName());
+        fileSignature.setEncrypted(isFileEncrypted);
+        fileSignature.setContentLength(contentLength);
+        fileSignatureDao.insert(fileSignature);
+    }
+
+    private long[] getFileRange(Path path) {
+        long[] range = new long[2];
+        Optional<FileSignature> signature = fileSignatureDao.findByFileName(path.toFile().getName());
+        if(signature.isPresent() && path.toFile().length() < signature.get().getContentLength()) {
+            range[0] = path.toFile().length();
+            range[1] = signature.get().getContentLength();
+            return range;
+        }
+        return null;
     }
 
     private JSONArray getDecryptedDataList(String data) throws JSONException {

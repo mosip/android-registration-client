@@ -60,4 +60,8 @@ public interface SyncRestService {
     @POST("/registrationprocessor/v1/registrationstatus/auth")
     Call<ResponseWrapper<Map<String, Object>>> doOperatorAuth(@Header("signature") String signature,
                                                               @Body Map<String, Object> requestMap);
+    @GET
+    Call<ResponseBody> downloadScript(@Url String url,
+                                      @HeaderMap Map<String, String> headers,
+                                      @Query("keyindex") String keyindex);
 }
