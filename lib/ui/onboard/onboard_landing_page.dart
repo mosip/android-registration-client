@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -201,21 +201,19 @@ class OnboardLandingPage extends StatelessWidget {
                       SizedBox(
                         height: 4.h,
                       ),
-                      Expanded(
-                        child: ResponsiveGridList(
-                          // shrinkWrap: true,
-                          minItemWidth: 300,
-                          minItemsPerRow: 1,
-                          maxItemsPerRow: 3,
-                          horizontalGridSpacing: 8,
-                          verticalGridSpacing: 8,
-                          children: List.generate(
-                            helpTopics.length,
-                            (index) => OnboardLandingPageCard(
-                              icon: helpTopics[index]["icon"] as String,
-                              title: helpTopics[index]["title"] as String,
-                              ontap: helpTopics[index]["onTap"],
-                            ),
+                      ResponsiveGridList(
+                        shrinkWrap: true,
+                        minItemWidth: 300,
+                        minItemsPerRow: 1,
+                        maxItemsPerRow: 3,
+                        horizontalGridSpacing: 8,
+                        verticalGridSpacing: 8,
+                        children: List.generate(
+                          helpTopics.length,
+                          (index) => OnboardLandingPageCard(
+                            icon: helpTopics[index]["icon"] as String,
+                            title: helpTopics[index]["title"] as String,
+                            ontap: helpTopics[index]["onTap"],
                           ),
                         ),
                       ),

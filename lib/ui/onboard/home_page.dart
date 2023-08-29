@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'dart:convert';
 
@@ -203,45 +203,43 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Expanded(
-                        child: ResponsiveGridList(
-                          // shrinkWrap: true,
-                          minItemWidth: 300,
-                          horizontalGridSpacing: 8,
-                          verticalGridSpacing: 8,
-                          children: List.generate(
-                              context
-                                  .watch<RegistrationTaskProvider>()
-                                  .listOfProcesses
-                                  .length,
-                              (index) => HomePageCard(
-                                    icon: Image.asset(
-                                      "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon ?? ""}",
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    title: Process.fromJson(jsonDecode(context
-                                            .watch<RegistrationTaskProvider>()
-                                            .listOfProcesses
-                                            .elementAt(index)
-                                            .toString()))
-                                        .label!["eng"]!,
-                                    ontap: () {
-                                      getProcessUI(
-                                        context,
-                                        Process.fromJson(
-                                          jsonDecode(
-                                            context
-                                                .read<RegistrationTaskProvider>()
-                                                .listOfProcesses
-                                                .elementAt(index)
-                                                .toString(),
-                                          ),
+                      ResponsiveGridList(
+                        shrinkWrap: true,
+                        minItemWidth: 300,
+                        horizontalGridSpacing: 8,
+                        verticalGridSpacing: 8,
+                        children: List.generate(
+                            context
+                                .watch<RegistrationTaskProvider>()
+                                .listOfProcesses
+                                .length,
+                            (index) => HomePageCard(
+                                  icon: Image.asset(
+                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon ?? ""}",
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  title: Process.fromJson(jsonDecode(context
+                                          .watch<RegistrationTaskProvider>()
+                                          .listOfProcesses
+                                          .elementAt(index)
+                                          .toString()))
+                                      .label!["eng"]!,
+                                  ontap: () {
+                                    getProcessUI(
+                                      context,
+                                      Process.fromJson(
+                                        jsonDecode(
+                                          context
+                                              .read<RegistrationTaskProvider>()
+                                              .listOfProcesses
+                                              .elementAt(index)
+                                              .toString(),
                                         ),
-                                      );
-                                    },
-                                  )),
-                        ),
+                                      ),
+                                    );
+                                  },
+                                )),
                       ),
                       SizedBox(
                         height: 30.h,
@@ -276,20 +274,18 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Expanded(
-                        child: ResponsiveGridList(
-                          // shrinkWrap: true,
-                          minItemWidth: 300,
-                          horizontalGridSpacing: 12,
-                          verticalGridSpacing: 12,
-                          children: List.generate(
-                            operationalTasks.length,
-                            (index) => HomePageCard(
-                              icon: operationalTasks[index]["icon"],
-                              title: operationalTasks[index]["title"] as String,
-                              ontap: () =>
-                                  operationalTasks[index]["onTap"](context),
-                            ),
+                      ResponsiveGridList(
+                        shrinkWrap: true,
+                        minItemWidth: 300,
+                        horizontalGridSpacing: 12,
+                        verticalGridSpacing: 12,
+                        children: List.generate(
+                          operationalTasks.length,
+                          (index) => HomePageCard(
+                            icon: operationalTasks[index]["icon"],
+                            title: operationalTasks[index]["title"] as String,
+                            ontap: () =>
+                                operationalTasks[index]["onTap"](context),
                           ),
                         ),
                       ),
