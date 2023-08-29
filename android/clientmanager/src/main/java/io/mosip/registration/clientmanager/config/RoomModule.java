@@ -16,6 +16,7 @@ import io.mosip.registration.clientmanager.dao.AuditDao;
 import io.mosip.registration.clientmanager.dao.BlocklistedWordDao;
 import io.mosip.registration.clientmanager.dao.DocumentTypeDao;
 import io.mosip.registration.clientmanager.dao.DynamicFieldDao;
+import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
 import io.mosip.registration.clientmanager.dao.JobTransactionDao;
@@ -201,6 +202,12 @@ public class RoomModule {
     @Provides
     AuditDao providesAuditDao(ClientDatabase clientDatabase) {
         return clientDatabase.auditDao();
+    }
+
+    @Singleton
+    @Provides
+    FileSignatureDao providesFileSignatureDao(ClientDatabase clientDatabase) {
+        return clientDatabase.fileSignatureDao();
     }
 
     @Provides

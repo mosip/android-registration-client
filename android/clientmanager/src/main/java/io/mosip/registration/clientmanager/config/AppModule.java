@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.service.*;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
@@ -130,12 +131,13 @@ public class AppModule {
                                                       UserDetailRepository userDetailRepository,
                                                       CertificateManagerService certificateManagerService,
                                                       LanguageRepository languageRepository,
-                                                      JobManagerService jobManagerService) {
+                                                      JobManagerService jobManagerService,
+                                                      FileSignatureDao fileSignatureDao) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao);
     }
 
 
