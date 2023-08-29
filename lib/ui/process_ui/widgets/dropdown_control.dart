@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -112,11 +114,11 @@ class _CustomDropDownState extends State<DropDownControl> {
           .fieldInputValue[widget.field.id ?? ""] as GenericData;
     }
     setState(() {
-      list.forEach((element) {
+      for (var element in list) {
         if (element!.name == response!.name) {
           selected = element;
         }
-      });
+      }
     });
   }
 

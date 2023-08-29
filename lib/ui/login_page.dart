@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -145,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
 
     String langCode = context.read<AppLanguageProvider>().selectedLanguage;
     await context.read<AuthProvider>().validateUser(username, langCode);
+
     bool isValid = context.read<AuthProvider>().isValidUser;
     if (!isValid) {
       _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);

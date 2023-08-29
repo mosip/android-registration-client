@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -132,8 +134,8 @@ class _TextBoxControlState extends State<TextBoxControl> {
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 14, horizontal: 16),
                     hintText: widget.e.label![lang],
-                    hintStyle:
-                        const TextStyle(color: AppStyle.appBlackShade3, fontSize: 14),
+                    hintStyle: const TextStyle(
+                        color: AppStyle.appBlackShade3, fontSize: 14),
                     prefixIcon: (lang == 'ara')
                         ? const Icon(
                             Icons.keyboard_outlined,

@@ -14,7 +14,7 @@ class RadioButtonControl extends StatefulWidget {
 
   final Field field;
   @override
-  _RadioFormFieldState createState() => _RadioFormFieldState();
+  State<RadioButtonControl> createState() => _RadioFormFieldState();
 }
 
 class _RadioFormFieldState extends State<RadioButtonControl> {

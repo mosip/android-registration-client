@@ -9,7 +9,7 @@ class PreviewPage extends StatefulWidget {
   const PreviewPage({super.key});
 
   @override
-  _PreviewPageState createState() => _PreviewPageState();
+  State<PreviewPage> createState() => _PreviewPageState();
 }
 
 class _PreviewPageState extends State<PreviewPage> {
@@ -28,7 +28,9 @@ class _PreviewPageState extends State<PreviewPage> {
             height: _height + 150.h,
             child:
                 context.watch<RegistrationTaskProvider>().previewTemplate == ""
-                    ? const Center(child: CircularProgressIndicator(),)
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
                     : WebViewPlus(
                         onWebViewCreated: (controller) {
                           _controller = controller;
