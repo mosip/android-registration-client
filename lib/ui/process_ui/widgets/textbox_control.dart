@@ -93,63 +93,65 @@ class _TextBoxControlState extends State<TextBoxControl> {
           const SizedBox(
             height: 10,
           ),
-          ResponsiveGridList(
-            shrinkWrap: true,
-            minItemWidth: 400,
-            horizontalGridSpacing: 16,
-            verticalGridSpacing: 12,
-            children: choosenLang.map((code) {
-              String lang = context.read<GlobalProvider>().langToCode(code);
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  initialValue: _getDataFromMap(lang),
-                  onChanged: (value) {
-                    _saveDataToMap(value, lang);
-                    saveData(value, lang);
-                  },
-                  validator: (value) {
-                    if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
+          Expanded(
+            child: ResponsiveGridList(
+              // shrinkWrap: true,
+              minItemWidth: 400,
+              horizontalGridSpacing: 16,
+              verticalGridSpacing: 12,
+              children: choosenLang.map((code) {
+                String lang = context.read<GlobalProvider>().langToCode(code);
+          
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    initialValue: _getDataFromMap(lang),
+                    onChanged: (value) {
+                      _saveDataToMap(value, lang);
+                      saveData(value, lang);
+                    },
+                    validator: (value) {
+                      if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
+                        return null;
+                      }
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a value';
+                      }
+                      if (!widget.validation.hasMatch(value)) {
+                        return 'Invalid input';
+                      }
                       return null;
-                    }
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a value';
-                    }
-                    if (!widget.validation.hasMatch(value)) {
-                      return 'Invalid input';
-                    }
-                    return null;
-                  },
-                  textAlign: (lang == 'ara') ? TextAlign.right : TextAlign.left,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: const BorderSide(
-                          color: AppStyle.appGreyShade, width: 1),
+                    },
+                    textAlign: (lang == 'ara') ? TextAlign.right : TextAlign.left,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                            color: AppStyle.appGreyShade, width: 1),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 16),
+                      hintText: widget.e.label![lang],
+                      hintStyle:
+                          const TextStyle(color: AppStyle.appBlackShade3, fontSize: 14),
+                      prefixIcon: (lang == 'ara')
+                          ? const Icon(
+                              Icons.keyboard_outlined,
+                              size: 36,
+                            )
+                          : null,
+                      suffixIcon: (lang == 'ara')
+                          ? null
+                          : const Icon(
+                              Icons.keyboard_outlined,
+                              size: 36,
+                            ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 16),
-                    hintText: widget.e.label![lang],
-                    hintStyle:
-                        const TextStyle(color: AppStyle.appBlackShade3, fontSize: 14),
-                    prefixIcon: (lang == 'ara')
-                        ? const Icon(
-                            Icons.keyboard_outlined,
-                            size: 36,
-                          )
-                        : null,
-                    suffixIcon: (lang == 'ara')
-                        ? null
-                        : const Icon(
-                            Icons.keyboard_outlined,
-                            size: 36,
-                          ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           ),
         ]),
       ),

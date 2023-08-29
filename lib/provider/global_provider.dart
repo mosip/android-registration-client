@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -68,10 +70,22 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, List<Uint8List?>> get scannedPages => _scannedPages;
+  Map<String, List<Uint8List?>> get scannedPages {
+    return _scannedPages;
+  }
 
   String get ageGroup => _ageGroup;
   List<String?> get locationHierarchy => _locationHierarchy;
+
+  set scannedPages(Map<String, List<Uint8List?>> value) {
+    _scannedPages = value;
+    notifyListeners();
+  }
+
+  set locationHierarchy(List<String?> value) {
+    _locationHierarchy = value;
+    notifyListeners();
+  }
 
   set ageGroup(String value) {
     _ageGroup = value;
@@ -123,11 +137,20 @@ class GlobalProvider with ChangeNotifier {
   Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
   List<String> get chosenLang => _chosenLang;
 
-  set chosenLang(List<String> value) => _chosenLang = value;
+  set chosenLang(List<String> value) {
+    _chosenLang = value;
+    notifyListeners();
+  }
 
-  set languageMap(Map<String, bool> value) => _languageMap = value;
-  set thresholdValuesMap(Map<String, String> value) =>
-      _thresholdValuesMap = value;
+  set languageMap(Map<String, bool> value) {
+    _languageMap = value;
+    notifyListeners();
+  }
+
+  set thresholdValuesMap(Map<String, String> value) {
+    _thresholdValuesMap = value;
+    notifyListeners();
+  }
 
   set currentProcess(Process? value) {
     _currentProcess = value;
@@ -216,7 +239,7 @@ class GlobalProvider with ChangeNotifier {
   addRemoveLang(String key, bool value) {
     for (int i = 0; i < languageMap.length; i++) {
       if (languageMap.entries.elementAt(i).key == key) {
-        languageMap["${key}"] = value;
+        languageMap[key] = value;
 
         if (value == true) {
           chosenLang.add(key);

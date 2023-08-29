@@ -16,7 +16,7 @@ class Scanner extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ScannerState createState() => _ScannerState();
+  State<Scanner> createState() => _ScannerState();
 }
 
 class _ScannerState extends State<Scanner> {
