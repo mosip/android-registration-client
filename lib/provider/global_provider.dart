@@ -7,6 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
@@ -15,6 +17,7 @@ class GlobalProvider with ChangeNotifier {
   final MachineKey machineKey = MachineKey();
 
   final PacketService packetService = PacketService();
+  final DynamicResponseService dynamicResponseService = DynamicResponseService();
 
   //Variables
   int _currentIndex = 0;
@@ -29,8 +32,8 @@ class GlobalProvider with ChangeNotifier {
 
   int _newProcessTabIndex = 0;
   int _htmlBoxTabIndex = 0;
-
-  List<String> _chosenLang = ["English"];
+  
+  List<String> _chosenLang = [];
   Map<String, bool> _languageMap = {
     'English': true,
     'Arabic': false,
@@ -110,7 +113,7 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, bool> get mvelValues => _mvelValues;
   Map<int, String> get hierarchyValues => _hierarchyValues;
-
+  
   setRegId(String value) {
     _regId = value;
     notifyListeners();
@@ -293,30 +296,45 @@ class GlobalProvider with ChangeNotifier {
   chooseLanguage(Map<String, String> label) {
     String x = '';
     for (var i in chosenLang) {
-      if (i == "English") {
-        x = "$x${label["eng"]!}/";
+      // if (i == "English") {
+      //   x = "$x${label["eng"]!}/";
+      // }
+      // if (i == "Arabic") {
+      //   x = "$x${label["ara"]!}/";
+      // }
+      // if (i == "French") {
+      //   x = "$x${label["fra"]!}/";
+      // }
+      languageDataList.forEach((element) {
+      if(i == element!.name) {
+        x = "$x${label[element.code]!}/";
+        return;
       }
-      if (i == "Arabic") {
-        x = "$x${label["ara"]!}/";
-      }
-      if (i == "French") {
-        x = "$x${label["fra"]!}/";
-      }
+     });
     }
     x = x.substring(0, x.length - 1);
     return x;
   }
 
   langToCode(String lang) {
-    if (lang == "English") {
-      return "eng";
-    }
-    if (lang == "Arabic") {
-      return "ara";
-    }
-    if (lang == "French") {
-      return "fra";
-    }
+    String code = "";
+    languageDataList.forEach((element) {
+      if(lang == element!.name) {
+        code = element.code;
+        return;
+      }
+     });
+    // if (lang == "English") {
+    //   return "eng";
+    // }
+    // if (lang == "Arabic") {
+    //   return "ara";
+    // }
+    // if (lang == "French") {
+    //   return "fra";
+    // }
+
+    return code;
   }
 
   fieldValues(Process process) {
@@ -367,5 +385,33 @@ class GlobalProvider with ChangeNotifier {
     _fieldDisplayValues = {};
     log(_fieldInputValue.toString());
     notifyListeners();
+  }
+
+  fetchAllLanguages() async {
+    return await dynamicResponseService.fetchAllLanguages();
+  }
+  
+  List<LanguageData?> _languageDataList = [];
+  
+  List<LanguageData?> get languageDataList => _languageDataList;
+
+  setLanguageDataList(List<LanguageData?> value) {
+    _languageDataList = value;
+    notifyListeners();
+  }
+
+  createLanguageMap() {
+    _chosenLang = [];
+    Map<String, bool> languageDataMap = {};
+    _languageDataList.forEach((element) {
+      if(element!.name == "English") {
+        languageDataMap[element.name] = true;
+        _chosenLang.add("English");
+      } else {
+        languageDataMap[element.name] = false;
+      }
+     });
+     
+     _languageMap = languageDataMap;
   }
 }

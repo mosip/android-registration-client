@@ -25,7 +25,7 @@ Widget testableWidget({required Widget child}) {
     providers: [
       ChangeNotifierProvider(
         lazy: false,
-        create: (_) => AppLanguageProvider(),
+        create: (_) => GlobalProvider(),
       ),
       ChangeNotifierProvider(
         lazy: false,

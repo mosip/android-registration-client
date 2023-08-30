@@ -43,4 +43,8 @@ public class LanguageRepository {
         }
         return localCache.get(code);
     }
+
+    public List<Language> getAllLanguages() {
+        return languageDao.getAllActiveLanguage();
+    }
 }

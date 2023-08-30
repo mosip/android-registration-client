@@ -7,6 +7,7 @@
 */
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 
 import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
@@ -62,9 +64,17 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  setLanguagesMap() async {
+    List<LanguageData?> languageList = await context.read<GlobalProvider>().fetchAllLanguages();
+    context.read<GlobalProvider>().setLanguageDataList(languageList);
+    context.read<GlobalProvider>().createLanguageMap();
+    log("lang map: ${context.read<GlobalProvider>().languageMap}");
+  }
+
   @override
   void initState() {
     super.initState();
+    setLanguagesMap();
     mp['eng'] = "English";
     mp['ara'] = "العربية";
     mp['fra'] = "Français";
@@ -323,7 +333,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: () async {
+              await context.read<GlobalProvider>().fetchAllLanguages();
+            },
           ),
         ],
       ),

@@ -15,6 +15,18 @@ class GenericData {
   });
 }
 
+class LanguageData {
+  final String code;
+  final String name;
+  final String nativeName;
+
+  LanguageData({
+    required this.code,
+    required this.name,
+    required this.nativeName,
+  });
+}
+
 @HostApi()
 abstract class DynamicResponseApi {
   @async
@@ -31,4 +43,7 @@ abstract class DynamicResponseApi {
   @async
   List<GenericData> getLocationValuesBasedOnParent(
       String? parentCode, String hierarchyLevelName, String langCode);
+
+  @async
+  List<LanguageData> getAllLanguages();
 }

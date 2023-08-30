@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 
@@ -51,7 +52,7 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
                         .setCode(v.getCode())
                         .setName(v.getName())
                         .setLangCode(v.getLangCode())
-                        .setHierarchyLevel((long)hierarchyLevel)
+                        .setHierarchyLevel((long) hierarchyLevel)
                         .build();
                 locationList.add(location);
             });
@@ -62,12 +63,12 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     }
 
     @Override
-    public void getDocumentValues(@NonNull String categoryCode, String applicantType,@NonNull String langCode,@NonNull DynamicResponsePigeon.Result<List<String>> result){
+    public void getDocumentValues(@NonNull String categoryCode, String applicantType, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<String>> result) {
 
-        List<String> documentResponse=new ArrayList<>();
-        try{
-            documentResponse=this.masterDataService.getDocumentTypes(categoryCode,applicantType,langCode);
-        }catch(Exception e){
+        List<String> documentResponse = new ArrayList<>();
+        try {
+            documentResponse = this.masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(documentResponse);
@@ -85,7 +86,7 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
                         .setCode(v.getCode())
                         .setName(v.getName())
                         .setLangCode(v.getLangCode())
-                        .setHierarchyLevel((long)hierarchyLevel)
+                        .setHierarchyLevel((long) hierarchyLevel)
                         .build();
                 locationList.add(location);
             });
@@ -95,5 +96,24 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
         result.success(locationList);
     }
 
+    @Override
+    public void getAllLanguages(@NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.LanguageData>> result) {
+        List<DynamicResponsePigeon.LanguageData> languageNameList = new ArrayList<>();
+        try {
+            List<Language> languageList = this.masterDataService.getAllLanguages();
+            Log.e(getClass().getSimpleName(), "Fetch location values: " + languageList);
+            languageList.forEach((lang) -> {
+                DynamicResponsePigeon.LanguageData languageData = new DynamicResponsePigeon.LanguageData.Builder()
+                        .setCode(lang.getCode())
+                        .setName(lang.getName())
+                        .setNativeName(lang.getNativeName())
+                        .build();
+                languageNameList.add(languageData);
+            });
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Fetch language values failed: " + Arrays.toString(e.getStackTrace()));
+        }
 
+        result.success(languageNameList);
+    }
 }
