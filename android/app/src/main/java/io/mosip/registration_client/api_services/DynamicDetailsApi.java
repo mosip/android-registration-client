@@ -98,22 +98,29 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
 
     @Override
     public void getAllLanguages(@NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.LanguageData>> result) {
-        List<DynamicResponsePigeon.LanguageData> languageNameList = new ArrayList<>();
+        List<DynamicResponsePigeon.LanguageData> languageDataList = new ArrayList<>();
         try {
             List<Language> languageList = this.masterDataService.getAllLanguages();
-            Log.e(getClass().getSimpleName(), "Fetch location values: " + languageList);
             languageList.forEach((lang) -> {
                 DynamicResponsePigeon.LanguageData languageData = new DynamicResponsePigeon.LanguageData.Builder()
                         .setCode(lang.getCode())
                         .setName(lang.getName())
                         .setNativeName(lang.getNativeName())
                         .build();
-                languageNameList.add(languageData);
+                languageDataList.add(languageData);
             });
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch language values failed: " + Arrays.toString(e.getStackTrace()));
         }
 
-        result.success(languageNameList);
+        if(languageDataList.isEmpty()) {
+            DynamicResponsePigeon.LanguageData languageData = new DynamicResponsePigeon.LanguageData.Builder()
+                    .setCode("eng")
+                    .setName("English")
+                    .setNativeName("English")
+                    .build();
+            languageDataList.add(languageData);
+        }
+        result.success(languageDataList);
     }
 }

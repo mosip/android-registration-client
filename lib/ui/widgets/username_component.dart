@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
@@ -23,6 +27,11 @@ class UsernameComponent extends StatelessWidget {
   final Function onChanged;
   final bool isDisabled;
   final bool isMobile;
+
+  Future<List<LanguageData?>> getAllLang() async {
+    final list = await DynamicResponseService().fetchAllLanguages();
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,8 +167,10 @@ class UsernameComponent extends StatelessWidget {
         items: _addDividersAfterItems(languages),
         value: context.watch<GlobalProvider>().selectedLanguage,
         onChanged: (newValue) {
-          context.read<GlobalProvider>().selectedLanguage = newValue!;
-          appLanguage.changeLanguage(Locale(newValue));
+          // context.read<GlobalProvider>().selectedLanguage = newValue!;
+          // appLanguage.changeLanguage(Locale(newValue));
+          appLanguage.toggleLocale(newValue!);
+          log(appLanguage.selectedLanguage);
         },
         buttonStyleData: ButtonStyleData(
           height: 52.h,

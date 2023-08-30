@@ -339,7 +339,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   codeToLang() {
-    
+
   }
 
   fieldValues(Process process) {
@@ -397,27 +397,55 @@ class GlobalProvider with ChangeNotifier {
   }
   
   List<LanguageData?> _languageDataList = [];
+  Map<String, String> _languageCodeMapper = {};
+  List<String> _languages = [];
   
   List<LanguageData?> get languageDataList => _languageDataList;
+  Map<String, String> get languageCodeMapper => _languageCodeMapper;
+  List<String> get languages => _languages;
+  
+  initializeLanguageDataList() async {
+    _languageDataList = await dynamicResponseService.fetchAllLanguages();
+    createLanguageCodeMapper();
+    notifyListeners();
+  }
 
   setLanguageDataList(List<LanguageData?> value) {
     _languageDataList = value;
     notifyListeners();
   }
 
-  createLanguageMap() {
+  setLanguageCodeMapper(Map<String, String> value) {
+    _languageCodeMapper = value;
+    notifyListeners();
+  }
+
+  setLanguages(List<String> value) {
+    _languages = value;
+    notifyListeners();
+  }
+
+  createRegistrationLanguageMap() {
     _chosenLang = [];
     Map<String, bool> languageDataMap = {};
+    String lang = _languageCodeMapper[_selectedLanguage]!;
+    languageDataMap[lang] = true;
+    _chosenLang.add(lang);
     _languageDataList.forEach((element) {
-      if(element!.code == _selectedLanguage) {
-        languageDataMap[element.name] = true;
-        _chosenLang.add(element.name);
-      } else {
+      if(element!.code != _selectedLanguage) {
         languageDataMap[element.name] = false;
       }
      });
      
      _languageMap = languageDataMap;
+  }
+
+  createLanguageCodeMapper() {
+    _languages = [];
+    _languageDataList.forEach((element) {
+      _languageCodeMapper[element!.code] = element.name;
+      languages.add(element.code);
+    });
   }
 
   // App Language
@@ -465,6 +493,20 @@ class GlobalProvider with ChangeNotifier {
       _appLocale = const Locale("en");
       await prefs.setString('language_code', 'en');
       await prefs.setString('countryCode', '');
+    }
+    notifyListeners();
+  }
+  
+  toggleLocale(String code) async {
+    if(_selectedLanguage == code) {
+      return;
+    }
+    _selectedLanguage = code;
+    if(code == "kan") {
+      _appLocale = const Locale("kn");
+    } else {
+      String localeCode = code.substring(0, 2);
+      _appLocale = Locale(localeCode);
     }
     notifyListeners();
   }

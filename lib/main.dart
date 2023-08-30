@@ -88,6 +88,7 @@ class BuildApp extends StatelessWidget {
           splitScreenMode: true,
         );
         context.read<GlobalProvider>().setMachineDetails();
+        context.read<GlobalProvider>().initializeLanguageDataList();
         return child!;
       },
       home: const LoginPage(),
