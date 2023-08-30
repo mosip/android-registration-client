@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
 
-import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
@@ -16,7 +15,7 @@ import 'package:registration_client/utils/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final AppLanguageProvider appLanguage = AppLanguageProvider();
+  final GlobalProvider appLanguage = GlobalProvider();
   await appLanguage.fetchLocale();
   runApp(
     const RestartWidget(child: RegistrationClientApp()),
@@ -30,10 +29,6 @@ class RegistrationClientApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => AppLanguageProvider(),
-        ),
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => ConnectivityProvider(),
@@ -71,7 +66,7 @@ class BuildApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Provider.of<AppLanguageProvider>(context).appLocal,
+      locale: Provider.of<GlobalProvider>(context).appLocal,
       theme: ThemeData(
           colorScheme: ColorScheme.light(primary: solidPrimary),
           primaryColor: solidPrimary,

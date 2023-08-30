@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/provider/app_language_provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class UsernameComponent extends StatelessWidget {
@@ -152,13 +152,13 @@ class UsernameComponent extends StatelessWidget {
   }
 
   _getLanguageDropdownButton(BuildContext context) {
-    final appLanguage = Provider.of<AppLanguageProvider>(context, listen: false);
+    final appLanguage = Provider.of<GlobalProvider>(context, listen: false);
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         items: _addDividersAfterItems(languages),
-        value: context.watch<AppLanguageProvider>().selectedLanguage,
+        value: context.watch<GlobalProvider>().selectedLanguage,
         onChanged: (newValue) {
-          context.read<AppLanguageProvider>().selectedLanguage = newValue!;
+          context.read<GlobalProvider>().selectedLanguage = newValue!;
           appLanguage.changeLanguage(Locale(newValue));
         },
         buttonStyleData: ButtonStyleData(

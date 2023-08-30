@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 
-import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -155,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    String langCode = context.read<AppLanguageProvider>().selectedLanguage;
+    String langCode = context.read<GlobalProvider>().selectedLanguage;
     await context.read<AuthProvider>().validateUser(username, langCode);
 
     bool isValid = context.read<AuthProvider>().isValidUser;

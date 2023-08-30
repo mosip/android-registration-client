@@ -12,6 +12,7 @@ import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
   final MachineKey machineKey = MachineKey();
@@ -337,6 +338,10 @@ class GlobalProvider with ChangeNotifier {
     return code;
   }
 
+  codeToLang() {
+    
+  }
+
   fieldValues(Process process) {
     process.screens!.forEach((screen) {
       screen!.fields!.forEach((field) async {
@@ -404,14 +409,63 @@ class GlobalProvider with ChangeNotifier {
     _chosenLang = [];
     Map<String, bool> languageDataMap = {};
     _languageDataList.forEach((element) {
-      if(element!.name == "English") {
+      if(element!.code == _selectedLanguage) {
         languageDataMap[element.name] = true;
-        _chosenLang.add("English");
+        _chosenLang.add(element.name);
       } else {
         languageDataMap[element.name] = false;
       }
      });
      
      _languageMap = languageDataMap;
+  }
+
+  // App Language
+  Locale? _appLocale = const Locale('en');
+
+  Locale get appLocal => _appLocale ?? const Locale("en");
+
+  String _selectedLanguage = 'eng';
+  String get selectedLanguage => _selectedLanguage;
+  set selectedLanguage(String value) {
+    _selectedLanguage = value;
+    notifyListeners();
+  }
+
+  fetchLocale() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('language_code') == null) {
+      _appLocale = const Locale('en');
+      return null;
+    }
+    _appLocale = Locale(prefs.getString('language_code')!);
+    return null;
+  }
+
+  void changeLanguage(Locale code) async {
+    var prefs = await SharedPreferences.getInstance();
+
+    if (_appLocale == code) {
+      return;
+    }
+
+    if (code == const Locale("eng")) {
+      _appLocale = const Locale("en");
+      await prefs.setString('language_code', 'en');
+      await prefs.setString('countryCode', '');
+    } else if (code == const Locale("ara")) {
+      _appLocale = const Locale("ar");
+      await prefs.setString('language_code', 'ar');
+      await prefs.setString('countryCode', '');
+    } else if (code == const Locale("fra")) {
+      _appLocale = const Locale("fr");
+      await prefs.setString('language_code', 'fr');
+      await prefs.setString('countryCode', '');
+    } else {
+      _appLocale = const Locale("en");
+      await prefs.setString('language_code', 'en');
+      await prefs.setString('countryCode', '');
+    }
+    notifyListeners();
   }
 }
