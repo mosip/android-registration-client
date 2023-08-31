@@ -409,7 +409,9 @@ class _LoginPageState extends State<LoginPage> {
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
-                  isDisabled: username.isEmpty || username.length > 50,
+                  isDisabled: username.trim().isEmpty ||
+                      username.trim().length > 50 ||
+                      context.watch<GlobalProvider>().selectedLanguage.isEmpty,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
                   mp: context.watch<GlobalProvider>().languageCodeMapper,

@@ -449,11 +449,11 @@ class GlobalProvider with ChangeNotifier {
   }
 
   // App Language
-  Locale? _appLocale = const Locale('en');
+  Locale? _appLocale = const Locale("en");
 
   Locale get appLocal => _appLocale ?? const Locale("en");
 
-  String _selectedLanguage = 'eng';
+  String _selectedLanguage = "";
   String get selectedLanguage => _selectedLanguage;
   set selectedLanguage(String value) {
     _selectedLanguage = value;

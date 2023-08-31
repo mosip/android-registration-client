@@ -1,16 +1,12 @@
-import 'dart:developer';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
-import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
-class UsernameComponent extends StatelessWidget {
+class UsernameComponent extends StatefulWidget {
   const UsernameComponent({
     Key? key,
     required this.onTap,
@@ -28,10 +24,12 @@ class UsernameComponent extends StatelessWidget {
   final bool isDisabled;
   final bool isMobile;
 
-  Future<List<LanguageData?>> getAllLang() async {
-    final list = await DynamicResponseService().fetchAllLanguages();
-    return list;
-  }
+  @override
+  State<UsernameComponent> createState() => _UsernameComponentState();
+}
+
+class _UsernameComponentState extends State<UsernameComponent> {
+  String? selectedLanguage;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +88,7 @@ class UsernameComponent extends StatelessWidget {
               border: InputBorder.none,
             ),
             onChanged: (v) {
-              onChanged(v);
+              widget.onChanged(v);
             },
           ),
         ),
@@ -98,14 +96,18 @@ class UsernameComponent extends StatelessWidget {
           height: 30.h,
         ),
         InkWell(
-          onTap: !isDisabled ? onTap : null,
+          onTap: !widget.isDisabled ? widget.onTap : null,
           child: Container(
             height: 52.h,
             decoration: BoxDecoration(
-              color: !isDisabled ? AppStyle.appSolidPrimary : AppStyle.appGreyShade,
+              color: !widget.isDisabled
+                  ? AppStyle.appSolidPrimary
+                  : AppStyle.appGreyShade,
               border: Border.all(
                 width: 1.w,
-                color: !isDisabled ? AppStyle.appBlueShade1 : AppStyle.appGreyShade,
+                color: !widget.isDisabled
+                    ? AppStyle.appBlueShade1
+                    : AppStyle.appGreyShade,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -131,7 +133,7 @@ class UsernameComponent extends StatelessWidget {
           DropdownMenuItem<String>(
             value: item,
             child: Text(
-              mp[item]!,
+              widget.mp[item]!,
               style: AppStyle.mobileDropdownText,
             ),
           ),
@@ -149,7 +151,7 @@ class UsernameComponent extends StatelessWidget {
 
   List<double> _getCustomItemsHeights() {
     List<double> itemsHeights = [];
-    for (var i = 0; i < (languages.length * 2) - 1; i++) {
+    for (var i = 0; i < (widget.languages.length * 2) - 1; i++) {
       if (i.isEven) {
         itemsHeights.add(52.h);
       }
@@ -164,17 +166,19 @@ class UsernameComponent extends StatelessWidget {
     final appLanguage = Provider.of<GlobalProvider>(context, listen: false);
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
-        items: _addDividersAfterItems(languages),
-        value: context.watch<GlobalProvider>().selectedLanguage,
+        items: _addDividersAfterItems(widget.languages),
+        value: selectedLanguage,
         onChanged: (newValue) {
-          // context.read<GlobalProvider>().selectedLanguage = newValue!;
-          // appLanguage.changeLanguage(Locale(newValue));
+          selectedLanguage = newValue;
           appLanguage.toggleLocale(newValue!);
-          log(appLanguage.selectedLanguage);
         },
+        hint: Text(
+          'Select a value!',
+          style: AppStyle.mobileDropdownHintText,
+        ),
         buttonStyleData: ButtonStyleData(
           height: 52.h,
-          width: isMobile ? 318.w : 384.w,
+          width: widget.isMobile ? 318.w : 384.w,
           padding: EdgeInsets.only(
             left: 17.w,
             right: (14.42).w,
@@ -190,13 +194,12 @@ class UsernameComponent extends StatelessWidget {
         dropdownStyleData: DropdownStyleData(
           maxHeight: 164.h,
           decoration: BoxDecoration(
-            color: AppStyle.appWhite,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              width: 1.h,
-              color: AppStyle.appGreyShade,
-            )
-          ),
+              color: AppStyle.appWhite,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                width: 1.h,
+                color: AppStyle.appGreyShade,
+              )),
         ),
         menuItemStyleData: MenuItemStyleData(
           customHeights: _getCustomItemsHeights(),
