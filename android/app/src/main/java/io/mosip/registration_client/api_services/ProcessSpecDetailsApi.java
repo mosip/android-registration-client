@@ -99,7 +99,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
     public void getOptionalLanguageCodes(@NonNull ProcessSpecPigeon.Result<List<String>> result) {
         List<String> optionalLanguageList = new ArrayList<>();
         try {
-            optionalLanguageList = globalParamRepository.getMandatoryLanguageCodes();
+            optionalLanguageList = globalParamRepository.getOptionalLanguageCodes();
         } catch (Exception e){
             Log.e(getClass().getSimpleName(), "Error in getOptionalLanguageCodes", e);
         }
