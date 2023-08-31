@@ -10,4 +10,16 @@ abstract class ProcessSpecApi {
 
   @async
   List<String?> getNewProcessSpec();
+
+  @async
+  List<String> getMandatoryLanguageCodes();
+
+  @async
+  List<String> getOptionalLanguageCodes();
+
+  @async
+  int getMinLanguageCount();
+
+  @async
+  int getMaxLanguageCount(); 
 }

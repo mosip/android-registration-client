@@ -12,11 +12,12 @@ import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
+import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
   final MachineKey machineKey = MachineKey();
-
+  final ProcessSpec processSpec = ProcessSpec();
   final PacketService packetService = PacketService();
   final DynamicResponseService dynamicResponseService = DynamicResponseService();
 
@@ -392,6 +393,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Language Config
   fetchAllLanguages() async {
     return await dynamicResponseService.fetchAllLanguages();
   }
@@ -399,10 +401,20 @@ class GlobalProvider with ChangeNotifier {
   List<LanguageData?> _languageDataList = [];
   Map<String, String> _languageCodeMapper = {};
   List<String> _languages = [];
+  List<String?> _mandatoryLanguages = [];
+  List<String?> _optionalLanguages = [];
+  int _minLanguageCount = 0;
+  int _maxLanguageCount = 0;
+  Map<String, bool> _mandatoryLanguageMap = {};
   
   List<LanguageData?> get languageDataList => _languageDataList;
   Map<String, String> get languageCodeMapper => _languageCodeMapper;
   List<String> get languages => _languages;
+  List<String?> get mandatoryLanguages => _mandatoryLanguages;
+  List<String?> get optionalLanguages => _optionalLanguages;
+  int get minLanguageCount => _minLanguageCount;
+  int get maxLanguageCount => _maxLanguageCount;
+  Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
   
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
@@ -425,19 +437,55 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  setMandatoryLanguages(List<String?> value) {
+    _mandatoryLanguages = value;
+    notifyListeners();
+  }
+
+  setOptionalLanguages(List<String?> value) {
+    _optionalLanguages = value;
+    notifyListeners();
+  }
+  
+  setMinLanguageCount(int value) {
+    _minLanguageCount = value;
+    notifyListeners();
+  }
+
+  setMaxLanguageCount(int value) {
+    _maxLanguageCount = value;
+    notifyListeners();
+  }
+
+  setMandatoryLanguageMap(Map<String, bool> value) {
+    _mandatoryLanguageMap = value;
+    notifyListeners();
+  }
+
+  setLanguageConfigData() async {
+    _mandatoryLanguages = await processSpec.getMandatoryLanguageCodes();
+    _optionalLanguages = await processSpec.getOptionalLanguageCodes();
+    _minLanguageCount = await processSpec.getMinLanguageCount();
+    _maxLanguageCount = await processSpec.getMaxLanguageCount();
+    notifyListeners();
+  }
+
   createRegistrationLanguageMap() {
     _chosenLang = [];
     Map<String, bool> languageDataMap = {};
-    String lang = _languageCodeMapper[_selectedLanguage]!;
-    languageDataMap[lang] = true;
-    _chosenLang.add(lang);
+    Map<String, bool> mandatoryMap = {};
     _languageDataList.forEach((element) {
-      if(element!.code != _selectedLanguage) {
-        languageDataMap[element.name] = false;
-      }
+      languageDataMap[element!.name] = false;
      });
-     
+     _mandatoryLanguages.forEach((element) {
+      String lang = _languageCodeMapper[element]!;
+      languageDataMap[lang] = true;
+      mandatoryMap[lang] = true;
+      _chosenLang.add(lang);
+     });
      _languageMap = languageDataMap;
+     _mandatoryLanguageMap = mandatoryMap;
+     notifyListeners();
   }
 
   createLanguageCodeMapper() {
