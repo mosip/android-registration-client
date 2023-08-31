@@ -57,6 +57,13 @@ abstract class AppStyle {
     letterSpacing: 0.5,
   );
 
+  static TextStyle mobileDropdownHintText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 15,
+    color: appBlackShade3,
+    letterSpacing: 0.5,
+  );
+
   static TextStyle mobileButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 14,

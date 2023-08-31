@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
       context.read<GlobalProvider>().newProcessTabIndex = 0;
       context.read<GlobalProvider>().htmlBoxTabIndex = 0;
       context.read<GlobalProvider>().setRegId("");
-      context.read<GlobalProvider>().createLanguageMap();
+      context.read<GlobalProvider>().createRegistrationLanguageMap();
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
