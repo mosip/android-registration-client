@@ -65,6 +65,7 @@ dependencies:
   colorful_progress_indicators: ^1.0.2
   webview_flutter_plus: ^0.3.0+2
   printing: ^5.11.0
+  android_alarm_manager_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:
