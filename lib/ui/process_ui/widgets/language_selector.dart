@@ -95,10 +95,14 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                               ),
                               Checkbox(
                                   value: e.value,
-                                  onChanged: e.key == "English"
+                                  onChanged: context
+                                                .read<GlobalProvider>()
+                                                .mandatoryLanguageMap[e.key] ?? false
                                       ? null
                                       : (bool? newValue) {
-                                          if (e.key != "English") {
+                                          if (!(context
+                                                .read<GlobalProvider>()
+                                                .mandatoryLanguageMap[e.key] ?? false)) {
                                             context
                                                 .read<GlobalProvider>()
                                                 .addRemoveLang(
@@ -120,7 +124,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                     .textTheme
                                     .titleSmall
                                     ?.copyWith(
-                                        color: e.key == "English"
+                                        color: context
+                                                .read<GlobalProvider>()
+                                                .mandatoryLanguageMap[e.key] ?? false
                                             ? Colors.grey
                                             : const Color(0xff333333)),
                               )
@@ -142,10 +148,14 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                 ),
                                 Checkbox(
                                     value: e.value,
-                                    onChanged: e.key == "English"
+                                    onChanged: context
+                                                .read<GlobalProvider>()
+                                                .mandatoryLanguageMap[e.key] ?? false
                                         ? null
                                         : (bool? newValue) {
-                                            if (e.key != "English") {
+                                            if (!(context
+                                                .read<GlobalProvider>()
+                                                .mandatoryLanguageMap[e.key] ?? false)) {
                                               context
                                                   .read<GlobalProvider>()
                                                   .addRemoveLang(
@@ -167,7 +177,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                       .textTheme
                                       .titleSmall
                                       ?.copyWith(
-                                        color: e.key == "English"
+                                        color: context
+                                                    .read<GlobalProvider>()
+                                                    .langToCode(e.key) ==
+                                                context
+                                                    .read<GlobalProvider>()
+                                                    .selectedLanguage
                                             ? Colors.grey
                                             : AppStyle.appBlackShade1,
                                       ),

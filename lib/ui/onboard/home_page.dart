@@ -10,8 +10,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 
-import 'package:registration_client/provider/app_language_provider.dart';
-
 import 'package:registration_client/provider/global_provider.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
@@ -51,6 +49,11 @@ class _HomePageState extends State<HomePage> {
   void _fetchProcessSpec() async {
     await _getNewProcessSpecAction(context);
     await _getCenterNameAction(context);
+    await _setLanguageConfigData();
+  }
+  
+  _setLanguageConfigData() async {
+    await context.read<GlobalProvider>().setLanguageConfigData();
   }
 
   Future<void> _masterDataSync() async {
@@ -70,6 +73,7 @@ class _HomePageState extends State<HomePage> {
       context.read<GlobalProvider>().newProcessTabIndex = 0;
       context.read<GlobalProvider>().htmlBoxTabIndex = 0;
       context.read<GlobalProvider>().setRegId("");
+      context.read<GlobalProvider>().createRegistrationLanguageMap();
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -91,7 +95,7 @@ class _HomePageState extends State<HomePage> {
   _getCenterNameAction(BuildContext context) async {
     String regCenterId = context.read<GlobalProvider>().centerId;
 
-    String langCode = context.read<AppLanguageProvider>().selectedLanguage;
+    String langCode = context.read<GlobalProvider>().selectedLanguage;
     await context
         .read<GlobalProvider>()
         .getRegCenterName(regCenterId, langCode);

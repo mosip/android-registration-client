@@ -7,14 +7,19 @@ import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
+import 'package:registration_client/platform_spi/process_spec.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
   final MachineKey machineKey = MachineKey();
-
+  final ProcessSpec processSpec = ProcessSpec();
   final PacketService packetService = PacketService();
+  final DynamicResponseService dynamicResponseService = DynamicResponseService();
 
   //Variables
   int _currentIndex = 0;
@@ -29,8 +34,8 @@ class GlobalProvider with ChangeNotifier {
 
   int _newProcessTabIndex = 0;
   int _htmlBoxTabIndex = 0;
-
-  List<String> _chosenLang = ["English"];
+  
+  List<String> _chosenLang = [];
   Map<String, bool> _languageMap = {
     'English': true,
     'Arabic': false,
@@ -110,7 +115,7 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, bool> get mvelValues => _mvelValues;
   Map<int, String> get hierarchyValues => _hierarchyValues;
-
+  
   setRegId(String value) {
     _regId = value;
     notifyListeners();
@@ -293,30 +298,30 @@ class GlobalProvider with ChangeNotifier {
   chooseLanguage(Map<String, String> label) {
     String x = '';
     for (var i in chosenLang) {
-      if (i == "English") {
-        x = "$x${label["eng"]!}/";
+      languageDataList.forEach((element) {
+      if(i == element!.name) {
+        x = "$x${label[element.code]!}/";
+        return;
       }
-      if (i == "Arabic") {
-        x = "$x${label["ara"]!}/";
-      }
-      if (i == "French") {
-        x = "$x${label["fra"]!}/";
-      }
+     });
     }
     x = x.substring(0, x.length - 1);
     return x;
   }
 
   langToCode(String lang) {
-    if (lang == "English") {
-      return "eng";
-    }
-    if (lang == "Arabic") {
-      return "ara";
-    }
-    if (lang == "French") {
-      return "fra";
-    }
+    String code = "";
+    languageDataList.forEach((element) {
+      if(lang == element!.name) {
+        code = element.code;
+        return;
+      }
+     });
+    return code;
+  }
+
+  codeToLang() {
+
   }
 
   fieldValues(Process process) {
@@ -366,6 +371,172 @@ class GlobalProvider with ChangeNotifier {
     _fieldInputValue = {};
     _fieldDisplayValues = {};
     log(_fieldInputValue.toString());
+    notifyListeners();
+  }
+
+  // Language Config
+  fetchAllLanguages() async {
+    return await dynamicResponseService.fetchAllLanguages();
+  }
+  
+  List<LanguageData?> _languageDataList = [];
+  Map<String, String> _languageCodeMapper = {};
+  List<String> _languages = [];
+  List<String?> _mandatoryLanguages = [];
+  List<String?> _optionalLanguages = [];
+  int _minLanguageCount = 0;
+  int _maxLanguageCount = 0;
+  Map<String, bool> _mandatoryLanguageMap = {};
+  
+  List<LanguageData?> get languageDataList => _languageDataList;
+  Map<String, String> get languageCodeMapper => _languageCodeMapper;
+  List<String> get languages => _languages;
+  List<String?> get mandatoryLanguages => _mandatoryLanguages;
+  List<String?> get optionalLanguages => _optionalLanguages;
+  int get minLanguageCount => _minLanguageCount;
+  int get maxLanguageCount => _maxLanguageCount;
+  Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
+  
+  initializeLanguageDataList() async {
+    _languageDataList = await dynamicResponseService.fetchAllLanguages();
+    createLanguageCodeMapper();
+    notifyListeners();
+  }
+
+  setLanguageDataList(List<LanguageData?> value) {
+    _languageDataList = value;
+    notifyListeners();
+  }
+
+  setLanguageCodeMapper(Map<String, String> value) {
+    _languageCodeMapper = value;
+    notifyListeners();
+  }
+
+  setLanguages(List<String> value) {
+    _languages = value;
+    notifyListeners();
+  }
+
+  setMandatoryLanguages(List<String?> value) {
+    _mandatoryLanguages = value;
+    notifyListeners();
+  }
+
+  setOptionalLanguages(List<String?> value) {
+    _optionalLanguages = value;
+    notifyListeners();
+  }
+  
+  setMinLanguageCount(int value) {
+    _minLanguageCount = value;
+    notifyListeners();
+  }
+
+  setMaxLanguageCount(int value) {
+    _maxLanguageCount = value;
+    notifyListeners();
+  }
+
+  setMandatoryLanguageMap(Map<String, bool> value) {
+    _mandatoryLanguageMap = value;
+    notifyListeners();
+  }
+
+  setLanguageConfigData() async {
+    _mandatoryLanguages = await processSpec.getMandatoryLanguageCodes();
+    _optionalLanguages = await processSpec.getOptionalLanguageCodes();
+    _minLanguageCount = await processSpec.getMinLanguageCount();
+    _maxLanguageCount = await processSpec.getMaxLanguageCount();
+    notifyListeners();
+  }
+
+  createRegistrationLanguageMap() {
+    _chosenLang = [];
+    Map<String, bool> languageDataMap = {};
+    Map<String, bool> mandatoryMap = {};
+    _languageDataList.forEach((element) {
+      languageDataMap[element!.name] = false;
+     });
+     _mandatoryLanguages.forEach((element) {
+      String lang = _languageCodeMapper[element]!;
+      languageDataMap[lang] = true;
+      mandatoryMap[lang] = true;
+      _chosenLang.add(lang);
+     });
+     _languageMap = languageDataMap;
+     _mandatoryLanguageMap = mandatoryMap;
+     notifyListeners();
+  }
+
+  createLanguageCodeMapper() {
+    _languages = [];
+    _languageDataList.forEach((element) {
+      _languageCodeMapper[element!.code] = element.name;
+      languages.add(element.code);
+    });
+  }
+
+  // App Language
+  Locale? _appLocale = const Locale("en");
+
+  Locale get appLocal => _appLocale ?? const Locale("en");
+
+  String _selectedLanguage = "";
+  String get selectedLanguage => _selectedLanguage;
+  set selectedLanguage(String value) {
+    _selectedLanguage = value;
+    notifyListeners();
+  }
+
+  fetchLocale() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('language_code') == null) {
+      _appLocale = const Locale('en');
+      return null;
+    }
+    _appLocale = Locale(prefs.getString('language_code')!);
+    return null;
+  }
+
+  void changeLanguage(Locale code) async {
+    var prefs = await SharedPreferences.getInstance();
+
+    if (_appLocale == code) {
+      return;
+    }
+
+    if (code == const Locale("eng")) {
+      _appLocale = const Locale("en");
+      await prefs.setString('language_code', 'en');
+      await prefs.setString('countryCode', '');
+    } else if (code == const Locale("ara")) {
+      _appLocale = const Locale("ar");
+      await prefs.setString('language_code', 'ar');
+      await prefs.setString('countryCode', '');
+    } else if (code == const Locale("fra")) {
+      _appLocale = const Locale("fr");
+      await prefs.setString('language_code', 'fr');
+      await prefs.setString('countryCode', '');
+    } else {
+      _appLocale = const Locale("en");
+      await prefs.setString('language_code', 'en');
+      await prefs.setString('countryCode', '');
+    }
+    notifyListeners();
+  }
+  
+  toggleLocale(String code) async {
+    if(_selectedLanguage == code) {
+      return;
+    }
+    _selectedLanguage = code;
+    if(code == "kan") {
+      _appLocale = const Locale("kn");
+    } else {
+      String localeCode = code.substring(0, 2);
+      _appLocale = Locale(localeCode);
+    }
     notifyListeners();
   }
 }

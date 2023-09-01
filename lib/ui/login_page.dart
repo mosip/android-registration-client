@@ -16,7 +16,6 @@ import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
 
-import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -53,9 +52,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  final List<String> _languages = ['eng', 'ara', 'fra'];
-
-  Map<String, String> mp = {};
   late AuthProvider authProvider;
   late SyncProvider syncProvider;
 
@@ -65,9 +61,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    mp['eng'] = "English";
-    mp['ara'] = "العربية";
-    mp['fra'] = "Français";
   }
 
   @override
@@ -145,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    String langCode = context.read<AppLanguageProvider>().selectedLanguage;
+    String langCode = context.read<GlobalProvider>().selectedLanguage;
     await context.read<AuthProvider>().validateUser(username, langCode);
 
     bool isValid = context.read<AuthProvider>().isValidUser;
@@ -323,7 +316,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: () async {
+              await context.read<GlobalProvider>().fetchAllLanguages();
+            },
           ),
         ],
       ),
@@ -414,10 +409,12 @@ class _LoginPageState extends State<LoginPage> {
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
-                  isDisabled: username.isEmpty || username.length > 50,
-                  languages: _languages,
+                  isDisabled: username.trim().isEmpty ||
+                      username.trim().length > 50 ||
+                      context.watch<GlobalProvider>().selectedLanguage.isEmpty,
+                  languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
-                  mp: mp,
+                  mp: context.watch<GlobalProvider>().languageCodeMapper,
                   onChanged: (v) {
                     setState(() {
                       username = v;
