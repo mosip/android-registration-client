@@ -97,18 +97,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                   value: e.value,
                                   onChanged: context
                                                 .read<GlobalProvider>()
-                                                .langToCode(e.key) ==
-                                            context
-                                                .read<GlobalProvider>()
-                                                .selectedLanguage
+                                                .mandatoryLanguageMap[e.key] ?? false
                                       ? null
                                       : (bool? newValue) {
-                                          if (context
-                                                    .read<GlobalProvider>()
-                                                    .langToCode(e.key) !=
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .selectedLanguage) {
+                                          if (!(context
+                                                .read<GlobalProvider>()
+                                                .mandatoryLanguageMap[e.key] ?? false)) {
                                             context
                                                 .read<GlobalProvider>()
                                                 .addRemoveLang(
@@ -132,10 +126,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                     ?.copyWith(
                                         color: context
                                                 .read<GlobalProvider>()
-                                                .langToCode(e.key) ==
-                                            context
-                                                .read<GlobalProvider>()
-                                                .selectedLanguage
+                                                .mandatoryLanguageMap[e.key] ?? false
                                             ? Colors.grey
                                             : const Color(0xff333333)),
                               )
@@ -159,18 +150,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                     value: e.value,
                                     onChanged: context
                                                 .read<GlobalProvider>()
-                                                .langToCode(e.key) ==
-                                            context
-                                                .read<GlobalProvider>()
-                                                .selectedLanguage
+                                                .mandatoryLanguageMap[e.key] ?? false
                                         ? null
                                         : (bool? newValue) {
-                                            if (context
-                                                    .read<GlobalProvider>()
-                                                    .langToCode(e.key) !=
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .selectedLanguage) {
+                                            if (!(context
+                                                .read<GlobalProvider>()
+                                                .mandatoryLanguageMap[e.key] ?? false)) {
                                               context
                                                   .read<GlobalProvider>()
                                                   .addRemoveLang(

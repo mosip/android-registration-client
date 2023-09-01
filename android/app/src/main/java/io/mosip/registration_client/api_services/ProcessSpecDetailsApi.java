@@ -43,12 +43,12 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
 
     @Override
     public void getUISchema(@NonNull ProcessSpecPigeon.Result<String> result) {
-        try{
+        try {
             String schemaJson = identitySchemaRepository.getSchemaJson(context,
                     identitySchemaRepository.getLatestSchemaVersion());
             result.success(schemaJson);
             return;
-        }catch (Exception e){
+        } catch (Exception e){
             Log.e(getClass().getSimpleName(), "Error in getUISchema", e);
         }
         result.success("");
@@ -56,11 +56,11 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
 
     @Override
     public void getStringValueGlobalParam(@NonNull String key, @NonNull ProcessSpecPigeon.Result<String> result) {
-        try{
+        try {
             String cachedString = globalParamRepository.getCachedStringGlobalParam(key);
             result.success(cachedString);
             return;
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getStringValueGlobalParam", e);
         }
         result.success("");
@@ -70,7 +70,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
     public void getNewProcessSpec(@NonNull ProcessSpecPigeon.Result<List<String>> result) {
         ObjectWriter ow;
         List<String> processSpecList=new ArrayList<>();
-        try{
+        try {
             ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(context,
                     identitySchemaRepository.getLatestSchemaVersion());
             ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -78,9 +78,53 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
                 String json = ow.writeValueAsString(processSpecDto);
                 processSpecList.add(json);
             }
-        }catch (Exception e){
+        } catch (Exception e){
             Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
         }
         result.success(processSpecList);
+    }
+
+    @Override
+    public void getMandatoryLanguageCodes(@NonNull ProcessSpecPigeon.Result<List<String>> result) {
+        List<String> mandatoryLanguageList = new ArrayList<>();
+        try {
+            mandatoryLanguageList = globalParamRepository.getMandatoryLanguageCodes();
+        } catch (Exception e){
+            Log.e(getClass().getSimpleName(), "Error in getMandatoryLanguageCodes", e);
+        }
+        result.success(mandatoryLanguageList);
+    }
+
+    @Override
+    public void getOptionalLanguageCodes(@NonNull ProcessSpecPigeon.Result<List<String>> result) {
+        List<String> optionalLanguageList = new ArrayList<>();
+        try {
+            optionalLanguageList = globalParamRepository.getOptionalLanguageCodes();
+        } catch (Exception e){
+            Log.e(getClass().getSimpleName(), "Error in getOptionalLanguageCodes", e);
+        }
+        result.success(optionalLanguageList);
+    }
+
+    @Override
+    public void getMinLanguageCount(@NonNull ProcessSpecPigeon.Result<Long> result) {
+        int minLangCount = 0;
+        try {
+            minLangCount = globalParamRepository.getMinLanguageCount();
+        } catch (Exception e){
+            Log.e(getClass().getSimpleName(), "Error in getMinLangCount", e);
+        }
+        result.success((long)minLangCount);
+    }
+
+    @Override
+    public void getMaxLanguageCount(@NonNull ProcessSpecPigeon.Result<Long> result) {
+        int maxLangCount = 0;
+        try {
+            maxLangCount = globalParamRepository.getMinLanguageCount();
+        } catch (Exception e){
+            Log.e(getClass().getSimpleName(), "Error in getMaxLangCount", e);
+        }
+        result.success((long)maxLangCount);
     }
 }
