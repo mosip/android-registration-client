@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
     await _masterDataSync();
     await _getNewProcessSpecAction(context);
     await _getCenterNameAction(context);
+    await context.read<GlobalProvider>().initializeLanguageDataList();
   }
 
   void _fetchProcessSpec() async {
