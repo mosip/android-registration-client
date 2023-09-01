@@ -293,7 +293,6 @@ class _NewProcessState extends State<NewProcess> {
           }
         }
       }
-
       return isValid;
     }
 
