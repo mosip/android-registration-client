@@ -37,7 +37,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
       ],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
-      thresholdPercentage: "0");
+      thresholdPercentage: "0",
+      noOfCapturesAllowed: 0);
   BiometricAttributeData rightHand = BiometricAttributeData(
       title: "Right Hand",
       attemptNo: 0,
@@ -47,7 +48,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
       listofImages: ["assets/images/Right Hand@2x.png"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
-      thresholdPercentage: "0");
+      thresholdPercentage: "0",
+      noOfCapturesAllowed: 0);
   BiometricAttributeData leftHand = BiometricAttributeData(
       title: "Left Hand",
       attemptNo: 0,
@@ -57,7 +59,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
       listofImages: ["assets/images/Left Hand@2x.png"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
-      thresholdPercentage: "0");
+      thresholdPercentage: "0",
+      noOfCapturesAllowed: 0);
   BiometricAttributeData thumbs = BiometricAttributeData(
       title: "Thumbs",
       attemptNo: 0,
@@ -67,7 +70,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
       listofImages: ["assets/images/Thumbs@2x.png"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
-      thresholdPercentage: "0");
+      thresholdPercentage: "0",
+      noOfCapturesAllowed: 0);
   BiometricAttributeData face = BiometricAttributeData(
       title: "Face",
       attemptNo: 0,
@@ -77,7 +81,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
       listofImages: ["assets/images/Face@2x.png"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
-      thresholdPercentage: "0");
+      thresholdPercentage: "0",
+      noOfCapturesAllowed: 0);
   BiometricAttributeData exception = BiometricAttributeData(
       title: "Exception",
       attemptNo: 0,
@@ -87,7 +92,8 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
       listofImages: ["assets/images/Exception@2x.png"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
-      thresholdPercentage: "0");
+      thresholdPercentage: "0",
+      noOfCapturesAllowed: 3);
 
   getElementPosition(List<BiometricAttributeData> list, String title) {
     for (int i = 0; i < list.length; i++) {
@@ -100,7 +106,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
 
   int i = 0;
   String biometricAttribute = "Iris";
-  setInitialBioAttribute() {
+  setInitialBioAttribute() async{
     if (widget.field.conditionalBioAttributes!.first!.ageGroup!
             .compareTo(context.read<GlobalProvider>().ageGroup) ==
         0) {
@@ -156,6 +162,12 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         biometricAttribute = "Face";
       }
     }
+    iris.noOfCapturesAllowed=int.parse(await BiometricsApi().getThresholdValue("mosip.registration.num_of_iris_retries"));
+    leftHand.noOfCapturesAllowed=int.parse(await BiometricsApi().getThresholdValue("mosip.registration.num_of_fingerprint_retries"));
+    rightHand.noOfCapturesAllowed=int.parse(await BiometricsApi().getThresholdValue("mosip.registration.num_of_fingerprint_retries"));
+    thumbs.noOfCapturesAllowed=int.parse(await BiometricsApi().getThresholdValue("mosip.registration.num_of_fingerprint_retries"));
+    face.noOfCapturesAllowed=int.parse(await BiometricsApi().getThresholdValue("mosip.registration.num_of_face_retries"));
+    
   }
 
   Widget _getBiometricCaptureSelectionBlock(
