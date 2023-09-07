@@ -66,7 +66,6 @@ class GlobalProvider with ChangeNotifier {
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
     _scannedPages[field] = value;
-
     notifyListeners();
   }
 

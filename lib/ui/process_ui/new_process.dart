@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -42,6 +40,9 @@ class NewProcess extends StatefulWidget {
 }
 
 class _NewProcessState extends State<NewProcess> {
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+
   final List<String> postRegistrationTabs = [
     'Preview',
     'Authentication',
@@ -60,12 +61,15 @@ class _NewProcessState extends State<NewProcess> {
     );
   }
 
-  _submitRegistration(BuildContext context) async {
-    RegistrationSubmitResponse registrationSubmitResponse = await context
-        .read<RegistrationTaskProvider>()
+  _submitRegistration() async {
+    RegistrationSubmitResponse registrationSubmitResponse = await registrationTaskProvider
         .submitRegistrationDto(username);
 
     return registrationSubmitResponse;
+  }
+
+  _getIsPacketAuthenticated() {
+    return context.read<AuthProvider>().isPacketAuthenticated;
   }
 
   _authenticatePacket(BuildContext context) async {
@@ -85,8 +89,7 @@ class _NewProcessState extends State<NewProcess> {
     await context
         .read<AuthProvider>()
         .authenticatePacket(username, password, isConnected);
-    bool isPacketAuthenticated =
-        context.read<AuthProvider>().isPacketAuthenticated;
+    bool isPacketAuthenticated = _getIsPacketAuthenticated();
 
     if (!isPacketAuthenticated) {
       _showErrorInSnackbar();
@@ -161,13 +164,23 @@ class _NewProcessState extends State<NewProcess> {
   }
 
   // _onTabBackNavigate(int index, BuildContext context) {
-  //   if (index < context.read<GlobalProvider>().newProcessTabIndex) {
-  //     context.read<GlobalProvider>().newProcessTabIndex = index;
+  //   if (index < globalProvider.newProcessTabIndex) {
+  //     globalProvider.newProcessTabIndex = index;
   //   }
   // }
 
+  _resetValuesOnRegistrationComplete() {
+    Navigator.of(context).pop();
+    globalProvider.newProcessTabIndex = 0;
+    globalProvider.htmlBoxTabIndex = 0;
+    globalProvider.setRegId("");
+  }
+
   @override
   Widget build(BuildContext context) {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     bool isMobile = MediaQuery.of(context).size.width < 750;
     double w = ScreenUtil().screenWidth;
     Map<String, dynamic> arguments =
@@ -237,8 +250,7 @@ class _NewProcessState extends State<NewProcess> {
                 int count = returnBiometricListLength(
                     screen.fields!.elementAt(i)!.bioAttributes);
 
-                if (context
-                        .read<GlobalProvider>()
+                if (globalProvider
                         .fieldInputValue[screen.fields!.elementAt(i)!.id!]
                         .length <
                     count) {
@@ -258,9 +270,7 @@ class _NewProcessState extends State<NewProcess> {
               screen.fields!.elementAt(i)!);
           if (required) {
             if (screen.fields!.elementAt(i)!.inputRequired!) {
-              if (!(context
-                  .read<GlobalProvider>()
-                  .fieldInputValue
+              if (!(globalProvider.fieldInputValue
                   .containsKey(screen.fields!.elementAt(i)!.id))) {
                 isValid = false;
 
@@ -297,50 +307,45 @@ class _NewProcessState extends State<NewProcess> {
     }
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
-      if (context.read<GlobalProvider>().newProcessTabIndex < size) {
-        if (context.read<GlobalProvider>().formKey.currentState!.validate()) {
-          bool customValidator = await customValidation(
-              context.read<GlobalProvider>().newProcessTabIndex);
+      if (globalProvider.newProcessTabIndex < size) {
+        if (globalProvider.formKey.currentState!.validate()) {
+          bool customValidator =
+              await customValidation(globalProvider.newProcessTabIndex);
           if (customValidator) {
-            if (context.read<GlobalProvider>().newProcessTabIndex ==
+            if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-              context.read<RegistrationTaskProvider>().setPreviewTemplate("");
-              context.read<RegistrationTaskProvider>().getPreviewTemplate(true);
+              registrationTaskProvider.setPreviewTemplate("");
+              registrationTaskProvider.getPreviewTemplate(true);
             }
 
-            context.read<GlobalProvider>().newProcessTabIndex =
-                context.read<GlobalProvider>().newProcessTabIndex + 1;
+            globalProvider.newProcessTabIndex =
+                globalProvider.newProcessTabIndex + 1;
           }
         }
       } else {
-        if (context.read<GlobalProvider>().newProcessTabIndex == size + 1) {
+        if (globalProvider.newProcessTabIndex == size + 1) {
           bool isPacketAuthenticated = await _authenticatePacket(context);
           if (!isPacketAuthenticated) {
             return;
           }
           RegistrationSubmitResponse registrationSubmitResponse =
-              await _submitRegistration(context);
+              await _submitRegistration();
           if (registrationSubmitResponse.errorCode!.isNotEmpty) {
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }
-          context
-              .read<GlobalProvider>()
-              .setRegId(registrationSubmitResponse.rId);
+          globalProvider.setRegId(registrationSubmitResponse.rId);
           setState(() {
             username = '';
             password = '';
           });
         }
-        if (context.read<GlobalProvider>().newProcessTabIndex == size + 2) {
-          Navigator.of(context).pop();
-          context.read<GlobalProvider>().newProcessTabIndex = 0;
-          context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-          context.read<GlobalProvider>().setRegId("");
+        if (globalProvider.newProcessTabIndex == size + 2) {
+          _resetValuesOnRegistrationComplete();
           return;
         }
-        context.read<GlobalProvider>().newProcessTabIndex =
-            context.read<GlobalProvider>().newProcessTabIndex + 1;
+        globalProvider.newProcessTabIndex =
+            globalProvider.newProcessTabIndex + 1;
       }
     }
 
@@ -356,9 +361,9 @@ class _NewProcessState extends State<NewProcess> {
         child: isMobile
             ? ElevatedButton(
                 child: Text(
-                    context.read<GlobalProvider>().newProcessTabIndex <= size
+                    globalProvider.newProcessTabIndex <= size
                         ? "CONTINUE"
-                        : context.read<GlobalProvider>().newProcessTabIndex ==
+                        : globalProvider.newProcessTabIndex ==
                                 size + 1
                             ? "AUTHENTICATE"
                             : "COMPLETE"),
@@ -369,22 +374,22 @@ class _NewProcessState extends State<NewProcess> {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  context.read<GlobalProvider>().newProcessTabIndex == size + 2
+                  globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
                           onPressed: () {
-                            context.read<GlobalProvider>().syncPacket(
-                                context.read<GlobalProvider>().regId);
+                            globalProvider.syncPacket(
+                                globalProvider.regId);
                           },
                           child: const Text("Sync Packet"))
                       : const SizedBox.shrink(),
                   SizedBox(
                     width: 10.w,
                   ),
-                  context.read<GlobalProvider>().newProcessTabIndex == size + 2
+                  globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
                           onPressed: () {
-                            context.read<GlobalProvider>().uploadPacket(
-                                context.read<GlobalProvider>().regId);
+                            globalProvider.uploadPacket(
+                                globalProvider.regId);
                           },
                           child: const Text("Upload Packet"))
                       : const SizedBox.shrink(),
@@ -406,7 +411,7 @@ class _NewProcessState extends State<NewProcess> {
                                 .newProcessTabIndex <=
                             size
                         ? "CONTINUE"
-                        : context.read<GlobalProvider>().newProcessTabIndex ==
+                        : globalProvider.newProcessTabIndex ==
                                 size + 1
                             ? "AUTHENTICATE"
                             : "COMPLETE"),

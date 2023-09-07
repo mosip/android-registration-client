@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -137,6 +135,13 @@ class _CustomDropDownState extends State<DropDownControl> {
             parentCode, hierarchyLevelName, langCode);
   }
 
+  _isFieldIdPresent() {
+    return context
+        .read<GlobalProvider>()
+        .fieldInputValue
+        .containsKey(widget.field.id ?? "");
+  }
+
   _getOptionsList() async {
     List<GenericData?> temp;
     if (index == 0) {
@@ -153,10 +158,7 @@ class _CustomDropDownState extends State<DropDownControl> {
     setState(() {
       list = temp;
     });
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey(widget.field.id ?? "")) {
+    if (_isFieldIdPresent()) {
       _getSelectedValueFromMap("eng", list);
     }
   }
