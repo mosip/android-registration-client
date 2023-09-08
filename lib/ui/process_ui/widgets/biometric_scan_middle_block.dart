@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -106,7 +104,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
     return -1;
   }
 
-  generateList(BuildContext context, String key, BiometricAttributeData data) {
+  generateList(String key, BiometricAttributeData data) {
     List<BiometricAttributeData> list = [];
 
     if (context.read<GlobalProvider>().fieldInputValue.containsKey(key)) {
@@ -126,6 +124,139 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
       list.add(data);
       context.read<GlobalProvider>().fieldInputValue[key] = list;
     }
+  }
+
+  _navigateBack() {
+    Navigator.pop(context);
+  }
+
+  _showScanDialogBox(List<Uint8List?> temp) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: SizedBox(
+          height: 539.h,
+          width: 768.w,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${widget.parameterTitle} Capture",
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 18, fontWeight: bold, color: blackShade1),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(0),
+                // EdgeInsets.fromLTRB(
+                //     60.w, 35.h, 60.w, 35.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ...temp.map(
+                      (e) => Image.memory(
+                        e!,
+                        height: widget.imageHeight,
+                        width: widget.imageWidth,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        maximumSize: Size(160.w, 42.h),
+                        minimumSize: Size(160.w, 42.h),
+                        side: BorderSide(color: solidPrimary),
+                      ),
+                      onPressed: () async {
+                        if (widget.biometricAttributeData.attemptNo <
+                            widget.biometricAttributeData.noOfCapturesAllowed) {
+                          await BiometricsApi().invokeDiscoverSbi(
+                              widget.field.id!, widget.parameterTitle);
+                          await BiometricsApi()
+                              .extractImageValues(
+                                  widget.field.id!, widget.parameterTitle)
+                              .then((value) {
+                            temp = value;
+                          });
+                          await BiometricsApi().incrementBioAttempt(
+                              widget.field.id!, widget.parameterTitle);
+                          widget.biometricAttributeData.attemptNo =
+                              await BiometricsApi().getBioAttempt(
+                                  widget.field.id!, widget.parameterTitle);
+                        }
+                      },
+                      child: const Text("RESCAN"),
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          maximumSize: Size(160.w, 42.h),
+                          minimumSize: Size(160.w, 42.h)),
+                      onPressed: () async {
+                        widget.biometricAttributeData.listOfBiometricsDto
+                            .clear();
+                        await BiometricsApi()
+                            .getBestBiometrics(
+                                widget.field.id!, widget.parameterTitle)
+                            .then((value) async {
+                          for (var e in value) {
+                            widget.biometricAttributeData.listOfBiometricsDto
+                                .add(
+                              BiometricsDto.fromJson(
+                                json.decode(e!),
+                              ),
+                            );
+                          }
+                        });
+                        widget.biometricAttributeData.qualityPercentage =
+                            avgScore(widget
+                                .biometricAttributeData.listOfBiometricsDto);
+                        await BiometricsApi()
+                            .extractImageValues(
+                                widget.field.id!, widget.parameterTitle)
+                            .then((value) {
+                          widget.biometricAttributeData.listofImages = value;
+                        });
+                        widget.biometricAttributeData.isScanned = true;
+                        generateList("${widget.field.id}",
+                            widget.biometricAttributeData);
+
+                        setState(() {});
+                        _navigateBack();
+                      },
+                      child: const Text("SAVE"),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -157,150 +288,24 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                 ),
           OutlinedButton.icon(
             onPressed: () async {
-              if(widget.biometricAttributeData.attemptNo<widget.biometricAttributeData.noOfCapturesAllowed){
+              if (widget.biometricAttributeData.attemptNo <
+                  widget.biometricAttributeData.noOfCapturesAllowed) {
                 List<Uint8List?> temp = [];
-              await BiometricsApi()
-                  .invokeDiscoverSbi(widget.field.id!, widget.parameterTitle);
-              await BiometricsApi()
-                  .getBestBiometrics(widget.field.id!, widget.parameterTitle)
-                  .then((value) {});
-              await BiometricsApi()
-                  .extractImageValues(widget.field.id!, widget.parameterTitle)
-                  .then((value) {
-                temp = value;
-              });
-              await BiometricsApi()
-                  .incrementBioAttempt(widget.field.id!, widget.parameterTitle);
-              widget.biometricAttributeData.attemptNo = await BiometricsApi()
-                  .getBioAttempt(widget.field.id!, widget.parameterTitle);
-              showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                    content: SizedBox(
-                  height: 539.h,
-                  width: 768.w,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "${widget.parameterTitle} Capture",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                      fontSize: 18,
-                                      fontWeight: bold,
-                                      color: blackShade1),
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(
-                                  Icons.close,
-                                )),
-                          ],
-                        ),
-                        const Divider(),
-                        Padding(
-                          padding: const EdgeInsets.all(0),
-                          // EdgeInsets.fromLTRB(
-                          //     60.w, 35.h, 60.w, 35.h),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ...temp.map((e) => Image.memory(
-                                    e!,
-                                    height: widget.imageHeight,
-                                    width: widget.imageWidth,
-                                  )),
-                            ],
-                          ),
-                        ),
-                        const Divider(),
-                        Padding(
-                          padding: const EdgeInsets.all(0.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                      maximumSize: Size(160.w, 42.h),
-                                      minimumSize: Size(160.w, 42.h),
-                                      side: BorderSide(color: solidPrimary)),
-                                  onPressed: () async {
-                                    if(widget.biometricAttributeData.attemptNo<widget.biometricAttributeData.noOfCapturesAllowed){
-                                      await BiometricsApi().invokeDiscoverSbi(
-                                        widget.field.id!,
-                                        widget.parameterTitle);
-                                    await BiometricsApi()
-                                        .extractImageValues(widget.field.id!,
-                                            widget.parameterTitle)
-                                        .then((value) {
-                                      temp = value;
-                                    });
-                                    await BiometricsApi().incrementBioAttempt(
-                                        widget.field.id!,
-                                        widget.parameterTitle);
-                                    widget.biometricAttributeData.attemptNo =
-                                        await BiometricsApi().getBioAttempt(
-                                            widget.field.id!,
-                                            widget.parameterTitle);
-                                    }
-                                  },
-                                  child: const Text("RESCAN")),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    maximumSize: Size(160.w, 42.h),
-                                    minimumSize: Size(160.w, 42.h)),
-                                onPressed: () async {
-                                  widget.biometricAttributeData
-                                      .listOfBiometricsDto
-                                      .clear();
-                                  await BiometricsApi()
-                                      .getBestBiometrics(widget.field.id!,
-                                          widget.parameterTitle)
-                                      .then((value) async {
-                                    for (var e in value) {
-                                      widget.biometricAttributeData
-                                          .listOfBiometricsDto
-                                          .add(BiometricsDto.fromJson(
-                                              json.decode(e!)));
-                                    }
-                                  });
-                                  widget.biometricAttributeData
-                                          .qualityPercentage =
-                                      avgScore(widget.biometricAttributeData
-                                          .listOfBiometricsDto);
-                                  await BiometricsApi()
-                                      .extractImageValues(widget.field.id!,
-                                          widget.parameterTitle)
-                                      .then((value) {
-                                    widget.biometricAttributeData.listofImages =
-                                        value;
-                                  });
-                                  widget.biometricAttributeData.isScanned =
-                                      true;
-                                  generateList(context, "${widget.field.id}",
-                                      widget.biometricAttributeData);
-
-                                  setState(() {});
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("SAVE"),
-                              )
-                            ],
-                          ),
-                        )
-                      ]),
-                )),
-              );
+                await BiometricsApi()
+                    .invokeDiscoverSbi(widget.field.id!, widget.parameterTitle);
+                await BiometricsApi()
+                    .getBestBiometrics(widget.field.id!, widget.parameterTitle)
+                    .then((value) {});
+                await BiometricsApi()
+                    .extractImageValues(widget.field.id!, widget.parameterTitle)
+                    .then((value) {
+                  temp = value;
+                });
+                await BiometricsApi().incrementBioAttempt(
+                    widget.field.id!, widget.parameterTitle);
+                widget.biometricAttributeData.attemptNo = await BiometricsApi()
+                    .getBioAttempt(widget.field.id!, widget.parameterTitle);
+                _showScanDialogBox(temp);
               }
             },
             icon: Icon(
@@ -430,70 +435,77 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                     SizedBox(
                       width: 13.w,
                     ),
-                    for(int i=1;i<=widget.biometricAttributeData.noOfCapturesAllowed;i++)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 9.5),
-                      child: InkWell(
-                        onTap: () async {
-                          if (widget.biometricAttributeData.attemptNo >= i) {
-                            await BiometricsApi()
-                                .getBiometrics(
-                                    widget.field.id!, widget.parameterTitle, i)
-                                .then((value) {
-                              widget.biometricAttributeData.listOfBiometricsDto
-                                  .clear();
-                              for (var e in value) {
-                                widget.biometricAttributeData.listOfBiometricsDto
-                                    .add(BiometricsDto.fromJson(json.decode(e!)));
-                              }
-                            });
-                    
-                            setState(() {
-                              widget.biometricAttributeData.qualityPercentage =
-                                  avgScore(widget.biometricAttributeData
-                                      .listOfBiometricsDto);
-                            });
-                            await BiometricsApi()
-                                .extractImageValuesByAttempt(
-                                    widget.field.id!, widget.parameterTitle, i)
-                                .then((value) {
-                              widget.biometricAttributeData.listofImages = value;
-                            });
-                            setState(() {});
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 0,
-                            horizontal: 11,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: secondaryColors.elementAt(17),
+                    for (int i = 1;
+                        i <= widget.biometricAttributeData.noOfCapturesAllowed;
+                        i++)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 9.5),
+                        child: InkWell(
+                          onTap: () async {
+                            if (widget.biometricAttributeData.attemptNo >= i) {
+                              await BiometricsApi()
+                                  .getBiometrics(widget.field.id!,
+                                      widget.parameterTitle, i)
+                                  .then((value) {
+                                widget
+                                    .biometricAttributeData.listOfBiometricsDto
+                                    .clear();
+                                for (var e in value) {
+                                  widget.biometricAttributeData
+                                      .listOfBiometricsDto
+                                      .add(BiometricsDto.fromJson(
+                                          json.decode(e!)));
+                                }
+                              });
+
+                              setState(() {
+                                widget.biometricAttributeData
+                                        .qualityPercentage =
+                                    avgScore(widget.biometricAttributeData
+                                        .listOfBiometricsDto);
+                              });
+                              await BiometricsApi()
+                                  .extractImageValuesByAttempt(widget.field.id!,
+                                      widget.parameterTitle, i)
+                                  .then((value) {
+                                widget.biometricAttributeData.listofImages =
+                                    value;
+                              });
+                              setState(() {});
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 0,
+                              horizontal: 11,
                             ),
-                            color: (widget.biometricAttributeData.attemptNo < i)
-                                ? secondaryColors.elementAt(18)
-                                : secondaryColors.elementAt(11),
-                          ),
-                          child: Text(
-                            i.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    fontSize: 12,
-                                    color:
-                                        (widget.biometricAttributeData.attemptNo <
-                                                i)
-                                            ? secondaryColors.elementAt(19)
-                                            : pureWhite,
-                                    fontWeight: semiBold),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: secondaryColors.elementAt(17),
+                              ),
+                              color:
+                                  (widget.biometricAttributeData.attemptNo < i)
+                                      ? secondaryColors.elementAt(18)
+                                      : secondaryColors.elementAt(11),
+                            ),
+                            child: Text(
+                              i.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                      fontSize: 12,
+                                      color: (widget.biometricAttributeData
+                                                  .attemptNo <
+                                              i)
+                                          ? secondaryColors.elementAt(19)
+                                          : pureWhite,
+                                      fontWeight: semiBold),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    
                   ],
                 )
               ],

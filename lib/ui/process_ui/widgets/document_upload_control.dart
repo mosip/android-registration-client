@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
 
@@ -60,26 +59,41 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   List<String> poaList = [];
   List<Uint8List?> imageBytesList = []; // list of image bytes
 
-  Future<void> addDocument(String item, Field e) async {
-    final bytes = await getImageBytes(item);
-
-    debugPrint("The selected value for dropdown for ${e.id!} is $selected");
-    Uint8List myBytes = Uint8List.fromList(bytes);
+  _getAddDocumentProvider(Field e, Uint8List myBytes) {
     context
         .read<RegistrationTaskProvider>()
         .addDocument(e.id!, selected!, "reference", myBytes);
   }
 
+  Future<void> addDocument(String item, Field e) async {
+    final bytes = await getImageBytes(item);
+
+    debugPrint("The selected value for dropdown for ${e.id!} is $selected");
+    Uint8List myBytes = Uint8List.fromList(bytes);
+    // context
+    //     .read<RegistrationTaskProvider>()
+    //     .addDocument(e.id!, selected!, "reference", myBytes);
+    _getAddDocumentProvider(e, myBytes);
+  }
+
+  _setScannedPages(Field e, List<Uint8List?> listOfScannedDoc) {
+    context.read<GlobalProvider>().setScannedPages(e.id!, listOfScannedDoc);
+  }
+
+  _setValueInMap() {
+    context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
+  }
+
   Future<void> getScannedDocuments(Field e) async {
     try {
-      final listofscannedDoc = await DocumentApi().getScannedPages(e.id!);
-      context.read<GlobalProvider>().setScannedPages(e.id!, listofscannedDoc);
+      final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
+      _setScannedPages(e, listOfScannedDoc);
       setState(() {
-        imageBytesList = listofscannedDoc;
+        imageBytesList = listOfScannedDoc;
         doc.listofImages = imageBytesList;
       });
       if (doc.title.isNotEmpty) {
-        context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
+        _setValueInMap();
       }
     } catch (e) {
       debugPrint("Error while getting scanned pages $e");

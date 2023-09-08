@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 
@@ -21,10 +20,27 @@ class LanguageSelector extends StatefulWidget {
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
+
+  _getRegistrationError() {
+    return context.read<RegistrationTaskProvider>().registrationStartError;
+  }
+  
+  _triggerNavigation() {
+    Navigator.pushNamed(context, NewProcess.routeName,
+          arguments: {"process": widget.newProcess});
+  }
+
+  _showInSnackBar(String value) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value),
+      ),
+    );
+  }
+  
   _navigateToConsentPage() async {
     context.read<GlobalProvider>().getThresholdValues();
     context.read<GlobalProvider>().fieldDisplayValues = {};
-
     context.read<GlobalProvider>().fieldValues(widget.newProcess);
 
     Navigator.of(context).pop();
@@ -33,18 +49,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     }).toList();
     // print(langList);
     await context.read<RegistrationTaskProvider>().startRegistration(langList);
-    String registrationStartError =
-        context.read<RegistrationTaskProvider>().registrationStartError;
+    String registrationStartError = _getRegistrationError();
 
     if (registrationStartError.isEmpty) {
-      Navigator.pushNamed(context, NewProcess.routeName,
-          arguments: {"process": widget.newProcess});
+      _triggerNavigation();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(registrationStartError),
-        ),
-      );
+      _showInSnackBar(registrationStartError);
     }
   }
 

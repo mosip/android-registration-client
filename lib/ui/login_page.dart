@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -15,6 +14,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
+import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
@@ -128,6 +128,32 @@ class _LoginPageState extends State<LoginPage> {
           );
   }
 
+  _getIsValidUser() {
+    return context.read<AuthProvider>().isValidUser;
+  }
+
+  User _getCurrentUser() {
+    return context.read<AuthProvider>().currentUser;
+  }
+
+  _getIsLoggedIn() {
+    return context.read<AuthProvider>().isLoggedIn;
+  }
+
+  _setCenterAndName(User user) {
+    context.read<GlobalProvider>().setCenterId(user.centerId!);
+    context.read<GlobalProvider>().setName(user.name!);
+    context.read<GlobalProvider>().setCenterName(user.centerName!);
+  }
+  
+  _getUsernameIncorrectErrorText() {
+    return AppLocalizations.of(context)!.username_incorrect;
+  }
+
+  _getUserValidationSuccessText() {
+    return AppLocalizations.of(context)!.user_validated;
+  }
+
   _getUserValidation() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
@@ -141,17 +167,15 @@ class _LoginPageState extends State<LoginPage> {
     String langCode = context.read<GlobalProvider>().selectedLanguage;
     await context.read<AuthProvider>().validateUser(username, langCode);
 
-    bool isValid = context.read<AuthProvider>().isValidUser;
+    bool isValid = _getIsValidUser();
     if (!isValid) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
+      _showInSnackBar(_getUsernameIncorrectErrorText());
       return;
     }
 
-    final user = context.read<AuthProvider>().currentUser;
-    context.read<GlobalProvider>().setCenterId(user.centerId!);
-    context.read<GlobalProvider>().setName(user.name!);
-    context.read<GlobalProvider>().setCenterName(user.centerName!);
-    _showInSnackBar(AppLocalizations.of(context)!.user_validated);
+    final User user = _getCurrentUser();
+    _setCenterAndName(user);
+    _showInSnackBar(_getUserValidationSuccessText());
   }
 
   void _onNextButtonPressed() async {
@@ -189,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
         .read<AuthProvider>()
         .authenticateUser(username, password, isConnected);
 
-    bool isTrue = context.read<AuthProvider>().isLoggedIn;
+    bool isTrue = _getIsLoggedIn();
     if (!isTrue) {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
@@ -504,7 +528,7 @@ class _LoginPageState extends State<LoginPage> {
       await syncProvider.autoSync(context).then((value) {
         // syncProvider.setIsGlobalSyncInProgress(false);
       });
-      showSyncResultDialog(context);
+      showSyncResultDialog();
     }
 
     Timer(const Duration(seconds: 5), () {
@@ -516,7 +540,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  showSyncResultDialog(BuildContext context) {
+  showSyncResultDialog() {
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
