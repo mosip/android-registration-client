@@ -105,33 +105,24 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                 width: 40,
                               ),
                               Checkbox(
-                                  value: e.value,
-                                  onChanged: context
-                                              .read<GlobalProvider>()
-                                              .mandatoryLanguageMap[e.key] ??
-                                          false
-                                      ? null
-                                      : (bool? newValue) {
-                                          if (!(context
-                                                      .read<GlobalProvider>()
-                                                      .mandatoryLanguageMap[
-                                                  e.key] ??
-                                              false)) {
-                                            context
+                                value: e.value,
+                                onChanged: context
+                                            .read<GlobalProvider>()
+                                            .mandatoryLanguageMap[e.key] ??
+                                        false
+                                    ? null
+                                    : (bool? newValue) {
+                                        if (!(context
                                                 .read<GlobalProvider>()
-                                                .addRemoveLang(
-                                                    e.key, newValue!);
-                                          }
-                                        },
-                                  fillColor:
-                                      MaterialStateProperty.resolveWith<Color>(
-                                          (Set<MaterialState> states) {
-                                    if (states
-                                        .contains(MaterialState.disabled)) {
-                                      return Colors.grey;
-                                    }
-                                    return solidPrimary;
-                                  })),
+                                                .mandatoryLanguageMap[e.key] ??
+                                            false)) {
+                                          context
+                                              .read<GlobalProvider>()
+                                              .addRemoveLang(e.key, newValue!);
+                                        }
+                                      },
+                                activeColor: solidPrimary,
+                              ),
                               Text(
                                 e.key,
                                 style: Theme.of(context)
@@ -163,33 +154,26 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                   width: 40,
                                 ),
                                 Checkbox(
-                                    value: e.value,
-                                    onChanged: context
+                                  value: e.value,
+                                  onChanged: context
+                                              .read<GlobalProvider>()
+                                              .mandatoryLanguageMap[e.key] ??
+                                          false
+                                      ? null
+                                      : (bool? newValue) {
+                                          if (!(context
+                                                      .read<GlobalProvider>()
+                                                      .mandatoryLanguageMap[
+                                                  e.key] ??
+                                              false)) {
+                                            context
                                                 .read<GlobalProvider>()
-                                                .mandatoryLanguageMap[e.key] ??
-                                            false
-                                        ? null
-                                        : (bool? newValue) {
-                                            if (!(context
-                                                        .read<GlobalProvider>()
-                                                        .mandatoryLanguageMap[
-                                                    e.key] ??
-                                                false)) {
-                                              context
-                                                  .read<GlobalProvider>()
-                                                  .addRemoveLang(
-                                                      e.key, newValue!);
-                                            }
-                                          },
-                                    fillColor:
-                                        MaterialStateProperty.resolveWith<
-                                            Color>((Set<MaterialState> states) {
-                                      if (states
-                                          .contains(MaterialState.disabled)) {
-                                        return Colors.grey;
-                                      }
-                                      return solidPrimary;
-                                    })),
+                                                .addRemoveLang(
+                                                    e.key, newValue!);
+                                          }
+                                        },
+                                  activeColor: solidPrimary,
+                                ),
                                 Text(
                                   e.key,
                                   style: Theme.of(context)
