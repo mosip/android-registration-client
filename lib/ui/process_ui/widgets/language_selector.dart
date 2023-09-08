@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -20,14 +19,13 @@ class LanguageSelector extends StatefulWidget {
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
-
   _getRegistrationError() {
     return context.read<RegistrationTaskProvider>().registrationStartError;
   }
-  
+
   _triggerNavigation() {
     Navigator.pushNamed(context, NewProcess.routeName,
-          arguments: {"process": widget.newProcess});
+        arguments: {"process": widget.newProcess});
   }
 
   _showInSnackBar(String value) {
@@ -37,20 +35,23 @@ class _LanguageSelectorState extends State<LanguageSelector> {
       ),
     );
   }
-  
+
+  _navigateBack() {
+    Navigator.of(context).pop();
+  }
+
   _navigateToConsentPage() async {
     context.read<GlobalProvider>().getThresholdValues();
     context.read<GlobalProvider>().fieldDisplayValues = {};
     context.read<GlobalProvider>().fieldValues(widget.newProcess);
 
-    Navigator.of(context).pop();
     List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
       return context.read<GlobalProvider>().langToCode(e) as String;
     }).toList();
     // print(langList);
     await context.read<RegistrationTaskProvider>().startRegistration(langList);
     String registrationStartError = _getRegistrationError();
-
+    _navigateBack();
     if (registrationStartError.isEmpty) {
       _triggerNavigation();
     } else {
@@ -106,13 +107,16 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                               Checkbox(
                                   value: e.value,
                                   onChanged: context
-                                                .read<GlobalProvider>()
-                                                .mandatoryLanguageMap[e.key] ?? false
+                                              .read<GlobalProvider>()
+                                              .mandatoryLanguageMap[e.key] ??
+                                          false
                                       ? null
                                       : (bool? newValue) {
                                           if (!(context
-                                                .read<GlobalProvider>()
-                                                .mandatoryLanguageMap[e.key] ?? false)) {
+                                                      .read<GlobalProvider>()
+                                                      .mandatoryLanguageMap[
+                                                  e.key] ??
+                                              false)) {
                                             context
                                                 .read<GlobalProvider>()
                                                 .addRemoveLang(
@@ -135,8 +139,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                     .titleSmall
                                     ?.copyWith(
                                         color: context
-                                                .read<GlobalProvider>()
-                                                .mandatoryLanguageMap[e.key] ?? false
+                                                        .read<GlobalProvider>()
+                                                        .mandatoryLanguageMap[
+                                                    e.key] ??
+                                                false
                                             ? Colors.grey
                                             : const Color(0xff333333)),
                               )
@@ -160,12 +166,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                     value: e.value,
                                     onChanged: context
                                                 .read<GlobalProvider>()
-                                                .mandatoryLanguageMap[e.key] ?? false
+                                                .mandatoryLanguageMap[e.key] ??
+                                            false
                                         ? null
                                         : (bool? newValue) {
                                             if (!(context
-                                                .read<GlobalProvider>()
-                                                .mandatoryLanguageMap[e.key] ?? false)) {
+                                                        .read<GlobalProvider>()
+                                                        .mandatoryLanguageMap[
+                                                    e.key] ??
+                                                false)) {
                                               context
                                                   .read<GlobalProvider>()
                                                   .addRemoveLang(
