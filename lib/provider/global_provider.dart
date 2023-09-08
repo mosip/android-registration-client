@@ -1,9 +1,8 @@
-// ignore_for_file: avoid_function_literals_in_foreach_calls
-
 import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
+import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
@@ -19,7 +18,8 @@ class GlobalProvider with ChangeNotifier {
   final MachineKey machineKey = MachineKey();
   final ProcessSpec processSpec = ProcessSpec();
   final PacketService packetService = PacketService();
-  final DynamicResponseService dynamicResponseService = DynamicResponseService();
+  final DynamicResponseService dynamicResponseService =
+      DynamicResponseService();
 
   //Variables
   int _currentIndex = 0;
@@ -34,7 +34,7 @@ class GlobalProvider with ChangeNotifier {
 
   int _newProcessTabIndex = 0;
   int _htmlBoxTabIndex = 0;
-  
+
   List<String> _chosenLang = [];
   Map<String, bool> _languageMap = {
     'English': true,
@@ -114,7 +114,7 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, bool> get mvelValues => _mvelValues;
   Map<int, String> get hierarchyValues => _hierarchyValues;
-  
+
   setRegId(String value) {
     _regId = value;
     notifyListeners();
@@ -297,12 +297,12 @@ class GlobalProvider with ChangeNotifier {
   chooseLanguage(Map<String, String> label) {
     String x = '';
     for (var i in chosenLang) {
-      languageDataList.forEach((element) {
-      if(i == element!.name) {
-        x = "$x${label[element.code]!}/";
-        return;
+      for (var element in languageDataList) {
+        if (i == element!.name) {
+          x = "$x${label[element.code]!}/";
+          continue;
+        }
       }
-     });
     }
     x = x.substring(0, x.length - 1);
     return x;
@@ -310,40 +310,55 @@ class GlobalProvider with ChangeNotifier {
 
   langToCode(String lang) {
     String code = "";
-    languageDataList.forEach((element) {
-      if(lang == element!.name) {
+    for (var element in languageDataList) {
+      if (lang == element!.name) {
         code = element.code;
-        return;
+        continue;
       }
-     });
+    }
     return code;
   }
 
-  codeToLang() {
-
+  _getDynamicFieldValues(Field field) async {
+    if (field.fieldType == "dynamic") {
+      fieldDisplayValues[field.id!] =
+          await CommonDetailsApi().getFieldValues(field.id!, "eng");
+    }
+    if (field.templateName != null) {
+      List values = List.empty(growable: true);
+      for (var lang in chosenLang) {
+        String templateContent = await CommonDetailsApi().getTemplateContent(
+            field.templateName!,
+            langToCode(lang),
+          );
+        values.add(templateContent);
+      }
+      fieldDisplayValues[field.id!] = values;
+    }
   }
 
-  fieldValues(Process process) {
-    process.screens!.forEach((screen) {
-      screen!.fields!.forEach((field) async {
-        if (field!.fieldType == "dynamic") {
-          fieldDisplayValues[field.id!] =
-              await CommonDetailsApi().getFieldValues(field.id!, "eng");
-        }
-        if (field.templateName != null) {
-          List values = List.empty(growable: true);
-          chosenLang.forEach((lang) async {
-            values.add(
-              await CommonDetailsApi().getTemplateContent(
-                field.templateName!,
-                langToCode(lang),
-              ),
-            );
-          });
-          fieldDisplayValues[field.id!] = values;
-        }
-      });
-    });
+  fieldValues(Process process) async {
+    for (var screen in process.screens!) {
+      for (var field in screen!.fields!) {
+        // if (field!.fieldType == "dynamic") {
+        //   fieldDisplayValues[field.id!] =
+        //       await CommonDetailsApi().getFieldValues(field.id!, "eng");
+        // }
+        // if (field.templateName != null) {
+        //   List values = List.empty(growable: true);
+        //   chosenLang.forEach((lang) async {
+        //     values.add(
+        //       await CommonDetailsApi().getTemplateContent(
+        //         field.templateName!,
+        //         langToCode(lang),
+        //       ),
+        //     );
+        //   });
+        //   fieldDisplayValues[field.id!] = values;
+        // }
+        await _getDynamicFieldValues(field!);
+      }
+    }
   }
 
   getRegCenterName(String regCenterId, String langCode) async {
@@ -356,12 +371,12 @@ class GlobalProvider with ChangeNotifier {
 
   syncPacket(String packetId) async {
     await packetService.packetSync(packetId);
-    log("provider sync packet Sucess");
+    log("provider sync packet Success");
   }
 
   uploadPacket(String packetId) async {
     await packetService.packetUpload(packetId);
-    log("provider upload packet Sucess");
+    log("provider upload packet Success");
   }
 
   clearMap() {
@@ -377,7 +392,7 @@ class GlobalProvider with ChangeNotifier {
   fetchAllLanguages() async {
     return await dynamicResponseService.fetchAllLanguages();
   }
-  
+
   List<LanguageData?> _languageDataList = [];
   Map<String, String> _languageCodeMapper = {};
   List<String> _languages = [];
@@ -386,7 +401,7 @@ class GlobalProvider with ChangeNotifier {
   int _minLanguageCount = 0;
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
-  
+
   List<LanguageData?> get languageDataList => _languageDataList;
   Map<String, String> get languageCodeMapper => _languageCodeMapper;
   List<String> get languages => _languages;
@@ -395,7 +410,7 @@ class GlobalProvider with ChangeNotifier {
   int get minLanguageCount => _minLanguageCount;
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
-  
+
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     createLanguageCodeMapper();
@@ -426,7 +441,7 @@ class GlobalProvider with ChangeNotifier {
     _optionalLanguages = value;
     notifyListeners();
   }
-  
+
   setMinLanguageCount(int value) {
     _minLanguageCount = value;
     notifyListeners();
@@ -454,26 +469,26 @@ class GlobalProvider with ChangeNotifier {
     _chosenLang = [];
     Map<String, bool> languageDataMap = {};
     Map<String, bool> mandatoryMap = {};
-    _languageDataList.forEach((element) {
+    for (var element in _languageDataList) {
       languageDataMap[element!.name] = false;
-     });
-     _mandatoryLanguages.forEach((element) {
+    }
+    for (var element in _mandatoryLanguages) {
       String lang = _languageCodeMapper[element]!;
       languageDataMap[lang] = true;
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
-     });
-     _languageMap = languageDataMap;
-     _mandatoryLanguageMap = mandatoryMap;
-     notifyListeners();
+    }
+    _languageMap = languageDataMap;
+    _mandatoryLanguageMap = mandatoryMap;
+    notifyListeners();
   }
 
   createLanguageCodeMapper() {
     _languages = [];
-    _languageDataList.forEach((element) {
+    for (var element in _languageDataList) {
       _languageCodeMapper[element!.code] = element.name;
       languages.add(element.code);
-    });
+    }
   }
 
   // App Language
@@ -524,13 +539,13 @@ class GlobalProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   toggleLocale(String code) async {
-    if(_selectedLanguage == code) {
+    if (_selectedLanguage == code) {
       return;
     }
     _selectedLanguage = code;
-    if(code == "kan") {
+    if (code == "kan") {
       _appLocale = const Locale("kn");
     } else {
       String localeCode = code.substring(0, 2);
