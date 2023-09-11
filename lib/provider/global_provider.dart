@@ -340,22 +340,6 @@ class GlobalProvider with ChangeNotifier {
   fieldValues(Process process) async {
     for (var screen in process.screens!) {
       for (var field in screen!.fields!) {
-        // if (field!.fieldType == "dynamic") {
-        //   fieldDisplayValues[field.id!] =
-        //       await CommonDetailsApi().getFieldValues(field.id!, "eng");
-        // }
-        // if (field.templateName != null) {
-        //   List values = List.empty(growable: true);
-        //   chosenLang.forEach((lang) async {
-        //     values.add(
-        //       await CommonDetailsApi().getTemplateContent(
-        //         field.templateName!,
-        //         langToCode(lang),
-        //       ),
-        //     );
-        //   });
-        //   fieldDisplayValues[field.id!] = values;
-        // }
         await _getDynamicFieldValues(field!);
       }
     }
@@ -413,8 +397,8 @@ class GlobalProvider with ChangeNotifier {
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
-    createLanguageCodeMapper();
     await setLanguageConfigData();
+    createLanguageCodeMapper();
     notifyListeners();
   }
 
@@ -488,8 +472,13 @@ class GlobalProvider with ChangeNotifier {
   }
 
   createLanguageCodeMapper() {
+    if(_languageDataList.isEmpty) {
+      _languages = ["eng"];
+      _languageCodeMapper["eng"] = "English";
+      return;
+    }
     for (var element in _languageDataList) {
-      _languageCodeMapper[element!.code] = element.nativeName;
+      _languageCodeMapper[element!.code] = element.name;
     }
   }
 

@@ -52,9 +52,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  final List<String> _languages = ['eng', 'ara', 'fra'];
-  Map<String, String> mp = {};
-
   late AuthProvider authProvider;
   late SyncProvider syncProvider;
 
@@ -63,9 +60,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    mp['eng'] = "English";
-    mp['ara'] = "العربية";
-    mp['fra'] = "Français";
     _initializeAppData();
     super.initState();
   }
@@ -91,7 +85,8 @@ class _LoginPageState extends State<LoginPage> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
 
-    return SafeArea(
+    return
+      SafeArea(
             child: Scaffold(
               backgroundColor: AppStyle.appSolidPrimary,
               body: Stack(
@@ -532,17 +527,21 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  _initializeLanguageData() async {
+    await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
   _autoSyncHandler() async {
     if (syncProvider.isGlobalSyncInProgress) {
       authProvider.setIsSyncing(false);
       showLoadingDialog(context);
       await syncProvider.autoSync(context).then((value) {
         // syncProvider.setIsGlobalSyncInProgress(false);
-        context.read<GlobalProvider>().initializeLanguageDataList();
       });
       showSyncResultDialog();
     }
-
+    
+    await _initializeLanguageData();
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {
         RestartWidget.restartApp(context);
