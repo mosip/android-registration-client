@@ -17,7 +17,7 @@ class UsernameComponent extends StatefulWidget {
     required this.isMobile,
   }) : super(key: key);
 
-  final List<String> languages;
+  final List<String?> languages;
   final Map<String, String> mp;
   final VoidCallback onTap;
   final Function onChanged;
@@ -125,7 +125,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
     );
   }
 
-  List<DropdownMenuItem<String>> _addDividersAfterItems(List<String> items) {
+  List<DropdownMenuItem<String>> _addDividersAfterItems(List<String?> items) {
     List<DropdownMenuItem<String>> menuItems = [];
     for (var item in items) {
       menuItems.addAll(
@@ -167,7 +167,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         items: _addDividersAfterItems(widget.languages),
-        value: selectedLanguage,
+        value: context.read<GlobalProvider>().selectedLanguage,
         onChanged: (newValue) {
           selectedLanguage = newValue;
           appLanguage.toggleLocale(newValue!);

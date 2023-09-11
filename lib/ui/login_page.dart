@@ -52,6 +52,9 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  final List<String> _languages = ['eng', 'ara', 'fra'];
+  Map<String, String> mp = {};
+
   late AuthProvider authProvider;
   late SyncProvider syncProvider;
 
@@ -60,7 +63,24 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    mp['eng'] = "English";
+    mp['ara'] = "العربية";
+    mp['fra'] = "Français";
+    _initializeAppData();
     super.initState();
+  }
+
+  _initializeAppData() async {
+    await _initializeMachineData();
+    await _initializeAppLanguageData();
+  }
+
+  _initializeMachineData() async {
+    await context.read<GlobalProvider>().setMachineDetails();
+  }
+
+  _initializeAppLanguageData() async {
+    await context.read<GlobalProvider>().initializeLanguageDataList();
   }
 
   @override
@@ -71,13 +91,7 @@ class _LoginPageState extends State<LoginPage> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
 
-    return authProvider.isLoggedIn && !syncProvider.isGlobalSyncInProgress
-        ? Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
-          )
-        : SafeArea(
+    return SafeArea(
             child: Scaffold(
               backgroundColor: AppStyle.appSolidPrimary,
               body: Stack(
@@ -340,9 +354,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () async {
-              await context.read<GlobalProvider>().fetchAllLanguages();
-            },
+            onTap: ()  {},
           ),
         ],
       ),
@@ -434,8 +446,7 @@ class _LoginPageState extends State<LoginPage> {
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
                   isDisabled: username.trim().isEmpty ||
-                      username.trim().length > 50 ||
-                      context.watch<GlobalProvider>().selectedLanguage.isEmpty,
+                      username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
                   mp: context.watch<GlobalProvider>().languageCodeMapper,
@@ -527,6 +538,7 @@ class _LoginPageState extends State<LoginPage> {
       showLoadingDialog(context);
       await syncProvider.autoSync(context).then((value) {
         // syncProvider.setIsGlobalSyncInProgress(false);
+        context.read<GlobalProvider>().initializeLanguageDataList();
       });
       showSyncResultDialog();
     }
