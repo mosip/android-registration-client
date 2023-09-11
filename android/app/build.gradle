@@ -55,7 +55,7 @@ android {
             shrinkResources false
             signingConfig signingConfigs.debug
             ndk {
-                abiFilters 'armeabi-v7a','arm64-v8a','x86_64' // architectures: 'armeabi-v7a', 'arm64-v8a', 'armeabi', 'x86', 'x86_64'
+                abiFilters 'arm64-v8a' // architectures: 'armeabi-v7a', 'arm64-v8a', 'armeabi', 'x86', 'x86_64'
             }
         }
     }

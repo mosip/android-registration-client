@@ -86,8 +86,7 @@ class BuildApp extends StatelessWidget {
           minTextAdapt: true,
           splitScreenMode: true,
         );
-        context.read<GlobalProvider>().setMachineDetails();
-        context.read<GlobalProvider>().initializeLanguageDataList();
+
         return child!;
       },
       home: const LoginPage(),
@@ -97,7 +96,9 @@ class BuildApp extends StatelessWidget {
 
 class RestartWidget extends StatefulWidget {
   const RestartWidget({super.key, required this.child});
+
   final Widget child;
+
   static void restartApp(BuildContext context) {
     context.findAncestorStateOfType<_RestartWidgetState>()?.restartApp();
   }

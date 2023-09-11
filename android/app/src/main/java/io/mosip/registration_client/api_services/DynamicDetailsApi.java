@@ -112,15 +112,6 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch language values failed: " + Arrays.toString(e.getStackTrace()));
         }
-
-        if(languageDataList == null || languageDataList.isEmpty()) {
-            DynamicResponsePigeon.LanguageData languageData = new DynamicResponsePigeon.LanguageData.Builder()
-                    .setCode("eng")
-                    .setName("English")
-                    .setNativeName("English")
-                    .build();
-            languageDataList.add(languageData);
-        }
         result.success(languageDataList);
     }
 }

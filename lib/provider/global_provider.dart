@@ -340,22 +340,6 @@ class GlobalProvider with ChangeNotifier {
   fieldValues(Process process) async {
     for (var screen in process.screens!) {
       for (var field in screen!.fields!) {
-        // if (field!.fieldType == "dynamic") {
-        //   fieldDisplayValues[field.id!] =
-        //       await CommonDetailsApi().getFieldValues(field.id!, "eng");
-        // }
-        // if (field.templateName != null) {
-        //   List values = List.empty(growable: true);
-        //   chosenLang.forEach((lang) async {
-        //     values.add(
-        //       await CommonDetailsApi().getTemplateContent(
-        //         field.templateName!,
-        //         langToCode(lang),
-        //       ),
-        //     );
-        //   });
-        //   fieldDisplayValues[field.id!] = values;
-        // }
         await _getDynamicFieldValues(field!);
       }
     }
@@ -394,8 +378,8 @@ class GlobalProvider with ChangeNotifier {
   }
 
   List<LanguageData?> _languageDataList = [];
-  Map<String, String> _languageCodeMapper = {};
-  List<String> _languages = [];
+  Map<String, String> _languageCodeMapper = {"eng": "English"};
+  List<String?> _languages = ['eng'];
   List<String?> _mandatoryLanguages = [];
   List<String?> _optionalLanguages = [];
   int _minLanguageCount = 0;
@@ -404,7 +388,7 @@ class GlobalProvider with ChangeNotifier {
 
   List<LanguageData?> get languageDataList => _languageDataList;
   Map<String, String> get languageCodeMapper => _languageCodeMapper;
-  List<String> get languages => _languages;
+  List<String?> get languages => _languages;
   List<String?> get mandatoryLanguages => _mandatoryLanguages;
   List<String?> get optionalLanguages => _optionalLanguages;
   int get minLanguageCount => _minLanguageCount;
@@ -413,6 +397,7 @@ class GlobalProvider with ChangeNotifier {
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
+    await setLanguageConfigData();
     createLanguageCodeMapper();
     notifyListeners();
   }
@@ -427,7 +412,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setLanguages(List<String> value) {
+  setLanguages(List<String?> value) {
     _languages = value;
     notifyListeners();
   }
@@ -462,6 +447,7 @@ class GlobalProvider with ChangeNotifier {
     _optionalLanguages = await processSpec.getOptionalLanguageCodes();
     _minLanguageCount = await processSpec.getMinLanguageCount();
     _maxLanguageCount = await processSpec.getMaxLanguageCount();
+    _languages = [..._mandatoryLanguages, ..._optionalLanguages];
     notifyListeners();
   }
 
@@ -469,14 +455,16 @@ class GlobalProvider with ChangeNotifier {
     _chosenLang = [];
     Map<String, bool> languageDataMap = {};
     Map<String, bool> mandatoryMap = {};
-    for (var element in _languageDataList) {
-      languageDataMap[element!.name] = false;
-    }
     for (var element in _mandatoryLanguages) {
       String lang = _languageCodeMapper[element]!;
       languageDataMap[lang] = true;
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
+    }
+    for(var element in _optionalLanguages) {
+      String lang = _languageCodeMapper[element]!;
+      languageDataMap[lang] = false;
+      mandatoryMap[lang] = false;
     }
     _languageMap = languageDataMap;
     _mandatoryLanguageMap = mandatoryMap;
@@ -484,10 +472,13 @@ class GlobalProvider with ChangeNotifier {
   }
 
   createLanguageCodeMapper() {
-    _languages = [];
+    if(_languageDataList.isEmpty) {
+      _languages = ["eng"];
+      _languageCodeMapper["eng"] = "English";
+      return;
+    }
     for (var element in _languageDataList) {
       _languageCodeMapper[element!.code] = element.name;
-      languages.add(element.code);
     }
   }
 
@@ -496,7 +487,7 @@ class GlobalProvider with ChangeNotifier {
 
   Locale get appLocal => _appLocale ?? const Locale("en");
 
-  String _selectedLanguage = "";
+  String _selectedLanguage = "eng";
   String get selectedLanguage => _selectedLanguage;
   set selectedLanguage(String value) {
     _selectedLanguage = value;
@@ -511,33 +502,6 @@ class GlobalProvider with ChangeNotifier {
     }
     _appLocale = Locale(prefs.getString('language_code')!);
     return null;
-  }
-
-  void changeLanguage(Locale code) async {
-    var prefs = await SharedPreferences.getInstance();
-
-    if (_appLocale == code) {
-      return;
-    }
-
-    if (code == const Locale("eng")) {
-      _appLocale = const Locale("en");
-      await prefs.setString('language_code', 'en');
-      await prefs.setString('countryCode', '');
-    } else if (code == const Locale("ara")) {
-      _appLocale = const Locale("ar");
-      await prefs.setString('language_code', 'ar');
-      await prefs.setString('countryCode', '');
-    } else if (code == const Locale("fra")) {
-      _appLocale = const Locale("fr");
-      await prefs.setString('language_code', 'fr');
-      await prefs.setString('countryCode', '');
-    } else {
-      _appLocale = const Locale("en");
-      await prefs.setString('language_code', 'en');
-      await prefs.setString('countryCode', '');
-    }
-    notifyListeners();
   }
 
   toggleLocale(String code) async {

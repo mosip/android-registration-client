@@ -60,7 +60,21 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    _initializeAppData();
     super.initState();
+  }
+
+  _initializeAppData() async {
+    await _initializeMachineData();
+    await _initializeAppLanguageData();
+  }
+
+  _initializeMachineData() async {
+    await context.read<GlobalProvider>().setMachineDetails();
+  }
+
+  _initializeAppLanguageData() async {
+    await context.read<GlobalProvider>().initializeLanguageDataList();
   }
 
   @override
@@ -71,13 +85,8 @@ class _LoginPageState extends State<LoginPage> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
 
-    return authProvider.isLoggedIn && !syncProvider.isGlobalSyncInProgress
-        ? Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
-          )
-        : SafeArea(
+    return
+      SafeArea(
             child: Scaffold(
               backgroundColor: AppStyle.appSolidPrimary,
               body: Stack(
@@ -340,9 +349,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () async {
-              await context.read<GlobalProvider>().fetchAllLanguages();
-            },
+            onTap: ()  {},
           ),
         ],
       ),
@@ -434,8 +441,7 @@ class _LoginPageState extends State<LoginPage> {
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
                   isDisabled: username.trim().isEmpty ||
-                      username.trim().length > 50 ||
-                      context.watch<GlobalProvider>().selectedLanguage.isEmpty,
+                      username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
                   mp: context.watch<GlobalProvider>().languageCodeMapper,
@@ -521,6 +527,10 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  _initializeLanguageData() async {
+    await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
   _autoSyncHandler() async {
     if (syncProvider.isGlobalSyncInProgress) {
       authProvider.setIsSyncing(false);
@@ -530,7 +540,8 @@ class _LoginPageState extends State<LoginPage> {
       });
       showSyncResultDialog();
     }
-
+    
+    await _initializeLanguageData();
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {
         RestartWidget.restartApp(context);

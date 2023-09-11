@@ -199,7 +199,7 @@ public class MainActivity extends FlutterActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // Set the alarm to trigger your PendingIntent after a certain interval
-        long delayMillis = 60000;  // Example delay of 60 seconds
+        long delayMillis = 3600000;  // Example delay of 60 seconds
         long triggerAtMillis = SystemClock.elapsedRealtime() + delayMillis;
         alarmManager.setRepeating(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,

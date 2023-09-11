@@ -42,19 +42,18 @@ class _HomePageState extends State<HomePage> {
   void syncData(BuildContext context) async {
     // await SyncProvider().autoSync(context);
     await _masterDataSync();
-    await _getNewProcessSpecAction(context);
-    await _getCenterNameAction(context);
-    await context.read<GlobalProvider>().initializeLanguageDataList();
+    await _getNewProcessSpecAction();
+    await _getCenterNameAction();
+    await _initializeLanguageDataList();
   }
 
   void _fetchProcessSpec() async {
-    await _getNewProcessSpecAction(context);
-    await _getCenterNameAction(context);
-    await _setLanguageConfigData();
+    await _getNewProcessSpecAction();
+    await _getCenterNameAction();
   }
-  
-  _setLanguageConfigData() async {
-    await context.read<GlobalProvider>().setLanguageConfigData();
+
+  _initializeLanguageDataList() async {
+    await context.read<GlobalProvider>().initializeLanguageDataList();
   }
 
   Future<void> _masterDataSync() async {
@@ -85,7 +84,7 @@ class _HomePageState extends State<HomePage> {
     return Container();
   }
 
-  _getNewProcessSpecAction(BuildContext context) async {
+  _getNewProcessSpecAction() async {
     await context.read<RegistrationTaskProvider>().getListOfProcesses();
   }
 
@@ -93,7 +92,7 @@ class _HomePageState extends State<HomePage> {
   //   await context.read<RegistrationTaskProvider>().getUISchema();
   // }
 
-  _getCenterNameAction(BuildContext context) async {
+  _getCenterNameAction() async {
     String regCenterId = context.read<GlobalProvider>().centerId;
 
     String langCode = context.read<GlobalProvider>().selectedLanguage;
