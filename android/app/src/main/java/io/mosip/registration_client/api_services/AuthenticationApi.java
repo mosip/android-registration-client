@@ -11,6 +11,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
@@ -154,6 +156,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Override
     public void login(@NonNull String username, @NonNull String password, @NonNull Boolean isConnected, @NonNull AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
+        auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
         if(!isConnected) {
             offlineLogin(username, password, result);
             return;

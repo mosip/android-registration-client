@@ -11,16 +11,19 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 
 @Singleton
 public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
     private final RegistrationService registrationService;
+    AuditManagerService auditManagerService;
 
     @Inject
-    public DocumentDetailsApi(RegistrationService registrationService) {
+    public DocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
         this.registrationService = registrationService;
+        this.auditManagerService = auditManagerService;
     }
 
 

@@ -11,11 +11,14 @@ import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.UserPigeon;
@@ -25,17 +28,20 @@ public class UserDetailsApi implements UserPigeon.UserApi {
     LoginService loginService;
     RegistrationCenterRepository registrationCenterRepository;
     MasterDataService masterDataService;
+    AuditManagerService auditManagerService;
 
     @Inject
     public UserDetailsApi(LoginService loginService, RegistrationCenterRepository registrationCenterRepository,
-                          MasterDataService masterDataService) {
+                          MasterDataService masterDataService, AuditManagerService auditManagerService) {
         this.loginService = loginService;
         this.registrationCenterRepository = registrationCenterRepository;
         this.masterDataService = masterDataService;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override
     public void validateUser(@NonNull String username, @NonNull String langCode, @NonNull UserPigeon.Result<UserPigeon.User> result) {
+        auditManagerService.audit(AuditEvent.NEXT_BUTTON_CLICKED, Components.REGISTRATION);
         if (username == null || username.trim().length() == 0) {
             UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
