@@ -34,11 +34,14 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -147,6 +150,9 @@ public class MainActivity extends FlutterActivity {
     @Inject
     MasterDataSyncApi masterDataSyncApi;
 
+    @Inject
+    SyncJobDefRepository syncJobDefRepository;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -215,7 +221,7 @@ public class MainActivity extends FlutterActivity {
             List<Registration> registrationList = packetService.getAllRegistrations(1,5);
             Log.e(getClass().getSimpleName(), "Registration : "+ registrationList);
 
-            registrationList = packetService.getRegistrationsByStatus("CREATED");
+            registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name());
             registrationList.forEach(value->{
                 try {
                     Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
@@ -225,7 +231,7 @@ public class MainActivity extends FlutterActivity {
                 }
             });
 
-            registrationList = packetService.getRegistrationsByStatus("SYNCED");
+            registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name());
             registrationList.forEach(value->{
                 try {
                     Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
@@ -235,6 +241,11 @@ public class MainActivity extends FlutterActivity {
                 }
             });
         }
+    }
+
+    private void getSyncJobs(){
+        List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
+        Log.e(getClass().getSimpleName(), syncJobs.toString());
     }
 
     public void initializeAppComponent() {
@@ -276,9 +287,8 @@ public class MainActivity extends FlutterActivity {
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
-
+                                    getSyncJobs();
                                     break;
-
                                 default:
                                     result.notImplemented();
                                     break;
