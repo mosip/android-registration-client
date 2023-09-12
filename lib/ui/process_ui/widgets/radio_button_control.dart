@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -17,7 +14,7 @@ class RadioButtonControl extends StatefulWidget {
 
   final Field field;
   @override
-  _RadioFormFieldState createState() => _RadioFormFieldState();
+  State<RadioButtonControl> createState() => _RadioFormFieldState();
 }
 
 class _RadioFormFieldState extends State<RadioButtonControl> {
@@ -161,7 +158,7 @@ class SelectableCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      color: groupValue == value ? solid_primary : Colors.white,
+      color: groupValue == value ? solidPrimary : Colors.white,
       elevation: 0,
       child: InkWell(
         onTap: () {
@@ -175,7 +172,7 @@ class SelectableCard extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: solid_primary,
+                color: solidPrimary,
                 width: 1,
               )),
           alignment: Alignment.center,

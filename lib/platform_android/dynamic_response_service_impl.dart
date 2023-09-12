@@ -65,6 +65,19 @@ class DynamicResponseServiceImpl implements DynamicResponseService {
     }
     return genericDataList;
   }
+  
+  @override
+  Future<List<LanguageData?>> fetchAllLanguages() async {
+    List<LanguageData?> languageList = [];
+    try {
+      languageList = await DynamicResponseApi().getAllLanguages();
+    } on PlatformException {
+      debugPrint('DynamicServiceResponseApi call failed!');
+    } catch (e) {
+      debugPrint('Language Values not fetched! ${e.toString()}');
+    }
+    return languageList;
+  }
 }
 
 DynamicResponseService getDynamicResponseServiceImpl() =>

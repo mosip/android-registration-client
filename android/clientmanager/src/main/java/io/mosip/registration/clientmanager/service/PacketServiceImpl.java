@@ -247,6 +247,11 @@ public class PacketServiceImpl implements PacketService {
     }
 
     @Override
+    public List<Registration> getRegistrationsByStatus(String status) {
+        return this.registrationRepository.getRegistrationsByStatus(status);
+    }
+
+    @Override
     public void syncAllPacketStatus() {
         List<Registration> registrations = this.registrationRepository.getAllRegistrations();
 

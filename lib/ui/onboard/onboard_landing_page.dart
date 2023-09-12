@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -122,7 +124,7 @@ class OnboardLandingPage extends StatelessWidget {
                                 .textTheme
                                 .titleLarge
                                 ?.copyWith(
-                                    color: pure_white, fontWeight: regular),
+                                    color: pureWhite, fontWeight: regular),
                             children: [
                           TextSpan(
                             text: context
@@ -137,7 +139,7 @@ class OnboardLandingPage extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
-                                ?.copyWith(color: pure_white, fontWeight: bold),
+                                ?.copyWith(color: pureWhite, fontWeight: bold),
                           )
                         ])),
                   ),
@@ -155,12 +157,12 @@ class OnboardLandingPage extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(16.w, 31.h, 0, 0),
                     child: ElevatedButton(
                       onPressed: () {
-                        print(MediaQuery.of(context).size.width);
+                        debugPrint(MediaQuery.of(context).size.width.toString());
                         context.read<GlobalProvider>().setCurrentIndex(1);
                       },
                       style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(pure_white)),
+                              MaterialStateProperty.all<Color>(pureWhite)),
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 18.h, horizontal: 44.w),

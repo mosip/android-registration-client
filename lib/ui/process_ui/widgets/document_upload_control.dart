@@ -1,10 +1,9 @@
-import 'dart:developer';
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/upload_document_data.dart';
 import 'package:registration_client/pigeon/document_pigeon.dart';
@@ -60,38 +59,44 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   List<String> poaList = [];
   List<Uint8List?> imageBytesList = []; // list of image bytes
 
-  void _getSavedDocument() async {
-    final listofscannedDoc = await context
-        .read<RegistrationTaskProvider>()
-        .getScannedDocument(widget.field.id!);
-    setState(() {
-      imageBytesList = listofscannedDoc;
-    });
-  }
-
-  Future<void> addDocument(String item, Field e) async {
-    final bytes = await getImageBytes(item);
-
-    print("The selected value for dropdown for ${e.id!} is ${selected}");
-    Uint8List myBytes = Uint8List.fromList(bytes);
+  _getAddDocumentProvider(Field e, Uint8List myBytes) {
     context
         .read<RegistrationTaskProvider>()
         .addDocument(e.id!, selected!, "reference", myBytes);
   }
 
+  Future<void> addDocument(String item, Field e) async {
+    final bytes = await getImageBytes(item);
+
+    debugPrint("The selected value for dropdown for ${e.id!} is $selected");
+    Uint8List myBytes = Uint8List.fromList(bytes);
+    // context
+    //     .read<RegistrationTaskProvider>()
+    //     .addDocument(e.id!, selected!, "reference", myBytes);
+    _getAddDocumentProvider(e, myBytes);
+  }
+
+  _setScannedPages(Field e, List<Uint8List?> listOfScannedDoc) {
+    context.read<GlobalProvider>().setScannedPages(e.id!, listOfScannedDoc);
+  }
+
+  _setValueInMap() {
+    context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
+  }
+
   Future<void> getScannedDocuments(Field e) async {
     try {
-      final listofscannedDoc = await DocumentApi().getScannedPages(e.id!);
-      context.read<GlobalProvider>().setScannedPages(e.id!, listofscannedDoc);
+      final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
+      _setScannedPages(e, listOfScannedDoc);
       setState(() {
-        imageBytesList = listofscannedDoc;
+        imageBytesList = listOfScannedDoc;
         doc.listofImages = imageBytesList;
       });
-      if (doc.title.isNotEmpty && doc.title != null) {
-        context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
+      if (doc.title.isNotEmpty) {
+        _setValueInMap();
       }
     } catch (e) {
-      print("Error while getting scanned pages ${e}");
+      debugPrint("Error while getting scanned pages $e");
     }
   }
 
@@ -123,25 +128,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  void _saveDataToMap(value) {
-    if (value != null) {
-      if (widget.field.type == 'simpleType') {
-        context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.field.id ?? "",
-              value!,
-              "eng",
-              context.read<GlobalProvider>().fieldInputValue,
-            );
-      } else {
-        context.read<GlobalProvider>().setInputMapValue(
-              widget.field.id ?? "",
-              value!,
-              context.read<GlobalProvider>().fieldInputValue,
-            );
-      }
-    }
-  }
-
   Future<List<String?>> _getDocumentValues(
       String fieldName, String langCode, String? applicantType) async {
     return await context
@@ -168,8 +154,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     //   height: 10,
                     // ),
                     FutureBuilder(
-                        future: _getDocumentValues(widget.field.subType!, "eng",
-                            null), //TODO: drive the applicant type
+                        future: _getDocumentValues(
+                            widget.field.subType!, "eng", null),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
@@ -259,13 +245,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        Scanner(title: "Scan Document")),
+                                        const Scanner(title: "Scan Document")),
                               );
 
                               await addDocument(doc, widget.field);
                               await getScannedDocuments(widget.field);
                             },
-                            child: Text(
+                            child: const Text(
                               "Scan",
                               style: TextStyle(fontSize: 16),
                             ),
@@ -277,13 +263,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       height: 10,
                     ),
                     imageBytesList.isNotEmpty
-                        ? Container(
+                        ? SizedBox(
                             height: 80,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
-                                  child: Container(
+                                  child: SizedBox(
                                     height: 70,
                                     width: 90,
                                     child: Image.memory(item!),
@@ -310,9 +296,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         Expanded(
                             child: FutureBuilder(
                                 future: _getDocumentValues(
-                                    widget.field.subType!,
-                                    "eng",
-                                    null), //TODO: drive the applicant type
+                                    widget.field.subType!, "eng", null),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
@@ -402,7 +386,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         const SizedBox(
                           width: 50,
                         ),
-                        Container(
+                        SizedBox(
                           width: 300,
                           child: Row(
                             children: [
@@ -412,15 +396,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     var doc = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              Scanner(title: "Scan Document")),
+                                          builder: (context) => const Scanner(
+                                              title: "Scan Document")),
                                     );
 
                                     await addDocument(doc, widget.field);
 
                                     await getScannedDocuments(widget.field);
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     "Scan",
                                     style: TextStyle(fontSize: 16),
                                   ),
@@ -435,13 +419,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       height: 10,
                     ),
                     imageBytesList.isNotEmpty
-                        ? Container(
+                        ? SizedBox(
                             height: 80,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
-                                  child: Container(
+                                  child: SizedBox(
                                     height: 70,
                                     width: 90,
                                     child: Image.memory(item!),

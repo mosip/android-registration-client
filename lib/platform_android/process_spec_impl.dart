@@ -43,6 +43,62 @@ class ProcessSpecImpl implements ProcessSpec {
     }
     return result;
   }
+  
+  @override
+  Future<List<String?>> getMandatoryLanguageCodes() async {
+    List<String?> mandatoryLanguageCodes;
+    try {
+      mandatoryLanguageCodes = await ProcessSpecApi().getMandatoryLanguageCodes();
+    } on PlatformException {
+      debugPrint("Process Spec Api failed!");
+      mandatoryLanguageCodes = List.empty();
+    }  catch (e) {
+      mandatoryLanguageCodes = List.empty();
+      debugPrint("Process spec fetch error: $e");
+    }
+    return mandatoryLanguageCodes;
+  }
+  
+  @override
+  Future<int> getMaxLanguageCount() async {
+    int maxLangCount = 0;
+    try {
+      maxLangCount = await ProcessSpecApi().getMaxLanguageCount();
+    } on PlatformException {
+      debugPrint("Process Spec Api failed!");
+    }  catch (e) {
+      debugPrint("Process spec fetch error: $e");
+    }
+    return maxLangCount;
+  }
+  
+  @override
+  Future<int> getMinLanguageCount() async {
+    int minLangCount = 0;
+    try {
+      minLangCount = await ProcessSpecApi().getMinLanguageCount();
+    } on PlatformException {
+      debugPrint("Process Spec Api failed!");
+    }  catch (e) {
+      debugPrint("Process spec fetch error: $e");
+    }
+    return minLangCount;
+  }
+  
+  @override
+  Future<List<String?>> getOptionalLanguageCodes() async {
+    List<String?> optionalLanguageCodes;
+    try {
+      optionalLanguageCodes = await ProcessSpecApi().getOptionalLanguageCodes();
+    } on PlatformException {
+      debugPrint("Process Spec Api failed!");
+      optionalLanguageCodes = List.empty();
+    }  catch (e) {
+      optionalLanguageCodes = List.empty();
+      debugPrint("Process spec fetch error: $e");
+    }
+    return optionalLanguageCodes;
+  }
 }
 
 ProcessSpec getProcessSpecImpl() => ProcessSpecImpl();

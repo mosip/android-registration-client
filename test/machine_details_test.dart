@@ -6,11 +6,11 @@ void main() {
   final machineDetails = MachineDetails();
 
   test("Copy Text", () {
-    expect(machineDetails.performAction("Copy Text"), MachineAction.copy_text.value);
+    expect(machineDetails.performAction("Copy Text"), MachineAction.copyText.value);
   });
 
   test("Download JSON", () {
-    expect(machineDetails.performAction("Download JSON"), MachineAction.download_json.value);
+    expect(machineDetails.performAction("Download JSON"), MachineAction.downloadJson.value);
   });
 
   test("Share JSON", () {

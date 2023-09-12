@@ -16,6 +16,7 @@ import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
@@ -781,4 +782,11 @@ public class MasterDataServiceImpl implements MasterDataService {
     public String getPreviewTemplateContent(String templateTypeCode, String langCode) {
         return templateRepository.getPreviewTemplate(templateTypeCode, langCode);
     }
+
+    @Override
+    public List<Language> getAllLanguages() {
+        return languageRepository.getAllLanguages();
+    }
+
+
 }

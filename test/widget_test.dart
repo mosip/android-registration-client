@@ -14,7 +14,6 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
-import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
@@ -25,7 +24,7 @@ Widget testableWidget({required Widget child}) {
     providers: [
       ChangeNotifierProvider(
         lazy: false,
-        create: (_) => AppLanguageProvider(),
+        create: (_) => GlobalProvider(),
       ),
       ChangeNotifierProvider(
         lazy: false,
@@ -60,7 +59,7 @@ class ParentWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Provider.of<AppLanguageProvider>(context).appLocal,
+      locale: Provider.of<GlobalProvider>(context).appLocal,
       home: Builder(builder: (BuildContext context) {
         return child;
       }),

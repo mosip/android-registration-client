@@ -47,6 +47,14 @@ public interface PacketService {
 
     /**
      *
+     * @param status
+     * @return
+     */
+
+    List<Registration> getRegistrationsByStatus(String status);
+
+    /**
+     *
      * @return
      */
     void syncAllPacketStatus();

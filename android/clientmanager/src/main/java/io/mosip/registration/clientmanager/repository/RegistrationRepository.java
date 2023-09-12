@@ -21,8 +21,13 @@ public class RegistrationRepository {
         this.objectMapper = objectMapper;
     }
 
+
     public List<Registration> getAllRegistrations() {
         return this.registrationDao.findAll();
+    }
+
+    public List<Registration> getRegistrationsByStatus(String status) {
+        return this.registrationDao.findRegistrationByStatus(status);
     }
 
     public Registration getRegistration(String packetId) {

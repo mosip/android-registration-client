@@ -22,154 +22,161 @@ abstract class AppStyle {
   static const Color authIconBorder = Color(0XFFE1EDF5);
   static const Color dividerColor = Color(0XFFE5EBFA);
 
-  static TextStyle mobileHelpText = TextStyle(
+  static TextStyle mobileHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
     color: appHelpText,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileHeaderText = TextStyle(
+  static TextStyle mobileHeaderText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 28,
     color: appBlackShade1,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileTextfieldHeader = TextStyle(
+  static TextStyle mobileTextfieldHeader = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
     color: appBlackShade1,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileDropdownText = TextStyle(
+  static TextStyle mobileDropdownText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 14,
     color: appBlackShade1,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileTextfieldHintText = TextStyle(
+  static TextStyle mobileTextfieldHintText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 14,
     color: appBlackShade3,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileButtonText = TextStyle(
+  static TextStyle mobileDropdownHintText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 15,
+    color: appBlackShade3,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle mobileButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 14,
     color: appWhite,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileWelcomeText = TextStyle(
+  static TextStyle mobileWelcomeText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 26,
     color: appWhite,
     letterSpacing: 0.5,
   );
   
-  static TextStyle mobileCommunityRegClientText = TextStyle(
+  static TextStyle mobileCommunityRegClientText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 26,
     color: appWhite,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileInfoText = TextStyle(
+  static TextStyle mobileInfoText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 16,
     color: appInfoText,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileForgotPasswordText = TextStyle(
+  static TextStyle mobileForgotPasswordText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
     color: appSolidPrimary,
     letterSpacing: 0.5,
   );
 
-  static TextStyle mobileBackButtonText = TextStyle(
+  static TextStyle mobileBackButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 14,
     color: appHelpText,
     letterSpacing: 0.5,
   );
 
-  static TextStyle tabletHelpText = TextStyle(
+  static TextStyle tabletHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
     color: appHelpText,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletHeaderText = TextStyle(
+  static TextStyle tabletHeaderText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 28,
     color: appBlackShade1,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletTextfieldHeader = TextStyle(
+  static TextStyle tabletTextfieldHeader = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
     color: appBlackShade1,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletDropdownText = TextStyle(
+  static TextStyle tabletDropdownText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 14,
     color: appBlackShade1,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletTextfieldHintText = TextStyle(
+  static TextStyle tabletTextfieldHintText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 14,
     color: appBlackShade3,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletButtonText = TextStyle(
+  static TextStyle tabletButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 14,
     color: appWhite,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletWelcomeText = TextStyle(
+  static TextStyle tabletWelcomeText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 26,
     color: appWhite,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletCommunityRegClientText = TextStyle(
+  static TextStyle tabletCommunityRegClientText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 26,
     color: appWhite,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletInfoText = TextStyle(
+  static TextStyle tabletInfoText = const TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 16,
     color: appInfoText,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletForgotPasswordText = TextStyle(
+  static TextStyle tabletForgotPasswordText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
     color: appSolidPrimary,
     letterSpacing: 0,
   );
 
-  static TextStyle tabletBackButtonText = TextStyle(
+  static TextStyle tabletBackButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 14,
     color: appHelpText,

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:registration_client/model/biometrics_dto.dart';
 
 class BiometricAttributeData {
@@ -12,6 +10,7 @@ class BiometricAttributeData {
   double qualityPercentage;
   List<BiometricsDto> listOfBiometricsDto;
   List<dynamic> listofImages;
+  int noOfCapturesAllowed;
   BiometricAttributeData({
     required this.title,
     required this.attemptNo,
@@ -22,5 +21,6 @@ class BiometricAttributeData {
     required this.listofImages,
     required this.listOfBiometricsDto,
     required this.thresholdPercentage,
+    required this.noOfCapturesAllowed,
   });
 }

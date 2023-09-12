@@ -1,3 +1,4 @@
+
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -5,23 +6,16 @@
 */
 
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+
 import 'package:registration_client/main.dart';
-import 'package:registration_client/pigeon/machine_pigeon.dart';
-import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_android/auth_impl.dart';
-import 'package:registration_client/platform_android/machine_key_impl.dart';
-import 'package:registration_client/platform_android/sync_response_impl.dart';
-import 'package:registration_client/platform_spi/machine_key.dart';
-import 'package:registration_client/provider/app_language_provider.dart';
+
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -58,9 +52,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  final List<String> _languages = ['eng', 'ara', 'fra'];
-
-  Map<String, String> mp = {};
   late AuthProvider authProvider;
   late SyncProvider syncProvider;
 
@@ -69,10 +60,21 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    _initializeAppData();
     super.initState();
-    mp['eng'] = "English";
-    mp['ara'] = "العربية";
-    mp['fra'] = "Français";
+  }
+
+  _initializeAppData() async {
+    await _initializeMachineData();
+    await _initializeAppLanguageData();
+  }
+
+  _initializeMachineData() async {
+    await context.read<GlobalProvider>().setMachineDetails();
+  }
+
+  _initializeAppLanguageData() async {
+    await context.read<GlobalProvider>().initializeLanguageDataList();
   }
 
   @override
@@ -83,13 +85,8 @@ class _LoginPageState extends State<LoginPage> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
 
-    return authProvider.isLoggedIn && !syncProvider.isGlobalSyncInProgress
-        ? Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
-          )
-        : SafeArea(
+    return
+      SafeArea(
             child: Scaffold(
               backgroundColor: AppStyle.appSolidPrimary,
               body: Stack(
@@ -99,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                     left: 16.w,
                     child: _getBuildingsImage(),
                   ),
-                  Container(
+                  SizedBox(
                     height: h,
                     width: w,
                     child: SingleChildScrollView(
@@ -140,6 +137,32 @@ class _LoginPageState extends State<LoginPage> {
           );
   }
 
+  _getIsValidUser() {
+    return context.read<AuthProvider>().isValidUser;
+  }
+
+  User _getCurrentUser() {
+    return context.read<AuthProvider>().currentUser;
+  }
+
+  _getIsLoggedIn() {
+    return context.read<AuthProvider>().isLoggedIn;
+  }
+
+  _setCenterAndName(User user) {
+    context.read<GlobalProvider>().setCenterId(user.centerId!);
+    context.read<GlobalProvider>().setName(user.name!);
+    context.read<GlobalProvider>().setCenterName(user.centerName!);
+  }
+  
+  _getUsernameIncorrectErrorText() {
+    return AppLocalizations.of(context)!.username_incorrect;
+  }
+
+  _getUserValidationSuccessText() {
+    return AppLocalizations.of(context)!.user_validated;
+  }
+
   _getUserValidation() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
@@ -150,19 +173,18 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    String langCode = context.read<AppLanguageProvider>().selectedLanguage;
+    String langCode = context.read<GlobalProvider>().selectedLanguage;
     await context.read<AuthProvider>().validateUser(username, langCode);
-    bool isValid = context.read<AuthProvider>().isValidUser;
+
+    bool isValid = _getIsValidUser();
     if (!isValid) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_incorrect);
+      _showInSnackBar(_getUsernameIncorrectErrorText());
       return;
     }
 
-    final user = context.read<AuthProvider>().currentUser;
-    context.read<GlobalProvider>().setCenterId(user.centerId!);
-    context.read<GlobalProvider>().setName(user.name!);
-    context.read<GlobalProvider>().setCenterName(user.centerName!);
-    _showInSnackBar(AppLocalizations.of(context)!.user_validated);
+    final User user = _getCurrentUser();
+    _setCenterAndName(user);
+    _showInSnackBar(_getUserValidationSuccessText());
   }
 
   void _onNextButtonPressed() async {
@@ -200,21 +222,19 @@ class _LoginPageState extends State<LoginPage> {
         .read<AuthProvider>()
         .authenticateUser(username, password, isConnected);
 
-    bool isTrue = context.read<AuthProvider>().isLoggedIn;
+    bool isTrue = _getIsLoggedIn();
     if (!isTrue) {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
       return;
     }
-    
+
     await syncProvider.getLastSyncTime();
     debugPrint(syncProvider.lastSuccessfulSyncTime);
     if (isTrue && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
       syncProvider.setIsGlobalSyncInProgress(true);
       await _autoSyncHandler();
-    } 
-    else
-     {
+    } else {
       authProvider.setIsSyncing(false);
       _navigateToHomePage();
     }
@@ -298,7 +318,7 @@ class _LoginPageState extends State<LoginPage> {
                 isMachineKeysDialogOpen = true;
               });
             },
-            child: Container(
+            child: SizedBox(
               height: isMobile ? 46.h : 54.h,
               child: Image.asset(
                 appIcon,
@@ -329,7 +349,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: ()  {},
           ),
         ],
       ),
@@ -410,11 +430,9 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 34.h,
           ),
-          Container(
-            child: Text(
-              AppLocalizations.of(context)!.login_text,
-              style: AppStyle.mobileHeaderText,
-            ),
+          Text(
+            AppLocalizations.of(context)!.login_text,
+            style: AppStyle.mobileHeaderText,
           ),
           SizedBox(
             height: context.watch<AuthProvider>().isValidUser ? 41.h : 38.h,
@@ -422,10 +440,11 @@ class _LoginPageState extends State<LoginPage> {
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
-                  isDisabled: username.isEmpty || username.length > 50,
-                  languages: _languages,
+                  isDisabled: username.trim().isEmpty ||
+                      username.trim().length > 50,
+                  languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
-                  mp: mp,
+                  mp: context.watch<GlobalProvider>().languageCodeMapper,
                   onChanged: (v) {
                     setState(() {
                       username = v;
@@ -498,7 +517,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _getBuildingsImage() {
-    return Container(
+    return SizedBox(
       height: isMobile ? (162.48).h : (293.48).h,
       width: isMobile ? (222.28).w : (400.28).w,
       child: Image.asset(
@@ -508,17 +527,21 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  _initializeLanguageData() async {
+    await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
   _autoSyncHandler() async {
-   
     if (syncProvider.isGlobalSyncInProgress) {
       authProvider.setIsSyncing(false);
       showLoadingDialog(context);
       await syncProvider.autoSync(context).then((value) {
         // syncProvider.setIsGlobalSyncInProgress(false);
       });
-      showSyncResultDialog(context);
+      showSyncResultDialog();
     }
-
+    
+    await _initializeLanguageData();
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {
         RestartWidget.restartApp(context);
@@ -528,7 +551,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  showSyncResultDialog(BuildContext context) {
+  showSyncResultDialog() {
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
@@ -541,7 +564,7 @@ class _LoginPageState extends State<LoginPage> {
               height: isMobile ? 125.h : 280.h,
               width: isMobile ? 125.w : 280.w,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15), color: pure_white),
+                  borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: Column(
@@ -611,7 +634,7 @@ class _LoginPageState extends State<LoginPage> {
               height: isMobile ? 125.h : 280.h,
               width: isMobile ? 125.w : 280.w,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15), color: pure_white),
+                  borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -628,10 +651,10 @@ class _LoginPageState extends State<LoginPage> {
                         scale: isMobile ? 1.4 : 2.8,
                         child: Center(
                           child: ColorfulCircularProgressIndicator(
-                            colors: app_colors,
+                            colors: appColors,
                             strokeWidth: 2.2,
                             duration: const Duration(milliseconds: 500),
-                            initialColor: app_colors[0],
+                            initialColor: appColors[0],
                           ),
                         ),
                       ),

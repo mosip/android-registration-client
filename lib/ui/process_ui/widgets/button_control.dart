@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -14,8 +13,8 @@ class ButtonControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: pure_white,
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+      color: pureWhite,
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
         child: Column(
@@ -29,9 +28,9 @@ class ButtonControl extends StatelessWidget {
                         .chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontSize: 14,
-                        color: black_shade_1,
+                        color: blackShade1,
                         fontWeight: semiBold),
-                    children: [
+                    children: const [
                       TextSpan(
                         text: " *",
                         style: TextStyle(color: Colors.red, fontSize: 14),
@@ -42,7 +41,7 @@ class ButtonControl extends StatelessWidget {
                     context.read<GlobalProvider>().chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontSize: 14,
-                        color: black_shade_1,
+                        color: blackShade1,
                         fontWeight: semiBold),
                   ),
             const SizedBox(
@@ -63,29 +62,33 @@ class ButtonControl extends StatelessWidget {
                         height: 20,
                         width: 20,
                         child: Checkbox(
-                          activeColor: solid_primary,
+                          activeColor: solidPrimary,
                           value: (context
                                   .watch<GlobalProvider>()
                                   .fieldInputValue
                                   .containsKey(field.id))
                               ? (context
-                                  .watch<GlobalProvider>()
-                                  .fieldInputValue[field.id]==context
-                          .read<GlobalProvider>()
-                          .fieldDisplayValues[field.id][i])?true:false
+                                          .watch<GlobalProvider>()
+                                          .fieldInputValue[field.id] ==
+                                      context
+                                          .read<GlobalProvider>()
+                                          .fieldDisplayValues[field.id][i])
+                                  ? true
+                                  : false
                               : false,
                           onChanged: (value) async {
                             context.read<GlobalProvider>().setInputMapValue(
                                 field.id!,
                                 context
-                          .read<GlobalProvider>()
-                          .fieldDisplayValues[field.id][i],
+                                    .read<GlobalProvider>()
+                                    .fieldDisplayValues[field.id][i],
                                 context.read<GlobalProvider>().fieldInputValue);
-                                
+
                             await DemographicsApi().addDemographicField(
-                                field.id!, context
-                          .read<GlobalProvider>()
-                          .fieldDisplayValues[field.id][i]);
+                                field.id!,
+                                context
+                                    .read<GlobalProvider>()
+                                    .fieldDisplayValues[field.id][i]);
                           },
                         ),
                       ),

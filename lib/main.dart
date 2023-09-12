@@ -1,14 +1,6 @@
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
-*/
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
-
-import 'package:registration_client/provider/app_language_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
@@ -22,10 +14,10 @@ import 'package:registration_client/utils/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final AppLanguageProvider appLanguage = AppLanguageProvider();
+  final GlobalProvider appLanguage = GlobalProvider();
   await appLanguage.fetchLocale();
   runApp(
-    RestartWidget(child: const RegistrationClientApp()),
+    const RestartWidget(child: RegistrationClientApp()),
   );
 }
 
@@ -36,10 +28,6 @@ class RegistrationClientApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => AppLanguageProvider(),
-        ),
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => ConnectivityProvider(),
@@ -77,10 +65,10 @@ class BuildApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Provider.of<AppLanguageProvider>(context).appLocal,
+      locale: Provider.of<GlobalProvider>(context).appLocal,
       theme: ThemeData(
-          colorScheme: ColorScheme.light(primary: solid_primary),
-          primaryColor: solid_primary,
+          colorScheme: ColorScheme.light(primary: solidPrimary),
+          primaryColor: solidPrimary,
           textTheme: const TextTheme(
             titleLarge: TextStyle(fontSize: 24),
             bodyLarge: TextStyle(fontSize: 18),
@@ -98,16 +86,16 @@ class BuildApp extends StatelessWidget {
           minTextAdapt: true,
           splitScreenMode: true,
         );
-        context.read<GlobalProvider>().setMachineDetails();
+
         return child!;
       },
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
 
 class RestartWidget extends StatefulWidget {
-  RestartWidget({required this.child});
+  const RestartWidget({super.key, required this.child});
 
   final Widget child;
 
@@ -116,7 +104,7 @@ class RestartWidget extends StatefulWidget {
   }
 
   @override
-  _RestartWidgetState createState() => _RestartWidgetState();
+  State<RestartWidget> createState() => _RestartWidgetState();
 }
 
 class _RestartWidgetState extends State<RestartWidget> {

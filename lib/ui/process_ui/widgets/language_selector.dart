@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/pigeon/process_spec_pigeon.dart';
-import 'package:registration_client/platform_spi/process_spec.dart';
+
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -20,30 +19,43 @@ class LanguageSelector extends StatefulWidget {
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
+  _getRegistrationError() {
+    return context.read<RegistrationTaskProvider>().registrationStartError;
+  }
+
+  _triggerNavigation() {
+    Navigator.pushNamed(context, NewProcess.routeName,
+        arguments: {"process": widget.newProcess});
+  }
+
+  _showInSnackBar(String value) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value),
+      ),
+    );
+  }
+
+  _navigateBack() {
+    Navigator.of(context).pop();
+  }
+
   _navigateToConsentPage() async {
     context.read<GlobalProvider>().getThresholdValues();
     context.read<GlobalProvider>().fieldDisplayValues = {};
-
     context.read<GlobalProvider>().fieldValues(widget.newProcess);
 
-    Navigator.of(context).pop();
     List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
       return context.read<GlobalProvider>().langToCode(e) as String;
     }).toList();
     // print(langList);
     await context.read<RegistrationTaskProvider>().startRegistration(langList);
-    String registrationStartError =
-        context.read<RegistrationTaskProvider>().registrationStartError;
-
+    String registrationStartError = _getRegistrationError();
+    _navigateBack();
     if (registrationStartError.isEmpty) {
-      Navigator.pushNamed(context, NewProcess.routeName,
-          arguments: {"process": widget.newProcess});
+      _triggerNavigation();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(registrationStartError),
-        ),
-      );
+      _showInSnackBar(registrationStartError);
     }
   }
 
@@ -93,33 +105,35 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                 width: 40,
                               ),
                               Checkbox(
-                                  value: e.value,
-                                  onChanged: e.key == "English"
-                                      ? null
-                                      : (bool? newValue) {
-                                          if (e.key != "English") {
-                                            context
+                                value: e.value,
+                                onChanged: context
+                                            .read<GlobalProvider>()
+                                            .mandatoryLanguageMap[e.key] ??
+                                        false
+                                    ? null
+                                    : (bool? newValue) {
+                                        if (!(context
                                                 .read<GlobalProvider>()
-                                                .addRemoveLang(
-                                                    e.key, newValue!);
-                                          }
-                                        },
-                                  fillColor:
-                                      MaterialStateProperty.resolveWith<Color>(
-                                          (Set<MaterialState> states) {
-                                    if (states
-                                        .contains(MaterialState.disabled)) {
-                                      return Colors.grey;
-                                    }
-                                    return solid_primary;
-                                  })),
+                                                .mandatoryLanguageMap[e.key] ??
+                                            false)) {
+                                          context
+                                              .read<GlobalProvider>()
+                                              .addRemoveLang(e.key, newValue!);
+                                        }
+                                      },
+                                activeColor: solidPrimary,
+                              ),
                               Text(
                                 e.key,
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleSmall
                                     ?.copyWith(
-                                        color: e.key == "English"
+                                        color: context
+                                                        .read<GlobalProvider>()
+                                                        .mandatoryLanguageMap[
+                                                    e.key] ??
+                                                false
                                             ? Colors.grey
                                             : const Color(0xff333333)),
                               )
@@ -140,33 +154,38 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                                   width: 40,
                                 ),
                                 Checkbox(
-                                    value: e.value,
-                                    onChanged: e.key == "English"
-                                        ? null
-                                        : (bool? newValue) {
-                                            if (e.key != "English") {
-                                              context
-                                                  .read<GlobalProvider>()
-                                                  .addRemoveLang(
-                                                      e.key, newValue!);
-                                            }
-                                          },
-                                    fillColor:
-                                        MaterialStateProperty.resolveWith<
-                                            Color>((Set<MaterialState> states) {
-                                      if (states
-                                          .contains(MaterialState.disabled)) {
-                                        return Colors.grey;
-                                      }
-                                      return solid_primary;
-                                    })),
+                                  value: e.value,
+                                  onChanged: context
+                                              .read<GlobalProvider>()
+                                              .mandatoryLanguageMap[e.key] ??
+                                          false
+                                      ? null
+                                      : (bool? newValue) {
+                                          if (!(context
+                                                      .read<GlobalProvider>()
+                                                      .mandatoryLanguageMap[
+                                                  e.key] ??
+                                              false)) {
+                                            context
+                                                .read<GlobalProvider>()
+                                                .addRemoveLang(
+                                                    e.key, newValue!);
+                                          }
+                                        },
+                                  activeColor: solidPrimary,
+                                ),
                                 Text(
                                   e.key,
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleSmall
                                       ?.copyWith(
-                                        color: e.key == "English"
+                                        color: context
+                                                    .read<GlobalProvider>()
+                                                    .langToCode(e.key) ==
+                                                context
+                                                    .read<GlobalProvider>()
+                                                    .selectedLanguage
                                             ? Colors.grey
                                             : AppStyle.appBlackShade1,
                                       ),

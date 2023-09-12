@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -25,11 +24,11 @@ class AgeDateControl extends StatefulWidget {
 }
 
 class _AgeDateControlState extends State<AgeDateControl> {
-  TextEditingController _dayController = TextEditingController();
+  TextEditingController dayController = TextEditingController();
 
-  TextEditingController _monthController = TextEditingController();
-  TextEditingController _yearController = TextEditingController();
-  TextEditingController _ageController = TextEditingController();
+  TextEditingController monthController = TextEditingController();
+  TextEditingController yearController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
 
   final dayFocus = FocusNode();
   final monthFocus = FocusNode();
@@ -43,9 +42,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   @override
   void dispose() {
-    _dayController.dispose();
-    _monthController.dispose();
-    _yearController.dispose();
+    dayController.dispose();
+    monthController.dispose();
+    yearController.dispose();
 
     dayFocus.dispose();
     monthFocus.dispose();
@@ -88,13 +87,13 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   _calculateAgeFromDOB() {
     DateTime date = DateTime.parse(
-        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}");
+        "${yearController.text}-${monthController.text.padLeft(2, '0')}-${dayController.text.padLeft(2, '0')}");
     DateTime currentDate = DateTime.now();
     if (date.compareTo(currentDate) < 0) {
-      _ageController.text =
+      ageController.text =
           calculateYearDifference(date, currentDate).abs().toString();
     } else {
-      _ageController.text = "";
+      ageController.text = "";
     }
   }
 
@@ -102,9 +101,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
     try {
       String targetDateString = widget.field.format ??
           "yyyy/MM/dd"
-              .replaceAll('dd', _dayController.text.padLeft(2, '0'))
-              .replaceAll('MM', _monthController.text.padLeft(2, '0'))
-              .replaceAll('yyyy', _yearController.text);
+              .replaceAll('dd', dayController.text.padLeft(2, '0'))
+              .replaceAll('MM', monthController.text.padLeft(2, '0'))
+              .replaceAll('yyyy', yearController.text);
 
       if (value == "") {
         return 'Empty';
@@ -121,7 +120,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   _invalidDateText() {
     DateTime date = DateTime.parse(
-        "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}");
+        "${yearController.text}-${monthController.text.padLeft(2, '0')}-${dayController.text.padLeft(2, '0')}");
     DateTime currentDate = DateTime.now();
     if (date.compareTo(currentDate) > 0) {
       return "Invalid date!";
@@ -132,16 +131,16 @@ class _AgeDateControlState extends State<AgeDateControl> {
   void saveData() {
     String targetDateString = widget.field.format ??
         "yyyy/MM/dd"
-            .replaceAll('dd', _dayController.text.padLeft(2, '0'))
-            .replaceAll('MM', _monthController.text.padLeft(2, '0'))
-            .replaceAll('yyyy', _yearController.text);
+            .replaceAll('dd', dayController.text.padLeft(2, '0'))
+            .replaceAll('MM', monthController.text.padLeft(2, '0'))
+            .replaceAll('yyyy', yearController.text);
 
     context.read<RegistrationTaskProvider>().setDateField(
           widget.field.id ?? "",
           widget.field.subType ?? "",
-          _dayController.text.padLeft(2, '0'),
-          _monthController.text.padLeft(2, '0'),
-          _yearController.text,
+          dayController.text.padLeft(2, '0'),
+          monthController.text.padLeft(2, '0'),
+          yearController.text,
         );
     context.read<GlobalProvider>().setInputMapValue(
           widget.field.id!,
@@ -163,12 +162,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
       String savedDate =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id];
       DateTime parsedDate = DateFormat(targetDateFormat).parse(savedDate);
-      _dayController.text = parsedDate.day.toString().padLeft(2, '0');
-      _monthController.text = parsedDate.month.toString().padLeft(2, '0');
-      _yearController.text = parsedDate.year.toString();
-      _ageController.text = calculateYearDifference(
+      dayController.text = parsedDate.day.toString().padLeft(2, '0');
+      monthController.text = parsedDate.month.toString().padLeft(2, '0');
+      yearController.text = parsedDate.year.toString();
+      ageController.text = calculateYearDifference(
               DateTime.parse(
-                  "${_yearController.text}-${_monthController.text.padLeft(2, '0')}-${_dayController.text.padLeft(2, '0')}"),
+                  "${yearController.text}-${monthController.text.padLeft(2, '0')}-${dayController.text.padLeft(2, '0')}"),
               DateTime.now())
           .abs()
           .toString();
@@ -179,9 +178,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
     int age = int.parse(value);
     DateTime currentDate = DateTime.now();
     DateTime calculatedDate = DateTime(currentDate.year - age, 1, 1);
-    _dayController.text = calculatedDate.day.toString().padLeft(2, '0');
-    _monthController.text = calculatedDate.month.toString().padLeft(2, '0');
-    _yearController.text = calculatedDate.year.toString();
+    dayController.text = calculatedDate.day.toString().padLeft(2, '0');
+    monthController.text = calculatedDate.month.toString().padLeft(2, '0');
+    yearController.text = calculatedDate.year.toString();
   }
 
   @override
@@ -217,11 +216,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         },
                         onChanged: (value) {
                           if (value.length == 2 &&
-                              _monthController.text.length == 2 &&
-                              _yearController.text.length == 4) {
+                              monthController.text.length == 2 &&
+                              yearController.text.length == 4) {
                             _calculateAgeFromDOB();
                           } else {
-                            _ageController.text = "";
+                            ageController.text = "";
                           }
                           if (value.length >= 2) {
                             focusNextField(dayFocus, monthFocus);
@@ -231,11 +230,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         maxLength: 2,
                         focusNode: dayFocus,
                         keyboardType: TextInputType.number,
-                        controller: _dayController,
+                        controller: dayController,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: TextStyle(
+                          hintStyle:const TextStyle(
                               color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'DD',
@@ -261,11 +260,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         },
                         onChanged: (value) {
                           if (value.length == 2 &&
-                              _monthController.text.length == 2 &&
-                              _yearController.text.length == 4) {
+                              monthController.text.length == 2 &&
+                              yearController.text.length == 4) {
                             _calculateAgeFromDOB();
                           } else {
-                            _ageController.text = "";
+                            ageController.text = "";
                           }
                           if (value.length >= 2) {
                             focusNextField(monthFocus, yearFocus);
@@ -275,11 +274,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         maxLength: 2,
                         focusNode: monthFocus,
                         keyboardType: TextInputType.number,
-                        controller: _monthController,
+                        controller: monthController,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: TextStyle(
+                          hintStyle:const TextStyle(
                               color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'MM',
@@ -303,11 +302,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         },
                         onChanged: (value) {
                           if (value.length == 4 &&
-                              _dayController.text.length == 2 &&
-                              _monthController.text.length == 2) {
+                              dayController.text.length == 2 &&
+                              monthController.text.length == 2) {
                             _calculateAgeFromDOB();
                           } else {
-                            _ageController.text = "";
+                            ageController.text = "";
                           }
                           saveData();
                         },
@@ -315,12 +314,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         maxLength: 4,
                         focusNode: yearFocus,
-                        controller: _yearController,
+                        controller: yearController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: TextStyle(
+                          hintStyle:const TextStyle(
                               color: AppStyle.appBlackShade3, fontSize: 14),
                           counterText: "",
                           hintText: 'YYYY',
@@ -338,22 +337,22 @@ class _AgeDateControlState extends State<AgeDateControl> {
                     Flexible(
                       child: TextFormField(
                         // readOnly: true,
-                        controller: _ageController,
+                        controller: ageController,
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
-                          if(value != "") {
+                          if (value != "") {
                             _getDateFromAge(value);
                             saveData();
                           } else {
-                            _dayController.text = "";
-                            _monthController.text = "";
-                            _yearController.text = "";
+                            dayController.text = "";
+                            monthController.text = "";
+                            yearController.text = "";
                           }
                         },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle: TextStyle(
+                          hintStyle:const TextStyle(
                               color: AppStyle.appBlackShade3, fontSize: 14),
                           hintText: 'Age',
                           border: OutlineInputBorder(

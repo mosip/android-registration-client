@@ -112,11 +112,11 @@ class _CustomDropDownState extends State<DropDownControl> {
           .fieldInputValue[widget.field.id ?? ""] as GenericData;
     }
     setState(() {
-      list.forEach((element) {
+      for (var element in list) {
         if (element!.name == response!.name) {
           selected = element;
         }
-      });
+      }
     });
   }
 
@@ -135,6 +135,13 @@ class _CustomDropDownState extends State<DropDownControl> {
             parentCode, hierarchyLevelName, langCode);
   }
 
+  _isFieldIdPresent() {
+    return context
+        .read<GlobalProvider>()
+        .fieldInputValue
+        .containsKey(widget.field.id ?? "");
+  }
+
   _getOptionsList() async {
     List<GenericData?> temp;
     if (index == 0) {
@@ -151,10 +158,7 @@ class _CustomDropDownState extends State<DropDownControl> {
     setState(() {
       list = temp;
     });
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey(widget.field.id ?? "")) {
+    if (_isFieldIdPresent()) {
       _getSelectedValueFromMap("eng", list);
     }
   }

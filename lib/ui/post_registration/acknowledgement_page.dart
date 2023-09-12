@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
-import 'package:registration_client/utils/file_storage.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
+import 'package:printing/printing.dart';
 
 class AcknowledgementPage extends StatefulWidget {
   const AcknowledgementPage({super.key});
@@ -21,6 +20,17 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  _printHtmlToPdf() async {
+    String htmlContent =
+        context.read<RegistrationTaskProvider>().previewTemplate;
+
+    await Printing.layoutPdf(
+    onLayout: (format) async => await Printing.convertHtml(
+          format: format,
+          html: htmlContent,
+        ));
   }
 
   @override
@@ -46,16 +56,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
               ),
               InkWell(
                 onTap: () {
-                  String htmlContent =
-                      context.read<RegistrationTaskProvider>().previewTemplate;
-                  String regId = context.read<GlobalProvider>().regId;
-                  FileStorage.htmlToPDF(htmlContent, regId).then((value) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(value),
-                      ),
-                    );
-                  });
+                  _printHtmlToPdf();
                 },
                 child: Container(
                   height: 42.h,

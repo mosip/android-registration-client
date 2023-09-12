@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -25,7 +25,7 @@ class CustomLabel extends StatelessWidget {
             width: 5,
           ),
           if (field.required! || field.requiredOn!.isNotEmpty)
-            Text(
+            const Text(
               "*",
               style: TextStyle(color: Colors.red, fontSize: 14),
             )

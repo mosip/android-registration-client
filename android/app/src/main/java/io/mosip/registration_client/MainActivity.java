@@ -7,13 +7,23 @@
 package io.mosip.registration_client;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -24,6 +34,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
+import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -135,9 +147,94 @@ public class MainActivity extends FlutterActivity {
     @Inject
     MasterDataSyncApi masterDataSyncApi;
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("BACKGROUND_TASK_COMPLETE")) {
+                fetchRegistrationPackets(context);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createBackgroundTask();
+        IntentFilter intentFilter = new IntentFilter("BACKGROUND_TASK_COMPLETE");
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the BroadcastReceiver when the activity is destroyed
+        unregisterReceiver(broadcastReceiver);
+        Intent serviceIntent = new Intent(this, MyBackgroundService.class);
+        stopService(serviceIntent);
+        Log.d(getClass().getSimpleName(),"Background Service Stopped");
+    }
+
+    void createBackgroundTask(){
+        Intent serviceIntent = new Intent(this, MyBackgroundService.class);
+
+        // Create a PendingIntent with the appropriate flags
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getForegroundService(
+                    this,
+                    0,  // Request code
+                    serviceIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+            );
+        } else {
+            pendingIntent = PendingIntent.getService(
+                    this,
+                    0,  // Request code
+                    serviceIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+        }
+
+        // Get an instance of AlarmManager
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        // Set the alarm to trigger your PendingIntent after a certain interval
+        long delayMillis = 3600000;  // Example delay of 60 seconds
+        long triggerAtMillis = SystemClock.elapsedRealtime() + delayMillis;
+        alarmManager.setRepeating(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                triggerAtMillis,
+                delayMillis,
+                pendingIntent
+        );
+    }
+
+    private void fetchRegistrationPackets(Context context) {
+        if(NetworkUtils.isNetworkConnected(context)){
+            Log.d(getClass().getSimpleName(), "Fetching Packets in main activity");
+            List<Registration> registrationList = packetService.getAllRegistrations(1,5);
+            Log.e(getClass().getSimpleName(), "Registration : "+ registrationList);
+
+            registrationList = packetService.getRegistrationsByStatus("CREATED");
+            registrationList.forEach(value->{
+                try {
+                    Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
+                    packetService.syncRegistration(value.getPacketId());
+                }catch (Exception e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+            });
+
+            registrationList = packetService.getRegistrationsByStatus("SYNCED");
+            registrationList.forEach(value->{
+                try {
+                    Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                    packetService.uploadRegistration(value.getPacketId());
+                }catch (Exception e){
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                }
+            });
+        }
     }
 
     public void initializeAppComponent() {
@@ -151,7 +248,6 @@ public class MainActivity extends FlutterActivity {
 
         appComponent.inject(this);
     }
-
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {

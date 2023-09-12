@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Scanner extends StatefulWidget {
   final String title;
@@ -17,7 +16,7 @@ class Scanner extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ScannerState createState() => _ScannerState();
+  State<Scanner> createState() => _ScannerState();
 }
 
 class _ScannerState extends State<Scanner> {
@@ -31,7 +30,7 @@ class _ScannerState extends State<Scanner> {
           ? AppBar(
               title: Text(
                 widget.title,
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -40,7 +39,7 @@ class _ScannerState extends State<Scanner> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.close,
                       color: Colors.black,
                     )),
@@ -76,33 +75,33 @@ class _ScannerState extends State<Scanner> {
     }
   }
 
-  Widget _imageCard() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: kIsWeb ? 24.0 : 16.0),
-            child: Container(
-              height: 600,
-              width: 400,
-              child: Card(
-                elevation: 4.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(kIsWeb ? 24.0 : 16.0),
-                  child: _image(),
-                ),
-              ),
-            ),
-          ),
-          //const SizedBox(height: 24.0),
-          //_menu(),
-        ],
-      ),
-    );
-  }
+  // Widget _imageCard() {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         Padding(
+  //           padding:
+  //               const EdgeInsets.symmetric(horizontal: kIsWeb ? 24.0 : 16.0),
+  //           child: SizedBox(
+  //             height: 600,
+  //             width: 400,
+  //             child: Card(
+  //               elevation: 4.0,
+  //               child: Padding(
+  //                 padding: const EdgeInsets.all(kIsWeb ? 24.0 : 16.0),
+  //                 child: _image(),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         //const SizedBox(height: 24.0),
+  //         //_menu(),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // Widget _image() {
   //   final screenWidth = MediaQuery.of(context).size.width;
@@ -192,7 +191,7 @@ class _ScannerState extends State<Scanner> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -201,7 +200,7 @@ class _ScannerState extends State<Scanner> {
                               child: const Text('Stream'),
                             ),
                           ),
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -215,7 +214,7 @@ class _ScannerState extends State<Scanner> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -224,7 +223,7 @@ class _ScannerState extends State<Scanner> {
                               child: const Text('Crop'),
                             ),
                           ),
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -245,12 +244,10 @@ class _ScannerState extends State<Scanner> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
+                    child: SizedBox(
                       height: 40,
                       child: ElevatedButton(
                         onPressed: () async {
-                          //await _saveImageToCache();
-                          // await _loadCachedImage();
                           if (_croppedFile != null) {
                             Navigator.pop(context, _croppedFile!.path);
                           } else {
@@ -328,7 +325,7 @@ class _ScannerState extends State<Scanner> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -337,7 +334,7 @@ class _ScannerState extends State<Scanner> {
                               child: const Text('Stream'),
                             ),
                           ),
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -351,7 +348,7 @@ class _ScannerState extends State<Scanner> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -360,7 +357,7 @@ class _ScannerState extends State<Scanner> {
                               child: const Text('Crop'),
                             ),
                           ),
-                          Container(
+                          SizedBox(
                             width: 160,
                             child: OutlinedButton(
                               onPressed: () {
@@ -381,7 +378,7 @@ class _ScannerState extends State<Scanner> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
+                    child: SizedBox(
                       height: 40,
                       child: ElevatedButton(
                         onPressed: () {
@@ -410,33 +407,33 @@ class _ScannerState extends State<Scanner> {
     }
   }
 
-  Widget _menu() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FloatingActionButton(
-          onPressed: () {
-            _clear();
-          },
-          backgroundColor: Colors.redAccent,
-          tooltip: 'Delete',
-          child: const Icon(Icons.delete),
-        ),
-        if (_croppedFile == null)
-          Padding(
-            padding: const EdgeInsets.only(left: 32.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                _cropImage();
-              },
-              backgroundColor: const Color(0xFFBC764A),
-              tooltip: 'Crop',
-              child: const Icon(Icons.crop),
-            ),
-          )
-      ],
-    );
-  }
+  // Widget _menu() {
+  //   return Row(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       FloatingActionButton(
+  //         onPressed: () {
+  //           _clear();
+  //         },
+  //         backgroundColor: Colors.redAccent,
+  //         tooltip: 'Delete',
+  //         child: const Icon(Icons.delete),
+  //       ),
+  //       if (_croppedFile == null)
+  //         Padding(
+  //           padding: const EdgeInsets.only(left: 32.0),
+  //           child: FloatingActionButton(
+  //             onPressed: () {
+  //               _cropImage();
+  //             },
+  //             backgroundColor: const Color(0xFFBC764A),
+  //             tooltip: 'Crop',
+  //             child: const Icon(Icons.crop),
+  //           ),
+  //         )
+  //     ],
+  //   );
+  // }
 
   Widget _uploaderCard() {
     return Center(
@@ -486,7 +483,7 @@ class _ScannerState extends State<Scanner> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 160,
                           child: OutlinedButton(
                             onPressed: () {
@@ -495,7 +492,7 @@ class _ScannerState extends State<Scanner> {
                             child: const Text('Stream'),
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 160,
                           child: OutlinedButton(
                             onPressed: () {
@@ -509,7 +506,7 @@ class _ScannerState extends State<Scanner> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 160,
                           child: OutlinedButton(
                             onPressed: () {
@@ -518,7 +515,7 @@ class _ScannerState extends State<Scanner> {
                             child: const Text('Crop'),
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 160,
                           child: OutlinedButton(
                             onPressed: () {
@@ -539,7 +536,7 @@ class _ScannerState extends State<Scanner> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
+                  child: SizedBox(
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () {
