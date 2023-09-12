@@ -12,9 +12,12 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.service.TemplateService;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.packetmanager.util.JsonUtils;
@@ -25,15 +28,19 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     private final RegistrationService registrationService;
     RegistrationDto registrationDto;
     TemplateService templateService;
+    AuditManagerService auditManagerService;
 
     @Inject
-    public RegistrationApi(RegistrationService registrationService, TemplateService templateService) {
+    public RegistrationApi(RegistrationService registrationService, TemplateService templateService,
+                           AuditManagerService auditManagerService) {
         this.registrationService = registrationService;
         this.templateService = templateService;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override
     public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<String> result) {
+        auditManagerService.audit(AuditEvent.REGISTRATION_START, Components.REGISTRATION);
         String response = "";
         try {
             this.registrationDto = registrationService.startRegistration(languages);
@@ -80,6 +87,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
             registrationService.submitRegistrationDto(makerName);
         } catch (Exception e) {
             errorCode = e.getMessage();
+            auditManagerService.audit(AuditEvent.CREATE_PACKET_FAILED, Components.REGISTRATION, errorCode);
             Log.e(getClass().getSimpleName(), "Failed on registration submission", e);
         }
         RegistrationDataPigeon.RegistrationSubmitResponse registrationSubmitResponse =

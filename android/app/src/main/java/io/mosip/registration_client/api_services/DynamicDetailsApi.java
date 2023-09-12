@@ -14,16 +14,19 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 
 @Singleton
 public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseApi {
     MasterDataService masterDataService;
+    AuditManagerService auditManagerService;
 
     @Inject
-    public DynamicDetailsApi(MasterDataService masterDataService) {
+    public DynamicDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService) {
         this.masterDataService = masterDataService;
+        this.auditManagerService = auditManagerService;
     }
 
 

@@ -52,6 +52,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -90,6 +91,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     SyncJobDefRepository syncJobDefRepository;
     LanguageRepository languageRepository;
     JobManagerService jobManagerService;
+    AuditManagerService auditManagerService;
     Context context;
 
     @Inject
@@ -101,7 +103,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              BlocklistedWordRepository blocklistedWordRepository,
                              SyncJobDefRepository syncJobDefRepository,
                              LanguageRepository languageRepository,
-                             JobManagerService jobManagerService) {
+                             JobManagerService jobManagerService,
+                             AuditManagerService auditManagerService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -121,6 +124,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.syncJobDefRepository = syncJobDefRepository;
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
+        this.auditManagerService = auditManagerService;
     }
 
 

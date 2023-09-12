@@ -7,6 +7,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/platform_spi/audit.dart';
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key.dart';
@@ -20,6 +21,7 @@ class GlobalProvider with ChangeNotifier {
   final PacketService packetService = PacketService();
   final DynamicResponseService dynamicResponseService =
       DynamicResponseService();
+  final Audit audit = Audit(); 
 
   //Variables
   int _currentIndex = 0;
@@ -516,5 +518,9 @@ class GlobalProvider with ChangeNotifier {
       _appLocale = Locale(localeCode);
     }
     notifyListeners();
+  }
+
+  getAudit() async {
+    await audit.performAudit();
   }
 }
