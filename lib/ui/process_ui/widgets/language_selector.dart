@@ -60,6 +60,16 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   }
 
   @override
+  void initState() {
+    _languageSelectorPageLoadedAudit();
+    super.initState();
+  }
+
+  _languageSelectorPageLoadedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-LOAD-006", "REG-MOD-103");
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return AlertDialog(

@@ -520,7 +520,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAudit() async {
-    await audit.performAudit();
+  getAudit(String id, String componentId) async {
+    await audit.performAudit(id, componentId);
   }
 }

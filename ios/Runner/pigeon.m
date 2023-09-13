@@ -40,9 +40,12 @@ void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
         binaryMessenger:binaryMessenger
         codec:AuditResponseApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(auditWithCompletion:)], @"AuditResponseApi api (%@) doesn't respond to @selector(auditWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(auditId:componentId:completion:)], @"AuditResponseApi api (%@) doesn't respond to @selector(auditId:componentId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api auditWithCompletion:^(FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSString *arg_id = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_componentId = GetNullableObjectAtIndex(args, 1);
+        [api auditId:arg_id componentId:arg_componentId completion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
         }];
       }];
