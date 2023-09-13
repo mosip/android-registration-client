@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 NSObject<FlutterMessageCodec> *AuditResponseApiGetCodec(void);
 
 @protocol AuditResponseApi
-- (void)auditWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)auditId:(NSString *)id componentId:(NSString *)componentId completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 extern void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuditResponseApi> *_Nullable api);

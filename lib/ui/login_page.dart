@@ -67,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
   _initializeAppData() async {
     await _initializeMachineData();
     await _initializeAppLanguageData();
+    await _loginPageLoadedAudit();
   }
 
   _initializeMachineData() async {
@@ -75,6 +76,14 @@ class _LoginPageState extends State<LoginPage> {
 
   _initializeAppLanguageData() async {
     await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
+  _loginPageLoadedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-LOAD-001", "REG-MOD-101");
+  }
+
+  _longPressLogoAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -314,6 +323,7 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           InkWell(
             onLongPress: () {
+              _longPressLogoAudit();
               setState(() {
                 isMachineKeysDialogOpen = true;
               });
@@ -349,7 +359,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: ()  {},
+            onTap: () async {},
           ),
         ],
       ),

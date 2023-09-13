@@ -29,6 +29,10 @@ class MachineKeys extends StatelessWidget {
   String machineDetails = '';
   bool isMobile = true;
   late BuildContext _context;
+  
+  _machineKeysLoadedAudit() async {
+    await _context.read<GlobalProvider>().getAudit("REG-LOAD-002", "REG-MOD-101");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,7 @@ class MachineKeys extends StatelessWidget {
     } else {
       machineDetails = jsonEncode(map).toString();
     }
-
+    _machineKeysLoadedAudit();
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Container(

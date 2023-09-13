@@ -50,10 +50,15 @@ class _HomePageState extends State<HomePage> {
   void _fetchProcessSpec() async {
     await _getNewProcessSpecAction();
     await _getCenterNameAction();
+    await _homePageLoadedAudit();
   }
 
   _initializeLanguageDataList() async {
     await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
+  _homePageLoadedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-LOAD-003", "REG-MOD-102");
   }
 
   Future<void> _masterDataSync() async {
@@ -66,8 +71,13 @@ class _HomePageState extends State<HomePage> {
     debugPrint(result);
   }
 
+  _newRegistrationClickedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-HOME-002", "REG-MOD-102");
+  }
+
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
+      _newRegistrationClickedAudit();
       context.read<GlobalProvider>().clearMap();
       context.read<GlobalProvider>().clearScannedPages();
       context.read<GlobalProvider>().newProcessTabIndex = 0;

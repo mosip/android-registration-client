@@ -50,8 +50,13 @@ class _NewProcessState extends State<NewProcess> {
   ];
 
   String username = '';
-
   String password = '';
+  
+  @override
+  void initState() {
+    _registrationScreenLoadedAudit();
+    super.initState();
+  }
 
   void _showInSnackBar(String value) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -174,6 +179,14 @@ class _NewProcessState extends State<NewProcess> {
     globalProvider.newProcessTabIndex = 0;
     globalProvider.htmlBoxTabIndex = 0;
     globalProvider.setRegId("");
+  }
+
+  _registrationScreenLoadedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-002", "REG-MOD-103");
+  }
+
+  _nextButtonClickedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-003", "REG-MOD-103");
   }
 
   @override
@@ -322,6 +335,7 @@ class _NewProcessState extends State<NewProcess> {
                 globalProvider.newProcessTabIndex + 1;
           }
         }
+        _nextButtonClickedAudit();
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {
           bool isPacketAuthenticated = await _authenticatePacket(context);
