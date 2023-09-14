@@ -8,10 +8,15 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class CheckboxControl extends StatelessWidget {
+class CheckboxControl extends StatefulWidget {
   const CheckboxControl({super.key, required this.field});
   final Field field;
 
+  @override
+  State<CheckboxControl> createState() => _CheckboxControlState();
+}
+
+class _CheckboxControlState extends State<CheckboxControl> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -30,32 +35,37 @@ class CheckboxControl extends StatelessWidget {
                     value: (context
                             .watch<GlobalProvider>()
                             .fieldInputValue
-                            .containsKey(field.id))
+                            .containsKey(widget.field.id))
                         ? context
                             .watch<GlobalProvider>()
-                            .fieldInputValue[field.id]
+                            .fieldInputValue[widget.field.id]
                         : false,
                     onChanged: (value) async {
-                      context.read<GlobalProvider>().setInputMapValue(
-                          field.id!,
+                      if(value == true) {
+                        context.read<GlobalProvider>().setInputMapValue(
+                          widget.field.id!,
                           value,
                           context.read<GlobalProvider>().fieldInputValue);
+                      } else {
+                        context.read<GlobalProvider>().fieldInputValue.remove(widget.field.id!);
+                        setState(() {});
+                      }
                       context
                           .read<RegistrationTaskProvider>()
                           .addConsentField(value != null && value ? 'Y' : 'N');
                       await DemographicsApi()
-                          .addDemographicField(field.id!, value!.toString());
+                          .addDemographicField(widget.field.id!, value!.toString());
                     })),
             const SizedBox(
               width: 8,
             ),
             Flexible(
-              child: (field.inputRequired!)
+              child: (widget.field.inputRequired!)
                   ? RichText(
                       text: TextSpan(
                       text: context
                           .read<GlobalProvider>()
-                          .chooseLanguage(field.label!),
+                          .chooseLanguage(widget.field.label!),
                       style: TextStyle(color: blackShade1),
                       children: const [
                         TextSpan(
@@ -67,7 +77,7 @@ class CheckboxControl extends StatelessWidget {
                   : Text(
                       context
                           .read<GlobalProvider>()
-                          .chooseLanguage(field.label!),
+                          .chooseLanguage(widget.field.label!),
                     ),
             ),
           ],
