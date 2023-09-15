@@ -24,6 +24,8 @@ import androidx.annotation.Nullable;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Inject;
 
@@ -35,7 +37,6 @@ import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
-import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
@@ -156,8 +157,11 @@ public class MainActivity extends FlutterActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("BACKGROUND_TASK_COMPLETE")) {
-                fetchRegistrationPackets(context);
+            if (intent.getAction().equals("REGISTRATION_PACKET_SYNC")) {
+                syncRegistrationPackets(context);
+            }
+            if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
+                uploadRegistrationPackets(context);
             }
         }
     };
@@ -165,76 +169,81 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createBackgroundTask();
-        IntentFilter intentFilter = new IntentFilter("BACKGROUND_TASK_COMPLETE");
-        registerReceiver(broadcastReceiver, intentFilter);
+
+        Intent serviceIntentSync = new Intent(this, SyncBackgroundService.class);
+        createBackgroundTask(serviceIntentSync, "registrationPacketSyncJob");
+        IntentFilter intentFilterSync = new IntentFilter("REGISTRATION_PACKET_SYNC");
+        registerReceiver(broadcastReceiver, intentFilterSync);
+
+        Intent serviceIntentUpload = new Intent(this, UploadBackgroundService.class);
+        createBackgroundTask(serviceIntentUpload, "registrationPacketUploadJob");
+        IntentFilter intentFilterUpload = new IntentFilter("REGISTRATION_PACKET_UPLOAD");
+        registerReceiver(broadcastReceiver, intentFilterUpload);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Unregister the BroadcastReceiver when the activity is destroyed
         unregisterReceiver(broadcastReceiver);
-        Intent serviceIntent = new Intent(this, MyBackgroundService.class);
-        stopService(serviceIntent);
-        Log.d(getClass().getSimpleName(),"Background Service Stopped");
     }
 
-    void createBackgroundTask(){
-        Intent serviceIntent = new Intent(this, MyBackgroundService.class);
-
-        // Create a PendingIntent with the appropriate flags
+    void createBackgroundTask(Intent intent, String api){
         PendingIntent pendingIntent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             pendingIntent = PendingIntent.getForegroundService(
                     this,
                     0,  // Request code
-                    serviceIntent,
+                    intent,
                     PendingIntent.FLAG_IMMUTABLE
             );
         } else {
             pendingIntent = PendingIntent.getService(
                     this,
                     0,  // Request code
-                    serviceIntent,
+                    intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
             );
         }
 
-        // Get an instance of AlarmManager
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        // Set the alarm to trigger your PendingIntent after a certain interval
-        long delayMillis = 3600000;  // Example delay of 60 seconds
-        long triggerAtMillis = SystemClock.elapsedRealtime() + delayMillis;
-        alarmManager.setRepeating(
-                AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                triggerAtMillis,
-                delayMillis,
-                pendingIntent
-        );
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            long alarmTime = getIntervalMillis(api);
+            long currentTime = System.currentTimeMillis();
+            long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
+            Log.d(getClass().getSimpleName(), String.valueOf(delay)+ " Next Execution");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+            }
+        }
     }
 
-    private void fetchRegistrationPackets(Context context) {
+    private void syncRegistrationPackets(Context context) {
         if(NetworkUtils.isNetworkConnected(context)){
-            Log.d(getClass().getSimpleName(), "Fetching Packets in main activity");
-            List<Registration> registrationList = packetService.getAllRegistrations(1,5);
-            Log.e(getClass().getSimpleName(), "Registration : "+ registrationList);
-
-            registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name());
+            Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
+            List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name());
             registrationList.forEach(value->{
                 try {
-                    Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
+                    Log.e(getClass().getSimpleName(), "Syncing " + value.getPacketId());
                     packetService.syncRegistration(value.getPacketId());
                 }catch (Exception e){
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             });
+        }
+    }
 
-            registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name());
+    private void uploadRegistrationPackets(Context context) {
+        if(NetworkUtils.isNetworkConnected(context)){
+            Log.d(getClass().getSimpleName(), "Upload Packets in main activity");
+            List<Registration>  registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name());
             registrationList.forEach(value->{
                 try {
-                    Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                    Log.e(getClass().getSimpleName(), "Uploading " + value.getPacketId());
                     packetService.uploadRegistration(value.getPacketId());
                 }catch (Exception e){
                     Log.e(getClass().getSimpleName(), e.getMessage());
@@ -243,9 +252,16 @@ public class MainActivity extends FlutterActivity {
         }
     }
 
-    private void getSyncJobs(){
+    private long getIntervalMillis(String api){
+        AtomicLong alarmTime = new AtomicLong(System.currentTimeMillis()+60000);
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
-        Log.e(getClass().getSimpleName(), syncJobs.toString());
+        syncJobs.forEach(value-> {
+            if(Objects.equals(value.getApiName(), api)){
+                Log.e(getClass().getSimpleName(), String.valueOf(value.getSyncFreq()) + " Cron Expression");
+                alarmTime.set(CronParserUtil.getNextExecutionTimeInMillis(String.valueOf(value.getSyncFreq())));
+            }
+        });
+        return alarmTime.get();
     }
 
     public void initializeAppComponent() {
@@ -287,7 +303,8 @@ public class MainActivity extends FlutterActivity {
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
-                                    getSyncJobs();
+                                    getIntervalMillis("registrationPacketSyncJob");
+                                    getIntervalMillis("registrationPacketUploadJob");
                                     break;
                                 default:
                                     result.notImplemented();

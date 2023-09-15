@@ -13,7 +13,8 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
-       <service android:name=".MyBackgroundService" />
+       <service android:name=".SyncBackgroundService" />
+       <service android:name=".UploadBackgroundService" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
