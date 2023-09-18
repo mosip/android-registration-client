@@ -17,7 +17,7 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
-import '../../../platform_spi/registration.dart';
+import '../../../platform_spi/registration_service.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -92,8 +92,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   evaluateMVEL(
       String fieldData, String? engine, String? expression, Field e) async {
-    final Registration registration = Registration();
-    registration.evaluateMVEL(fieldData, expression!).then((value) {
+    final RegistrationService registrationService = RegistrationService();
+    registrationService.evaluateMVEL(fieldData, expression!).then((value) {
       if (!value) {
         context.read<GlobalProvider>().removeFieldFromMap(
             e.id!, context.read<GlobalProvider>().fieldInputValue);

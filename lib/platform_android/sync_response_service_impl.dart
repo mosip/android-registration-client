@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
-import 'package:registration_client/platform_spi/sync_response.dart';
+import 'package:registration_client/platform_spi/sync_response_service.dart';
 
-class SyncResponseImpl implements SyncResponse {
+class SyncResponseServiceImpl implements SyncResponseService {
   @override
   Future<Sync> getPolicyKeySync() async {
     late Sync syncResponse;

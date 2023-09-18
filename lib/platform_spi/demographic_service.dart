@@ -1,6 +1,6 @@
-import 'package:registration_client/platform_android/demographics_impl.dart';
+import 'package:registration_client/platform_android/demographic_service_impl.dart';
 
-abstract class Demographics {
+abstract class DemographicService {
   Future<void> addDemographicField(String fieldId, String value);
   Future<String> getDemographicField(String fieldId);
 
@@ -16,5 +16,5 @@ abstract class Demographics {
 
   Future<void> setConsentField(String consentData);
 
-  factory Demographics() => getDemographicsImpl();
+  factory DemographicService() => getDemographicServiceImpl();
 }

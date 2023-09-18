@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 
-import 'package:registration_client/platform_android/sync_response_impl.dart';
+import 'package:registration_client/platform_android/sync_response_service_impl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SyncProvider with ChangeNotifier {
   String _lastSuccessfulSyncTime = "";
@@ -35,7 +35,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   getLastSyncTime() async {
-    SyncTime lastSyncTime = await SyncResponseImpl().getLastSyncTime();
+    SyncTime lastSyncTime = await SyncResponseServiceImpl().getLastSyncTime();
     setLastSuccessfulSyncTime(lastSyncTime.syncTime!);
     // print("Last Sync Time from GlobalParamRepository:" + lastSyncTime.syncTime!);
   }
@@ -61,8 +61,8 @@ class SyncProvider with ChangeNotifier {
 
 
   autoSync(BuildContext context) async {
-    await SyncResponseImpl().getLastSyncTime();
-    await SyncResponseImpl()
+    await SyncResponseServiceImpl().getLastSyncTime();
+    await SyncResponseServiceImpl()
         .getGlobalParamsSync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
@@ -74,7 +74,7 @@ class SyncProvider with ChangeNotifier {
         log(AppLocalizations.of(context)!.global_params_sync_failed);
       }
       notifyListeners();
-      await SyncResponseImpl()
+      await SyncResponseServiceImpl()
           .getMasterDataSync()
           .then((Sync getAutoSync) async {
         setCurrentProgressType(getAutoSync.syncType!);
@@ -87,7 +87,7 @@ class SyncProvider with ChangeNotifier {
           log(AppLocalizations.of(context)!.master_data_sync_failed);
         }
         notifyListeners();
-        await SyncResponseImpl()
+        await SyncResponseServiceImpl()
             .getUserDetailsSync()
             .then((Sync getAutoSync) async {
           setCurrentProgressType(getAutoSync.syncType!);
@@ -100,7 +100,7 @@ class SyncProvider with ChangeNotifier {
             log(AppLocalizations.of(context)!.user_details_sync_failed);
           }
           notifyListeners();
-          await SyncResponseImpl()
+          await SyncResponseServiceImpl()
               .getIDSchemaSync()
               .then((Sync getAutoSync) async {
             setCurrentProgressType(getAutoSync.syncType!);
@@ -112,7 +112,7 @@ class SyncProvider with ChangeNotifier {
               log(AppLocalizations.of(context)!.id_schema_sync_failed);
             }
             notifyListeners();
-            await SyncResponseImpl()
+            await SyncResponseServiceImpl()
                 .getPolicyKeySync()
                 .then((Sync getAutoSync) {
               setCurrentProgressType(getAutoSync.syncType!);

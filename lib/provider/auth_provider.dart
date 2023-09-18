@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
-import 'package:registration_client/platform_spi/auth.dart';
+import 'package:registration_client/platform_spi/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  final Auth auth = Auth();
+  final AuthService auth = AuthService();
   bool _isLoggedIn = false;
   bool _isSyncing = false;
   bool _isOnboarded = false;
