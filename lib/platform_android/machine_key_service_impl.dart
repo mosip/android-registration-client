@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/machine_pigeon.dart';
 
-import 'package:registration_client/platform_spi/machine_key.dart';
+import 'package:registration_client/platform_spi/machine_key_service.dart';
 
-class MachineKeyImpl implements MachineKey {
+class MachineKeyImpl implements MachineKeyService {
   @override
   Future<Machine> getMachineKeys() async {
     late Machine machine;
@@ -33,4 +33,4 @@ class MachineKeyImpl implements MachineKey {
   }
 }
 
-MachineKey getMachineKeyImpl() => MachineKeyImpl();
+MachineKeyService getMachineKeyServiceImpl() => MachineKeyImpl();
