@@ -10,6 +10,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/document_upload_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dynamic_dropdown_control.dart';
@@ -79,7 +80,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           validation: regexPattern,
         );
       case "date":
-        return TextBoxControl(validation: regexPattern, e: e);
+        return DateControl(
+          validation: regexPattern,
+          field: e,
+        );
       case "fileupload":
         return DocumentUploadControl(
           field: e,
