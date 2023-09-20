@@ -1,6 +1,6 @@
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 
-abstract class SyncResponse{
+abstract class SyncResponseService {
   Future<SyncTime> getLastSyncTime();
   Future<Sync> getPolicyKeySync();
   Future<Sync> getGlobalParamsSync();

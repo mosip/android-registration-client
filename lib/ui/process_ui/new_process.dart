@@ -10,7 +10,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
-import 'package:registration_client/platform_spi/registration.dart';
+import 'package:registration_client/platform_spi/registration_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -202,8 +202,8 @@ class _NewProcessState extends State<NewProcess> {
     int size = newProcess.screens!.length;
     evaluateMVEL(
         String fieldData, String? engine, String? expression, Field e) async {
-      final Registration registration = Registration();
-      bool required = await registration.evaluateMVEL(fieldData, expression!);
+      final RegistrationService registrationService = RegistrationService();
+      bool required = await registrationService.evaluateMVEL(fieldData, expression!);
       return required;
     }
 

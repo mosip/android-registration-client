@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
-import 'package:registration_client/platform_spi/demographics.dart';
+import 'package:registration_client/platform_spi/demographic_service.dart';
 
-class DemographicsImpl implements Demographics {
+class DemographicServiceImpl implements DemographicService {
   @override
   Future<void> addDemographicField(String fieldId, String value) async {
     try {
@@ -91,4 +91,4 @@ class DemographicsImpl implements Demographics {
   }
 }
 
-Demographics getDemographicsImpl() => DemographicsImpl();
+DemographicService getDemographicServiceImpl() => DemographicServiceImpl();
