@@ -35,7 +35,11 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
 
     @Override
     public void removeDocument(@NonNull String fieldId, @NonNull Long pageIndex, @NonNull DocumentDataPigeon.Result<Void> result) {
-
+        try {
+            this.registrationService.getRegistrationDto().removeDocument(fieldId, pageIndex.intValue());
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Remove Document failed!" + Arrays.toString(e.getStackTrace()));
+        }
     }
 
     @Override
