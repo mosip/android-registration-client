@@ -26,8 +26,8 @@ public class RegistrationRepository {
         return this.registrationDao.findAll();
     }
 
-    public List<Registration> getRegistrationsByStatus(String status) {
-        return this.registrationDao.findRegistrationByStatus(status);
+    public List<Registration> getRegistrationsByStatus(String status, Integer batchSize) {
+        return this.registrationDao.findRegistrationByStatus(status, batchSize);
     }
 
     public Registration getRegistration(String packetId) {
