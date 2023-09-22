@@ -277,6 +277,14 @@ class _LoginPageState extends State<LoginPage> {
         snackbarText = AppLocalizations.of(context)!.cred_expired;
         break;
 
+      case "REG_MACHINE_INACTIVE":
+        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        break;
+
+      case "REG_CENTER_INACTIVE":
+        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        break;
+
       case "":
         return;
 
