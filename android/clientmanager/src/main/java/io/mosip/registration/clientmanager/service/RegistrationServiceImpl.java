@@ -399,7 +399,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         if(biometricsDto == null)
             return null;
 
-        SingleType singleType = SingleType.valueOf(biometricsDto.getModality());
+        SingleType singleType = SingleType.fromValue(biometricsDto.getModality());
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
         RegistryIDType birFormat = new RegistryIDType();

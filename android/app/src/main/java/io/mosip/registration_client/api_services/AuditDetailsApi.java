@@ -41,7 +41,6 @@ public class AuditDetailsApi implements AuditResponsePigeon.AuditResponseApi {
         Arrays.stream(Components.values()).forEach((component) -> {
             if(Objects.equals(component.getId(), componentId)) {
                 auditManagerService.audit(auditEvent, component);
-                return;
             }
         });
     }
