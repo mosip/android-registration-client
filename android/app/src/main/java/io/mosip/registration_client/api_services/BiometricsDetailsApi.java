@@ -378,23 +378,31 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                List<BiometricsDto> temp= registrationDto.getBestBiometrics(fieldId,modality);
                biometricsDtoList.addAll(temp);
             }
+            System.out.println(biometricsDtoList);
             Map<String,Boolean> dataContext=new HashMap<String,Boolean>();
             Pattern REGEX_PATTERN =
                     Pattern.compile("[a-zA-Z]+");
+
             Matcher matcher=REGEX_PATTERN.matcher(expression);
 
             while (matcher.find()) {
                 dataContext.put(matcher.group(),false);
+
+
                 for (BiometricsDto dto:biometricsDtoList
                      ) {
+
                     if(dto.getBioSubType()!=null){
                         if(customMatcher(dto.getBioSubType(),matcher.group())){
+
                             dataContext.put(matcher.group(),true);
                             break;
                         }
                     }
                     else{
-                        if(dto.getModality().matches(matcher.group().toUpperCase())){
+
+                        if(dto.getModality().toUpperCase().matches(matcher.group().toUpperCase())){
+
                             dataContext.put(matcher.group(),true);
                             break;
                         }
