@@ -475,6 +475,7 @@ class _LoginPageState extends State<LoginPage> {
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onLoginButtonPressed,
                   onTapBack: () {
+                    password="";
                     FocusManager.instance.primaryFocus?.unfocus();
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
