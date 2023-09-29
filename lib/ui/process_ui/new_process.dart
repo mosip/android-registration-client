@@ -51,7 +51,7 @@ class _NewProcessState extends State<NewProcess> {
 
   String username = '';
   String password = '';
-  
+
   @override
   void initState() {
     _registrationScreenLoadedAudit();
@@ -67,8 +67,8 @@ class _NewProcessState extends State<NewProcess> {
   }
 
   _submitRegistration() async {
-    RegistrationSubmitResponse registrationSubmitResponse = await registrationTaskProvider
-        .submitRegistrationDto(username);
+    RegistrationSubmitResponse registrationSubmitResponse =
+        await registrationTaskProvider.submitRegistrationDto(username);
 
     return registrationSubmitResponse;
   }
@@ -203,7 +203,8 @@ class _NewProcessState extends State<NewProcess> {
     evaluateMVEL(
         String fieldData, String? engine, String? expression, Field e) async {
       final RegistrationService registrationService = RegistrationService();
-      bool required = await registrationService.evaluateMVEL(fieldData, expression!);
+      bool required =
+          await registrationService.evaluateMVEL(fieldData, expression!);
       return required;
     }
 
@@ -374,13 +375,11 @@ class _NewProcessState extends State<NewProcess> {
         height: 84.h,
         child: isMobile
             ? ElevatedButton(
-                child: Text(
-                    globalProvider.newProcessTabIndex <= size
-                        ? "CONTINUE"
-                        : globalProvider.newProcessTabIndex ==
-                                size + 1
-                            ? "AUTHENTICATE"
-                            : "COMPLETE"),
+                child: Text(globalProvider.newProcessTabIndex <= size
+                    ? "CONTINUE"
+                    : globalProvider.newProcessTabIndex == size + 1
+                        ? "AUTHENTICATE"
+                        : "COMPLETE"),
                 onPressed: () {
                   continueButtonTap(context, size, newProcess);
                 },
@@ -391,8 +390,7 @@ class _NewProcessState extends State<NewProcess> {
                   globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
                           onPressed: () {
-                            globalProvider.syncPacket(
-                                globalProvider.regId);
+                            globalProvider.syncPacket(globalProvider.regId);
                           },
                           child: const Text("Sync Packet"))
                       : const SizedBox.shrink(),
@@ -402,8 +400,7 @@ class _NewProcessState extends State<NewProcess> {
                   globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
                           onPressed: () {
-                            globalProvider.uploadPacket(
-                                globalProvider.regId);
+                            globalProvider.uploadPacket(globalProvider.regId);
                           },
                           child: const Text("Upload Packet"))
                       : const SizedBox.shrink(),
@@ -420,15 +417,13 @@ class _NewProcessState extends State<NewProcess> {
                     onPressed: () {
                       continueButtonTap(context, size, newProcess);
                     },
-                    child: Text(context
-                                .read<GlobalProvider>()
-                                .newProcessTabIndex <=
-                            size
-                        ? "CONTINUE"
-                        : globalProvider.newProcessTabIndex ==
-                                size + 1
-                            ? "AUTHENTICATE"
-                            : "COMPLETE"),
+                    child: Text(
+                        context.read<GlobalProvider>().newProcessTabIndex <=
+                                size
+                            ? "CONTINUE"
+                            : globalProvider.newProcessTabIndex == size + 1
+                                ? "AUTHENTICATE"
+                                : "COMPLETE"),
                   ),
                 ],
               ),
