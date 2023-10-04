@@ -54,7 +54,7 @@ class TabletHeader extends StatelessWidget {
             ),
             Icon(
               Icons.circle,
-              color: context.watch<ConnectivityProvider>().isConnected
+              color: context.watch<ConnectivityProvider>().vpnConnection
                   ? const Color(0xff1A9B42)
                   : Colors.grey,
               size: 12,
