@@ -243,6 +243,7 @@ class _LoginPageState extends State<LoginPage> {
     log("isCon: $isConnected");
     await _authenticateUser(isConnected);
 
+
     bool isTrue = _getIsLoggedIn();
     if (!isTrue) {
       authProvider.setIsSyncing(false);
