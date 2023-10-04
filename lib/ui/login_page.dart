@@ -278,11 +278,11 @@ class _LoginPageState extends State<LoginPage> {
         break;
 
       case "REG_MACHINE_INACTIVE":
-        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        snackbarText = AppLocalizations.of(context)!.machine_inactive;
         break;
 
       case "REG_CENTER_INACTIVE":
-        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        snackbarText = AppLocalizations.of(context)!.center_inactive;
         break;
 
       case "":

@@ -66,9 +66,11 @@ public class UserDetailsApi implements UserPigeon.UserApi {
         boolean machineStatus = true;
         String centerId = "";
         String centerName = "";
+        String machineCenterId = "";
         if(centerMachineDto != null) {
             centerStatus = centerMachineDto.getCenterStatus();
             machineStatus = centerMachineDto.getMachineStatus();
+            machineCenterId = centerMachineDto.getCenterId();
         }
         if (userDetail == null) {
             UserPigeon.User user = new UserPigeon.User.Builder()
@@ -82,6 +84,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .setFailedAttempts("0")
                     .setCenterStatus(centerStatus)
                     .setMachineStatus(machineStatus)
+                    .setMachineCenterId(machineCenterId)
                     .build();
             result.success(user);
         } else {
@@ -97,6 +100,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .setCenterName(centerName)
                     .setCenterStatus(centerStatus)
                     .setMachineStatus(machineStatus)
+                    .setMachineCenterId(machineCenterId)
                     .build();
             result.success(user);
         }
