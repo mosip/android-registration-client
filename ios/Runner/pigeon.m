@@ -26,27 +26,121 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-NSObject<FlutterMessageCodec> *AuditResponseApiGetCodec(void) {
+@interface AuthResponse ()
++ (AuthResponse *)fromList:(NSArray *)list;
++ (nullable AuthResponse *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@implementation AuthResponse
++ (instancetype)makeWithResponse:(NSString *)response
+    username:(NSString *)username
+    isOfficer:(NSNumber *)isOfficer
+    isDefault:(NSNumber *)isDefault
+    isSupervisor:(NSNumber *)isSupervisor
+    errorCode:(nullable NSString *)errorCode {
+  AuthResponse* pigeonResult = [[AuthResponse alloc] init];
+  pigeonResult.response = response;
+  pigeonResult.username = username;
+  pigeonResult.isOfficer = isOfficer;
+  pigeonResult.isDefault = isDefault;
+  pigeonResult.isSupervisor = isSupervisor;
+  pigeonResult.errorCode = errorCode;
+  return pigeonResult;
+}
++ (AuthResponse *)fromList:(NSArray *)list {
+  AuthResponse *pigeonResult = [[AuthResponse alloc] init];
+  pigeonResult.response = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.response != nil, @"");
+  pigeonResult.username = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.username != nil, @"");
+  pigeonResult.isOfficer = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.isOfficer != nil, @"");
+  pigeonResult.isDefault = GetNullableObjectAtIndex(list, 3);
+  NSAssert(pigeonResult.isDefault != nil, @"");
+  pigeonResult.isSupervisor = GetNullableObjectAtIndex(list, 4);
+  NSAssert(pigeonResult.isSupervisor != nil, @"");
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 5);
+  return pigeonResult;
+}
++ (nullable AuthResponse *)nullableFromList:(NSArray *)list {
+  return (list) ? [AuthResponse fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.response ?: [NSNull null]),
+    (self.username ?: [NSNull null]),
+    (self.isOfficer ?: [NSNull null]),
+    (self.isDefault ?: [NSNull null]),
+    (self.isSupervisor ?: [NSNull null]),
+    (self.errorCode ?: [NSNull null]),
+  ];
+}
+@end
+
+@interface AuthResponseApiCodecReader : FlutterStandardReader
+@end
+@implementation AuthResponseApiCodecReader
+- (nullable id)readValueOfType:(UInt8)type {
+  switch (type) {
+    case 128: 
+      return [AuthResponse fromList:[self readValue]];
+    default:
+      return [super readValueOfType:type];
+  }
+}
+@end
+
+@interface AuthResponseApiCodecWriter : FlutterStandardWriter
+@end
+@implementation AuthResponseApiCodecWriter
+- (void)writeValue:(id)value {
+  if ([value isKindOfClass:[AuthResponse class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else {
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface AuthResponseApiCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation AuthResponseApiCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[AuthResponseApiCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[AuthResponseApiCodecReader alloc] initWithData:data];
+}
+@end
+
+NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    AuthResponseApiCodecReaderWriter *readerWriter = [[AuthResponseApiCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
   return sSharedObject;
 }
 
-void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuditResponseApi> *api) {
+void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.AuditResponseApi.audit"
+        initWithName:@"dev.flutter.pigeon.registration_client.AuthResponseApi.login"
         binaryMessenger:binaryMessenger
-        codec:AuditResponseApiGetCodec()];
+        codec:AuthResponseApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(auditId:componentId:completion:)], @"AuditResponseApi api (%@) doesn't respond to @selector(auditId:componentId:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(loginUsername:password:isConnected:completion:)], @"AuthResponseApi api (%@) doesn't respond to @selector(loginUsername:password:isConnected:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_componentId = GetNullableObjectAtIndex(args, 1);
-        [api auditId:arg_id componentId:arg_componentId completion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
+        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_password = GetNullableObjectAtIndex(args, 1);
+        NSNumber *arg_isConnected = GetNullableObjectAtIndex(args, 2);
+        [api loginUsername:arg_username password:arg_password isConnected:arg_isConnected completion:^(AuthResponse *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
         }];
       }];
     } else {

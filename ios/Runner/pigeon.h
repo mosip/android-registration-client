@@ -10,14 +10,32 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class AuthResponse;
 
-/// The codec used by AuditResponseApi.
-NSObject<FlutterMessageCodec> *AuditResponseApiGetCodec(void);
-
-@protocol AuditResponseApi
-- (void)auditId:(NSString *)id componentId:(NSString *)componentId completion:(void (^)(FlutterError *_Nullable))completion;
+@interface AuthResponse : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithResponse:(NSString *)response
+    username:(NSString *)username
+    isOfficer:(NSNumber *)isOfficer
+    isDefault:(NSNumber *)isDefault
+    isSupervisor:(NSNumber *)isSupervisor
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy) NSString * response;
+@property(nonatomic, copy) NSString * username;
+@property(nonatomic, strong) NSNumber * isOfficer;
+@property(nonatomic, strong) NSNumber * isDefault;
+@property(nonatomic, strong) NSNumber * isSupervisor;
+@property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-extern void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuditResponseApi> *_Nullable api);
+/// The codec used by AuthResponseApi.
+NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void);
+
+@protocol AuthResponseApi
+- (void)loginUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(AuthResponse *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
