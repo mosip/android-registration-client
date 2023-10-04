@@ -15,6 +15,7 @@ class User {
   final String? errorCode;
   final bool? machineStatus;
   final bool? centerStatus;
+  final String? machineCenterId;
 
   User({
     required this.userId,
@@ -29,8 +30,9 @@ class User {
     this.machineId,
     this.failedAttempts,
     this.errorCode,
-    this.machineStatus, 
+    this.machineStatus,
     this.centerStatus,
+    this.machineCenterId,
   });
 }
 
