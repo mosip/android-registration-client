@@ -90,7 +90,7 @@ class _NewProcessState extends State<NewProcess> {
       return false;
     }
 
-    bool isConnected = context.read<ConnectivityProvider>().isConnected;
+    bool isConnected = context.read<ConnectivityProvider>().vpnConnection;
     await context
         .read<AuthProvider>()
         .authenticatePacket(username, password, isConnected);
