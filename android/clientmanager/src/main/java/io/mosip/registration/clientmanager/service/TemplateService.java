@@ -158,16 +158,34 @@ public class TemplateService {
             List<BiometricsDto> leftHandFingersDtoList = capturedFingers.stream().filter(b -> leftFingers.contains(Modality.getBioAttribute(b.getBioSubType()))).collect(Collectors.toList());
             if(!leftHandFingersDtoList.isEmpty()) {
                 setFingerRankings(leftHandFingersDtoList, leftFingers, bioData);
-                BiometricsDto lLittleFinger = leftHandFingersDtoList.stream().filter(dto -> "Left LittleFinger".equals(dto.getBioSubType())).findFirst().get();
-                BiometricsDto lRingFinger = leftHandFingersDtoList.stream().filter(dto -> "Left RingFinger".equals(dto.getBioSubType())).findFirst().get();
-                BiometricsDto lMiddleFinger = leftHandFingersDtoList.stream().filter(dto -> "Left MiddleFinger".equals(dto.getBioSubType())).findFirst().get();
-                BiometricsDto lIndexFinger = leftHandFingersDtoList.stream().filter(dto -> "Left IndexFinger".equals(dto.getBioSubType())).findFirst().get();
+                List<Bitmap> images  = new ArrayList<>();
+                BiometricsDto lLittleFinger;
+                BiometricsDto lRingFinger;
+                BiometricsDto lMiddleFinger;
+                BiometricsDto lIndexFinger;
+                result = leftHandFingersDtoList.stream().filter(dto -> "Left LittleFinger".equals(dto.getBioSubType())).findFirst();
+                if(result.isPresent()) {
+                    lLittleFinger = result.get();
+                    images.add(UserInterfaceHelperService.getFingerBitMap(lLittleFinger));
+                }
 
-                Bitmap leftHandBitmaps = UserInterfaceHelperService.combineBitmaps(Arrays.asList(
-                        UserInterfaceHelperService.getFingerBitMap(lLittleFinger),
-                        UserInterfaceHelperService.getFingerBitMap(lRingFinger),
-                        UserInterfaceHelperService.getFingerBitMap(lMiddleFinger),
-                        UserInterfaceHelperService.getFingerBitMap(lIndexFinger)), missingImage);
+                result = leftHandFingersDtoList.stream().filter(dto -> "Left RingFinger".equals(dto.getBioSubType())).findFirst();
+                if(result.isPresent()) {
+                    lRingFinger = result.get();
+                    images.add(UserInterfaceHelperService.getFingerBitMap(lRingFinger));
+                }
+                result = leftHandFingersDtoList.stream().filter(dto -> "Left MiddleFinger".equals(dto.getBioSubType())).findFirst();
+                if(result.isPresent()) {
+                    lMiddleFinger = result.get();
+                    images.add(UserInterfaceHelperService.getFingerBitMap(lMiddleFinger));
+                }
+                result = leftHandFingersDtoList.stream().filter(dto -> "Left IndexFinger".equals(dto.getBioSubType())).findFirst();
+                if(result.isPresent()) {
+                    lIndexFinger = result.get();
+                    images.add(UserInterfaceHelperService.getFingerBitMap(lIndexFinger));
+                }
+                
+                Bitmap leftHandBitmaps = UserInterfaceHelperService.combineBitmaps(images, missingImage);
                 setBiometricImage(bioData, "CapturedLeftSlap", isPreview ? 0 : R.drawable.left_palm,
                         isPreview ? leftHandBitmaps : null);
             }
