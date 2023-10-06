@@ -3,6 +3,7 @@ package io.mosip.registration_client.api_services;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +12,6 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
-import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
-import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -20,9 +19,6 @@ import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration_client.model.PacketAuthPigeon;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 @Singleton
 public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
@@ -66,7 +62,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     }
 
     @Override
-    public void authenticate(@NonNull String username, @NonNull String password, @NonNull Boolean isConnected, @NonNull PacketAuthPigeon.Result<PacketAuthPigeon.PacketAuth> result) {
+    public void authenticate(@NonNull String username, @NonNull String password, @NonNull PacketAuthPigeon.Result<PacketAuthPigeon.PacketAuth> result) {
         auditManagerService.audit(AuditEvent.CREATE_PACKET_AUTH, Components.REGISTRATION);
         offlineAuthentication(username, password, result);
     }

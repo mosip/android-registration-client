@@ -214,6 +214,16 @@ class _LoginPageState extends State<LoginPage> {
     await _getLoginAction();
   }
 
+  _authenticateUser(bool isConnected) async {
+    await context
+        .read<AuthProvider>()
+        .authenticateUser(username, password, isConnected);
+  }
+
+   _getIsConnected() {
+    return context.read<ConnectivityProvider>().isConnected;
+  }
+
   _getLoginAction() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
@@ -228,12 +238,10 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       authProvider.setIsSyncing(true);
     });
-    bool isConnected = context.read<ConnectivityProvider>().vpnConnection;
-    log("Piyush");
-    log(isConnected.toString());
-    await context
-        .read<AuthProvider>()
-        .authenticateUser(username, password, isConnected);
+    await context.read<ConnectivityProvider>().checkNetworkConnection();
+    bool isConnected = _getIsConnected();
+    log("isCon: $isConnected");
+    await _authenticateUser(isConnected);
 
     bool isTrue = _getIsLoggedIn();
     if (!isTrue) {

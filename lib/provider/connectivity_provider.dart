@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:developer';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:registration_client/platform_spi/network_service.dart';
@@ -8,37 +5,49 @@ import 'package:registration_client/platform_spi/network_service.dart';
 class ConnectivityProvider extends ChangeNotifier {
   NetworkService networkService = NetworkService();
   late ConnectivityResult _connectivityResult;
-  bool _vpnConnection = false;
+  bool _isConnected = false;
 
   ConnectivityResult get connectivityResult => _connectivityResult;
-  bool get vpnConnection => _vpnConnection;
+  bool get isConnected => _isConnected;
 
-  // set vpnConnection(bool value) {
-  //   _vpnConnection = value;
+  // ConnectivityProvider() {
+  //   initialize();
+  //   _connectivity.onConnectivityChanged.listen(updateConnection);
+  // }
+
+  // Future<void> initialize() async {
+  //   late ConnectivityResult result;
+  //   try {
+  //     result = await _connectivity.checkConnectivity();
+  //   } on PlatformException catch (e) {
+  //     debugPrint('Couldn\'t check connectivity status $e');
+  //     return;
+  //   }
+
+  //   updateConnection(result);
+  // }
+
+  // void updateConnection(ConnectivityResult result) async {
+  //   _connectivityResult = result;
+  //   String response = await networkService.checkInternetConnection();
+  //   if(response == "200") {
+  //     log("Back online");
+  //     _vpnConnection = true;
+  //   } else {
+  //     log("offline");
+  //     _vpnConnection = false;
+  //   }
+  //   log(_vpnConnection.toString());
   //   notifyListeners();
   // }
 
-  ConnectivityProvider() {
-    initialize();
-  }
-
-  Future<void> initialize() async {
-    final connectivity = Connectivity();
-    _connectivityResult = await connectivity.checkConnectivity();
-    log("check ${_connectivityResult.toString()}");
-
-    connectivity.onConnectivityChanged.listen((result) {
-      _connectivityResult = result;
-      log("on change ${result.toString()}");
-      networkService.checkInternetConnection().then((value) {
-        if(value == "200") {
-          _vpnConnection = true;
-        } else {
-          _vpnConnection = false;
-        }
-        notifyListeners();
-      });
-      // notifyListeners();
-    });
+  checkNetworkConnection() async {
+    String response = await networkService.checkInternetConnection();
+    if(response == "200") {
+      _isConnected = true;
+    } else {
+      _isConnected = false;
+    }
+    notifyListeners();
   }
 }

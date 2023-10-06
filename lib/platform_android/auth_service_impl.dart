@@ -37,11 +37,11 @@ class AuthServiceImpl implements AuthService {
 
   @override
   Future<PacketAuth> packetAuthentication(
-      String username, String password, bool isConnected) async {
+      String username, String password) async {
     late PacketAuth packetAuth;
     try {
       packetAuth =
-          await PacketAuthApi().authenticate(username, password, isConnected);
+          await PacketAuthApi().authenticate(username, password);
     } on PlatformException {
       debugPrint('PacketAuthenticationApi call failed!');
     } catch (e) {

@@ -14,7 +14,6 @@ import 'package:registration_client/platform_spi/registration_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
-
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -66,6 +65,10 @@ class _NewProcessState extends State<NewProcess> {
     );
   }
 
+  _showNetworkError() {
+    _showInSnackBar(AppLocalizations.of(context)!.network_error);
+  }
+
   _submitRegistration() async {
     RegistrationSubmitResponse registrationSubmitResponse =
         await registrationTaskProvider.submitRegistrationDto(username);
@@ -90,10 +93,7 @@ class _NewProcessState extends State<NewProcess> {
       return false;
     }
 
-    bool isConnected = context.read<ConnectivityProvider>().vpnConnection;
-    await context
-        .read<AuthProvider>()
-        .authenticatePacket(username, password, isConnected);
+    await context.read<AuthProvider>().authenticatePacket(username, password);
     bool isPacketAuthenticated = _getIsPacketAuthenticated();
 
     if (!isPacketAuthenticated) {
@@ -181,12 +181,16 @@ class _NewProcessState extends State<NewProcess> {
     globalProvider.setRegId("");
   }
 
-  _registrationScreenLoadedAudit() async {
+  void _registrationScreenLoadedAudit() async {
     await context.read<GlobalProvider>().getAudit("REG-EVT-002", "REG-MOD-103");
   }
 
   _nextButtonClickedAudit() async {
     await context.read<GlobalProvider>().getAudit("REG-EVT-003", "REG-MOD-103");
+  }
+
+  _getIsConnected() {
+    return context.read<ConnectivityProvider>().isConnected;
   }
 
   @override
@@ -389,7 +393,15 @@ class _NewProcessState extends State<NewProcess> {
                 children: [
                   globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await context
+                                .read<ConnectivityProvider>()
+                                .checkNetworkConnection();
+                            bool isConnected = _getIsConnected();
+                            if (!isConnected) {
+                              _showNetworkError();
+                              return;
+                            }
                             globalProvider.syncPacket(globalProvider.regId);
                           },
                           child: const Text("Sync Packet"))
@@ -399,7 +411,15 @@ class _NewProcessState extends State<NewProcess> {
                   ),
                   globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await context
+                                .read<ConnectivityProvider>()
+                                .checkNetworkConnection();
+                            bool isConnected = _getIsConnected();
+                            if (!isConnected) {
+                              _showNetworkError();
+                              return;
+                            }
                             globalProvider.uploadPacket(globalProvider.regId);
                           },
                           child: const Text("Upload Packet"))

@@ -50,5 +50,6 @@
   "global_params_sync_failed":"Échec de la synchronisation globale des paramètres",
   "user_details_sync_failed":"Échec de la synchronisation des détails de l'utilisateur",
   "id_schema_sync_failed":"Échec de la synchronisation IDSchema",
-  "master_data_sync_failed":"Échec de la synchronisation des données principales"
+  "master_data_sync_failed":"Échec de la synchronisation des données principales",
+  "network_error": "Aucun réseau trouvé!"
 }

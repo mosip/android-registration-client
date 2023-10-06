@@ -145,8 +145,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
   
-  authenticatePacket(String username, String password, bool isConnected) async {
-    final packetAuth = await auth.packetAuthentication(username, password, isConnected);
+  authenticatePacket(String username, String password) async {
+    final packetAuth = await auth.packetAuthentication(username, password);
 
     if(packetAuth.errorCode != null) {
       _packetError = packetAuth.errorCode!;
