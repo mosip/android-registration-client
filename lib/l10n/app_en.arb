@@ -50,5 +50,6 @@
   "global_params_sync_failed":"Global Params Sync Failed",
   "user_details_sync_failed":"User Details Sync Failed",
   "id_schema_sync_failed":"IDSchena Sync Failed",
-  "master_data_sync_failed":"Master Data Sync Failed"
+  "master_data_sync_failed":"Master Data Sync Failed",
+  "network_error": "No network found!"
 }

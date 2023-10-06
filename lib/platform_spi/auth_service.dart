@@ -10,7 +10,7 @@ abstract class AuthService {
   Future<AuthResponse> login(
       String username, String password, bool isConnected);
 
-  Future<PacketAuth> packetAuthentication(String username, String password, bool isConnected);
+  Future<PacketAuth> packetAuthentication(String username, String password);
 
   factory AuthService() => getAuthServiceImpl();
 }

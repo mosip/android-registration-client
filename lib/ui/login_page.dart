@@ -6,6 +6,7 @@
 */
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,7 @@ import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
+import 'package:registration_client/platform_spi/network_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
@@ -212,6 +214,16 @@ class _LoginPageState extends State<LoginPage> {
     await _getLoginAction();
   }
 
+  _authenticateUser(bool isConnected) async {
+    await context
+        .read<AuthProvider>()
+        .authenticateUser(username, password, isConnected);
+  }
+
+   _getIsConnected() {
+    return context.read<ConnectivityProvider>().isConnected;
+  }
+
   _getLoginAction() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
@@ -226,10 +238,10 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       authProvider.setIsSyncing(true);
     });
-    bool isConnected = context.read<ConnectivityProvider>().isConnected;
-    await context
-        .read<AuthProvider>()
-        .authenticateUser(username, password, isConnected);
+    await context.read<ConnectivityProvider>().checkNetworkConnection();
+    bool isConnected = _getIsConnected();
+    log("isCon: $isConnected");
+    await _authenticateUser(isConnected);
 
     bool isTrue = _getIsLoggedIn();
     if (!isTrue) {
@@ -367,7 +379,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () async {},
+            onTap: () async {
+              final NetworkService networkService = NetworkService();
+              String result = await networkService.checkInternetConnection();
+              log(result);
+            },
           ),
         ],
       ),

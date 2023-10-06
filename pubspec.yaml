@@ -66,6 +66,7 @@ dependencies:
   webview_flutter_plus: ^0.3.0+2
   printing: ^5.11.0
   android_alarm_manager_plus: ^3.0.2
+  http: ^0.13.6
 
 dev_dependencies:
   flutter_test:
