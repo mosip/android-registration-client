@@ -10,27 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PacketAuth;
 
-@interface PacketAuth : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithResponse:(NSString *)response
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * response;
-@property(nonatomic, copy, nullable) NSString * errorCode;
+/// The codec used by AuditResponseApi.
+NSObject<FlutterMessageCodec> *AuditResponseApiGetCodec(void);
+
+@protocol AuditResponseApi
+- (void)auditId:(NSString *)id componentId:(NSString *)componentId completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by PacketAuthApi.
-NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void);
-
-@protocol PacketAuthApi
-- (void)authenticateUsername:(NSString *)username password:(NSString *)password completion:(void (^)(PacketAuth *_Nullable, FlutterError *_Nullable))completion;
-- (void)syncPacketPacketId:(NSString *)packetId completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)uploadPacketPacketId:(NSString *)packetId completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)getAllRegistrationPacketWithCompletion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *_Nullable api);
+extern void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuditResponseApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

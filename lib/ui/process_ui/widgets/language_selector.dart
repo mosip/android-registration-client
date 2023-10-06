@@ -244,7 +244,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             ),
             Expanded(
               child: ElevatedButton(
-                
                 onPressed: () {
                   if (context.read<GlobalProvider>().chosenLang.length >=
                           minLanguage &&
