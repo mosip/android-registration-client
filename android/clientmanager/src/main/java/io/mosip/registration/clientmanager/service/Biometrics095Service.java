@@ -92,7 +92,7 @@ public class Biometrics095Service extends BiometricsService {
                 //TODO need requested spec version to validate response spec version
 
                 biometricsDtoList.add(new BiometricsDto(
-                        modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().name() : captureDto.getBioType(),
+                        modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().value() : captureDto.getBioType(),
                         modality == Modality.EXCEPTION_PHOTO ? EXCEPTION_PHOTO_ATTR.get(0) : captureDto.getBioSubType(),
                         captureDto.getBioValue(),
                         bio.getSpecVersion(),
