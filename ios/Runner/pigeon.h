@@ -10,32 +10,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class AuthResponse;
+@class PacketAuth;
 
-@interface AuthResponse : NSObject
+@interface PacketAuth : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithResponse:(NSString *)response
-    username:(NSString *)username
-    isOfficer:(NSNumber *)isOfficer
-    isDefault:(NSNumber *)isDefault
-    isSupervisor:(NSNumber *)isSupervisor
     errorCode:(nullable NSString *)errorCode;
 @property(nonatomic, copy) NSString * response;
-@property(nonatomic, copy) NSString * username;
-@property(nonatomic, strong) NSNumber * isOfficer;
-@property(nonatomic, strong) NSNumber * isDefault;
-@property(nonatomic, strong) NSNumber * isSupervisor;
 @property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by AuthResponseApi.
-NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void);
+/// The codec used by PacketAuthApi.
+NSObject<FlutterMessageCodec> *PacketAuthApiGetCodec(void);
 
-@protocol AuthResponseApi
-- (void)loginUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(AuthResponse *_Nullable, FlutterError *_Nullable))completion;
+@protocol PacketAuthApi
+- (void)authenticateUsername:(NSString *)username password:(NSString *)password completion:(void (^)(PacketAuth *_Nullable, FlutterError *_Nullable))completion;
+- (void)syncPacketPacketId:(NSString *)packetId completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)uploadPacketPacketId:(NSString *)packetId completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)getAllRegistrationPacketWithCompletion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *_Nullable api);
+extern void PacketAuthApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PacketAuthApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
