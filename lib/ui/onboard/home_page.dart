@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,7 +57,7 @@ class _HomePageState extends State<HomePage> {
     // await SyncProvider().autoSync(context);
     await context.read<ConnectivityProvider>().checkNetworkConnection();
     bool isConnected = _getIsConnected();
-    if(!isConnected) {
+    if (!isConnected) {
       _showInSnackBar(AppLocalizations.of(context)!.network_error);
       return;
     }
@@ -77,7 +78,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   _homePageLoadedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-LOAD-003", "REG-MOD-102");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-003", "REG-MOD-102");
   }
 
   Future<void> _masterDataSync() async {
@@ -91,7 +94,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   _newRegistrationClickedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-HOME-002", "REG-MOD-102");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-HOME-002", "REG-MOD-102");
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
