@@ -66,7 +66,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   }
 
   _languageSelectorPageLoadedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-LOAD-006", "REG-MOD-103");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-006", "REG-MOD-103");
   }
 
   @override
@@ -242,15 +244,26 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             ),
             Expanded(
               child: ElevatedButton(
-                
                 onPressed: () {
-                  if(context.read<GlobalProvider>().chosenLang.length>=minLanguage && context.read<GlobalProvider>().chosenLang.length<=maxLanguage){
-                   _navigateToConsentPage();
+                  if (context.read<GlobalProvider>().chosenLang.length >=
+                          minLanguage &&
+                      context.read<GlobalProvider>().chosenLang.length <=
+                          maxLanguage) {
+                    _navigateToConsentPage();
                   }
-                  
                 },
+                style: ButtonStyle(
+                  backgroundColor: (context
+                                  .read<GlobalProvider>()
+                                  .chosenLang
+                                  .length >=
+                              minLanguage &&
+                          context.read<GlobalProvider>().chosenLang.length <=
+                              maxLanguage)
+                      ? MaterialStateProperty.all<Color>(solidPrimary)
+                      : MaterialStateProperty.all<Color>(Colors.grey),
+                ),
                 child: const Text("SUBMIT"),
-                style: ButtonStyle(backgroundColor: (context.read<GlobalProvider>().chosenLang.length>=minLanguage && context.read<GlobalProvider>().chosenLang.length<=maxLanguage)?MaterialStateProperty.all<Color>(solidPrimary):MaterialStateProperty.all<Color>(Colors.grey) ),
               ),
             )
           ],
