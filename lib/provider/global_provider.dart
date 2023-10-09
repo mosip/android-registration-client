@@ -7,19 +7,21 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/platform_spi/audit_service.dart';
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
-import 'package:registration_client/platform_spi/machine_key.dart';
+import 'package:registration_client/platform_spi/machine_key_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
-import 'package:registration_client/platform_spi/process_spec.dart';
+import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
-  final MachineKey machineKey = MachineKey();
-  final ProcessSpec processSpec = ProcessSpec();
+  final MachineKeyService machineKeyService = MachineKeyService();
+  final ProcessSpecService processSpecService = ProcessSpecService();
   final PacketService packetService = PacketService();
   final DynamicResponseService dynamicResponseService =
       DynamicResponseService();
+  final Audit audit = Audit(); 
 
   //Variables
   int _currentIndex = 0;
@@ -228,7 +230,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   setMachineDetails() async {
-    final machine = await machineKey.getMachineKeys();
+    final machine = await machineKeyService.getMachineKeys();
 
     if (machine.errorCode != null) {
       _machineDetails.addAll({});
@@ -347,7 +349,7 @@ class GlobalProvider with ChangeNotifier {
 
   getRegCenterName(String regCenterId, String langCode) async {
     String regCenterName =
-        await machineKey.getCenterName(regCenterId, langCode);
+        await machineKeyService.getCenterName(regCenterId, langCode);
 
     _centerName = regCenterName;
     notifyListeners();
@@ -443,10 +445,10 @@ class GlobalProvider with ChangeNotifier {
   }
 
   setLanguageConfigData() async {
-    _mandatoryLanguages = await processSpec.getMandatoryLanguageCodes();
-    _optionalLanguages = await processSpec.getOptionalLanguageCodes();
-    _minLanguageCount = await processSpec.getMinLanguageCount();
-    _maxLanguageCount = await processSpec.getMaxLanguageCount();
+    _mandatoryLanguages = await processSpecService.getMandatoryLanguageCodes();
+    _optionalLanguages = await processSpecService.getOptionalLanguageCodes();
+    _minLanguageCount = await processSpecService.getMinLanguageCount();
+    _maxLanguageCount = await processSpecService.getMaxLanguageCount();
     _languages = [..._mandatoryLanguages, ..._optionalLanguages];
     notifyListeners();
   }
@@ -516,5 +518,9 @@ class GlobalProvider with ChangeNotifier {
       _appLocale = Locale(localeCode);
     }
     notifyListeners();
+  }
+
+  getAudit(String id, String componentId) async {
+    await audit.performAudit(id, componentId);
   }
 }

@@ -40,6 +40,8 @@
   "cred_expired": "Credentials not found or are expired. Please try online login!",
   "not_initialized": "Machine could not be initialized!",
   "invalid_user": "Username invalid!",
+  "machine_inactive": "Machine is not active!",
+  "center_inactive": "Center is not active!",
   "sync_completed_succesfully": "Sync Completed Successfully",
   "sync_completed_message": "System will restart in a few seconds and you will be redirected to login page.",
   "sync_failed": "Sync. Failed",
@@ -48,5 +50,6 @@
   "global_params_sync_failed":"Global Params Sync Failed",
   "user_details_sync_failed":"User Details Sync Failed",
   "id_schema_sync_failed":"IDSchena Sync Failed",
-  "master_data_sync_failed":"Master Data Sync Failed"
+  "master_data_sync_failed":"Master Data Sync Failed",
+  "network_error": "No network found!"
 }

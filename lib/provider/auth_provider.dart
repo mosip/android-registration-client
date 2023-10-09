@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
-import 'package:registration_client/platform_spi/auth.dart';
+import 'package:registration_client/platform_spi/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  final Auth auth = Auth();
+  final AuthService auth = AuthService();
   bool _isLoggedIn = false;
   bool _isSyncing = false;
   bool _isOnboarded = false;
@@ -128,6 +128,12 @@ class AuthProvider with ChangeNotifier {
     if (authResponse.errorCode != null) {
       _loginError = authResponse.errorCode!;
       _isLoggedIn = false;
+    } else if(!isMachineActive) {
+      _loginError = "REG_MACHINE_INACTIVE";
+      _isLoggedIn = false;
+    } else if(!isCenterActive) {
+      _loginError = "REG_CENTER_INACTIVE";
+      _isLoggedIn = false;
     } else {
       _isDefault = authResponse.isDefault;
       _isOfficer = authResponse.isOfficer;
@@ -139,8 +145,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
   
-  authenticatePacket(String username, String password, bool isConnected) async {
-    final packetAuth = await auth.packetAuthentication(username, password, isConnected);
+  authenticatePacket(String username, String password) async {
+    final packetAuth = await auth.packetAuthentication(username, password);
 
     if(packetAuth.errorCode != null) {
       _packetError = packetAuth.errorCode!;

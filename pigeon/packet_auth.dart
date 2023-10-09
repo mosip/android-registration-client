@@ -13,7 +13,7 @@ class PacketAuth {
 @HostApi()
 abstract class PacketAuthApi {
   @async
-  PacketAuth authenticate(String username, String password, bool isConnected);
+  PacketAuth authenticate(String username, String password);
 
   @async
   void syncPacket(String packetId);

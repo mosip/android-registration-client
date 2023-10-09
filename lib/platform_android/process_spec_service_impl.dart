@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/process_spec_pigeon.dart';
-import 'package:registration_client/platform_spi/process_spec.dart';
+import 'package:registration_client/platform_spi/process_spec_service.dart';
 
-class ProcessSpecImpl implements ProcessSpec {
+class ProcessSpecServiceImpl implements ProcessSpecService {
   @override
   Future<List<String?>> getNewProcessSpec() async {
     List<String?> listOfProcesses;
@@ -101,4 +101,4 @@ class ProcessSpecImpl implements ProcessSpec {
   }
 }
 
-ProcessSpec getProcessSpecImpl() => ProcessSpecImpl();
+ProcessSpecService getProcessSpecServiceImpl() => ProcessSpecServiceImpl();

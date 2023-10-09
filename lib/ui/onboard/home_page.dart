@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 
@@ -18,7 +19,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'widgets/home_page_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,8 +40,26 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  void _showInSnackBar(String value) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value),
+      ),
+    );
+  }
+
+  _getIsConnected() {
+    return context.read<ConnectivityProvider>().isConnected;
+  }
+
   void syncData(BuildContext context) async {
     // await SyncProvider().autoSync(context);
+    await context.read<ConnectivityProvider>().checkNetworkConnection();
+    bool isConnected = _getIsConnected();
+    if (!isConnected) {
+      _showInSnackBar(AppLocalizations.of(context)!.network_error);
+      return;
+    }
     await _masterDataSync();
     await _getNewProcessSpecAction();
     await _getCenterNameAction();
@@ -50,10 +69,17 @@ class _HomePageState extends State<HomePage> {
   void _fetchProcessSpec() async {
     await _getNewProcessSpecAction();
     await _getCenterNameAction();
+    await _homePageLoadedAudit();
   }
 
   _initializeLanguageDataList() async {
     await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
+  _homePageLoadedAudit() async {
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-003", "REG-MOD-102");
   }
 
   Future<void> _masterDataSync() async {
@@ -66,8 +92,15 @@ class _HomePageState extends State<HomePage> {
     debugPrint(result);
   }
 
+  _newRegistrationClickedAudit() async {
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-HOME-002", "REG-MOD-102");
+  }
+
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
+      _newRegistrationClickedAudit();
       context.read<GlobalProvider>().clearMap();
       context.read<GlobalProvider>().clearScannedPages();
       context.read<GlobalProvider>().newProcessTabIndex = 0;

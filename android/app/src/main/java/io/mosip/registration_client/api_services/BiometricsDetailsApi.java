@@ -56,27 +56,15 @@ import io.mosip.registration_client.model.BiometricsPigeon;
 
 @Singleton
 public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
-
     private Activity activity;
-
     private final AuditManagerService auditManagerService;
-
     private final ObjectMapper objectMapper;
-
     private final Biometrics095Service biometricsService;
-
     private final RegistrationService registrationService;
-
     private final GlobalParamRepository globalParamRepository;
-
-
-
     private Modality currentModality;
-
     private static final String TAG="BiometricsDetailApi";
-
     private String callbackId;
-
     private String fieldId;
     private String purpose;
     private int capturedAttempts;
@@ -97,7 +85,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         this.biometricsService=biometrics095Service;
         this.registrationService=registrationService;
         this.globalParamRepository=globalParamRepository;
-
     }
 
     public void setCallbackActivity(MainActivity mainActivity){
@@ -107,6 +94,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
     @Override
     public void invokeDiscoverSbi(@NonNull String fieldId, @NonNull String modality, @NonNull BiometricsPigeon.Result<String> result) {
+        auditManagerService.audit(AuditEvent.BIOMETRIC_CAPTURE, Components.REGISTRATION);
         currentModality = getModality(modality);
         this.fieldId=fieldId;
         discoverSBI();
@@ -390,23 +378,31 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                List<BiometricsDto> temp= registrationDto.getBestBiometrics(fieldId,modality);
                biometricsDtoList.addAll(temp);
             }
+            System.out.println(biometricsDtoList);
             Map<String,Boolean> dataContext=new HashMap<String,Boolean>();
             Pattern REGEX_PATTERN =
                     Pattern.compile("[a-zA-Z]+");
+
             Matcher matcher=REGEX_PATTERN.matcher(expression);
 
             while (matcher.find()) {
                 dataContext.put(matcher.group(),false);
+
+
                 for (BiometricsDto dto:biometricsDtoList
                      ) {
+
                     if(dto.getBioSubType()!=null){
                         if(customMatcher(dto.getBioSubType(),matcher.group())){
+
                             dataContext.put(matcher.group(),true);
                             break;
                         }
                     }
                     else{
-                        if(dto.getModality().matches(matcher.group().toUpperCase())){
+
+                        if(dto.getModality().toUpperCase().matches(matcher.group().toUpperCase())){
+
                             dataContext.put(matcher.group(),true);
                             break;
                         }

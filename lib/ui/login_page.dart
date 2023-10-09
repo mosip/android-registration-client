@@ -6,6 +6,7 @@
 */
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,7 @@ import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
+import 'package:registration_client/platform_spi/network_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
@@ -67,6 +69,7 @@ class _LoginPageState extends State<LoginPage> {
   _initializeAppData() async {
     await _initializeMachineData();
     await _initializeAppLanguageData();
+    await _loginPageLoadedAudit();
   }
 
   _initializeMachineData() async {
@@ -75,6 +78,14 @@ class _LoginPageState extends State<LoginPage> {
 
   _initializeAppLanguageData() async {
     await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
+  _loginPageLoadedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-LOAD-001", "REG-MOD-101");
+  }
+
+  _longPressLogoAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -203,6 +214,16 @@ class _LoginPageState extends State<LoginPage> {
     await _getLoginAction();
   }
 
+  _authenticateUser(bool isConnected) async {
+    await context
+        .read<AuthProvider>()
+        .authenticateUser(username, password, isConnected);
+  }
+
+   _getIsConnected() {
+    return context.read<ConnectivityProvider>().isConnected;
+  }
+
   _getLoginAction() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
@@ -217,10 +238,10 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       authProvider.setIsSyncing(true);
     });
-    bool isConnected = context.read<ConnectivityProvider>().isConnected;
-    await context
-        .read<AuthProvider>()
-        .authenticateUser(username, password, isConnected);
+    await context.read<ConnectivityProvider>().checkNetworkConnection();
+    bool isConnected = _getIsConnected();
+    log("isCon: $isConnected");
+    await _authenticateUser(isConnected);
 
     bool isTrue = _getIsLoggedIn();
     if (!isTrue) {
@@ -266,6 +287,14 @@ class _LoginPageState extends State<LoginPage> {
 
       case "REG_CRED_EXPIRED":
         snackbarText = AppLocalizations.of(context)!.cred_expired;
+        break;
+
+      case "REG_MACHINE_INACTIVE":
+        snackbarText = AppLocalizations.of(context)!.machine_inactive;
+        break;
+
+      case "REG_CENTER_INACTIVE":
+        snackbarText = AppLocalizations.of(context)!.center_inactive;
         break;
 
       case "":
@@ -314,6 +343,7 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           InkWell(
             onLongPress: () {
+              _longPressLogoAudit();
               setState(() {
                 isMachineKeysDialogOpen = true;
               });
@@ -349,7 +379,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: ()  {},
+            onTap: () async {
+              final NetworkService networkService = NetworkService();
+              String result = await networkService.checkInternetConnection();
+              log(result);
+            },
           ),
         ],
       ),
@@ -457,6 +491,7 @@ class _LoginPageState extends State<LoginPage> {
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onLoginButtonPressed,
                   onTapBack: () {
+                    password="";
                     FocusManager.instance.primaryFocus?.unfocus();
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {

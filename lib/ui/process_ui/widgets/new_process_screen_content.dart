@@ -10,6 +10,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/document_upload_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dynamic_dropdown_control.dart';
@@ -17,7 +18,7 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
-import '../../../platform_spi/registration.dart';
+import '../../../platform_spi/registration_service.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -79,7 +80,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           validation: regexPattern,
         );
       case "date":
-        return TextBoxControl(validation: regexPattern, e: e);
+        return DateControl(
+          validation: regexPattern,
+          field: e,
+        );
       case "fileupload":
         return DocumentUploadControl(
           field: e,
@@ -92,8 +96,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   evaluateMVEL(
       String fieldData, String? engine, String? expression, Field e) async {
-    final Registration registration = Registration();
-    registration.evaluateMVEL(fieldData, expression!).then((value) {
+    final RegistrationService registrationService = RegistrationService();
+    registrationService.evaluateMVEL(fieldData, expression!).then((value) {
       if (!value) {
         context.read<GlobalProvider>().removeFieldFromMap(
             e.id!, context.read<GlobalProvider>().fieldInputValue);

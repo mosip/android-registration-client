@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.model.MachinePigeon;
 
@@ -22,12 +23,15 @@ import io.mosip.registration_client.model.MachinePigeon;
 public class MachineDetailsApi  implements MachinePigeon.MachineApi {
     ClientCryptoManagerService clientCryptoManagerService;
     RegistrationCenterRepository registrationCenterRepository;
+    AuditManagerService auditManagerService;
 
     @Inject
     public MachineDetailsApi(ClientCryptoManagerService clientCryptoManagerService,
-                             RegistrationCenterRepository registrationCenterRepository) {
+                             RegistrationCenterRepository registrationCenterRepository,
+                             AuditManagerService auditManagerService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.registrationCenterRepository = registrationCenterRepository;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override
