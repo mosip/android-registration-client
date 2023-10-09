@@ -247,8 +247,8 @@ public class PacketServiceImpl implements PacketService {
     }
 
     @Override
-    public List<Registration> getRegistrationsByStatus(String status) {
-        return this.registrationRepository.getRegistrationsByStatus(status);
+    public List<Registration> getRegistrationsByStatus(String status, Integer batchSize) {
+        return this.registrationRepository.getRegistrationsByStatus(status, batchSize);
     }
 
     @Override

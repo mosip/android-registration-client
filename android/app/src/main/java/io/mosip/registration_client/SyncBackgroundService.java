@@ -10,7 +10,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 
-public class MyBackgroundService extends Service {
+public class SyncBackgroundService extends Service {
 
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "ForegroundServiceChannel";
@@ -26,9 +26,8 @@ public class MyBackgroundService extends Service {
         createNotificationChannel();
         Notification notification = createNotification();
         startForeground(NOTIFICATION_ID, notification);
-
-        Log.d(getClass().getSimpleName(), "Fetching Packets in background activity");
-        Intent broadcastIntent = new Intent("BACKGROUND_TASK_COMPLETE");
+        Log.d(getClass().getSimpleName(), "Sync Packets in background activity");
+        Intent broadcastIntent = new Intent("REGISTRATION_PACKET_SYNC");
         sendBroadcast(broadcastIntent);
         return START_STICKY;
     }

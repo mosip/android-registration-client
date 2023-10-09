@@ -51,7 +51,7 @@ public interface PacketService {
      * @return
      */
 
-    List<Registration> getRegistrationsByStatus(String status);
+    List<Registration> getRegistrationsByStatus(String status, Integer batchSize);
 
     /**
      *
