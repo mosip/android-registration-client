@@ -45,6 +45,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", rootProject.ext.serverBaseURL)
+        buildConfigField("String", "HEALTH_CHECK_PATH", rootProject.ext.serverHealthCheckPath)
     }
 
     buildTypes {
