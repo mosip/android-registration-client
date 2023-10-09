@@ -40,7 +40,7 @@ ext {
     clientmanagerLibVersionName = "\"1.0.0\""
 
     serverBaseURL = "\"https://api-internal.qa-triad.mosip.net/\""
-    serverHealthCheckURL = "\"https://api-internal.qa-triad.mosip.net/v1/syncdata/actuator/health\""
+    serverHealthCheckPath = "\"v1/syncdata/actuator/health\""
 }
 
 

@@ -9,7 +9,7 @@ class NetworkServiceImpl implements NetworkService {
 
     try {
       final response = await http.get(Uri.parse(
-          FlutterConfig.get('HEALTH_CHECK_URL')))
+          FlutterConfig.get('BASE_URL') + FlutterConfig.get('HEALTH_CHECK_PATH')))
           .timeout(const Duration(seconds: 2));
       return response.statusCode.toString();
     } catch (e) {
