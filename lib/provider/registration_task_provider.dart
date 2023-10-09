@@ -5,6 +5,7 @@ import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/demographics.dart';
 import 'package:registration_client/platform_spi/document.dart';
+import 'package:registration_client/platform_spi/document_category_service.dart';
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec.dart';
 import 'package:registration_client/platform_spi/registration.dart';
@@ -14,6 +15,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   final ProcessSpec processSpec = ProcessSpec();
   final Demographics demographics = Demographics();
   final Document document = Document();
+  final DocumentCategory documentCategory = DocumentCategory();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
@@ -140,7 +142,7 @@ class RegistrationTaskProvider with ChangeNotifier {
     await demographics.setConsentField(consentData);
   }
 
-  Future<List<String?>> getFieldValues(
+  Future<List<DynamicFieldData?>> getFieldValues(
       String fieldName, String langCode) async {
     return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
   }
@@ -170,5 +172,13 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   getScannedDocument(String fieldId) async {
     return document.getScannedPages(fieldId);
+  }
+
+  removeDocument(String fieldId, int pageIndex) async {
+    await document.removeDocument(fieldId, pageIndex);
+  }
+
+  Future<List<String?>> getTypeDocument(String categoryCode,String langCode)async{
+    return await documentCategory.getDocumentCategories(categoryCode,langCode);
   }
 }

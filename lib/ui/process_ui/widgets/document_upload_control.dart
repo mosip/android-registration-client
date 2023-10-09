@@ -26,15 +26,19 @@ class DocumentUploadControl extends StatefulWidget {
 }
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
+
+  late Future<List<String?>> myGetDocumentCategoryFuture;
   @override
   void initState() {
     //load from the map
     final scannedPagesMap =
         context.read<GlobalProvider>().scannedPages[widget.field.id];
+    myGetDocumentCategoryFuture = _getDocumentCategory(widget.field.subType!, "eng");
 
     if (scannedPagesMap != null) {
+      imageBytesList.clear();
       setState(() {
-        imageBytesList = scannedPagesMap;
+        imageBytesList.addAll(scannedPagesMap);
       });
     }
 
@@ -47,7 +51,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           .fieldInputValue[widget.field.id]
           .title!;
     }
-
     super.initState();
   }
 
@@ -57,7 +60,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   List<String> poaList = [];
-  List<Uint8List?> imageBytesList = []; // list of image bytes
+  List<Uint8List?> imageBytesList = List.empty(growable: true); // list of image bytes
 
   _getAddDocumentProvider(Field e, Uint8List myBytes) {
     context
@@ -76,6 +79,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     _getAddDocumentProvider(e, myBytes);
   }
 
+  _getRemoveDocumentProvider(Field e, int index){
+    context.read<RegistrationTaskProvider>().removeDocument(e.id!, index);
+  }
+
   _setScannedPages(Field e, List<Uint8List?> listOfScannedDoc) {
     context.read<GlobalProvider>().setScannedPages(e.id!, listOfScannedDoc);
   }
@@ -84,12 +91,17 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
   }
 
+  _setRemoveScannedPages(Field e, Uint8List? item, List<Uint8List?> listOfScannedDoc){
+    context.read<GlobalProvider>().removeScannedPages(e.id!,item,listOfScannedDoc);
+  }
+
   Future<void> getScannedDocuments(Field e) async {
     try {
+      imageBytesList.clear();
       final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
       _setScannedPages(e, listOfScannedDoc);
       setState(() {
-        imageBytesList = listOfScannedDoc;
+        imageBytesList.addAll(listOfScannedDoc);
         doc.listofImages = imageBytesList;
       });
       if (doc.title.isNotEmpty) {
@@ -128,11 +140,29 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  Future<List<String?>> _getDocumentValues(
-      String fieldName, String langCode, String? applicantType) async {
+  // Future<List<String?>> _getDocumentValues(
+  //     String fieldName, String langCode, String? applicantType) async {
+  //   return await context
+  //       .read<RegistrationTaskProvider>()
+  //       .getDocumentValues(fieldName, langCode, applicantType);
+  // }
+  Future<List<String?>> _getDocumentCategory(
+      String fieldName, String langCode) async {
     return await context
         .read<RegistrationTaskProvider>()
-        .getDocumentValues(fieldName, langCode, applicantType);
+        .getTypeDocument(fieldName, langCode);
+  }
+
+  void _deleteImage(Field e, Uint8List? item) async {
+    for(int i =0;i<=imageBytesList.length;i++){
+      if(imageBytesList[i] == item){
+        setState(() {
+          imageBytesList.remove(item);
+        });
+        await _getRemoveDocumentProvider(e, i);
+        _setRemoveScannedPages(e, item, imageBytesList);
+      }
+    }
   }
 
   @override
@@ -154,8 +184,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     //   height: 10,
                     // ),
                     FutureBuilder(
-                        future: _getDocumentValues(
-                            widget.field.subType!, "eng", null),
+                        future: myGetDocumentCategoryFuture,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
@@ -264,15 +293,33 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     ),
                     imageBytesList.isNotEmpty
                         ? SizedBox(
-                            height: 80,
+                            height: 110,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
-                                  child: SizedBox(
-                                    height: 70,
-                                    width: 90,
-                                    child: Image.memory(item!),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 70,
+                                        width: 100,
+                                        child: Image.memory(item!),
+                                      ),
+                                      const SizedBox(height: 10,),
+                                      GestureDetector(
+                                        onTap: (){
+                                          _deleteImage(widget.field,item);
+                                        },
+                                        child: const Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
+                                            SizedBox(width: 5,),
+                                            Text("DELETE",style: TextStyle(fontSize: 13,color: Colors.red)),
+                                          ],
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 );
                               }).toList(),
@@ -295,8 +342,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                             child: FutureBuilder(
-                                future: _getDocumentValues(
-                                    widget.field.subType!, "eng", null),
+                                future: myGetDocumentCategoryFuture,
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
@@ -420,15 +466,33 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     ),
                     imageBytesList.isNotEmpty
                         ? SizedBox(
-                            height: 80,
+                            height: 110,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
-                                  child: SizedBox(
-                                    height: 70,
-                                    width: 90,
-                                    child: Image.memory(item!),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 70,
+                                        width: 100,
+                                        child: Image.memory(item!),
+                                      ),
+                                      const SizedBox(height: 10,),
+                                      GestureDetector(
+                                        onTap: (){
+                                          _deleteImage(widget.field,item);
+                                        },
+                                        child: const Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
+                                            SizedBox(width: 5,),
+                                            Text("DELETE",style: TextStyle(fontSize: 13,color: Colors.red)),
+                                          ],
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 );
                               }).toList(),
