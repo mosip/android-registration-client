@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
-
 import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:http/http.dart' as http;
 
