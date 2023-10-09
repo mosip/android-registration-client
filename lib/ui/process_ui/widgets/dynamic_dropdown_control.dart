@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 
@@ -20,7 +21,7 @@ class DynamicDropDownControl extends StatefulWidget {
 }
 
 class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
-  String? selected;
+  DynamicFieldData? selected;
 
   @override
   void initState() {
@@ -67,7 +68,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   void _getSelectedValueFromMap(String lang) {
-    String response = "";
+    DynamicFieldData? response;
     if (widget.field.type == 'simpleType') {
       if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
@@ -85,7 +86,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     });
   }
 
-  Future<List<String?>> _getFieldValues(String fieldId, String langCode) async {
+  Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
     return await context
         .read<RegistrationTaskProvider>()
         .getFieldValues(fieldId, langCode);
@@ -95,7 +96,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!, "eng"),
-        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
             elevation: 0,
             margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
@@ -129,7 +130,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
                                     value: option,
-                                    child: Text(option!),
+                                    child: Text(option!.name),
                                   ))
                               .toList(),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -139,10 +140,10 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                                 widget.field.requiredOn!.isEmpty) {
                               return null;
                             }
-                            if (value == null || value.isEmpty) {
+                            if (value == null) {
                               return 'Please enter a value';
                             }
-                            if (!widget.validation.hasMatch(value)) {
+                            if (!widget.validation.hasMatch(value.name)) {
                               return 'Invalid input';
                             }
                             return null;
@@ -151,7 +152,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             saveData(value);
                             _saveDataToMap(value);
                             setState(() {
-                              selected = value!;
+                              selected = value;
                             });
                           },
                         )

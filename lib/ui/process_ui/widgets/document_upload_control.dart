@@ -26,11 +26,14 @@ class DocumentUploadControl extends StatefulWidget {
 }
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
+
+  late Future<List<String?>> myGetDocumentCategoryFuture;
   @override
   void initState() {
     //load from the map
     final scannedPagesMap =
         context.read<GlobalProvider>().scannedPages[widget.field.id];
+    myGetDocumentCategoryFuture = _getDocumentCategory(widget.field.subType!, "eng");
 
     if (scannedPagesMap != null) {
       imageBytesList.clear();
@@ -137,11 +140,17 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  Future<List<String?>> _getDocumentValues(
-      String fieldName, String langCode, String? applicantType) async {
+  // Future<List<String?>> _getDocumentValues(
+  //     String fieldName, String langCode, String? applicantType) async {
+  //   return await context
+  //       .read<RegistrationTaskProvider>()
+  //       .getDocumentValues(fieldName, langCode, applicantType);
+  // }
+  Future<List<String?>> _getDocumentCategory(
+      String fieldName, String langCode) async {
     return await context
         .read<RegistrationTaskProvider>()
-        .getDocumentValues(fieldName, langCode, applicantType);
+        .getTypeDocument(fieldName, langCode);
   }
 
   void _deleteImage(Field e, Uint8List? item) async {
@@ -175,8 +184,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     //   height: 10,
                     // ),
                     FutureBuilder(
-                        future: _getDocumentValues(
-                            widget.field.subType!, "eng", null),
+                        future: myGetDocumentCategoryFuture,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
@@ -334,8 +342,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                             child: FutureBuilder(
-                                future: _getDocumentValues(
-                                    widget.field.subType!, "eng", null),
+                                future: myGetDocumentCategoryFuture,
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
