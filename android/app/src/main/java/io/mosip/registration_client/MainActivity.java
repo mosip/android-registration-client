@@ -233,7 +233,7 @@ public class MainActivity extends FlutterActivity {
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
             for (Registration value : registrationList) {
                 try {
-                    Log.e(getClass().getSimpleName(), "Syncing " + value.getPacketId());
+                    Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
                     packetService.syncRegistration(value.getPacketId());
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
@@ -249,7 +249,7 @@ public class MainActivity extends FlutterActivity {
             List<Registration>  registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name(), batchSize);
             for (Registration value : registrationList) {
                 try {
-                    Log.e(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                    Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
                     packetService.uploadRegistration(value.getPacketId());
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
@@ -273,7 +273,7 @@ public class MainActivity extends FlutterActivity {
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
         for (SyncJobDef value : syncJobs) {
             if (Objects.equals(value.getApiName(), api)) {
-                Log.e(getClass().getSimpleName(), String.valueOf(value.getSyncFreq()) + " Cron Expression");
+                Log.d(getClass().getSimpleName(), String.valueOf(value.getSyncFreq()) + " Cron Expression");
                 alarmTime.set(CronParserUtil.getNextExecutionTimeInMillis(String.valueOf(value.getSyncFreq())));
             }
         }
