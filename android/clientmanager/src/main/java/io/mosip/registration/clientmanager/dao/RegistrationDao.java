@@ -16,8 +16,8 @@ public interface RegistrationDao {
     @Query("SELECT * FROM registration order by cr_dtimes desc")
     List<Registration> findAll();
 
-    @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes desc ")
-    List<Registration> findRegistrationByStatus(String status);
+    @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes desc limit :batchSize")
+    List<Registration> findRegistrationByStatus(String status, Integer batchSize);
 
     @Query("SELECT * FROM registration where server_status in (:statuses) order by cr_dtimes desc")
     List<Registration> findAllByServerStatus(List<String> statuses);
