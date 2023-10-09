@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:registration_client/utils/app_config.dart';
 
 class NetworkServiceImpl implements NetworkService {
   @override
@@ -8,7 +9,7 @@ class NetworkServiceImpl implements NetworkService {
 
     try {
       final response = await http.get(Uri.parse(
-          'https://api-internal.dev2.mosip.net/v1/syncdata/actuator/health'))
+          healthCheckApi))
           .timeout(const Duration(seconds: 2));
       return response.statusCode.toString();
     } catch (e) {
