@@ -2,15 +2,15 @@ import 'package:registration_client/pigeon/auth_response_pigeon.dart';
 import 'package:registration_client/pigeon/packet_auth_pigeon.dart';
 
 import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_android/auth_impl.dart';
+import 'package:registration_client/platform_android/auth_service_impl.dart';
 
-abstract class Auth {
+abstract class AuthService {
   Future<User> validateUser(String username, String langCode);
 
   Future<AuthResponse> login(
       String username, String password, bool isConnected);
 
-  Future<PacketAuth> packetAuthentication(String username, String password, bool isConnected);
+  Future<PacketAuth> packetAuthentication(String username, String password);
 
-  factory Auth() => getAuthImpl();
+  factory AuthService() => getAuthServiceImpl();
 }

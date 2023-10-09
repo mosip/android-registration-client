@@ -108,6 +108,7 @@ class _TextBoxControlState extends State<TextBoxControl> {
                 child: TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   initialValue: _getDataFromMap(lang),
+                  textCapitalization: TextCapitalization.words,
                   onChanged: (value) {
                     _saveDataToMap(value, lang);
                     saveData(value, lang);
@@ -136,18 +137,18 @@ class _TextBoxControlState extends State<TextBoxControl> {
                     hintText: widget.e.label![lang],
                     hintStyle: const TextStyle(
                         color: AppStyle.appBlackShade3, fontSize: 14),
-                    prefixIcon: (lang == 'ara')
-                        ? const Icon(
-                            Icons.keyboard_outlined,
-                            size: 36,
-                          )
-                        : null,
-                    suffixIcon: (lang == 'ara')
-                        ? null
-                        : const Icon(
-                            Icons.keyboard_outlined,
-                            size: 36,
-                          ),
+                    // prefixIcon: (lang == 'ara')
+                    //     ? const Icon(
+                    //         Icons.keyboard_outlined,
+                    //         size: 36,
+                    //       )
+                    //     : null,
+                    // suffixIcon: (lang == 'ara')
+                    //     ? null
+                    //     : const Icon(
+                    //         Icons.keyboard_outlined,
+                    //         size: 36,
+                    //       ),
                   ),
                 ),
               );

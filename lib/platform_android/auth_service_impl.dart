@@ -4,9 +4,9 @@ import 'package:registration_client/pigeon/auth_response_pigeon.dart';
 import 'package:registration_client/pigeon/packet_auth_pigeon.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
-import 'package:registration_client/platform_spi/auth.dart';
+import 'package:registration_client/platform_spi/auth_service.dart';
 
-class AuthImpl implements Auth {
+class AuthServiceImpl implements AuthService {
   @override
   Future<User> validateUser(String username, String langCode) async {
     late User user;
@@ -37,11 +37,11 @@ class AuthImpl implements Auth {
 
   @override
   Future<PacketAuth> packetAuthentication(
-      String username, String password, bool isConnected) async {
+      String username, String password) async {
     late PacketAuth packetAuth;
     try {
       packetAuth =
-          await PacketAuthApi().authenticate(username, password, isConnected);
+          await PacketAuthApi().authenticate(username, password);
     } on PlatformException {
       debugPrint('PacketAuthenticationApi call failed!');
     } catch (e) {
@@ -52,4 +52,4 @@ class AuthImpl implements Auth {
   }
 }
 
-Auth getAuthImpl() => AuthImpl();
+AuthService getAuthServiceImpl() => AuthServiceImpl();

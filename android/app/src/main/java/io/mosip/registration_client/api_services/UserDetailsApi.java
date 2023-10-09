@@ -11,11 +11,14 @@ import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.UserPigeon;
@@ -25,13 +28,15 @@ public class UserDetailsApi implements UserPigeon.UserApi {
     LoginService loginService;
     RegistrationCenterRepository registrationCenterRepository;
     MasterDataService masterDataService;
+    AuditManagerService auditManagerService;
 
     @Inject
     public UserDetailsApi(LoginService loginService, RegistrationCenterRepository registrationCenterRepository,
-                          MasterDataService masterDataService) {
+                          MasterDataService masterDataService, AuditManagerService auditManagerService) {
         this.loginService = loginService;
         this.registrationCenterRepository = registrationCenterRepository;
         this.masterDataService = masterDataService;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override
@@ -61,9 +66,11 @@ public class UserDetailsApi implements UserPigeon.UserApi {
         boolean machineStatus = true;
         String centerId = "";
         String centerName = "";
+        String machineCenterId = "";
         if(centerMachineDto != null) {
             centerStatus = centerMachineDto.getCenterStatus();
             machineStatus = centerMachineDto.getMachineStatus();
+            machineCenterId = centerMachineDto.getCenterId();
         }
         if (userDetail == null) {
             UserPigeon.User user = new UserPigeon.User.Builder()
@@ -77,6 +84,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .setFailedAttempts("0")
                     .setCenterStatus(centerStatus)
                     .setMachineStatus(machineStatus)
+                    .setMachineCenterId(machineCenterId)
                     .build();
             result.success(user);
         } else {
@@ -92,6 +100,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
                     .setCenterName(centerName)
                     .setCenterStatus(centerStatus)
                     .setMachineStatus(machineStatus)
+                    .setMachineCenterId(machineCenterId)
                     .build();
             result.success(user);
         }

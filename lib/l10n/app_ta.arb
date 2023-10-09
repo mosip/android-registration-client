@@ -40,6 +40,8 @@
   "cred_expired": "நற்சான்றிதழ்கள் காணப்படவில்லை அல்லது காலாவதியாகவில்லை. ஆன்லைன் உள்நுழைவை முயற்சிக்கவும்!",
   "not_initialized": "இயந்திரத்தை துவக்க முடியவில்லை!",
   "invalid_user": "பயனர்பெயர் செல்லாது!",
+  "machine_inactive": "இயந்திரம் செயலில் இல்லை!",
+  "center_inactive": "மையம் செயல்படவில்லை!",
   "sync_completed_succesfully": "ஒத்திசைவு வெற்றிகரமாக நிறைவடைந்தது",
   "sync_completed_message": "கணினி சில வினாடிகளில் மறுதொடக்கம் செய்யப்படும் மற்றும் நீங்கள் உள்நுழைவு பக்கத்திற்கு திருப்பிவிடப்படுவீர்கள்.",
   "sync_failed": "ஒத்திசைவு தோல்வியுற்றது",
@@ -48,5 +50,6 @@
   "global_params_sync_failed":"Global Params Sync தோல்வியுற்றது",
   "user_details_sync_failed":"பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
   "id_schema_sync_failed":"IDSchena Sync Failed",
-  "master_data_sync_failed":"Master Data Sync தோல்வியுற்றது"
+  "master_data_sync_failed":"Master Data Sync தோல்வியுற்றது",
+  "network_error": "நெட்வொர்க் இல்லை!"
 }

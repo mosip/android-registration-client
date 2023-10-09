@@ -45,3 +45,6 @@ flutter pub run pigeon --input pigeon/dynamic_response.dart --dart_out lib/pigeo
 
 # Generate master data sync files
 flutter pub run pigeon --input pigeon/master_data_sync.dart --dart_out lib/pigeon/master_data_sync_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/MasterDataSyncPigeon.java --java_package "io.mosip.registration_client.model"
+
+# Generate audit event files
+flutter pub run pigeon --input pigeon/audit_response.dart --dart_out lib/pigeon/audit_response_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/AuditResponsePigeon.java --java_package "io.mosip.registration_client.model"

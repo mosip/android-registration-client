@@ -7,6 +7,7 @@ String buildingsX = 'assets/images/buildings.png';
 String buildingsXX = 'assets/images/buildings@2x.png';
 double appIconScale = 8;
 Color solidPrimary = const Color(0xFF1C43A1);
+String healthCheckApi = "https://api-internal.dev2.mosip.net/v1/syncdata/actuator/health";
 
 Color backgroundColor = const Color(0xFFF8FCFF);
 Color pureWhite = const Color(0xFFFFFFFF);

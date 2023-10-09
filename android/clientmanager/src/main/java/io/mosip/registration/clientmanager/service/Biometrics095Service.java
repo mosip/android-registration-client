@@ -51,7 +51,7 @@ public class Biometrics095Service extends BiometricsService {
         captureRequest.setSpecVersion("0.9.5");
         List<CaptureBioDetail> list = new ArrayList<>();
         CaptureBioDetail detail = new CaptureBioDetail();
-        detail.setType(modality == Modality.EXCEPTION_PHOTO ? Modality.FACE.getSingleType().name() : modality.getSingleType().name());
+        detail.setType(modality == Modality.EXCEPTION_PHOTO ? Modality.FACE.getSingleType().value() : modality.getSingleType().value());
         detail.setException(modality == Modality.EXCEPTION_PHOTO ? exceptionAttributes.toArray(new String[0]) :
                 Modality.getSpecBioSubType(exceptionAttributes).toArray(new String[0]));
         detail.setBioSubType(new String[]{});
@@ -71,6 +71,7 @@ public class Biometrics095Service extends BiometricsService {
         List<BiometricsDto> biometricsDtoList = new ArrayList<>();
         try {
             CaptureResponse captureResponse = objectMapper.readValue(response, new TypeReference<CaptureResponse>(){});
+
             List<String> exemptedBioSubTypes = Modality.getSpecBioSubType(exceptionAttributes);
             for (CaptureRespDetail bio : captureResponse.getBiometrics()) {
                 //On error, even for one attribute fail the RCapture
@@ -91,7 +92,7 @@ public class Biometrics095Service extends BiometricsService {
                 //TODO need requested spec version to validate response spec version
 
                 biometricsDtoList.add(new BiometricsDto(
-                        modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().name() : captureDto.getBioType(),
+                        modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().value() : captureDto.getBioType(),
                         modality == Modality.EXCEPTION_PHOTO ? EXCEPTION_PHOTO_ATTR.get(0) : captureDto.getBioSubType(),
                         captureDto.getBioValue(),
                         bio.getSpecVersion(),

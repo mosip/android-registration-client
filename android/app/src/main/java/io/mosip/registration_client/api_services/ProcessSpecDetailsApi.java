@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 
@@ -26,19 +27,21 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
     Context context;
     IdentitySchemaRepository identitySchemaRepository;
     GlobalParamRepository globalParamRepository;
-
+    AuditManagerService auditManagerService;
     RegistrationService registrationService;
 
     @Inject
     public ProcessSpecDetailsApi(Context context,
                                  IdentitySchemaRepository identitySchemaRepository,
                                  GlobalParamRepository globalParamRepository,
-                                 RegistrationService registrationService) {
+                                 RegistrationService registrationService,
+                                 AuditManagerService auditManagerService) {
 
         this.context = context;
         this.identitySchemaRepository = identitySchemaRepository;
         this.globalParamRepository = globalParamRepository;
         this.registrationService=registrationService;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override

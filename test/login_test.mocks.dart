@@ -31,6 +31,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         Invocation.getter(#username),
         returnValue: '',
       ) as String);
+
   @override
   set username(String? _username) => super.noSuchMethod(
         Invocation.setter(
@@ -39,11 +40,13 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   String get password => (super.noSuchMethod(
         Invocation.getter(#password),
         returnValue: '',
       ) as String);
+
   @override
   set password(String? _password) => super.noSuchMethod(
         Invocation.setter(
@@ -52,6 +55,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   String validateUsername(String? uname) => (super.noSuchMethod(
         Invocation.method(
@@ -60,6 +64,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: '',
       ) as String);
+
   @override
   String validatePassword(String? pword) => (super.noSuchMethod(
         Invocation.method(
@@ -68,6 +73,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: '',
       ) as String);
+
   @override
   String login(
     String? username,
@@ -83,6 +89,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: '',
       ) as String);
+
   @override
   String isOnboarded(Map<String, dynamic>? mockData) => (super.noSuchMethod(
         Invocation.method(
@@ -91,6 +98,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: '',
       ) as String);
+
   @override
   String userRoleAuthorised(List<dynamic>? mockData) => (super.noSuchMethod(
         Invocation.method(
@@ -99,6 +107,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: '',
       ) as String);
+
   @override
   bool isPasswordPresent(
     Map<String, dynamic>? passwordData,
@@ -114,6 +123,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: false,
       ) as bool);
+
   @override
   bool isPasswordValid(
     Map<String, dynamic>? passwordData,
@@ -131,6 +141,7 @@ class MockLogin extends _i1.Mock implements _i2.Login {
         ),
         returnValue: false,
       ) as bool);
+
   @override
   String offlineLogin(
     Map<String, dynamic>? passwordData,

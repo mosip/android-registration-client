@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 
@@ -16,10 +17,12 @@ import io.mosip.registration_client.model.CommonDetailsPigeon;
 public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
 
     MasterDataService masterDataService;
+    AuditManagerService auditManagerService;
 
     @Inject
-    public CommonDetailsApi(MasterDataService masterDataService){
+    public CommonDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService){
         this.masterDataService=masterDataService;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override

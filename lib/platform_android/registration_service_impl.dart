@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
-import 'package:registration_client/platform_spi/registration.dart';
+import 'package:registration_client/platform_spi/registration_service.dart';
 
-class RegistrationImpl implements Registration {
+class RegistrationServiceImpl implements RegistrationService {
   @override
   Future<String> startRegistration(List<String> langauages) async {
     String registrationStartResponse = '';
@@ -65,4 +65,4 @@ class RegistrationImpl implements Registration {
   }
 }
 
-Registration getRegistrationImpl() => RegistrationImpl();
+RegistrationService getRegistrationServiceImpl() => RegistrationServiceImpl();

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 
 class Scanner extends StatefulWidget {
   final String title;
@@ -22,6 +24,14 @@ class Scanner extends StatefulWidget {
 class _ScannerState extends State<Scanner> {
   XFile? _pickedFile;
   CroppedFile? _croppedFile;
+
+  _documentScanFailedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-005", "REG-MOD-103");
+  }
+
+   _documentPreviewAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-006", "REG-MOD-103");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +144,7 @@ class _ScannerState extends State<Scanner> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     if (_croppedFile != null) {
+      _documentPreviewAudit();
       final path = _croppedFile!.path;
       // return ConstrainedBox(
       //   constraints: BoxConstraints(
@@ -268,6 +279,7 @@ class _ScannerState extends State<Scanner> {
         ),
       );
     } else if (_pickedFile != null) {
+      _documentPreviewAudit();
       final path = _pickedFile!.path;
       // return ConstrainedBox(
       //   constraints: BoxConstraints(
@@ -403,6 +415,7 @@ class _ScannerState extends State<Scanner> {
         ),
       );
     } else {
+      _documentScanFailedAudit();
       return const SizedBox.shrink();
     }
   }
