@@ -16,7 +16,6 @@ import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
-import 'package:registration_client/platform_spi/network_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
@@ -379,11 +378,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () async {
-              final NetworkService networkService = NetworkService();
-              String result = await networkService.checkInternetConnection();
-              log(result);
-            },
+            onTap: () {},
           ),
         ],
       ),
