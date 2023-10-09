@@ -104,9 +104,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     @Override
     public void getBestBiometrics(@NonNull String fieldId, @NonNull String modality, @NonNull BiometricsPigeon.Result<List<String>> result) {
         try{
-
             RegistrationDto registrationDto=registrationService.getRegistrationDto();
-
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json;
             List<String> jsonList=new ArrayList<>();
@@ -114,12 +112,8 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             for(int i=0;i<biometricsDtoList.size();i++){
                 json=ow.writeValueAsString(biometricsDtoList.get(i));
                 jsonList.add(json);
-
             }
-
             result.success(jsonList);
-
-
         }catch (Exception e){
             Log.e(TAG,e.getMessage());
         }
@@ -133,13 +127,10 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             String json;
             List<String> jsonList=new ArrayList<>();
             biometricsDtoList=registrationDto.getBiometrics(fieldId,getModality(modality),attempt.intValue()-1);
-
             for(int i=0;i<biometricsDtoList.size();i++){
                 json=ow.writeValueAsString(biometricsDtoList.get(i));
                 jsonList.add(json);
-
             }
-
             result.success(jsonList);
         }catch(Exception e){
             Log.e(TAG,e.getMessage());
@@ -152,7 +143,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         List<byte[]> listByteArrayTester=new ArrayList<>();
         try{
             RegistrationDto registrationDto=registrationService.getRegistrationDto();
-
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json;
             List<String> jsonList=new ArrayList<>();
@@ -378,7 +368,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                List<BiometricsDto> temp= registrationDto.getBestBiometrics(fieldId,modality);
                biometricsDtoList.addAll(temp);
             }
-            System.out.println(biometricsDtoList);
             Map<String,Boolean> dataContext=new HashMap<String,Boolean>();
             Pattern REGEX_PATTERN =
                     Pattern.compile("[a-zA-Z]+");
@@ -387,27 +376,19 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
             while (matcher.find()) {
                 dataContext.put(matcher.group(),false);
-
-
-                for (BiometricsDto dto:biometricsDtoList
-                     ) {
-
+                for (BiometricsDto dto:biometricsDtoList) {
                     if(dto.getBioSubType()!=null){
                         if(customMatcher(dto.getBioSubType(),matcher.group())){
-
                             dataContext.put(matcher.group(),true);
                             break;
                         }
                     }
                     else{
-
                         if(dto.getModality().toUpperCase().matches(matcher.group().toUpperCase())){
-
                             dataContext.put(matcher.group(),true);
                             break;
                         }
                     }
-
                 }
             }
             Log.i(TAG, "Printing Map: " + dataContext);
