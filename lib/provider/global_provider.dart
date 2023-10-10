@@ -167,6 +167,10 @@ class GlobalProvider with ChangeNotifier {
     _commitIdApp = value;
     notifyListeners();
   }
+  
+  saveVersionToGlobalParam(String id, String version) async {
+    await networkService.saveVersionToGlobalParam(id, version);
+  }
 
   set chosenLang(List<String> value) {
     _chosenLang = value;
