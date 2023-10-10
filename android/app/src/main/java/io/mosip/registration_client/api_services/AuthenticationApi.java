@@ -81,7 +81,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                             loginService.setPasswordHash(username, password);
                             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                                     .setResponse(wrapper.getResponse())
-                                    .setUsername(sharedPreferences.getString(USER_NAME, null))
+                                    .setUsername(sharedPreferences.getString(USER_NAME, username))
                                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
                                     .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
                                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
@@ -141,7 +141,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             String token = loginService.saveUserAuthTokenOffline(username);
             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse(token)
-                    .setUsername(sharedPreferences.getString(USER_NAME, null))
+                    .setUsername(sharedPreferences.getString(USER_NAME, username))
                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
                     .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
