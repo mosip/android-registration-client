@@ -51,5 +51,6 @@
   "user_details_sync_failed":"उपयोगकर्ता विवरण सिंक्रनाइज़ेशन विफल रहा",
   "id_schema_sync_failed":"IDSchena सिंक्रनाइज़ेशन विफल रहा",
   "master_data_sync_failed":"मास्टर डेटा सिंक्रनाइज़ेशन विफल",
-  "network_error": "कोई नेटवर्क नहीं मिला!"
+  "network_error": "कोई नेटवर्क नहीं मिला!",
+  "delete": "मिटाना"
 }
