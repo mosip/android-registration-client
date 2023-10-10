@@ -11,6 +11,7 @@ import 'package:registration_client/platform_spi/audit_service.dart';
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key_service.dart';
+import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +22,8 @@ class GlobalProvider with ChangeNotifier {
   final PacketService packetService = PacketService();
   final DynamicResponseService dynamicResponseService =
       DynamicResponseService();
-  final Audit audit = Audit(); 
+  final Audit audit = Audit();
+  final NetworkService networkService = NetworkService();
 
   //Variables
   int _currentIndex = 0;
@@ -29,6 +31,7 @@ class GlobalProvider with ChangeNotifier {
   String _centerId = "";
   String _centerName = "";
   String _machineName = "";
+
   final formKey = GlobalKey<FormState>();
 
   Process? _currentProcess;
@@ -142,6 +145,13 @@ class GlobalProvider with ChangeNotifier {
   Map<String, bool> get languageMap => _languageMap;
   Map<String, String> get thresholdValuesMap => _thresholdValuesMap;
   List<String> get chosenLang => _chosenLang;
+
+  String _versionNoApp = "";
+  String get versionNoApp => _versionNoApp;
+  set versionNoApp(String value) {
+    _versionNoApp = value;
+    notifyListeners();
+  }
 
   set chosenLang(List<String> value) {
     _chosenLang = value;
@@ -280,6 +290,11 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  getVersionNoApp() async {
+    String versionNoAppTemp = await networkService.getVersionNoApp();
+    versionNoApp = versionNoAppTemp;
+  }
+
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
     notifyListeners();
@@ -330,9 +345,9 @@ class GlobalProvider with ChangeNotifier {
       List values = List.empty(growable: true);
       for (var lang in chosenLang) {
         String templateContent = await CommonDetailsApi().getTemplateContent(
-            field.templateName!,
-            langToCode(lang),
-          );
+          field.templateName!,
+          langToCode(lang),
+        );
         values.add(templateContent);
       }
       fieldDisplayValues[field.id!] = values;
@@ -463,7 +478,7 @@ class GlobalProvider with ChangeNotifier {
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
     }
-    for(var element in _optionalLanguages) {
+    for (var element in _optionalLanguages) {
       String lang = _languageCodeMapper[element]!;
       languageDataMap[lang] = false;
       mandatoryMap[lang] = false;
@@ -474,7 +489,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   createLanguageCodeMapper() {
-    if(_languageDataList.isEmpty) {
+    if (_languageDataList.isEmpty) {
       _languages = ["eng"];
       _languageCodeMapper["eng"] = "English";
       return;

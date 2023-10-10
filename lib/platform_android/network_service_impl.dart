@@ -22,7 +22,7 @@ class NetworkServiceImpl implements NetworkService {
   }
   
   @override
-  Future<String> getActucatorInfo() async {
+  Future<String> getVersionNoApp() async {
    String versionInfo = '';
     try {
       final response = await http.get(Uri.parse(

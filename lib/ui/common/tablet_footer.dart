@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 
 import '../../utils/app_config.dart';
 
@@ -7,6 +11,7 @@ class TabletFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       height: 50,
       width: double.infinity,
@@ -20,7 +25,7 @@ class TabletFooter extends StatelessWidget {
       ),
       child: Center(
           child: Text(
-        "Community Registration - Client Version 1.2.0.1.B2",
+        "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
         style: TextStyle(
             color: const Color(0xff6F6E6E), fontSize: 14, fontWeight: regular),
       )),
