@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -167,7 +166,7 @@ class GlobalProvider with ChangeNotifier {
     _commitIdApp = value;
     notifyListeners();
   }
-  
+
   saveVersionToGlobalParam(String id, String version) async {
     await networkService.saveVersionToGlobalParam(id, version);
   }
@@ -311,10 +310,10 @@ class GlobalProvider with ChangeNotifier {
 
   getVersionNoApp() async {
     String versionNoAppTemp = await networkService.getVersionNoApp();
-    final _head = await rootBundle.loadString('.git/HEAD');
+    final head = await rootBundle.loadString('.git/HEAD');
     final commitId = await rootBundle.loadString('.git/ORIG_HEAD');
 
-    final branch = _head.split('/').last;
+    final branch = head.split('/').last;
 
     branchNameApp = branch;
     commitIdApp = commitId;
