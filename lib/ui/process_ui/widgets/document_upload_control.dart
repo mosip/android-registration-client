@@ -148,6 +148,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .getDocumentValues(fieldName, langCode, applicantType);
   }
 
+  //delete uploaded document
   void _deleteImage(Field e, Uint8List? item) async {
     for(int i =0;i<=imageBytesList.length;i++){
       if(imageBytesList[i] == item){
