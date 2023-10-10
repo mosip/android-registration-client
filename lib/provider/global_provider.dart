@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
@@ -153,6 +154,20 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  String _branchNameApp = "";
+  String get branchNameApp => _branchNameApp;
+  set branchNameApp(String value) {
+    _branchNameApp = value;
+    notifyListeners();
+  }
+
+  String _commitIdApp = "";
+  String get commitIdApp => _commitIdApp;
+  set commitIdApp(String value) {
+    _commitIdApp = value;
+    notifyListeners();
+  }
+
   set chosenLang(List<String> value) {
     _chosenLang = value;
     notifyListeners();
@@ -292,6 +307,13 @@ class GlobalProvider with ChangeNotifier {
 
   getVersionNoApp() async {
     String versionNoAppTemp = await networkService.getVersionNoApp();
+    final _head = await rootBundle.loadString('.git/HEAD');
+    final commitId = await rootBundle.loadString('.git/ORIG_HEAD');
+
+    final branch = _head.split('/').last;
+
+    branchNameApp = branch;
+    commitIdApp = commitId;
     versionNoApp = versionNoAppTemp;
   }
 

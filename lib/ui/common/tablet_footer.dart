@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
 import '../../utils/app_config.dart';
 
 class TabletFooter extends StatelessWidget {
+
   const TabletFooter({super.key});
 
   @override
@@ -20,12 +22,21 @@ class TabletFooter extends StatelessWidget {
         ),
         color: Color(0xffFCFCFC),
       ),
-      child: Center(
-          child: Text(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
         "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
         style: TextStyle(
-            color: const Color(0xff6F6E6E), fontSize: 14, fontWeight: regular),
-      )),
+                color: const Color(0xff6F6E6E), fontSize: 14, fontWeight: regular),
+      ),
+      Text(
+        "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
+        style: TextStyle(
+                color: const Color(0xff6F6E6E), fontSize: 14, fontWeight: regular),
+      ),
+        ],
+      ),
     );
   }
 }
