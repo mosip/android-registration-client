@@ -153,6 +153,10 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  saveVersionToGlobalParam(String id, String version) async {
+    await networkService.saveVersionToGlobalParam(id, version);
+  }
+
   set chosenLang(List<String> value) {
     _chosenLang = value;
     notifyListeners();

@@ -1,11 +1,11 @@
 package io.mosip.registration.clientmanager.spi;
 
+import java.util.List;
+
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
-
-import java.util.List;
 
 public interface MasterDataService {
 
@@ -128,5 +128,7 @@ public interface MasterDataService {
     String getPreviewTemplateContent(String templateTypeCode, String language);
 
     List<Language> getAllLanguages();
+
+    void saveGlobalParam(String id, String value);
 
 }

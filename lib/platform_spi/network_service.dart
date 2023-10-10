@@ -4,6 +4,8 @@ abstract class NetworkService {
   Future<String> checkInternetConnection();
 
   Future<String> getVersionNoApp();
+  
+  Future<String> saveVersionToGlobalParam(String id, String version);
 
   factory NetworkService() => getNetworkServiceImpl();
 }
