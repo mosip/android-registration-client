@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
 import 'package:registration_client/provider/auth_provider.dart';
@@ -15,6 +16,7 @@ import 'package:registration_client/utils/app_config.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final GlobalProvider appLanguage = GlobalProvider();
+  await FlutterConfig.loadEnvVariables();
   await appLanguage.fetchLocale();
   runApp(
     const RestartWidget(child: RegistrationClientApp()),

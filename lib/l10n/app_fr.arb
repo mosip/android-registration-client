@@ -40,6 +40,8 @@
   "cred_expired": "Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!",
   "not_initialized": "La machine n’a pas pu être initialisée!",
   "invalid_user": "Nom d’utilisateur non valide!",
+  "machine_inactive": "La machine n'est pas active !",
+  "center_inactive": "Le centre n'est pas actif !",
   "sync_completed_succesfully": "Synchro. Complété avec succès",
   "sync_completed_message": "Le système redémarrera dans quelques secondes et vous serez redirigé vers la page de connexion.",
   "sync_failed": "Synchro. Échoué",
@@ -48,5 +50,6 @@
   "global_params_sync_failed":"Échec de la synchronisation globale des paramètres",
   "user_details_sync_failed":"Échec de la synchronisation des détails de l'utilisateur",
   "id_schema_sync_failed":"Échec de la synchronisation IDSchema",
-  "master_data_sync_failed":"Échec de la synchronisation des données principales"
+  "master_data_sync_failed":"Échec de la synchronisation des données principales",
+  "network_error": "Aucun réseau trouvé!"
 }

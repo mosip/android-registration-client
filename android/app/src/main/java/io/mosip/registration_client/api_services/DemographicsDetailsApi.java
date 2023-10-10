@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.dto.SimpleType;
@@ -19,12 +20,12 @@ import io.mosip.registration_client.model.DemographicsDataPigeon;
 @Singleton
 public class DemographicsDetailsApi implements DemographicsDataPigeon.DemographicsApi {
     private final RegistrationService registrationService;
-
-
+    AuditManagerService auditManagerService;
 
     @Inject
-    public DemographicsDetailsApi(RegistrationService registrationService) {
+    public DemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
         this.registrationService = registrationService;
+        this.auditManagerService = auditManagerService;
 
     }
 

@@ -26,8 +26,8 @@ public class RegistrationRepository {
         return this.registrationDao.findAll();
     }
 
-    public List<Registration> getRegistrationsByStatus(String status) {
-        return this.registrationDao.findRegistrationByStatus(status);
+    public List<Registration> getRegistrationsByStatus(String status, Integer batchSize) {
+        return this.registrationDao.findRegistrationByStatus(status, batchSize);
     }
 
     public Registration getRegistration(String packetId) {
@@ -48,7 +48,7 @@ public class RegistrationRepository {
         registration.setFilePath(containerPath);
         registration.setRegType(registrationType);
         registration.setCenterId(centerId);
-        registration.setClientStatus(PacketClientStatus.CREATED.name());
+        registration.setClientStatus(PacketClientStatus.APPROVED.name());
         registration.setServerStatus(null);
         registration.setCrDtime(System.currentTimeMillis());
         registration.setCrBy("110006");

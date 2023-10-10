@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
@@ -33,6 +34,14 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
         ));
   }
 
+  _registrationAcknowledgementPageLoadedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-011", "REG-MOD-103");
+  }
+
+  _printAcknowledgementAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-0012", "REG-MOD-103");
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -56,6 +65,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
               ),
               InkWell(
                 onTap: () {
+                  _printAcknowledgementAudit();
                   _printHtmlToPdf();
                 },
                 child: Container(
@@ -101,6 +111,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                         setState(() {
                           _height = height;
                         });
+                        _registrationAcknowledgementPageLoadedAudit();
                       });
                     },
                     javascriptMode: JavascriptMode.unrestricted,

@@ -1,6 +1,6 @@
-import 'package:registration_client/platform_android/process_spec_impl.dart';
+import 'package:registration_client/platform_android/process_spec_service_impl.dart';
 
-abstract class ProcessSpec {
+abstract class ProcessSpecService {
   Future<String> getUISchema();
   Future<String> getStringValueGlobalParam(String key);
   Future<List<String?>> getNewProcessSpec();
@@ -9,5 +9,5 @@ abstract class ProcessSpec {
   Future<int> getMinLanguageCount();
   Future<int> getMaxLanguageCount();
 
-  factory ProcessSpec() => getProcessSpecImpl();
+  factory ProcessSpecService() => getProcessSpecServiceImpl();
 }

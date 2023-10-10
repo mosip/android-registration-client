@@ -3,16 +3,16 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
-import 'package:registration_client/platform_spi/demographics.dart';
+import 'package:registration_client/platform_spi/demographic_service.dart';
 import 'package:registration_client/platform_spi/document.dart';
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
-import 'package:registration_client/platform_spi/process_spec.dart';
-import 'package:registration_client/platform_spi/registration.dart';
+import 'package:registration_client/platform_spi/process_spec_service.dart';
+import 'package:registration_client/platform_spi/registration_service.dart';
 
 class RegistrationTaskProvider with ChangeNotifier {
-  final Registration registration = Registration();
-  final ProcessSpec processSpec = ProcessSpec();
-  final Demographics demographics = Demographics();
+  final RegistrationService registrationService = RegistrationService();
+  final ProcessSpecService processSpecService = ProcessSpecService();
+  final DemographicService demographics = DemographicService();
   final Document document = Document();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   List<Object?> _listOfProcesses = List.empty(growable: true);
@@ -46,7 +46,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getStringValueGlobalParam(String key) async {
-    String result = await processSpec.getStringValueGlobalParam(key);
+    String result = await processSpecService.getStringValueGlobalParam(key);
     if (result == "REG_GLOBAL_PARAM_ERROR") {
       _stringValueGlobalParam = "";
     } else {
@@ -56,7 +56,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getUISchema() async {
-    String result = await processSpec.getUISchema();
+    String result = await processSpecService.getUISchema();
     if (result == "REG_UI_SCHEMA_ERROR") {
       _uiSchema = "";
     } else {
@@ -71,7 +71,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getListOfProcesses() async {
-    List<String?> result = await processSpec.getNewProcessSpec();
+    List<String?> result = await processSpecService.getNewProcessSpec();
     if (result.isEmpty) {
       _listOfProcesses = [];
     } else {
@@ -81,12 +81,12 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   startRegistration(List<String> languages) async {
-    _registrationStartError = await registration.startRegistration(languages);
+    _registrationStartError = await registrationService.startRegistration(languages);
     notifyListeners();
   }
 
   evaluateMVEL(String fieldData, String expression) async {
-    return await registration.evaluateMVEL(fieldData, expression);
+    return await registrationService.evaluateMVEL(fieldData, expression);
   }
 
   setPreviewTemplate(String value) {
@@ -95,7 +95,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getPreviewTemplate(bool isPreview) async {
-    _previewTemplate = await registration.getPreviewTemplate(isPreview);
+    _previewTemplate = await registrationService.getPreviewTemplate(isPreview);
     notifyListeners();
   }
 
@@ -106,7 +106,7 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   submitRegistrationDto(String makerName) async {
     RegistrationSubmitResponse registrationSubmitResponse =
-        await registration.submitRegistrationDto(makerName);
+        await registrationService.submitRegistrationDto(makerName);
     return registrationSubmitResponse;
   }
 

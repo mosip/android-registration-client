@@ -10,11 +10,10 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
-import 'package:registration_client/platform_spi/registration.dart';
+import 'package:registration_client/platform_spi/registration_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
-
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -50,8 +49,13 @@ class _NewProcessState extends State<NewProcess> {
   ];
 
   String username = '';
-
   String password = '';
+
+  @override
+  void initState() {
+    _registrationScreenLoadedAudit();
+    super.initState();
+  }
 
   void _showInSnackBar(String value) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -61,9 +65,13 @@ class _NewProcessState extends State<NewProcess> {
     );
   }
 
+  _showNetworkError() {
+    _showInSnackBar(AppLocalizations.of(context)!.network_error);
+  }
+
   _submitRegistration() async {
-    RegistrationSubmitResponse registrationSubmitResponse = await registrationTaskProvider
-        .submitRegistrationDto(username);
+    RegistrationSubmitResponse registrationSubmitResponse =
+        await registrationTaskProvider.submitRegistrationDto(username);
 
     return registrationSubmitResponse;
   }
@@ -85,10 +93,7 @@ class _NewProcessState extends State<NewProcess> {
       return false;
     }
 
-    bool isConnected = context.read<ConnectivityProvider>().isConnected;
-    await context
-        .read<AuthProvider>()
-        .authenticatePacket(username, password, isConnected);
+    await context.read<AuthProvider>().authenticatePacket(username, password);
     bool isPacketAuthenticated = _getIsPacketAuthenticated();
 
     if (!isPacketAuthenticated) {
@@ -176,6 +181,18 @@ class _NewProcessState extends State<NewProcess> {
     globalProvider.setRegId("");
   }
 
+  void _registrationScreenLoadedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-002", "REG-MOD-103");
+  }
+
+  _nextButtonClickedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-003", "REG-MOD-103");
+  }
+
+  _getIsConnected() {
+    return context.read<ConnectivityProvider>().isConnected;
+  }
+
   @override
   Widget build(BuildContext context) {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
@@ -189,8 +206,9 @@ class _NewProcessState extends State<NewProcess> {
     int size = newProcess.screens!.length;
     evaluateMVEL(
         String fieldData, String? engine, String? expression, Field e) async {
-      final Registration registration = Registration();
-      bool required = await registration.evaluateMVEL(fieldData, expression!);
+      final RegistrationService registrationService = RegistrationService();
+      bool required =
+          await registrationService.evaluateMVEL(fieldData, expression!);
       return required;
     }
 
@@ -322,6 +340,7 @@ class _NewProcessState extends State<NewProcess> {
                 globalProvider.newProcessTabIndex + 1;
           }
         }
+        _nextButtonClickedAudit();
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {
           bool isPacketAuthenticated = await _authenticatePacket(context);
@@ -360,13 +379,11 @@ class _NewProcessState extends State<NewProcess> {
         height: 84.h,
         child: isMobile
             ? ElevatedButton(
-                child: Text(
-                    globalProvider.newProcessTabIndex <= size
-                        ? "CONTINUE"
-                        : globalProvider.newProcessTabIndex ==
-                                size + 1
-                            ? "AUTHENTICATE"
-                            : "COMPLETE"),
+                child: Text(globalProvider.newProcessTabIndex <= size
+                    ? "CONTINUE"
+                    : globalProvider.newProcessTabIndex == size + 1
+                        ? "AUTHENTICATE"
+                        : "COMPLETE"),
                 onPressed: () {
                   continueButtonTap(context, size, newProcess);
                 },
@@ -376,9 +393,16 @@ class _NewProcessState extends State<NewProcess> {
                 children: [
                   globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
-                          onPressed: () {
-                            globalProvider.syncPacket(
-                                globalProvider.regId);
+                          onPressed: () async {
+                            await context
+                                .read<ConnectivityProvider>()
+                                .checkNetworkConnection();
+                            bool isConnected = _getIsConnected();
+                            if (!isConnected) {
+                              _showNetworkError();
+                              return;
+                            }
+                            globalProvider.syncPacket(globalProvider.regId);
                           },
                           child: const Text("Sync Packet"))
                       : const SizedBox.shrink(),
@@ -387,9 +411,16 @@ class _NewProcessState extends State<NewProcess> {
                   ),
                   globalProvider.newProcessTabIndex == size + 2
                       ? ElevatedButton(
-                          onPressed: () {
-                            globalProvider.uploadPacket(
-                                globalProvider.regId);
+                          onPressed: () async {
+                            await context
+                                .read<ConnectivityProvider>()
+                                .checkNetworkConnection();
+                            bool isConnected = _getIsConnected();
+                            if (!isConnected) {
+                              _showNetworkError();
+                              return;
+                            }
+                            globalProvider.uploadPacket(globalProvider.regId);
                           },
                           child: const Text("Upload Packet"))
                       : const SizedBox.shrink(),
@@ -406,15 +437,13 @@ class _NewProcessState extends State<NewProcess> {
                     onPressed: () {
                       continueButtonTap(context, size, newProcess);
                     },
-                    child: Text(context
-                                .read<GlobalProvider>()
-                                .newProcessTabIndex <=
-                            size
-                        ? "CONTINUE"
-                        : globalProvider.newProcessTabIndex ==
-                                size + 1
-                            ? "AUTHENTICATE"
-                            : "COMPLETE"),
+                    child: Text(
+                        context.read<GlobalProvider>().newProcessTabIndex <=
+                                size
+                            ? "CONTINUE"
+                            : globalProvider.newProcessTabIndex == size + 1
+                                ? "AUTHENTICATE"
+                                : "COMPLETE"),
                   ),
                 ],
               ),

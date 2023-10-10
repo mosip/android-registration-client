@@ -38,6 +38,7 @@ import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
@@ -79,15 +80,17 @@ public class HostApiModule {
     @Singleton
     UserDetailsApi getLoginActivityApi(LoginService loginService,
                                        RegistrationCenterRepository registrationCenterRepository,
-                                       MasterDataService masterDataService) {
-        return new UserDetailsApi(loginService, registrationCenterRepository, masterDataService);
+                                       MasterDataService masterDataService,
+                                       AuditManagerService auditManagerService) {
+        return new UserDetailsApi(loginService, registrationCenterRepository, masterDataService, auditManagerService);
     }
 
     @Provides
     @Singleton
     MachineDetailsApi getMachineDetailsApi(ClientCryptoManagerService clientCryptoManagerService,
-                                           RegistrationCenterRepository registrationCenterRepository) {
-        return new MachineDetailsApi(clientCryptoManagerService, registrationCenterRepository);
+                                           RegistrationCenterRepository registrationCenterRepository,
+                                           AuditManagerService auditManagerService) {
+        return new MachineDetailsApi(clientCryptoManagerService, registrationCenterRepository, auditManagerService);
     }
 
 
@@ -103,17 +106,18 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService){
-        return new CommonDetailsApi(masterDataService);
+    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService, AuditManagerService auditManagerService){
+        return new CommonDetailsApi(masterDataService, auditManagerService);
     }
     
 
     @Provides
     @Singleton
     ProcessSpecDetailsApi getProcessSpecDetailsApi(IdentitySchemaRepository identitySchemaRepository,
-                                                   GlobalParamRepository globalParamRepository,RegistrationService registrationService) {
+                                                   GlobalParamRepository globalParamRepository,RegistrationService registrationService,
+                                                   AuditManagerService auditManagerService) {
         return new ProcessSpecDetailsApi(appContext, identitySchemaRepository,
-                        globalParamRepository,registrationService);
+                        globalParamRepository,registrationService, auditManagerService);
 
     }
 
@@ -126,34 +130,36 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    RegistrationApi getRegistrationDataApi(RegistrationService registrationService, TemplateService templateService) {
-        return new RegistrationApi(registrationService, templateService);
+    RegistrationApi getRegistrationDataApi(RegistrationService registrationService, TemplateService templateService,
+                                           AuditManagerService auditManagerService) {
+        return new RegistrationApi(registrationService, templateService, auditManagerService);
 
     }
 
     @Provides
     @Singleton
     PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                                       LoginService loginService, PacketService packetService) {
-        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService);
+                                                       LoginService loginService, PacketService packetService,
+                                                       AuditManagerService auditManagerService) {
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService, auditManagerService);
     }
 
     @Provides
     @Singleton
-    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService) {
-        return new DemographicsDetailsApi(registrationService);
+    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
+        return new DemographicsDetailsApi(registrationService, auditManagerService);
     }
 
     @Provides
     @Singleton
-    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService) {
-        return new DynamicDetailsApi(masterDataService);
+    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService) {
+        return new DynamicDetailsApi(masterDataService, auditManagerService);
     }
 
     @Provides
     @Singleton
-    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService) {
-        return new DocumentDetailsApi(registrationService);
+    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
+        return new DocumentDetailsApi(registrationService, auditManagerService);
     }
     @Provides
     @Singleton
@@ -168,7 +174,8 @@ public class HostApiModule {
             BlocklistedWordRepository blocklistedWordRepository,
             SyncJobDefRepository syncJobDefRepository,
             LanguageRepository languageRepository,
-            JobManagerService jobManagerService) {
+            JobManagerService jobManagerService,
+            AuditManagerService auditManagerService) {
         return new MasterDataSyncApi( clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
@@ -177,8 +184,15 @@ public class HostApiModule {
                 documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
-                syncJobDefRepository, languageRepository,jobManagerService
+                syncJobDefRepository, languageRepository,jobManagerService,
+                auditManagerService
                 );
+    }
+
+    @Provides
+    @Singleton
+    AuditDetailsApi getAuditDetailsApi(AuditManagerService auditManagerService) {
+        return new AuditDetailsApi(auditManagerService);
     }
 }
 

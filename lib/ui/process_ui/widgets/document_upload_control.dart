@@ -109,6 +109,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
+  _documentScanClickedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-004", "REG-MOD-103");
+  }
+
   Future<List<int>> getImageBytes(String imagePath) async {
     final File imageFile = File(imagePath);
     if (!imageFile.existsSync()) {
@@ -262,6 +266,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () async {
+                              _documentScanClickedAudit();
                               var doc = await Navigator.push(
                                 context,
                                 MaterialPageRoute(

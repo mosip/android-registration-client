@@ -60,7 +60,21 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   }
 
   @override
+  void initState() {
+    _languageSelectorPageLoadedAudit();
+    super.initState();
+  }
+
+  _languageSelectorPageLoadedAudit() async {
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-006", "REG-MOD-103");
+  }
+
+  @override
   Widget build(BuildContext context) {
+    int minLanguage = context.read<GlobalProvider>().minLanguageCount;
+    int maxLanguage = context.read<GlobalProvider>().maxLanguageCount;
     final size = MediaQuery.of(context).size;
     return AlertDialog(
       title: const Text(
@@ -77,7 +91,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             ListTile(
               minLeadingWidth: 0,
               title: Text(
-                "Please select any two language for data entry",
+                "Please select any $minLanguage language for data entry",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               leading: const Icon(
@@ -231,8 +245,24 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  _navigateToConsentPage();
+                  if (context.read<GlobalProvider>().chosenLang.length >=
+                          minLanguage &&
+                      context.read<GlobalProvider>().chosenLang.length <=
+                          maxLanguage) {
+                    _navigateToConsentPage();
+                  }
                 },
+                style: ButtonStyle(
+                  backgroundColor: (context
+                                  .read<GlobalProvider>()
+                                  .chosenLang
+                                  .length >=
+                              minLanguage &&
+                          context.read<GlobalProvider>().chosenLang.length <=
+                              maxLanguage)
+                      ? MaterialStateProperty.all<Color>(solidPrimary)
+                      : MaterialStateProperty.all<Color>(Colors.grey),
+                ),
                 child: const Text("SUBMIT"),
               ),
             )

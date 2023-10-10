@@ -11,9 +11,10 @@
    <application
         android:label="registration_client"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true">
-       <service android:name=".MyBackgroundService" />
+       <service android:name=".SyncBackgroundService" />
+       <service android:name=".UploadBackgroundService" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
