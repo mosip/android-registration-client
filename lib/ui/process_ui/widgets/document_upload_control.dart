@@ -9,6 +9,7 @@ import 'package:registration_client/model/upload_document_data.dart';
 import 'package:registration_client/pigeon/document_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/scanner/scanner.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -308,12 +309,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                         onTap: (){
                                           _deleteImage(widget.field,item);
                                         },
-                                        child: const Row(
+                                        child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
-                                            SizedBox(width: 5,),
-                                            Text("DELETE",style: TextStyle(fontSize: 13,color: Colors.red)),
+                                            const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
+                                            const SizedBox(width: 5,),
+                                            Text(AppLocalizations.of(context)!.delete,style: TextStyle(fontSize: 13,color: Colors.red)),
                                           ],
                                         ),
                                       )
@@ -482,12 +483,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                         onTap: (){
                                           _deleteImage(widget.field,item);
                                         },
-                                        child: const Row(
+                                        child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
-                                            SizedBox(width: 5,),
-                                            Text("DELETE",style: TextStyle(fontSize: 13,color: Colors.red)),
+                                            const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
+                                            const SizedBox(width: 5,),
+                                            Text(AppLocalizations.of(context)!.delete,style: TextStyle(fontSize: 13,color: Colors.red)),
                                           ],
                                         ),
                                       )
