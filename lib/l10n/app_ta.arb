@@ -51,5 +51,6 @@
   "user_details_sync_failed":"பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
   "id_schema_sync_failed":"IDSchena Sync Failed",
   "master_data_sync_failed":"Master Data Sync தோல்வியுற்றது",
-  "network_error": "நெட்வொர்க் இல்லை!"
+  "network_error": "நெட்வொர்க் இல்லை!",
+  "delete": "அழி"
 }

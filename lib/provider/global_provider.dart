@@ -71,6 +71,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  removeScannedPages(String field,Uint8List? value, List<Uint8List?> listOfValue) {
+    _scannedPages[field] = listOfValue;
+    _scannedPages[field]!.remove(value);
+    notifyListeners();
+  }
+
   void clearScannedPages() {
     _scannedPages.clear();
     notifyListeners();
