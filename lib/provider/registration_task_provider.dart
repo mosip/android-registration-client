@@ -171,4 +171,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   getScannedDocument(String fieldId) async {
     return document.getScannedPages(fieldId);
   }
+
+  removeDocument(String fieldId, int pageIndex) async {
+    await document.removeDocument(fieldId, pageIndex);
+  }
 }
