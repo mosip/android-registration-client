@@ -242,13 +242,11 @@ public class RegistrationServiceImpl implements RegistrationService {
             biometricRecord.getSegments().add(buildBIR(b));
         });
         this.registrationDto.EXCEPTIONS.forEach((key, value) -> {
-            Log.e(getClass().getSimpleName(), "key: " + key);
-            Log.e(getClass().getSimpleName(), "value: " + value);
             value.forEach((v) -> {
                 Modality modality = Modality.getModality(v);
-                String bioSubtype = "";
+                String bioSubtype = Modality.getSpecBioSubType(v);
                 String bioValue = null;
-                String specVersion = "";
+                String specVersion = null;
                 boolean isException = true;
                 String decodedBioResponse = null;
                 String signature = null;
@@ -257,7 +255,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 double sdkScore = 0;
                 float qualityScore = 0;
                 BiometricsDto exceptionBiometricDto =
-                        new BiometricsDto(modality.getSingleType(), bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature, isForceCaptured, numOfRetries, sdkScore, qualityScore);
+                        new BiometricsDto(modality.getSingleType().value(), bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature, isForceCaptured, numOfRetries, sdkScore, qualityScore);
                 biometricRecord.getSegments().add(buildBIR(exceptionBiometricDto));
             });
         });
@@ -418,10 +416,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public BIR buildBIR(BiometricsDto biometricsDto) {
         if(biometricsDto == null)
             return null;
-        Log.e(getClass().getSimpleName(), "modality: " + biometricsDto.getModality());
-        Log.e(getClass().getSimpleName(), "BioSubtype: " + biometricsDto.getBioSubType());
         SingleType singleType = SingleType.fromValue(biometricsDto.getModality());
-        byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
+        byte[] iso = biometricsDto.getBioValue() == null ? null : CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
         RegistryIDType birFormat = new RegistryIDType();
         birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG);

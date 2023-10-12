@@ -83,6 +83,25 @@ public enum Modality implements Serializable {
         return bioSubTypes;
     }
 
+    public static String getSpecBioSubType(String bioAttribute) {
+            switch (bioAttribute.toLowerCase()) {
+                case "leftlittle": return "Left LittleFinger";
+                case "leftring": return "Left RingFinger";
+                case "leftmiddle": return "Left MiddleFinger";
+                case "leftindex": return "Left IndexFinger";
+                case "rightlittle": return "Right LittleFinger";
+                case "rightring": return "Right RingFinger";
+                case "rightmiddle": return "Right MiddleFinger";
+                case "rightindex": return "Right IndexFinger";
+                case "leftthumb": return "Left Thumb";
+                case "rightthumb": return "Right Thumb";
+                case "lefteye": case "leftiris": return "Left";
+                case "righteye": case "rightiris": return "Right";
+                case "face": return "Face";
+            }
+        return "";
+    }
+
     public static String getBioAttribute(String bioSubType) {
         if(bioSubType==null){
             return "";
