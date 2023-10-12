@@ -241,6 +241,26 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
+        this.registrationDto.EXCEPTIONS.forEach((key, value) -> {
+            Log.e(getClass().getSimpleName(), "key: " + key);
+            Log.e(getClass().getSimpleName(), "value: " + value);
+            value.forEach((v) -> {
+                Modality modality = Modality.getModality(v);
+                String bioSubtype = "";
+                String bioValue = null;
+                String specVersion = "";
+                boolean isException = true;
+                String decodedBioResponse = null;
+                String signature = null;
+                boolean isForceCaptured = false;
+                int numOfRetries = 0;
+                double sdkScore = 0;
+                float qualityScore = 0;
+                BiometricsDto exceptionBiometricDto =
+                        new BiometricsDto(modality.getSingleType(), bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature, isForceCaptured, numOfRetries, sdkScore, qualityScore);
+                biometricRecord.getSegments().add(buildBIR(exceptionBiometricDto));
+            });
+        });
         return biometricRecord;
     }
 
@@ -398,7 +418,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public BIR buildBIR(BiometricsDto biometricsDto) {
         if(biometricsDto == null)
             return null;
-
+        Log.e(getClass().getSimpleName(), "modality: " + biometricsDto.getModality());
+        Log.e(getClass().getSimpleName(), "BioSubtype: " + biometricsDto.getBioSubType());
         SingleType singleType = SingleType.fromValue(biometricsDto.getModality());
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
