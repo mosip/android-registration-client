@@ -1,7 +1,5 @@
 package io.mosip.registration_client.api_services;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -51,17 +49,5 @@ public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
       List<String> response=new ArrayList<>();
       output.forEach((value)->{response.add(value.toString());});
       result.success(response);
-    }
-
-    @Override
-    public void saveVersionToGlobalParam(@NonNull String id, @NonNull String value, @NonNull CommonDetailsPigeon.Result<String> result) {
-        String response = "";
-        try {
-            masterDataService.saveGlobalParam(id, value);
-            response = "OK";
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error in save version.", e);
-        }
-        result.success(response);
     }
 }

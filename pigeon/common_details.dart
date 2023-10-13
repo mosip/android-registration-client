@@ -10,6 +10,4 @@ abstract class CommonDetailsApi {
   List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode);
   @async
   List<String> getFieldValues(String fieldName, String langCode);
-  @async
-  String saveVersionToGlobalParam(String id, String value);
 }
