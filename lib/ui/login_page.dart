@@ -1,4 +1,3 @@
-
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +9,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -67,9 +65,22 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _initializeAppData() async {
+    await _setVersionNoApp();
+    await _saveVersionToGlobalParam();
     await _initializeMachineData();
     await _initializeAppLanguageData();
     await _loginPageLoadedAudit();
+  }
+
+  _setVersionNoApp() async {
+    await context.read<GlobalProvider>().getVersionNoApp();
+  }
+
+  _saveVersionToGlobalParam() async {
+    String version = context.read<GlobalProvider>().versionNoApp;
+    await context
+        .read<GlobalProvider>()
+        .saveVersionToGlobalParam("mosip.registration.server_version", version);
   }
 
   _initializeMachineData() async {
@@ -81,11 +92,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _loginPageLoadedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-LOAD-001", "REG-MOD-101");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-001", "REG-MOD-101");
   }
 
   _longPressLogoAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-AUTH-002", "REG-MOD-101");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -96,56 +111,55 @@ class _LoginPageState extends State<LoginPage> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
 
-    return
-      SafeArea(
-            child: Scaffold(
-              backgroundColor: AppStyle.appSolidPrimary,
-              body: Stack(
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    left: 16.w,
-                    child: _getBuildingsImage(),
-                  ),
-                  SizedBox(
-                    height: h,
-                    width: w,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: isMobile
-                            ? CrossAxisAlignment.center
-                            : CrossAxisAlignment.start,
-                        children: [
-                          _appBarComponent(),
-                          SizedBox(
-                            height: isMobile ? 50.h : 132.h,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 16.w : 80.w,
-                            ),
-                            child: isMobile ? _mobileView() : _tabletView(),
-                          ),
-                        ],
-                      ),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyle.appSolidPrimary,
+        body: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 16.w,
+              child: _getBuildingsImage(),
+            ),
+            SizedBox(
+              height: h,
+              width: w,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: isMobile
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
+                  children: [
+                    _appBarComponent(),
+                    SizedBox(
+                      height: isMobile ? 50.h : 132.h,
                     ),
-                  ),
-                  isMachineKeysDialogOpen
-                      ? Container(
-                          color: Colors.transparent.withOpacity(0.5),
-                          child: Center(
-                            child: MachineKeys(
-                              onCloseComponent: () {
-                                _toggleMachineKeysDialog();
-                              },
-                            ),
-                          ),
-                        )
-                      : const SizedBox(),
-                ],
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16.w : 80.w,
+                      ),
+                      child: isMobile ? _mobileView() : _tabletView(),
+                    ),
+                  ],
+                ),
               ),
             ),
-          );
+            isMachineKeysDialogOpen
+                ? Container(
+                    color: Colors.transparent.withOpacity(0.5),
+                    child: Center(
+                      child: MachineKeys(
+                        onCloseComponent: () {
+                          _toggleMachineKeysDialog();
+                        },
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
+          ],
+        ),
+      ),
+    );
   }
 
   _getIsValidUser() {
@@ -165,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
     context.read<GlobalProvider>().setName(user.name!);
     context.read<GlobalProvider>().setCenterName(user.centerName!);
   }
-  
+
   _getUsernameIncorrectErrorText() {
     return AppLocalizations.of(context)!.username_incorrect;
   }
@@ -220,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
         .authenticateUser(username, password, isConnected);
   }
 
-   _getIsConnected() {
+  _getIsConnected() {
     return context.read<ConnectivityProvider>().isConnected;
   }
 
@@ -379,9 +393,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            onTap: () {
-              log("Health Check: ${FlutterConfig.get("HEALTH_CHECK_URL")}");
-            },
+            onTap: () async {},
           ),
         ],
       ),
@@ -472,8 +484,8 @@ class _LoginPageState extends State<LoginPage> {
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
-                  isDisabled: username.trim().isEmpty ||
-                      username.trim().length > 50,
+                  isDisabled:
+                      username.trim().isEmpty || username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
                   mp: context.watch<GlobalProvider>().languageCodeMapper,
@@ -489,7 +501,7 @@ class _LoginPageState extends State<LoginPage> {
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onLoginButtonPressed,
                   onTapBack: () {
-                    password="";
+                    password = "";
                     FocusManager.instance.primaryFocus?.unfocus();
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
@@ -573,7 +585,7 @@ class _LoginPageState extends State<LoginPage> {
       });
       showSyncResultDialog();
     }
-    
+
     await _initializeLanguageData();
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {
