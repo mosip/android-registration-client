@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.repository;
 
+import android.util.Log;
+
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
@@ -62,6 +64,7 @@ public class GlobalParamRepository {
 
     public void saveGlobalParam(String id, String value) {
         GlobalParam globalParam = new GlobalParam(id, id, value, true);
+        Log.e(getClass().getSimpleName(), "id: " + id + " value: " + value);
         globalParamDao.insertGlobalParam(globalParam);
         globalParamMap.put(id, value);
     }

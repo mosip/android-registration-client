@@ -788,5 +788,10 @@ public class MasterDataServiceImpl implements MasterDataService {
         return languageRepository.getAllLanguages();
     }
 
+    @Override
+    public void saveGlobalParam(String id, String value) {
+        globalParamRepository.saveGlobalParam(id, value);
+    }
+
 
 }
