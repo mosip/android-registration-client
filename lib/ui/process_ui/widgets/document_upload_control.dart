@@ -314,7 +314,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           children: [
                                             const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
                                             const SizedBox(width: 5,),
-                                            Text(AppLocalizations.of(context)!.delete,style: TextStyle(fontSize: 13,color: Colors.red)),
+                                            Text(AppLocalizations.of(context)!.delete,style: const TextStyle(fontSize: 13,color: Colors.red)),
                                           ],
                                         ),
                                       )
@@ -488,7 +488,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           children: [
                                             const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
                                             const SizedBox(width: 5,),
-                                            Text(AppLocalizations.of(context)!.delete,style: TextStyle(fontSize: 13,color: Colors.red)),
+                                            Text(AppLocalizations.of(context)!.delete,style: const TextStyle(fontSize: 13,color: Colors.red)),
                                           ],
                                         ),
                                       )

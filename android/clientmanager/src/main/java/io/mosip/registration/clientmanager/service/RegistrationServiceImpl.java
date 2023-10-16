@@ -241,6 +241,24 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
+        this.registrationDto.EXCEPTIONS.forEach((key, value) -> {
+            value.forEach((v) -> {
+                Modality modality = Modality.getModality(v);
+                String bioSubtype = Modality.getSpecBioSubType(v);
+                String bioValue = null;
+                String specVersion = null;
+                boolean isException = true;
+                String decodedBioResponse = null;
+                String signature = null;
+                boolean isForceCaptured = false;
+                int numOfRetries = 0;
+                double sdkScore = 0;
+                float qualityScore = 0;
+                BiometricsDto exceptionBiometricDto =
+                        new BiometricsDto(modality.getSingleType().value(), bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature, isForceCaptured, numOfRetries, sdkScore, qualityScore);
+                biometricRecord.getSegments().add(buildBIR(exceptionBiometricDto));
+            });
+        });
         return biometricRecord;
     }
 
@@ -398,9 +416,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public BIR buildBIR(BiometricsDto biometricsDto) {
         if(biometricsDto == null)
             return null;
-
         SingleType singleType = SingleType.fromValue(biometricsDto.getModality());
-        byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
+        byte[] iso = biometricsDto.getBioValue() == null ? null : CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
         RegistryIDType birFormat = new RegistryIDType();
         birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG);
