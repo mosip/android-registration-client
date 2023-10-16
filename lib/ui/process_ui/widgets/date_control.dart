@@ -94,6 +94,18 @@ class _DateControlState extends State<DateControl> {
                 onTap: _selectDate,
                 textCapitalization: TextCapitalization.words,
                 textAlign: TextAlign.left,
+                validator: (value) {
+                  if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                    return null;
+                  }
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a value';
+                  }
+                  if (!widget.validation.hasMatch(value)) {
+                    return 'Invalid input';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
