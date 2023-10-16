@@ -64,7 +64,6 @@ public class GlobalParamRepository {
 
     public void saveGlobalParam(String id, String value) {
         GlobalParam globalParam = new GlobalParam(id, id, value, true);
-        Log.e(getClass().getSimpleName(), "id: " + id + " value: " + value);
         globalParamDao.insertGlobalParam(globalParam);
         globalParamMap.put(id, value);
     }
