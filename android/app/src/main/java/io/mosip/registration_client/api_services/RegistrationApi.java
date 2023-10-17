@@ -44,7 +44,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         String response = "";
         try {
             Log.i(getClass().getSimpleName(), "Selected languages: "+languages);
-            this.registrationDto = registrationService.startRegistration(Arrays.asList("eng"));
+            this.registrationDto = registrationService.startRegistration(languages);
         } catch (Exception e) {
             response = e.getMessage();
             Log.e(getClass().getSimpleName(), "Registration start failed", e);
