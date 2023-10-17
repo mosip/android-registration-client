@@ -476,7 +476,7 @@ class _LoginPageState extends State<LoginPage> {
                       username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
-                  mp: context.watch<GlobalProvider>().languageCodeMapper,
+                  mp: context.watch<GlobalProvider>().codeToLanguageMapper,
                   onChanged: (v) {
                     setState(() {
                       username = v;

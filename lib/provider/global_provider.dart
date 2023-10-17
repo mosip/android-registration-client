@@ -305,9 +305,10 @@ class GlobalProvider with ChangeNotifier {
   chooseLanguage(Map<String, String> label) {
     String x = '';
     for (var i in chosenLang) {
-      for (var element in languageDataList) {
-        if (i == element!.name) {
-          x = "$x${label[element.code]!}/";
+      String code = languageToCodeMapper[i]!;
+      for (var element in _languages) {
+        if (code == element) {
+          x = "$x${label[code]!}/";
           continue;
         }
       }
@@ -318,9 +319,9 @@ class GlobalProvider with ChangeNotifier {
 
   langToCode(String lang) {
     String code = "";
-    for (var element in languageDataList) {
-      if (lang == element!.name) {
-        code = element.code;
+    for (var element in _languages) {
+      if (languageToCodeMapper[lang] == element) {
+        code = element!;
         continue;
       }
     }
@@ -376,7 +377,7 @@ class GlobalProvider with ChangeNotifier {
     _fieldInputValue = {};
     _fieldInputValue = {};
     _fieldDisplayValues = {};
-    log(_fieldInputValue.toString());
+    log("input value $_fieldInputValue");
     notifyListeners();
   }
 
@@ -386,7 +387,8 @@ class GlobalProvider with ChangeNotifier {
   }
 
   List<LanguageData?> _languageDataList = [];
-  Map<String, String> _languageCodeMapper = {"eng": "English"};
+  Map<String, String> _codeToLanguageMapper = {"eng": "English"};
+  Map<String, String> _languageToCodeMapper = {"English": "eng"};
   List<String?> _languages = ['eng'];
   List<String?> _mandatoryLanguages = [];
   List<String?> _optionalLanguages = [];
@@ -395,7 +397,8 @@ class GlobalProvider with ChangeNotifier {
   Map<String, bool> _mandatoryLanguageMap = {};
 
   List<LanguageData?> get languageDataList => _languageDataList;
-  Map<String, String> get languageCodeMapper => _languageCodeMapper;
+  Map<String, String> get codeToLanguageMapper => _codeToLanguageMapper;
+  Map<String, String> get languageToCodeMapper => _languageToCodeMapper;
   List<String?> get languages => _languages;
   List<String?> get mandatoryLanguages => _mandatoryLanguages;
   List<String?> get optionalLanguages => _optionalLanguages;
@@ -415,8 +418,13 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setLanguageCodeMapper(Map<String, String> value) {
-    _languageCodeMapper = value;
+  setCodeToLanguageMapper(Map<String, String> value) {
+    _codeToLanguageMapper = value;
+    notifyListeners();
+  }
+
+  setLanguageToCodeMapper(Map<String, String> value) {
+    _languageToCodeMapper = value;
     notifyListeners();
   }
 
@@ -464,13 +472,13 @@ class GlobalProvider with ChangeNotifier {
     Map<String, bool> languageDataMap = {};
     Map<String, bool> mandatoryMap = {};
     for (var element in _mandatoryLanguages) {
-      String lang = _languageCodeMapper[element]!;
+      String lang = _codeToLanguageMapper[element]!;
       languageDataMap[lang] = true;
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
     }
     for(var element in _optionalLanguages) {
-      String lang = _languageCodeMapper[element]!;
+      String lang = _codeToLanguageMapper[element]!;
       languageDataMap[lang] = false;
       mandatoryMap[lang] = false;
     }
@@ -482,11 +490,16 @@ class GlobalProvider with ChangeNotifier {
   createLanguageCodeMapper() {
     if(_languageDataList.isEmpty) {
       _languages = ["eng"];
-      _languageCodeMapper["eng"] = "English";
+      _codeToLanguageMapper["eng"] = "English";
+      _languageToCodeMapper["English"] = "eng";
       return;
     }
+    List<String> languageList = [];
     for (var element in _languageDataList) {
-      _languageCodeMapper[element!.code] = element.name;
+      languageList.add(element!.code);
+      _codeToLanguageMapper[element.code] = element.name;
+      _languageToCodeMapper[element.name] = element.code;
+      _languages = languageList;
     }
   }
 
