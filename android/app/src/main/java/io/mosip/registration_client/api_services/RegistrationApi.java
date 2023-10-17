@@ -43,10 +43,11 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         auditManagerService.audit(AuditEvent.REGISTRATION_START, Components.REGISTRATION);
         String response = "";
         try {
-            this.registrationDto = registrationService.startRegistration(languages);
+            Log.i(getClass().getSimpleName(), "Selected languages: "+languages);
+            this.registrationDto = registrationService.startRegistration(Arrays.asList("eng"));
         } catch (Exception e) {
             response = e.getMessage();
-            Log.e(getClass().getSimpleName(), "Registration start failed");
+            Log.e(getClass().getSimpleName(), "Registration start failed", e);
         }
         result.success(response);
     }

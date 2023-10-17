@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
@@ -91,6 +94,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
+    private String regCenterId;
 
     @Inject
     public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
@@ -256,7 +260,9 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (delta != null)
             queryParams.put("lastUpdated", delta);
 
-        Call<ResponseWrapper<ClientSettingDto>> call = syncRestService.fetchMasterData(queryParams);
+        String serverVersion = getServerVersionFromConfigs();
+        Log.i(TAG, "Query Params of clientsettings sync : " +queryParams);
+        Call<ResponseWrapper<ClientSettingDto>> call = serverVersion.startsWith("1.1.5") ? syncRestService.fetchV1MasterData(queryParams) : syncRestService.fetchMasterData(queryParams);
 
         call.enqueue(new Callback<ResponseWrapper<ClientSettingDto>>() {
             @Override
@@ -265,6 +271,13 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveMasterData(response.body().getResponse());
+                        if (regCenterId != null) {
+                            Log.i(TAG, "Updating RegCenterId to MachineMaster table: "+regCenterId);
+                            machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
+                        } else {
+                            Log.i(TAG, "Updating default RegCenterId to MachineMaster table");
+                            machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), "10002");
+                        }
                         if (centerMachineDto == null) {
                             if (retryNo < master_data_recursive_sync_max_retry) {
                                 Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
@@ -298,8 +311,10 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void syncGlobalParamsData(Runnable onFinish) throws Exception {
         Log.i(TAG, "config data sync is started");
+        String serverVersion = getServerVersionFromConfigs();
 
-        Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(
+        Call<ResponseWrapper<Map<String, Object>>> call = serverVersion.startsWith("1.1.5") ? syncRestService.getV1GlobalConfigs(
+                clientCryptoManagerService.getMachineName(), BuildConfig.CLIENT_VERSION) : syncRestService.getGlobalConfigs(
                 clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
             @Override
@@ -421,6 +436,15 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void syncUserDetails(Runnable onFinish) throws Exception {
+        String serverVersion = getServerVersionFromConfigs();
+        if (serverVersion.startsWith("1.1.5")) {
+            Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+            Log.i(TAG, "Found 115 version, skipping userdetails sync");
+            onFinish.run();
+            return;
+        }
+        Log.i(TAG, "Found 1.2.0 version, proceeding with userdetails sync");
+
         Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(
                 this.clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
@@ -522,11 +546,13 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void saveMasterData(ClientSettingDto clientSettingDto) {
         boolean foundErrors = false;
+        boolean applicantValidDocPresent = clientSettingDto.getDataToSync().stream().filter(masterData -> masterData.getEntityName().equalsIgnoreCase("ApplicantValidDocument")).findAny().isPresent();
+        Log.i(TAG, "Found applicantValidDoc :" + applicantValidDocPresent);
         for (MasterData masterData : clientSettingDto.getDataToSync()) {
             try {
                 switch (masterData.getEntityType()) {
                     case "structured":
-                        saveStructuredData(masterData.getEntityName(), masterData.getData());
+                        saveStructuredData(masterData.getEntityName(), masterData.getData(), applicantValidDocPresent);
                         break;
                     case "dynamic":
                         saveDynamicData(masterData.getData());
@@ -641,58 +667,84 @@ public class MasterDataServiceImpl implements MasterDataService {
         return new JSONArray(new String(CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue())));
     }
 
-    private void saveStructuredData(String entityName, String data) throws JSONException {
+    private String getServerVersionFromConfigs() {
+        return this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+    }
+
+    private void saveStructuredData(String entityName, String data, boolean applicantValidDocPresent) throws JSONException {
+        String serverVersion = getServerVersionFromConfigs();
+        String defaultAppTypeCode = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE);
         switch (entityName) {
             case "Machine":
                 JSONArray machines = getDecryptedDataList(data);
-                machineRepository.saveMachineMaster(machines.getJSONObject(0));
+                Log.i(TAG, "Machines inserting");
+                machineRepository.saveMachineMaster(new JSONObject(machines.getString(0)));
+                Log.i(TAG, "Machines inserted");
                 break;
             case "RegistrationCenter":
                 JSONArray centers = getDecryptedDataList(data);
+                Log.i(TAG, "Centers inserting");
                 for (int i = 0; i < centers.length(); i++) {
-                    registrationCenterRepository.saveRegistrationCenter(centers.getJSONObject(i));
+                    registrationCenterRepository.saveRegistrationCenter(new JSONObject(centers.getString(i)));
                 }
+                Log.i(TAG, "Centers inserted");
                 break;
             case "DocumentType":
                 JSONArray doctypes = getDecryptedDataList(data);
+                Log.i(TAG, "DocTypes inserting");
                 for (int i = 0; i < doctypes.length(); i++) {
-                    documentTypeRepository.saveDocumentType(doctypes.getJSONObject(i));
+                    documentTypeRepository.saveDocumentType(new JSONObject(doctypes.getString(i)));
                 }
+                Log.i(TAG, "DocTypes inserted");
                 break;
             case "ApplicantValidDocument":
                 JSONArray appValidDocs = getDecryptedDataList(data);
+                Log.i(TAG, "AppValidDocs inserting");
                 for (int i = 0; i < appValidDocs.length(); i++) {
-                    applicantValidDocRepository.saveApplicantValidDocument(appValidDocs.getJSONObject(i));
+                    applicantValidDocRepository.saveApplicantValidDocument(new JSONObject(appValidDocs.getString(i)), defaultAppTypeCode);
                 }
+                Log.i(TAG, "AppValidDocs inserted");
                 break;
             case "Template":
                 JSONArray templates = getDecryptedDataList(data);
+                Log.i(TAG, "Templates inserting");
                 for (int i = 0; i < templates.length(); i++) {
-                    templateRepository.saveTemplate(templates.getJSONObject(i));
+                    templateRepository.saveTemplate(new JSONObject(templates.getString(i)));
                 }
+                Log.i(TAG, "Templates inserted");
                 break;
             case "Location":
                 JSONArray locations = getDecryptedDataList(data);
+                Log.i(TAG, "Locations size : "+locations.length());
                 for (int i = 0; i < locations.length(); i++) {
-                    locationRepository.saveLocationData(locations.getJSONObject(i));
+                    JSONObject jsonObject = new JSONObject(locations.getString(i));
+                    if (jsonObject.getBoolean("isActive")) {
+                        locationRepository.saveLocationData(jsonObject);
+                    }
                 }
+                Log.i(TAG, "Locations inserted");
                 break;
             case "LocationHierarchy":
                 JSONArray locationHierarchies = getDecryptedDataList(data);
+                Log.i(TAG, "LocationHierarchy inserting");
                 for (int i = 0; i < locationHierarchies.length(); i++) {
-                    locationRepository.saveLocationHierarchyData(locationHierarchies.getJSONObject(i));
+                    locationRepository.saveLocationHierarchyData(new JSONObject(locationHierarchies.getString(i)));
                 }
+                Log.i(TAG, "LocationHierarchy inserted");
                 break;
             case "BlocklistedWords":
                 JSONArray words = getDecryptedDataList(data);
+                Log.i(TAG, "BlocklistedWords inserting");
                 for (int i = 0; i < words.length(); i++) {
-                    blocklistedWordRepository.saveBlocklistedWord(words.getJSONObject(i));
+                    blocklistedWordRepository.saveBlocklistedWord(new JSONObject(words.getString(i)));
                 }
+                Log.i(TAG, "BlocklistedWords inserted");
                 break;
             case "SyncJobDef":
                 JSONArray syncJobDefsJsonArray = getDecryptedDataList(data);
+                Log.i(TAG, "SyncJobDef inserting");
                 for (int i = 0; i < syncJobDefsJsonArray.length(); i++) {
-                    JSONObject jsonObject = syncJobDefsJsonArray.getJSONObject(i);
+                    JSONObject jsonObject = new JSONObject(syncJobDefsJsonArray.getString(i));
 
                     SyncJobDef syncJobDef = new SyncJobDef(jsonObject.getString("id"));
                     syncJobDef.setName(jsonObject.getString("name"));
@@ -707,20 +759,49 @@ public class MasterDataServiceImpl implements MasterDataService {
                     syncJobDefRepository.saveSyncJobDef(syncJobDef);
 //                    jobManagerService.refreshJobStatus(syncJobDef);
                 }
+                Log.i(TAG, "SyncJobDef inserted");
                 break;
             case "Language":
                 JSONArray languageJsonArray = getDecryptedDataList(data);
+                Log.i(TAG, "Languages inserting");
                 for (int i = 0; i < languageJsonArray.length(); i++) {
-                    languageRepository.saveLanguage(languageJsonArray.getJSONObject(i));
+                    languageRepository.saveLanguage(new JSONObject(languageJsonArray.getString(i)));
                 }
+                Log.i(TAG, "Languages inserted");
+                break;
+            case "RegistrationCenterUser":
+                JSONArray regCenterUserJsonArray = getDecryptedDataList(data);
+                Log.i(TAG, "RegCenterUser inserting");
+                if (serverVersion.startsWith("1.1.5")) {
+                    userDetailRepository.saveUserDetail(regCenterUserJsonArray);
+                }
+                Log.i(TAG, "RegCenterUser inserted");
+                break;
+            case "RegistrationCenterMachine":
+                JSONArray regCenterMachineJsonArray = getDecryptedDataList(data);
+                Log.i(TAG, "CenterID searching");
+                JSONObject jsonObject = new JSONObject(regCenterMachineJsonArray.getString(0));
+                regCenterId = jsonObject.getString("regCenterId");
+                Log.i(TAG, "CenterID saved");
+                break;
+            case "ValidDocument":
+                JSONArray validDocumentsJsonArray = getDecryptedDataList(data);
+                Log.i(TAG, "ValidDocument inserting");
+                if (!applicantValidDocPresent) {
+                    for (int i = 0; i < validDocumentsJsonArray.length(); i++) {
+                        applicantValidDocRepository.saveApplicantValidDocument(new JSONObject(validDocumentsJsonArray.getString(i)), defaultAppTypeCode);
+                    }
+                }
+                Log.i(TAG, "ValidDocument inserting");
                 break;
         }
     }
 
     private void saveDynamicData(String data) throws JSONException {
         JSONArray list = getDecryptedDataList(data);
+        Log.i(TAG, "Inserting dynamic data :"+list.toString());
         for (int i = 0; i < list.length(); i++) {
-            dynamicFieldRepository.saveDynamicField(list.getJSONObject(i));
+            dynamicFieldRepository.saveDynamicField(new JSONObject(list.getString(i)));
         }
     }
 
@@ -775,6 +856,9 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public String getTemplateContent(String templateName, String langCode) {
+        if(templateName.equalsIgnoreCase("Registration Consent")){
+            return "<!DOCTYPE html><html><head><title>Consent</title></head><body><div>I understand that the data collected about me during registration by the said authority includes <br><br>&#x2022 Name <br> &#x2022 Date of birth <br> &#x2022 Gender <br> &#x2022 Address <br> &#x2022 Contact details <br> &#x2022 Documents<br> &#x2022 Biometrics <br> <br>I also understand that this information will be stored and processed for the purpose of verifying my identity in order to access various services, or to comply with a legal obligation. I give my consent for the collection of this data for this purpose</div></body></html>";
+        }
         return templateRepository.getTemplate(templateName, langCode);
     }
 

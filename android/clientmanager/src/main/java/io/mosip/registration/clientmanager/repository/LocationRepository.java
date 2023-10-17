@@ -50,7 +50,7 @@ public class LocationRepository {
         location.setHierarchyLevel(locationJson.getInt("hierarchyLevel"));
         location.setHierarchyName(locationJson.getString("hierarchyName"));
         location.setIsActive(locationJson.getBoolean("isActive"));
-        location.setIsDeleted(locationJson.getBoolean("isDeleted"));
+        location.setIsDeleted(locationJson.optBoolean("isDeleted"));
         location.setParentLocCode(locationJson.getString("parentLocCode"));
         this.locationDao.insert(location);
     }

@@ -26,8 +26,14 @@ public class MachineRepository {
         MachineMaster machineMaster = new MachineMaster(machineJson.getString("id"));
         machineMaster.setIsActive(machineJson.getBoolean("isActive"));
         machineMaster.setName(machineJson.getString("name"));
-        machineMaster.setRegCenterId(machineJson.getString("regCenterId"));
+        if (machineJson.has("regCenterId")) {
+            machineMaster.setRegCenterId(machineJson.getString("regCenterId"));
+        }
         machineMaster.setValidityDateTime(null); //TODO
         machineMasterDao.insert(machineMaster);
+    }
+
+    public void updateMachine(String machineName, String regCenterId) {
+        this.machineMasterDao.updateMachine(machineName, regCenterId);
     }
 }

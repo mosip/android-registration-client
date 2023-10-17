@@ -25,13 +25,17 @@ public class ApplicantValidDocRepository {
                 categoryCode);
     }
 
-    public void saveApplicantValidDocument(JSONObject jsonObject) throws JSONException {
+    public void saveApplicantValidDocument(JSONObject jsonObject, String defaultAppTypeCode) throws JSONException {
+        String appTypeCode = defaultAppTypeCode;
+        if(jsonObject.has("appTypeCode")){
+            appTypeCode = jsonObject.getString("appTypeCode");
+        }
         ApplicantValidDocument applicantValidDocument = new ApplicantValidDocument(
-                jsonObject.getString("appTypeCode"),
+                appTypeCode,
                 jsonObject.getString("docTypeCode"),
                 jsonObject.getString("docCatCode") );
         applicantValidDocument.setIsActive(jsonObject.getBoolean("isActive"));
-        applicantValidDocument.setIsDeleted(jsonObject.getBoolean("isDeleted"));
+        applicantValidDocument.setIsDeleted(jsonObject.optBoolean("isDeleted"));
         applicantValidDocumentDao.insert(applicantValidDocument);
     }
 }
