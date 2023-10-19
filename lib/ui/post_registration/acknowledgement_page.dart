@@ -16,7 +16,7 @@ class AcknowledgementPage extends StatefulWidget {
 
 class _AcknowledgementPageState extends State<AcknowledgementPage> {
   WebViewPlusController? _controller;
-  double _height = 1;
+  double _height = ScreenUtil().screenHeight;
 
   @override
   void initState() {
@@ -28,10 +28,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
         context.read<RegistrationTaskProvider>().previewTemplate;
 
     await Printing.layoutPdf(
-    onLayout: (format) async => await Printing.convertHtml(
-          format: format,
-          html: htmlContent,
-        ));
+        onLayout: (format) async => await Printing.convertHtml(
+              format: format,
+              html: htmlContent,
+            ));
   }
 
   _registrationAcknowledgementPageLoadedAudit() async {
@@ -39,13 +39,15 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   }
 
   _printAcknowledgementAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-0012", "REG-MOD-103");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-EVT-0012", "REG-MOD-103");
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: ScreenUtil().screenHeight,
+      height: _height,
       width: ScreenUtil().screenWidth,
       child: Column(
         children: [
@@ -96,9 +98,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
           ),
           Expanded(
             child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 SizedBox(
-                  height: _height + 150.h,
+                  height: _height,
                   child: WebViewPlus(
                     onWebViewCreated: (controller) {
                       _controller = controller;
@@ -109,7 +112,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                     onPageFinished: (url) {
                       _controller!.getHeight().then((double height) {
                         setState(() {
-                          _height = height;
+                          _height = height - 250.h;
                         });
                         _registrationAcknowledgementPageLoadedAudit();
                       });
