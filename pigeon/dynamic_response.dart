@@ -46,4 +46,7 @@ abstract class DynamicResponseApi {
 
   @async
   List<LanguageData> getAllLanguages();
+
+  @async
+  Map<String, String> getLocationHierarchyMap();
 }

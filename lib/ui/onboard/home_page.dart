@@ -60,8 +60,10 @@ class _HomePageState extends State<HomePage> {
     }
     await _masterDataSync();
     await _getNewProcessSpecAction();
+    Clipboard.setData(ClipboardData(text: context.read<RegistrationTaskProvider>().listOfProcesses.toString()));
     await _getCenterNameAction();
     await _initializeLanguageDataList();
+    await _initializeLocationHierarchy();
   }
 
   void _fetchProcessSpec() async {
@@ -72,6 +74,10 @@ class _HomePageState extends State<HomePage> {
 
   _initializeLanguageDataList() async {
     await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
+  _initializeLocationHierarchy() async {
+    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
   }
 
   _homePageLoadedAudit() async {
@@ -104,6 +110,13 @@ class _HomePageState extends State<HomePage> {
       context.read<GlobalProvider>().newProcessTabIndex = 0;
       context.read<GlobalProvider>().htmlBoxTabIndex = 0;
       context.read<GlobalProvider>().setRegId("");
+      for(var screen in process.screens!) {
+        for(var field in screen!.fields!) {
+          if(field!.controlType == 'dropdown' && field.fieldType == 'default') {
+            context.read<GlobalProvider>().initializeGroupedHierarchyMap(field.group!);
+          }
+        }
+      }
       context.read<GlobalProvider>().createRegistrationLanguageMap();
       showDialog(
         context: context,
