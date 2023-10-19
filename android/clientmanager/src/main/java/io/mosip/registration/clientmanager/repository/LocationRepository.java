@@ -43,6 +43,10 @@ public class LocationRepository {
         return this.locationDao.findAllLocationByCode(code);
     }
 
+    public List<Location> findAllLocationsByLangCode(String langCode) {
+        return this.locationDao.findAllLocationsByLangCode(langCode);
+    }
+
     public void saveLocationData(JSONObject locationJson) throws JSONException {
         Location location = new Location(locationJson.getString("code"),
                 locationJson.getString("langCode"));

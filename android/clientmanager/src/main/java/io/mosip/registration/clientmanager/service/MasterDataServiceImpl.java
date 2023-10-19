@@ -20,6 +20,7 @@ import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
+import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
@@ -842,11 +843,11 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public List<GenericValueDto> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode) {
-        Integer level = getHierarchyLevel(hierarchyLevelName);
-        if (level == null)
-            return Collections.EMPTY_LIST;
-        return this.locationRepository.getLocationsBasedOnHierarchyLevel(level, langCode);
+    public List<GenericValueDto> findLocationByHierarchyLevel(int hierarchyLevel, String langCode) {
+//        Integer level = getHierarchyLevel(hierarchyLevelName);
+//        if (level == null)
+//            return Collections.EMPTY_LIST;
+        return this.locationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
     }
 
     @Override
@@ -872,5 +873,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         return languageRepository.getAllLanguages();
     }
 
-
+    @Override
+    public List<Location> findAllLocationsByLangCode(String langCode) {
+        return locationRepository.findAllLocationsByLangCode(langCode);
+    }
 }

@@ -63,7 +63,7 @@ class GlobalProvider with ChangeNotifier {
   String _regId = "";
   String _ageGroup = "";
 
-  List<String?> _locationHierarchy = [null, null, null, null, null];
+  List<String?> _locationHierarchy = [];
 
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
@@ -104,10 +104,10 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setLocationHierarchy(String? value, int index) {
-    _locationHierarchy[index] = value;
-    for (int i = index + 1; i < 5; i++) {
-      _locationHierarchy[i] = null;
+  void setLocationHierarchy(String group, String? value, int index) {
+    _groupedHierarchyValues[group]![index] = value;
+    for (int i = index + 1; i < _groupedHierarchyValues[group]!.length; i++) {
+      _groupedHierarchyValues[group]![i] = null;
     }
     notifyListeners();
   }
@@ -541,5 +541,78 @@ class GlobalProvider with ChangeNotifier {
 
   getAudit(String id, String componentId) async {
     await audit.performAudit(id, componentId);
+  }
+
+  Map<String?, String?> _locationHierarchyMap = {};
+  Map<int, String?> _hierarchyCodeMap = {};
+  Map<String, List<String?>> _groupedHierarchyValues = {};
+
+  Map<String?, String?> get locationHierarchyMap => _locationHierarchyMap;
+  Map<int, String?> get hierarchyCodeMap => _hierarchyCodeMap;
+  Map<String, List<String?>> get groupedHierarchyValues => _groupedHierarchyValues;
+
+  int _minIndex = 100;
+
+  int get minIndex => _minIndex;
+
+  setMinIndex(int value) {
+    _minIndex = value;
+    notifyListeners();
+  }
+
+  setLocationHierarchyMap(Map<String, String> value) {
+    _locationHierarchyMap = value;
+    notifyListeners();
+  }
+
+  setHierarchyCodeMap(Map<int, String?> value) {
+    _hierarchyCodeMap = value;
+    notifyListeners();
+  }
+
+  setCodeValue(int key, String? code) {
+    hierarchyCodeMap[key] = code;
+    notifyListeners();
+  }
+
+  initializeLocationHierarchyMap() async {
+    Map<String?, String?> hierarchyMap = await dynamicResponseService.fetchLocationHierarchyMap();
+    _locationHierarchyMap = hierarchyMap;
+    List<String?> hValues = [];
+    _locationHierarchyMap.forEach((key, value) {
+      hValues.add(null);
+    });
+    _locationHierarchy = hValues;
+    notifyListeners();
+  }
+
+  getLocationHierarchyReverseMap() {
+    Map<String, int> map = {};
+    _locationHierarchyMap.forEach((key, value) { 
+      map[value!] = int.parse(key!);
+    });
+    return map; 
+  }
+
+  getLocationHierarchyList() {
+    List<String> list = [];
+    _locationHierarchyMap.forEach((key, value) { 
+      list.add(value!);
+    });
+    return list;
+  }
+
+  setGroupedHierarchyValues(Map<String, List<String>> value) {
+    _groupedHierarchyValues = value;
+    notifyListeners();
+  }
+
+  initializeGroupedHierarchyMap(String key) {
+    List<String?> hValues = [];
+    _locationHierarchyMap.forEach((key, value) {
+      hValues.add(null);
+    });
+    _groupedHierarchyValues[key] = hValues;
+    notifyListeners();
   }
 }

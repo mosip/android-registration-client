@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -28,29 +26,37 @@ class DropDownControl extends StatefulWidget {
 class _CustomDropDownState extends State<DropDownControl> {
   GenericData? selected;
 
-  List<String> hierarchyReverse = [
-    "region",
-    "province",
-    "city",
-    "zone",
-    "postalCode"
-  ];
+  List<String> hierarchyReverse = [];
+  Map<String, int> hierarchyReverseMap = {};
   int? index;
   List<GenericData?> list = [];
 
   @override
   void initState() {
+    setHierarchyReverse();
     super.initState();
+  }
+
+  setHierarchyReverse() {
+    hierarchyReverseMap = context.read<GlobalProvider>().getLocationHierarchyReverseMap();
+    hierarchyReverse = context.read<GlobalProvider>().getLocationHierarchyList();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     setState(() {
-      index = hierarchyReverse.indexOf(widget.field.id!);
+      index = hierarchyReverseMap[widget.field.subType]!;
     });
+    // _getMinIndex();
     _getOptionsList();
   }
+
+  // _getMinIndex() {
+  //   int minIndex = context.read<GlobalProvider>().minIndex;
+  //   minIndex = min(minIndex, index!);
+  //   context.read<GlobalProvider>().setMinIndex(minIndex);
+  // }
 
   void saveData(value) {
     for (int i = index! + 1; i < 5; i++) {
@@ -144,11 +150,11 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   _getOptionsList() async {
     List<GenericData?> temp;
-    if (index == 0) {
-      temp = await _getLocationValues(widget.field.subType!, "eng");
+    if (index == 1) {
+      temp = await _getLocationValues("$index", "eng");
     } else {
       var parentCode =
-          context.watch<GlobalProvider>().locationHierarchy[index! - 1];
+          context.watch<GlobalProvider>().groupedHierarchyValues[widget.field.group]![index! - 1];
       temp = await _getLocationValuesBasedOnParent(
           parentCode, widget.field.subType!, "eng");
     }
@@ -222,13 +228,9 @@ class _CustomDropDownState extends State<DropDownControl> {
                     _saveDataToMap(value);
                     context
                         .read<GlobalProvider>()
-                        .setLocationHierarchy(value.code, index!);
+                        .setLocationHierarchy(widget.field.group!, value.code, index!);
                     _getSelectedValueFromMap("eng", list);
                   }
-                  log(context
-                      .read<GlobalProvider>()
-                      .locationHierarchy
-                      .toString());
                 },
               ),
             ],

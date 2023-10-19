@@ -23,6 +23,7 @@ public class FieldSpecDto {
     private Integer maximum;
     private Map<String, String> label;
     private String controlType;
+    private String group;
     private List<FieldValidatorDto> validators;
     private RequiredDto visible;
     private String templateName;
