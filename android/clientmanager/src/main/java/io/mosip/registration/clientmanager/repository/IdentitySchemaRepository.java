@@ -119,13 +119,18 @@ public class IdentitySchemaRepository {
         throw new Exception("Failed to load Identity schema for version : " + identitySchema.getSchemaVersion());
     }
 
-    //Handle label change
+    /**
+     * This method is for migrating 1.1.5 schema to LTS ProcessSpec structure.
+     * The spec contains Consent Screen, Demographics Screen, Documents Screen and Biometrics Screen.
+     * The screens are built in standard spec format.
+     * Any screen changes, label changes should be handled in this method.
+     */
     private IdSchemaResponse migrate115UiSpecToLTSProcessSpec(IdSchemaResponse idSchemaResponse) {
         try {
             List<FieldSpecDto> schema = idSchemaResponse.getSchema();
 
-            String primaryLanguage = "eng";//this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRIMARY_LANGUAGE);
-            String secondaryLanguage = "fra";//this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SECONDARY_LANGUAGE);
+            String primaryLanguage = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRIMARY_LANGUAGE);
+            String secondaryLanguage = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SECONDARY_LANGUAGE);
             List<String> allowedBioAttributes = new ArrayList<>(Arrays.asList(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.ALLOWED_BIO_ATTRIBUTES).split(",")));
 
             HashMap<String, AgeGroupConfigDto> ageGroupAttributes = new HashMap<>();
@@ -274,8 +279,10 @@ public class IdentitySchemaRepository {
     private RequiredDto changeMvelExpression(RequiredDto requiredDto) {
         String expr = requiredDto.getExpr();
         String infantAgegroupName = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INFANT_AGEGROUP_NAME);
-        expr = expr.replace("identity.?isChild", "identity.get('ageGroup') == '"+infantAgegroupName+"'");
-        expr = expr.replace("identity.isChild", "identity.get('ageGroup') == '"+infantAgegroupName+"'");
+        expr = expr.replace("identity.?isChild", "(identity.get('ageGroup') == '"+infantAgegroupName+"')");
+        expr = expr.replace("identity.isChild", "(identity.get('ageGroup') == '"+infantAgegroupName+"')");
+        expr = expr.replace("identity.?isNew", "identity.isNew");
+        expr = expr.replace("identity.?isUpdate", "identity.isUpdate");
         requiredDto.setExpr(expr);
         return requiredDto;
     }

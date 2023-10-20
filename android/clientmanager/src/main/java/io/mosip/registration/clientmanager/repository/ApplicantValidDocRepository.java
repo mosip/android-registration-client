@@ -18,7 +18,7 @@ public class ApplicantValidDocRepository {
     }
 
     public List<String> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
-        if(applicantType == null)
+        if (applicantType == null)
             return this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
 
         return this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
@@ -26,14 +26,11 @@ public class ApplicantValidDocRepository {
     }
 
     public void saveApplicantValidDocument(JSONObject jsonObject, String defaultAppTypeCode) throws JSONException {
-        String appTypeCode = defaultAppTypeCode;
-        if(jsonObject.has("appTypeCode")){
-            appTypeCode = jsonObject.getString("appTypeCode");
-        }
+        String appTypeCode = jsonObject.has("appTypeCode") ? jsonObject.getString("appTypeCode") : defaultAppTypeCode;
         ApplicantValidDocument applicantValidDocument = new ApplicantValidDocument(
                 appTypeCode,
                 jsonObject.getString("docTypeCode"),
-                jsonObject.getString("docCatCode") );
+                jsonObject.getString("docCatCode"));
         applicantValidDocument.setIsActive(jsonObject.getBoolean("isActive"));
         applicantValidDocument.setIsDeleted(jsonObject.optBoolean("isDeleted"));
         applicantValidDocumentDao.insert(applicantValidDocument);
