@@ -10,14 +10,44 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class GenericData;
+@class LanguageData;
 
-/// The codec used by AuditResponseApi.
-NSObject<FlutterMessageCodec> *AuditResponseApiGetCodec(void);
-
-@protocol AuditResponseApi
-- (void)auditId:(NSString *)id componentId:(NSString *)componentId completion:(void (^)(FlutterError *_Nullable))completion;
+@interface GenericData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithName:(NSString *)name
+    code:(NSString *)code
+    langCode:(NSString *)langCode
+    hierarchyLevel:(NSNumber *)hierarchyLevel;
+@property(nonatomic, copy) NSString * name;
+@property(nonatomic, copy) NSString * code;
+@property(nonatomic, copy) NSString * langCode;
+@property(nonatomic, strong) NSNumber * hierarchyLevel;
 @end
 
-extern void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuditResponseApi> *_Nullable api);
+@interface LanguageData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithCode:(NSString *)code
+    name:(NSString *)name
+    nativeName:(NSString *)nativeName;
+@property(nonatomic, copy) NSString * code;
+@property(nonatomic, copy) NSString * name;
+@property(nonatomic, copy) NSString * nativeName;
+@end
+
+/// The codec used by DynamicResponseApi.
+NSObject<FlutterMessageCodec> *DynamicResponseApiGetCodec(void);
+
+@protocol DynamicResponseApi
+- (void)getFieldValuesFieldName:(NSString *)fieldName langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getLocationValuesHierarchyLevelName:(NSString *)hierarchyLevelName langCode:(NSString *)langCode completion:(void (^)(NSArray<GenericData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getDocumentValuesCategoryCode:(NSString *)categoryCode applicantType:(nullable NSString *)applicantType langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getLocationValuesBasedOnParentParentCode:(nullable NSString *)parentCode hierarchyLevelName:(NSString *)hierarchyLevelName langCode:(NSString *)langCode completion:(void (^)(NSArray<GenericData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getAllLanguagesWithCompletion:(void (^)(NSArray<LanguageData *> *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void DynamicResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DynamicResponseApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

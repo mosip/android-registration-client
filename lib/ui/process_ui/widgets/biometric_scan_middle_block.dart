@@ -288,6 +288,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                 ),
           OutlinedButton.icon(
             onPressed: () async {
+              if(widget.biometricAttributeData.exceptions.contains(false)){
               if (widget.biometricAttributeData.attemptNo <
                   widget.biometricAttributeData.noOfCapturesAllowed) {
                 List<Uint8List?> temp = [];
@@ -307,16 +308,20 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                     .getBioAttempt(widget.field.id!, widget.parameterTitle);
                 _showScanDialogBox(temp);
               }
+              }else{
+                generateList("${widget.field.id}",
+                            widget.biometricAttributeData);
+              }
             },
             icon: Icon(
               Icons.crop_free,
-              color: solidPrimary,
+              color:(widget.biometricAttributeData.exceptions.contains(false))? solidPrimary:secondaryColors.elementAt(2),
               size: 14,
             ),
             label: Text(
               "SCAN",
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 14, fontWeight: bold, color: solidPrimary),
+                  fontSize: 14, fontWeight: bold, color: (widget.biometricAttributeData.exceptions.contains(false))? solidPrimary:secondaryColors.elementAt(2)),
             ),
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: solidPrimary, width: 1),
