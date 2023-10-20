@@ -26,9 +26,8 @@ class DropDownControl extends StatefulWidget {
 class _CustomDropDownState extends State<DropDownControl> {
   GenericData? selected;
 
-  List<String> hierarchyReverse = [];
-  Map<String, int> hierarchyReverseMap = {};
   int? index;
+  int maxLen = 0;
   List<GenericData?> list = [];
 
   @override
@@ -38,31 +37,23 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   setHierarchyReverse() {
-    hierarchyReverseMap = context.read<GlobalProvider>().getLocationHierarchyReverseMap();
-    hierarchyReverse = context.read<GlobalProvider>().getLocationHierarchyList();
+    maxLen = context.read<GlobalProvider>().hierarchyReverse.length;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     setState(() {
-      index = hierarchyReverseMap[widget.field.subType]!;
+      index = context.read<GlobalProvider>().hierarchyReverse.indexOf(widget.field.subType!);
     });
-    // _getMinIndex();
     _getOptionsList();
   }
 
-  // _getMinIndex() {
-  //   int minIndex = context.read<GlobalProvider>().minIndex;
-  //   minIndex = min(minIndex, index!);
-  //   context.read<GlobalProvider>().setMinIndex(minIndex);
-  // }
-
   void saveData(value) {
-    for (int i = index! + 1; i < 5; i++) {
+    for (int i = index! + 1; i < maxLen; i++) {
       context
           .read<RegistrationTaskProvider>()
-          .removeDemographicField(hierarchyReverse[i]);
+          .removeDemographicField(context.read<GlobalProvider>().hierarchyReverse[i]);
     }
     if (value != null) {
       if (widget.field.type == 'simpleType') {
@@ -78,23 +69,23 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   void _saveDataToMap(GenericData? value) {
-    for (int i = index! + 1; i < 5; i++) {
+    for (int i = index! + 1; i < maxLen; i++) {
       context.read<GlobalProvider>().removeFieldFromMap(
-            hierarchyReverse[i],
+        "${widget.field.group}${context.read<GlobalProvider>().hierarchyReverse[i]}",
             context.read<GlobalProvider>().fieldInputValue,
           );
     }
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.field.id ?? "",
+          "${widget.field.group}${widget.field.subType}",
               value,
               "eng",
               context.read<GlobalProvider>().fieldInputValue,
             );
       } else {
         context.read<GlobalProvider>().setInputMapValue(
-              widget.field.id ?? "",
+              "${widget.field.group}${widget.field.subType}",
               value,
               context.read<GlobalProvider>().fieldInputValue,
             );
@@ -105,17 +96,17 @@ class _CustomDropDownState extends State<DropDownControl> {
   void _getSelectedValueFromMap(String lang, List<GenericData?> list) {
     GenericData? response;
     if (widget.field.type == 'simpleType') {
-      if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
+      if ((context.read<GlobalProvider>().fieldInputValue["${widget.field.group}${widget.field.subType}"]
               as Map<String, dynamic>)
           .containsKey(lang)) {
         response = context
             .read<GlobalProvider>()
-            .fieldInputValue[widget.field.id ?? ""][lang] as GenericData;
+            .fieldInputValue["${widget.field.group}${widget.field.subType}"][lang] as GenericData;
       }
     } else {
       response = context
           .read<GlobalProvider>()
-          .fieldInputValue[widget.field.id ?? ""] as GenericData;
+          .fieldInputValue["${widget.field.group}${widget.field.subType}"] as GenericData;
     }
     setState(() {
       for (var element in list) {
@@ -145,7 +136,7 @@ class _CustomDropDownState extends State<DropDownControl> {
     return context
         .read<GlobalProvider>()
         .fieldInputValue
-        .containsKey(widget.field.id ?? "");
+        .containsKey("${widget.field.group}${widget.field.subType}");
   }
 
   _getOptionsList() async {

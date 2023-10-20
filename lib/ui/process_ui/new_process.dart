@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -245,12 +246,16 @@ class _NewProcessState extends State<NewProcess> {
         if (screen.fields!.elementAt(i)!.inputRequired! &&
             screen.fields!.elementAt(i)!.required!) {
           if (!(context
-              .read<GlobalProvider>()
-              .fieldInputValue
-              .containsKey(screen.fields!.elementAt(i)!.id))  && !(context
-              .read<GlobalProvider>()
-              .fieldInputValue
-              .containsKey(screen.fields!.elementAt(i)!.subType))) {
+                  .read<GlobalProvider>()
+                  .fieldInputValue
+                  .containsKey(screen.fields!.elementAt(i)!.id)) &&
+              !(context
+                  .read<GlobalProvider>()
+                  .fieldInputValue
+                  .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+              !(context.read<GlobalProvider>().fieldInputValue.containsKey(
+                  "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+            log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
             isValid = false;
 
             break;
@@ -292,7 +297,11 @@ class _NewProcessState extends State<NewProcess> {
           if (required) {
             if (screen.fields!.elementAt(i)!.inputRequired!) {
               if (!(globalProvider.fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.id))) {
+                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                  !(globalProvider.fieldInputValue.containsKey(
+                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
                 isValid = false;
 
                 break;
