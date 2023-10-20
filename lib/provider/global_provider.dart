@@ -56,14 +56,10 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, bool> _mvelValues = {};
 
-  Map<int, String> _hierarchyValues = {};
-
   Map<String, List<Uint8List?>> _scannedPages = {};
 
   String _regId = "";
   String _ageGroup = "";
-
-  List<String?> _locationHierarchy = [];
 
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
@@ -87,15 +83,9 @@ class GlobalProvider with ChangeNotifier {
   }
 
   String get ageGroup => _ageGroup;
-  List<String?> get locationHierarchy => _locationHierarchy;
 
   set scannedPages(Map<String, List<Uint8List?>> value) {
     _scannedPages = value;
-    notifyListeners();
-  }
-
-  set locationHierarchy(List<String?> value) {
-    _locationHierarchy = value;
     notifyListeners();
   }
 
@@ -106,7 +96,7 @@ class GlobalProvider with ChangeNotifier {
 
   void setLocationHierarchy(String group, String? value, int index) {
     _groupedHierarchyValues[group]![index] = value;
-    for (int i = index + 1; i < _groupedHierarchyValues[group]!.length; i++) {
+    for (int i = index + 1; i < hierarchyReverse.length; i++) {
       _groupedHierarchyValues[group]![i] = null;
     }
     notifyListeners();
@@ -121,7 +111,6 @@ class GlobalProvider with ChangeNotifier {
   String get regId => _regId;
 
   Map<String, bool> get mvelValues => _mvelValues;
-  Map<int, String> get hierarchyValues => _hierarchyValues;
 
   setRegId(String value) {
     _regId = value;
@@ -133,15 +122,6 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setHierarchyValues(int hierarchyLevel, String value) {
-    _hierarchyValues[hierarchyLevel] = value;
-    notifyListeners();
-  }
-
-  removeKeysFromHierarchy(int hierarchyLevel) {
-    hierarchyValues.removeWhere((key, value) => key > hierarchyLevel);
-    notifyListeners();
-  }
 
   Process? get currentProcess => _currentProcess;
 
@@ -199,11 +179,6 @@ class GlobalProvider with ChangeNotifier {
 
   set mvelValues(Map<String, bool> value) {
     _mvelValues = value;
-    notifyListeners();
-  }
-
-  set hierarchyValues(Map<int, String> value) {
-    _hierarchyValues = value;
     notifyListeners();
   }
 
@@ -544,62 +519,32 @@ class GlobalProvider with ChangeNotifier {
   }
 
   Map<String?, String?> _locationHierarchyMap = {};
-  Map<int, String?> _hierarchyCodeMap = {};
   Map<String, List<String?>> _groupedHierarchyValues = {};
+  List<String> _hierarchyReverse = [];
 
   Map<String?, String?> get locationHierarchyMap => _locationHierarchyMap;
-  Map<int, String?> get hierarchyCodeMap => _hierarchyCodeMap;
   Map<String, List<String?>> get groupedHierarchyValues => _groupedHierarchyValues;
-
-  int _minIndex = 100;
-
-  int get minIndex => _minIndex;
-
-  setMinIndex(int value) {
-    _minIndex = value;
-    notifyListeners();
-  }
+  List<String> get hierarchyReverse => _hierarchyReverse;
 
   setLocationHierarchyMap(Map<String, String> value) {
     _locationHierarchyMap = value;
     notifyListeners();
   }
 
-  setHierarchyCodeMap(Map<int, String?> value) {
-    _hierarchyCodeMap = value;
-    notifyListeners();
-  }
-
-  setCodeValue(int key, String? code) {
-    hierarchyCodeMap[key] = code;
+  setHierarchyReverse(List<String> value) {
+    _hierarchyReverse = value;
     notifyListeners();
   }
 
   initializeLocationHierarchyMap() async {
     Map<String?, String?> hierarchyMap = await dynamicResponseService.fetchLocationHierarchyMap();
     _locationHierarchyMap = hierarchyMap;
-    List<String?> hValues = [];
+    List<String> hReverse = [];
     _locationHierarchyMap.forEach((key, value) {
-      hValues.add(null);
+      hReverse.add(value!);
     });
-    _locationHierarchy = hValues;
+    _hierarchyReverse = hReverse;
     notifyListeners();
-  }
-
-  getLocationHierarchyReverseMap() {
-    Map<String, int> map = {};
-    _locationHierarchyMap.forEach((key, value) { 
-      map[value!] = int.parse(key!);
-    });
-    return map; 
-  }
-
-  getLocationHierarchyList() {
-    List<String> list = [];
-    _locationHierarchyMap.forEach((key, value) { 
-      list.add(value!);
-    });
-    return list;
   }
 
   setGroupedHierarchyValues(Map<String, List<String>> value) {
