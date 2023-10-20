@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.repository;
 
+import android.util.Log;
+
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
