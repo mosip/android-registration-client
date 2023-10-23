@@ -795,7 +795,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public String getGlobalParamValue(String id) {
-        String value = globalParamRepository.getCachedStringGlobalParam(id);
+        String value = globalParamRepository.getGlobalParamValue(id);
         return value == null ? "" : value;
     }
 
