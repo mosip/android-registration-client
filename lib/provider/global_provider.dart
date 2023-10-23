@@ -290,6 +290,9 @@ class GlobalProvider with ChangeNotifier {
 
   getVersionNoApp() async {
     String versionNoAppTemp = await networkService.getVersionNoApp();
+    if(versionNoAppTemp == "") {
+      versionNoAppTemp = await networkService.getVersionFromGobalParam("mosip.registration.server_version");
+    }
     final head = await rootBundle.loadString('.git/HEAD');
     final commitId = await rootBundle.loadString('.git/ORIG_HEAD');
 
