@@ -135,5 +135,10 @@ public interface MasterDataService {
 
 =======
     void saveGlobalParam(String id, String value);
+<<<<<<< HEAD
 >>>>>>> bea1eb6 (Save version to global params)
+=======
+
+    String getGlobalParamValue(String id);
+>>>>>>> 65c2bb4 (Added getGlobalParam function)
 }

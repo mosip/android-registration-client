@@ -64,4 +64,9 @@ public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
         }
         result.success(response);
     }
+
+    @Override
+    public void getVersionFromGlobalParam(@NonNull String id, @NonNull CommonDetailsPigeon.Result<String> result) {
+
+    }
 }
