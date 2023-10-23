@@ -793,5 +793,11 @@ public class MasterDataServiceImpl implements MasterDataService {
         globalParamRepository.saveGlobalParam(id, value);
     }
 
+    @Override
+    public String getGlobalParamValue(String id) {
+        String value = globalParamRepository.getCachedStringGlobalParam(id);
+        return value == null ? "" : value;
+    }
+
 
 }
