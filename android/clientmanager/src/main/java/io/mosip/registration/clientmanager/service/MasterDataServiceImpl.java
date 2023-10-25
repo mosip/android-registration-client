@@ -815,9 +815,6 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public List<GenericValueDto> findLocationByHierarchyLevel(int hierarchyLevel, String langCode) {
-//        Integer level = getHierarchyLevel(hierarchyLevelName);
-//        if (level == null)
-//            return Collections.EMPTY_LIST;
         return this.locationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
     }
 
@@ -845,11 +842,10 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-<<<<<<< HEAD
     public List<Location> findAllLocationsByLangCode(String langCode) {
         return locationRepository.findAllLocationsByLangCode(langCode);
     }
-=======
+
     public void saveGlobalParam(String id, String value) {
         globalParamRepository.saveGlobalParam(id, value);
     }
@@ -859,7 +855,4 @@ public class MasterDataServiceImpl implements MasterDataService {
         String value = globalParamRepository.getGlobalParamValue(id);
         return value == null ? "" : value;
     }
-
-
->>>>>>> bea1eb6 (Save version to global params)
 }
