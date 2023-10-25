@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -50,17 +52,20 @@ class _HomePageState extends State<HomePage> {
     return context.read<ConnectivityProvider>().isConnected;
   }
 
+  _showNetworkErrorMessage() {
+    _showInSnackBar(AppLocalizations.of(context)!.network_error);
+  }
+
   void syncData(BuildContext context) async {
     // await SyncProvider().autoSync(context);
     await context.read<ConnectivityProvider>().checkNetworkConnection();
     bool isConnected = _getIsConnected();
     if (!isConnected) {
-      _showInSnackBar(AppLocalizations.of(context)!.network_error);
+      _showNetworkErrorMessage();
       return;
     }
     await _masterDataSync();
     await _getNewProcessSpecAction();
-    Clipboard.setData(ClipboardData(text: context.read<RegistrationTaskProvider>().listOfProcesses.toString()));
     await _getCenterNameAction();
     await _initializeLanguageDataList();
     await _initializeLocationHierarchy();
