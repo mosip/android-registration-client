@@ -78,6 +78,19 @@ class DynamicResponseServiceImpl implements DynamicResponseService {
     }
     return languageList;
   }
+
+  @override
+  Future<Map<String?, String?>> fetchLocationHierarchyMap() async {
+    Map<String?, String?> locationHierarchy = {};
+    try {
+      locationHierarchy = await DynamicResponseApi().getLocationHierarchyMap();
+    } on PlatformException {
+      debugPrint('DynamicServiceResponseApi call failed!');
+    } catch (e) {
+      debugPrint('Location hierarchy not fetched! ${e.toString()}');
+    }
+    return locationHierarchy;
+  }
 }
 
 DynamicResponseService getDynamicResponseServiceImpl() =>

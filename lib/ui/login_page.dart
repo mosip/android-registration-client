@@ -69,6 +69,7 @@ class _LoginPageState extends State<LoginPage> {
   _initializeAppData() async {
     await _initializeMachineData();
     await _initializeAppLanguageData();
+    await _initializeLocationHierarchy();
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
     await _loginPageLoadedAudit();
@@ -93,6 +94,10 @@ class _LoginPageState extends State<LoginPage> {
 
   _initializeAppLanguageData() async {
     await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
+  _initializeLocationHierarchy() async {
+    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
   }
 
   _loginPageLoadedAudit() async {
@@ -491,7 +496,7 @@ class _LoginPageState extends State<LoginPage> {
                       username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
-                  mp: context.watch<GlobalProvider>().languageCodeMapper,
+                  mp: context.watch<GlobalProvider>().codeToLanguageMapper,
                   onChanged: (v) {
                     setState(() {
                       username = v;
