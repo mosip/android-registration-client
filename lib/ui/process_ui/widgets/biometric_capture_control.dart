@@ -371,6 +371,14 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         const SizedBox(
           width: double.infinity,
         ),
+        ElevatedButton(
+            onPressed: () {
+              context
+                  .read<GlobalProvider>()
+                  .fieldInputValue[widget.field.id]
+                  .forEach((BiometricAttributeData t) => print(t.title));
+            },
+            child: Text("Temp")),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: (widget.field.inputRequired!)
