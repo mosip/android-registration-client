@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
+
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
