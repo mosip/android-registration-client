@@ -50,7 +50,7 @@ class _NewProcessState extends State<NewProcess> {
 
   String username = '';
   String password = '';
-
+  
   @override
   void initState() {
     _registrationScreenLoadedAudit();
@@ -182,6 +182,7 @@ class _NewProcessState extends State<NewProcess> {
   }
 
   void _registrationScreenLoadedAudit() async {
+
     await context.read<GlobalProvider>().getAudit("REG-EVT-002", "REG-MOD-103");
   }
 

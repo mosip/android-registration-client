@@ -529,6 +529,5 @@ class GlobalProvider with ChangeNotifier {
 
   getAudit(String id, String componentId) async {
     await audit.performAudit(id, componentId);
-
   }
 }
