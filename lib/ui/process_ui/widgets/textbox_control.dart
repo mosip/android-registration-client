@@ -96,6 +96,8 @@ class _TextBoxControlState extends State<TextBoxControl> {
             height: 10,
           ),
           ResponsiveGridList(
+            //Setting primary listener false
+            listViewBuilderOptions: ListViewBuilderOptions(primary: false),
             shrinkWrap: true,
             minItemWidth: 400,
             horizontalGridSpacing: 16,

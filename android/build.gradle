@@ -41,6 +41,7 @@ ext {
 
     serverBaseURL = "\"https://api-internal.qa-triad.mosip.net/\""
     serverHealthCheckPath = "\"v1/syncdata/actuator/health\""
+    serverActuatorInfoPath = "\"v1/syncdata/actuator/info\""
 }
 
 

@@ -848,4 +848,16 @@ public class MasterDataServiceImpl implements MasterDataService {
     public List<Location> findAllLocationsByLangCode(String langCode) {
         return locationRepository.findAllLocationsByLangCode(langCode);
     }
+    @Override
+    public void saveGlobalParam(String id, String value) {
+        globalParamRepository.saveGlobalParam(id, value);
+    }
+
+    @Override
+    public String getGlobalParamValue(String id) {
+        String value = globalParamRepository.getGlobalParamValue(id);
+        return value == null ? "" : value;
+    }
+
+
 }

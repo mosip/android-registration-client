@@ -70,7 +70,22 @@ class _LoginPageState extends State<LoginPage> {
     await _initializeMachineData();
     await _initializeAppLanguageData();
     await _initializeLocationHierarchy();
+    await _setVersionNoApp();
+    await _saveVersionToGlobalParam();
     await _loginPageLoadedAudit();
+  }
+
+   _setVersionNoApp() async {
+    await context.read<GlobalProvider>().getVersionNoApp();
+  }
+
+  _saveVersionToGlobalParam() async {
+    String version = context.read<GlobalProvider>().versionNoApp;
+    if(version.isNotEmpty) {
+      await context
+        .read<GlobalProvider>()
+        .saveVersionToGlobalParam("mosip.registration.server_version", version);
+    }
   }
 
   _initializeMachineData() async {
