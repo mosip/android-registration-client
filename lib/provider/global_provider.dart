@@ -8,7 +8,6 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/platform_spi/audit_service.dart';
-
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key_service.dart';

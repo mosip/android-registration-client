@@ -210,6 +210,7 @@ class _NewProcessState extends State<NewProcess> {
       final RegistrationService registrationService = RegistrationService();
       bool required =
           await registrationService.evaluateMVEL(fieldData, expression!);
+
       return required;
     }
 
