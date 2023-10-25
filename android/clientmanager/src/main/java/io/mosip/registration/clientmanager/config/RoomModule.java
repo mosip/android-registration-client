@@ -273,8 +273,8 @@ public class RoomModule {
 
     @Provides
     @Singleton
-    IdentitySchemaRepository provideIdentitySchemaRepository(IdentitySchemaDao identitySchemaDao) {
-        return new IdentitySchemaRepository(identitySchemaDao);
+    IdentitySchemaRepository provideIdentitySchemaRepository(GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
+        return new IdentitySchemaRepository(globalParamRepository, identitySchemaDao);
     }
 
     @Provides

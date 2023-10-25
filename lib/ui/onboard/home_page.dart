@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
 
@@ -52,18 +52,23 @@ class _HomePageState extends State<HomePage> {
     return context.read<ConnectivityProvider>().isConnected;
   }
 
+  _showNetworkErrorMessage() {
+    _showInSnackBar(AppLocalizations.of(context)!.network_error);
+  }
+
   void syncData(BuildContext context) async {
     // await SyncProvider().autoSync(context);
     await context.read<ConnectivityProvider>().checkNetworkConnection();
     bool isConnected = _getIsConnected();
     if (!isConnected) {
-      _showInSnackBar(AppLocalizations.of(context)!.network_error);
+      _showNetworkErrorMessage();
       return;
     }
     await _masterDataSync();
     await _getNewProcessSpecAction();
     await _getCenterNameAction();
     await _initializeLanguageDataList();
+    await _initializeLocationHierarchy();
   }
 
   void _fetchProcessSpec() async {
@@ -74,6 +79,10 @@ class _HomePageState extends State<HomePage> {
 
   _initializeLanguageDataList() async {
     await context.read<GlobalProvider>().initializeLanguageDataList();
+  }
+
+  _initializeLocationHierarchy() async {
+    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
   }
 
   _homePageLoadedAudit() async {
@@ -106,6 +115,13 @@ class _HomePageState extends State<HomePage> {
       context.read<GlobalProvider>().newProcessTabIndex = 0;
       context.read<GlobalProvider>().htmlBoxTabIndex = 0;
       context.read<GlobalProvider>().setRegId("");
+      for(var screen in process.screens!) {
+        for(var field in screen!.fields!) {
+          if(field!.controlType == 'dropdown' && field.fieldType == 'default') {
+            context.read<GlobalProvider>().initializeGroupedHierarchyMap(field.group!);
+          }
+        }
+      }
       context.read<GlobalProvider>().createRegistrationLanguageMap();
       showDialog(
         context: context,
