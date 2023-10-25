@@ -845,7 +845,15 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+<<<<<<< HEAD
     public List<Location> findAllLocationsByLangCode(String langCode) {
         return locationRepository.findAllLocationsByLangCode(langCode);
     }
+=======
+    public void saveGlobalParam(String id, String value) {
+        globalParamRepository.saveGlobalParam(id, value);
+    }
+
+
+>>>>>>> bea1eb6 (Save version to global params)
 }

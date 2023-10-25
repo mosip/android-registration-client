@@ -130,6 +130,10 @@ public interface MasterDataService {
 
     List<Language> getAllLanguages();
 
+<<<<<<< HEAD
     List<Location> findAllLocationsByLangCode(String langCode);
 
+=======
+    void saveGlobalParam(String id, String value);
+>>>>>>> bea1eb6 (Save version to global params)
 }
