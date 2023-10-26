@@ -50,7 +50,7 @@ FontWeight semiBold = FontWeight.w500;
 List<String> lang = [
   "eng",
   "ara",
-  "fre",
+  "fra",
 ];
 
 // bool get isMobile => ScreenUtil().screenWidth < 750;
