@@ -603,4 +603,8 @@ class GlobalProvider with ChangeNotifier {
     _groupedHierarchyValues[key] = hValues;
     notifyListeners();
   }
+  
+  saveScreenHeaderToGlobalParam(String id, String value) async {
+    await networkService.saveScreenHeaderToGlobalParam(id, value);
+  }
 }

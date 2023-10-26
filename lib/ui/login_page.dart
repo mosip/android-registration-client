@@ -72,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
     await _initializeLocationHierarchy();
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
+    await _saveAllHeaders();
     await _loginPageLoadedAudit();
   }
 
@@ -86,6 +87,47 @@ class _LoginPageState extends State<LoginPage> {
         .read<GlobalProvider>()
         .saveVersionToGlobalParam("mosip.registration.server_version", version);
     }
+  }
+
+  _saveAllHeaders() async {
+    await _saveNewRegistrationScreenHeaders();
+    await _saveConsentScreenHeaders();
+    await _saveDemographicScreenHeaders();
+    await _saveDocumentScreenHeaders();
+    await _saveBiometricScreenHeaders();
+  }
+
+  _saveNewRegistrationScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("newRegistrationProcess_$header", AppLocalizations.of(context)!.newRegistrationProcess(header));
+    }
+  }
+  _saveConsentScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("consentScreenName_$header", AppLocalizations.of(context)!.consentScreenName(header));
+    }
+  }
+
+  _saveDemographicScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("demographicsScreenName_$header", AppLocalizations.of(context)!.demographicsScreenName(header));
+    }
+  }
+
+  _saveDocumentScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("documentsScreenName_$header", AppLocalizations.of(context)!.documentsScreenName(header));
+    }
+  }
+
+  _saveBiometricScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("biometricsScreenName_$header", AppLocalizations.of(context)!.biometricsScreenName(header));
+    }
+  }
+  
+  _saveHeader(String id, String value) async {
+    await context.read<GlobalProvider>().saveScreenHeaderToGlobalParam(id, value);
   }
 
   _initializeMachineData() async {

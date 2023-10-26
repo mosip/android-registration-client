@@ -20,8 +20,6 @@ List<Color> appColors = [
   const Color(0xFFFEC401)
 ];
 
-
-
 List<Color> secondaryColors = [
   const Color(0xFF214FBF),
   const Color(0xFF6F6E6E),
@@ -48,6 +46,12 @@ List<Color> secondaryColors = [
 FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;
 FontWeight semiBold = FontWeight.w500;
+
+List<String> lang = [
+  "eng",
+  "ara",
+  "fre",
+];
 
 // bool get isMobile => ScreenUtil().screenWidth < 750;
 // bool get isTablet => ScreenUtil().screenWidth <= 1160;
