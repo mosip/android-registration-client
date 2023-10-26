@@ -67,7 +67,7 @@ public class TemplateService {
 
         String templateText = this.masterDataService.getPreviewTemplateContent(TEMPLATE_TYPE_CODE,
                 registrationDto.getSelectedLanguages().get(0));
-
+        Log.i(TAG, "Preview template: "+templateText);
         InputStream is = new ByteArrayInputStream(templateText.getBytes(StandardCharsets.UTF_8));
 
         VelocityContext velocityContext = new VelocityContext();

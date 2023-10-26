@@ -825,9 +825,6 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public String getTemplateContent(String templateName, String langCode) {
-        if(templateName.equalsIgnoreCase("Registration Consent")){
-            return "<!DOCTYPE html><html><head><title>Consent</title></head><body><div>I understand that the data collected about me during registration by the said authority includes <br><br>&#x2022 Name <br> &#x2022 Date of birth <br> &#x2022 Gender <br> &#x2022 Address <br> &#x2022 Contact details <br> &#x2022 Documents<br> &#x2022 Biometrics <br> <br>I also understand that this information will be stored and processed for the purpose of verifying my identity in order to access various services, or to comply with a legal obligation. I give my consent for the collection of this data for this purpose</div></body></html>";
-        }
         return templateRepository.getTemplate(templateName, langCode);
     }
 
