@@ -72,12 +72,22 @@ class _LoginPageState extends State<LoginPage> {
     await _initializeLocationHierarchy();
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
-    await _saveAllHeaders();
+    String version = _fetchVersionNoApp();
+    log("version $version");
+    if(version.startsWith("1.1.5")) {
+      log("Server version: $version");
+      await _saveAllHeaders();
+    }
     await _loginPageLoadedAudit();
   }
 
    _setVersionNoApp() async {
     await context.read<GlobalProvider>().getVersionNoApp();
+  }
+
+  _fetchVersionNoApp() {
+    String version = context.read<GlobalProvider>().versionNoApp;
+    return version;
   }
 
   _saveVersionToGlobalParam() async {
