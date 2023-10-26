@@ -73,9 +73,7 @@ class _LoginPageState extends State<LoginPage> {
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
     String version = _fetchVersionNoApp();
-    log("version $version");
     if(version.startsWith("1.1.5")) {
-      log("Server version: $version");
       await _saveAllHeaders();
     }
     await _loginPageLoadedAudit();
