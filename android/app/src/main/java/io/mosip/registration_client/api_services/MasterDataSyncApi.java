@@ -369,6 +369,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         saveMasterData(response.body().getResponse());
                         if (regCenterId != null) {
                             machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
+                        } else {
+                            machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), "10002");
                         }
                         if (centerMachineDto == null) {
                             if (retryNo < master_data_recursive_sync_max_retry) {

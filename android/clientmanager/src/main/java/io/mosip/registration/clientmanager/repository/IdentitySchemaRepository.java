@@ -140,7 +140,6 @@ public class IdentitySchemaRepository {
             jsonObject.keys().forEachRemaining(key -> {
                 ObjectMapper objectMapper = new ObjectMapper();
                 try {
-                    Log.i(TAG, "Agegroup Config: "+jsonObject.get(key).toString());
                     AgeGroupConfigDto ageGroupConfigDto = objectMapper.readValue(jsonObject.get(key).toString(), AgeGroupConfigDto.class);
                     ageGroupAttributes.put(key, ageGroupConfigDto);
                     if (ageGroupConfigDto.getIsGuardianAuthRequired()) {
