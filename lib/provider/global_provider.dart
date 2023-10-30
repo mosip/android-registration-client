@@ -517,8 +517,8 @@ class GlobalProvider with ChangeNotifier {
       languageList.add(element!.code);
       _codeToLanguageMapper[element.code] = element.name;
       _languageToCodeMapper[element.name] = element.code;
-      _languages = languageList;
     }
+    _languages = languageList;
   }
 
   // App Language

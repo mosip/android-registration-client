@@ -58,7 +58,6 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
                         .setCode(v.getCode())
                         .setName(v.getName())
                         .setLangCode(v.getLangCode())
-                        .setHierarchyLevel((long) 0)
                         .build();
                 locationList.add(location);
             });
@@ -92,7 +91,6 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
                         .setCode(v.getCode())
                         .setName(v.getName())
                         .setLangCode(v.getLangCode())
-                        .setHierarchyLevel((long) 0)
                         .build();
                 locationList.add(location);
             });
