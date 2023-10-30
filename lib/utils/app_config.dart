@@ -47,6 +47,10 @@ FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;
 FontWeight semiBold = FontWeight.w500;
 
+
+/* For 1.1.5 configuration, the screen headers will be saved in the 
+global params for all the below languages. Other languages can also 
+be added here. */
 List<String> lang = [
   "eng",
   "ara",
