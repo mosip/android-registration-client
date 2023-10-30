@@ -261,6 +261,9 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
 
   @override
   Widget build(BuildContext context) {
+    (widget.biometricAttributeData.exceptions.contains(false))
+        ? true
+        : generateList("${widget.field.id}", widget.biometricAttributeData);
     return SizedBox(
       height: 460.h,
       child: Column(
@@ -288,38 +291,55 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                 ),
           OutlinedButton.icon(
             onPressed: () async {
-              if (widget.biometricAttributeData.attemptNo <
-                  widget.biometricAttributeData.noOfCapturesAllowed) {
-                List<Uint8List?> temp = [];
-                await BiometricsApi()
-                    .invokeDiscoverSbi(widget.field.id!, widget.parameterTitle);
-                await BiometricsApi()
-                    .getBestBiometrics(widget.field.id!, widget.parameterTitle)
-                    .then((value) {});
-                await BiometricsApi()
-                    .extractImageValues(widget.field.id!, widget.parameterTitle)
-                    .then((value) {
-                  temp = value;
-                });
-                await BiometricsApi().incrementBioAttempt(
-                    widget.field.id!, widget.parameterTitle);
-                widget.biometricAttributeData.attemptNo = await BiometricsApi()
-                    .getBioAttempt(widget.field.id!, widget.parameterTitle);
-                _showScanDialogBox(temp);
+              if (widget.biometricAttributeData.exceptions.contains(false)) {
+                if (widget.biometricAttributeData.attemptNo <
+                    widget.biometricAttributeData.noOfCapturesAllowed) {
+                  List<Uint8List?> temp = [];
+                  await BiometricsApi().invokeDiscoverSbi(
+                      widget.field.id!, widget.parameterTitle);
+                  await BiometricsApi()
+                      .getBestBiometrics(
+                          widget.field.id!, widget.parameterTitle)
+                      .then((value) {});
+                  await BiometricsApi()
+                      .extractImageValues(
+                          widget.field.id!, widget.parameterTitle)
+                      .then((value) {
+                    temp = value;
+                  });
+                  await BiometricsApi().incrementBioAttempt(
+                      widget.field.id!, widget.parameterTitle);
+                  widget.biometricAttributeData.attemptNo =
+                      await BiometricsApi().getBioAttempt(
+                          widget.field.id!, widget.parameterTitle);
+                  _showScanDialogBox(temp);
+                }
               }
             },
             icon: Icon(
               Icons.crop_free,
-              color: solidPrimary,
+              color: (widget.biometricAttributeData.exceptions.contains(false))
+                  ? solidPrimary
+                  : secondaryColors.elementAt(2),
               size: 14,
             ),
             label: Text(
               "SCAN",
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 14, fontWeight: bold, color: solidPrimary),
+                  fontSize: 14,
+                  fontWeight: bold,
+                  color:
+                      (widget.biometricAttributeData.exceptions.contains(false))
+                          ? solidPrimary
+                          : secondaryColors.elementAt(2)),
             ),
             style: OutlinedButton.styleFrom(
-              side: BorderSide(color: solidPrimary, width: 1),
+              side: BorderSide(
+                  color:
+                      (widget.biometricAttributeData.exceptions.contains(false))
+                          ? solidPrimary
+                          : secondaryColors.elementAt(2),
+                  width: 1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
