@@ -48,7 +48,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
       return context.read<GlobalProvider>().langToCode(e) as String;
     }).toList();
-    // print(langList);
     await context.read<RegistrationTaskProvider>().startRegistration(langList);
     String registrationStartError = _getRegistrationError();
     _navigateBack();

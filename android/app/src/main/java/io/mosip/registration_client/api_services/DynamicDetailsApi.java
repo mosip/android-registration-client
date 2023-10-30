@@ -7,13 +7,16 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
+import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
@@ -48,14 +51,13 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     public void getLocationValues(@NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
         List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
         try {
-            int hierarchyLevel = this.masterDataService.getHierarchyLevel(hierarchyLevelName);
-            List<GenericValueDto> genericValueList = this.masterDataService.findLocationByHierarchyLevel(hierarchyLevelName, langCode);
+            int level = Integer.parseInt(hierarchyLevelName);
+            List<GenericValueDto> genericValueList = this.masterDataService.findLocationByHierarchyLevel(level, langCode);
             genericValueList.forEach((v) -> {
                 DynamicResponsePigeon.GenericData location = new DynamicResponsePigeon.GenericData.Builder()
                         .setCode(v.getCode())
                         .setName(v.getName())
                         .setLangCode(v.getLangCode())
-                        .setHierarchyLevel((long) hierarchyLevel)
                         .build();
                 locationList.add(location);
             });
@@ -81,20 +83,19 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     @Override
     public void getLocationValuesBasedOnParent(@Nullable String parentCode, @NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
         List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
+        List<GenericValueDto> genericValueList = new ArrayList<>();
         try {
-            int hierarchyLevel = this.masterDataService.getHierarchyLevel(hierarchyLevelName);
-            List<GenericValueDto> genericValueList = this.masterDataService.findLocationByParentHierarchyCode(parentCode, langCode);
+            genericValueList = this.masterDataService.findLocationByParentHierarchyCode(parentCode, langCode);
             genericValueList.forEach((v) -> {
                 DynamicResponsePigeon.GenericData location = new DynamicResponsePigeon.GenericData.Builder()
                         .setCode(v.getCode())
                         .setName(v.getName())
                         .setLangCode(v.getLangCode())
-                        .setHierarchyLevel((long) hierarchyLevel)
                         .build();
                 locationList.add(location);
             });
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Fetch location values: " + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), "Fetch location values based on parent: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(locationList);
     }
@@ -116,5 +117,21 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
             Log.e(getClass().getSimpleName(), "Fetch language values failed: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(languageDataList);
+    }
+
+    @Override
+    public void getLocationHierarchyMap(@NonNull DynamicResponsePigeon.Result<Map<String, String>> result) {
+        Map<String, String> hierarchyMap = new HashMap<>();
+        try {
+            List<Location> locationList = this.masterDataService.findAllLocationsByLangCode("eng");
+            locationList.forEach((locationHierarchy) -> {
+                String levelName = locationHierarchy.getHierarchyName();
+                int level = locationHierarchy.getHierarchyLevel();
+                hierarchyMap.put(""+level, levelName);
+            });
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Fetch location hierarchy map failed: " + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(hierarchyMap);
     }
 }

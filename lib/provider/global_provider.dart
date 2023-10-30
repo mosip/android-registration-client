@@ -58,14 +58,10 @@ class GlobalProvider with ChangeNotifier {
 
   Map<String, bool> _mvelValues = {};
 
-  Map<int, String> _hierarchyValues = {};
-
   Map<String, List<Uint8List?>> _scannedPages = {};
 
   String _regId = "";
   String _ageGroup = "";
-
-  List<String?> _locationHierarchy = [null, null, null, null, null];
 
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
@@ -89,15 +85,9 @@ class GlobalProvider with ChangeNotifier {
   }
 
   String get ageGroup => _ageGroup;
-  List<String?> get locationHierarchy => _locationHierarchy;
 
   set scannedPages(Map<String, List<Uint8List?>> value) {
     _scannedPages = value;
-    notifyListeners();
-  }
-
-  set locationHierarchy(List<String?> value) {
-    _locationHierarchy = value;
     notifyListeners();
   }
 
@@ -106,10 +96,10 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setLocationHierarchy(String? value, int index) {
-    _locationHierarchy[index] = value;
-    for (int i = index + 1; i < 5; i++) {
-      _locationHierarchy[i] = null;
+  void setLocationHierarchy(String group, String? value, int index) {
+    _groupedHierarchyValues[group]![index] = value;
+    for (int i = index + 1; i < hierarchyReverse.length; i++) {
+      _groupedHierarchyValues[group]![i] = null;
     }
     notifyListeners();
   }
@@ -123,7 +113,6 @@ class GlobalProvider with ChangeNotifier {
   String get regId => _regId;
 
   Map<String, bool> get mvelValues => _mvelValues;
-  Map<int, String> get hierarchyValues => _hierarchyValues;
 
   setRegId(String value) {
     _regId = value;
@@ -135,15 +124,6 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setHierarchyValues(int hierarchyLevel, String value) {
-    _hierarchyValues[hierarchyLevel] = value;
-    notifyListeners();
-  }
-
-  removeKeysFromHierarchy(int hierarchyLevel) {
-    hierarchyValues.removeWhere((key, value) => key > hierarchyLevel);
-    notifyListeners();
-  }
 
   Process? get currentProcess => _currentProcess;
 
@@ -226,11 +206,6 @@ class GlobalProvider with ChangeNotifier {
 
   set mvelValues(Map<String, bool> value) {
     _mvelValues = value;
-    notifyListeners();
-  }
-
-  set hierarchyValues(Map<int, String> value) {
-    _hierarchyValues = value;
     notifyListeners();
   }
 
@@ -348,9 +323,10 @@ class GlobalProvider with ChangeNotifier {
   chooseLanguage(Map<String, String> label) {
     String x = '';
     for (var i in chosenLang) {
-      for (var element in languageDataList) {
-        if (i == element!.name) {
-          x = "$x${label[element.code]!}/";
+      String code = languageToCodeMapper[i]!;
+      for (var element in _languages) {
+        if (code == element) {
+          x = "$x${label[code]!}/";
           continue;
         }
       }
@@ -361,9 +337,9 @@ class GlobalProvider with ChangeNotifier {
 
   langToCode(String lang) {
     String code = "";
-    for (var element in languageDataList) {
-      if (lang == element!.name) {
-        code = element.code;
+    for (var element in _languages) {
+      if (languageToCodeMapper[lang] == element) {
+        code = element!;
         continue;
       }
     }
@@ -419,7 +395,7 @@ class GlobalProvider with ChangeNotifier {
     _fieldInputValue = {};
     _fieldInputValue = {};
     _fieldDisplayValues = {};
-    log(_fieldInputValue.toString());
+    log("input value $_fieldInputValue");
     notifyListeners();
   }
 
@@ -429,7 +405,8 @@ class GlobalProvider with ChangeNotifier {
   }
 
   List<LanguageData?> _languageDataList = [];
-  Map<String, String> _languageCodeMapper = {"eng": "English"};
+  Map<String, String> _codeToLanguageMapper = {"eng": "English"};
+  Map<String, String> _languageToCodeMapper = {"English": "eng"};
   List<String?> _languages = ['eng'];
   List<String?> _mandatoryLanguages = [];
   List<String?> _optionalLanguages = [];
@@ -438,7 +415,8 @@ class GlobalProvider with ChangeNotifier {
   Map<String, bool> _mandatoryLanguageMap = {};
 
   List<LanguageData?> get languageDataList => _languageDataList;
-  Map<String, String> get languageCodeMapper => _languageCodeMapper;
+  Map<String, String> get codeToLanguageMapper => _codeToLanguageMapper;
+  Map<String, String> get languageToCodeMapper => _languageToCodeMapper;
   List<String?> get languages => _languages;
   List<String?> get mandatoryLanguages => _mandatoryLanguages;
   List<String?> get optionalLanguages => _optionalLanguages;
@@ -458,8 +436,13 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setLanguageCodeMapper(Map<String, String> value) {
-    _languageCodeMapper = value;
+  setCodeToLanguageMapper(Map<String, String> value) {
+    _codeToLanguageMapper = value;
+    notifyListeners();
+  }
+
+  setLanguageToCodeMapper(Map<String, String> value) {
+    _languageToCodeMapper = value;
     notifyListeners();
   }
 
@@ -507,13 +490,13 @@ class GlobalProvider with ChangeNotifier {
     Map<String, bool> languageDataMap = {};
     Map<String, bool> mandatoryMap = {};
     for (var element in _mandatoryLanguages) {
-      String lang = _languageCodeMapper[element]!;
+      String lang = _codeToLanguageMapper[element]!;
       languageDataMap[lang] = true;
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
     }
     for(var element in _optionalLanguages) {
-      String lang = _languageCodeMapper[element]!;
+      String lang = _codeToLanguageMapper[element]!;
       languageDataMap[lang] = false;
       mandatoryMap[lang] = false;
     }
@@ -525,12 +508,17 @@ class GlobalProvider with ChangeNotifier {
   createLanguageCodeMapper() {
     if(_languageDataList.isEmpty) {
       _languages = ["eng"];
-      _languageCodeMapper["eng"] = "English";
+      _codeToLanguageMapper["eng"] = "English";
+      _languageToCodeMapper["English"] = "eng";
       return;
     }
+    List<String> languageList = [];
     for (var element in _languageDataList) {
-      _languageCodeMapper[element!.code] = element.name;
+      languageList.add(element!.code);
+      _codeToLanguageMapper[element.code] = element.name;
+      _languageToCodeMapper[element.name] = element.code;
     }
+    _languages = languageList;
   }
 
   // App Language
@@ -571,5 +559,52 @@ class GlobalProvider with ChangeNotifier {
 
   getAudit(String id, String componentId) async {
     await audit.performAudit(id, componentId);
+  }
+
+  Map<String?, String?> _locationHierarchyMap = {};
+  Map<String, List<String?>> _groupedHierarchyValues = {};
+  List<String> _hierarchyReverse = [];
+
+  Map<String?, String?> get locationHierarchyMap => _locationHierarchyMap;
+  Map<String, List<String?>> get groupedHierarchyValues => _groupedHierarchyValues;
+  List<String> get hierarchyReverse => _hierarchyReverse;
+
+  setLocationHierarchyMap(Map<String, String> value) {
+    _locationHierarchyMap = value;
+    notifyListeners();
+  }
+
+  setHierarchyReverse(List<String> value) {
+    _hierarchyReverse = value;
+    notifyListeners();
+  }
+
+  initializeLocationHierarchyMap() async {
+    Map<String?, String?> hierarchyMap = await dynamicResponseService.fetchLocationHierarchyMap();
+    _locationHierarchyMap = hierarchyMap;
+    List<String> hReverse = [];
+    _locationHierarchyMap.forEach((key, value) {
+      hReverse.add(value!);
+    });
+    _hierarchyReverse = hReverse;
+    notifyListeners();
+  }
+
+  setGroupedHierarchyValues(Map<String, List<String>> value) {
+    _groupedHierarchyValues = value;
+    notifyListeners();
+  }
+
+  initializeGroupedHierarchyMap(String key) {
+    List<String?> hValues = [];
+    _locationHierarchyMap.forEach((key, value) {
+      hValues.add(null);
+    });
+    _groupedHierarchyValues[key] = hValues;
+    notifyListeners();
+  }
+  
+  saveScreenHeaderToGlobalParam(String id, String value) async {
+    await networkService.saveScreenHeaderToGlobalParam(id, value);
   }
 }

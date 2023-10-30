@@ -52,5 +52,50 @@
   "id_schema_sync_failed":"Échec de la synchronisation IDSchema",
   "master_data_sync_failed":"Échec de la synchronisation des données principales",
   "network_error": "Aucun réseau trouvé!",
-  "delete": "SUPPRIMER"
+  "delete": "SUPPRIMER",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
 }

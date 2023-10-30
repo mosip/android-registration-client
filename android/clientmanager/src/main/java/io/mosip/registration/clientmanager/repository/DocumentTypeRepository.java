@@ -21,7 +21,7 @@ public class DocumentTypeRepository {
                 typeJson.getString("langCode"));
         documentType.setName(typeJson.getString("name"));
         documentType.setDescription(typeJson.getString("description"));
-        documentType.setIsDeleted(typeJson.getBoolean("isDeleted"));
+        documentType.setIsDeleted(typeJson.optBoolean("isDeleted"));
         documentTypeDao.insert(documentType);
     }
 }
