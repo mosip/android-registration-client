@@ -1,10 +1,13 @@
 package io.mosip.registration.clientmanager.dto.http;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 
 import java.math.BigInteger;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SyncRIDRequest {
 
     private String langCode;

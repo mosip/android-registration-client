@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -28,35 +26,34 @@ class DropDownControl extends StatefulWidget {
 class _CustomDropDownState extends State<DropDownControl> {
   GenericData? selected;
 
-  List<String> hierarchyReverse = [
-    "region",
-    "province",
-    "city",
-    "zone",
-    "postalCode"
-  ];
   int? index;
+  int maxLen = 0;
   List<GenericData?> list = [];
 
   @override
   void initState() {
+    setHierarchyReverse();
     super.initState();
+  }
+
+  setHierarchyReverse() {
+    maxLen = context.read<GlobalProvider>().hierarchyReverse.length;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     setState(() {
-      index = hierarchyReverse.indexOf(widget.field.id!);
+      index = context.read<GlobalProvider>().hierarchyReverse.indexOf(widget.field.subType!);
     });
     _getOptionsList();
   }
 
   void saveData(value) {
-    for (int i = index! + 1; i < 5; i++) {
+    for (int i = index! + 1; i < maxLen; i++) {
       context
           .read<RegistrationTaskProvider>()
-          .removeDemographicField(hierarchyReverse[i]);
+          .removeDemographicField(context.read<GlobalProvider>().hierarchyReverse[i]);
     }
     if (value != null) {
       if (widget.field.type == 'simpleType') {
@@ -72,23 +69,23 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   void _saveDataToMap(GenericData? value) {
-    for (int i = index! + 1; i < 5; i++) {
+    for (int i = index! + 1; i < maxLen; i++) {
       context.read<GlobalProvider>().removeFieldFromMap(
-            hierarchyReverse[i],
+        "${widget.field.group}${context.read<GlobalProvider>().hierarchyReverse[i]}",
             context.read<GlobalProvider>().fieldInputValue,
           );
     }
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.field.id ?? "",
+          "${widget.field.group}${widget.field.subType}",
               value,
               "eng",
               context.read<GlobalProvider>().fieldInputValue,
             );
       } else {
         context.read<GlobalProvider>().setInputMapValue(
-              widget.field.id ?? "",
+              "${widget.field.group}${widget.field.subType}",
               value,
               context.read<GlobalProvider>().fieldInputValue,
             );
@@ -99,17 +96,17 @@ class _CustomDropDownState extends State<DropDownControl> {
   void _getSelectedValueFromMap(String lang, List<GenericData?> list) {
     GenericData? response;
     if (widget.field.type == 'simpleType') {
-      if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
+      if ((context.read<GlobalProvider>().fieldInputValue["${widget.field.group}${widget.field.subType}"]
               as Map<String, dynamic>)
           .containsKey(lang)) {
         response = context
             .read<GlobalProvider>()
-            .fieldInputValue[widget.field.id ?? ""][lang] as GenericData;
+            .fieldInputValue["${widget.field.group}${widget.field.subType}"][lang] as GenericData;
       }
     } else {
       response = context
           .read<GlobalProvider>()
-          .fieldInputValue[widget.field.id ?? ""] as GenericData;
+          .fieldInputValue["${widget.field.group}${widget.field.subType}"] as GenericData;
     }
     setState(() {
       for (var element in list) {
@@ -139,16 +136,16 @@ class _CustomDropDownState extends State<DropDownControl> {
     return context
         .read<GlobalProvider>()
         .fieldInputValue
-        .containsKey(widget.field.id ?? "");
+        .containsKey("${widget.field.group}${widget.field.subType}");
   }
 
   _getOptionsList() async {
     List<GenericData?> temp;
-    if (index == 0) {
-      temp = await _getLocationValues(widget.field.subType!, "eng");
+    if (index == 1) {
+      temp = await _getLocationValues("$index", "eng");
     } else {
       var parentCode =
-          context.watch<GlobalProvider>().locationHierarchy[index! - 1];
+          context.watch<GlobalProvider>().groupedHierarchyValues[widget.field.group]![index! - 1];
       temp = await _getLocationValuesBasedOnParent(
           parentCode, widget.field.subType!, "eng");
     }
@@ -222,13 +219,9 @@ class _CustomDropDownState extends State<DropDownControl> {
                     _saveDataToMap(value);
                     context
                         .read<GlobalProvider>()
-                        .setLocationHierarchy(value.code, index!);
+                        .setLocationHierarchy(widget.field.group!, value.code, index!);
                     _getSelectedValueFromMap("eng", list);
                   }
-                  log(context
-                      .read<GlobalProvider>()
-                      .locationHierarchy
-                      .toString());
                 },
               ),
             ],

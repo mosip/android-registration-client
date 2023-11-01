@@ -67,6 +67,19 @@ class NetworkServiceImpl implements NetworkService {
     }
     return response;
   }
+  
+  @override
+  Future<String> saveScreenHeaderToGlobalParam(String id, String value) async {
+    String response = "";
+    try {
+      response = await CommonDetailsApi().saveVersionToGlobalParam(id, value);
+    } on PlatformException {
+      debugPrint('SaveVersionToGlobalParam Api Call Failed');
+    } catch (e) {
+      debugPrint('Save version failed: $e');
+    }
+    return response;
+  }
 }
 
 NetworkService getNetworkServiceImpl() => NetworkServiceImpl();
