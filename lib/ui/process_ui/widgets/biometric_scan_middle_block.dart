@@ -199,11 +199,6 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                               .then((value) {
                             temp = value;
                           });
-                          await BiometricsApi().incrementBioAttempt(
-                              widget.field.id!, widget.parameterTitle);
-                          widget.biometricAttributeData.attemptNo =
-                              await BiometricsApi().getBioAttempt(
-                                  widget.field.id!, widget.parameterTitle);
                         }
                       },
                       child: const Text("RESCAN"),
@@ -218,6 +213,11 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       onPressed: () async {
                         widget.biometricAttributeData.listOfBiometricsDto
                             .clear();
+                        await BiometricsApi().incrementBioAttempt(
+                            widget.field.id!, widget.parameterTitle);
+                        widget.biometricAttributeData.attemptNo =
+                            await BiometricsApi().getBioAttempt(
+                                widget.field.id!, widget.parameterTitle);
                         await BiometricsApi()
                             .getBestBiometrics(
                                 widget.field.id!, widget.parameterTitle)
@@ -307,11 +307,6 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       .then((value) {
                     temp = value;
                   });
-                  await BiometricsApi().incrementBioAttempt(
-                      widget.field.id!, widget.parameterTitle);
-                  widget.biometricAttributeData.attemptNo =
-                      await BiometricsApi().getBioAttempt(
-                          widget.field.id!, widget.parameterTitle);
                   _showScanDialogBox(temp);
                 }
               }
