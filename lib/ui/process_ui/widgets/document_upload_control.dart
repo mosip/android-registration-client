@@ -30,15 +30,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   @override
   void initState() {
     //load from the map
-    final scannedPagesMap =
-        context.read<GlobalProvider>().scannedPages[widget.field.id];
-
-    if (scannedPagesMap != null) {
-      imageBytesList.clear();
-      setState(() {
-        imageBytesList.addAll(scannedPagesMap);
-      });
-    }
+    getAllData();
 
     if (context
         .read<GlobalProvider>()
@@ -48,9 +40,24 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           .read<GlobalProvider>()
           .fieldInputValue[widget.field.id]
           .title!;
+      doc.title = context
+          .read<GlobalProvider>()
+          .fieldInputValue[widget.field.id]
+          .title;
     }
 
     super.initState();
+  }
+
+  getAllData() async {
+    final scannedPagesMap = await DocumentApi().getScannedPages(widget.field.id!);
+
+    if (scannedPagesMap != null) {
+      imageBytesList.clear();
+      setState(() {
+        imageBytesList.addAll(scannedPagesMap);
+      });
+    }
   }
 
   void focusNextField(FocusNode currentFocus, FocusNode nextFocus) {
@@ -88,6 +95,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   _setRemoveScannedPages(Field e, Uint8List? item, List<Uint8List?> listOfScannedDoc){
     context.read<GlobalProvider>().removeScannedPages(e.id!,item,listOfScannedDoc);
+  }
+  _removeFieldValue(Field e) async{
+    context.read<GlobalProvider>().removeFieldFromMap(
+        e.id!, context.read<GlobalProvider>().fieldInputValue);
   }
 
   _setValueInMap() {
@@ -157,7 +168,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           imageBytesList.remove(item);
         });
         await _getRemoveDocumentProvider(e, i);
-        _setRemoveScannedPages(e, item, imageBytesList);
       }
     }
   }
@@ -308,6 +318,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       GestureDetector(
                                         onTap: (){
                                           _deleteImage(widget.field,item);
+                                          _removeFieldValue(widget.field);
+                                          _setRemoveScannedPages(widget.field, item,imageBytesList);
                                         },
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
@@ -482,6 +494,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       GestureDetector(
                                         onTap: (){
                                           _deleteImage(widget.field,item);
+                                          _removeFieldValue(widget.field);
+                                          _setRemoveScannedPages(widget.field, item,imageBytesList);
                                         },
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
