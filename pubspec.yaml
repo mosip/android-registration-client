@@ -107,7 +107,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/svg/
-    - .git/        
+    - .git/
     - .git/refs/heads/
 
   # An image asset can refer to one or more resolution-specific "variants", see
