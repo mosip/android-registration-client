@@ -11,10 +11,10 @@ import 'package:http/http.dart' as http;
 class NetworkServiceImpl implements NetworkService {
   @override
   Future<String> checkInternetConnection() async {
-
     try {
-      final response = await http.get(Uri.parse(
-          FlutterConfig.get('BASE_URL') + FlutterConfig.get('HEALTH_CHECK_PATH')))
+      final response = await http
+          .get(Uri.parse(FlutterConfig.get('BASE_URL') +
+              FlutterConfig.get('HEALTH_CHECK_PATH')))
           .timeout(const Duration(seconds: 2));
       return response.statusCode.toString();
     } catch (e) {
@@ -25,12 +25,17 @@ class NetworkServiceImpl implements NetworkService {
 
   @override
   Future<String> getVersionNoApp() async {
-   String versionInfo = '';
+    String versionInfo = '';
     try {
-      final response = await http.get(Uri.parse(
-          FlutterConfig.get('BASE_URL') + FlutterConfig.get('ACTUATOR_INFO_PATH')));
-          ActuatorInfo actuatorInfo = ActuatorInfo.fromJson(jsonDecode(response.body));
-      versionInfo = actuatorInfo.build['version']!;
+      final response = await http
+          .get(Uri.parse(FlutterConfig.get('BASE_URL') +
+              FlutterConfig.get('ACTUATOR_INFO_PATH')))
+          .timeout(const Duration(seconds: 3));
+      if (response.statusCode == 200) {
+        ActuatorInfo actuatorInfo =
+            ActuatorInfo.fromJson(jsonDecode(response.body));
+        versionInfo = actuatorInfo.build['version']!;
+      }
     } catch (e) {
       debugPrint("Fetch actuator info failed $e");
     }
@@ -42,6 +47,32 @@ class NetworkServiceImpl implements NetworkService {
     String response = "";
     try {
       response = await CommonDetailsApi().saveVersionToGlobalParam(id, version);
+    } on PlatformException {
+      debugPrint('SaveVersionToGlobalParam Api Call Failed');
+    } catch (e) {
+      debugPrint('Save version failed: $e');
+    }
+    return response;
+  }
+  
+  @override
+  Future<String> getVersionFromGobalParam(String id) async {
+    String response = "";
+    try {
+      response = await CommonDetailsApi().getVersionFromGlobalParam(id);
+    } on PlatformException {
+      debugPrint('GetVersionFromGlobalParam Api Call Failed');
+    } catch (e) {
+      debugPrint('Get version failed: $e');
+    }
+    return response;
+  }
+  
+  @override
+  Future<String> saveScreenHeaderToGlobalParam(String id, String value) async {
+    String response = "";
+    try {
+      response = await CommonDetailsApi().saveVersionToGlobalParam(id, value);
     } on PlatformException {
       debugPrint('SaveVersionToGlobalParam Api Call Failed');
     } catch (e) {

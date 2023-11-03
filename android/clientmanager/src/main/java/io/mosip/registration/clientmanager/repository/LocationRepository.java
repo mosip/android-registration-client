@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.repository;
 
+import android.util.Log;
+
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
@@ -43,6 +45,10 @@ public class LocationRepository {
         return this.locationDao.findAllLocationByCode(code);
     }
 
+    public List<Location> findAllLocationsByLangCode(String langCode) {
+        return this.locationDao.findAllLocationsByLangCode(langCode);
+    }
+
     public void saveLocationData(JSONObject locationJson) throws JSONException {
         Location location = new Location(locationJson.getString("code"),
                 locationJson.getString("langCode"));
@@ -50,7 +56,7 @@ public class LocationRepository {
         location.setHierarchyLevel(locationJson.getInt("hierarchyLevel"));
         location.setHierarchyName(locationJson.getString("hierarchyName"));
         location.setIsActive(locationJson.getBoolean("isActive"));
-        location.setIsDeleted(locationJson.getBoolean("isDeleted"));
+        location.setIsDeleted(locationJson.optBoolean("isDeleted"));
         location.setParentLocCode(locationJson.getString("parentLocCode"));
         this.locationDao.insert(location);
     }

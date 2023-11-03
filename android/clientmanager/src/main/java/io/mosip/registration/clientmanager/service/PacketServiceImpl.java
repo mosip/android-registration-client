@@ -25,7 +25,6 @@ import io.mosip.registration.clientmanager.constant.PacketServerStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
-import io.mosip.registration.clientmanager.dto.Error;
 import io.mosip.registration.clientmanager.dto.PacketIdDto;
 import io.mosip.registration.clientmanager.dto.PacketStatusDto;
 import io.mosip.registration.clientmanager.dto.PacketStatusRequest;
@@ -38,8 +37,8 @@ import io.mosip.registration.clientmanager.dto.http.SyncRIDRequest;
 import io.mosip.registration.clientmanager.dto.http.SyncRIDResponse;
 import io.mosip.registration.clientmanager.dto.http.UploadResponse;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
-import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
@@ -63,6 +62,7 @@ public class PacketServiceImpl implements PacketService {
 
     private static final String TAG = PacketServiceImpl.class.getSimpleName();
     public static final String PACKET_EXTERNAL_STATUS_READER_ID = "mosip.registration.packet.external.status";
+    public static final String PACKET_STATUS_READER_ID = "mosip.registration.status";
     public static final String PACKET_SYNC_ID = "mosip.registration.sync";
     public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
@@ -76,16 +76,18 @@ public class PacketServiceImpl implements PacketService {
     private IPacketCryptoService packetCryptoService;
     private SyncRestService syncRestService;
     private MasterDataService masterDataService;
+    private GlobalParamRepository globalParamRepository;
 
     @Inject
     public PacketServiceImpl(Context context, RegistrationRepository registrationRepository,
                              IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
-                             MasterDataService masterDataService) {
+                             MasterDataService masterDataService, GlobalParamRepository globalParamRepository) {
         this.context = context;
         this.registrationRepository = registrationRepository;
         this.packetCryptoService = packetCryptoService;
         this.syncRestService = syncRestService;
         this.masterDataService = masterDataService;
+        this.globalParamRepository = globalParamRepository;
     }
 
     @Override
@@ -115,6 +117,8 @@ public class PacketServiceImpl implements PacketService {
             return;
         }
 
+        String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+
         RegProcRequestWrapper<List<SyncRIDRequest>> wrapper = new RegProcRequestWrapper<>();
         wrapper.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         wrapper.setId(PACKET_SYNC_ID);
@@ -123,8 +127,10 @@ public class PacketServiceImpl implements PacketService {
         SyncRIDRequest syncRIDRequest = new SyncRIDRequest();
         syncRIDRequest.setRegistrationId(registration.getPacketId());
         syncRIDRequest.setRegistrationType(registration.getRegType().toUpperCase());
-        syncRIDRequest.setPacketId(registration.getPacketId());
-        syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
+        if (!serverVersion.startsWith("1.1.5")) {
+            syncRIDRequest.setPacketId(registration.getPacketId());
+            syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
+        }
         syncRIDRequest.setSupervisorStatus(PacketClientStatus.APPROVED.name());
 
         if (registration.getAdditionalInfo() != null) {
@@ -147,7 +153,9 @@ public class PacketServiceImpl implements PacketService {
         byte[] cipher = this.packetCryptoService.encrypt(centerMachineDto.getMachineRefId(),
                 JsonUtils.javaObjectToJsonString(wrapper).getBytes(StandardCharsets.UTF_8));
 
-        Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call = this.syncRestService.syncRID(
+        Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call = serverVersion.startsWith("1.1.5") ? this.syncRestService.v1syncRID(
+                DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)),
+                centerMachineDto.getMachineRefId(), CryptoUtil.base64encoder.encodeToString(cipher)) : this.syncRestService.syncRID(
                 DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)),
                 centerMachineDto.getMachineRefId(), CryptoUtil.base64encoder.encodeToString(cipher));
 
@@ -258,20 +266,24 @@ public class PacketServiceImpl implements PacketService {
         if (registrations == null || registrations.size() == 0)
             return;
 
+        String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId(PACKET_EXTERNAL_STATUS_READER_ID);
+        packetStatusRequest.setId(serverVersion.startsWith("1.1.5") ? PACKET_STATUS_READER_ID :PACKET_EXTERNAL_STATUS_READER_ID);
         packetStatusRequest.setVersion(PACKET_SYNC_VERSION);
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
-
         List<PacketIdDto> packets = new ArrayList<>();
-
         for (Registration reg : registrations) {
-            packets.add(new PacketIdDto(reg.getPacketId()));
+            PacketIdDto packet = new PacketIdDto();
+            if (serverVersion.startsWith("1.1.5")) {
+                packet.setRegistrationId(reg.getPacketId());
+            } else {
+                packet.setPacketId(reg.getPacketId());
+            }
         }
-
         packetStatusRequest.setRequest(packets);
 
-        Call<PacketStatusResponse> call = this.syncRestService.getPacketStatus(packetStatusRequest);
+        Call<PacketStatusResponse> call = serverVersion.startsWith("1.1.5") ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
         call.enqueue(new Callback<PacketStatusResponse>() {
             @Override
             public void onResponse(Call<PacketStatusResponse> call, Response<PacketStatusResponse> response) {
@@ -281,7 +293,7 @@ public class PacketServiceImpl implements PacketService {
 
                     if (packetStatusList != null && packetStatusList.size() > 0) {
                         for (PacketStatusDto packetStatus : packetStatusList) {
-                            PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getPacketId(), packetStatus.getStatusCode());
+                            PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getRegistrationId() != null ? packetStatus.getRegistrationId() : packetStatus.getPacketId(), packetStatus.getStatusCode());
                             registrationRepository.updateStatus(updateDto.getRegistrationId(), updateDto.getStatusCode(),
                                     PacketClientStatus.UPLOADED.name());
                             packetSyncSuccess++;

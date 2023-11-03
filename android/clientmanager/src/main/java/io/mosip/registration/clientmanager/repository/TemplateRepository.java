@@ -42,7 +42,7 @@ public class TemplateRepository {
         template.setFileText(templateJson.getString("fileText"));
         template.setFileFormatCode(templateJson.getString("fileFormatCode"));
         template.setName(templateJson.getString("name"));
-        template.setIsDeleted(templateJson.getBoolean("isDeleted"));
+        template.setIsDeleted(templateJson.optBoolean("isDeleted"));
         template.setIsActive(templateJson.getBoolean("isActive"));
         templateDao.insert(template);
     }

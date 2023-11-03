@@ -12,4 +12,8 @@ abstract class CommonDetailsApi {
   List<String> getFieldValues(String fieldName, String langCode);
   @async
   String saveVersionToGlobalParam(String id, String value);
+  @async
+  String getVersionFromGlobalParam(String id);
+  @async
+  String saveScreenHeaderToGlobalParam(String id, String value);
 }

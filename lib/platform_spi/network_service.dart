@@ -8,5 +8,9 @@ abstract class NetworkService {
 
   Future<String> saveVersionToGlobalParam(String id, String version);
 
+  Future<String> getVersionFromGobalParam(String id);
+
+  Future<String> saveScreenHeaderToGlobalParam(String id, String value);
+
   factory NetworkService() => getNetworkServiceImpl();
 }

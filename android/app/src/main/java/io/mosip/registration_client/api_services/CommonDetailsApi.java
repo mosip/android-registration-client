@@ -64,4 +64,27 @@ public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
         }
         result.success(response);
     }
+
+    @Override
+    public void getVersionFromGlobalParam(@NonNull String id, @NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            response = masterDataService.getGlobalParamValue(id);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error in save version.", e);
+        }
+        result.success(response);
+    }
+
+    @Override
+    public void saveScreenHeaderToGlobalParam(@NonNull String id, @NonNull String value, @NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            masterDataService.saveGlobalParam(id, value);
+            response = "OK";
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error in save screen header.", e);
+        }
+        result.success(response);
+    }
 }

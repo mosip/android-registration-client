@@ -137,7 +137,7 @@ public class PacketServiceImplTest {
                 .setResponseCode(200)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_200)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null);
+        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for sync to completed
@@ -154,7 +154,7 @@ public class PacketServiceImplTest {
                 .setResponseCode(200)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_200)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null);
+        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for sync to completed
@@ -183,7 +183,7 @@ public class PacketServiceImplTest {
                 .setResponseCode(404)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_404)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null);
+        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for packetServiceSync to complete

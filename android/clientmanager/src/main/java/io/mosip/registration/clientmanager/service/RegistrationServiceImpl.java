@@ -9,6 +9,7 @@ import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import io.mosip.biometrics.util.face.FaceBDIR;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
@@ -41,7 +42,9 @@ import org.json.JSONObject;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -159,6 +162,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
 //        try {
+            String individualBiometricsFieldId = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID);
+            String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+
             this.registrationDto.getAllDemographicFields().forEach(entry -> {
                 packetWriterService.setField(this.registrationDto.getRId(), entry.getKey(), entry.getValue());
             });
@@ -173,8 +179,20 @@ public class RegistrationServiceImpl implements RegistrationService {
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 
+            if (serverVersion.startsWith("1.1.5")) {
+                this.registrationDto.getBestBiometrics(individualBiometricsFieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
+                    Document document = new Document();
+                    document.setType("EOP");
+                    document.setFormat("jpg");
+                    document.setValue("POE_EOP");
+                    document.setDocument(convertImageToBytes(b.getBioValue()));
+                    Log.i(TAG,"Adding Proof of Exception document with size :" + document.getDocument().length);
+                    packetWriterService.setDocument(this.registrationDto.getRId(), "proofOfException", document);
+                });
+            }
+
             this.registrationDto.CAPTURED_BIO_FIELDS.forEach( field -> {
-                BiometricRecord biometricRecord = getBiometricRecord(field);
+                BiometricRecord biometricRecord = getBiometricRecord(field, serverVersion);
                 biometricRecord.getSegments().removeIf(Objects::isNull);
                 packetWriterService.setBiometric(this.registrationDto.getRId(), field, biometricRecord);
             });
@@ -209,6 +227,18 @@ public class RegistrationServiceImpl implements RegistrationService {
 //        }
     }
 
+    private byte[] convertImageToBytes(String bioValue) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(CryptoUtil.base64decoder.decode(bioValue));
+            DataInputStream inputStream = new DataInputStream(bais);
+            FaceBDIR faceBDIR = new FaceBDIR(inputStream);
+            return faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to convert exception image to bytes", e);
+        }
+        return null;
+    }
+
     @Override
     public void clearRegistration() {
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
@@ -221,7 +251,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
     }
 
-    private BiometricRecord getBiometricRecord(String fieldId) {
+    private BiometricRecord getBiometricRecord(String fieldId, String serverVersion) {
         BiometricRecord biometricRecord = new BiometricRecord();
         this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_LEFT).forEach( b -> {
             biometricRecord.getSegments().add(buildBIR(b));
@@ -238,27 +268,29 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.registrationDto.getBestBiometrics(fieldId, Modality.FACE).forEach( b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
-        this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
-            biometricRecord.getSegments().add(buildBIR(b));
-        });
-        this.registrationDto.EXCEPTIONS.forEach((key, value) -> {
-            value.forEach((v) -> {
-                Modality modality = Modality.getModality(v);
-                String bioSubtype = Modality.getSpecBioSubType(v);
-                String bioValue = null;
-                String specVersion = null;
-                boolean isException = true;
-                String decodedBioResponse = null;
-                String signature = null;
-                boolean isForceCaptured = false;
-                int numOfRetries = 0;
-                double sdkScore = 0;
-                float qualityScore = 0;
-                BiometricsDto exceptionBiometricDto =
-                        new BiometricsDto(modality.getSingleType().value(), bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature, isForceCaptured, numOfRetries, sdkScore, qualityScore);
-                biometricRecord.getSegments().add(buildBIR(exceptionBiometricDto));
+        if (!serverVersion.startsWith("1.1.5")) {
+            this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
+                biometricRecord.getSegments().add(buildBIR(b));
             });
-        });
+            this.registrationDto.EXCEPTIONS.forEach((key, value) -> {
+                value.forEach((v) -> {
+                    Modality modality = Modality.getModality(v);
+                    String bioSubtype = Modality.getSpecBioSubType(v);
+                    String bioValue = null;
+                    String specVersion = null;
+                    boolean isException = true;
+                    String decodedBioResponse = null;
+                    String signature = null;
+                    boolean isForceCaptured = false;
+                    int numOfRetries = 0;
+                    double sdkScore = 0;
+                    float qualityScore = 0;
+                    BiometricsDto exceptionBiometricDto =
+                            new BiometricsDto(modality.getSingleType().value(), bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature, isForceCaptured, numOfRetries, sdkScore, qualityScore);
+                    biometricRecord.getSegments().add(buildBIR(exceptionBiometricDto));
+                });
+            });
+        }
         return biometricRecord;
     }
 

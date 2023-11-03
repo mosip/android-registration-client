@@ -373,6 +373,10 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.put(RegistrationConstants.FLOW_KEY, this.flowType);
         allIdentityDetails.put(RegistrationConstants.PROCESS_KEY, this.process);
         allIdentityDetails.put("langCodes", this.selectedLanguages);
+        allIdentityDetails.put("isNew", true);
+        allIdentityDetails.put("isUpdate", false);
+        allIdentityDetails.put("isLost", false);
+        allIdentityDetails.put("updatableFieldGroups", Collections.EMPTY_LIST);
         allIdentityDetails.putAll(this.demographics);
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);
