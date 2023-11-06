@@ -48,7 +48,7 @@ public class RegistrationConstants {
     public static final String SERVER_VERSION = "mosip.registration.server_version";
     public static final String PRIMARY_LANGUAGE = "mosip.primary-language";
     public static final String SECONDARY_LANGUAGE = "mosip.secondary-language";
-    public static final String CONSENT_SCREEN_CONTENT = "mosip.registration.consent-screen-content";
+    public static final String CONSENT_SCREEN_TEMPLATE_NAME = "mosip.registration.consent-screen-template-name";
     public static final String INDIVIDUAL_BIOMETRICS_ID = "mosip.registration.individual-biometrics-id";
     public static final String INTRODUCER_BIOMETRICS_ID = "mosip.registration.introducer-biometrics-id";
     public static final String INFANT_AGEGROUP_NAME = "mosip.registration.infant-agegroup-name";
