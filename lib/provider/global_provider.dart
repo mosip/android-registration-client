@@ -309,6 +309,15 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  removeValidFromMap(String key,Uint8List? item, Map<String, dynamic> commonMap) {
+    if(commonMap[key].listofImages!=null && commonMap[key].listofImages.length>=1) {
+      commonMap[key].listofImages.remove(item);
+    }else{
+      commonMap.remove(key);
+    }
+    notifyListeners();
+  }
+
   clearMapValue(Map<String, dynamic> commonMap) {
     commonMap = {};
     notifyListeners();

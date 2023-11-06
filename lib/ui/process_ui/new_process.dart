@@ -256,6 +256,10 @@ class _NewProcessState extends State<NewProcess> {
               !(context.read<GlobalProvider>().fieldInputValue.containsKey(
                   "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
             log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
+
+            if(screen.fields!.elementAt(i)!.controlType == "fileupload"){
+              _showInSnackBar(AppLocalizations.of(context)!.upload_document);
+            }
             isValid = false;
 
             break;
