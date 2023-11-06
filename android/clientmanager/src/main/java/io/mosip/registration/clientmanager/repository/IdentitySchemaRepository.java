@@ -36,8 +36,10 @@ public class IdentitySchemaRepository {
 
     private IdentitySchemaDao identitySchemaDao;
     private GlobalParamRepository globalParamRepository;
+    private TemplateRepository templateRepository;
 
-    public IdentitySchemaRepository(GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
+    public IdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
+        this.templateRepository = templateRepository;
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaDao = identitySchemaDao;
     }
@@ -234,7 +236,8 @@ public class IdentitySchemaRepository {
             List<FieldSpecDto> consentFields = new ArrayList<>();
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonArray = objectMapper.readTree(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.CONSENT_SCREEN_CONTENT));
+                String consentScreenTemplateName = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.CONSENT_SCREEN_TEMPLATE_NAME);
+                JsonNode jsonArray = objectMapper.readTree(templateRepository.getTemplate(consentScreenTemplateName, primaryLanguage));
                 for (JsonNode element : jsonArray) {
                     FieldSpecDto field = objectMapper.treeToValue(element, FieldSpecDto.class);
                     consentFields.add(field);
