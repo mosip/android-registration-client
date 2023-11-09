@@ -315,7 +315,6 @@ class GlobalProvider with ChangeNotifier {
     } catch (e) {
       debugPrint("Failed fetching git info: $e");
     }
-
     branchNameApp = branchName;
     commitIdApp = commitId;
     versionNoApp = versionNoAppTemp;
