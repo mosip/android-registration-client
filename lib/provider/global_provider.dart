@@ -294,11 +294,16 @@ class GlobalProvider with ChangeNotifier {
       versionNoAppTemp = await networkService.getVersionFromGobalParam("mosip.registration.server_version");
     }
     final head = await rootBundle.loadString('.git/HEAD');
-    final commitId = await rootBundle.loadString('.git/ORIG_HEAD');
+    String branchName = head.split('/').last;
+    String commitId = "";
+    if (head.startsWith('ref: ')) {
+      branchName = head.split('ref: refs/heads/').last.trim();
+      commitId = await rootBundle.loadString('.git/refs/heads/$branchName');
+    } else {
+      commitId = head;
+    }
 
-    final branch = head.split('/').last;
-
-    branchNameApp = branch;
+    branchNameApp = branchName;
     commitIdApp = commitId;
     versionNoApp = versionNoAppTemp;
   }
