@@ -51,7 +51,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     switch (e.controlType) {
       case "checkbox":
         if (e.subType == "gender") {
-          return ButtonControl(field: e);
+          return RadioButtonControl(field: e);
         }
         return CheckboxControl(field: e);
       case "html":

@@ -117,7 +117,11 @@ class _TextBoxControlState extends State<TextBoxControl> {
                   },
                   validator: (value) {
                     if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
-                      return null;
+                      if (value == null || value.isEmpty) {
+                        return null;
+                      } else if (!widget.validation.hasMatch(value)) {
+                        return 'Invalid input';
+                      }
                     }
                     if (value == null || value.isEmpty) {
                       return 'Please enter a value';

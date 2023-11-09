@@ -40,15 +40,23 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     Navigator.of(context).pop();
   }
 
+  _getRegistrationLanguageList() {
+    return context.read<GlobalProvider>().chosenLang.map((e) {
+      return context.read<GlobalProvider>().langToCode(e) as String;
+    }).toList();
+  }
+
+  _startRegistration(List<String> langList) async {
+    await context.read<RegistrationTaskProvider>().startRegistration(langList);
+  }
+
   _navigateToConsentPage() async {
     context.read<GlobalProvider>().getThresholdValues();
     context.read<GlobalProvider>().fieldDisplayValues = {};
-    context.read<GlobalProvider>().fieldValues(widget.newProcess);
+    await context.read<GlobalProvider>().fieldValues(widget.newProcess);
 
-    List<String> langList = context.read<GlobalProvider>().chosenLang.map((e) {
-      return context.read<GlobalProvider>().langToCode(e) as String;
-    }).toList();
-    await context.read<RegistrationTaskProvider>().startRegistration(langList);
+    List<String> langList = _getRegistrationLanguageList();
+    await _startRegistration(langList);
     String registrationStartError = _getRegistrationError();
     _navigateBack();
     if (registrationStartError.isEmpty) {
