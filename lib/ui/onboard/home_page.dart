@@ -12,6 +12,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -63,7 +64,9 @@ class _HomePageState extends State<HomePage> {
       _showNetworkErrorMessage();
       return;
     }
+    await context.read<SyncProvider>().getLastSyncTime();
     await _masterDataSync();
+    await context.read<SyncProvider>().getLastSyncTime();
     await _getNewProcessSpecAction();
     await _getCenterNameAction();
     await _initializeLanguageDataList();
