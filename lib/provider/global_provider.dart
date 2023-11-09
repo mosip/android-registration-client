@@ -312,7 +312,7 @@ class GlobalProvider with ChangeNotifier {
       } else {
         commitId = head;
       }
-    } catch (e) {
+    } catch(e) {
       debugPrint("Failed fetching git info: $e");
     }
 
