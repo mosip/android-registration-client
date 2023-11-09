@@ -563,11 +563,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                 Log.e(TAG, "Failed to parse the data", e);
             }
         }
-
-        if (!foundErrors) {
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
-        }
     }
 
     private void downloadUrlData(Path path, JSONObject jsonObject) {
