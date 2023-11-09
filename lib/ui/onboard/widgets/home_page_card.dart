@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +26,6 @@ class _HomePageCardState extends State<HomePageCard> {
   String? subtitle;
 
   void updateSubTitle(int index) {
-    log(index.toString());
     switch (index) {
       case 0:
         String syncTime = context.watch<SyncProvider>().lastSuccessfulSyncTime;

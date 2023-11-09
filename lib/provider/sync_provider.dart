@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
@@ -6,6 +5,7 @@ import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 
 import 'package:registration_client/platform_android/sync_response_service_impl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class SyncProvider with ChangeNotifier {
   String _lastSuccessfulSyncTime = "";
   int _currentSyncProgress = 0;
@@ -30,14 +30,14 @@ class SyncProvider with ChangeNotifier {
   bool get idSchemaSyncSuccess => _idSchemaSyncSuccess;
   bool get masterDataSyncSuccess => _masterDataSyncSuccess;
   set isSyncing(bool value) {
-    _isSyncing=value;
+    _isSyncing = value;
     notifyListeners();
   }
 
   getLastSyncTime() async {
     SyncTime lastSyncTime = await SyncResponseServiceImpl().getLastSyncTime();
     setLastSuccessfulSyncTime(lastSyncTime.syncTime!);
-    // print("Last Sync Time from GlobalParamRepository:" + lastSyncTime.syncTime!);
+    log("Last Sync Time from GlobalParamRepository:" + lastSyncTime.syncTime!);
   }
 
   setLastSuccessfulSyncTime(String syncTime) {
@@ -58,7 +58,6 @@ class SyncProvider with ChangeNotifier {
   setIsGlobalSyncInProgress(bool isGlobalSyncInProgress) {
     _isGlobalSyncInProgress = isGlobalSyncInProgress;
   }
-
 
   autoSync(BuildContext context) async {
     await SyncResponseServiceImpl().getLastSyncTime();
@@ -82,8 +81,7 @@ class SyncProvider with ChangeNotifier {
           _globalParamsSyncSuccess = true;
           _currentSyncProgress = getAutoSync.syncProgress!;
           notifyListeners();
-
-          } else {
+        } else {
           log(AppLocalizations.of(context)!.master_data_sync_failed);
         }
         notifyListeners();
@@ -95,8 +93,7 @@ class SyncProvider with ChangeNotifier {
             _userDetailsSyncSuccess = true;
             _currentSyncProgress = getAutoSync.syncProgress!;
             notifyListeners();
-  
-              } else {
+          } else {
             log(AppLocalizations.of(context)!.user_details_sync_failed);
           }
           notifyListeners();
@@ -108,7 +105,7 @@ class SyncProvider with ChangeNotifier {
               _idSchemaSyncSuccess = true;
               _currentSyncProgress = getAutoSync.syncProgress!;
               notifyListeners();
-                  } else {
+            } else {
               log(AppLocalizations.of(context)!.id_schema_sync_failed);
             }
             notifyListeners();
@@ -120,8 +117,7 @@ class SyncProvider with ChangeNotifier {
                 _masterDataSyncSuccess = true;
                 _currentSyncProgress = getAutoSync.syncProgress!;
                 notifyListeners();
-      
-                      } else {
+              } else {
                 log(AppLocalizations.of(context)!.policy_key_sync_failed);
               }
               notifyListeners();
