@@ -64,8 +64,10 @@ class _HomePageState extends State<HomePage> {
       _showNetworkErrorMessage();
       return;
     }
+    // ignore: use_build_context_synchronously
     await context.read<SyncProvider>().getLastSyncTime();
     await _masterDataSync();
+    // ignore: use_build_context_synchronously
     await context.read<SyncProvider>().getLastSyncTime();
     await _getNewProcessSpecAction();
     await _getCenterNameAction();

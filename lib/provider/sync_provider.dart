@@ -37,7 +37,7 @@ class SyncProvider with ChangeNotifier {
   getLastSyncTime() async {
     SyncTime lastSyncTime = await SyncResponseServiceImpl().getLastSyncTime();
     setLastSuccessfulSyncTime(lastSyncTime.syncTime!);
-    log("Last Sync Time from GlobalParamRepository:" + lastSyncTime.syncTime!);
+    log("Last Sync Time from GlobalParamRepository:${lastSyncTime.syncTime!}");
   }
 
   setLastSuccessfulSyncTime(String syncTime) {
