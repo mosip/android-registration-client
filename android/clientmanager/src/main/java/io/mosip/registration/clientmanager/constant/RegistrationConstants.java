@@ -45,6 +45,16 @@ public class RegistrationConstants {
     public static final String THUMBS_ATTEMPTS_KEY = "mosip.registration.num_of_fingerprint_retries";
     public static final String IRIS_ATTEMPTS_KEY = "mosip.registration.num_of_iris_retries";
     public static final String FACE_ATTEMPTS_KEY = "mosip.registration.num_of_face_retries";
+    public static final String SERVER_VERSION = "mosip.registration.server_version";
+    public static final String PRIMARY_LANGUAGE = "mosip.primary-language";
+    public static final String SECONDARY_LANGUAGE = "mosip.secondary-language";
+    public static final String CONSENT_SCREEN_TEMPLATE_NAME = "mosip.registration.consent-screen-template-name";
+    public static final String INDIVIDUAL_BIOMETRICS_ID = "mosip.registration.individual-biometrics-id";
+    public static final String INTRODUCER_BIOMETRICS_ID = "mosip.registration.introducer-biometrics-id";
+    public static final String INFANT_AGEGROUP_NAME = "mosip.registration.infant-agegroup-name";
+    public static final String AGEGROUP_CONFIG = "mosip.registration.agegroup-config";
+    public static final String ALLOWED_BIO_ATTRIBUTES = "mosip.registration.allowed-bioattributes";
+    public static final String DEFAULT_APP_TYPE_CODE = "mosip.registration.default-app-type-code";
 
     //Audits
     public static final String REGISTRATION_SCREEN = "Registration: %s";

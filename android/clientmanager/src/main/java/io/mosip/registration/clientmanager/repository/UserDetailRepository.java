@@ -42,19 +42,20 @@ public class UserDetailRepository {
         List<UserDetail> existingUsers = userDetailDao.getAllUserDetails();
         List<UserDetail> userDetailList = new ArrayList<>();
         for (int i = 0; i < users.length(); i++) {
-            String userId = users.getJSONObject(i).getString("userId");
+            JSONObject jsonObject = new JSONObject(users.getString(i));
+            String userId = jsonObject.getString("userId");
             Optional<UserDetail> result = existingUsers.stream()
                     .filter(u -> u.getId().equalsIgnoreCase(userId))
                     .findFirst();
 
             UserDetail userDetail = new UserDetail(userId);
-            userDetail.setIsDeleted(users.getJSONObject(i).getBoolean("isDeleted"));
-            userDetail.setIsActive(users.getJSONObject(i).getBoolean("isActive"));
-            userDetail.setRegCenterId(users.getJSONObject(i).getString("regCenterId"));
+            userDetail.setIsDeleted(jsonObject.optBoolean("isDeleted"));
+            userDetail.setIsActive(jsonObject.getBoolean("isActive"));
+            userDetail.setRegCenterId(jsonObject.getString("regCenterId"));
             userDetail.setName(userId);
 
             if (result.isPresent()) {
-                 userDetail.setName(result.get().getName());
+                userDetail.setName(result.get().getName());
                 userDetail.setDefault(result.get().isDefault());
                 userDetail.setSupervisor(result.get().isSupervisor());
                 userDetail.setOfficer(result.get().isOfficer());

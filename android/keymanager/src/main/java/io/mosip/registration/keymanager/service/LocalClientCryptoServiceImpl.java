@@ -1,7 +1,6 @@
 package io.mosip.registration.keymanager.service;
 
 import android.content.Context;
-import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Log;
@@ -13,6 +12,11 @@ import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
+import org.spongycastle.crypto.InvalidCipherTextException;
+import org.spongycastle.crypto.digests.SHA256Digest;
+import org.spongycastle.crypto.encodings.OAEPEncoding;
+import org.spongycastle.crypto.engines.RSAEngine;
+import org.spongycastle.crypto.params.RSAKeyParameters;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
@@ -25,8 +29,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.interfaces.RSAKey;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -126,7 +132,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                 final KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                         KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
                 final KeyGenParameterSpec keyPairGenParameterSpec = new KeyGenParameterSpec.Builder(
-                         SIGNV_ALIAS, KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
+                        SIGNV_ALIAS, KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
                         .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
                         .setSignaturePaddings(KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD)
                         .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
@@ -156,17 +162,18 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                         KEYGEN_ASYMMETRIC_ALGORITHM, ANDROID_KEY_STORE);
 
                 final KeyGenParameterSpec keyPairGenParameterSpec = new KeyGenParameterSpec.Builder(
-                         ENCDEC_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        ENCDEC_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(KEYGEN_ASYMMETRIC_ALGO_BLOCK)
                         .setKeySize(KEYGEN_ASYMMETRIC_KEY_LENGTH)
-                        .setEncryptionPaddings(KEYGEN_ASYMMETRIC_ALGO_PAD)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                        .setRandomizedEncryptionRequired(false)
                         .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                         .build();
 
                 kpg.initialize(keyPairGenParameterSpec);
                 kpg.generateKeyPair();
                 Log.i(TAG, "genEncDecKey: Initialized the machine crypto key");
-           }
+            }
         } catch(Exception e){
             Log.e(TAG, "genEncDecKey: Crypto key generation failed ", e);
             if(e  instanceof  UnrecoverableKeyException) {
@@ -328,17 +335,33 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     private byte[] asymmetricEncrypt(byte[] data) throws Exception {
         final Cipher cipher = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, getEnDecPublicKey(), new OAEPParameterSpec(
-                CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT));
+                CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT));
         return cipher.doFinal(data);
     }
 
     private byte[] asymmetricDecrypt(byte[] dataToDecrypt) throws Exception {
-        final Cipher cipher = Cipher.getInstance(CRYPTO_ASYMMETRIC_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, getEnDecPrivateKey(), new OAEPParameterSpec(
-                CRYPTO_ASYMMETRIC_ALGO_MD, CRYPTO_ASYMMETRIC_ALGO_MGF, MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT));
-        return cipher.doFinal(dataToDecrypt);
+        final Cipher cipher = Cipher.getInstance("RSA/ECB/NOPADDING");
+        cipher.init(Cipher.DECRYPT_MODE, getEnDecPrivateKey());
+        byte[] paddedBytes = cipher.doFinal(dataToDecrypt);
+        BigInteger keyModulus = ((RSAKey) getEnDecPrivateKey()).getModulus();
+        return unpadOAEPPadding(paddedBytes, keyModulus);
     }
 
+    //	  This is a hack of removing OEAP padding after decryption with NO Padding as
+    //	  SoftHSM does not support it.Will be removed after HSM implementation
+    /**
+     *
+     * @param paddedPlainText
+     * @param keyModulus
+     * @return
+     */
+    private byte[] unpadOAEPPadding(byte[] paddedPlainText, BigInteger keyModulus) throws InvalidCipherTextException {
+        OAEPEncoding encode = new OAEPEncoding(new RSAEngine(), new SHA256Digest());
+        BigInteger exponent = new BigInteger("1");
+        RSAKeyParameters keyParams = new RSAKeyParameters(false, keyModulus, exponent);
+        encode.init(false, keyParams);
+        return encode.processBlock(paddedPlainText, 0, paddedPlainText.length);
+    }
 
     private void saveAppConf(String entryName, String entryValue) {
         try {
@@ -389,7 +412,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         } catch (Exception e) {
             Log.e(TAG, KeyManagerErrorCode.KEY_STORE_EXCEPTION.getErrorMessage(), e);
         }
-       return null;
+        return null;
     }
 
     @Override

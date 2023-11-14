@@ -19,6 +19,9 @@ public interface SyncRestService {
     @GET("/v1/syncdata/v2/clientsettings")
     Call<ResponseWrapper<ClientSettingDto>> fetchMasterData(@QueryMap Map<String, String> params);
 
+    @GET("/v1/syncdata/clientsettings")
+    Call<ResponseWrapper<ClientSettingDto>> fetchV1MasterData(@QueryMap Map<String, String> params);
+
     @GET("/v1/syncdata/getCertificate")
     Call<ResponseWrapper<CertificateResponse>> getPolicyKey(@Query("applicationId") String applicationId,
                                                             @Query("referenceId") String referenceId,
@@ -32,8 +35,17 @@ public interface SyncRestService {
     Call<ResponseWrapper<UserDetailResponse>> fetchCenterUserDetails(@Query("keyindex") String keyIndex,
                                                                      @Query("version") String version);
 
+    @GET("/v1/syncdata/userdetails")
+    Call<ResponseWrapper<UserDetailResponse>> fetchV1CenterUserDetails(@Query("keyindex") String keyIndex,
+                                                                     @Query("version") String version);
+
     @POST("/registrationprocessor/v1/registrationstatus/syncV2")
     Call<RegProcResponseWrapper<List<SyncRIDResponse>>> syncRID(@Header("timestamp") String timestamp,
+                                                                @Header("Center-Machine-RefId") String refId,
+                                                                @Body String encryptedData);
+
+    @POST("/registrationprocessor/v1/registrationstatus/sync")
+    Call<RegProcResponseWrapper<List<SyncRIDResponse>>> v1syncRID(@Header("timestamp") String timestamp,
                                                                 @Header("Center-Machine-RefId") String refId,
                                                                 @Body String encryptedData);
 
@@ -41,13 +53,17 @@ public interface SyncRestService {
     @POST("/registrationprocessor/v1/packetreceiver/registrationpackets")
     Call<RegProcResponseWrapper<UploadResponse>> uploadPacket(@Part MultipartBody.Part filePart);
 
-
     @POST("/registrationprocessor/v1/registrationstatus/packetexternalstatus")
     Call<PacketStatusResponse> getPacketStatus(@Body PacketStatusRequest packetStatusRequestDto);
 
+    @POST("/registrationprocessor/v1/registrationstatus/search")
+    Call<PacketStatusResponse> getV1PacketStatus(@Body PacketStatusRequest packetStatusRequestDto);
 
     @GET("/v1/syncdata/configs/{key_index}")
     Call<ResponseWrapper<Map<String, Object>>> getGlobalConfigs(@Path("key_index") String key_index,
+                                                                @Query("version") String version);
+    @GET("/v1/syncdata/configs/{machine_name}")
+    Call<ResponseWrapper<Map<String, Object>>> getV1GlobalConfigs(@Path("machine_name") String machine_name,
                                                                 @Query("version") String version);
 
     @GET("/v1/syncdata/getcacertificates")
