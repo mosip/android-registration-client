@@ -104,6 +104,20 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
     return -1;
   }
 
+  resetAfterException(String key, BiometricAttributeData data) {
+    if (context.read<GlobalProvider>().fieldInputValue.containsKey(key)) {
+      if (getElementPosition(
+              context.read<GlobalProvider>().fieldInputValue[key],
+              data.title) !=
+          -1) {
+        context.read<GlobalProvider>().fieldInputValue[key].removeAt(
+            getElementPosition(
+                context.read<GlobalProvider>().fieldInputValue[key],
+                data.title));
+      }
+    }
+  }
+
   int i = 0;
   String biometricAttribute = "Iris";
   setInitialBioAttribute() async {
@@ -357,6 +371,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         const SizedBox(
           width: double.infinity,
         ),
+        
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: (widget.field.inputRequired!)
@@ -596,55 +611,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               widget.field.id!,
                                               "Iris",
                                               "leftEye");
-                                        } else {
-                                          await BiometricsApi()
-                                              .removeBioException(
-                                                  widget.field.id!,
-                                                  "Iris",
-                                                  "leftEye");
-                                        }
-                                        setState(() {
-                                          iris.exceptions[0] =
-                                              !(iris.exceptions.elementAt(0));
-
-                                          if (iris.exceptions.contains(true)) {
-                                            if (iris.exceptionType.isEmpty) {
-                                              iris.exceptionType = "Permanent";
-                                              iris.isScanned = false;
-                                              iris.attemptNo = 0;
-
-                                              iris.listofImages = [
-                                                "assets/images/Left Eye@2x.png",
-                                                "assets/images/Right Eye@2x.png"
-                                              ];
-                                              iris.listOfBiometricsDto = [];
-                                              iris.qualityPercentage = 0;
-                                              iris.thresholdPercentage = "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      iris.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        iris.title));
-                                              }
-                                            }
-                                          }
-                                          if (!iris.exceptions.contains(true)) {
-                                            iris.exceptionType = "";
+                                          resetAfterException(
+                                              widget.field.id!, iris);
+                                          setState(() {
                                             iris.isScanned = false;
                                             iris.attemptNo = 0;
 
@@ -655,26 +624,39 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             iris.listOfBiometricsDto = [];
                                             iris.qualityPercentage = 0;
                                             iris.thresholdPercentage = "0";
+                                          });
+                                        } else {
+                                          await BiometricsApi()
+                                              .removeBioException(
+                                                  widget.field.id!,
+                                                  "Iris",
+                                                  "leftEye");
+                                          resetAfterException(
+                                              widget.field.id!, iris);
+                                          setState(() {
+                                            iris.isScanned = false;
+                                            iris.attemptNo = 0;
 
-                                            if (!(getElementPosition(
-                                                    context
-                                                            .read<GlobalProvider>()
-                                                            .fieldInputValue[
-                                                        widget.field.id!],
-                                                    iris.title) ==
-                                                -1)) {
-                                              context
-                                                  .read<GlobalProvider>()
-                                                  .fieldInputValue[
-                                                      widget.field.id!]
-                                                  .removeAt(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      iris.title));
+                                            iris.listofImages = [
+                                              "assets/images/Left Eye@2x.png",
+                                              "assets/images/Right Eye@2x.png"
+                                            ];
+                                            iris.listOfBiometricsDto = [];
+                                            iris.qualityPercentage = 0;
+                                            iris.thresholdPercentage = "0";
+                                          });
+                                        }
+                                        setState(() {
+                                          iris.exceptions[0] =
+                                              !(iris.exceptions.elementAt(0));
+
+                                          if (iris.exceptions.contains(true)) {
+                                            if (iris.exceptionType.isEmpty) {
+                                              iris.exceptionType = "Permanent";
                                             }
+                                          }
+                                          if (!iris.exceptions.contains(true)) {
+                                            iris.exceptionType = "";
                                           }
                                         });
                                       },
@@ -719,54 +701,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               widget.field.id!,
                                               "Iris",
                                               "rightEye");
-                                        } else {
-                                          await BiometricsApi()
-                                              .removeBioException(
-                                                  widget.field.id!,
-                                                  "Iris",
-                                                  "rightEye");
-                                        }
-                                        setState(() {
-                                          iris.exceptions[1] =
-                                              !(iris.exceptions.elementAt(1));
-                                          if (iris.exceptions.contains(true)) {
-                                            if (iris.exceptionType.isEmpty) {
-                                              iris.exceptionType = "Permanent";
-                                              iris.isScanned = false;
-                                              iris.attemptNo = 0;
-
-                                              iris.listofImages = [
-                                                "assets/images/Left Eye@2x.png",
-                                                "assets/images/Right Eye@2x.png"
-                                              ];
-                                              iris.listOfBiometricsDto = [];
-                                              iris.qualityPercentage = 0;
-                                              iris.thresholdPercentage = "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      iris.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        iris.title));
-                                              }
-                                            }
-                                          }
-                                          if (!iris.exceptions.contains(true)) {
-                                            iris.exceptionType = "";
+                                          resetAfterException(
+                                              widget.field.id!, iris);
+                                          setState(() {
                                             iris.isScanned = false;
                                             iris.attemptNo = 0;
 
@@ -777,26 +714,38 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                             iris.listOfBiometricsDto = [];
                                             iris.qualityPercentage = 0;
                                             iris.thresholdPercentage = "0";
+                                          });
+                                        } else {
+                                          await BiometricsApi()
+                                              .removeBioException(
+                                                  widget.field.id!,
+                                                  "Iris",
+                                                  "rightEye");
+                                          resetAfterException(
+                                              widget.field.id!, iris);
+                                          setState(() {
+                                            iris.isScanned = false;
+                                            iris.attemptNo = 0;
 
-                                            if (!(getElementPosition(
-                                                    context
-                                                            .read<GlobalProvider>()
-                                                            .fieldInputValue[
-                                                        widget.field.id!],
-                                                    iris.title) ==
-                                                -1)) {
-                                              context
-                                                  .read<GlobalProvider>()
-                                                  .fieldInputValue[
-                                                      widget.field.id!]
-                                                  .removeAt(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      iris.title));
+                                            iris.listofImages = [
+                                              "assets/images/Left Eye@2x.png",
+                                              "assets/images/Right Eye@2x.png"
+                                            ];
+                                            iris.listOfBiometricsDto = [];
+                                            iris.qualityPercentage = 0;
+                                            iris.thresholdPercentage = "0";
+                                          });
+                                        }
+                                        setState(() {
+                                          iris.exceptions[1] =
+                                              !(iris.exceptions.elementAt(1));
+                                          if (iris.exceptions.contains(true)) {
+                                            if (iris.exceptionType.isEmpty) {
+                                              iris.exceptionType = "Permanent";
                                             }
+                                          }
+                                          if (!iris.exceptions.contains(true)) {
+                                            iris.exceptionType = "";
                                           }
                                         });
                                       },
@@ -861,60 +810,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "RightHand",
                                                     "rightIndex");
-                                          } else {
-                                            await BiometricsApi()
-                                                .removeBioException(
-                                                    widget.field.id!,
-                                                    "RightHand",
-                                                    "rightIndex");
-                                          }
-                                          setState(() {
-                                            rightHand.exceptions[0] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(0));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                                rightHand.isScanned = false;
-                                                rightHand.attemptNo = 0;
-
-                                                rightHand.listofImages = [
-                                                  "assets/images/Right Hand@2x.png"
-                                                ];
-                                                rightHand.listOfBiometricsDto =
-                                                    [];
-                                                rightHand.qualityPercentage = 0;
-                                                rightHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          rightHand.title));
-                                                }
-                                              }
-                                            }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
                                               rightHand.isScanned = false;
                                               rightHand.attemptNo = 0;
 
@@ -926,27 +824,44 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               rightHand.qualityPercentage = 0;
                                               rightHand.thresholdPercentage =
                                                   "0";
+                                            });
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightIndex");
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
+                                              rightHand.isScanned = false;
+                                              rightHand.attemptNo = 0;
 
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      rightHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title));
+                                              rightHand.listofImages = [
+                                                "assets/images/Right Hand@2x.png"
+                                              ];
+                                              rightHand.listOfBiometricsDto =
+                                                  [];
+                                              rightHand.qualityPercentage = 0;
+                                              rightHand.thresholdPercentage =
+                                                  "0";
+                                            });
+                                          }
+                                          setState(() {
+                                            rightHand.exceptions[0] =
+                                                !(rightHand.exceptions
+                                                    .elementAt(0));
+                                            if (rightHand.exceptions
+                                                .contains(true)) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
+                                                rightHand.exceptionType =
+                                                    "Permanent";
                                               }
+                                            }
+                                            if (!rightHand.exceptions
+                                                .contains(true)) {
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -972,60 +887,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "RightHand",
                                                     "rightMiddle");
-                                          } else {
-                                            await BiometricsApi()
-                                                .removeBioException(
-                                                    widget.field.id!,
-                                                    "RightHand",
-                                                    "rightMiddle");
-                                          }
-                                          setState(() {
-                                            rightHand.exceptions[1] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(1));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                                rightHand.isScanned = false;
-                                                rightHand.attemptNo = 0;
-
-                                                rightHand.listofImages = [
-                                                  "assets/images/Right Hand@2x.png"
-                                                ];
-                                                rightHand.listOfBiometricsDto =
-                                                    [];
-                                                rightHand.qualityPercentage = 0;
-                                                rightHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          rightHand.title));
-                                                }
-                                              }
-                                            }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
                                               rightHand.isScanned = false;
                                               rightHand.attemptNo = 0;
 
@@ -1037,27 +901,44 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               rightHand.qualityPercentage = 0;
                                               rightHand.thresholdPercentage =
                                                   "0";
+                                            });
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightMiddle");
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
+                                              rightHand.isScanned = false;
+                                              rightHand.attemptNo = 0;
 
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      rightHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title));
+                                              rightHand.listofImages = [
+                                                "assets/images/Right Hand@2x.png"
+                                              ];
+                                              rightHand.listOfBiometricsDto =
+                                                  [];
+                                              rightHand.qualityPercentage = 0;
+                                              rightHand.thresholdPercentage =
+                                                  "0";
+                                            });
+                                          }
+                                          setState(() {
+                                            rightHand.exceptions[1] =
+                                                !(rightHand.exceptions
+                                                    .elementAt(1));
+                                            if (rightHand.exceptions
+                                                .contains(true)) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
+                                                rightHand.exceptionType =
+                                                    "Permanent";
                                               }
+                                            }
+                                            if (!rightHand.exceptions
+                                                .contains(true)) {
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -1083,60 +964,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "RightHand",
                                                     "rightRing");
-                                          } else {
-                                            await BiometricsApi()
-                                                .removeBioException(
-                                                    widget.field.id!,
-                                                    "RightHand",
-                                                    "rightRing");
-                                          }
-                                          setState(() {
-                                            rightHand.exceptions[2] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(2));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                                rightHand.isScanned = false;
-                                                rightHand.attemptNo = 0;
-
-                                                rightHand.listofImages = [
-                                                  "assets/images/Right Hand@2x.png"
-                                                ];
-                                                rightHand.listOfBiometricsDto =
-                                                    [];
-                                                rightHand.qualityPercentage = 0;
-                                                rightHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          rightHand.title));
-                                                }
-                                              }
-                                            }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
                                               rightHand.isScanned = false;
                                               rightHand.attemptNo = 0;
 
@@ -1148,27 +978,44 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               rightHand.qualityPercentage = 0;
                                               rightHand.thresholdPercentage =
                                                   "0";
+                                            });
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightRing");
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
+                                              rightHand.isScanned = false;
+                                              rightHand.attemptNo = 0;
 
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      rightHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title));
+                                              rightHand.listofImages = [
+                                                "assets/images/Right Hand@2x.png"
+                                              ];
+                                              rightHand.listOfBiometricsDto =
+                                                  [];
+                                              rightHand.qualityPercentage = 0;
+                                              rightHand.thresholdPercentage =
+                                                  "0";
+                                            });
+                                          }
+                                          setState(() {
+                                            rightHand.exceptions[2] =
+                                                !(rightHand.exceptions
+                                                    .elementAt(2));
+                                            if (rightHand.exceptions
+                                                .contains(true)) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
+                                                rightHand.exceptionType =
+                                                    "Permanent";
                                               }
+                                            }
+                                            if (!rightHand.exceptions
+                                                .contains(true)) {
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -1194,60 +1041,9 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "RightHand",
                                                     "rightLittle");
-                                          } else {
-                                            await BiometricsApi()
-                                                .removeBioException(
-                                                    widget.field.id!,
-                                                    "RightHand",
-                                                    "rightLittle");
-                                          }
-                                          setState(() {
-                                            rightHand.exceptions[3] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(3));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                                rightHand.isScanned = false;
-                                                rightHand.attemptNo = 0;
-
-                                                rightHand.listofImages = [
-                                                  "assets/images/Right Hand@2x.png"
-                                                ];
-                                                rightHand.listOfBiometricsDto =
-                                                    [];
-                                                rightHand.qualityPercentage = 0;
-                                                rightHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          rightHand.title));
-                                                }
-                                              }
-                                            }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
                                               rightHand.isScanned = false;
                                               rightHand.attemptNo = 0;
 
@@ -1259,27 +1055,44 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                               rightHand.qualityPercentage = 0;
                                               rightHand.thresholdPercentage =
                                                   "0";
+                                            });
+                                          } else {
+                                            await BiometricsApi()
+                                                .removeBioException(
+                                                    widget.field.id!,
+                                                    "RightHand",
+                                                    "rightLittle");
+                                            resetAfterException(
+                                                widget.field.id!, rightHand);
+                                            setState(() {
+                                              rightHand.isScanned = false;
+                                              rightHand.attemptNo = 0;
 
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      rightHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        rightHand.title));
+                                              rightHand.listofImages = [
+                                                "assets/images/Right Hand@2x.png"
+                                              ];
+                                              rightHand.listOfBiometricsDto =
+                                                  [];
+                                              rightHand.qualityPercentage = 0;
+                                              rightHand.thresholdPercentage =
+                                                  "0";
+                                            });
+                                          }
+                                          setState(() {
+                                            rightHand.exceptions[3] =
+                                                !(rightHand.exceptions
+                                                    .elementAt(3));
+                                            if (rightHand.exceptions
+                                                .contains(true)) {
+                                              if (rightHand
+                                                  .exceptionType.isEmpty) {
+                                                rightHand.exceptionType =
+                                                    "Permanent";
                                               }
+                                            }
+                                            if (!rightHand.exceptions
+                                                .contains(true)) {
+                                              rightHand.exceptionType = "";
                                             }
                                           });
                                         },
@@ -1338,12 +1151,40 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftIndex");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftIndex");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           }
                                           setState(() {
                                             leftHand.exceptions[0] = !(leftHand
@@ -1355,74 +1196,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
-                                                leftHand.isScanned = false;
-                                                leftHand.attemptNo = 0;
-
-                                                leftHand.listofImages = [
-                                                  "assets/images/Left Hand@2x.png"
-                                                ];
-                                                leftHand.listOfBiometricsDto =
-                                                    [];
-                                                leftHand.qualityPercentage = 0;
-                                                leftHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          leftHand.title));
-                                                }
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
                                               leftHand.exceptionType = "";
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      leftHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title));
-                                              }
                                             }
                                           });
                                         },
@@ -1448,12 +1226,40 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftMiddle");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftMiddle");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           }
                                           setState(() {
                                             leftHand.exceptions[1] = !(leftHand
@@ -1465,74 +1271,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
-                                                leftHand.isScanned = false;
-                                                leftHand.attemptNo = 0;
-
-                                                leftHand.listofImages = [
-                                                  "assets/images/Left Hand@2x.png"
-                                                ];
-                                                leftHand.listOfBiometricsDto =
-                                                    [];
-                                                leftHand.qualityPercentage = 0;
-                                                leftHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          leftHand.title));
-                                                }
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
                                               leftHand.exceptionType = "";
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      leftHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title));
-                                              }
                                             }
                                           });
                                         },
@@ -1558,12 +1301,40 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftRing");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftRing");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           }
                                           setState(() {
                                             leftHand.exceptions[2] = !(leftHand
@@ -1575,74 +1346,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
-                                                leftHand.isScanned = false;
-                                                leftHand.attemptNo = 0;
-
-                                                leftHand.listofImages = [
-                                                  "assets/images/Left Hand@2x.png"
-                                                ];
-                                                leftHand.listOfBiometricsDto =
-                                                    [];
-                                                leftHand.qualityPercentage = 0;
-                                                leftHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          leftHand.title));
-                                                }
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
                                               leftHand.exceptionType = "";
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      leftHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title));
-                                              }
                                             }
                                           });
                                         },
@@ -1668,12 +1376,40 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftLittle");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
                                                     widget.field.id!,
                                                     "LeftHand",
                                                     "leftLittle");
+                                            resetAfterException(
+                                                widget.field.id!, leftHand);
+                                            setState(() {
+                                              leftHand.isScanned = false;
+                                              leftHand.attemptNo = 0;
+
+                                              leftHand.listofImages = [
+                                                "assets/images/Left Hand@2x.png"
+                                              ];
+                                              leftHand.listOfBiometricsDto = [];
+                                              leftHand.qualityPercentage = 0;
+                                              leftHand.thresholdPercentage =
+                                                  "0";
+                                            });
                                           }
                                           setState(() {
                                             leftHand.exceptions[3] = !(leftHand
@@ -1685,74 +1421,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .exceptionType.isEmpty) {
                                                 leftHand.exceptionType =
                                                     "Permanent";
-                                                leftHand.isScanned = false;
-                                                leftHand.attemptNo = 0;
-
-                                                leftHand.listofImages = [
-                                                  "assets/images/Left Hand@2x.png"
-                                                ];
-                                                leftHand.listOfBiometricsDto =
-                                                    [];
-                                                leftHand.qualityPercentage = 0;
-                                                leftHand.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          leftHand.title));
-                                                }
                                               }
                                             }
                                             if (!leftHand.exceptions
                                                 .contains(true)) {
                                               leftHand.exceptionType = "";
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      leftHand.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        leftHand.title));
-                                              }
                                             }
                                           });
                                         },
@@ -1811,12 +1484,38 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "Thumbs",
                                                     "leftThumb");
+                                            resetAfterException(
+                                                widget.field.id!, thumbs);
+                                            setState(() {
+                                              thumbs.isScanned = false;
+                                              thumbs.attemptNo = 0;
+
+                                              thumbs.listofImages = [
+                                                "assets/images/Thumbs@2x.png"
+                                              ];
+                                              thumbs.listOfBiometricsDto = [];
+                                              thumbs.qualityPercentage = 0;
+                                              thumbs.thresholdPercentage = "0";
+                                            });
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
                                                     widget.field.id!,
                                                     "Thumbs",
                                                     "leftThumb");
+                                            resetAfterException(
+                                                widget.field.id!, thumbs);
+                                            setState(() {
+                                              thumbs.isScanned = false;
+                                              thumbs.attemptNo = 0;
+
+                                              thumbs.listofImages = [
+                                                "assets/images/Thumbs@2x.png"
+                                              ];
+                                              thumbs.listOfBiometricsDto = [];
+                                              thumbs.qualityPercentage = 0;
+                                              thumbs.thresholdPercentage = "0";
+                                            });
                                           }
                                           setState(() {
                                             thumbs.exceptions[0] = !(thumbs
@@ -1828,72 +1527,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .exceptionType.isEmpty) {
                                                 thumbs.exceptionType =
                                                     "Permanent";
-                                                thumbs.isScanned = false;
-                                                thumbs.attemptNo = 0;
-
-                                                thumbs.listofImages = [
-                                                  "assets/images/Thumbs@2x.png"
-                                                ];
-                                                thumbs.listOfBiometricsDto = [];
-                                                thumbs.qualityPercentage = 0;
-                                                thumbs.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        thumbs.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          thumbs.title));
-                                                }
                                               }
                                             }
                                             if (!thumbs.exceptions
                                                 .contains(true)) {
                                               thumbs.exceptionType = "";
-                                              thumbs.isScanned = false;
-                                              thumbs.attemptNo = 0;
-
-                                              thumbs.listofImages = [
-                                                "assets/images/Thumbs@2x.png"
-                                              ];
-                                              thumbs.listOfBiometricsDto = [];
-                                              thumbs.qualityPercentage = 0;
-                                              thumbs.thresholdPercentage = "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      thumbs.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        thumbs.title));
-                                              }
                                             }
                                           });
                                         },
@@ -1918,12 +1556,38 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                     widget.field.id!,
                                                     "Thumbs",
                                                     "rightThumb");
+                                            resetAfterException(
+                                                widget.field.id!, thumbs);
+                                            setState(() {
+                                              thumbs.isScanned = false;
+                                              thumbs.attemptNo = 0;
+
+                                              thumbs.listofImages = [
+                                                "assets/images/Thumbs@2x.png"
+                                              ];
+                                              thumbs.listOfBiometricsDto = [];
+                                              thumbs.qualityPercentage = 0;
+                                              thumbs.thresholdPercentage = "0";
+                                            });
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
                                                     widget.field.id!,
                                                     "Thumbs",
                                                     "rightThumb");
+                                            resetAfterException(
+                                                widget.field.id!, thumbs);
+                                            setState(() {
+                                              thumbs.isScanned = false;
+                                              thumbs.attemptNo = 0;
+
+                                              thumbs.listofImages = [
+                                                "assets/images/Thumbs@2x.png"
+                                              ];
+                                              thumbs.listOfBiometricsDto = [];
+                                              thumbs.qualityPercentage = 0;
+                                              thumbs.thresholdPercentage = "0";
+                                            });
                                           }
                                           setState(() {
                                             thumbs.exceptions[1] = !(thumbs
@@ -1935,72 +1599,11 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
                                                   .exceptionType.isEmpty) {
                                                 thumbs.exceptionType =
                                                     "Permanent";
-                                                thumbs.isScanned = false;
-                                                thumbs.attemptNo = 0;
-
-                                                thumbs.listofImages = [
-                                                  "assets/images/Thumbs@2x.png"
-                                                ];
-                                                thumbs.listOfBiometricsDto = [];
-                                                thumbs.qualityPercentage = 0;
-                                                thumbs.thresholdPercentage =
-                                                    "0";
-
-                                                if (!(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        thumbs.title) ==
-                                                    -1)) {
-                                                  context
-                                                      .read<GlobalProvider>()
-                                                      .fieldInputValue[
-                                                          widget.field.id!]
-                                                      .removeAt(getElementPosition(
-                                                          context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .fieldInputValue[
-                                                              widget.field.id!],
-                                                          thumbs.title));
-                                                }
                                               }
                                             }
                                             if (!thumbs.exceptions
                                                 .contains(true)) {
                                               thumbs.exceptionType = "";
-                                              thumbs.isScanned = false;
-                                              thumbs.attemptNo = 0;
-
-                                              thumbs.listofImages = [
-                                                "assets/images/Thumbs@2x.png"
-                                              ];
-                                              thumbs.listOfBiometricsDto = [];
-                                              thumbs.qualityPercentage = 0;
-                                              thumbs.thresholdPercentage = "0";
-
-                                              if (!(getElementPosition(
-                                                      context
-                                                              .read<
-                                                                  GlobalProvider>()
-                                                              .fieldInputValue[
-                                                          widget.field.id!],
-                                                      thumbs.title) ==
-                                                  -1)) {
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .fieldInputValue[
-                                                        widget.field.id!]
-                                                    .removeAt(getElementPosition(
-                                                        context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .fieldInputValue[
-                                                            widget.field.id!],
-                                                        thumbs.title));
-                                              }
                                             }
                                           });
                                         },
