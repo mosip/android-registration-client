@@ -68,6 +68,9 @@ dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
     implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
+    // https://mvnrepository.com/artifact/com.madgag.spongycastle/core
+    implementation 'com.madgag.spongycastle:core:1.58.0.0'
+
 }
 
 sonarqube {

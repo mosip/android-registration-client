@@ -12,6 +12,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -57,14 +58,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void syncData(BuildContext context) async {
-    // await SyncProvider().autoSync(context);
     await context.read<ConnectivityProvider>().checkNetworkConnection();
     bool isConnected = _getIsConnected();
     if (!isConnected) {
       _showNetworkErrorMessage();
       return;
     }
+    // ignore: use_build_context_synchronously
+    await context.read<SyncProvider>().getLastSyncTime();
     await _masterDataSync();
+    // ignore: use_build_context_synchronously
+    await context.read<SyncProvider>().getLastSyncTime();
     await _getNewProcessSpecAction();
     await _getCenterNameAction();
     await _initializeLanguageDataList();
@@ -115,10 +119,13 @@ class _HomePageState extends State<HomePage> {
       context.read<GlobalProvider>().newProcessTabIndex = 0;
       context.read<GlobalProvider>().htmlBoxTabIndex = 0;
       context.read<GlobalProvider>().setRegId("");
-      for(var screen in process.screens!) {
-        for(var field in screen!.fields!) {
-          if(field!.controlType == 'dropdown' && field.fieldType == 'default') {
-            context.read<GlobalProvider>().initializeGroupedHierarchyMap(field.group!);
+      for (var screen in process.screens!) {
+        for (var field in screen!.fields!) {
+          if (field!.controlType == 'dropdown' &&
+              field.fieldType == 'default') {
+            context
+                .read<GlobalProvider>()
+                .initializeGroupedHierarchyMap(field.group!);
           }
         }
       }
@@ -272,6 +279,7 @@ class _HomePageState extends State<HomePage> {
                                     width: 20,
                                     height: 20,
                                   ),
+                                  index: index + 1,
                                   title: Process.fromJson(jsonDecode(context
                                           .watch<RegistrationTaskProvider>()
                                           .listOfProcesses
@@ -334,12 +342,15 @@ class _HomePageState extends State<HomePage> {
                         verticalGridSpacing: 12,
                         children: List.generate(
                           operationalTasks.length,
-                          (index) => HomePageCard(
-                            icon: operationalTasks[index]["icon"],
-                            title: operationalTasks[index]["title"] as String,
-                            ontap: () =>
-                                operationalTasks[index]["onTap"](context),
-                          ),
+                          (index) {
+                            return HomePageCard(
+                              index: index,
+                              icon: operationalTasks[index]["icon"],
+                              title: operationalTasks[index]["title"] as String,
+                              ontap: () =>
+                                  operationalTasks[index]["onTap"](context),
+                            );
+                          },
                         ),
                       ),
                       SizedBox(
