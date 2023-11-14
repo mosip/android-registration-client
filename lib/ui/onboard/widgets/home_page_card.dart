@@ -1,50 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class HomePageCard extends StatelessWidget {
+import '../../../provider/sync_provider.dart';
+
+class HomePageCard extends StatefulWidget {
   const HomePageCard(
       {super.key,
       required this.icon,
       required this.title,
+      required this.index,
       required this.ontap});
   final Widget icon;
   final String title;
+  final int index;
   final void Function() ontap;
 
   @override
+  State<HomePageCard> createState() => _HomePageCardState();
+}
+
+class _HomePageCardState extends State<HomePageCard> {
+  String? subtitle;
+
+  void updateSubTitle(int index) {
+    switch (index) {
+      case 0:
+        String syncTime = context.watch<SyncProvider>().lastSuccessfulSyncTime;
+        setState(() {
+          subtitle = syncTime == ""
+              ? null
+              : DateFormat("EEEE d MMMM, hh:mma")
+                  .format(DateTime.parse(syncTime).toLocal())
+                  .toString();
+        });
+        break;
+      default:
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: ontap,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    color: const Color(0xffF4F7FF),
-                    borderRadius: BorderRadius.circular(4)),
-                child: icon,
-              ),
-              SizedBox(
-                width: 10.w,
-              ),
-              Flexible(
+    updateSubTitle(widget.index);
+
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        onTap: widget.ontap,
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: const Color(0xffF4F7FF),
+              borderRadius: BorderRadius.circular(8)),
+          child: widget.icon,
+        ),
+        title: Text(
+          widget.title,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontWeight: semiBold,
+              fontSize: 15,
+              color: const Color(0xff333333)),
+        ),
+        subtitle: subtitle == null
+            ? null
+            : Padding(
+                padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: semiBold,
-                      fontSize: 15,
-                      color: const Color(0xff333333)),
+                  subtitle ?? "",
+                  style:
+                      const TextStyle(fontSize: 12, color: Color(0xff6F6E6E)),
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
