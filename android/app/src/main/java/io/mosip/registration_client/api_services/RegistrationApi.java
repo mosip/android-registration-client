@@ -71,7 +71,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         String template = "";
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            template = this.templateService.getTemplate(this.registrationDto, true);
+            template = this.templateService.getTemplate(this.registrationDto, isPreview);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch template failed: ", e);
         }

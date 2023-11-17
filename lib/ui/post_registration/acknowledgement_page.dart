@@ -25,13 +25,13 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
 
   _printHtmlToPdf() async {
     String htmlContent =
-        context.read<RegistrationTaskProvider>().previewTemplate;
+        context.read<RegistrationTaskProvider>().acknowledgementTemplate;
 
     await Printing.layoutPdf(
-    onLayout: (format) async => await Printing.convertHtml(
-          format: format,
-          html: htmlContent,
-        ));
+        onLayout: (format) async => await Printing.convertHtml(
+              format: format,
+              html: htmlContent,
+            ));
   }
 
   _registrationAcknowledgementPageLoadedAudit() async {
@@ -39,7 +39,9 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   }
 
   _printAcknowledgementAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-0012", "REG-MOD-103");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-EVT-0012", "REG-MOD-103");
   }
 
   @override
@@ -104,7 +106,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                       _controller = controller;
                       controller.loadString(context
                           .read<RegistrationTaskProvider>()
-                          .previewTemplate);
+                          .acknowledgementTemplate);
                     },
                     onPageFinished: (url) {
                       _controller!.getHeight().then((double height) {
