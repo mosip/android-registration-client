@@ -16,7 +16,7 @@ class AcknowledgementPage extends StatefulWidget {
 
 class _AcknowledgementPageState extends State<AcknowledgementPage> {
   WebViewPlusController? _controller;
-  double _height = 1;
+  double _height = ScreenUtil().screenHeight;
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: ScreenUtil().screenHeight,
+      height: _height,
       width: ScreenUtil().screenWidth,
       child: Column(
         children: [
@@ -98,9 +98,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
           ),
           Expanded(
             child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 SizedBox(
-                  height: _height + 150.h,
+                  height: _height,
                   child: WebViewPlus(
                     onWebViewCreated: (controller) {
                       _controller = controller;
@@ -111,7 +112,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                     onPageFinished: (url) {
                       _controller!.getHeight().then((double height) {
                         setState(() {
-                          _height = height;
+                          _height = height - 250.h;
                         });
                         _registrationAcknowledgementPageLoadedAudit();
                       });
