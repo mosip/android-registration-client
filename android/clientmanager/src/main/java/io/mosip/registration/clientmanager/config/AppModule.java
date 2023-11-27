@@ -221,9 +221,9 @@ public class AppModule {
 
     @Provides
     @Singleton
-    Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, ClientCryptoManagerService clientCryptoManagerService, AuditManagerService auditManagerService,
+    Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                      GlobalParamRepository globalParamRepository) {
-        return new Biometrics095Service(appContext, objectMapper, clientCryptoManagerService, auditManagerService, globalParamRepository);
+        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository);
     }
 
     @Provides
