@@ -45,4 +45,15 @@ public class CryptoUtil {
         return new String(Hex.encodeHex(messageDigestMD5.digest(data)));
     }
 
+    public static byte[] decodeBase64(String data) {
+        if (data == null || data.trim().length() == 0) {
+            return null;
+        }
+        try {
+            return base64decoder.decode(data);
+        } catch (IllegalArgumentException exception) {
+            return Base64.getDecoder().decode(data);
+        }
+    }
+
 }

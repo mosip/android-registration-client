@@ -16,7 +16,7 @@ class PreviewPage extends StatefulWidget {
 class _PreviewPageState extends State<PreviewPage> {
   bool isLoading = true;
   WebViewPlusController? _controller;
-  double _height = 1;
+  double _height = ScreenUtil().screenHeight;
 
   _registrationPreviewPageLoadedAudit() async {
     await context.read<GlobalProvider>().getAudit("REG-EVT-008", "REG-MOD-103");
@@ -26,11 +26,12 @@ class _PreviewPageState extends State<PreviewPage> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+      height: _height,
       child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           SizedBox(
-            height: _height + 150.h,
+            height: _height,
             child:
                 context.watch<RegistrationTaskProvider>().previewTemplate == ""
                     ? const Center(
@@ -46,7 +47,7 @@ class _PreviewPageState extends State<PreviewPage> {
                         onPageFinished: (url) {
                           _controller!.getHeight().then((double height) {
                             setState(() {
-                              _height = height;
+                              _height = height - 250.h;
                             });
                             _registrationPreviewPageLoadedAudit();
                           });

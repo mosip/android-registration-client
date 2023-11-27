@@ -71,8 +71,8 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public ClientCryptoManagerService provideClientCryptoManagerService() {
-        return new LocalClientCryptoServiceImpl(appContext);
+    public ClientCryptoManagerService provideClientCryptoManagerService(CertificateManagerService certificateManagerService) {
+        return new LocalClientCryptoServiceImpl(appContext, certificateManagerService);
     }
 
     @Singleton
@@ -221,9 +221,9 @@ public class AppModule {
 
     @Provides
     @Singleton
-    Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, AuditManagerService auditManagerService,
+    Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, ClientCryptoManagerService clientCryptoManagerService, AuditManagerService auditManagerService,
                                                      GlobalParamRepository globalParamRepository) {
-        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository);
+        return new Biometrics095Service(appContext, objectMapper, clientCryptoManagerService, auditManagerService, globalParamRepository);
     }
 
     @Provides

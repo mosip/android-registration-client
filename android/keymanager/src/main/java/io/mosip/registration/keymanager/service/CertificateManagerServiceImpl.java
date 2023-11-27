@@ -5,6 +5,8 @@ import android.util.Log;
 import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CACertificateResponseDto;
 import io.mosip.registration.keymanager.dto.CertificateRequestDto;
+import io.mosip.registration.keymanager.dto.CertificateTrustRequestDto;
+import io.mosip.registration.keymanager.dto.CertificateTrustResponseDto;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
@@ -54,6 +56,10 @@ public class CertificateManagerServiceImpl implements CertificateManagerService 
 
         String certSubject = CertificateManagerUtil.formatCertificateDN(reqX509Cert.getSubjectX500Principal().getName());
         String certIssuer = CertificateManagerUtil.formatCertificateDN(reqX509Cert.getIssuerX500Principal().getName());
+
+        Log.i(TAG, "Certificate Data: "+certificateData);
+        Log.i(TAG, "X509Cert: "+reqX509Cert);
+
         boolean selfSigned = CertificateManagerUtil.isSelfSignedCertificate(reqX509Cert);
 
         if (selfSigned) {
@@ -78,6 +84,26 @@ public class CertificateManagerServiceImpl implements CertificateManagerService 
 
         CACertificateResponseDto responseDto = new CACertificateResponseDto();
         responseDto.setStatus(KeyManagerConstant.SUCCESS_UPLOAD);
+        return responseDto;
+    }
+
+    public CertificateTrustResponseDto verifyCertificateTrust(CertificateTrustRequestDto certificateTrustRequestDto) {
+        Log.i(TAG, "Certificate Trust Path Validation.");
+
+        String certificateData = certificateTrustRequestDto.getCertificateData();
+        if (!CertificateManagerUtil.isValidCertificateData(certificateData)) {
+            Log.e(TAG, "Invalid Certificate Data provided to verify partner certificate trust.");
+            throw new KeymanagerServiceException(KeyManagerErrorCode.INVALID_CERTIFICATE.getErrorCode(),
+                    KeyManagerErrorCode.INVALID_CERTIFICATE.getErrorMessage());
+        }
+        X509Certificate reqX509Cert = (X509Certificate) CertificateManagerUtil.convertToCertificate(certificateData);
+        String partnerDomain = validateAllowedDomains(certificateTrustRequestDto.getPartnerDomain());
+
+        Log.i(TAG, "Certificate Trust Path Validation for domain: " + partnerDomain);
+
+        boolean certValid = validateCertificatePath(reqX509Cert, partnerDomain);
+        CertificateTrustResponseDto responseDto = new CertificateTrustResponseDto();
+        responseDto.setStatus(certValid);
         return responseDto;
     }
 

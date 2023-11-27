@@ -10,6 +10,7 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.util.encoders.Hex;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -17,6 +18,7 @@ import org.bouncycastle.util.io.pem.PemReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -34,6 +36,14 @@ public class CertificateManagerUtil {
         return certData != null && !certData.trim().isEmpty();
     }
 
+    public static boolean isValidApplicationId(String appId) {
+        return appId != null && !appId.trim().isEmpty();
+    }
+
+    public static boolean isDataValid(String anyData) {
+        return anyData != null && !anyData.trim().isEmpty();
+    }
+
     public static Certificate convertToCertificate(String certData) {
         if(!isValidCertificateData(certData))
             throw new KeymanagerServiceException(KeyManagerErrorCode.INVALID_CERTIFICATE.getErrorCode(),
@@ -47,6 +57,17 @@ public class CertificateManagerUtil {
             CertificateFactory certFactory = CertificateFactory.getInstance(KeyManagerConstant.CERTIFICATE_TYPE);
             return certFactory.generateCertificate(new ByteArrayInputStream(certBytes));
         } catch(IOException | CertificateException e) {
+            Log.e(TAG, "Error Parsing Certificate.", e);
+            throw new KeymanagerServiceException(KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorCode(),
+                    KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorMessage() + e.getMessage());
+        }
+    }
+
+    public static Certificate convertToCertificate(byte[] certDataBytes) {
+        try {
+            CertificateFactory certFactory = CertificateFactory.getInstance(KeyManagerConstant.CERTIFICATE_TYPE);
+            return certFactory.generateCertificate(new ByteArrayInputStream(certDataBytes));
+        } catch(CertificateException e) {
             Log.e(TAG, "Error Parsing Certificate.", e);
             throw new KeymanagerServiceException(KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorCode(),
                     KeyManagerErrorCode.CERTIFICATE_PARSING_ERROR.getErrorMessage() + e.getMessage());
@@ -149,5 +170,24 @@ public class CertificateManagerUtil {
 
     public static String getCertificateThumbprintInHex(Certificate cert) {
         return Hex.toHexString(getCertificateThumbprint(cert)).toUpperCase();
+    }
+
+    public static boolean isIncludeAttrsValid(Boolean includes) {
+        if (Objects.isNull(includes)) {
+            return KeyManagerConstant.DEFAULT_INCLUDES;
+        }
+        return includes;
+    }
+
+    public static String getPEMFormatedData(Object anyObject){
+        StringWriter stringWriter = new StringWriter();
+        try (PEMWriter pemWriter = new PEMWriter(stringWriter)) {
+            pemWriter.writeObject(anyObject);
+            pemWriter.flush();
+            return stringWriter.toString();
+        } catch (IOException ioExp) {
+            throw new KeymanagerServiceException(KeyManagerErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(),
+                    KeyManagerErrorCode.INTERNAL_SERVER_ERROR.getErrorMessage(), ioExp);
+        }
     }
 }
