@@ -57,9 +57,6 @@ public class CertificateManagerServiceImpl implements CertificateManagerService 
         String certSubject = CertificateManagerUtil.formatCertificateDN(reqX509Cert.getSubjectX500Principal().getName());
         String certIssuer = CertificateManagerUtil.formatCertificateDN(reqX509Cert.getIssuerX500Principal().getName());
 
-        Log.i(TAG, "Certificate Data: "+certificateData);
-        Log.i(TAG, "X509Cert: "+reqX509Cert);
-
         boolean selfSigned = CertificateManagerUtil.isSelfSignedCertificate(reqX509Cert);
 
         if (selfSigned) {
