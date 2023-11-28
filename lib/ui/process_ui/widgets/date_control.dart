@@ -8,10 +8,9 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 import 'package:registration_client/utils/app_style.dart';
 
-
 class DateControl extends StatefulWidget {
   const DateControl({super.key, required this.field, required this.validation});
-  final Field  field;
+  final Field field;
   final RegExp validation;
 
   @override
@@ -33,7 +32,7 @@ class _DateControlState extends State<DateControl> {
     pickedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(DateTime.now().year - 100) ,
+        firstDate: DateTime(DateTime.now().year - 100),
         lastDate: DateTime.now());
 
     if (pickedDate != null) {
@@ -64,7 +63,8 @@ class _DateControlState extends State<DateControl> {
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id)) {
-      response = context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+      response =
+          context.read<GlobalProvider>().fieldInputValue[widget.field.id];
     }
     setState(() {
       dateController.text = response;
@@ -94,6 +94,18 @@ class _DateControlState extends State<DateControl> {
                 onTap: _selectDate,
                 textCapitalization: TextCapitalization.words,
                 textAlign: TextAlign.left,
+                validator: (value) {
+                  if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                    return null;
+                  }
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a value';
+                  }
+                  if (!widget.validation.hasMatch(value)) {
+                    return 'Invalid input';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),

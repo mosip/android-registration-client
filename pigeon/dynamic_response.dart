@@ -5,13 +5,13 @@ class GenericData {
   final String name;
   final String code;
   final String langCode;
-  final int hierarchyLevel;
+  final int? hierarchyLevel;
 
   GenericData({
     required this.name,
     required this.code,
     required this.langCode,
-    required this.hierarchyLevel,
+    this.hierarchyLevel,
   });
 }
 
@@ -46,4 +46,7 @@ abstract class DynamicResponseApi {
 
   @async
   List<LanguageData> getAllLanguages();
+
+  @async
+  Map<String, String> getLocationHierarchyMap();
 }

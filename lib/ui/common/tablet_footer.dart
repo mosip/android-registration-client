@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 
 import '../../utils/app_config.dart';
 
@@ -19,10 +21,23 @@ class TabletFooter extends StatelessWidget {
         color: Color(0xffFCFCFC),
       ),
       child: Center(
-          child: Text(
-        "Community Registration - Client Version 1.2.0.1.B2",
-        style: TextStyle(
-            color: const Color(0xff6F6E6E), fontSize: 14, fontWeight: regular),
+          child: Column(
+        children: [
+          Text(
+            "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
+            style: TextStyle(
+                color: const Color(0xff6F6E6E),
+                fontSize: 14,
+                fontWeight: regular),
+          ),
+          Text(
+            "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
+            style: TextStyle(
+                color: const Color(0xff6F6E6E),
+                fontSize: 14,
+                fontWeight: regular),
+          ),
+        ],
       )),
     );
   }

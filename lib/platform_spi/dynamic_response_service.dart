@@ -15,5 +15,7 @@ abstract class DynamicResponseService {
 
   Future<List<LanguageData?>> fetchAllLanguages();
 
+  Future<Map<String?, String?>> fetchLocationHierarchyMap();
+
   factory DynamicResponseService() => getDynamicResponseServiceImpl();
 }

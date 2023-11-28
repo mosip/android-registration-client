@@ -178,9 +178,9 @@ public class AppModule {
     @Singleton
     PacketService providePacketService(RegistrationRepository registrationRepository,
                                        IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
-                                       MasterDataService masterDataService) {
+                                       MasterDataService masterDataService, GlobalParamRepository globalParamRepository) {
         return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService,
-                masterDataService);
+                masterDataService, globalParamRepository);
     }
 
     @Provides

@@ -4,6 +4,7 @@ import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
+import io.mosip.registration.clientmanager.entity.Location;
 
 import java.util.List;
 
@@ -88,11 +89,11 @@ public interface MasterDataService {
 
     /**
      * Returns the list of immediate children for the provided hierarchy Level
-     * @param hierarchyLevelName
+     * @param hierarchyLevel
      * @param langCode
      * @return
      */
-    List<GenericValueDto> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode);
+    List<GenericValueDto> findLocationByHierarchyLevel(int hierarchyLevel, String langCode);
 
     /**
      * Returns the element for the provided code and language code
@@ -129,4 +130,9 @@ public interface MasterDataService {
 
     List<Language> getAllLanguages();
 
+    List<Location> findAllLocationsByLangCode(String langCode);
+
+    void saveGlobalParam(String id, String value);
+
+    String getGlobalParamValue(String id);
 }

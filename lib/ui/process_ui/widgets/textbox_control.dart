@@ -10,6 +10,7 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../../model/field.dart';
 
 import '../../../provider/global_provider.dart';
+import '../../../utils/life_cycle_event_handler.dart';
 import 'custom_label.dart';
 
 class TextBoxControl extends StatefulWidget {
@@ -21,12 +22,39 @@ class TextBoxControl extends StatefulWidget {
   State<TextBoxControl> createState() => _TextBoxControlState();
 }
 
-class _TextBoxControlState extends State<TextBoxControl> {
+class _TextBoxControlState extends State<TextBoxControl>
+    with WidgetsBindingObserver {
   bool isMvelValid = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+      resumeCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+      suspendingCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+    ));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void closeKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   void saveData(value, lang) {
@@ -96,6 +124,8 @@ class _TextBoxControlState extends State<TextBoxControl> {
             height: 10,
           ),
           ResponsiveGridList(
+            //Setting primary listener false
+            listViewBuilderOptions: ListViewBuilderOptions(primary: false),
             shrinkWrap: true,
             minItemWidth: 400,
             horizontalGridSpacing: 16,
@@ -115,7 +145,11 @@ class _TextBoxControlState extends State<TextBoxControl> {
                   },
                   validator: (value) {
                     if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
-                      return null;
+                      if (value == null || value.isEmpty) {
+                        return null;
+                      } else if (!widget.validation.hasMatch(value)) {
+                        return 'Invalid input';
+                      }
                     }
                     if (value == null || value.isEmpty) {
                       return 'Please enter a value';

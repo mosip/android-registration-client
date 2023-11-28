@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
@@ -17,6 +20,7 @@ import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
+import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
@@ -91,6 +95,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
+    private String regCenterId;
 
     @Inject
     public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
@@ -256,7 +261,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (delta != null)
             queryParams.put("lastUpdated", delta);
 
-        Call<ResponseWrapper<ClientSettingDto>> call = syncRestService.fetchMasterData(queryParams);
+        String serverVersion = getServerVersionFromConfigs();
+        Call<ResponseWrapper<ClientSettingDto>> call = serverVersion.startsWith("1.1.5") ? syncRestService.fetchV1MasterData(queryParams) : syncRestService.fetchMasterData(queryParams);
 
         call.enqueue(new Callback<ResponseWrapper<ClientSettingDto>>() {
             @Override
@@ -265,6 +271,9 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveMasterData(response.body().getResponse());
+                        if (regCenterId != null) {
+                            machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
+                        }
                         if (centerMachineDto == null) {
                             if (retryNo < master_data_recursive_sync_max_retry) {
                                 Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
@@ -298,8 +307,10 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void syncGlobalParamsData(Runnable onFinish) throws Exception {
         Log.i(TAG, "config data sync is started");
+        String serverVersion = getServerVersionFromConfigs();
 
-        Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getGlobalConfigs(
+        Call<ResponseWrapper<Map<String, Object>>> call = serverVersion.startsWith("1.1.5") ? syncRestService.getV1GlobalConfigs(
+                clientCryptoManagerService.getMachineName(), BuildConfig.CLIENT_VERSION) : syncRestService.getGlobalConfigs(
                 clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
             @Override
@@ -421,6 +432,14 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void syncUserDetails(Runnable onFinish) throws Exception {
+        String serverVersion = getServerVersionFromConfigs();
+        if (serverVersion.startsWith("1.1.5")) {
+            Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+            Log.i(TAG, "Found 115 version, skipping userdetails sync");
+            onFinish.run();
+            return;
+        }
+
         Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(
                 this.clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
@@ -455,7 +474,6 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncCACertificates() {
-
         Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
                 BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
@@ -522,11 +540,12 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void saveMasterData(ClientSettingDto clientSettingDto) {
         boolean foundErrors = false;
+        boolean applicantValidDocPresent = clientSettingDto.getDataToSync().stream().filter(masterData -> masterData.getEntityName().equalsIgnoreCase("ApplicantValidDocument")).findAny().isPresent();
         for (MasterData masterData : clientSettingDto.getDataToSync()) {
             try {
                 switch (masterData.getEntityType()) {
                     case "structured":
-                        saveStructuredData(masterData.getEntityName(), masterData.getData());
+                        saveStructuredData(masterData.getEntityName(), masterData.getData(), applicantValidDocPresent);
                         break;
                     case "dynamic":
                         saveDynamicData(masterData.getData());
@@ -544,11 +563,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                 Log.e(TAG, "Failed to parse the data", e);
             }
         }
-
-        if (!foundErrors) {
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
-        }
     }
 
     private void downloadUrlData(Path path, JSONObject jsonObject) {
@@ -641,58 +657,73 @@ public class MasterDataServiceImpl implements MasterDataService {
         return new JSONArray(new String(CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue())));
     }
 
-    private void saveStructuredData(String entityName, String data) throws JSONException {
+    private String getServerVersionFromConfigs() {
+        return this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+    }
+
+    private void saveStructuredData(String entityName, String data, boolean applicantValidDocPresent) throws JSONException {
+        String serverVersion = getServerVersionFromConfigs();
+        String defaultAppTypeCode = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE);
+        Boolean fullSync = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED) == null ? true : false;
         switch (entityName) {
             case "Machine":
                 JSONArray machines = getDecryptedDataList(data);
-                machineRepository.saveMachineMaster(machines.getJSONObject(0));
+                machineRepository.saveMachineMaster(new JSONObject(machines.getString(0)));
                 break;
             case "RegistrationCenter":
                 JSONArray centers = getDecryptedDataList(data);
                 for (int i = 0; i < centers.length(); i++) {
-                    registrationCenterRepository.saveRegistrationCenter(centers.getJSONObject(i));
+                    registrationCenterRepository.saveRegistrationCenter(new JSONObject(centers.getString(i)));
                 }
                 break;
             case "DocumentType":
                 JSONArray doctypes = getDecryptedDataList(data);
                 for (int i = 0; i < doctypes.length(); i++) {
-                    documentTypeRepository.saveDocumentType(doctypes.getJSONObject(i));
+                    documentTypeRepository.saveDocumentType(new JSONObject(doctypes.getString(i)));
                 }
                 break;
             case "ApplicantValidDocument":
                 JSONArray appValidDocs = getDecryptedDataList(data);
                 for (int i = 0; i < appValidDocs.length(); i++) {
-                    applicantValidDocRepository.saveApplicantValidDocument(appValidDocs.getJSONObject(i));
+                    applicantValidDocRepository.saveApplicantValidDocument(new JSONObject(appValidDocs.getString(i)), defaultAppTypeCode);
                 }
                 break;
             case "Template":
                 JSONArray templates = getDecryptedDataList(data);
                 for (int i = 0; i < templates.length(); i++) {
-                    templateRepository.saveTemplate(templates.getJSONObject(i));
+                    templateRepository.saveTemplate(new JSONObject(templates.getString(i)));
                 }
                 break;
             case "Location":
                 JSONArray locations = getDecryptedDataList(data);
                 for (int i = 0; i < locations.length(); i++) {
-                    locationRepository.saveLocationData(locations.getJSONObject(i));
+                    JSONObject jsonObject = new JSONObject(locations.getString(i));
+                    if (fullSync) {
+                        if (jsonObject.getBoolean("isActive")) {
+                            locationRepository.saveLocationData(jsonObject);
+                        }
+                    } else {
+                        locationRepository.saveLocationData(jsonObject);
+                    }
                 }
                 break;
             case "LocationHierarchy":
                 JSONArray locationHierarchies = getDecryptedDataList(data);
                 for (int i = 0; i < locationHierarchies.length(); i++) {
-                    locationRepository.saveLocationHierarchyData(locationHierarchies.getJSONObject(i));
+                    locationRepository.saveLocationHierarchyData(new JSONObject(locationHierarchies.getString(i)));
                 }
                 break;
             case "BlocklistedWords":
+            case "BlacklistedWords":
                 JSONArray words = getDecryptedDataList(data);
                 for (int i = 0; i < words.length(); i++) {
-                    blocklistedWordRepository.saveBlocklistedWord(words.getJSONObject(i));
+                    blocklistedWordRepository.saveBlocklistedWord(new JSONObject(words.getString(i)));
                 }
                 break;
             case "SyncJobDef":
                 JSONArray syncJobDefsJsonArray = getDecryptedDataList(data);
                 for (int i = 0; i < syncJobDefsJsonArray.length(); i++) {
-                    JSONObject jsonObject = syncJobDefsJsonArray.getJSONObject(i);
+                    JSONObject jsonObject = new JSONObject(syncJobDefsJsonArray.getString(i));
 
                     SyncJobDef syncJobDef = new SyncJobDef(jsonObject.getString("id"));
                     syncJobDef.setName(jsonObject.getString("name"));
@@ -711,7 +742,26 @@ public class MasterDataServiceImpl implements MasterDataService {
             case "Language":
                 JSONArray languageJsonArray = getDecryptedDataList(data);
                 for (int i = 0; i < languageJsonArray.length(); i++) {
-                    languageRepository.saveLanguage(languageJsonArray.getJSONObject(i));
+                    languageRepository.saveLanguage(new JSONObject(languageJsonArray.getString(i)));
+                }
+                break;
+            case "RegistrationCenterUser":
+                JSONArray regCenterUserJsonArray = getDecryptedDataList(data);
+                if (serverVersion.startsWith("1.1.5")) {
+                    userDetailRepository.saveUserDetail(regCenterUserJsonArray);
+                }
+                break;
+            case "RegistrationCenterMachine":
+                JSONArray regCenterMachineJsonArray = getDecryptedDataList(data);
+                JSONObject jsonObject = new JSONObject(regCenterMachineJsonArray.getString(0));
+                regCenterId = jsonObject.getString("regCenterId");
+                break;
+            case "ValidDocument":
+                JSONArray validDocumentsJsonArray = getDecryptedDataList(data);
+                if (!applicantValidDocPresent) {
+                    for (int i = 0; i < validDocumentsJsonArray.length(); i++) {
+                        applicantValidDocRepository.saveApplicantValidDocument(new JSONObject(validDocumentsJsonArray.getString(i)), defaultAppTypeCode);
+                    }
                 }
                 break;
         }
@@ -720,7 +770,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private void saveDynamicData(String data) throws JSONException {
         JSONArray list = getDecryptedDataList(data);
         for (int i = 0; i < list.length(); i++) {
-            dynamicFieldRepository.saveDynamicField(list.getJSONObject(i));
+            dynamicFieldRepository.saveDynamicField(new JSONObject(list.getString(i)));
         }
     }
 
@@ -761,11 +811,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public List<GenericValueDto> findLocationByHierarchyLevel(String hierarchyLevelName, String langCode) {
-        Integer level = getHierarchyLevel(hierarchyLevelName);
-        if (level == null)
-            return Collections.EMPTY_LIST;
-        return this.locationRepository.getLocationsBasedOnHierarchyLevel(level, langCode);
+    public List<GenericValueDto> findLocationByHierarchyLevel(int hierarchyLevel, String langCode) {
+        return this.locationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
     }
 
     @Override
@@ -788,5 +835,19 @@ public class MasterDataServiceImpl implements MasterDataService {
         return languageRepository.getAllLanguages();
     }
 
+    @Override
+    public List<Location> findAllLocationsByLangCode(String langCode) {
+        return locationRepository.findAllLocationsByLangCode(langCode);
+    }
 
+    @Override
+    public void saveGlobalParam(String id, String value) {
+        globalParamRepository.saveGlobalParam(id, value);
+    }
+
+    @Override
+    public String getGlobalParamValue(String id) {
+        String value = globalParamRepository.getGlobalParamValue(id);
+        return value == null ? "" : value;
+    }
 }

@@ -23,7 +23,7 @@ public class PacketStatusRequest {
     private String id;
     @SerializedName("request")
     @Expose
-    private List<PacketIdDto> request = null;
+    private List<?> request = null;
     @SerializedName("requesttime")
     @Expose
     private String requesttime;

@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
@@ -212,7 +214,18 @@ class _NewProcessState extends State<NewProcess> {
       return required;
     }
 
-    returnBiometricListLength(List<String?>? list) {
+    isExceptionPresent(String id){
+      bool isExceptionPresent = false;
+      context.read<GlobalProvider>().fieldInputValue[id].forEach((BiometricAttributeData x){
+        if(x.exceptions.contains(true)){
+          isExceptionPresent = true;
+          return isExceptionPresent;
+        }
+      });
+      return isExceptionPresent;
+    }
+
+    returnBiometricListLength(List<String?>? list,String id) {
       int i = 0;
       if (list!.contains("leftEye") && list.contains("rightEye")) {
         i++;
@@ -235,8 +248,13 @@ class _NewProcessState extends State<NewProcess> {
       if (list.contains("face")) {
         i++;
       }
+      if(isExceptionPresent(id)==true){
+        i++;
+      }
       return i;
     }
+
+    
 
     customValidation(int currentIndex) async {
       bool isValid = true;
@@ -245,9 +263,16 @@ class _NewProcessState extends State<NewProcess> {
         if (screen.fields!.elementAt(i)!.inputRequired! &&
             screen.fields!.elementAt(i)!.required!) {
           if (!(context
-              .read<GlobalProvider>()
-              .fieldInputValue
-              .containsKey(screen.fields!.elementAt(i)!.id))) {
+                  .read<GlobalProvider>()
+                  .fieldInputValue
+                  .containsKey(screen.fields!.elementAt(i)!.id)) &&
+              !(context
+                  .read<GlobalProvider>()
+                  .fieldInputValue
+                  .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+              !(context.read<GlobalProvider>().fieldInputValue.containsKey(
+                  "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+            log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
             isValid = false;
 
             break;
@@ -266,7 +291,7 @@ class _NewProcessState extends State<NewProcess> {
                 0)) {
               if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
                 int count = returnBiometricListLength(
-                    screen.fields!.elementAt(i)!.bioAttributes);
+                    screen.fields!.elementAt(i)!.bioAttributes,screen.fields!.elementAt(i)!.id!);
 
                 if (globalProvider
                         .fieldInputValue[screen.fields!.elementAt(i)!.id!]
@@ -289,7 +314,11 @@ class _NewProcessState extends State<NewProcess> {
           if (required) {
             if (screen.fields!.elementAt(i)!.inputRequired!) {
               if (!(globalProvider.fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.id))) {
+                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                  !(globalProvider.fieldInputValue.containsKey(
+                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
                 isValid = false;
 
                 break;

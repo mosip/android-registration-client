@@ -51,5 +51,51 @@
   "user_details_sync_failed":"பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
   "id_schema_sync_failed":"IDSchena Sync Failed",
   "master_data_sync_failed":"Master Data Sync தோல்வியுற்றது",
-  "network_error": "நெட்வொர்க் இல்லை!"
+  "network_error": "நெட்வொர்க் இல்லை!",
+  "delete": "அழி",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
 }
