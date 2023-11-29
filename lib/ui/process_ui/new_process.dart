@@ -24,6 +24,7 @@ import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
 import 'package:registration_client/ui/post_registration/preview_page.dart';
+import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
@@ -181,6 +182,54 @@ class _NewProcessState extends State<NewProcess> {
     globalProvider.newProcessTabIndex = 0;
     globalProvider.htmlBoxTabIndex = 0;
     globalProvider.setRegId("");
+    for(int i=0; i < context
+        .read<RegistrationTaskProvider>()
+        .listOfProcesses.length;i++) {
+      Process process = Process.fromJson(
+        jsonDecode(
+          context
+              .read<RegistrationTaskProvider>()
+              .listOfProcesses
+              .elementAt(i)
+              .toString(),
+        ),
+      );
+      if (process.id == "NEW") {
+        getProcessUI(context,process);
+      }
+    }
+  }
+
+  Widget getProcessUI(BuildContext context, Process process) {
+    if (process.id == "NEW") {
+      _newRegistrationClickedAudit();
+      context.read<GlobalProvider>().clearMap();
+      context.read<GlobalProvider>().clearScannedPages();
+      context.read<GlobalProvider>().newProcessTabIndex = 0;
+      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
+      context.read<GlobalProvider>().setRegId("");
+      for(var screen in process.screens!) {
+        for(var field in screen!.fields!) {
+          if(field!.controlType == 'dropdown' && field.fieldType == 'default') {
+            context.read<GlobalProvider>().initializeGroupedHierarchyMap(field.group!);
+          }
+        }
+      }
+      context.read<GlobalProvider>().createRegistrationLanguageMap();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => LanguageSelector(
+          newProcess: process,
+        ),
+      );
+    }
+    return Container();
+  }
+
+  _newRegistrationClickedAudit() async {
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-HOME-002", "REG-MOD-102");
   }
 
   void _registrationScreenLoadedAudit() async {
@@ -412,7 +461,7 @@ class _NewProcessState extends State<NewProcess> {
                     ? "CONTINUE"
                     : globalProvider.newProcessTabIndex == size + 1
                         ? "AUTHENTICATE"
-                        : "COMPLETE"),
+                        : "NEW REGISTRATION"),
                 onPressed: () {
                   continueButtonTap(context, size, newProcess);
                 },
@@ -472,7 +521,7 @@ class _NewProcessState extends State<NewProcess> {
                             ? "CONTINUE"
                             : globalProvider.newProcessTabIndex == size + 1
                                 ? "AUTHENTICATE"
-                                : "COMPLETE"),
+                                : "NEW REGISTRATION"),
                   ),
                 ],
               ),
