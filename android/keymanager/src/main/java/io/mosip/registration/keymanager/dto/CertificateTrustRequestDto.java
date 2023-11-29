@@ -14,12 +14,12 @@ public class CertificateTrustRequestDto {
      * Certificate Data of Partner.
      */
     @NotBlank(message = "Invalid Request")
-    String certificateData;
+    private String certificateData;
 
     /**
      * Partner Type.
      */
     @NotBlank(message = "Invalid Request")
-    String partnerDomain;
+    private String partnerDomain;
 
 }

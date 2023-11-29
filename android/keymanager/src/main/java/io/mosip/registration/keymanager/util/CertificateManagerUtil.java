@@ -5,6 +5,7 @@ import io.mosip.registration.keymanager.entity.CACertificateStore;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import lombok.NonNull;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -33,15 +34,15 @@ public class CertificateManagerUtil {
     private static final String TAG = CertificateManagerUtil.class.getSimpleName();
 
     public static boolean isValidCertificateData(String certData) {
-        return certData != null && !certData.trim().isEmpty();
+        return !StringUtils.isBlank(certData);
     }
 
     public static boolean isValidApplicationId(String appId) {
-        return appId != null && !appId.trim().isEmpty();
+        return !StringUtils.isBlank(appId);
     }
 
     public static boolean isDataValid(String anyData) {
-        return anyData != null && !anyData.trim().isEmpty();
+        return !StringUtils.isBlank(anyData);
     }
 
     public static Certificate convertToCertificate(String certData) {
@@ -170,13 +171,6 @@ public class CertificateManagerUtil {
 
     public static String getCertificateThumbprintInHex(Certificate cert) {
         return Hex.toHexString(getCertificateThumbprint(cert)).toUpperCase();
-    }
-
-    public static boolean isIncludeAttrsValid(Boolean includes) {
-        if (Objects.isNull(includes)) {
-            return KeyManagerConstant.DEFAULT_INCLUDES;
-        }
-        return includes;
     }
 
     public static String getPEMFormatedData(Object anyObject){

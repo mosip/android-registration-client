@@ -4,6 +4,7 @@ import android.util.Log;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
@@ -46,7 +47,7 @@ public class CryptoUtil {
     }
 
     public static byte[] decodeBase64(String data) {
-        if (data == null || data.trim().length() == 0) {
+        if (StringUtils.isBlank(data)) {
             return null;
         }
         try {

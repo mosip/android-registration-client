@@ -340,8 +340,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     }
 
     private String validateTrust(JWTSignatureVerifyRequestDto jwtVerifyRequestDto, Certificate headerCertificate, String reqCertData) {
-        boolean validateTrust = CertificateManagerUtil.isIncludeAttrsValid(jwtVerifyRequestDto.getValidateTrust());
-        if (!validateTrust) {
+        if (jwtVerifyRequestDto.getValidateTrust() == null || !jwtVerifyRequestDto.getValidateTrust()) {
             return KeyManagerConstant.TRUST_NOT_VERIFIED;
         }
 
