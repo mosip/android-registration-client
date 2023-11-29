@@ -221,6 +221,10 @@ class _NewProcessState extends State<NewProcess> {
           isExceptionPresent = true;
           return isExceptionPresent;
         }
+        if(x.title=="Exception"){
+          isExceptionPresent = true;
+          return isExceptionPresent;
+        }
       });
       return isExceptionPresent;
     }
