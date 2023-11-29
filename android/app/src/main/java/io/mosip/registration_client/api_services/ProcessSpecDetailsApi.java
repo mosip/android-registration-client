@@ -124,7 +124,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
     public void getMaxLanguageCount(@NonNull ProcessSpecPigeon.Result<Long> result) {
         int maxLangCount = 0;
         try {
-            maxLangCount = globalParamRepository.getMinLanguageCount();
+            maxLangCount = globalParamRepository.getMaxLanguageCount();
         } catch (Exception e){
             Log.e(getClass().getSimpleName(), "Error in getMaxLangCount", e);
         }
