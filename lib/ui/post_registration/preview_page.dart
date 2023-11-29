@@ -47,7 +47,7 @@ class _PreviewPageState extends State<PreviewPage> {
                         onPageFinished: (url) {
                           _controller!.getHeight().then((double height) {
                             setState(() {
-                              _height = height - 250.h;
+                              _height = height + 250.h;
                             });
                             _registrationPreviewPageLoadedAudit();
                           });
