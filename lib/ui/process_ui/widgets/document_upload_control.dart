@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -30,27 +29,52 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   @override
   void initState() {
     //load from the map
-    final scannedPagesMap =
-        context.read<GlobalProvider>().scannedPages[widget.field.id];
-
-    if (scannedPagesMap != null) {
-      imageBytesList.clear();
-      setState(() {
-        imageBytesList.addAll(scannedPagesMap);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        getAgeDocuments(widget.field);
       });
-    }
 
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey(widget.field.id ?? "")) {
-      selected = context
-          .read<GlobalProvider>()
-          .fieldInputValue[widget.field.id]
-          .title!;
-    }
 
     super.initState();
+  }
+
+  Future<void> getAgeDocuments(Field e) async {
+
+    if(context.read<GlobalProvider>().docAgeGroup!="") {
+      if(context.read<GlobalProvider>().ageGroup!=context.read<GlobalProvider>().docAgeGroup) {
+        imageBytesList.clear();
+        final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
+        for(int i =0; i<listOfScannedDoc.length;i++){
+          _getRemoveDocumentProvider(e, i);
+        }
+        _removeDocAgeValue(e);
+        _clearScannedDoc();
+        _setAgeGroupValue();
+      }else{
+        _setAgeGroupValue();
+        getScannedDocuments(e);
+        if (context
+            .read<GlobalProvider>()
+            .fieldInputValue
+            .containsKey(widget.field.id ?? "")) {
+          selected = context
+              .read<GlobalProvider>()
+              .fieldInputValue[widget.field.id]
+              .title!;
+          doc.title =
+              context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
+        }
+      }
+    } else {
+      _setAgeGroupValue();
+    }
+  }
+
+  _setAgeGroupValue() {
+    context.read<GlobalProvider>().docAgeGroup = context.read<GlobalProvider>().ageGroup;
+  }
+
+  _clearScannedDoc(){
+    context.read<GlobalProvider>().clearScannedPages();
   }
 
   void focusNextField(FocusNode currentFocus, FocusNode nextFocus) {
@@ -59,7 +83,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   List<String> poaList = [];
-  List<Uint8List?> imageBytesList = List.empty(growable: true); // list of image bytes
+  List<Uint8List?> imageBytesList =
+      List.empty(growable: true); // list of image bytes
 
   _getAddDocumentProvider(Field e, Uint8List myBytes) {
     context
@@ -78,7 +103,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     _getAddDocumentProvider(e, myBytes);
   }
 
-  _getRemoveDocumentProvider(Field e, int index){
+  _getRemoveDocumentProvider(Field e, int index) {
     context.read<RegistrationTaskProvider>().removeDocument(e.id!, index);
   }
 
@@ -86,8 +111,20 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     context.read<GlobalProvider>().setScannedPages(e.id!, listOfScannedDoc);
   }
 
-  _setRemoveScannedPages(Field e, Uint8List? item, List<Uint8List?> listOfScannedDoc){
-    context.read<GlobalProvider>().removeScannedPages(e.id!,item,listOfScannedDoc);
+  _setRemoveScannedPages(
+      Field e, Uint8List? item, List<Uint8List?> listOfScannedDoc) {
+    context
+        .read<GlobalProvider>()
+        .removeScannedPages(e.id!, item, listOfScannedDoc);
+  }
+
+  _removeFieldValue(Field e, Uint8List? item) async {
+    context.read<GlobalProvider>().removeValidFromMap(
+        e.id!, item, context.read<GlobalProvider>().fieldInputValue);
+  }
+  _removeDocAgeValue(Field e) async {
+    context.read<GlobalProvider>().removeFieldFromMap(
+        e.id!, context.read<GlobalProvider>().fieldInputValue);
   }
 
   _setValueInMap() {
@@ -151,13 +188,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   void _deleteImage(Field e, Uint8List? item) async {
-    for(int i =0;i<=imageBytesList.length;i++){
-      if(imageBytesList[i] == item){
+    for (int i = 0; i < imageBytesList.length; i++) {
+      if (imageBytesList[i] == item) {
         setState(() {
-          imageBytesList.remove(item);
+          imageBytesList.removeAt(i);
         });
         await _getRemoveDocumentProvider(e, i);
-        _setRemoveScannedPages(e, item, imageBytesList);
       }
     }
   }
@@ -267,18 +303,20 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () async {
-                              _documentScanClickedAudit();
-                              var doc = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const Scanner(title: "Scan Document")),
-                              );
+                            onPressed: (selected == null)
+                                ? null
+                                : () async {
+                                    _documentScanClickedAudit();
+                                    var doc = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const Scanner(
+                                              title: "Scan Document")),
+                                    );
 
-                              await addDocument(doc, widget.field);
-                              await getScannedDocuments(widget.field);
-                            },
+                                    await addDocument(doc, widget.field);
+                                    await getScannedDocuments(widget.field);
+                                  },
                             child: const Text(
                               "Scan",
                               style: TextStyle(fontSize: 16),
@@ -304,17 +342,34 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                         width: 100,
                                         child: Image.memory(item!),
                                       ),
-                                      const SizedBox(height: 10,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
                                       GestureDetector(
-                                        onTap: (){
-                                          _deleteImage(widget.field,item);
+                                        onTap: () {
+                                          _deleteImage(widget.field, item);
+                                          _removeFieldValue(widget.field, item);
+                                          _setRemoveScannedPages(widget.field,
+                                              item, imageBytesList);
                                         },
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
-                                            const SizedBox(width: 5,),
-                                            Text(AppLocalizations.of(context)!.delete,style: const TextStyle(fontSize: 13,color: Colors.red)),
+                                            const Icon(
+                                              Icons.delete_forever_outlined,
+                                              color: Colors.red,
+                                              size: 14,
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text(
+                                                AppLocalizations.of(context)!
+                                                    .delete,
+                                                style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.red)),
                                           ],
                                         ),
                                       )
@@ -366,7 +421,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                   decoration: InputDecoration(
                                                     contentPadding:
                                                         const EdgeInsets
-                                                                .symmetric(
+                                                            .symmetric(
                                                             horizontal: 16.0),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
@@ -438,18 +493,23 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             children: [
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: () async {
-                                    var doc = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const Scanner(
-                                              title: "Scan Document")),
-                                    );
+                                  onPressed: (selected == null)
+                                      ? null
+                                      : () async {
+                                          var doc = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Scanner(
+                                                        title:
+                                                            "Scan Document")),
+                                          );
 
-                                    await addDocument(doc, widget.field);
+                                          await addDocument(doc, widget.field);
 
-                                    await getScannedDocuments(widget.field);
-                                  },
+                                          await getScannedDocuments(
+                                              widget.field);
+                                        },
                                   child: const Text(
                                     "Scan",
                                     style: TextStyle(fontSize: 16),
@@ -478,17 +538,34 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                         width: 100,
                                         child: Image.memory(item!),
                                       ),
-                                      const SizedBox(height: 10,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
                                       GestureDetector(
-                                        onTap: (){
-                                          _deleteImage(widget.field,item);
+                                        onTap: () {
+                                          _deleteImage(widget.field, item);
+                                          _removeFieldValue(widget.field, item);
+                                          _setRemoveScannedPages(widget.field,
+                                              item, imageBytesList);
                                         },
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
-                                            const SizedBox(width: 5,),
-                                            Text(AppLocalizations.of(context)!.delete,style: const TextStyle(fontSize: 13,color: Colors.red)),
+                                            const Icon(
+                                              Icons.delete_forever_outlined,
+                                              color: Colors.red,
+                                              size: 14,
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text(
+                                                AppLocalizations.of(context)!
+                                                    .delete,
+                                                style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.red)),
                                           ],
                                         ),
                                       )

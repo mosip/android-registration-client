@@ -62,6 +62,7 @@ class GlobalProvider with ChangeNotifier {
 
   String _regId = "";
   String _ageGroup = "";
+  String _docAgeGroup = "";
 
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
@@ -86,6 +87,8 @@ class GlobalProvider with ChangeNotifier {
 
   String get ageGroup => _ageGroup;
 
+  String get docAgeGroup => _docAgeGroup;
+
   set scannedPages(Map<String, List<Uint8List?>> value) {
     _scannedPages = value;
     notifyListeners();
@@ -93,6 +96,11 @@ class GlobalProvider with ChangeNotifier {
 
   set ageGroup(String value) {
     _ageGroup = value;
+    notifyListeners();
+  }
+
+  set docAgeGroup(String value) {
+    _docAgeGroup = value;
     notifyListeners();
   }
 
@@ -317,6 +325,15 @@ class GlobalProvider with ChangeNotifier {
 
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
+    notifyListeners();
+  }
+
+  removeValidFromMap(String key,Uint8List? item, Map<String, dynamic> commonMap) {
+    if(commonMap[key].listofImages!=null && commonMap[key].listofImages.length>=1) {
+      commonMap[key].listofImages.remove(item);
+    }else{
+      commonMap.remove(key);
+    }
     notifyListeners();
   }
 
