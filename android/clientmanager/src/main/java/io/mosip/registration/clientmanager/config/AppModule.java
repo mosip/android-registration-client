@@ -71,8 +71,8 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public ClientCryptoManagerService provideClientCryptoManagerService() {
-        return new LocalClientCryptoServiceImpl(appContext);
+    public ClientCryptoManagerService provideClientCryptoManagerService(CertificateManagerService certificateManagerService) {
+        return new LocalClientCryptoServiceImpl(appContext, certificateManagerService);
     }
 
     @Singleton

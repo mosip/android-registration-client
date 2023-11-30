@@ -377,9 +377,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: (referenceNumber == "")
-                                ? null
-                                :() async {
+                            onPressed: (selected == null || referenceNumber == "")
+                              ? null :() async {
                               _documentScanClickedAudit();
                               var doc = await Navigator.push(
                                 context,
@@ -610,9 +609,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             children: [
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: (referenceNumber == "")
-                                      ? null
-                                      :() async {
+                                  onPressed: (selected == null || referenceNumber == "")
+                                      ? null :() async {
                                     var doc = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
