@@ -27,4 +27,6 @@ public interface ClientCryptoManagerService {
     String getClientKeyIndex() throws Exception;
 
     Map<String, String> getMachineDetails();
+
+    JWTSignatureVerifyResponseDto jwtVerify(JWTSignatureVerifyRequestDto jwtSignatureVerifyRequestDto) throws Exception;
 }
