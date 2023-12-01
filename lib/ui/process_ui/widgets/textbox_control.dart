@@ -169,10 +169,10 @@ class _TextBoxControlState extends State<TextBoxControl>
                               setState(() {
                                 controllerMap[targetCode]!.text = result.output;
                               });
-                              log(result.output);
+                              log("Transliteration success : ${result.output}");
                             }
                           } catch (e) {
-                            log(e.toString());
+                            log("Transliteration failed : $e");
                           }
                         }
                       }
