@@ -10,14 +10,34 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class TransliterationOptions;
+@class TransliterationResult;
 
-/// The codec used by AuditResponseApi.
-NSObject<FlutterMessageCodec> *AuditResponseApiGetCodec(void);
-
-@protocol AuditResponseApi
-- (void)auditId:(NSString *)id componentId:(NSString *)componentId completion:(void (^)(FlutterError *_Nullable))completion;
+@interface TransliterationOptions : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithInput:(NSString *)input
+    sourceLanguage:(NSString *)sourceLanguage
+    targetLanguage:(NSString *)targetLanguage;
+@property(nonatomic, copy) NSString * input;
+@property(nonatomic, copy) NSString * sourceLanguage;
+@property(nonatomic, copy) NSString * targetLanguage;
 @end
 
-extern void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuditResponseApi> *_Nullable api);
+@interface TransliterationResult : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithOutput:(NSString *)output;
+@property(nonatomic, copy) NSString * output;
+@end
+
+/// The codec used by TransliterationApi.
+NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void);
+
+@protocol TransliterationApi
+- (void)transliterateOptions:(TransliterationOptions *)options completion:(void (^)(TransliterationResult *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

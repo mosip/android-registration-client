@@ -118,117 +118,142 @@ class _LanguageSelectorState extends State<LanguageSelector> {
               ),
             ),
             (size.width >= 512)
-                ? Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    ...context.watch<GlobalProvider>().languageMap.entries.map(
-                          (e) => Row(
-                            children: [
-                              const SizedBox(
-                                width: 40,
-                              ),
-                              Checkbox(
-                                value: e.value,
-                                onChanged: context
-                                            .read<GlobalProvider>()
-                                            .mandatoryLanguageMap[e.key] ??
-                                        false
-                                    ? null
-                                    : (bool? newValue) {
-                                        if (!(context
-                                                .read<GlobalProvider>()
-                                                .mandatoryLanguageMap[e.key] ??
-                                            false)) {
-                                          context
-                                              .read<GlobalProvider>()
-                                              .addRemoveLang(e.key, newValue!);
-                                        }
-                                      },
-                                activeColor: solidPrimary,
-                              ),
-                              Text(
-                                e.key,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(
-                                        color: context
+                ? SizedBox(
+                    width: size.width,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ...context
+                                .watch<GlobalProvider>()
+                                .languageMap
+                                .entries
+                                .map(
+                                  (e) => Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 40,
+                                      ),
+                                      Checkbox(
+                                        value: e.value,
+                                        onChanged: context
                                                         .read<GlobalProvider>()
                                                         .mandatoryLanguageMap[
                                                     e.key] ??
                                                 false
-                                            ? Colors.grey
-                                            : const Color(0xff333333)),
-                              )
-                            ],
-                          ),
-                        )
-                  ])
-                : Column(
-                    children: [
-                      ...context
-                          .watch<GlobalProvider>()
-                          .languageMap
-                          .entries
-                          .map(
-                            (e) => Row(
-                              children: [
-                                const SizedBox(
-                                  width: 40,
-                                ),
-                                Checkbox(
-                                  value: e.value,
-                                  onChanged: context
-                                              .read<GlobalProvider>()
-                                              .mandatoryLanguageMap[e.key] ??
-                                          false
-                                      ? null
-                                      : (bool? newValue) {
-                                          if (!(context
+                                            ? null
+                                            : (bool? newValue) {
+                                                if (!(context
+                                                            .read<GlobalProvider>()
+                                                            .mandatoryLanguageMap[
+                                                        e.key] ??
+                                                    false)) {
+                                                  context
+                                                      .read<GlobalProvider>()
+                                                      .addRemoveLang(
+                                                          e.key, newValue!);
+                                                }
+                                              },
+                                        activeColor: solidPrimary,
+                                      ),
+                                      Text(
+                                        e.key,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                                color: context
+                                                                .read<
+                                                                    GlobalProvider>()
+                                                                .mandatoryLanguageMap[
+                                                            e.key] ??
+                                                        false
+                                                    ? Colors.grey
+                                                    : const Color(0xff333333)),
+                                      )
+                                    ],
+                                  ),
+                                )
+                          ]),
+                    ),
+                  )
+                : SizedBox(
+                    height: size.height / 5,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          ...context
+                              .watch<GlobalProvider>()
+                              .languageMap
+                              .entries
+                              .map(
+                                (e) => Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 40,
+                                    ),
+                                    Checkbox(
+                                      value: e.value,
+                                      onChanged: context
                                                       .read<GlobalProvider>()
                                                       .mandatoryLanguageMap[
                                                   e.key] ??
-                                              false)) {
-                                            context
-                                                .read<GlobalProvider>()
-                                                .addRemoveLang(
-                                                    e.key, newValue!);
-                                          }
-                                        },
-                                  activeColor: solidPrimary,
-                                ),
-                                Text(
-                                  e.key,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        color: context
-                                                    .read<GlobalProvider>()
-                                                    .langToCode(e.key) ==
+                                              false
+                                          ? null
+                                          : (bool? newValue) {
+                                              if (!(context
+                                                          .read<GlobalProvider>()
+                                                          .mandatoryLanguageMap[
+                                                      e.key] ??
+                                                  false)) {
                                                 context
                                                     .read<GlobalProvider>()
-                                                    .selectedLanguage
-                                            ? Colors.grey
-                                            : AppStyle.appBlackShade1,
-                                      ),
-                                )
-                              ],
-                            ),
-                          )
-                    ],
+                                                    .addRemoveLang(
+                                                        e.key, newValue!);
+                                              }
+                                            },
+                                      activeColor: solidPrimary,
+                                    ),
+                                    Text(
+                                      e.key,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(
+                                            color: context
+                                                        .read<GlobalProvider>()
+                                                        .langToCode(e.key) ==
+                                                    context
+                                                        .read<GlobalProvider>()
+                                                        .selectedLanguage
+                                                ? Colors.grey
+                                                : AppStyle.appBlackShade1,
+                                          ),
+                                    )
+                                  ],
+                                ),
+                              )
+                        ],
+                      ),
+                    ),
                   ),
             const Spacer(),
             Container(
               padding: const EdgeInsets.all(12),
               width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              color: const Color(0xffFFFAF0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: const Color(0xffFFFAF0),
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 12),
               child: const Text(
                 "Please note that the language might be based on data entered during Pre-registration.",
                 style: TextStyle(
                     color: Color(
                       0xff764B00,
                     ),
-                    fontSize: 13),
+                    fontSize: 12),
               ),
             )
           ],
