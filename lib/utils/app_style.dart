@@ -200,4 +200,16 @@ abstract class AppStyle {
     fontSize: 20,
     color: appBlack
   );
+
+  static TextStyle primaryButtonText = TextStyle(
+    fontWeight: bold,
+    fontSize: 21,
+    color: appWhite
+  );
+
+  static TextStyle secondaryButtonText = TextStyle(
+    fontWeight: bold,
+    fontSize: 21,
+    color: appHelpText
+  );
 }
