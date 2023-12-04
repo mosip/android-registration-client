@@ -30,7 +30,9 @@ class PasswordComponent extends StatelessWidget {
           children: [
             Text(
               AppLocalizations.of(context)!.password,
-              style: isMobile ? AppStyle.tabletPortraitTextfieldHeader : AppStyle.mobileTextfieldHeader,
+              style: isMobile
+                  ? AppStyle.tabletPortraitTextfieldHeader
+                  : AppStyle.mobileTextfieldHeader,
             ),
             const Text(
               ' *',
@@ -42,7 +44,7 @@ class PasswordComponent extends StatelessWidget {
           height: 11.h,
         ),
         Container(
-          height: 52.h,
+          height: 82.h,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(horizontal: 17.w),
           decoration: BoxDecoration(
@@ -61,8 +63,14 @@ class PasswordComponent extends StatelessWidget {
             },
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_password,
-              hintStyle: isMobile ? AppStyle.tabletPortraitTextfieldHintText : AppStyle.mobileTextfieldHintText,
+              hintStyle: isMobile
+                  ? AppStyle.tabletPortraitTextfieldHintText
+                  : AppStyle.mobileTextfieldHintText,
               border: InputBorder.none,
+            ),
+            style: const TextStyle(
+              fontSize: 22,
+              color: AppStyle.appBlack,
             ),
           ),
         ),
@@ -72,11 +80,12 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: () {},
           child: Container(
-            height: 17.h,
             alignment: Alignment.centerRight,
             child: Text(
               AppLocalizations.of(context)!.forgot_password,
-              style: isMobile ? AppStyle.tabletPortraitForgotPasswordText : AppStyle.mobileForgotPasswordText,
+              style: isMobile
+                  ? AppStyle.tabletPortraitForgotPasswordText
+                  : AppStyle.mobileForgotPasswordText,
             ),
           ),
         ),
@@ -86,12 +95,16 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: !isDisabled ? onTapLogin : null,
           child: Container(
-            height: 52.h,
+            height: 82.h,
             decoration: BoxDecoration(
-              color: !isDisabled ? AppStyle.appSolidPrimary : AppStyle.buttonDisabled,
+              color: !isDisabled
+                  ? AppStyle.appSolidPrimary
+                  : AppStyle.buttonDisabled,
               border: Border.all(
                 width: 1.w,
-                color: !isDisabled ? AppStyle.appBlueShade1 : AppStyle.buttonDisabled,
+                color: !isDisabled
+                    ? AppStyle.appBlueShade1
+                    : AppStyle.buttonDisabled,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -104,18 +117,20 @@ class PasswordComponent extends StatelessWidget {
                     )
                   : Text(
                       AppLocalizations.of(context)!.login_button,
-                      style: isMobile ? AppStyle.tabletPortraitButtonText : AppStyle.mobileButtonText,
+                      style: isMobile
+                          ? AppStyle.tabletPortraitButtonText
+                          : AppStyle.mobileButtonText,
                     ),
             ),
           ),
         ),
         SizedBox(
-          height: 10.h,
+          height: 20.h,
         ),
         InkWell(
           onTap: onTapBack,
           child: Container(
-            height: 52.h,
+            height: 82.h,
             // width: 318.w,
             decoration: BoxDecoration(
               color: AppStyle.appWhite,
@@ -130,7 +145,9 @@ class PasswordComponent extends StatelessWidget {
             child: Center(
               child: Text(
                 AppLocalizations.of(context)!.back_button,
-                style: isMobile ? AppStyle.tabletPortraitBackButtonText : AppStyle.mobileBackButtonText,
+                style: isMobile
+                    ? AppStyle.tabletPortraitBackButtonText
+                    : AppStyle.mobileBackButtonText,
               ),
             ),
           ),
