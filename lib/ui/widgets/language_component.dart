@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class LanguageComponent extends StatefulWidget {
@@ -7,10 +8,12 @@ class LanguageComponent extends StatefulWidget {
     required this.title,
     required this.isSelected,
     required this.onTap,
+    required this.isMobile,
   });
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isMobile;
 
   @override
   State<LanguageComponent> createState() => _LanguageComponentState();
@@ -22,11 +25,11 @@ class _LanguageComponentState extends State<LanguageComponent> {
     return InkWell(
       onTap: widget.onTap,
       child: Container(
-        padding: const EdgeInsets.only(
+        padding: EdgeInsets.only(
           left: 25,
           right: 25,
-          top: 15,
-          bottom: 15,
+          top: widget.isMobile ? 15.h : 9.h,
+          bottom: widget.isMobile ? 15.h : 9.h,
         ),
         decoration: BoxDecoration(
           color: widget.isSelected ? AppStyle.appHelpText : Colors.transparent,

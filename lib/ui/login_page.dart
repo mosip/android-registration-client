@@ -428,7 +428,7 @@ class _LoginPageState extends State<LoginPage> {
               });
             },
             child: SizedBox(
-              height: isMobile ? 46.h : 54.h,
+              height: isMobile ? 51.h : 54.h,
               child: Image.asset(
                 appIcon,
                 fit: BoxFit.fill,
@@ -437,10 +437,10 @@ class _LoginPageState extends State<LoginPage> {
           ),
           InkWell(
             child: Container(
-              height: 46.h,
+              height: 62.h,
               padding: EdgeInsets.only(
-                left: 46.w,
-                right: 47.w,
+                left: isMobile ? 37.w : 46.w,
+                right: isMobile ? 36.w : 47.w,
               ),
               decoration: BoxDecoration(
                 border: Border.all(

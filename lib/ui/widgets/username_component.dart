@@ -94,8 +94,8 @@ class _UsernameComponentState extends State<UsernameComponent> {
                   : AppStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
-            style: const TextStyle(
-              fontSize: 22,
+            style: TextStyle(
+              fontSize: widget.isMobile ? 22 : 14,
               color: AppStyle.appBlack,
             ),
             onChanged: (v) {
@@ -151,6 +151,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
             selectedLanguage = e;
             appLanguage.toggleLocale(e!);
           },
+          isMobile: widget.isMobile,
         );
       }).toList(),
     );
