@@ -11,6 +11,7 @@ class PasswordComponent extends StatelessWidget {
     required this.onChanged,
     required this.isLoggingIn,
     required this.isDisabled,
+    required this.isMobile,
   }) : super(key: key);
 
   final VoidCallback onTapLogin;
@@ -18,6 +19,7 @@ class PasswordComponent extends StatelessWidget {
   final Function onChanged;
   final bool isLoggingIn;
   final bool isDisabled;
+  final bool isMobile;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class PasswordComponent extends StatelessWidget {
           children: [
             Text(
               AppLocalizations.of(context)!.password,
-              style: AppStyle.mobileTextfieldHeader,
+              style: isMobile ? AppStyle.tabletPortraitTextfieldHeader : AppStyle.mobileTextfieldHeader,
             ),
             const Text(
               ' *',
@@ -59,7 +61,7 @@ class PasswordComponent extends StatelessWidget {
             },
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_password,
-              hintStyle: AppStyle.mobileTextfieldHintText,
+              hintStyle: isMobile ? AppStyle.tabletPortraitTextfieldHintText : AppStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
           ),
@@ -74,7 +76,7 @@ class PasswordComponent extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Text(
               AppLocalizations.of(context)!.forgot_password,
-              style: AppStyle.mobileForgotPasswordText,
+              style: isMobile ? AppStyle.tabletPortraitForgotPasswordText : AppStyle.mobileForgotPasswordText,
             ),
           ),
         ),
@@ -102,7 +104,7 @@ class PasswordComponent extends StatelessWidget {
                     )
                   : Text(
                       AppLocalizations.of(context)!.login_button,
-                      style: AppStyle.mobileButtonText,
+                      style: isMobile ? AppStyle.tabletPortraitButtonText : AppStyle.mobileButtonText,
                     ),
             ),
           ),
@@ -128,7 +130,7 @@ class PasswordComponent extends StatelessWidget {
             child: Center(
               child: Text(
                 AppLocalizations.of(context)!.back_button,
-                style: AppStyle.mobileBackButtonText,
+                style: isMobile ? AppStyle.tabletPortraitBackButtonText : AppStyle.mobileBackButtonText,
               ),
             ),
           ),

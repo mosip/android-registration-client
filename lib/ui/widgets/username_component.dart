@@ -37,14 +37,13 @@ class _UsernameComponentState extends State<UsernameComponent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 17.h,
           child: Text(
             AppLocalizations.of(context)!.language,
-            style: AppStyle.mobileTextfieldHeader,
+            style: widget.isMobile ? AppStyle.tabletPortraitTextfieldHeader : AppStyle.mobileTextfieldHeader,
           ),
         ),
         SizedBox(
-          height: 8.h,
+          height: widget.isMobile ? 14.h : 8.h,
         ),
         _getLanguageDropdownButton(context),
         SizedBox(
@@ -54,7 +53,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
           children: [
             Text(
               AppLocalizations.of(context)!.username,
-              style: AppStyle.mobileTextfieldHeader,
+              style: widget.isMobile ? AppStyle.tabletPortraitTextfieldHeader : AppStyle.mobileTextfieldHeader,
             ),
             const Text(
               ' *',
@@ -66,7 +65,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
           height: 11.h,
         ),
         Container(
-          height: 52.h,
+          height: widget.isMobile? 82.h : 52.h,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(
             horizontal: 17.w,
@@ -84,7 +83,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
             // controller: usernameController,
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_username,
-              hintStyle: AppStyle.mobileTextfieldHintText,
+              hintStyle: widget.isMobile ? AppStyle.tabletPortraitTextfieldHintText : AppStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
             onChanged: (v) {
@@ -98,7 +97,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
         InkWell(
           onTap: !widget.isDisabled ? widget.onTap : null,
           child: Container(
-            height: 52.h,
+            height: widget.isMobile? 82.h : 52.h,
             decoration: BoxDecoration(
               color: !widget.isDisabled
                   ? AppStyle.appSolidPrimary
@@ -116,7 +115,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
             child: Center(
               child: Text(
                 AppLocalizations.of(context)!.next_button,
-                style: AppStyle.mobileButtonText,
+                style: widget.isMobile ? AppStyle.tabletPortraitButtonText : AppStyle.mobileButtonText,
               ),
             ),
           ),
@@ -134,7 +133,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
             value: item,
             child: Text(
               widget.mp[item]!,
-              style: AppStyle.mobileDropdownText,
+              style: widget.isMobile ? AppStyle.tabletPortraitDropdownText : AppStyle.mobileDropdownText,
             ),
           ),
           //If it's last item, we will not add Divider after it.
@@ -153,7 +152,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
     List<double> itemsHeights = [];
     for (var i = 0; i < (widget.languages.length * 2) - 1; i++) {
       if (i.isEven) {
-        itemsHeights.add(52.h);
+        itemsHeights.add(82.h);
       }
       if (i.isOdd) {
         itemsHeights.add(4.h);
@@ -174,11 +173,11 @@ class _UsernameComponentState extends State<UsernameComponent> {
         },
         hint: Text(
           'Select a value!',
-          style: AppStyle.mobileDropdownHintText,
+          style: widget.isMobile ? AppStyle.tabletPortraitDropdownHintText : AppStyle.mobileDropdownHintText,
         ),
         buttonStyleData: ButtonStyleData(
-          height: 52.h,
-          width: widget.isMobile ? 318.w : 384.w,
+          height: widget.isMobile? 82.h : 52.h,
+          width: widget.isMobile ? 556.w : 384.w,
           padding: EdgeInsets.only(
             left: 17.w,
             right: (14.42).w,
@@ -192,7 +191,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
           ),
         ),
         dropdownStyleData: DropdownStyleData(
-          maxHeight: 164.h,
+          maxHeight: widget.isMobile ? 248.h : 164.h,
           decoration: BoxDecoration(
               color: AppStyle.appWhite,
               borderRadius: BorderRadius.circular(6),

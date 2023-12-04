@@ -44,6 +44,7 @@ class NewProcess extends StatefulWidget {
 class _NewProcessState extends State<NewProcess> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
+  bool isPortrait = true;
 
   final List<String> postRegistrationTabs = [
     'Preview',
@@ -246,6 +247,7 @@ class _NewProcessState extends State<NewProcess> {
 
   @override
   Widget build(BuildContext context) {
+    isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
@@ -788,7 +790,7 @@ class _NewProcessState extends State<NewProcess> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.username,
-                    style: AppStyle.mobileTextfieldHeader,
+                    style: isPortrait ? AppStyle.tabletPortraitTextfieldHeader : AppStyle.mobileTextfieldHeader,
                   ),
                   const Text(
                     ' *',
@@ -809,7 +811,7 @@ class _NewProcessState extends State<NewProcess> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.password,
-                    style: AppStyle.mobileTextfieldHeader,
+                    style: isPortrait ? AppStyle.tabletPortraitTextfieldHeader : AppStyle.mobileTextfieldHeader,
                   ),
                   const Text(
                     ' *',
@@ -866,7 +868,7 @@ class _NewProcessState extends State<NewProcess> {
       child: TextField(
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_username,
-          hintStyle: AppStyle.mobileTextfieldHintText,
+          hintStyle: isPortrait ? AppStyle.tabletPortraitTextfieldHintText : AppStyle.mobileTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {
@@ -899,7 +901,7 @@ class _NewProcessState extends State<NewProcess> {
         obscureText: true,
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_password,
-          hintStyle: AppStyle.mobileTextfieldHintText,
+          hintStyle: isPortrait ? AppStyle.tabletPortraitTextfieldHintText : AppStyle.mobileTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {

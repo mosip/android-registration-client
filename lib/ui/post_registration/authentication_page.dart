@@ -59,7 +59,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.username,
-                    style: AppStyle.mobileTextfieldHeader,
+                    style: AppStyle.tabletPortraitTextfieldHeader,
                   ),
                   const Text(
                     ' *',
@@ -80,7 +80,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.password,
-                    style: AppStyle.mobileTextfieldHeader,
+                    style: AppStyle.tabletPortraitTextfieldHeader,
                   ),
                   const Text(
                     ' *',
@@ -137,7 +137,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       child: TextField(
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_username,
-          hintStyle: AppStyle.mobileTextfieldHintText,
+          hintStyle: AppStyle.tabletPortraitTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {
@@ -168,7 +168,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         obscureText: true,
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_password,
-          hintStyle: AppStyle.mobileTextfieldHintText,
+          hintStyle: AppStyle.tabletPortraitTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {

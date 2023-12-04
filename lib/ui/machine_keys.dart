@@ -149,47 +149,43 @@ class MachineKeys extends StatelessWidget {
     );
   }
 
-  Widget _buttonRow() {
-    return Row(
-      children: [
-        // Expanded(child: _downloadButton()),
-        SizedBox(
-          width: 10.w,
-        ),
-        Expanded(child: _copyButton()),
-      ],
-    );
-  }
+  // Widget _buttonRow() {
+  //   return Row(
+  //     children: [
+  //       // Expanded(child: _downloadButton()),
+  //       SizedBox(
+  //         width: 10.w,
+  //       ),
+  //       Expanded(child: _copyButton()),
+  //     ],
+  //   );
+  // }
 
-  Widget _mobileView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _buttonRow(),
-        SizedBox(
-          height: 29.h,
-        ),
-        _shareButton(),
-      ],
-    );
-  }
+  // Widget _mobileView() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.center,
+  //     children: [
+  //       _buttonRow(),
+  //       SizedBox(
+  //         height: 29.h,
+  //       ),
+  //       _shareButton(),
+  //     ],
+  //   );
+  // }
 
-  Widget _tabletView() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: _shareButton(),
-        ),
-        Expanded(
-          child: _buttonRow(),
-        ),
-      ],
-    );
-  }
-
-  // _buttonColumn() {
-  //   return Column()
+  // Widget _tabletView() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       Expanded(
+  //         child: _shareButton(),
+  //       ),
+  //       Expanded(
+  //         child: _buttonRow(),
+  //       ),
+  //     ],
+  //   );
   // }
 
   Widget _copyButton() {
@@ -246,27 +242,27 @@ class MachineKeys extends StatelessWidget {
     );
   }
 
-  _shareButton() {
-    return InkWell(
-      child: Row(
-        children: [
-          const Icon(
-            Icons.share,
-            color: AppStyle.appSolidPrimary,
-          ),
-          SizedBox(
-            width: 5.w,
-          ),
-          const Text(
-            'SHARE',
-            style: TextStyle(
-              color: AppStyle.appSolidPrimary,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // _shareButton() {
+  //   return InkWell(
+  //     child: Row(
+  //       children: [
+  //         const Icon(
+  //           Icons.share,
+  //           color: AppStyle.appSolidPrimary,
+  //         ),
+  //         SizedBox(
+  //           width: 5.w,
+  //         ),
+  //         const Text(
+  //           'SHARE',
+  //           style: TextStyle(
+  //             color: AppStyle.appSolidPrimary,
+  //             fontSize: 14,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

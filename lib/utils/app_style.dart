@@ -212,4 +212,88 @@ abstract class AppStyle {
     fontSize: 21,
     color: appHelpText
   );
+
+  static TextStyle tabletPortraitHelpText = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
+    color: appHelpText,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitHeaderText = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 36,
+    color: appBlackShade1,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitTextfieldHeader = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
+    color: appBlackShade1,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitDropdownText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 22,
+    color: appBlackShade1,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitTextfieldHintText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 22,
+    color: appBlackShade3,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitDropdownHintText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 22,
+    color: appBlackShade3,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitButtonText = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 22,
+    color: appWhite,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitWelcomeText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 36,
+    color: appWhite,
+    letterSpacing: 0.5,
+  );
+  
+  static TextStyle tabletPortraitCommunityRegClientText = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 36,
+    color: appWhite,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitInfoText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 26,
+    color: appInfoText,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitForgotPasswordText = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
+    color: appSolidPrimary,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitBackButtonText = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 22,
+    color: appHelpText,
+    letterSpacing: 0.5,
+  );
 }

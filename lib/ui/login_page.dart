@@ -1,4 +1,3 @@
-
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,13 +72,13 @@ class _LoginPageState extends State<LoginPage> {
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
     String version = _fetchVersionNoApp();
-    if(version.startsWith("1.1.5")) {
+    if (version.startsWith("1.1.5")) {
       await _saveAllHeaders();
     }
     await _loginPageLoadedAudit();
   }
 
-   _setVersionNoApp() async {
+  _setVersionNoApp() async {
     await context.read<GlobalProvider>().getVersionNoApp();
   }
 
@@ -90,10 +89,9 @@ class _LoginPageState extends State<LoginPage> {
 
   _saveVersionToGlobalParam() async {
     String version = context.read<GlobalProvider>().versionNoApp;
-    if(version.isNotEmpty) {
-      await context
-        .read<GlobalProvider>()
-        .saveVersionToGlobalParam("mosip.registration.server_version", version);
+    if (version.isNotEmpty) {
+      await context.read<GlobalProvider>().saveVersionToGlobalParam(
+          "mosip.registration.server_version", version);
     }
   }
 
@@ -107,35 +105,43 @@ class _LoginPageState extends State<LoginPage> {
 
   _saveNewRegistrationScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("newRegistrationProcess_$header", AppLocalizations.of(context)!.newRegistrationProcess(header));
+      await _saveHeader("newRegistrationProcess_$header",
+          AppLocalizations.of(context)!.newRegistrationProcess(header));
     }
   }
+
   _saveConsentScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("consentScreenName_$header", AppLocalizations.of(context)!.consentScreenName(header));
+      await _saveHeader("consentScreenName_$header",
+          AppLocalizations.of(context)!.consentScreenName(header));
     }
   }
 
   _saveDemographicScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("demographicsScreenName_$header", AppLocalizations.of(context)!.demographicsScreenName(header));
+      await _saveHeader("demographicsScreenName_$header",
+          AppLocalizations.of(context)!.demographicsScreenName(header));
     }
   }
 
   _saveDocumentScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("documentsScreenName_$header", AppLocalizations.of(context)!.documentsScreenName(header));
+      await _saveHeader("documentsScreenName_$header",
+          AppLocalizations.of(context)!.documentsScreenName(header));
     }
   }
 
   _saveBiometricScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("biometricsScreenName_$header", AppLocalizations.of(context)!.biometricsScreenName(header));
+      await _saveHeader("biometricsScreenName_$header",
+          AppLocalizations.of(context)!.biometricsScreenName(header));
     }
   }
-  
+
   _saveHeader(String id, String value) async {
-    await context.read<GlobalProvider>().saveScreenHeaderToGlobalParam(id, value);
+    await context
+        .read<GlobalProvider>()
+        .saveScreenHeaderToGlobalParam(id, value);
   }
 
   _initializeMachineData() async {
@@ -151,11 +157,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _loginPageLoadedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-LOAD-001", "REG-MOD-101");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-001", "REG-MOD-101");
   }
 
   _longPressLogoAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-AUTH-002", "REG-MOD-101");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -166,56 +176,55 @@ class _LoginPageState extends State<LoginPage> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
 
-    return
-      SafeArea(
-            child: Scaffold(
-              backgroundColor: AppStyle.appSolidPrimary,
-              body: Stack(
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    left: 16.w,
-                    child: _getBuildingsImage(),
-                  ),
-                  SizedBox(
-                    height: h,
-                    width: w,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: isMobile
-                            ? CrossAxisAlignment.center
-                            : CrossAxisAlignment.start,
-                        children: [
-                          _appBarComponent(),
-                          SizedBox(
-                            height: isMobile ? 50.h : 132.h,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 16.w : 80.w,
-                            ),
-                            child: isMobile ? _mobileView() : _tabletView(),
-                          ),
-                        ],
-                      ),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyle.appSolidPrimary,
+        body: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 16.w,
+              child: _getBuildingsImage(),
+            ),
+            SizedBox(
+              height: h,
+              width: w,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: isMobile
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
+                  children: [
+                    _appBarComponent(),
+                    SizedBox(
+                      height: isMobile ? 62.h : 132.h,
                     ),
-                  ),
-                  isMachineKeysDialogOpen
-                      ? Container(
-                          color: Colors.transparent.withOpacity(0.5),
-                          child: Center(
-                            child: MachineKeys(
-                              onCloseComponent: () {
-                                _toggleMachineKeysDialog();
-                              },
-                            ),
-                          ),
-                        )
-                      : const SizedBox(),
-                ],
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 92.w : 80.w,
+                      ),
+                      child: isMobile ? _mobileView() : _tabletView(),
+                    ),
+                  ],
+                ),
               ),
             ),
-          );
+            isMachineKeysDialogOpen
+                ? Container(
+                    color: Colors.transparent.withOpacity(0.5),
+                    child: Center(
+                      child: MachineKeys(
+                        onCloseComponent: () {
+                          _toggleMachineKeysDialog();
+                        },
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
+          ],
+        ),
+      ),
+    );
   }
 
   _getIsValidUser() {
@@ -235,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
     context.read<GlobalProvider>().setName(user.name!);
     context.read<GlobalProvider>().setCenterName(user.centerName!);
   }
-  
+
   _getUsernameIncorrectErrorText() {
     return AppLocalizations.of(context)!.username_incorrect;
   }
@@ -290,7 +299,7 @@ class _LoginPageState extends State<LoginPage> {
         .authenticateUser(username, password, isConnected);
   }
 
-   _getIsConnected() {
+  _getIsConnected() {
     return context.read<ConnectivityProvider>().isConnected;
   }
 
@@ -402,11 +411,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _appBarComponent() {
     return Container(
-      height: 90.h,
+      height: isMobile ? 94.h : 90.h,
       color: AppStyle.appWhite,
       padding: EdgeInsets.symmetric(
         vertical: 22.h,
-        horizontal: isMobile ? 16.w : 80.w,
+        horizontal: isMobile ? 20.w : 80.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -445,7 +454,9 @@ class _LoginPageState extends State<LoginPage> {
               child: Center(
                 child: Text(
                   AppLocalizations.of(context)!.help,
-                  style: AppStyle.mobileHelpText,
+                  style: isMobile
+                      ? AppStyle.tabletPortraitHelpText
+                      : AppStyle.mobileHelpText,
                 ),
               ),
             ),
@@ -461,7 +472,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _welcomeTextComponent() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 41.w : 0,
+        horizontal: isMobile ? 38.w : 0,
       ),
       child: Column(
         crossAxisAlignment:
@@ -469,12 +480,16 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Text(
             AppLocalizations.of(context)!.welcome,
-            style: AppStyle.mobileWelcomeText,
+            style: isMobile
+                ? AppStyle.tabletPortraitWelcomeText
+                : AppStyle.mobileWelcomeText,
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
           ),
           Text(
             AppLocalizations.of(context)!.community_reg_text,
-            style: AppStyle.mobileCommunityRegClientText,
+            style: isMobile
+                ? AppStyle.tabletPortraitCommunityRegClientText
+                : AppStyle.mobileCommunityRegClientText,
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
           )
         ],
@@ -485,11 +500,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget _infoTextComponent() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 52.w : 0,
+        horizontal: isMobile ? 113.w : 0,
       ),
       child: Text(
         AppLocalizations.of(context)!.info_text,
-        style: AppStyle.mobileInfoText,
+        style: isMobile
+            ? AppStyle.tabletPortraitInfoText
+            : AppStyle.mobileInfoText,
         textAlign: isMobile ? TextAlign.center : TextAlign.start,
       ),
     );
@@ -502,7 +519,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _welcomeTextComponent(),
         SizedBox(
-          height: isMobile ? 12.h : 16.h,
+          height: isMobile ? 18.h : 16.h,
         ),
         _infoTextComponent(),
       ],
@@ -511,10 +528,10 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginComponent() {
     return Container(
-      width: isMobile ? 358.w : 424.w,
+      width: isMobile ? 616.w : 424.w,
       padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 20.h,
+        horizontal: isMobile ? 30.w : 20.w,
+        vertical: isMobile ? 30.h : 20.h,
       ),
       decoration: BoxDecoration(
         color: AppStyle.appWhite,
@@ -530,20 +547,22 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: 34.h,
+            height: isMobile ? 16.h : 34.h,
           ),
           Text(
             AppLocalizations.of(context)!.login_text,
-            style: AppStyle.mobileHeaderText,
+            style: isMobile
+                ? AppStyle.tabletPortraitHeaderText
+                : AppStyle.mobileHeaderText,
           ),
           SizedBox(
-            height: context.watch<AuthProvider>().isValidUser ? 41.h : 38.h,
+            height: context.watch<AuthProvider>().isValidUser ? 42.h : 38.h,
           ),
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
-                  isDisabled: username.trim().isEmpty ||
-                      username.trim().length > 50,
+                  isDisabled:
+                      username.trim().isEmpty || username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
                   mp: context.watch<GlobalProvider>().codeToLanguageMapper,
@@ -558,8 +577,9 @@ class _LoginPageState extends State<LoginPage> {
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onLoginButtonPressed,
+                  isMobile: isMobile,
                   onTapBack: () {
-                    password="";
+                    password = "";
                     FocusManager.instance.primaryFocus?.unfocus();
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
@@ -586,7 +606,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _appCombinedTextComponent(),
         SizedBox(
-          height: 40.h,
+          height: 70.h,
         ),
         _loginComponent(),
       ],
@@ -621,8 +641,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _getBuildingsImage() {
     return SizedBox(
-      height: isMobile ? (162.48).h : (293.48).h,
-      width: isMobile ? (222.28).w : (400.28).w,
+      height: isMobile ? (350.48).h : (293.48).h,
+      width: isMobile ? (478.28).w : (400.28).w,
       child: Image.asset(
         isMobile ? buildingsX : buildingsXX,
         fit: BoxFit.fill,
@@ -643,7 +663,7 @@ class _LoginPageState extends State<LoginPage> {
       });
       showSyncResultDialog();
     }
-    
+
     await _initializeLanguageData();
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {
