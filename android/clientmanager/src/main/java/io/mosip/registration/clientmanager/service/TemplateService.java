@@ -277,7 +277,7 @@ public class TemplateService {
     private void generateQRCode(VelocityContext velocityContext,RegistrationDto registrationDto){
         Bitmap qrBitmap = QRCode.from(registrationDto.getRId()).bitmap();
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            qrBitmap.compress(Bitmap.CompressFormat.JPEG, 75 , byteArrayOutputStream);
+            qrBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
             velocityContext.put("QRCodeSource", "\"data:image/jpeg;base64," + encodedBytes + "\"");
