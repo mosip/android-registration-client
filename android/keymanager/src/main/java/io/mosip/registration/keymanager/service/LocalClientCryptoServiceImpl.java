@@ -5,12 +5,22 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Log;
 import io.mosip.registration.keymanager.dto.*;
+import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.util.CertificateManagerUtil;
 import io.mosip.registration.keymanager.util.ConfigService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
+import io.mosip.registration.keymanager.util.JsonUtils;
+import io.mosip.registration.keymanager.util.KeyManagerConstant;
 import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
+import java.security.cert.Certificate;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwx.CompactSerializer;
 import org.json.JSONObject;
 import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.digests.SHA256Digest;
@@ -32,13 +42,15 @@ import java.io.FileWriter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
+import java.util.Objects;
 import static io.mosip.registration.keymanager.util.KeyManagerConstant.*;
 
 
@@ -76,17 +88,21 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
     private static String CERTIFICATE_SIGN_ALGORITHM;
 
+    private static String SIGN_APPLICATION_ID;
+    private static String SIGN_REFERENCE_ID;
+
     private static SecureRandom secureRandom = new SecureRandom();
     private KeyStore keyStore = null;
-
+    private CertificateManagerService certificateManagerService;
 
     @Inject
-    public LocalClientCryptoServiceImpl(Context appContext) {
+    public LocalClientCryptoServiceImpl(Context appContext, CertificateManagerService certificateManagerService) {
         Log.i(TAG, "LocalClientCryptoServiceImpl: Constructor call successful");
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             initLocalClientCryptoService(appContext);
+            this.certificateManagerService = certificateManagerService;
         } catch (Exception e) {
             Log.e(TAG, "LocalClientCryptoServiceImpl: Failed Initialization", e);
         }
@@ -122,6 +138,8 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                 ConfigService.getProperty("mosip.kernel.crypto.gcm-tag-length",context));
         KEYGEN_ASYMMETRIC_ALGO_SIGN_PAD = ConfigService.getProperty("mosip.kernel.crypto.sign-algorithm-padding-scheme",context);
         CERTIFICATE_SIGN_ALGORITHM = ConfigService.getProperty("mosip.kernel.certificate.sign.algorithm",context);
+        SIGN_APPLICATION_ID = ConfigService.getProperty("mosip.sign.applicationid", context);
+        SIGN_REFERENCE_ID = ConfigService.getProperty("mosip.sign.refid", context);
     }
 
     private void genSignKey() {
@@ -229,6 +247,125 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             Log.e(TAG, KeyManagerErrorCode.SIGNATURE_EXCEPTION.getErrorMessage(), e);
         }
         return null;
+    }
+
+    public JWTSignatureVerifyResponseDto jwtVerify(JWTSignatureVerifyRequestDto jwtVerifyRequestDto) throws Exception {
+        String signedData = jwtVerifyRequestDto.getJwtSignatureData();
+        if (!CertificateManagerUtil.isDataValid(signedData)) {
+            Log.e(TAG,"Provided Signed Data value is invalid.");
+            throw new Exception();
+        }
+
+        String encodedActualData = CertificateManagerUtil.isDataValid(jwtVerifyRequestDto.getActualData())
+                ? jwtVerifyRequestDto.getActualData() : null;
+
+        String reqCertData = CertificateManagerUtil.isValidCertificateData(jwtVerifyRequestDto.getCertificateData())
+                ? jwtVerifyRequestDto.getCertificateData(): null;
+        String applicationId = jwtVerifyRequestDto.getApplicationId();
+        String referenceId = jwtVerifyRequestDto.getReferenceId();
+        if (!CertificateManagerUtil.isValidApplicationId(applicationId)) {
+            applicationId = SIGN_APPLICATION_ID;
+            referenceId = SIGN_REFERENCE_ID;
+        }
+
+        String[] jwtTokens = signedData.split(PERIOD, -1);
+
+        boolean signatureValid = false;
+        Certificate certToVerify = certificateExistsInHeader(jwtTokens[0]);
+        if (Objects.nonNull(certToVerify)){
+            signatureValid = verifySignature(jwtTokens, encodedActualData, certToVerify);
+        } else {
+            Certificate reqCertToVerify = getCertificateToVerify(reqCertData, applicationId, referenceId);
+            signatureValid = verifySignature(jwtTokens, encodedActualData, reqCertToVerify);
+        }
+
+        JWTSignatureVerifyResponseDto responseDto = new JWTSignatureVerifyResponseDto();
+        responseDto.setSignatureValid(signatureValid);
+        responseDto.setMessage(signatureValid ? KeyManagerConstant.VALIDATION_SUCCESSFUL : KeyManagerConstant.VALIDATION_FAILED);
+        responseDto.setTrustValid(validateTrust(jwtVerifyRequestDto, certToVerify, reqCertData));
+        return responseDto;
+    }
+
+    private Certificate getCertificateToVerify(String reqCertData, String applicationId, String referenceId) {
+        // 2nd precedence to consider certificate to use in signature verification (Certificate Data provided in request).
+        if (reqCertData != null)
+            return CertificateManagerUtil.convertToCertificate(reqCertData);
+
+        // 3rd precedence to consider certificate to use in signature verification. (based on AppId & RefId)
+        String certificateData = certificateManagerService.getCertificate(applicationId, referenceId);
+        return CertificateManagerUtil.convertToCertificate(certificateData);
+    }
+
+    private boolean verifySignature(String[] jwtTokens, String actualData, Certificate certToVerify) {
+        JsonWebSignature jws = new JsonWebSignature();
+        try {
+            boolean validCert = CertificateManagerUtil.isCertificateDatesValid((X509Certificate) certToVerify);
+            if (!validCert) {
+                Log.e(TAG, "Error certificate dates are not valid.");
+                throw new KeymanagerServiceException(KeyManagerErrorCode.CERT_NOT_VALID.getErrorCode(),
+                        KeyManagerErrorCode.CERT_NOT_VALID.getErrorMessage());
+            }
+
+            PublicKey publicKey = certToVerify.getPublicKey();
+            if (Objects.nonNull(actualData))
+                jwtTokens[1] = actualData;
+
+            jws.setCompactSerialization(CompactSerializer.serialize(jwtTokens));
+            if (Objects.nonNull(publicKey))
+                jws.setKey(publicKey);
+
+            return jws.verifySignature();
+        } catch (Exception e) {
+            Log.e(TAG, "Provided Signed Data value is invalid.");
+            throw new KeymanagerServiceException(KeyManagerErrorCode.VERIFY_ERROR.getErrorCode(),
+                    KeyManagerErrorCode.VERIFY_ERROR.getErrorMessage(), e);
+        }
+    }
+
+    private Certificate certificateExistsInHeader(String jwtHeader) {
+        String jwtTokenHeader = new String(CryptoUtil.decodeBase64(jwtHeader));
+        Map<String, Object> jwtTokenHeadersMap = JsonUtils.jsonStringToJavaMap(jwtTokenHeader);
+        if (jwtTokenHeadersMap == null){
+            Log.e(TAG, "Provided Signed Data value is invalid.");
+            return null;
+        }
+        // 1st precedence to consider certificate to use in signature verification (JWT Header).
+        if (jwtTokenHeadersMap.containsKey(JWT_HEADER_CERT_KEY)) {
+            Log.i(TAG, "Certificate found in JWT Header.");
+            List<String> certList = (List<String>) jwtTokenHeadersMap.get(JWT_HEADER_CERT_KEY);
+            return CertificateManagerUtil.convertToCertificate(Base64.decodeBase64(certList.get(0)));
+        }
+        Log.i(TAG, "Certificate not found in JWT Header.");
+        return null;
+    }
+
+    private String validateTrust(JWTSignatureVerifyRequestDto jwtVerifyRequestDto, Certificate headerCertificate, String reqCertData) {
+        if (jwtVerifyRequestDto.getValidateTrust() == null || !jwtVerifyRequestDto.getValidateTrust()) {
+            return KeyManagerConstant.TRUST_NOT_VERIFIED;
+        }
+
+        String domain = jwtVerifyRequestDto.getDomain();
+        if(!CertificateManagerUtil.isDataValid(domain))
+            return KeyManagerConstant.TRUST_NOT_VERIFIED_NO_DOMAIN;
+
+        String certData = null;
+        if (Objects.nonNull(headerCertificate)) {
+            certData = CertificateManagerUtil.getPEMFormatedData(headerCertificate);
+        }
+        String trustCertData = certData == null ? reqCertData : certData;
+
+        if (trustCertData == null)
+            return KeyManagerConstant.TRUST_NOT_VERIFIED;
+
+        CertificateTrustRequestDto trustRequestDto = new CertificateTrustRequestDto();
+        trustRequestDto.setCertificateData(trustCertData);
+        trustRequestDto.setPartnerDomain(domain);
+        CertificateTrustResponseDto responseDto = certificateManagerService.verifyCertificateTrust(trustRequestDto);
+
+        if (responseDto.getStatus()){
+            return KeyManagerConstant.TRUST_VALID;
+        }
+        return KeyManagerConstant.TRUST_NOT_VALID;
     }
 
     @Override

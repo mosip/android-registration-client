@@ -22,11 +22,13 @@ class RegistrationTaskProvider with ChangeNotifier {
   bool _isRegistrationSaved = false;
 
   String _previewTemplate = "";
+  String _acknowledgementTemplate = "";
 
   List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
   String get previewTemplate => _previewTemplate;
+  String get acknowledgementTemplate => _acknowledgementTemplate;
   String get registrationStartError => _registrationStartError;
   bool get isRegistrationSaved => _isRegistrationSaved;
 
@@ -96,6 +98,16 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   getPreviewTemplate(bool isPreview) async {
     _previewTemplate = await registrationService.getPreviewTemplate(isPreview);
+    notifyListeners();
+  }
+
+  setAcknowledgementTemplate(String value) {
+    _acknowledgementTemplate = "";
+    notifyListeners();
+  }
+
+  getAcknowledgementTemplate(bool isAcknowledgement) async {
+    _acknowledgementTemplate = await registrationService.getPreviewTemplate(isAcknowledgement);
     notifyListeners();
   }
 
