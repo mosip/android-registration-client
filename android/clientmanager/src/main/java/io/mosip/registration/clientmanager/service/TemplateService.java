@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
+import net.glxn.qrgen.android.QRCode;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
@@ -269,6 +271,18 @@ public class TemplateService {
         return bioData;
     }
 
+    private void generateQRCode(VelocityContext velocityContext,RegistrationDto registrationDto){
+        Bitmap qrBitmap = QRCode.from(registrationDto.getRId()).bitmap();
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            qrBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            velocityContext.put("QRCodeSource", "\"data:image/jpeg;base64," + encodedBytes + "\"");
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+        }
+    }
+
 
     private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap) {
         if (bitmap != null) {
@@ -339,6 +353,7 @@ public class TemplateService {
 
 
     private void setBasicDetails(boolean isPreview, RegistrationDto registrationDto, VelocityContext velocityContext) {
+        generateQRCode(velocityContext,registrationDto);
         velocityContext.put("isPreview", isPreview);
         velocityContext.put("ApplicationIDLabel", appContext.getString(R.string.app_id));
         velocityContext.put("ApplicationID", registrationDto.getRId());

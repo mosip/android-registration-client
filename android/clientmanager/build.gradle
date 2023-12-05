@@ -128,6 +128,7 @@ dependencies {
     // added packet-manager Android library module as a dependency
     implementation project(':packetmanager')
     implementation project(':keymanager')
+    implementation 'com.github.kenglxn.QRGen:android:3.0.1'
 }
 
 sonarqube {
