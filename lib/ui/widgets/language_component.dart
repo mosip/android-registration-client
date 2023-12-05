@@ -52,7 +52,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
         child: Text(
           widget.title,
           style: TextStyle(
-            fontSize: 24,
+            fontSize: widget.isMobile ? 24 : 16,
             color:
                 widget.isFreezed ? AppStyle.appBlack : widget.isSelected ? AppStyle.appWhite : AppStyle.appBlackShade1,
           ),

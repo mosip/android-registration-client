@@ -178,6 +178,7 @@ class _LoginPageState extends State<LoginPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppStyle.appSolidPrimary,
+        bottomNavigationBar: _getBottomBar(),
         body: Stack(
           children: [
             Positioned(
@@ -185,24 +186,59 @@ class _LoginPageState extends State<LoginPage> {
               left: 16.w,
               child: _getBuildingsImage(),
             ),
-            SizedBox(
-              height: h,
-              width: w,
-              child: SingleChildScrollView(
+            SingleChildScrollView(
+              child: SizedBox(
+                height: h - 94.h,
+                width: w,
                 child: Column(
-                  crossAxisAlignment: isMobile
-                      ? CrossAxisAlignment.center
-                      : CrossAxisAlignment.start,
                   children: [
-                    _appBarComponent(),
                     SizedBox(
-                      height: isMobile ? 62.h : 132.h,
+                      height: 20.h,
                     ),
                     Container(
+                      alignment: Alignment.centerRight,
                       padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 92.w : 80.w,
+                          horizontal: isMobile ? 20.w : 80.w),
+                      child: InkWell(
+                        onTap: () {},
+                        child: Container(
+                          height: 62.h,
+                          width: 129.w,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: AppStyle.appWhite,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(5),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'HELP',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: AppStyle.appWhite,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      child: isMobile ? _mobileView() : _tabletView(),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 92.w : 80.w,
+                            ),
+                            child: isMobile ? _mobileView() : _tabletView(),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -224,6 +260,55 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+    // SafeArea(
+    //   child: Scaffold(
+    //     backgroundColor: AppStyle.appSolidPrimary,
+    //     body: Stack(
+    //       children: [
+    //         Positioned(
+    //           bottom: 0,
+    //           left: 16.w,
+    //           child: _getBuildingsImage(),
+    //         ),
+    //         SizedBox(
+    //           height: h,
+    //           width: w,
+    //           child: SingleChildScrollView(
+    //             child: Column(
+    //               crossAxisAlignment: isMobile
+    //                   ? CrossAxisAlignment.center
+    //                   : CrossAxisAlignment.start,
+    //               children: [
+    //                 _appBarComponent(),
+    // SizedBox(
+    //   height: isMobile ? 62.h : 132.h,
+    // ),
+    // Container(
+    //   padding: EdgeInsets.symmetric(
+    //     horizontal: isMobile ? 92.w : 80.w,
+    //   ),
+    //   child: isMobile ? _mobileView() : _tabletView(),
+    // ),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //         isMachineKeysDialogOpen
+    //             ? Container(
+    //                 color: Colors.transparent.withOpacity(0.5),
+    //                 child: Center(
+    //                   child: MachineKeys(
+    //                     onCloseComponent: () {
+    //                       _toggleMachineKeysDialog();
+    //                     },
+    //                   ),
+    //                 ),
+    //               )
+    //             : const SizedBox(),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   _getIsValidUser() {
@@ -408,63 +493,87 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Widget _appBarComponent() {
+  _getBottomBar() {
     return Container(
-      height: isMobile ? 94.h : 90.h,
-      color: AppStyle.appWhite,
+      height: 94.h,
       padding: EdgeInsets.symmetric(
-        vertical: 22.h,
-        horizontal: isMobile ? 20.w : 80.w,
+        vertical: 15.h,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          InkWell(
-            onLongPress: () {
-              _longPressLogoAudit();
-              setState(() {
-                isMachineKeysDialogOpen = true;
-              });
-            },
-            child: SizedBox(
-              height: isMobile ? 51.h : 54.h,
-              child: Image.asset(
-                appIcon,
-                fit: BoxFit.fill,
-              ),
-            ),
+      color: AppStyle.appWhite,
+      child: Center(
+        child: InkWell(
+          onLongPress: () {
+            _longPressLogoAudit();
+            setState(() {
+              isMachineKeysDialogOpen = true;
+            });
+          },
+          child: Image.asset(
+            appIcon,
+            fit: BoxFit.fill,
           ),
-          InkWell(
-            child: Container(
-              height: 62.h,
-              padding: EdgeInsets.only(
-                left: isMobile ? 37.w : 46.w,
-                right: isMobile ? 36.w : 47.w,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 1.h,
-                  color: AppStyle.appHelpText,
-                ),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(5),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  AppLocalizations.of(context)!.help,
-                  style: isMobile
-                      ? AppStyle.tabletPortraitHelpText
-                      : AppStyle.mobileHelpText,
-                ),
-              ),
-            ),
-            onTap: () {},
-          ),
-        ],
+        ),
       ),
     );
   }
+
+  // Widget _appBarComponent() {
+  //   return Container(
+  //     height: isMobile ? 94.h : 90.h,
+  //     color: AppStyle.appWhite,
+  //     padding: EdgeInsets.symmetric(
+  //       vertical: 22.h,
+  //       horizontal: isMobile ? 20.w : 80.w,
+  //     ),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         InkWell(
+  //           onLongPress: () {
+  //             _longPressLogoAudit();
+  //             setState(() {
+  //               isMachineKeysDialogOpen = true;
+  //             });
+  //           },
+  //           child: SizedBox(
+  //             height: isMobile ? 51.h : 54.h,
+  //             child: Image.asset(
+  //               appIcon,
+  //               fit: BoxFit.fill,
+  //             ),
+  //           ),
+  //         ),
+  //         InkWell(
+  //           child: Container(
+  //             height: 62.h,
+  //             padding: EdgeInsets.only(
+  //               left: isMobile ? 37.w : 46.w,
+  //               right: isMobile ? 36.w : 47.w,
+  //             ),
+  //             decoration: BoxDecoration(
+  //               border: Border.all(
+  //                 width: 1.h,
+  //                 color: AppStyle.appHelpText,
+  //               ),
+  //               borderRadius: const BorderRadius.all(
+  //                 Radius.circular(5),
+  //               ),
+  //             ),
+  //             child: Center(
+  //               child: Text(
+  //                 AppLocalizations.of(context)!.help,
+  //                 style: isMobile
+  //                     ? AppStyle.tabletPortraitHelpText
+  //                     : AppStyle.mobileHelpText,
+  //               ),
+  //             ),
+  //           ),
+  //           onTap: () {},
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _welcomeTextComponent() {
     return Container(
