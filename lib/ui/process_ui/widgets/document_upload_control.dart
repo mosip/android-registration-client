@@ -10,6 +10,7 @@ import 'package:registration_client/pigeon/document_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/scanner/scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/ui/scanner/scanner_page.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -67,7 +68,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .addDocument(e.id!, selected!, "reference", myBytes);
   }
 
-  Future<void> addDocument(String item, Field e) async {
+  Future<void> addDocument(var item, Field e) async {
     final bytes = await getImageBytes(item);
 
     debugPrint("The selected value for dropdown for ${e.id!} is $selected");
@@ -438,23 +439,35 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: OutlinedButton(
-                                  onPressed: (selected == null)
-                                      ? null :() async {
-                                    var doc = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const Scanner(
-                                              title: "Scan Document")),
-                                    );
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(100, 50),
+                                    ),
+                                    onPressed: (selected == null)
+                                        ? null :() async {
+                                      var doc = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const ScannerPage(
+                                                title: "Scan Document")),
+                                      );
+                                      await addDocument(doc, widget.field);
 
-                                    await addDocument(doc, widget.field);
-
-                                    await getScannedDocuments(widget.field);
-                                  },
-                                  child: const Text(
-                                    "Scan",
-                                    style: TextStyle(fontSize: 16),
+                                      await getScannedDocuments(widget.field);
+                                    },
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.crop_free_sharp,color: Colors.white,size: 14,),
+                                        SizedBox(width: 5,),
+                                        Text(
+                                          "SCAN",
+                                          style: TextStyle(fontSize: 16,color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
