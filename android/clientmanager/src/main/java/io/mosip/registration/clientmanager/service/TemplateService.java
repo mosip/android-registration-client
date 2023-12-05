@@ -49,6 +49,7 @@ public class TemplateService {
     private static final String TAG = TemplateService.class.getSimpleName();
     private static final String SLASH = "/";
     private static final String TEMPLATE_TYPE_CODE = "reg-android-preview-template-part";
+    private static final String ACK_TEMPLATE_TYPE_CODE = "reg-android-ack-template-part";
 
     private Context appContext;
 
@@ -56,7 +57,7 @@ public class TemplateService {
 
     IdentitySchemaRepository identitySchemaRepository;
 
-    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository){
+    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository) {
         this.appContext = appContext;
         this.masterDataService = masterDataService;
         this.identitySchemaRepository = identitySchemaRepository;
@@ -67,7 +68,9 @@ public class TemplateService {
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.init();
 
-        String templateText = this.masterDataService.getPreviewTemplateContent(TEMPLATE_TYPE_CODE,
+        String templateText = isPreview ? this.masterDataService.getPreviewTemplateContent(TEMPLATE_TYPE_CODE,
+                registrationDto.getSelectedLanguages().get(0)) :
+                this.masterDataService.getPreviewTemplateContent(ACK_TEMPLATE_TYPE_CODE,
                 registrationDto.getSelectedLanguages().get(0));
 
         InputStream is = new ByteArrayInputStream(templateText.getBytes(StandardCharsets.UTF_8));
@@ -143,7 +146,7 @@ public class TemplateService {
             BiometricsDto biometricsDto = result.get();
             bioData.put("LeftEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
             setBiometricImage(bioData, "CapturedLeftEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
-                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : null);
+                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.eye), isPreview);
         }
 
         result = capturedIris.stream()
@@ -152,7 +155,7 @@ public class TemplateService {
             BiometricsDto biometricsDto = result.get();
             bioData.put("RightEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
             setBiometricImage(bioData, "CapturedRightEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
-                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : null);
+                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.eye), isPreview);
         }
 
         if (!capturedFingers.isEmpty()) {
@@ -189,7 +192,7 @@ public class TemplateService {
 
                 Bitmap leftHandBitmaps = UserInterfaceHelperService.combineBitmaps(images, missingImage);
                 setBiometricImage(bioData, "CapturedLeftSlap", isPreview ? 0 : R.drawable.left_palm,
-                        isPreview ? leftHandBitmaps : null);
+                        isPreview ? leftHandBitmaps : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.left_palm), isPreview);
             }
 
             List<String> rightFingers = Modality.FINGERPRINT_SLAB_RIGHT.getAttributes();
@@ -228,7 +231,7 @@ public class TemplateService {
 
                 Bitmap rightHandBitmaps = UserInterfaceHelperService.combineBitmaps(images, missingImage);
                 setBiometricImage(bioData, "CapturedRightSlap", isPreview ? 0 : R.drawable.right_palm,
-                        isPreview ? rightHandBitmaps : null);
+                        isPreview ? rightHandBitmaps : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.right_palm), isPreview);
             }
 
 
@@ -254,7 +257,7 @@ public class TemplateService {
 
                 Bitmap thumbsBitmap = UserInterfaceHelperService.combineBitmaps(images, missingImage);
                 setBiometricImage(bioData, "CapturedThumbs", isPreview ? 0 : R.drawable.thumbs,
-                        isPreview ? thumbsBitmap : null);
+                        isPreview ? thumbsBitmap : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.thumbs), isPreview);
             }
 
         }
@@ -262,10 +265,10 @@ public class TemplateService {
         if (!capturedFace.isEmpty()) {
             Bitmap faceBitmap = UserInterfaceHelperService.getFaceBitMap(capturedFace.get(0));
             setBiometricImage(bioData, "FaceImageSource", isPreview ? 0 : R.drawable.face,
-                    isPreview ? faceBitmap : null);
+                    isPreview ? faceBitmap : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.face), isPreview);
 
             if ("applicant".equalsIgnoreCase(field.getSubType())) {
-                setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap);
+                setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap, isPreview);
             }
         }
         return bioData;
@@ -284,10 +287,14 @@ public class TemplateService {
     }
 
 
-    private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap) {
+    private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap, boolean isPreview) {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
+                if (isPreview) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                } else {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                }
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
                 templateValues.put(key, "\"data:image/jpeg;base64," + encodedBytes + "\"");
@@ -299,10 +306,14 @@ public class TemplateService {
         }
     }
 
-    private void setBiometricImage(VelocityContext velocityContext, String key, Bitmap bitmap) {
+    private void setBiometricImage(VelocityContext velocityContext, String key, Bitmap bitmap, boolean isPreview) {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                if (isPreview) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                } else {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                }
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
                 velocityContext.put(key, "\"data:image/jpeg;base64," + encodedBytes + "\"");
@@ -323,13 +334,13 @@ public class TemplateService {
         double prev = 0;
         Map<String, Integer> rankings = new HashMap<>();
         for (Map.Entry<String, Float> entry : sortedValues.entrySet()) {
-            rankings.put(entry.getKey(), prev == 0 ? ++rank : entry.getValue() == prev ? rank : ++rank);
+            rankings.put(Modality.getBioAttribute(entry.getKey()), prev == 0 ? ++rank : entry.getValue() == prev ? rank : ++rank);
             prev = entry.getValue();
         }
 
         for (String finger : fingers) {
             Optional<BiometricsDto> result = capturedFingers.stream()
-                    .filter(b -> b.getBioSubType().equalsIgnoreCase(finger)).findFirst();
+                    .filter(b -> Modality.getBioAttribute(b.getBioSubType()).equalsIgnoreCase(finger)).findFirst();
             if (result.isPresent()) {
                 data.put(finger, result.get().getBioValue() == null ? "&#10008;" :
                         rankings.get(finger));
