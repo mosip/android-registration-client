@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -152,100 +151,101 @@ class _UsernameComponentState extends State<UsernameComponent> {
             appLanguage.toggleLocale(e!);
           },
           isMobile: widget.isMobile,
+          isFreezed: false,
         );
       }).toList(),
     );
   }
 
-  List<DropdownMenuItem<String>> _addDividersAfterItems(List<String?> items) {
-    List<DropdownMenuItem<String>> menuItems = [];
-    for (var item in items) {
-      menuItems.addAll(
-        [
-          DropdownMenuItem<String>(
-            value: item,
-            child: Text(
-              widget.mp[item]!,
-              style: widget.isMobile
-                  ? AppStyle.tabletPortraitDropdownText
-                  : AppStyle.mobileDropdownText,
-            ),
-          ),
-          //If it's last item, we will not add Divider after it.
-          if (item != items.last)
-            const DropdownMenuItem<String>(
-              enabled: false,
-              child: Divider(),
-            ),
-        ],
-      );
-    }
-    return menuItems;
-  }
+  // List<DropdownMenuItem<String>> _addDividersAfterItems(List<String?> items) {
+  //   List<DropdownMenuItem<String>> menuItems = [];
+  //   for (var item in items) {
+  //     menuItems.addAll(
+  //       [
+  //         DropdownMenuItem<String>(
+  //           value: item,
+  //           child: Text(
+  //             widget.mp[item]!,
+  //             style: widget.isMobile
+  //                 ? AppStyle.tabletPortraitDropdownText
+  //                 : AppStyle.mobileDropdownText,
+  //           ),
+  //         ),
+  //         //If it's last item, we will not add Divider after it.
+  //         if (item != items.last)
+  //           const DropdownMenuItem<String>(
+  //             enabled: false,
+  //             child: Divider(),
+  //           ),
+  //       ],
+  //     );
+  //   }
+  //   return menuItems;
+  // }
 
-  List<double> _getCustomItemsHeights() {
-    List<double> itemsHeights = [];
-    for (var i = 0; i < (widget.languages.length * 2) - 1; i++) {
-      if (i.isEven) {
-        itemsHeights.add(82.h);
-      }
-      if (i.isOdd) {
-        itemsHeights.add(4.h);
-      }
-    }
-    return itemsHeights;
-  }
+  // List<double> _getCustomItemsHeights() {
+  //   List<double> itemsHeights = [];
+  //   for (var i = 0; i < (widget.languages.length * 2) - 1; i++) {
+  //     if (i.isEven) {
+  //       itemsHeights.add(82.h);
+  //     }
+  //     if (i.isOdd) {
+  //       itemsHeights.add(4.h);
+  //     }
+  //   }
+  //   return itemsHeights;
+  // }
 
-  _getLanguageDropdownButton(BuildContext context) {
-    final appLanguage = Provider.of<GlobalProvider>(context, listen: false);
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        items: _addDividersAfterItems(widget.languages),
-        value: context.read<GlobalProvider>().selectedLanguage,
-        onChanged: (newValue) {
-          selectedLanguage = newValue;
-          appLanguage.toggleLocale(newValue!);
-        },
-        hint: Text(
-          'Select a value!',
-          style: widget.isMobile
-              ? AppStyle.tabletPortraitDropdownHintText
-              : AppStyle.mobileDropdownHintText,
-        ),
-        buttonStyleData: ButtonStyleData(
-          height: widget.isMobile ? 82.h : 52.h,
-          width: widget.isMobile ? 556.w : 384.w,
-          padding: EdgeInsets.only(
-            left: 17.w,
-            right: (14.42).w,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              width: 1.h,
-              color: AppStyle.appGreyShade,
-            ),
-          ),
-        ),
-        dropdownStyleData: DropdownStyleData(
-          maxHeight: widget.isMobile ? 248.h : 164.h,
-          decoration: BoxDecoration(
-              color: AppStyle.appWhite,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                width: 1.h,
-                color: AppStyle.appGreyShade,
-              )),
-        ),
-        menuItemStyleData: MenuItemStyleData(
-          customHeights: _getCustomItemsHeights(),
-        ),
-        iconStyleData: const IconStyleData(
-            icon: Icon(
-          Icons.keyboard_arrow_down_outlined,
-          color: AppStyle.appGreyShade,
-        )),
-      ),
-    );
-  }
+  // _getLanguageDropdownButton(BuildContext context) {
+  //   final appLanguage = Provider.of<GlobalProvider>(context, listen: false);
+  //   return DropdownButtonHideUnderline(
+  //     child: DropdownButton2(
+  //       items: _addDividersAfterItems(widget.languages),
+  //       value: context.read<GlobalProvider>().selectedLanguage,
+  //       onChanged: (newValue) {
+  //         selectedLanguage = newValue;
+  //         appLanguage.toggleLocale(newValue!);
+  //       },
+  //       hint: Text(
+  //         'Select a value!',
+  //         style: widget.isMobile
+  //             ? AppStyle.tabletPortraitDropdownHintText
+  //             : AppStyle.mobileDropdownHintText,
+  //       ),
+  //       buttonStyleData: ButtonStyleData(
+  //         height: widget.isMobile ? 82.h : 52.h,
+  //         width: widget.isMobile ? 556.w : 384.w,
+  //         padding: EdgeInsets.only(
+  //           left: 17.w,
+  //           right: (14.42).w,
+  //         ),
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(6),
+  //           border: Border.all(
+  //             width: 1.h,
+  //             color: AppStyle.appGreyShade,
+  //           ),
+  //         ),
+  //       ),
+  //       dropdownStyleData: DropdownStyleData(
+  //         maxHeight: widget.isMobile ? 248.h : 164.h,
+  //         decoration: BoxDecoration(
+  //             color: AppStyle.appWhite,
+  //             borderRadius: BorderRadius.circular(6),
+  //             border: Border.all(
+  //               width: 1.h,
+  //               color: AppStyle.appGreyShade,
+  //             )),
+  //       ),
+  //       menuItemStyleData: MenuItemStyleData(
+  //         customHeights: _getCustomItemsHeights(),
+  //       ),
+  //       iconStyleData: const IconStyleData(
+  //           icon: Icon(
+  //         Icons.keyboard_arrow_down_outlined,
+  //         color: AppStyle.appGreyShade,
+  //       )),
+  //     ),
+  //   );
+  // }
 }
