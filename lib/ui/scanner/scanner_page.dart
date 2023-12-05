@@ -31,7 +31,7 @@ class _ScannerPageState extends State<ScannerPage> {
   Image? _croppedFile;
   final controller = CropController(
     aspectRatio: 1,
-    defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.7, 0.7),
+    defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
   );
 
   @override
@@ -245,99 +245,35 @@ class _ScannerPageState extends State<ScannerPage> {
     } else if (_pickedFile != null) {
       _documentPreviewAudit();
       final path = _pickedFile!.path;
-      // return ConstrainedBox(
-      //   constraints: BoxConstraints(
-      //     maxWidth: 0.8 * screenWidth,
-      //     maxHeight: 0.7 * screenHeight,
-      //   ),
-      //   child: kIsWeb ? Image.network(path) :
-      //   Image.file(File(path)),
-      // );
       return Center(
         child: Column(
           children: [
             Expanded(
-              flex: 6,
-              child: Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: SizedBox(
-                  // width: kIsWeb ? 380.0 : 320.0,
-                  // height: 400.0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        // child: Padding(
-                        //   padding: const EdgeInsets.all(16.0),
-                        //   child: ConstrainedBox(
-                        //     constraints: BoxConstraints(
-                        //       maxWidth: 0.8 * screenWidth,
-                        //       maxHeight: 0.7 * screenHeight,
-                        //     ),
-                        //     child: kIsWeb
-                        //         ? Image.network(path)
-                        //         : Image.file(File(path)),
-                        //   ),
-                        // ),
-                        child: Center(
-                          child: CropImage(
-                            controller: controller,
-                            gridColor: Colors.indigo,
-                            gridThickWidth: 12,
-                            gridThinWidth: 3,
-                            image: Image.file(File(path)),
-                            paddingSize: 0.0,
-                            scrimColor: Colors.white,
-                            alwaysMove: true,
-                          ),
+              child: SizedBox(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: CropImage(
+                          controller: controller,
+                          gridColor: Colors.indigo,
+                          gridThickWidth: 10,
+                          gridThinWidth: 1,
+                          gridInnerColor: Colors.transparent,
+                          image: Image.file(File(path)),
+                          paddingSize: 0.0,
+                         // scrimColor: Colors.white,
+                          alwaysMove: true,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            // Expanded(
-            //   flex: 3,
-            //   child: Card(
-            //     child: SizedBox(
-            //       //width: kIsWeb ? 380.0 : 320.0,
-            //       height: 200.0,
-            //       child: Column(
-            //         children: [
-            //           Row(
-            //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //             children: [
-            //               SizedBox(
-            //                 width: 160,
-            //                 child: OutlinedButton(
-            //                   onPressed: () {
-            //                     _cropImage();
-            //                   },
-            //                   child: const Text('Crop'),
-            //                 ),
-            //               ),
-            //               SizedBox(
-            //                 width: 160,
-            //                 child: OutlinedButton(
-            //                   onPressed: () {
-            //                     _clear();
-            //                   },
-            //                   child: const Text('Delete'),
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
