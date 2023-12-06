@@ -18,6 +18,7 @@ import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -200,7 +201,15 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 20.w : 80.w),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const MobileHomePage(),
+                            ),
+                          );
+                        },
                         child: Container(
                           height: 62.h,
                           width: 129.w,
@@ -213,10 +222,10 @@ class _LoginPageState extends State<LoginPage> {
                               Radius.circular(5),
                             ),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              'HELP',
-                              style: TextStyle(
+                              AppLocalizations.of(context)!.help,
+                              style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: AppStyle.appWhite,

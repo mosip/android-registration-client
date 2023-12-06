@@ -13,6 +13,7 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -245,6 +246,18 @@ class _HomePageState extends State<HomePage> {
               children: [
                 SizedBox(
                   width: w < 512 ? 0 : 60,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const MobileHomePage(),
+                            ),
+                          );
+                  },
+                  child: const Text('Temp'),
                 ),
                 Expanded(
                   child: Column(

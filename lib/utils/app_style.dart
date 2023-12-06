@@ -5,6 +5,7 @@ abstract class AppStyle {
   static const Color appWhite = Color(0xFFffffff);
   static const Color appBlack = Color(0xFF000000);
   static const Color appBlackShade1 = Color(0xFF333333);
+  static const Color appBlackShade2 = Color(0xFF6F6E6E);
   static const Color appBlackShade3 = Color(0xFF999999);
   static const Color appGreyShade = Color(0xFF9B9B9F);
   static const Color appSolidPrimary = Color(0xFF1C43A1);
@@ -23,6 +24,10 @@ abstract class AppStyle {
   static const Color dividerColor = Color(0XFFE5EBFA);
   static const Color languageSelectedColor = Color(0XFF1C429F);
   static const Color languageFreezedColor = Color(0XFFD9E3FF);
+  static const Color appBlueShade = Color(0XFFFAFBFF);
+  static const Color greyBorderShade = Color(0XFFEAEAEA);
+  static const Color dropShadow = Color(0X0000000F);
+  static const Color iconContainerColor = Color(0XFFF4F7FF);
 
   static TextStyle mobileHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
