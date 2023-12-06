@@ -418,11 +418,11 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       backgroundColor: Colors.grey,
                       progressColor: (widget
                                   .biometricAttributeData.qualityPercentage
-                                  .toInt() >
+                                  .toInt() <
                               int.parse(widget
                                   .biometricAttributeData.thresholdPercentage))
-                          ? secondaryColors.elementAt(11)
-                          : secondaryColors.elementAt(20),
+                          ? secondaryColors.elementAt(20)
+                          : secondaryColors.elementAt(11),
                     ),
                     SizedBox(
                       width: 16.h,

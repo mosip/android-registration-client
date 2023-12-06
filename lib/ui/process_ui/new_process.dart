@@ -182,9 +182,9 @@ class _NewProcessState extends State<NewProcess> {
     globalProvider.newProcessTabIndex = 0;
     globalProvider.htmlBoxTabIndex = 0;
     globalProvider.setRegId("");
-    for(int i=0; i < context
-        .read<RegistrationTaskProvider>()
-        .listOfProcesses.length;i++) {
+    for (int i = 0;
+        i < context.read<RegistrationTaskProvider>().listOfProcesses.length;
+        i++) {
       Process process = Process.fromJson(
         jsonDecode(
           context
@@ -195,7 +195,7 @@ class _NewProcessState extends State<NewProcess> {
         ),
       );
       if (process.id == "NEW") {
-        getProcessUI(context,process);
+        getProcessUI(context, process);
       }
     }
   }
@@ -208,10 +208,13 @@ class _NewProcessState extends State<NewProcess> {
       context.read<GlobalProvider>().newProcessTabIndex = 0;
       context.read<GlobalProvider>().htmlBoxTabIndex = 0;
       context.read<GlobalProvider>().setRegId("");
-      for(var screen in process.screens!) {
-        for(var field in screen!.fields!) {
-          if(field!.controlType == 'dropdown' && field.fieldType == 'default') {
-            context.read<GlobalProvider>().initializeGroupedHierarchyMap(field.group!);
+      for (var screen in process.screens!) {
+        for (var field in screen!.fields!) {
+          if (field!.controlType == 'dropdown' &&
+              field.fieldType == 'default') {
+            context
+                .read<GlobalProvider>()
+                .initializeGroupedHierarchyMap(field.group!);
           }
         }
       }
@@ -263,18 +266,19 @@ class _NewProcessState extends State<NewProcess> {
       return required;
     }
 
-    isExceptionPresent(String id){
+    isExceptionPresent(String id) {
       bool isExceptionPresent = false;
-      context.read<GlobalProvider>().fieldInputValue[id].forEach((BiometricAttributeData x){
-        if(x.exceptions.contains(true)){
+      for (BiometricAttributeData x
+          in context.read<GlobalProvider>().fieldInputValue[id]) {
+        if (x.exceptions.contains(true) || x.title == "Exception") {
           isExceptionPresent = true;
-          return isExceptionPresent;
+          break;
         }
-      });
+      }
       return isExceptionPresent;
     }
 
-    returnBiometricListLength(List<String?>? list,String id) {
+    returnBiometricListLength(List<String?>? list, String id) {
       int i = 0;
       if (list!.contains("leftEye") && list.contains("rightEye")) {
         i++;
@@ -297,13 +301,11 @@ class _NewProcessState extends State<NewProcess> {
       if (list.contains("face")) {
         i++;
       }
-      if(isExceptionPresent(id)==true){
+      if (isExceptionPresent(id) == true) {
         i++;
       }
       return i;
     }
-
-    
 
     customValidation(int currentIndex) async {
       bool isValid = true;
@@ -340,7 +342,8 @@ class _NewProcessState extends State<NewProcess> {
                 0)) {
               if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
                 int count = returnBiometricListLength(
-                    screen.fields!.elementAt(i)!.bioAttributes,screen.fields!.elementAt(i)!.id!);
+                    screen.fields!.elementAt(i)!.bioAttributes,
+                    screen.fields!.elementAt(i)!.id!);
 
                 if (globalProvider
                         .fieldInputValue[screen.fields!.elementAt(i)!.id!]
