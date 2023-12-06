@@ -293,9 +293,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         ),
         Row(
           children: [
-            SizedBox(
-              width: 20.w,
+            const Expanded(
+              child: SizedBox(
+                
+              ),
             ),
+            const Expanded(child: SizedBox(),),
             Expanded(
               child: OutlinedButton(
                 onPressed: () {
@@ -328,15 +331,13 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   }
                 },
                 style: ButtonStyle(
-                  backgroundColor: (context
-                                  .read<GlobalProvider>()
-                                  .chosenLang
-                                  .length >=
-                              minLanguage &&
-                          context.read<GlobalProvider>().chosenLang.length <=
-                              maxLanguage)
-                      ? MaterialStateProperty.all<Color>(solidPrimary)
-                      : MaterialStateProperty.all<Color>(Colors.grey),
+                  backgroundColor:
+                      (context.read<GlobalProvider>().chosenLang.length >=
+                                  minLanguage &&
+                              context.read<GlobalProvider>().chosenLang.length <=
+                                  maxLanguage)
+                          ? MaterialStateProperty.all<Color>(solidPrimary)
+                          : MaterialStateProperty.all<Color>(Colors.grey),
                 ),
                 child: SizedBox(
                   height: isMobile ? 62.h : 37.h,
