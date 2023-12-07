@@ -18,6 +18,7 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
+import 'package:registration_client/ui/process_ui/widgets_mobile/biometric_capture_control_mobile.dart';
 import '../../../platform_spi/registration_service.dart';
 import 'radio_button_control.dart';
 
@@ -39,6 +40,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   }
 
   Widget widgetType(Field e) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     RegExp regexPattern = RegExp(r'^.*$');
 
     if (e.validators!.isNotEmpty) {
@@ -57,7 +60,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        return BiometricCaptureControl(field: e);
+        return (isPortrait)
+            ? BiometricCaptureControlMobile(field: e)
+            : BiometricCaptureControl(field: e);
       case "button":
         if (e.subType == "preferredLang") {
           return ButtonControl(field: e);

@@ -364,7 +364,7 @@ class _BiometricCaptureControlState extends State<BiometricCaptureControl> {
         }
       }
     }
-
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

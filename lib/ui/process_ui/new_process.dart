@@ -247,7 +247,7 @@ class _NewProcessState extends State<NewProcess> {
 
   @override
   Widget build(BuildContext context) {
-    isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    bool isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
@@ -406,10 +406,10 @@ class _NewProcessState extends State<NewProcess> {
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
-        if (globalProvider.formKey.currentState!.validate()) {
-          bool customValidator =
-              await customValidation(globalProvider.newProcessTabIndex);
-          if (customValidator) {
+        // if (globalProvider.formKey.currentState!.validate()) {
+        //   bool customValidator =
+        //       await customValidation(globalProvider.newProcessTabIndex);
+        //   if (customValidator) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
               registrationTaskProvider.setAcknowledgementTemplate("");
@@ -420,8 +420,8 @@ class _NewProcessState extends State<NewProcess> {
 
             globalProvider.newProcessTabIndex =
                 globalProvider.newProcessTabIndex + 1;
-          }
-        }
+        //   }
+        // }
         _nextButtonClickedAudit();
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {
@@ -449,6 +449,7 @@ class _NewProcessState extends State<NewProcess> {
             globalProvider.newProcessTabIndex + 1;
       }
     }
+    
 
     return Scaffold(
       backgroundColor: secondaryColors.elementAt(10),
@@ -727,7 +728,7 @@ class _NewProcessState extends State<NewProcess> {
                 ),
               ),
               Padding(
-                padding: isMobile
+                padding: isPortrait
                     ? const EdgeInsets.all(0)
                     : const EdgeInsets.fromLTRB(60, 0, 60, 0),
                 child: context.watch<GlobalProvider>().newProcessTabIndex < size
