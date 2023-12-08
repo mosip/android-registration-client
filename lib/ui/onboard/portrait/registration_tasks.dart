@@ -5,14 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class RegistrationTasks extends StatefulWidget {
-  const RegistrationTasks({super.key});
+  const RegistrationTasks({
+    super.key,
+    required this.getProcessUI,
+  });
+  final Function getProcessUI;
 
   @override
   State<RegistrationTasks> createState() => _RegistrationTasksState();
@@ -33,41 +35,6 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
         _getTasks(),
       ],
     );
-  }
-
-  _newRegistrationClickedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-HOME-002", "REG-MOD-102");
-  }
-
-  Widget getProcessUI(BuildContext context, Process process) {
-    if (process.id == "NEW") {
-      _newRegistrationClickedAudit();
-      context.read<GlobalProvider>().clearMap();
-      context.read<GlobalProvider>().clearScannedPages();
-      context.read<GlobalProvider>().newProcessTabIndex = 0;
-      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-      context.read<GlobalProvider>().setRegId("");
-      for (var screen in process.screens!) {
-        for (var field in screen!.fields!) {
-          if (field!.controlType == 'dropdown' &&
-              field.fieldType == 'default') {
-            context
-                .read<GlobalProvider>()
-                .initializeGroupedHierarchyMap(field.group!);
-          }
-        }
-      }
-      context.read<GlobalProvider>().createRegistrationLanguageMap();
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => LanguageSelector(
-          newProcess: process,
-        ),
-      );
-    }
-    return Container();
   }
 
   _getSyncDataProvider() {
@@ -144,69 +111,6 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
     );
   }
 
-  // _getRegistrationTasks() {
-  //   debugPrint(
-  //       "length ${context.watch<RegistrationTaskProvider>().listOfProcesses.length}");
-  //   return SizedBox(
-  //     height: 907.h,
-  //     child: GridView.builder(
-  //       itemCount:
-  //           context.watch<RegistrationTaskProvider>().listOfProcesses.length,
-  //       gridDelegate:
-  //           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-  //       itemBuilder: (BuildContext context, int index) {
-  //         return Container(
-  //           decoration: BoxDecoration(
-  //             border: Border.all(
-  //               color: AppStyle.appWhite,
-  //             ),
-  //             borderRadius: const BorderRadius.all(
-  //               Radius.circular(6),
-  //             ),
-  //             color: AppStyle.appWhite,
-  //             boxShadow: const [
-  //               BoxShadow(
-  //                 color: AppStyle.greyBorderShade,
-  //                 offset: Offset(3.0, 3.0),
-  //                 blurRadius: 6.0,
-  //                 spreadRadius: 0.0,
-  //               ),
-  //             ],
-  //           ),
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               SizedBox(
-  //                 height: 49.08.h,
-  //                 width: 67.73.w,
-  //                 child: Image.asset(
-  //                   "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon ?? ""}",
-  //                   fit: BoxFit.fill,
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 38.17.h,
-  //               ),
-  //               Text(
-  //                 Process.fromJson(jsonDecode(context
-  //                         .watch<RegistrationTaskProvider>()
-  //                         .listOfProcesses
-  //                         .elementAt(index)
-  //                         .toString()))
-  //                     .label!["eng"]!,
-  //                 style: const TextStyle(
-  //                   fontSize: 27,
-  //                   color: AppStyle.appBlackShade1,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
   _getTasks() {
     return Wrap(
       spacing: 8.w,
@@ -215,7 +119,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
           context.watch<RegistrationTaskProvider>().listOfProcesses.map((e) {
         return InkWell(
           onTap: () {
-            getProcessUI(
+            widget.getProcessUI(
               context,
               Process.fromJson(
                 jsonDecode(

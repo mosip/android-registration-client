@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
 import 'package:registration_client/ui/onboard/widgets/onboard_landing_page_navbar_icon.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class MobileHomePage extends StatefulWidget {
-  const MobileHomePage({super.key});
+  const MobileHomePage({
+    super.key,
+    required this.operationalTasks,
+    required this.getProcessUI,
+  });
+  final List<Map<String, dynamic>> operationalTasks;
+  final Function getProcessUI;
 
   @override
   State<MobileHomePage> createState() => _MobileHomePageState();
@@ -30,7 +37,12 @@ class _MobileHomePageState extends State<MobileHomePage> {
               top: 14.h,
             ),
             color: AppStyle.appBlueShade,
-            child: const TasksPage(),
+            child: TasksPage(
+              operationalTasks: widget.operationalTasks,
+              getProcessUI: (BuildContext context, Process process) {
+                widget.getProcessUI(context, process);
+              },
+            ),
           ),
         ),
       ),

@@ -18,14 +18,13 @@ import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
-import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
+import 'package:registration_client/ui/onboard/home_page.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile.dart';
-import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
@@ -201,15 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.symmetric(
                           horizontal: isMobile ? 20.w : 80.w),
                       child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const MobileHomePage(),
-                            ),
-                          );
-                        },
+                        onTap: () {},
                         child: Container(
                           height: 62.h,
                           width: 129.w,
@@ -494,8 +485,8 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(
           builder: (context) => Responsive(
             mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
+            desktop: const HomePage(),
+            tablet: const HomePage(),
           ),
         ),
       );

@@ -7,63 +7,17 @@ import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class OperationalTasks extends StatefulWidget {
-  const OperationalTasks({super.key});
+  const OperationalTasks({
+    super.key,
+    required this.operationalTasks,
+  });
+  final List<Map<String, dynamic>> operationalTasks;
 
   @override
   State<OperationalTasks> createState() => _OperationalTasksState();
 }
 
 class _OperationalTasksState extends State<OperationalTasks> {
-  List<Map<String, dynamic>> operationalTasks = [
-    {
-      "icon": SvgPicture.asset(
-        "assets/svg/Uploading Local - Registration Data.svg",
-      ),
-      "title": "Download Pre-Registration Data",
-      "onTap": () {},
-      "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
-    },
-    {
-      "icon": SvgPicture.asset(
-        "assets/svg/Updating Operator Biometrics.svg",
-      ),
-      "title": "Update Operator Biometrics",
-      "onTap": () {},
-      "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-    },
-    {
-      "icon": SvgPicture.asset(
-        "assets/svg/Uploading Local - Registration Data.svg",
-      ),
-      "title": "Application Upload",
-      "onTap": () {},
-      "subtitle": "3 application(s)"
-    },
-    {
-      "icon": SvgPicture.asset(
-        "assets/svg/Onboarding Yourself.svg",
-      ),
-      "title": "Check Updates",
-      "onTap": () {},
-      "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-    },
-    {
-      "icon": SvgPicture.asset(
-        "assets/svg/Uploading Local - Registration Data.svg",
-      ),
-      "title": "Center Remap Sync.",
-      "onTap": () {},
-      "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-    },
-    {
-      "icon": SvgPicture.asset(
-        "assets/svg/Uploading Local - Registration Data.svg",
-      ),
-      "title": "Sync. Activities",
-      "onTap": () {},
-      "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -192,14 +146,14 @@ class _OperationalTasksState extends State<OperationalTasks> {
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
       children: List.generate(
-        operationalTasks.length,
+        widget.operationalTasks.length,
         (index) {
           return TaskCard(
             index: index,
-            icon: operationalTasks[index]["icon"],
-            title: operationalTasks[index]["title"] as String,
-            ontap: () => operationalTasks[index]["onTap"](context),
-            subtitle: operationalTasks[index]["subtitle"],
+            icon: widget.operationalTasks[index]["icon"],
+            title: widget.operationalTasks[index]["title"] as String,
+            ontap: () => widget.operationalTasks[index]["onTap"](context),
+            subtitle: widget.operationalTasks[index]["subtitle"],
           );
         },
       ),

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/ui/onboard/portrait/operational_tasks.dart';
 import 'package:registration_client/ui/onboard/portrait/registration_tasks.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class TasksPage extends StatefulWidget {
-  const TasksPage({super.key});
+  const TasksPage({
+    super.key,
+    required this.operationalTasks,
+    required this.getProcessUI,
+  });
+  final List<Map<String, dynamic>> operationalTasks;
+  final Function getProcessUI;
 
   @override
   State<TasksPage> createState() => _TasksPageState();
@@ -107,13 +114,17 @@ class _TasksPageState extends State<TasksPage> {
         Container(
           color: AppStyle.appSolidPrimary,
           height: 2.5.h,
-          margin: EdgeInsets.symmetric(
-            horizontal: 20.w
-          ),
+          margin: EdgeInsets.symmetric(horizontal: 20.w),
         ),
         currentIndex == 0
-            ? const RegistrationTasks()
-            : const OperationalTasks(),
+            ? RegistrationTasks(
+                getProcessUI: (BuildContext context, Process process) {
+                  widget.getProcessUI(context, process);
+                },
+              )
+            : OperationalTasks(
+                operationalTasks: widget.operationalTasks,
+              ),
       ],
     );
   }
