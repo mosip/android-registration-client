@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,8 @@ class DocumentUploadControl extends StatefulWidget {
 }
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
+
+  FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
   void initState() {
     //load from the map
@@ -133,6 +136,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     listofImages: [],
   );
   String? selected;
+  final TextEditingController textController = TextEditingController(text:"");
 
   void saveData(value) {
     if (value != null) {
@@ -436,6 +440,72 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     ),
                                   );
                                 })),
+                        Expanded(
+                            child: FutureBuilder(
+                                future: _getDocumentValues(
+                                    widget.field.subType!, "eng", null),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<String?>> snapshot) {
+                                  return Card(
+                                    elevation: 0,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 1, horizontal: 12),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 24, horizontal: 16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          CustomLabel(field: widget.field),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          snapshot.hasData
+                                              ? TextFormField(
+                                            readOnly: true,
+                                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                                            controller: textController,
+                                            onTap: (){
+                                              _showDropdownBottomSheet(snapshot,widget.field.label!["eng"],context);
+                                            },
+                                            validator: (value) {
+                                              if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                                              if (value == null || value.isEmpty) {
+                                                return null;
+                                              } else if (!widget.validation.hasMatch(value)) {
+                                                  return 'Invalid input';
+                                              }
+                                               }
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please enter a value';
+                                              }
+                                              if (!widget.validation.hasMatch(value)) {
+                                                return 'Invalid input';
+                                              }
+                                              return null;
+                                            },
+                                            textAlign: TextAlign.left,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                borderSide: const BorderSide(
+                                                    color: Colors.grey, width: 1),
+                                              ),
+                                              contentPadding: const EdgeInsets.symmetric(
+                                                  vertical: 14, horizontal: 16),
+                                              hintText: "Select Value",
+                                              hintStyle: const TextStyle(
+                                                  color: Colors.grey, fontSize: 14),
+                                              suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
+                                            ),
+                                          )
+                                              : const SizedBox.shrink(),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                })),
                         const SizedBox(
                           width: 50,
                         ),
@@ -524,6 +594,119 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                 ),
         ),
       ),
+    );
+  }
+
+  void _showDropdownBottomSheet(AsyncSnapshot? snapshot, String? title, BuildContext context) {
+    showModalBottomSheet(
+      isDismissible: false,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(15),
+          topLeft: Radius.circular(15),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return  Container(
+          width: MediaQuery.of(context).size.width,
+          height: double.maxFinite,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15),
+              topLeft: Radius.circular(15),
+            )
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child:  Column(
+            children: [
+               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                   const SizedBox.shrink(),
+                   Padding(
+                     padding: const EdgeInsets.all(20.0),
+                     child: Text(
+                      "Select $title",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                  ),
+                   ),
+                  InkWell(onTap: (){
+                    Navigator.of(context).pop();
+                  }, child: const Padding(
+                    padding:  EdgeInsets.all(12.0),
+                    child:  Icon(Icons.clear,color: Colors.black,size: 35,),
+                  ))
+                ],
+              ),
+          Expanded(
+            child: CupertinoPicker(
+              itemExtent: 50,
+              children: <Widget>[
+                for (var i = 0;
+                i < snapshot!.data.length;
+                i++)
+                  ListTile(
+                    title: Center(
+                      child: Text(
+                        snapshot.data[i],
+                        style: TextStyle(fontSize: 20,color: Colors.indigo,fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    trailing: Icon(Icons.check,size: 35,color: Colors.indigo,)
+                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: <Widget>[
+                  //     Padding(
+                  //       padding: EdgeInsets.only(left: 10),
+                  //       child: Text(
+                  //         snapshot[i],
+                  //         style: TextStyle(fontSize: 20,color: Colors.indigo,fontWeight: FontWeight.w500),
+                  //       ),
+                  //     ),
+                  //     Icon(Icons.check,size: 25,)
+                  //   ],
+                  // ),
+              ],
+              onSelectedItemChanged: (int index) {
+                print('good boi');
+              },
+              looping: false,
+              backgroundColor: Colors.white,
+            ),
+          ),
+
+        // ListView.builder(
+              //   shrinkWrap: true,
+              //   itemCount: snapshot.data.length,
+              //   itemBuilder: (BuildContext context, int index) {
+              //   return GestureDetector(
+              //     onTap: () {
+              //       setState(() {
+              //         textController.text = snapshot.data[index];
+              //       });
+              //       Navigator.of(context).pop();
+              //     },
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         Text(snapshot.data[index],style: const TextStyle(fontSize: 20),),
+              //         const SizedBox(width: 80,),
+              //         const Icon(Icons.check),
+              //       ],
+              //     ),
+              //   );
+              // })
+            ],
+          ),
+        );
+      },
     );
   }
 }
