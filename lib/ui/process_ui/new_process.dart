@@ -469,7 +469,7 @@ class _NewProcessState extends State<NewProcess> {
             color: pureWhite,
           ),
           padding: EdgeInsets.symmetric(
-            horizontal: isPortrait ? 20.w : 80.w,
+            horizontal: isPortrait ? 20.w : 60.w,
             vertical: 16.h,
           ),
           // height: isPortrait ? 94.h : 84.h,
