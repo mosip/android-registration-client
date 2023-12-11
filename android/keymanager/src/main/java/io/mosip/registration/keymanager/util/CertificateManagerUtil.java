@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -95,7 +96,7 @@ public class CertificateManagerUtil {
             Date currentDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             x509Cert.checkValidity(currentDate);
             return true;
-        } catch(CertificateExpiredException | CertificateNotYetValidException exp) {
+        } catch(GeneralSecurityException exp) {
             Log.e(TAG, "Ignore this exception, the exception thrown when certificate dates are not valid.");
         }
         try {
@@ -112,8 +113,7 @@ public class CertificateManagerUtil {
         try {
             x509Cert.verify(x509Cert.getPublicKey());
             return true;
-        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | SignatureException
-                 | NoSuchProviderException exp) {
+        } catch (GeneralSecurityException exp) {
             Log.e(TAG, "Ignore this exception, the exception thrown when signature validation failed.");
         }
         return false;
