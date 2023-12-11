@@ -13,7 +13,7 @@ import io.mosip.registration_client.model.TransliterationPigeon;
 public class TransliterationApi implements TransliterationPigeon.TransliterationApi{
 
     @Override
-    public void transliterate(@NonNull TransliterationPigeon.TransliterationOptions options, @NonNull TransliterationPigeon.Result<TransliterationPigeon.TransliterationResult> result) {
+    public void transliterate(@NonNull TransliterationPigeon.TransliterationOptions options, @NonNull TransliterationPigeon.Result<String> result) {
         String input = options.getInput();
         String inputLang = options.getSourceLanguage();
         String outputLang = options.getTargetLanguage();
@@ -21,9 +21,7 @@ public class TransliterationApi implements TransliterationPigeon.Transliteration
         Transliterator transliterator = Transliterator.getInstance(inputLang+"-"+outputLang);
         String transliteratedResult = transliterator.transliterate(input);
 
-        TransliterationPigeon.TransliterationResult response = new TransliterationPigeon.TransliterationResult();
-        response.setOutput(transliteratedResult);
-        result.success(response);
+        result.success(transliteratedResult);
     }
 }
 

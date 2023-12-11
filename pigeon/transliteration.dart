@@ -13,15 +13,8 @@ class TransliterationOptions {
   });
 }
 
-class TransliterationResult {
-  String output;
-  TransliterationResult({
-    required this.output,
-  });
-}
-
 @HostApi()
 abstract class TransliterationApi {
   @async
-  TransliterationResult transliterate(TransliterationOptions options);
+  String transliterate(TransliterationOptions options);
 }

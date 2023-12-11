@@ -11,7 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class TransliterationOptions;
-@class TransliterationResult;
 
 @interface TransliterationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -24,18 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) NSString * targetLanguage;
 @end
 
-@interface TransliterationResult : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithOutput:(NSString *)output;
-@property(nonatomic, copy) NSString * output;
-@end
-
 /// The codec used by TransliterationApi.
 NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void);
 
 @protocol TransliterationApi
-- (void)transliterateOptions:(TransliterationOptions *)options completion:(void (^)(TransliterationResult *_Nullable, FlutterError *_Nullable))completion;
+- (void)transliterateOptions:(TransliterationOptions *)options completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *_Nullable api);

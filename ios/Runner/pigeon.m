@@ -32,12 +32,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface TransliterationResult ()
-+ (TransliterationResult *)fromList:(NSArray *)list;
-+ (nullable TransliterationResult *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
 @implementation TransliterationOptions
 + (instancetype)makeWithInput:(NSString *)input
     sourceLanguage:(NSString *)sourceLanguage
@@ -70,28 +64,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation TransliterationResult
-+ (instancetype)makeWithOutput:(NSString *)output {
-  TransliterationResult* pigeonResult = [[TransliterationResult alloc] init];
-  pigeonResult.output = output;
-  return pigeonResult;
-}
-+ (TransliterationResult *)fromList:(NSArray *)list {
-  TransliterationResult *pigeonResult = [[TransliterationResult alloc] init];
-  pigeonResult.output = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.output != nil, @"");
-  return pigeonResult;
-}
-+ (nullable TransliterationResult *)nullableFromList:(NSArray *)list {
-  return (list) ? [TransliterationResult fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    (self.output ?: [NSNull null]),
-  ];
-}
-@end
-
 @interface TransliterationApiCodecReader : FlutterStandardReader
 @end
 @implementation TransliterationApiCodecReader
@@ -99,8 +71,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   switch (type) {
     case 128: 
       return [TransliterationOptions fromList:[self readValue]];
-    case 129: 
-      return [TransliterationResult fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -113,9 +83,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[TransliterationOptions class]]) {
     [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[TransliterationResult class]]) {
-    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -156,7 +123,7 @@ void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         TransliterationOptions *arg_options = GetNullableObjectAtIndex(args, 0);
-        [api transliterateOptions:arg_options completion:^(TransliterationResult *_Nullable output, FlutterError *_Nullable error) {
+        [api transliterateOptions:arg_options completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

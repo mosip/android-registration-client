@@ -156,20 +156,19 @@ class _TextBoxControlState extends State<TextBoxControl>
                           String targetCode =
                               context.read<GlobalProvider>().langToCode(target);
                           try {
-                            TransliterationResult result =
-                                await TransliterationServiceImpl()
-                                    .transliterate(TransliterationOptions(
-                                        input: value,
-                                        sourceLanguage: lang.substring(0, 2),
-                                        targetLanguage:
-                                            targetCode.substring(0, 2)));
-                            if (value != result.output) {
-                              _saveDataToMap(result.output, targetCode);
-                              saveData(result.output, targetCode);
+                            String result = await TransliterationServiceImpl()
+                                .transliterate(TransliterationOptions(
+                                    input: value,
+                                    sourceLanguage: lang.substring(0, 2),
+                                    targetLanguage:
+                                        targetCode.substring(0, 2)));
+                            if (value != result) {
+                              _saveDataToMap(result, targetCode);
+                              saveData(result, targetCode);
                               setState(() {
-                                controllerMap[targetCode]!.text = result.output;
+                                controllerMap[targetCode]!.text = result;
                               });
-                              log("Transliteration success : ${result.output}");
+                              log("Transliteration success : $result");
                             }
                           } catch (e) {
                             log("Transliteration failed : $e");
