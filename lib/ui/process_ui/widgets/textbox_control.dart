@@ -162,7 +162,7 @@ class _TextBoxControlState extends State<TextBoxControl>
                                     sourceLanguage: lang.substring(0, 2),
                                     targetLanguage:
                                         targetCode.substring(0, 2)));
-                            if (value != result) {
+                            if (result != "") {
                               _saveDataToMap(result, targetCode);
                               saveData(result, targetCode);
                               setState(() {

@@ -24,7 +24,7 @@ public class TransliterationApi implements TransliterationPigeon.Transliteration
         String inputLang = options.getSourceLanguage();
         String outputLang = options.getTargetLanguage();
 
-        String transliteratedResult = transliterationService.transliterate(inputLang+"-"+outputLang,input);
+        String transliteratedResult = transliterationService.transliterate(inputLang,outputLang,input);
         result.success(transliteratedResult);
     }
 }
