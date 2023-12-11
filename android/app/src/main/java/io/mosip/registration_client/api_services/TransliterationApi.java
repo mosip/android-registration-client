@@ -2,15 +2,21 @@ package io.mosip.registration_client.api_services;
 
 import androidx.annotation.NonNull;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import com.ibm.icu.text.Transliterator;
-
+import io.mosip.registration.transliterationmanager.service.TransliterationServiceImpl;
 import io.mosip.registration_client.model.TransliterationPigeon;
 
 
 @Singleton
 public class TransliterationApi implements TransliterationPigeon.TransliterationApi{
+
+    TransliterationServiceImpl transliterationService;
+
+    @Inject
+    public TransliterationApi( TransliterationServiceImpl transliterationService) {
+        this.transliterationService = transliterationService;
+    }
 
     @Override
     public void transliterate(@NonNull TransliterationPigeon.TransliterationOptions options, @NonNull TransliterationPigeon.Result<String> result) {
@@ -18,9 +24,7 @@ public class TransliterationApi implements TransliterationPigeon.Transliteration
         String inputLang = options.getSourceLanguage();
         String outputLang = options.getTargetLanguage();
 
-        Transliterator transliterator = Transliterator.getInstance(inputLang+"-"+outputLang);
-        String transliteratedResult = transliterator.transliterate(input);
-
+        String transliteratedResult = transliterationService.transliterate(inputLang+"-"+outputLang,input);
         result.success(transliteratedResult);
     }
 }

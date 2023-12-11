@@ -56,6 +56,8 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+
+import io.mosip.registration.transliterationmanager.service.TransliterationServiceImpl;
 import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
@@ -315,7 +317,7 @@ public class MainActivity extends FlutterActivity {
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
 
-        TransliterationPigeon.TransliterationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),new TransliterationApi());
+        TransliterationPigeon.TransliterationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),new TransliterationApi(new TransliterationServiceImpl()));
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
