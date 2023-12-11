@@ -223,6 +223,9 @@ class _HomePageState extends State<HomePage> {
             getProcessUI: (BuildContext context, Process process) {
               getProcessUI(context, process);
             },
+            syncData: (BuildContext context) {
+              syncData(context);
+            },
           )
         : Scaffold(
             backgroundColor: Colors.white,

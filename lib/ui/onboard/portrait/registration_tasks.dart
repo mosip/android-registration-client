@@ -13,8 +13,10 @@ class RegistrationTasks extends StatefulWidget {
   const RegistrationTasks({
     super.key,
     required this.getProcessUI,
+    required this.syncData,
   });
   final Function getProcessUI;
+  final Function syncData;
 
   @override
   State<RegistrationTasks> createState() => _RegistrationTasksState();
@@ -38,75 +40,80 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   }
 
   _getSyncDataProvider() {
-    return Container(
-      height: 111.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 15.w,
-        vertical: 16.h,
-      ),
-      margin: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
-      decoration: BoxDecoration(
-        border: Border.all(
+    return InkWell(
+      onTap: () {
+        widget.syncData(context);
+      },
+      child: Container(
+        height: 111.h,
+        padding: EdgeInsets.symmetric(
+          horizontal: 15.w,
+          vertical: 16.h,
+        ),
+        margin: EdgeInsets.symmetric(
+          horizontal: 20.w,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: AppStyle.appWhite,
+          ),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(6),
+          ),
           color: AppStyle.appWhite,
+          boxShadow: const [
+            BoxShadow(
+              color: AppStyle.greyBorderShade,
+              offset: Offset(-3.0, -3.0),
+              blurRadius: 6.0,
+              spreadRadius: 0.0,
+            ),
+          ],
         ),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(6),
+        child: Row(
+          children: [
+            Container(
+              height: 78.h,
+              width: 78.h,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: AppStyle.appWhite,
+                ),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: AppStyle.iconContainerColor,
+              ),
+              child: Transform.scale(
+                scale: 0.5,
+                child: SvgPicture.asset(
+                  syncDataIcon,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 24.w,
+            ),
+            Text(
+              'Synchronize Data',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: semiBold,
+                color: AppStyle.appBlackShade1,
+              ),
+            ),
+            const Expanded(
+              child: SizedBox(),
+            ),
+            const Text(
+              'Last Sync on Friday 24 Mar, 12:15 PM',
+              style: TextStyle(
+                fontSize: 18,
+                color: AppStyle.appBlackShade2,
+              ),
+            )
+          ],
         ),
-        color: AppStyle.appWhite,
-        boxShadow: const [
-          BoxShadow(
-            color: AppStyle.greyBorderShade,
-            offset: Offset(-3.0, -3.0),
-            blurRadius: 6.0,
-            spreadRadius: 0.0,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 78.h,
-            width: 78.h,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppStyle.appWhite,
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(10),
-              ),
-              color: AppStyle.iconContainerColor,
-            ),
-            child: Transform.scale(
-              scale: 0.5,
-              child: SvgPicture.asset(
-                syncDataIcon,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 24.w,
-          ),
-          Text(
-            'Synchronize Data',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: semiBold,
-              color: AppStyle.appBlackShade1,
-            ),
-          ),
-          const Expanded(
-            child: SizedBox(),
-          ),
-          const Text(
-            'Last Sync on Friday 24 Mar, 12:15 PM',
-            style: TextStyle(
-              fontSize: 18,
-              color: AppStyle.appBlackShade2,
-            ),
-          )
-        ],
       ),
     );
   }

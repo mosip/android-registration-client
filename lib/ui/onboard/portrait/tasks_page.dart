@@ -11,9 +11,11 @@ class TasksPage extends StatefulWidget {
     super.key,
     required this.operationalTasks,
     required this.getProcessUI,
+    required this.syncData,
   });
   final List<Map<String, dynamic>> operationalTasks;
   final Function getProcessUI;
+  final Function syncData;
 
   @override
   State<TasksPage> createState() => _TasksPageState();
@@ -120,6 +122,9 @@ class _TasksPageState extends State<TasksPage> {
             ? RegistrationTasks(
                 getProcessUI: (BuildContext context, Process process) {
                   widget.getProcessUI(context, process);
+                },
+                syncData: (BuildContext context) {
+                  widget.syncData(context);
                 },
               )
             : OperationalTasks(

@@ -11,9 +11,11 @@ class MobileHomePage extends StatefulWidget {
     super.key,
     required this.operationalTasks,
     required this.getProcessUI,
+    required this.syncData,
   });
   final List<Map<String, dynamic>> operationalTasks;
   final Function getProcessUI;
+  final Function syncData;
 
   @override
   State<MobileHomePage> createState() => _MobileHomePageState();
@@ -41,6 +43,9 @@ class _MobileHomePageState extends State<MobileHomePage> {
               operationalTasks: widget.operationalTasks,
               getProcessUI: (BuildContext context, Process process) {
                 widget.getProcessUI(context, process);
+              },
+              syncData: (BuildContext context) {
+                widget.syncData(context);
               },
             ),
           ),
