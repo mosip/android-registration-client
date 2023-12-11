@@ -13,17 +13,17 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
-class BiometricCaptureControlMobile extends StatefulWidget {
-  const BiometricCaptureControlMobile({super.key, required this.field});
+class BiometricCaptureControlPortrait extends StatefulWidget {
+  const BiometricCaptureControlPortrait({super.key, required this.field});
   final Field field;
 
   @override
-  State<BiometricCaptureControlMobile> createState() =>
-      _BiometricCaptureControlMobileState();
+  State<BiometricCaptureControlPortrait> createState() =>
+      _BiometricCaptureControlPortraitState();
 }
 
-class _BiometricCaptureControlMobileState
-    extends State<BiometricCaptureControlMobile> {
+class _BiometricCaptureControlPortraitState
+    extends State<BiometricCaptureControlPortrait> {
   BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
       attemptNo: 0,
