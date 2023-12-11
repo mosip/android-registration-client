@@ -226,10 +226,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 86.h,
+                    ),
                     Expanded(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
