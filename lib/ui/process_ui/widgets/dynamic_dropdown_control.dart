@@ -97,7 +97,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
         future: _getFieldValues(widget.field.subType!, "eng"),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
-            elevation: 0,
+            elevation: 5,
             margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),

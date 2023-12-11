@@ -165,7 +165,7 @@ class _CustomDropDownState extends State<DropDownControl> {
     _getOptionsList();
     return Column(children: [
       Card(
-        elevation: 0,
+        elevation: 5,
         margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
