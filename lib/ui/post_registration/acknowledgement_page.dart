@@ -112,7 +112,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                     onPageFinished: (url) {
                       _controller!.getHeight().then((double height) {
                         setState(() {
-                          _height = height - 250.h;
+                          _height = height + 250.h;
                         });
                         _registrationAcknowledgementPageLoadedAudit();
                       });

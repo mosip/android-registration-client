@@ -4,6 +4,7 @@ import android.util.Log;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
@@ -43,6 +44,17 @@ public class CryptoUtil {
 
     public static String generateMD5Hash(byte[] data) {
         return new String(Hex.encodeHex(messageDigestMD5.digest(data)));
+    }
+
+    public static byte[] decodeBase64(String data) {
+        if (StringUtils.isBlank(data)) {
+            return null;
+        }
+        try {
+            return base64decoder.decode(data);
+        } catch (IllegalArgumentException exception) {
+            return Base64.getDecoder().decode(data);
+        }
     }
 
 }

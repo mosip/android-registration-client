@@ -97,5 +97,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "upload_document": "يرجى تحميل الوثيقة"
 }
