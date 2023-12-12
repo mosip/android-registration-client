@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
@@ -23,6 +26,16 @@ class RegistrationTasks extends StatefulWidget {
 }
 
 class _RegistrationTasksState extends State<RegistrationTasks> {
+  @override
+  void initState() {
+    super.initState();
+    String syncTime = context.read<SyncProvider>().lastSuccessfulSyncTime;
+    String formattedTime = DateFormat("EEEE d MMMM, hh:mma")
+        .format(DateTime.parse(syncTime).toLocal())
+        .toString();
+    log("sync time: $formattedTime");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -105,9 +118,13 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
             const Expanded(
               child: SizedBox(),
             ),
-            const Text(
-              'Last Sync on Friday 24 Mar, 12:15 PM',
-              style: TextStyle(
+            Text(
+              DateFormat("EEEE d MMMM, hh:mma")
+                  .format(DateTime.parse(
+                          context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                      .toLocal())
+                  .toString(),
+              style: const TextStyle(
                 fontSize: 18,
                 color: AppStyle.appBlackShade2,
               ),
