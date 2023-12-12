@@ -6,15 +6,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import io.mosip.registration.transliterationmanager.service.TransliterationServiceImpl;
+import io.mosip.registration.transliterationmanager.spi.TransliterationService;
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 
 public class TransliterationServiceUnitTest {
-    TransliterationServiceImpl transliterationService;
+    TransliterationService transliterationService;
 
     @Before
     public void setUp() {

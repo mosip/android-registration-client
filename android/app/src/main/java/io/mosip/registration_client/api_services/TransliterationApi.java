@@ -4,17 +4,17 @@ import androidx.annotation.NonNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import io.mosip.registration.transliterationmanager.service.TransliterationServiceImpl;
+import io.mosip.registration.transliterationmanager.spi.TransliterationService;
 import io.mosip.registration_client.model.TransliterationPigeon;
 
 
 @Singleton
 public class TransliterationApi implements TransliterationPigeon.TransliterationApi{
 
-    TransliterationServiceImpl transliterationService;
+    TransliterationService transliterationService;
 
     @Inject
-    public TransliterationApi( TransliterationServiceImpl transliterationService) {
+    public TransliterationApi(TransliterationService transliterationService) {
         this.transliterationService = transliterationService;
     }
 
