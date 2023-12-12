@@ -301,11 +301,13 @@ class _NewProcessState extends State<NewProcess> {
       if (list.contains("face")) {
         i++;
       }
-      if (isExceptionPresent(id) == true) {
+      if(isExceptionPresent(id)==true){
         i++;
       }
       return i;
     }
+
+    
 
     customValidation(int currentIndex) async {
       bool isValid = true;
@@ -325,7 +327,7 @@ class _NewProcessState extends State<NewProcess> {
                   "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
             log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
 
-            if(screen.fields!.elementAt(i)!.controlType == "fileupload"){
+            if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
               _showInSnackBar(AppLocalizations.of(context)!.upload_document);
             }
             isValid = false;
