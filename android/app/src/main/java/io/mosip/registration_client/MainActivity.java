@@ -56,6 +56,8 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+
+import io.mosip.registration.transliterationmanager.service.TransliterationServiceImpl;
 import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
@@ -68,6 +70,7 @@ import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
+import io.mosip.registration_client.api_services.TransliterationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuditResponsePigeon;
 import io.mosip.registration_client.model.AuthResponsePigeon;
@@ -80,6 +83,7 @@ import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
+import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 
@@ -312,7 +316,8 @@ public class MainActivity extends FlutterActivity {
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
-        
+
+        TransliterationPigeon.TransliterationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),new TransliterationApi(new TransliterationServiceImpl()));
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);

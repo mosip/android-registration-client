@@ -48,3 +48,6 @@ dart run pigeon --input pigeon/master_data_sync.dart --dart_out lib/pigeon/maste
 
 # Generate audit event files
 dart run pigeon --input pigeon/audit_response.dart --dart_out lib/pigeon/audit_response_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/AuditResponsePigeon.java --java_package "io.mosip.registration_client.model"
+
+# Generate transliteration files
+dart run pigeon --input pigeon/transliteration.dart --dart_out lib/pigeon/transliteration_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/TransliterationPigeon.java --java_package "io.mosip.registration_client.model"

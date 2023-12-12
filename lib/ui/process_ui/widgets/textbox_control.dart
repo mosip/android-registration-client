@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -9,6 +11,8 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import '../../../model/field.dart';
 
+import '../../../pigeon/transliteration_pigeon.dart';
+import '../../../platform_android/transliteration_service_impl.dart';
 import '../../../provider/global_provider.dart';
 import '../../../utils/life_cycle_event_handler.dart';
 import 'custom_label.dart';
@@ -25,6 +29,7 @@ class TextBoxControl extends StatefulWidget {
 class _TextBoxControlState extends State<TextBoxControl>
     with WidgetsBindingObserver {
   bool isMvelValid = true;
+  Map<String, TextEditingController> controllerMap = {};
 
   @override
   void initState() {
@@ -132,14 +137,45 @@ class _TextBoxControlState extends State<TextBoxControl>
             verticalGridSpacing: 12,
             children: choosenLang.map((code) {
               String lang = context.read<GlobalProvider>().langToCode(code);
-
+              setState(() {
+                controllerMap.putIfAbsent(lang,
+                    () => TextEditingController(text: _getDataFromMap(lang)));
+              });
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 child: TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  initialValue: _getDataFromMap(lang),
+                  controller: controllerMap[lang],
                   textCapitalization: TextCapitalization.words,
-                  onChanged: (value) {
+                  onChanged: (value) async {
+                    if (lang ==
+                        context.read<GlobalProvider>().mandatoryLanguages[0]) {
+                      for (var target in choosenLang) {
+                        if (target != "English") {
+                          // ignore: use_build_context_synchronously
+                          String targetCode =
+                              context.read<GlobalProvider>().langToCode(target);
+                          try {
+                            String result = await TransliterationServiceImpl()
+                                .transliterate(TransliterationOptions(
+                                    input: value,
+                                    sourceLanguage: lang.substring(0, 2),
+                                    targetLanguage:
+                                        targetCode.substring(0, 2)));
+                            if (result != "") {
+                              _saveDataToMap(result, targetCode);
+                              saveData(result, targetCode);
+                              setState(() {
+                                controllerMap[targetCode]!.text = result;
+                              });
+                              log("Transliteration success : $result");
+                            }
+                          } catch (e) {
+                            log("Transliteration failed : $e");
+                          }
+                        }
+                      }
+                    }
                     _saveDataToMap(value, lang);
                     saveData(value, lang);
                   },
@@ -171,18 +207,6 @@ class _TextBoxControlState extends State<TextBoxControl>
                     hintText: widget.e.label![lang],
                     hintStyle: const TextStyle(
                         color: AppStyle.appBlackShade3, fontSize: 14),
-                    // prefixIcon: (lang == 'ara')
-                    //     ? const Icon(
-                    //         Icons.keyboard_outlined,
-                    //         size: 36,
-                    //       )
-                    //     : null,
-                    // suffixIcon: (lang == 'ara')
-                    //     ? null
-                    //     : const Icon(
-                    //         Icons.keyboard_outlined,
-                    //         size: 36,
-                    //       ),
                   ),
                 ),
               );
