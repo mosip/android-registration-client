@@ -146,7 +146,7 @@ public class TemplateService {
             BiometricsDto biometricsDto = result.get();
             bioData.put("LeftEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
             setBiometricImage(bioData, "CapturedLeftEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
-                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.eye), isPreview);
+                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.left_eye_ack), isPreview);
         }
 
         result = capturedIris.stream()
@@ -155,7 +155,7 @@ public class TemplateService {
             BiometricsDto biometricsDto = result.get();
             bioData.put("RightEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
             setBiometricImage(bioData, "CapturedRightEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
-                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.eye), isPreview);
+                    isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.right_eye_ack), isPreview);
         }
 
         if (!capturedFingers.isEmpty()) {
@@ -192,7 +192,7 @@ public class TemplateService {
 
                 Bitmap leftHandBitmaps = UserInterfaceHelperService.combineBitmaps(images, missingImage);
                 setBiometricImage(bioData, "CapturedLeftSlap", isPreview ? 0 : R.drawable.left_palm,
-                        isPreview ? leftHandBitmaps : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.left_palm), isPreview);
+                        isPreview ? leftHandBitmaps : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.left_hand_ack), isPreview);
             }
 
             List<String> rightFingers = Modality.FINGERPRINT_SLAB_RIGHT.getAttributes();
@@ -231,7 +231,7 @@ public class TemplateService {
 
                 Bitmap rightHandBitmaps = UserInterfaceHelperService.combineBitmaps(images, missingImage);
                 setBiometricImage(bioData, "CapturedRightSlap", isPreview ? 0 : R.drawable.right_palm,
-                        isPreview ? rightHandBitmaps : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.right_palm), isPreview);
+                        isPreview ? rightHandBitmaps : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.right_hand_ack), isPreview);
             }
 
 
@@ -257,7 +257,7 @@ public class TemplateService {
 
                 Bitmap thumbsBitmap = UserInterfaceHelperService.combineBitmaps(images, missingImage);
                 setBiometricImage(bioData, "CapturedThumbs", isPreview ? 0 : R.drawable.thumbs,
-                        isPreview ? thumbsBitmap : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.thumbs), isPreview);
+                        isPreview ? thumbsBitmap : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.thumbs_ack), isPreview);
             }
 
         }
@@ -265,7 +265,7 @@ public class TemplateService {
         if (!capturedFace.isEmpty()) {
             Bitmap faceBitmap = UserInterfaceHelperService.getFaceBitMap(capturedFace.get(0));
             setBiometricImage(bioData, "FaceImageSource", isPreview ? 0 : R.drawable.face,
-                    isPreview ? faceBitmap : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.face), isPreview);
+                    isPreview ? faceBitmap : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.face_ack), isPreview);
 
             if ("applicant".equalsIgnoreCase(field.getSubType())) {
                 setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap, isPreview);
