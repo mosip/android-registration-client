@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
+import 'package:registration_client/model/biometrics_dto.dart';
 
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_exception_block.dart';
@@ -24,177 +26,29 @@ class BiometricCaptureControlLandscape extends StatefulWidget {
       _BiometricCaptureControlLandscapeState();
 }
 
-class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureControlLandscape> {
-  BiometricAttributeData iris = BiometricAttributeData(
-      title: "Iris",
-      attemptNo: 0,
-      exceptionType: "",
-      exceptions: [false, false],
-      isScanned: false,
-      listofImages: [
-        "assets/images/Left Eye@2x.png",
-        "assets/images/Right Eye@2x.png"
-      ],
-      listOfBiometricsDto: [],
-      qualityPercentage: 0,
-      thresholdPercentage: "0",
-      noOfCapturesAllowed: 0);
-  BiometricAttributeData rightHand = BiometricAttributeData(
-      title: "Right Hand",
-      attemptNo: 0,
-      exceptionType: "",
-      exceptions: [false, false, false, false],
-      isScanned: false,
-      listofImages: ["assets/images/Right Hand@2x.png"],
-      listOfBiometricsDto: [],
-      qualityPercentage: 0,
-      thresholdPercentage: "0",
-      noOfCapturesAllowed: 0);
-  BiometricAttributeData leftHand = BiometricAttributeData(
-      title: "Left Hand",
-      attemptNo: 0,
-      exceptionType: "",
-      exceptions: [false, false, false, false],
-      isScanned: false,
-      listofImages: ["assets/images/Left Hand@2x.png"],
-      listOfBiometricsDto: [],
-      qualityPercentage: 0,
-      thresholdPercentage: "0",
-      noOfCapturesAllowed: 0);
-  BiometricAttributeData thumbs = BiometricAttributeData(
-      title: "Thumbs",
-      attemptNo: 0,
-      exceptionType: "",
-      exceptions: [false, false],
-      isScanned: false,
-      listofImages: ["assets/images/Thumbs@2x.png"],
-      listOfBiometricsDto: [],
-      qualityPercentage: 0,
-      thresholdPercentage: "0",
-      noOfCapturesAllowed: 0);
-  BiometricAttributeData face = BiometricAttributeData(
-      title: "Face",
-      attemptNo: 0,
-      exceptionType: "",
-      exceptions: [false],
-      isScanned: false,
-      listofImages: ["assets/images/Face@2x.png"],
-      listOfBiometricsDto: [],
-      qualityPercentage: 0,
-      thresholdPercentage: "0",
-      noOfCapturesAllowed: 0);
-  BiometricAttributeData exception = BiometricAttributeData(
-      title: "Exception",
-      attemptNo: 0,
-      exceptionType: "",
-      exceptions: [false],
-      isScanned: false,
-      listofImages: ["assets/images/Exception@2x.png"],
-      listOfBiometricsDto: [],
-      qualityPercentage: 0,
-      thresholdPercentage: "0",
-      noOfCapturesAllowed: 3);
-
-  getElementPosition(List<BiometricAttributeData> list, String title) {
-    for (int i = 0; i < list.length; i++) {
-      if (list.elementAt(i).title.compareTo(title) == 0) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
+class _BiometricCaptureControlLandscapeState
+    extends State<BiometricCaptureControlLandscape> {
   resetAfterException(String key, BiometricAttributeData data) {
     if (context.read<GlobalProvider>().fieldInputValue.containsKey(key)) {
-      if (getElementPosition(
+      if (context.read<BiometricCaptureControlProvider>().getElementPosition(
               context.read<GlobalProvider>().fieldInputValue[key],
               data.title) !=
           -1) {
-        context.read<GlobalProvider>().fieldInputValue[key].removeAt(
-            getElementPosition(
+        context.read<GlobalProvider>().fieldInputValue[key].removeAt(context
+            .read<BiometricCaptureControlProvider>()
+            .getElementPosition(
                 context.read<GlobalProvider>().fieldInputValue[key],
                 data.title));
       }
     }
   }
 
-  int i = 0;
-  String biometricAttribute = "Iris";
-  setInitialBioAttribute() async {
-    if (widget.field.conditionalBioAttributes!.first!.ageGroup!
-            .compareTo(context.read<GlobalProvider>().ageGroup) ==
-        0) {
-      if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("leftEye") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("rightEye")) {
-        biometricAttribute = "Iris";
-      } else if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("rightIndex") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("rightLittle") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("rightRing") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("rightMiddle")) {
-        biometricAttribute = "Right Hand";
-      } else if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("leftIndex") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("leftLittle") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("leftRing") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("leftMiddle")) {
-        biometricAttribute = "Left Hand";
-      } else if (widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("leftThumb") &&
-          widget.field.conditionalBioAttributes!.first!.bioAttributes!
-              .contains("rightThumb")) {
-        biometricAttribute = "Thumbs";
-      } else {
-        biometricAttribute = "Face";
-      }
-    } else {
-      if (widget.field.bioAttributes!.contains("leftEye") &&
-          widget.field.bioAttributes!.contains("rightEye")) {
-        biometricAttribute = "Iris";
-      } else if (widget.field.bioAttributes!.contains("rightIndex") &&
-          widget.field.bioAttributes!.contains("rightLittle") &&
-          widget.field.bioAttributes!.contains("rightRing") &&
-          widget.field.bioAttributes!.contains("rightMiddle")) {
-        biometricAttribute = "Right Hand";
-      } else if (widget.field.bioAttributes!.contains("leftIndex") &&
-          widget.field.bioAttributes!.contains("leftLittle") &&
-          widget.field.bioAttributes!.contains("leftRing") &&
-          widget.field.bioAttributes!.contains("leftMiddle")) {
-        biometricAttribute = "Left Hand";
-      } else if (widget.field.bioAttributes!.contains("leftThumb") &&
-          widget.field.bioAttributes!.contains("rightThumb")) {
-        biometricAttribute = "Thumbs";
-      } else {
-        biometricAttribute = "Face";
-      }
-    }
-    iris.noOfCapturesAllowed = int.parse(await BiometricsApi()
-        .getThresholdValue("mosip.registration.num_of_iris_retries"));
-    leftHand.noOfCapturesAllowed = int.parse(await BiometricsApi()
-        .getThresholdValue("mosip.registration.num_of_fingerprint_retries"));
-    rightHand.noOfCapturesAllowed = int.parse(await BiometricsApi()
-        .getThresholdValue("mosip.registration.num_of_fingerprint_retries"));
-    thumbs.noOfCapturesAllowed = int.parse(await BiometricsApi()
-        .getThresholdValue("mosip.registration.num_of_fingerprint_retries"));
-    face.noOfCapturesAllowed = int.parse(await BiometricsApi()
-        .getThresholdValue("mosip.registration.num_of_face_retries"));
-  }
-
   Widget _getBiometricCaptureSelectionBlock(
       BiometricAttributeData biometricAttributeData) {
     return InkWell(
         onTap: () {
-          setState(() {
-            biometricAttribute = biometricAttributeData.title;
-          });
+          context.read<BiometricCaptureControlProvider>().biometricAttribute =
+              biometricAttributeData.title;
         },
         child: Stack(
           children: [
@@ -209,7 +63,10 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                             ? (biometricAttributeData.exceptions.contains(true))
                                 ? secondaryColors.elementAt(16)
                                 : secondaryColors.elementAt(11)
-                            : (biometricAttribute ==
+                            : (context
+                                        .read<
+                                            BiometricCaptureControlProvider>()
+                                        .biometricAttribute ==
                                     biometricAttributeData.title)
                                 ? secondaryColors.elementAt(12)
                                 : secondaryColors.elementAt(14)),
@@ -257,121 +114,12 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
 
   @override
   Widget build(BuildContext context) {
-    if (i <= 0) {
-      setInitialBioAttribute();
-      i++;
-    }
-    leftHand.thresholdPercentage =
-        context.read<GlobalProvider>().thresholdValuesMap[
-            "mosip.registration.leftslap_fingerprint_threshold"]!;
-    rightHand.thresholdPercentage =
-        context.read<GlobalProvider>().thresholdValuesMap[
-            "mosip.registration.rightslap_fingerprint_threshold"]!;
-    iris.thresholdPercentage = context
-        .read<GlobalProvider>()
-        .thresholdValuesMap["mosip.registration.iris_threshold"]!;
-    thumbs.thresholdPercentage = context
-        .read<GlobalProvider>()
-        .thresholdValuesMap["mosip.registration.thumbs_fingerprint_threshold"]!;
-    face.thresholdPercentage = context
-        .read<GlobalProvider>()
-        .thresholdValuesMap["mosip.registration.face_threshold"]!;
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey("${widget.field.id}")) {
-      if (context
-          .read<GlobalProvider>()
-          .fieldInputValue[widget.field.id]
-          .isNotEmpty) {
-        if (getElementPosition(
-                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
-                "Iris") !=
-            -1) {
-          iris = context
-              .read<GlobalProvider>()
-              .fieldInputValue[widget.field.id]
-              .elementAt(getElementPosition(
-                  context
-                      .read<GlobalProvider>()
-                      .fieldInputValue[widget.field.id],
-                  "Iris"));
-        }
-        if (getElementPosition(
-                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
-                "Right Hand") !=
-            -1) {
-          rightHand = context
-              .read<GlobalProvider>()
-              .fieldInputValue[widget.field.id]
-              .elementAt(getElementPosition(
-                  context
-                      .read<GlobalProvider>()
-                      .fieldInputValue[widget.field.id],
-                  "Right Hand"));
-        }
-        if (getElementPosition(
-                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
-                "Left Hand") !=
-            -1) {
-          leftHand = context
-              .read<GlobalProvider>()
-              .fieldInputValue[widget.field.id]
-              .elementAt(getElementPosition(
-                  context
-                      .read<GlobalProvider>()
-                      .fieldInputValue[widget.field.id],
-                  "Left Hand"));
-        }
-        if (getElementPosition(
-                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
-                "Thumbs") !=
-            -1) {
-          thumbs = context
-              .read<GlobalProvider>()
-              .fieldInputValue[widget.field.id]
-              .elementAt(getElementPosition(
-                  context
-                      .read<GlobalProvider>()
-                      .fieldInputValue[widget.field.id],
-                  "Thumbs"));
-        }
-        if (getElementPosition(
-                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
-                "Face") !=
-            -1) {
-          face = context
-              .read<GlobalProvider>()
-              .fieldInputValue[widget.field.id]
-              .elementAt(getElementPosition(
-                  context
-                      .read<GlobalProvider>()
-                      .fieldInputValue[widget.field.id],
-                  "Face"));
-        }
-        if (getElementPosition(
-                context.read<GlobalProvider>().fieldInputValue[widget.field.id],
-                "Exception") !=
-            -1) {
-          exception = context
-              .read<GlobalProvider>()
-              .fieldInputValue[widget.field.id]
-              .elementAt(getElementPosition(
-                  context
-                      .read<GlobalProvider>()
-                      .fieldInputValue[widget.field.id],
-                  "Exception"));
-        }
-      }
-    }
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
           width: double.infinity,
         ),
-        
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 26, 0, 27),
           child: (widget.field.inputRequired!)
@@ -426,7 +174,9 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                 widget.field.conditionalBioAttributes!.first!
                                     .bioAttributes!
                                     .contains("rightEye"))
-                              _getBiometricCaptureSelectionBlock(iris),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .iris),
                             if (widget.field.conditionalBioAttributes!.first!
                                     .bioAttributes!
                                     .contains("rightIndex") &&
@@ -439,7 +189,9 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                 widget.field.conditionalBioAttributes!.first!
                                     .bioAttributes!
                                     .contains("rightMiddle"))
-                              _getBiometricCaptureSelectionBlock(rightHand),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .rightHand),
                             if (widget.field.conditionalBioAttributes!.first!
                                     .bioAttributes!
                                     .contains("leftIndex") &&
@@ -452,24 +204,52 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                 widget.field.conditionalBioAttributes!.first!
                                     .bioAttributes!
                                     .contains("leftMiddle"))
-                              _getBiometricCaptureSelectionBlock(leftHand),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .leftHand),
                             if (widget.field.conditionalBioAttributes!.first!
                                     .bioAttributes!
                                     .contains("leftThumb") &&
                                 widget.field.conditionalBioAttributes!.first!
                                     .bioAttributes!
                                     .contains("rightThumb"))
-                              _getBiometricCaptureSelectionBlock(thumbs),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .thumbs),
                             if (widget.field.conditionalBioAttributes!.first!
                                 .bioAttributes!
                                 .contains("face"))
-                              _getBiometricCaptureSelectionBlock(face),
-                            if (iris.exceptions.contains(true) ||
-                                rightHand.exceptions.contains(true) ||
-                                leftHand.exceptions.contains(true) ||
-                                thumbs.exceptions.contains(true) ||
-                                face.exceptions.contains(true))
-                              _getBiometricCaptureSelectionBlock(exception),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .face),
+                            if (context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .iris
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .rightHand
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .leftHand
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .thumbs
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .face
+                                    .exceptions
+                                    .contains(true))
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .exception),
                             const SizedBox(
                               height: 5,
                             ),
@@ -484,7 +264,9 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                     .contains("leftEye") &&
                                 widget.field.bioAttributes!
                                     .contains("rightEye"))
-                              _getBiometricCaptureSelectionBlock(iris),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .iris),
                             if (widget.field.bioAttributes!
                                     .contains("rightIndex") &&
                                 widget.field.bioAttributes!
@@ -493,7 +275,9 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                     .contains("rightRing") &&
                                 widget.field.bioAttributes!
                                     .contains("rightMiddle"))
-                              _getBiometricCaptureSelectionBlock(rightHand),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .rightHand),
                             if (widget.field.bioAttributes!
                                     .contains("leftIndex") &&
                                 widget.field.bioAttributes!
@@ -502,89 +286,151 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                     .contains("leftRing") &&
                                 widget.field.bioAttributes!
                                     .contains("leftMiddle"))
-                              _getBiometricCaptureSelectionBlock(leftHand),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .leftHand),
                             if (widget.field.bioAttributes!
                                     .contains("leftThumb") &&
                                 widget.field.bioAttributes!
                                     .contains("rightThumb"))
-                              _getBiometricCaptureSelectionBlock(thumbs),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .thumbs),
                             if (widget.field.bioAttributes!.contains("face"))
-                              _getBiometricCaptureSelectionBlock(face),
-                            if (iris.exceptions.contains(true) ||
-                                rightHand.exceptions.contains(true) ||
-                                leftHand.exceptions.contains(true) ||
-                                thumbs.exceptions.contains(true) ||
-                                face.exceptions.contains(true))
-                              _getBiometricCaptureSelectionBlock(exception),
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .face),
+                            if (context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .iris
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .rightHand
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .leftHand
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .thumbs
+                                    .exceptions
+                                    .contains(true) ||
+                                context
+                                    .read<BiometricCaptureControlProvider>()
+                                    .face
+                                    .exceptions
+                                    .contains(true))
+                              _getBiometricCaptureSelectionBlock(context
+                                  .read<BiometricCaptureControlProvider>()
+                                  .exception),
                             const SizedBox(
                               height: 5,
                             ),
                           ],
                         ),
                 ),
-                if (biometricAttribute == "Iris")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Iris")
                   BiometricCaptureScanBlock(
                     title: "IrisScan",
                     middleBlock: BiometricScanMiddleBlock(
-                        biometricAttributeData: iris,
+                        biometricAttributeData: context
+                            .read<BiometricCaptureControlProvider>()
+                            .iris,
                         field: widget.field,
                         imageHeight: 310.h,
                         imageWidth: 310.h,
                         parameterTitle: "Iris"),
                   ),
-                if (biometricAttribute == "Right Hand")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Right Hand")
                   BiometricCaptureScanBlock(
                       title: "RightHandScan",
                       middleBlock: BiometricScanMiddleBlock(
-                        biometricAttributeData: rightHand,
+                        biometricAttributeData: context
+                            .read<BiometricCaptureControlProvider>()
+                            .rightHand,
                         field: widget.field,
                         imageHeight: 190.h,
                         imageWidth: 190.h,
                         parameterTitle: "RightHand",
                       )),
-                if (biometricAttribute == "Left Hand")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Left Hand")
                   BiometricCaptureScanBlock(
                       title: "LeftHandScan",
                       middleBlock: BiometricScanMiddleBlock(
-                        biometricAttributeData: leftHand,
+                        biometricAttributeData: context
+                            .read<BiometricCaptureControlProvider>()
+                            .leftHand,
                         field: widget.field,
                         imageHeight: 190.h,
                         imageWidth: 190.h,
                         parameterTitle: "LeftHand",
                       )),
-                if (biometricAttribute == "Thumbs")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Thumbs")
                   BiometricCaptureScanBlock(
                       title: "ThumbsScan",
                       middleBlock: BiometricScanMiddleBlock(
-                        biometricAttributeData: thumbs,
+                        biometricAttributeData: context
+                            .read<BiometricCaptureControlProvider>()
+                            .thumbs,
                         field: widget.field,
                         imageHeight: 310.h,
                         imageWidth: 310.h,
                         parameterTitle: "Thumbs",
                       )),
-                if (biometricAttribute == "Face")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Face")
                   BiometricCaptureScanBlock(
                       title: "FaceScan",
                       middleBlock: BiometricScanMiddleBlock(
-                        biometricAttributeData: face,
+                        biometricAttributeData: context
+                            .read<BiometricCaptureControlProvider>()
+                            .face,
                         field: widget.field,
                         imageHeight: 310.h,
                         imageWidth: 310.h,
                         parameterTitle: "Face",
                       )),
-                if (biometricAttribute == "Exception")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Exception")
                   BiometricCaptureScanBlock(
                       title: "ExceptionScan",
                       middleBlock: BiometricScanMiddleBlock(
-                        biometricAttributeData: exception,
+                        biometricAttributeData: context
+                            .read<BiometricCaptureControlProvider>()
+                            .exception,
                         field: widget.field,
                         imageHeight: 310.h,
                         imageWidth: 310.h,
                         parameterTitle: "Exception",
                       )),
-                if (biometricAttribute == "Iris")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Iris")
                   BiometricCaptureExceptionBlock(
-                    attribute: iris,
+                    attribute:
+                        context.read<BiometricCaptureControlProvider>().iris,
                     exceptionImage: SizedBox(
                       height: 164.h,
                       child: Row(
@@ -605,26 +451,56 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                   children: [
                                     InkWell(
                                       onTap: () async {
-                                        if (!(iris.exceptions.elementAt(0)) ==
+                                        if (!(context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .iris
+                                                .exceptions
+                                                .elementAt(0)) ==
                                             true) {
                                           await BiometricsApi().addBioException(
                                               widget.field.id!,
                                               "Iris",
                                               "leftEye");
                                           resetAfterException(
-                                              widget.field.id!, iris);
-                                          setState(() {
-                                            iris.isScanned = false;
-                                            iris.attemptNo = 0;
-
-                                            iris.listofImages = [
-                                              "assets/images/Left Eye@2x.png",
-                                              "assets/images/Right Eye@2x.png"
-                                            ];
-                                            iris.listOfBiometricsDto = [];
-                                            iris.qualityPercentage = 0;
-                                            iris.thresholdPercentage = "0";
-                                          });
+                                              widget.field.id!,
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .iris);
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  false, "isScanned");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(0, "attemptNo");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris([
+                                            "assets/images/Left Eye@2x.png",
+                                            "assets/images/Right Eye@2x.png"
+                                          ], "listofImages");
+                                          List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  listOfBiometrics, "listOfBiometricsDto");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  0.0, "qualityPercentage");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  "0", "thresholdPercentage");
                                         } else {
                                           await BiometricsApi()
                                               .removeBioException(
@@ -632,40 +508,101 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                   "Iris",
                                                   "leftEye");
                                           resetAfterException(
-                                              widget.field.id!, iris);
-                                          setState(() {
-                                            iris.isScanned = false;
-                                            iris.attemptNo = 0;
-
-                                            iris.listofImages = [
-                                              "assets/images/Left Eye@2x.png",
-                                              "assets/images/Right Eye@2x.png"
-                                            ];
-                                            iris.listOfBiometricsDto = [];
-                                            iris.qualityPercentage = 0;
-                                            iris.thresholdPercentage = "0";
-                                          });
+                                              widget.field.id!,
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .iris);
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  false, "isScanned");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(0, "attemptNo");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris([
+                                            "assets/images/Left Eye@2x.png",
+                                            "assets/images/Right Eye@2x.png"
+                                          ], "listofImages");
+                                          List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  listOfBiometrics, "listOfBiometricsDto");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  0, "qualityPercentage");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  "0", "thresholdPercentage");
                                         }
-                                        setState(() {
-                                          iris.exceptions[0] =
-                                              !(iris.exceptions.elementAt(0));
+                                        List<bool> exceptionListCopy = context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .iris
+                                            .exceptions;
+                                        exceptionListCopy[0] =
+                                            !(exceptionListCopy.elementAt(0));
+                                        context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .customSetterIris(exceptionListCopy,
+                                                "exceptions");
 
-                                          if (iris.exceptions.contains(true)) {
-                                            if (iris.exceptionType.isEmpty) {
-                                              iris.exceptionType = "Permanent";
-                                            }
+                                        if (context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .iris
+                                            .exceptions
+                                            .contains(true)) {
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .iris
+                                              .exceptionType
+                                              .isEmpty) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterIris("Permanent",
+                                                    "exceptionType");
                                           }
-                                          if (!iris.exceptions.contains(true)) {
-                                            iris.exceptionType = "";
-                                          }
-                                        });
+                                        }
+                                        if (!context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .iris
+                                            .exceptions
+                                            .contains(true)) {
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  "", "exceptionType");
+                                        }
                                       },
                                       child: Image.asset(
                                         "assets/images/Left Eye@2x.png",
                                         height: 72,
                                       ),
                                     ),
-                                    (iris.exceptions[0] == true)
+                                    (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .iris
+                                                .exceptions[0] ==
+                                            true)
                                         ? Positioned(
                                             top: 0,
                                             left: 0,
@@ -695,26 +632,56 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                   children: [
                                     InkWell(
                                       onTap: () async {
-                                        if (!(iris.exceptions.elementAt(1)) ==
+                                        if (!(context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .iris
+                                                .exceptions
+                                                .elementAt(1)) ==
                                             true) {
                                           await BiometricsApi().addBioException(
                                               widget.field.id!,
                                               "Iris",
                                               "rightEye");
                                           resetAfterException(
-                                              widget.field.id!, iris);
-                                          setState(() {
-                                            iris.isScanned = false;
-                                            iris.attemptNo = 0;
-
-                                            iris.listofImages = [
-                                              "assets/images/Left Eye@2x.png",
-                                              "assets/images/Right Eye@2x.png"
-                                            ];
-                                            iris.listOfBiometricsDto = [];
-                                            iris.qualityPercentage = 0;
-                                            iris.thresholdPercentage = "0";
-                                          });
+                                              widget.field.id!,
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .iris);
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  false, "isScanned");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(0, "attemptNo");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris([
+                                            "assets/images/Left Eye@2x.png",
+                                            "assets/images/Right Eye@2x.png"
+                                          ], "listofImages");
+                                          List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  listOfBiometrics, "listOfBiometricsDto");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  0, "qualityPercentage");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  "0", "thresholdPercentage");
                                         } else {
                                           await BiometricsApi()
                                               .removeBioException(
@@ -722,39 +689,101 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                   "Iris",
                                                   "rightEye");
                                           resetAfterException(
-                                              widget.field.id!, iris);
-                                          setState(() {
-                                            iris.isScanned = false;
-                                            iris.attemptNo = 0;
-
-                                            iris.listofImages = [
-                                              "assets/images/Left Eye@2x.png",
-                                              "assets/images/Right Eye@2x.png"
-                                            ];
-                                            iris.listOfBiometricsDto = [];
-                                            iris.qualityPercentage = 0;
-                                            iris.thresholdPercentage = "0";
-                                          });
+                                              widget.field.id!,
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .iris);
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  false, "isScanned");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(0, "attemptNo");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris([
+                                            "assets/images/Left Eye@2x.png",
+                                            "assets/images/Right Eye@2x.png"
+                                          ], "listofImages");
+                                          List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  listOfBiometrics, "listOfBiometricsDto");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  0, "qualityPercentage");
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  "0", "thresholdPercentage");
                                         }
-                                        setState(() {
-                                          iris.exceptions[1] =
-                                              !(iris.exceptions.elementAt(1));
-                                          if (iris.exceptions.contains(true)) {
-                                            if (iris.exceptionType.isEmpty) {
-                                              iris.exceptionType = "Permanent";
-                                            }
+
+                                        List<bool> exceptionListCopy = context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .iris
+                                            .exceptions;
+                                        exceptionListCopy[1] =
+                                            !(exceptionListCopy.elementAt(1));
+                                        context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .customSetterIris(exceptionListCopy,
+                                                "exceptions");
+                                        if (context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .iris
+                                            .exceptions
+                                            .contains(true)) {
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .iris
+                                              .exceptionType
+                                              .isEmpty) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterIris("Permanent",
+                                                    "exceptionType");
                                           }
-                                          if (!iris.exceptions.contains(true)) {
-                                            iris.exceptionType = "";
-                                          }
-                                        });
+                                        }
+                                        if (!context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .iris
+                                            .exceptions
+                                            .contains(true)) {
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterIris(
+                                                  "", "exceptionType");
+                                        }
                                       },
                                       child: Image.asset(
                                         "assets/images/Right Eye@2x.png",
                                         height: 72,
                                       ),
                                     ),
-                                    (iris.exceptions[1] == true)
+                                    (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .iris
+                                                .exceptions[1] ==
+                                            true)
                                         ? Positioned(
                                             top: 0,
                                             right: 0,
@@ -772,9 +801,14 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                           ]),
                     ),
                   ),
-                if (biometricAttribute == "Right Hand")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Right Hand")
                   BiometricCaptureExceptionBlock(
-                    attribute: rightHand,
+                    attribute: context
+                        .read<BiometricCaptureControlProvider>()
+                        .rightHand,
                     exceptionImage: SizedBox(
                       height: 164.h,
                       child: Row(
@@ -802,7 +836,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       left: 25,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(rightHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .rightHand
+                                                  .exceptions
                                                   .elementAt(0)) ==
                                               true) {
                                             await BiometricsApi()
@@ -811,20 +849,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightIndex");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
-
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -832,42 +894,100 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightIndex");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
-
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            rightHand.exceptions[0] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(0));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                              }
+
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions;
+                                          exceptionListCopy[0] =
+                                              !(exceptionListCopy.elementAt(0));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterRightHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .rightHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterRightHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand.exceptions[0] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .rightHand
+                                                      .exceptions[0] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -879,7 +999,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       left: 40,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(rightHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .rightHand
+                                                  .exceptions
                                                   .elementAt(1)) ==
                                               true) {
                                             await BiometricsApi()
@@ -888,20 +1012,45 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightMiddle");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
 
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -909,42 +1058,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightMiddle");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
-
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            rightHand.exceptions[1] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(1));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions;
+                                          exceptionListCopy[1] =
+                                              !(exceptionListCopy.elementAt(1));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterRightHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .rightHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterRightHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand.exceptions[1] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .rightHand
+                                                      .exceptions[1] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -956,7 +1162,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       right: 16,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(rightHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .rightHand
+                                                  .exceptions
                                                   .elementAt(2)) ==
                                               true) {
                                             await BiometricsApi()
@@ -965,20 +1175,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightRing");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
-
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -986,42 +1220,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightRing");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
-
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            rightHand.exceptions[2] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(2));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions;
+                                          exceptionListCopy[2] =
+                                              !(exceptionListCopy.elementAt(2));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterRightHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .rightHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterRightHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand.exceptions[2] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .rightHand
+                                                      .exceptions[2] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -1033,7 +1324,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       right: 5,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(rightHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .rightHand
+                                                  .exceptions
                                                   .elementAt(3)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1042,20 +1337,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightLittle");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
-
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -1063,42 +1382,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "RightHand",
                                                     "rightLittle");
                                             resetAfterException(
-                                                widget.field.id!, rightHand);
-                                            setState(() {
-                                              rightHand.isScanned = false;
-                                              rightHand.attemptNo = 0;
-
-                                              rightHand.listofImages = [
-                                                "assets/images/Right Hand@2x.png"
-                                              ];
-                                              rightHand.listOfBiometricsDto =
-                                                  [];
-                                              rightHand.qualityPercentage = 0;
-                                              rightHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .rightHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand([
+                                              "assets/images/Right Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            rightHand.exceptions[3] =
-                                                !(rightHand.exceptions
-                                                    .elementAt(3));
-                                            if (rightHand.exceptions
-                                                .contains(true)) {
-                                              if (rightHand
-                                                  .exceptionType.isEmpty) {
-                                                rightHand.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions;
+                                          exceptionListCopy[3] =
+                                              !(exceptionListCopy.elementAt(3));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterRightHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .rightHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterRightHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!rightHand.exceptions
-                                                .contains(true)) {
-                                              rightHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .rightHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterRightHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (rightHand.exceptions[3] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .rightHand
+                                                      .exceptions[3] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -1113,9 +1489,14 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                       ),
                     ),
                   ),
-                if (biometricAttribute == "Left Hand")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Left Hand")
                   BiometricCaptureExceptionBlock(
-                    attribute: leftHand,
+                    attribute: context
+                        .read<BiometricCaptureControlProvider>()
+                        .leftHand,
                     exceptionImage: SizedBox(
                       height: 164.h,
                       child: Row(
@@ -1143,7 +1524,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       right: 25,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(leftHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .leftHand
+                                                  .exceptions
                                                   .elementAt(0)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1152,19 +1537,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftIndex");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -1172,41 +1582,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftIndex");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            leftHand.exceptions[0] = !(leftHand
-                                                .exceptions
-                                                .elementAt(0));
-                                            if (leftHand.exceptions
-                                                .contains(true)) {
-                                              if (leftHand
-                                                  .exceptionType.isEmpty) {
-                                                leftHand.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions;
+                                          exceptionListCopy[0] =
+                                              !(exceptionListCopy.elementAt(0));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterLeftHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .leftHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterLeftHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!leftHand.exceptions
-                                                .contains(true)) {
-                                              leftHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (leftHand.exceptions[0] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .leftHand
+                                                      .exceptions[0] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -1218,7 +1686,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       right: 40,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(leftHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .leftHand
+                                                  .exceptions
                                                   .elementAt(1)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1227,19 +1699,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftMiddle");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -1247,41 +1744,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftMiddle");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            leftHand.exceptions[1] = !(leftHand
-                                                .exceptions
-                                                .elementAt(1));
-                                            if (leftHand.exceptions
-                                                .contains(true)) {
-                                              if (leftHand
-                                                  .exceptionType.isEmpty) {
-                                                leftHand.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions;
+                                          exceptionListCopy[1] =
+                                              !(exceptionListCopy.elementAt(1));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterLeftHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .leftHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterLeftHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!leftHand.exceptions
-                                                .contains(true)) {
-                                              leftHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (leftHand.exceptions[1] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .leftHand
+                                                      .exceptions[1] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -1293,7 +1848,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       left: 16,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(leftHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .leftHand
+                                                  .exceptions
                                                   .elementAt(2)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1302,19 +1861,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftRing");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -1322,41 +1906,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftRing");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            leftHand.exceptions[2] = !(leftHand
-                                                .exceptions
-                                                .elementAt(2));
-                                            if (leftHand.exceptions
-                                                .contains(true)) {
-                                              if (leftHand
-                                                  .exceptionType.isEmpty) {
-                                                leftHand.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions;
+                                          exceptionListCopy[2] =
+                                              !(exceptionListCopy.elementAt(2));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterLeftHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .leftHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterLeftHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!leftHand.exceptions
-                                                .contains(true)) {
-                                              leftHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (leftHand.exceptions[2] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .leftHand
+                                                      .exceptions[2] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -1368,7 +2010,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       left: 5,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(leftHand.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .leftHand
+                                                  .exceptions
                                                   .elementAt(3)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1377,19 +2023,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftLittle");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -1397,41 +2068,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "LeftHand",
                                                     "leftLittle");
                                             resetAfterException(
-                                                widget.field.id!, leftHand);
-                                            setState(() {
-                                              leftHand.isScanned = false;
-                                              leftHand.attemptNo = 0;
-
-                                              leftHand.listofImages = [
-                                                "assets/images/Left Hand@2x.png"
-                                              ];
-                                              leftHand.listOfBiometricsDto = [];
-                                              leftHand.qualityPercentage = 0;
-                                              leftHand.thresholdPercentage =
-                                                  "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .leftHand);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand([
+                                              "assets/images/Left Hand@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            leftHand.exceptions[3] = !(leftHand
-                                                .exceptions
-                                                .elementAt(3));
-                                            if (leftHand.exceptions
-                                                .contains(true)) {
-                                              if (leftHand
-                                                  .exceptionType.isEmpty) {
-                                                leftHand.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions;
+                                          exceptionListCopy[3] =
+                                              !(exceptionListCopy.elementAt(3));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterLeftHand(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .leftHand
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterLeftHand(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!leftHand.exceptions
-                                                .contains(true)) {
-                                              leftHand.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .leftHand
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterLeftHand(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (leftHand.exceptions[3] ==
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .leftHand
+                                                      .exceptions[3] ==
                                                   true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
@@ -1446,9 +2175,13 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                       ),
                     ),
                   ),
-                if (biometricAttribute == "Thumbs")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Thumbs")
                   BiometricCaptureExceptionBlock(
-                    attribute: thumbs,
+                    attribute:
+                        context.read<BiometricCaptureControlProvider>().thumbs,
                     exceptionImage: SizedBox(
                       height: 164.h,
                       child: Row(
@@ -1476,7 +2209,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       left: 25,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(thumbs.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .thumbs
+                                                  .exceptions
                                                   .elementAt(0)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1485,18 +2222,45 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "Thumbs",
                                                     "leftThumb");
                                             resetAfterException(
-                                                widget.field.id!, thumbs);
-                                            setState(() {
-                                              thumbs.isScanned = false;
-                                              thumbs.attemptNo = 0;
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .thumbs);
 
-                                              thumbs.listofImages = [
-                                                "assets/images/Thumbs@2x.png"
-                                              ];
-                                              thumbs.listOfBiometricsDto = [];
-                                              thumbs.qualityPercentage = 0;
-                                              thumbs.thresholdPercentage = "0";
-                                            });
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs([
+                                              "assets/images/Thumbs@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -1504,40 +2268,100 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "Thumbs",
                                                     "leftThumb");
                                             resetAfterException(
-                                                widget.field.id!, thumbs);
-                                            setState(() {
-                                              thumbs.isScanned = false;
-                                              thumbs.attemptNo = 0;
-
-                                              thumbs.listofImages = [
-                                                "assets/images/Thumbs@2x.png"
-                                              ];
-                                              thumbs.listOfBiometricsDto = [];
-                                              thumbs.qualityPercentage = 0;
-                                              thumbs.thresholdPercentage = "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .thumbs);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs([
+                                              "assets/images/Thumbs@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            thumbs.exceptions[0] = !(thumbs
-                                                .exceptions
-                                                .elementAt(0));
-                                            if (thumbs.exceptions
-                                                .contains(true)) {
-                                              if (thumbs
-                                                  .exceptionType.isEmpty) {
-                                                thumbs.exceptionType =
-                                                    "Permanent";
-                                              }
+
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .thumbs
+                                              .exceptions;
+                                          exceptionListCopy[0] =
+                                              !(exceptionListCopy.elementAt(0));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterThumbs(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .thumbs
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .thumbs
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterThumbs(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!thumbs.exceptions
-                                                .contains(true)) {
-                                              thumbs.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .thumbs
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (thumbs.exceptions[0] == true)
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .thumbs
+                                                      .exceptions[0] ==
+                                                  true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
                                           size: 20,
@@ -1548,7 +2372,11 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                       right: 25,
                                       child: InkWell(
                                         onTap: () async {
-                                          if (!(thumbs.exceptions
+                                          if (!(context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .thumbs
+                                                  .exceptions
                                                   .elementAt(1)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1557,18 +2385,44 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "Thumbs",
                                                     "rightThumb");
                                             resetAfterException(
-                                                widget.field.id!, thumbs);
-                                            setState(() {
-                                              thumbs.isScanned = false;
-                                              thumbs.attemptNo = 0;
-
-                                              thumbs.listofImages = [
-                                                "assets/images/Thumbs@2x.png"
-                                              ];
-                                              thumbs.listOfBiometricsDto = [];
-                                              thumbs.qualityPercentage = 0;
-                                              thumbs.thresholdPercentage = "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .thumbs);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs([
+                                              "assets/images/Thumbs@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                   listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    "0", "thresholdPercentage");
                                           } else {
                                             await BiometricsApi()
                                                 .removeBioException(
@@ -1576,40 +2430,99 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                                                     "Thumbs",
                                                     "rightThumb");
                                             resetAfterException(
-                                                widget.field.id!, thumbs);
-                                            setState(() {
-                                              thumbs.isScanned = false;
-                                              thumbs.attemptNo = 0;
-
-                                              thumbs.listofImages = [
-                                                "assets/images/Thumbs@2x.png"
-                                              ];
-                                              thumbs.listOfBiometricsDto = [];
-                                              thumbs.qualityPercentage = 0;
-                                              thumbs.thresholdPercentage = "0";
-                                            });
+                                                widget.field.id!,
+                                                context
+                                                    .read<
+                                                        BiometricCaptureControlProvider>()
+                                                    .thumbs);
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    false, "isScanned");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "attemptNo");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs([
+                                              "assets/images/Thumbs@2x.png"
+                                            ], "listofImages");
+                                            List<BiometricsDto> listOfBiometrics =
+                                              [];
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    listOfBiometrics, "listOfBiometricsDto");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    0, "qualityPercentage");
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    "0", "thresholdPercentage");
                                           }
-                                          setState(() {
-                                            thumbs.exceptions[1] = !(thumbs
-                                                .exceptions
-                                                .elementAt(1));
-                                            if (thumbs.exceptions
-                                                .contains(true)) {
-                                              if (thumbs
-                                                  .exceptionType.isEmpty) {
-                                                thumbs.exceptionType =
-                                                    "Permanent";
-                                              }
+                                          List<bool> exceptionListCopy = context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .thumbs
+                                              .exceptions;
+                                          exceptionListCopy[1] =
+                                              !(exceptionListCopy.elementAt(1));
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .customSetterThumbs(
+                                                  exceptionListCopy,
+                                                  "exceptions");
+                                          if (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .thumbs
+                                              .exceptions
+                                              .contains(true)) {
+                                            if (context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .thumbs
+                                                .exceptionType
+                                                .isEmpty) {
+                                              context
+                                                  .read<
+                                                      BiometricCaptureControlProvider>()
+                                                  .customSetterThumbs(
+                                                      "Permanent",
+                                                      "exceptionType");
                                             }
-                                            if (!thumbs.exceptions
-                                                .contains(true)) {
-                                              thumbs.exceptionType = "";
-                                            }
-                                          });
+                                          }
+                                          if (!context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .thumbs
+                                              .exceptions
+                                              .contains(true)) {
+                                            context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .customSetterThumbs(
+                                                    "", "exceptionType");
+                                          }
                                         },
                                         child: Icon(
                                           Icons.cancel_rounded,
-                                          color: (thumbs.exceptions[1] == true)
+                                          color: (context
+                                                      .read<
+                                                          BiometricCaptureControlProvider>()
+                                                      .thumbs
+                                                      .exceptions[1] ==
+                                                  true)
                                               ? secondaryColors.elementAt(15)
                                               : Colors.transparent,
                                           size: 20,
@@ -1623,9 +2536,13 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                       ),
                     ),
                   ),
-                if (biometricAttribute == "Face")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Face")
                   BiometricCaptureExceptionBlock(
-                    attribute: face,
+                    attribute:
+                        context.read<BiometricCaptureControlProvider>().face,
                     exceptionImage: SizedBox(
                       height: 228.h,
                       child: Row(
@@ -1655,9 +2572,14 @@ class _BiometricCaptureControlLandscapeState extends State<BiometricCaptureContr
                       ),
                     ),
                   ),
-                if (biometricAttribute == "Exception")
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute ==
+                    "Exception")
                   BiometricCaptureExceptionBlock(
-                    attribute: exception,
+                    attribute: context
+                        .read<BiometricCaptureControlProvider>()
+                        .exception,
                     exceptionImage: SizedBox(
                       height: 228.h,
                       child: Row(

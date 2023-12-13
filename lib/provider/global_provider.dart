@@ -327,7 +327,7 @@ class GlobalProvider with ChangeNotifier {
 
   getThresholdValues() async {
     for (var e in thresholdValuesMap.keys) {
-      thresholdValuesMap[e] = await BiometricsApi().getThresholdValue(e);
+      thresholdValuesMap[e] = await BiometricsApi().getMapValue(e);
     }
   }
 

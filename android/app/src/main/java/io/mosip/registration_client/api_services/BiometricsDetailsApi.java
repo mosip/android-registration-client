@@ -342,7 +342,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     }
 
     @Override
-    public void getThresholdValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
+    public void getMapValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
       String response=globalParamRepository.getCachedStringGlobalParam(key);
       result.success(response);
     }
