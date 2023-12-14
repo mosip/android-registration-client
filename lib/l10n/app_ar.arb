@@ -97,5 +97,30 @@
         "type": "String"
       }
     }
-  }
+  },
+  "synchronize_data": "مزامنة البيانات",
+  "registration_tasks": "مهام التسجيل",
+  "operation_tasks": "المهام التشغيلية",
+  "system_storage_usage": "استخدام تخزين النظام",
+  "download_pre_registration_data": "تنزيل بيانات التسجيل المسبق",
+  "update_operator_biomterics": "تحديث القياسات الحيوية للمشغل",
+  "appliction_upload": "تحميل التطبيق",
+  "check_updates": "تفقد التحديث",
+  "center_remap_sync": "مركز إعادة رسم خريطة المزامنة.",
+  "sync_activities": "مزامنة. أنشطة",
+  "dashboard": "لوحة القيادة",
+  "settings": "إعدادات",
+  "notifications": "إشعارات",
+  "profile": "حساب تعريفي",
+  "select_language": "اختار اللغة",
+  "select_two_languages": "يرجى اختيار أي لغتين لإدخال البيانات.",
+  "english_mandatory": "اللغة الإنجليزية إلزامية للمقيم للاختيار وفقًا للإرشادات الحكومية. سيؤدي ترتيب الاختيار إلى عرض الصفحة للبيانات الديموغرافية.",
+  "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
+  "cancel": "يلغي",
+  "submit": "يُقدِّم",
+  "go_back": "عُد",
+  "informed": "أُبلغ",
+  "logo_text": "مدعوم من موسيب",
+  "get_onboard": "إركب",
+  "skip_to_home": "انتقل إلى المنزل"
 }

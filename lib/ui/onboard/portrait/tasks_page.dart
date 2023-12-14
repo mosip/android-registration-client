@@ -5,6 +5,7 @@ import 'package:registration_client/ui/onboard/portrait/operational_tasks.dart';
 import 'package:registration_client/ui/onboard/portrait/registration_tasks.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({
@@ -57,7 +58,7 @@ class _TasksPageState extends State<TasksPage> {
                   ),
                   child: Center(
                     child: Text(
-                      'Registration Tasks',
+                      AppLocalizations.of(context)!.registration_tasks,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: semiBold,
@@ -95,7 +96,7 @@ class _TasksPageState extends State<TasksPage> {
                   ),
                   child: Center(
                     child: Text(
-                      'Operational Tasks',
+                      AppLocalizations.of(context)!.operation_tasks,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: semiBold,

@@ -5,6 +5,7 @@ import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
 import 'package:registration_client/ui/onboard/widgets/onboard_landing_page_navbar_icon.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MobileHomePage extends StatefulWidget {
   const MobileHomePage({
@@ -82,7 +83,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                   color: solidPrimary,
                 ),
                 title: Text(
-                  "Dashboard",
+                  AppLocalizations.of(context)!.dashboard,
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
@@ -99,7 +100,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                   color: secondaryColors.elementAt(5),
                 ),
                 title: Text(
-                  "Settings",
+                  AppLocalizations.of(context)!.settings,
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
@@ -130,7 +131,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                   color: secondaryColors.elementAt(5),
                 ),
                 title: Text(
-                  "Notifications",
+                  AppLocalizations.of(context)!.notifications,
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
@@ -147,7 +148,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                   color: secondaryColors.elementAt(5),
                 ),
                 title: Text(
-                  "Account",
+                  AppLocalizations.of(context)!.profile,
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

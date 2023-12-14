@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +10,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegistrationTasks extends StatefulWidget {
   const RegistrationTasks({
@@ -29,11 +29,6 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   @override
   void initState() {
     super.initState();
-    String syncTime = context.read<SyncProvider>().lastSuccessfulSyncTime;
-    String formattedTime = DateFormat("EEEE d MMMM, hh:mma")
-        .format(DateTime.parse(syncTime).toLocal())
-        .toString();
-    log("sync time: $formattedTime");
   }
 
   @override
@@ -108,7 +103,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               width: 24.w,
             ),
             Text(
-              'Synchronize Data',
+              AppLocalizations.of(context)!.synchronize_data,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: semiBold,

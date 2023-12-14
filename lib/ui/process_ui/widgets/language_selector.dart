@@ -10,6 +10,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/ui/widgets/language_component.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LanguageSelector extends StatefulWidget {
   const LanguageSelector({super.key, required this.newProcess});
@@ -21,7 +22,7 @@ class LanguageSelector extends StatefulWidget {
 
 class _LanguageSelectorState extends State<LanguageSelector> {
   bool isMobile = true;
-
+  String? notificationLanguage;
   _getRegistrationError() {
     return context.read<RegistrationTaskProvider>().registrationStartError;
   }
@@ -60,6 +61,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
 
     List<String> langList = _getRegistrationLanguageList();
     await _startRegistration(langList);
+    _addNotificationLanguage();
     String registrationStartError = _getRegistrationError();
     _navigateBack();
     if (registrationStartError.isEmpty) {
@@ -67,6 +69,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     } else {
       _showInSnackBar(registrationStartError);
     }
+  }
+
+  _addNotificationLanguage() {
+    context.read<RegistrationTaskProvider>().addDemographicField(
+        "preferredLang",
+        context.read<GlobalProvider>().fieldInputValue["preferredLang"] ?? "");
   }
 
   @override
@@ -88,7 +96,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return AlertDialog(
       title: Text(
-        "Select Language",
+        AppLocalizations.of(context)!.select_language,
         style: TextStyle(
             fontSize: isMobile ? 24 : 18, fontWeight: FontWeight.bold),
       ),
@@ -103,7 +111,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             ListTile(
               minLeadingWidth: 0,
               title: Text(
-                "Please select any $minLanguage language for data entry",
+                AppLocalizations.of(context)!.select_two_languages,
                 style: const TextStyle(
                   fontSize: 22,
                 ),
@@ -113,15 +121,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 color: Colors.green,
               ),
             ),
-            const ListTile(
+             ListTile(
               minLeadingWidth: 0,
               title: Text(
-                "English is Mandatory for the residents to select as per government guidelines. The order of selection will lead to page view for demographic data.",
-                style: TextStyle(
+                AppLocalizations.of(context)!.english_mandatory,
+                style: const TextStyle(
                   fontSize: 22,
                 ),
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.check,
                 color: Colors.green,
               ),
@@ -130,7 +138,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
               height: 45.h,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.25.w),
+              padding: EdgeInsets.symmetric(
+                horizontal: 10.25.w,
+              ),
               child: Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
@@ -266,16 +276,64 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             //       ),
             // const Spacer(),
             SizedBox(
-              height: 31.h,
+              height: isMobile ? 42.h : 31.h,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 10.25.w,
+              ),
+              child: Text(
+                "Notification languages",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: semiBold,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15.h,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 10.25.w,
+              ),
+              child: Wrap(
+                spacing: 8.w,
+                runSpacing: 8.h,
+                children: context
+                    .watch<GlobalProvider>()
+                    .notificationLanguages
+                    .map((e) {
+                  return LanguageComponent(
+                    title: e!,
+                    isSelected: context
+                            .watch<GlobalProvider>()
+                            .fieldInputValue["preferredLang"] ==
+                        e,
+                    onTap: () {
+                      context.read<GlobalProvider>().setInputMapValue(
+                            "preferredLang",
+                            e,
+                            context.read<GlobalProvider>().fieldInputValue,
+                          );
+                    },
+                    isMobile: isMobile,
+                    isFreezed: false,
+                  );
+                }).toList(),
+              ),
+            ),
+            SizedBox(
+              height: 24.h,
             ),
             Container(
               padding: const EdgeInsets.all(12),
               width: double.infinity,
               margin: const EdgeInsets.symmetric(horizontal: 16),
               color: const Color(0xffFFFAF0),
-              child: const Text(
-                "Please note that the language might be based on data entered during Pre-registration.",
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.language_selector_note,
+                style: const TextStyle(
                   color: Color(
                     0xff764B00,
                   ),
@@ -294,11 +352,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         Row(
           children: [
             const Expanded(
-              child: SizedBox(
-                
-              ),
+              child: SizedBox(),
             ),
-            const Expanded(child: SizedBox(),),
+            const Expanded(
+              child: SizedBox(),
+            ),
             Expanded(
               child: OutlinedButton(
                 onPressed: () {
@@ -308,7 +366,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   height: isMobile ? 62.h : 37.h,
                   child: Center(
                     child: Text(
-                      "CANCEL",
+                      AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
                         fontSize: isMobile ? 18 : 14,
                       ),
@@ -323,27 +381,40 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  if (context.read<GlobalProvider>().chosenLang.length >=
+                  if (context
+                              .read<GlobalProvider>()
+                              .chosenLang
+                              .length >=
                           minLanguage &&
                       context.read<GlobalProvider>().chosenLang.length <=
-                          maxLanguage) {
+                          maxLanguage &&
+                      context
+                              .read<GlobalProvider>()
+                              .fieldInputValue["preferredLang"] !=
+                          null) {
                     _navigateToConsentPage();
                   }
                 },
                 style: ButtonStyle(
-                  backgroundColor:
-                      (context.read<GlobalProvider>().chosenLang.length >=
-                                  minLanguage &&
-                              context.read<GlobalProvider>().chosenLang.length <=
-                                  maxLanguage)
-                          ? MaterialStateProperty.all<Color>(solidPrimary)
-                          : MaterialStateProperty.all<Color>(Colors.grey),
+                  backgroundColor: (context
+                                  .read<GlobalProvider>()
+                                  .chosenLang
+                                  .length >=
+                              minLanguage &&
+                          context.read<GlobalProvider>().chosenLang.length <=
+                              maxLanguage &&
+                          context
+                                  .read<GlobalProvider>()
+                                  .fieldInputValue["preferredLang"] !=
+                              null)
+                      ? MaterialStateProperty.all<Color>(solidPrimary)
+                      : MaterialStateProperty.all<Color>(Colors.grey),
                 ),
                 child: SizedBox(
                   height: isMobile ? 62.h : 37.h,
                   child: Center(
                     child: Text(
-                      "SUBMIT",
+                      AppLocalizations.of(context)!.submit,
                       style: TextStyle(
                         fontSize: isMobile ? 18 : 14,
                       ),

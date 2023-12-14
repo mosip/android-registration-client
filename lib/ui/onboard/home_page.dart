@@ -18,6 +18,7 @@ import 'package:registration_client/ui/common/tablet_footer.dart';
 import 'package:registration_client/ui/common/tablet_header.dart';
 import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
+import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -26,7 +27,6 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'widgets/home_page_card.dart';
 
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
@@ -83,6 +83,7 @@ class _HomePageState extends State<HomePage> {
 
   void _fetchProcessSpec() async {
     await _getNewProcessSpecAction();
+    await _getFieldValues("preferredLang", "eng");
     await _getCenterNameAction();
     await _homePageLoadedAudit();
   }
@@ -93,6 +94,17 @@ class _HomePageState extends State<HomePage> {
 
   _initializeLocationHierarchy() async {
     await context.read<GlobalProvider>().initializeLocationHierarchyMap();
+  }
+
+  _getFieldValues(String fieldId, String langCode) async {
+    List<String?> fieldValues = await context
+        .read<RegistrationTaskProvider>()
+        .getFieldValues(fieldId, langCode);
+    _setNotificationLanguages(fieldValues);
+  }
+
+  _setNotificationLanguages(List<String?> fieldValues) {
+    context.read<GlobalProvider>().setNotificationLanguages(fieldValues);
   }
 
   _homePageLoadedAudit() async {
@@ -150,10 +162,6 @@ class _HomePageState extends State<HomePage> {
     await context.read<RegistrationTaskProvider>().getListOfProcesses();
   }
 
-  // _getUiSchemaAction(BuildContext context) async {
-  //   await context.read<RegistrationTaskProvider>().getUISchema();
-  // }
-
   _getCenterNameAction() async {
     String regCenterId = context.read<GlobalProvider>().centerId;
 
@@ -186,7 +194,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "Download Pre-Registration Data",
+        "title": AppLocalizations.of(context)!.download_pre_registration_data,
         "onTap": () {},
         "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
       },
@@ -194,7 +202,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",
         ),
-        "title": "Update Operator Biometrics",
+        "title": AppLocalizations.of(context)!.update_operator_biomterics,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -202,7 +210,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "Application Upload",
+        "title": AppLocalizations.of(context)!.appliction_upload,
         "onTap": () {},
         "subtitle": "3 application(s)"
       },
@@ -210,7 +218,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Onboarding Yourself.svg",
         ),
-        "title": "Check Updates",
+        "title": AppLocalizations.of(context)!.check_updates,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -218,7 +226,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "Center Remap Sync.",
+        "title": AppLocalizations.of(context)!.center_remap_sync,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -226,7 +234,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "Sync. Activities",
+        "title": AppLocalizations.of(context)!.sync_activities,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -287,7 +295,7 @@ class _HomePageState extends State<HomePage> {
                                                 height: 30.h,
                                               ),
                                               Text(
-                                                "Registration Tasks",
+                                                AppLocalizations.of(context)!.registration_tasks,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyLarge
@@ -369,7 +377,7 @@ class _HomePageState extends State<HomePage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "Operational Tasks",
+                                                AppLocalizations.of(context)!.operation_tasks,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyLarge
