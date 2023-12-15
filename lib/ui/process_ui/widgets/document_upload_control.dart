@@ -470,17 +470,20 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                               _showDropdownBottomSheet(snapshot,widget.field.label!["eng"],context);
                                             },
                                             validator: (value) {
-                                              if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
-                                              if (value == null || value.isEmpty) {
+                                              if (!widget
+                                                  .field.required! &&
+                                                  widget.field.requiredOn!
+                                                      .isEmpty) {
                                                 return null;
-                                              } else if (!widget.validation.hasMatch(value)) {
-                                                  return 'Invalid input';
                                               }
-                                               }
-                                              if (value == null || value.isEmpty) {
-                                                return 'Please enter a value';
+                                              if ((value == null ||
+                                                  value.isEmpty) &&
+                                                  widget.field
+                                                      .inputRequired!) {
+                                                return 'Please select a value';
                                               }
-                                              if (!widget.validation.hasMatch(value)) {
+                                              if (!widget.validation
+                                                  .hasMatch(value!)) {
                                                 return 'Invalid input';
                                               }
                                               return null;
@@ -525,7 +528,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       var doc = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => const ScannerPage(
+                                            builder: (context) => const Scanner(
                                                 title: "Scan Document")),
                                       );
                                       await addDocument(doc, widget.field);
@@ -598,6 +601,9 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   void _showDropdownBottomSheet(AsyncSnapshot? snapshot, String? title, BuildContext context) {
+    setState(() {
+      textController.text = snapshot!.data[0];
+    });
     showModalBottomSheet(
       isDismissible: false,
       context: context,
@@ -610,7 +616,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       builder: (BuildContext context) {
         return  Container(
           width: MediaQuery.of(context).size.width,
-          height: double.maxFinite,
+          height: snapshot!.data.length<=1 ? 200:350,
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -644,65 +650,36 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   ))
                 ],
               ),
+              const Divider(color: Color(0XFFBDCDF4),thickness: 1,),
           Expanded(
+            flex:3,
             child: CupertinoPicker(
               itemExtent: 50,
+              scrollController: FixedExtentScrollController(
+                initialItem: 0,
+              ),
+              onSelectedItemChanged: (int index) {
+                setState(() {
+                  textController.text = snapshot.data[index];
+                });
+              },
+              looping: false,
+              backgroundColor: Colors.white,
               children: <Widget>[
-                for (var i = 0;
-                i < snapshot!.data.length;
-                i++)
+                for (var i = 0; i < snapshot.data.length; i++)...[
                   ListTile(
                     title: Center(
                       child: Text(
                         snapshot.data[i],
-                        style: TextStyle(fontSize: 20,color: Colors.indigo,fontWeight: FontWeight.w500),
+                        style: const TextStyle(fontSize: 22,color: Color(0XFF1C429F),fontWeight: FontWeight.w500),
                       ),
                     ),
-                    trailing: Icon(Icons.check,size: 35,color: Colors.indigo,)
+                    trailing: Icon(Icons.check,size: 30,color: snapshot.data[i]==textController.text?const Color(0XFF1C429F):Colors.white,)
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: <Widget>[
-                  //     Padding(
-                  //       padding: EdgeInsets.only(left: 10),
-                  //       child: Text(
-                  //         snapshot[i],
-                  //         style: TextStyle(fontSize: 20,color: Colors.indigo,fontWeight: FontWeight.w500),
-                  //       ),
-                  //     ),
-                  //     Icon(Icons.check,size: 25,)
-                  //   ],
-                  // ),
+                  ],
               ],
-              onSelectedItemChanged: (int index) {
-                print('good boi');
-              },
-              looping: false,
-              backgroundColor: Colors.white,
             ),
           ),
-
-        // ListView.builder(
-              //   shrinkWrap: true,
-              //   itemCount: snapshot.data.length,
-              //   itemBuilder: (BuildContext context, int index) {
-              //   return GestureDetector(
-              //     onTap: () {
-              //       setState(() {
-              //         textController.text = snapshot.data[index];
-              //       });
-              //       Navigator.of(context).pop();
-              //     },
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       children: [
-              //         Text(snapshot.data[index],style: const TextStyle(fontSize: 20),),
-              //         const SizedBox(width: 80,),
-              //         const Icon(Icons.check),
-              //       ],
-              //     ),
-              //   );
-              // })
             ],
           ),
         );
