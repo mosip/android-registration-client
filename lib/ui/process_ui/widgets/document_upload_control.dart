@@ -136,7 +136,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     listofImages: [],
   );
   String? selected;
-  final TextEditingController textController = TextEditingController(text:"");
+  final TextEditingController documentController = TextEditingController(text:"");
 
   void saveData(value) {
     if (value != null) {
@@ -350,96 +350,96 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     // ),
                     Row(
                       children: [
-                        Expanded(
-                            child: FutureBuilder(
-                                future: _getDocumentValues(
-                                    widget.field.subType!, "eng", null),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<String?>> snapshot) {
-                                  return Card(
-                                    elevation: 0,
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 1, horizontal: 12),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 24, horizontal: 16),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CustomLabel(field: widget.field),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          snapshot.hasData
-                                              ? DropdownButtonFormField(
-                                                  icon: const Icon(null),
-                                                  decoration: InputDecoration(
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                                .symmetric(
-                                                            horizontal: 16.0),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        color: Colors.grey,
-                                                        width: 1.0,
-                                                      ),
-                                                    ),
-                                                    hintText: "Select Option",
-                                                    hintStyle: const TextStyle(
-                                                        color:
-                                                            Color(0xff999999)),
-                                                  ),
-                                                  items: snapshot.data!
-                                                      .map((option) =>
-                                                          DropdownMenuItem(
-                                                            value: option,
-                                                            child:
-                                                                Text(option!),
-                                                          ))
-                                                      .toList(),
-                                                  autovalidateMode:
-                                                      AutovalidateMode
-                                                          .onUserInteraction,
-                                                  value: selected,
-                                                  validator: (value) {
-                                                    if (!widget
-                                                            .field.required! &&
-                                                        widget.field.requiredOn!
-                                                            .isEmpty) {
-                                                      return null;
-                                                    }
-                                                    if ((value == null ||
-                                                            value.isEmpty) &&
-                                                        widget.field
-                                                            .inputRequired!) {
-                                                      return 'Please select a value';
-                                                    }
-                                                    if (!widget.validation
-                                                        .hasMatch(value!)) {
-                                                      return 'Invalid input';
-                                                    }
-                                                    return null;
-                                                  },
-                                                  onChanged: (value) {
-                                                    saveData(value);
-
-                                                    setState(() {
-                                                      selected = value!;
-                                                      doc.title = value;
-                                                    });
-                                                  },
-                                                )
-                                              : const SizedBox.shrink(),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                })),
+                        // Expanded(
+                        //     child: FutureBuilder(
+                        //         future: _getDocumentValues(
+                        //             widget.field.subType!, "eng", null),
+                        //         builder: (BuildContext context,
+                        //             AsyncSnapshot<List<String?>> snapshot) {
+                        //           return Card(
+                        //             elevation: 0,
+                        //             margin: const EdgeInsets.symmetric(
+                        //                 vertical: 1, horizontal: 12),
+                        //             child: Padding(
+                        //               padding: const EdgeInsets.symmetric(
+                        //                   vertical: 24, horizontal: 16),
+                        //               child: Column(
+                        //                 crossAxisAlignment:
+                        //                     CrossAxisAlignment.start,
+                        //                 children: [
+                        //                   CustomLabel(field: widget.field),
+                        //                   const SizedBox(
+                        //                     height: 10,
+                        //                   ),
+                        //                   snapshot.hasData
+                        //                       ? DropdownButtonFormField(
+                        //                           icon: const Icon(null),
+                        //                           decoration: InputDecoration(
+                        //                             contentPadding:
+                        //                                 const EdgeInsets
+                        //                                         .symmetric(
+                        //                                     horizontal: 16.0),
+                        //                             border: OutlineInputBorder(
+                        //                               borderRadius:
+                        //                                   BorderRadius.circular(
+                        //                                       8.0),
+                        //                               borderSide:
+                        //                                   const BorderSide(
+                        //                                 color: Colors.grey,
+                        //                                 width: 1.0,
+                        //                               ),
+                        //                             ),
+                        //                             hintText: "Select Option",
+                        //                             hintStyle: const TextStyle(
+                        //                                 color:
+                        //                                     Color(0xff999999)),
+                        //                           ),
+                        //                           items: snapshot.data!
+                        //                               .map((option) =>
+                        //                                   DropdownMenuItem(
+                        //                                     value: option,
+                        //                                     child:
+                        //                                         Text(option!),
+                        //                                   ))
+                        //                               .toList(),
+                        //                           autovalidateMode:
+                        //                               AutovalidateMode
+                        //                                   .onUserInteraction,
+                        //                           value: selected,
+                        //                           validator: (value) {
+                        //                             if (!widget
+                        //                                     .field.required! &&
+                        //                                 widget.field.requiredOn!
+                        //                                     .isEmpty) {
+                        //                               return null;
+                        //                             }
+                        //                             if ((value == null ||
+                        //                                     value.isEmpty) &&
+                        //                                 widget.field
+                        //                                     .inputRequired!) {
+                        //                               return 'Please select a value';
+                        //                             }
+                        //                             if (!widget.validation
+                        //                                 .hasMatch(value!)) {
+                        //                               return 'Invalid input';
+                        //                             }
+                        //                             return null;
+                        //                           },
+                        //                           onChanged: (value) {
+                        //                             saveData(value);
+                        //
+                        //                             setState(() {
+                        //                               selected = value!;
+                        //                               doc.title = value;
+                        //                             });
+                        //                           },
+                        //                         )
+                        //                       : const SizedBox.shrink(),
+                        //                 ],
+                        //               ),
+                        //             ),
+                        //           );
+                        //         })),
                         Expanded(
                             child: FutureBuilder(
                                 future: _getDocumentValues(
@@ -465,7 +465,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                               ? TextFormField(
                                             readOnly: true,
                                             autovalidateMode: AutovalidateMode.onUserInteraction,
-                                            controller: textController,
+                                            controller: documentController,
                                             onTap: (){
                                               _showDropdownBottomSheet(snapshot,widget.field.label!["eng"],context);
                                             },
@@ -523,7 +523,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: const Size(100, 50),
                                     ),
-                                    onPressed: (selected == null)
+                                    onPressed: (documentController.text == "")
                                         ? null :() async {
                                       var doc = await Navigator.push(
                                         context,
@@ -602,7 +602,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   void _showDropdownBottomSheet(AsyncSnapshot? snapshot, String? title, BuildContext context) {
     setState(() {
-      textController.text = snapshot!.data[0];
+      documentController.text = snapshot!.data[0];
     });
     showModalBottomSheet(
       isDismissible: false,
@@ -642,12 +642,26 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       ),
                   ),
                    ),
-                  InkWell(onTap: (){
-                    Navigator.of(context).pop();
-                  }, child: const Padding(
-                    padding:  EdgeInsets.all(12.0),
-                    child:  Icon(Icons.clear,color: Colors.black,size: 35,),
-                  ))
+                  Row(
+                    children: [
+                      InkWell(onTap: (){
+                        setState(() {
+                          documentController.clear();
+                          doc.title = "";
+                        });
+                        Navigator.of(context).pop();
+                      }, child: const Padding(
+                        padding:  EdgeInsets.all(12.0),
+                        child:  Icon(Icons.restart_alt,color: Colors.black,size: 35,),
+                      )),
+                      InkWell(onTap: (){
+                        Navigator.of(context).pop();
+                      }, child: const Padding(
+                        padding:  EdgeInsets.all(12.0),
+                        child:  Icon(Icons.clear,color: Colors.black,size: 35,),
+                      )),
+                    ],
+                  )
                 ],
               ),
               const Divider(color: Color(0XFFBDCDF4),thickness: 1,),
@@ -659,8 +673,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                 initialItem: 0,
               ),
               onSelectedItemChanged: (int index) {
+                saveData(snapshot.data[index]);
                 setState(() {
-                  textController.text = snapshot.data[index];
+                  documentController.text = snapshot.data[index];
+                  doc.title = snapshot.data[index];
                 });
               },
               looping: false,
@@ -674,7 +690,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         style: const TextStyle(fontSize: 22,color: Color(0XFF1C429F),fontWeight: FontWeight.w500),
                       ),
                     ),
-                    trailing: Icon(Icons.check,size: 30,color: snapshot.data[i]==textController.text?const Color(0XFF1C429F):Colors.white,)
+                    trailing: Icon(Icons.check,size: 30,color: (snapshot.data[i] == documentController.text)?const Color(0XFF1C429F):Colors.white,)
                   ),
                   ],
               ],
