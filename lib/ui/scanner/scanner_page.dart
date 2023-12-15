@@ -31,7 +31,7 @@ class _ScannerPageState extends State<ScannerPage> {
   Image? _croppedFile;
   final controller = CropController(
     aspectRatio: 1,
-    defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
+    defaultCrop: const Rect.fromLTRB(0.1, 0.0, 0.9, 1.0),
   );
 
   @override

@@ -15,6 +15,7 @@ import 'package:registration_client/ui/scanner/scanner_page.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
+import '../../../utils/app_style.dart';
 import 'custom_label.dart';
 
 class DocumentUploadControl extends StatefulWidget {
@@ -42,7 +43,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id ?? "")) {
-      selected = context
+      documentController.text = context
           .read<GlobalProvider>()
           .fieldInputValue[widget.field.id]
           .title!;
@@ -55,6 +56,39 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     super.initState();
   }
 
+  Map<String, String> referenceLang = {
+    "ara": "رقم المرجع",
+    "fra": "Numéro de réference",
+    "eng": "Reference Number",
+    "kan": "ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ",
+    "hin": "संदर्भ संख्या",
+    "tam": "குறிப்பு எண்",
+  };
+
+  String _getDataFromMap(String lang) {
+    String response = "";
+    if (context
+        .read<GlobalProvider>()
+        .fieldInputValue
+        .containsKey(widget.field.id)) {
+      if (widget.field.type == 'simpleType') {
+        if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id]
+        as Map<String, dynamic>)
+            .containsKey(lang)) {
+          response =
+              context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang].referenceNumber;
+          doc.referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang].referenceNumber;
+          referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang].referenceNumber;
+        }
+      } else {
+        response = context.read<GlobalProvider>().fieldInputValue[widget.field.id].referenceNumber;
+        doc.referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id].referenceNumber;
+        referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id].referenceNumber;
+      }
+    }
+    return response;
+  }
+
 
   void focusNextField(FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
@@ -64,21 +98,21 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   List<String> poaList = [];
   List<Uint8List?> imageBytesList = List.empty(growable: true); // list of image bytes
 
-  _getAddDocumentProvider(Field e, Uint8List myBytes) {
+  _getAddDocumentProvider(Field e, Uint8List myBytes, String referenceNumber) {
     context
         .read<RegistrationTaskProvider>()
-        .addDocument(e.id!, selected!, "reference", myBytes);
+        .addDocument(e.id!, documentController.text, referenceNumber, myBytes);
   }
 
-  Future<void> addDocument(var item, Field e) async {
+  Future<void> addDocument(var item, Field e,String referenceNumber) async {
     final bytes = await getImageBytes(item);
 
-    debugPrint("The selected value for dropdown for ${e.id!} is $selected");
+    debugPrint("The selected value for dropdown for ${e.id!} is ${documentController.text}");
     Uint8List myBytes = Uint8List.fromList(bytes);
     // context
     //     .read<RegistrationTaskProvider>()
     //     .addDocument(e.id!, selected!, "reference", myBytes);
-    _getAddDocumentProvider(e, myBytes);
+    _getAddDocumentProvider(e, myBytes, referenceNumber);
   }
 
   _getRemoveDocumentProvider(Field e, int index){
@@ -106,11 +140,22 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     try {
       imageBytesList.clear();
       final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
-      _setScannedPages(e, listOfScannedDoc);
+      String refNumber = "";
+      List<Uint8List?> scannedDoc = List.empty(growable: true);
+      for (var element in listOfScannedDoc) {
+        setState(() {
+          scannedDoc.addAll(element!.doc);
+          refNumber = element.referenceNumber;
+        });
+      }
+      _setScannedPages(e, scannedDoc);
       setState(() {
-        imageBytesList.addAll(listOfScannedDoc);
+        imageBytesList.addAll(scannedDoc);
         doc.listofImages = imageBytesList;
+        doc.referenceNumber = refNumber;
+        referenceNumber = refNumber;
       });
+      debugPrint("value is....."+doc.title.toString());
       if (doc.title.isNotEmpty) {
         _setValueInMap();
       }
@@ -134,8 +179,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   UploadDocumentData doc = UploadDocumentData(
     title: "",
     listofImages: [],
+    referenceNumber: "",
   );
   String? selected;
+  String referenceNumber = "";
   final TextEditingController documentController = TextEditingController(text:"");
 
   void saveData(value) {
@@ -275,17 +322,17 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: (selected == null)
+                            onPressed: (selected == null|| referenceNumber == "")
                               ? null :() async {
                               _documentScanClickedAudit();
                               var doc = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const Scanner(title: "Scan Document")),
+                                        const ScannerPage(title: "Scan Document")),
                               );
 
-                              await addDocument(doc, widget.field);
+                              await addDocument(doc, widget.field, referenceNumber);
                               await getScannedDocuments(widget.field);
                             },
                             child: const Text(
@@ -509,6 +556,69 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     ),
                                   );
                                 })),
+                        Expanded(
+                          child: Card(
+                            elevation: 0,
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 1, horizontal: 12),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 24, horizontal: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomLabel(field: Field(label: referenceLang,
+                                    required: widget
+                                        .field.required,
+                                    requiredOn: widget
+                                        .field.requiredOn,
+                                  )),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  TextFormField(
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    initialValue: _getDataFromMap("eng"),
+                                    textCapitalization: TextCapitalization.words,
+                                    onChanged: (value) {
+                                      doc.referenceNumber = value;
+                                      referenceNumber = value;
+                                    },
+                                    validator: (value) {
+                                      if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                                        if (value == null || value.isEmpty) {
+                                          return null;
+                                        } else if (!widget.validation.hasMatch(value)) {
+                                          return 'Invalid input';
+                                        }
+                                      }
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a value';
+                                      }
+                                      if (!widget.validation.hasMatch(value)) {
+                                        return 'Invalid input';
+                                      }
+                                      return null;
+                                    },
+                                    textAlign: TextAlign.left,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        borderSide: const BorderSide(
+                                            color: AppStyle.appGreyShade, width: 1),
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
+                                      hintText: "Enter Reference Number",
+                                      hintStyle: const TextStyle(
+                                          color: AppStyle.appBlackShade3, fontSize: 14),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(
                           width: 50,
                         ),
@@ -523,15 +633,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: const Size(100, 50),
                                     ),
-                                    onPressed: (documentController.text == "")
+                                    onPressed: (documentController.text == "" || referenceNumber == "")
                                         ? null :() async {
                                       var doc = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => const Scanner(
+                                            builder: (context) => const ScannerPage(
                                                 title: "Scan Document")),
                                       );
-                                      await addDocument(doc, widget.field);
+                                      await addDocument(doc, widget.field, referenceNumber);
 
                                       await getScannedDocuments(widget.field);
                                     },
@@ -603,6 +713,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   void _showDropdownBottomSheet(AsyncSnapshot? snapshot, String? title, BuildContext context) {
     setState(() {
       documentController.text = snapshot!.data[0];
+      doc.title = snapshot.data[0];
     });
     showModalBottomSheet(
       isDismissible: false,

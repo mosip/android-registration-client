@@ -1,5 +1,15 @@
 import 'package:pigeon/pigeon.dart';
 
+class DocumentData {
+  final List<Uint8List?> doc;
+  final String referenceNumber;
+
+  DocumentData({
+    required this.doc,
+    required this.referenceNumber,
+  });
+}
+
 @HostApi()
 abstract class DocumentApi {
   @async
@@ -10,7 +20,7 @@ abstract class DocumentApi {
   void removeDocument(String fieldId, int pageIndex);
 
   @async
-  List<Uint8List> getScannedPages(String fieldId); //List<byte[]>
+  List<DocumentData> getScannedPages(String fieldId); //List<byte[]>
 
   @async
   bool hasDocument(String fieldId);
