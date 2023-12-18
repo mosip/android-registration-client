@@ -13,13 +13,15 @@ class CustomLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           Text(
             context.read<GlobalProvider>().chooseLanguage(field.label!),
-            style: TextStyle(fontSize: 14, fontWeight: semiBold),
+            style: TextStyle(fontSize: isPortrait ? 18 : 14, fontWeight: semiBold),
           ),
           const SizedBox(
             width: 5,

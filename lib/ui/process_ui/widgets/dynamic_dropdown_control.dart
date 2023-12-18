@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -93,14 +94,16 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!, "eng"),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
-            elevation: 0,
-            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+            elevation: 5,
+            margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

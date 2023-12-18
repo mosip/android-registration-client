@@ -17,6 +17,7 @@ class AcknowledgementPage extends StatefulWidget {
 class _AcknowledgementPageState extends State<AcknowledgementPage> {
   WebViewPlusController? _controller;
   double _height = ScreenUtil().screenHeight;
+  bool isMobile = true;
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
 
   @override
   Widget build(BuildContext context) {
+    isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return SizedBox(
       height: _height,
       width: ScreenUtil().screenWidth,
@@ -86,7 +88,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                   child: Center(
                     child: Text(
                       'PRINT',
-                      style: AppStyle.mobileButtonText,
+                      style: isMobile ? AppStyle.tabletPortraitButtonText : AppStyle.mobileButtonText,
                     ),
                   ),
                 ),

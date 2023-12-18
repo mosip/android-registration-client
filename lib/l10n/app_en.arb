@@ -98,5 +98,30 @@
       }
     }
   },
-  "upload_document": "Please Upload The Document"
+  "upload_document": "Please Upload The Document",
+  "synchronize_data": "Synchronize Data",
+  "registration_tasks": "Registration Tasks",
+  "operation_tasks": "Operational Tasks",
+  "system_storage_usage": "System Storage Usage",
+  "download_pre_registration_data": "Download Pre-Registration Data",
+  "update_operator_biomterics": "Update Operator Biometrics",
+  "appliction_upload": "Application Upload",
+  "check_updates": "Check Updates",
+  "center_remap_sync": "Center Remap Sync.",
+  "sync_activities": "Sync. Activities",
+  "dashboard": "Dashboard",
+  "settings": "Settings",
+  "notifications": "Notifications",
+  "profile": "Notifications",
+  "select_language": "Select Language",
+  "select_two_languages": "Please select any 2 languages for data entry.",
+  "english_mandatory": "English is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.",
+  "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
+  "cancel": "CANCEL",
+  "submit": "SUBMIT",
+  "go_back": "GO BACK",
+  "informed": "INFORMED",
+  "logo_text": "Powered by MOSIP",
+  "get_onboard": "GET ONBOARD",
+  "skip_to_home": "SKIP TO HOME"
 }

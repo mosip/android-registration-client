@@ -433,6 +433,8 @@ class GlobalProvider with ChangeNotifier {
   int _minLanguageCount = 0;
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
+  List<String?> _notificationLanguages = [];
+
 
   List<LanguageData?> get languageDataList => _languageDataList;
   Map<String, String> get codeToLanguageMapper => _codeToLanguageMapper;
@@ -443,6 +445,7 @@ class GlobalProvider with ChangeNotifier {
   int get minLanguageCount => _minLanguageCount;
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
+  List<String?> get notificationLanguages => _notificationLanguages;
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
@@ -493,6 +496,11 @@ class GlobalProvider with ChangeNotifier {
 
   setMandatoryLanguageMap(Map<String, bool> value) {
     _mandatoryLanguageMap = value;
+    notifyListeners();
+  }
+
+  setNotificationLanguages(List<String?> value) {
+    _notificationLanguages = value;
     notifyListeners();
   }
 

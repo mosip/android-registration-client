@@ -98,5 +98,30 @@
       }
     }
   },
-   "upload_document": "Veuillez télécharger le document"
+  "upload_document": "Veuillez télécharger le document",
+  "synchronize_data": "Synchroniser les données",
+  "registration_tasks": "Tâches d'inscription",
+  "operation_tasks": "Tâches opérationnelles",
+  "system_storage_usage": "Utilisation du stockage système",
+  "download_pre_registration_data": "Télécharger les données de pré-inscription",
+  "update_operator_biomterics": "Mettre à jour les données biométriques de l'opérateur",
+  "appliction_upload": "Téléchargement d'application",
+  "check_updates": "Vérifier les mises à jour",
+  "center_remap_sync": "Synchronisation du remappage central.",
+  "sync_activities": "Synchronisation. Activités",
+  "dashboard": "Tableau de bord",
+  "settings": "Paramètres",
+  "notifications": "Notifications",
+  "profile": "Profil",
+  "select_language": "Choisir la langue",
+  "select_two_languages": "Veuillez sélectionner 2 langues pour la saisie des données.",
+  "english_mandatory": "L'anglais est obligatoire pour que le résident choisisse conformément aux directives du gouvernement. L'ordre de sélection mènera à l'affichage de la page pour les données démographiques.",
+  "language_selector_note": "Veuillez noter que la langue peut être basée sur les données saisies lors de la pré-inscription.",
+  "cancel": "ANNULER",
+  "submit": "SOUMETTRE",
+  "go_back": "RETOURNER",
+  "informed": "INFORMÉE",
+  "logo_text": "Propulsé par MOSIP",
+  "get_onboard": "MONTER À BORD",
+  "skip_to_home": "PASSEZ À LA MAISON"
 }

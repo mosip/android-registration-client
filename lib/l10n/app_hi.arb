@@ -98,5 +98,30 @@
       }
     }
   },
-  "upload_document": "कृपया दस्तावेज़ अपलोड करें"
+  "upload_document": "कृपया दस्तावेज़ अपलोड करें",
+  "synchronize_data": "डेटा सिंक्रनाइज़ करें",
+  "registration_tasks": "पंजीकरण कार्य",
+  "operation_tasks": "परिचालन कार्य",
+  "system_storage_usage": "सिस्टम संग्रहण उपयोग",
+  "download_pre_registration_data": "पूर्व-पंजीकरण डेटा डाउनलोड करें",
+  "update_operator_biomterics": "ऑपरेटर बायोमेट्रिक्स अपडेट करें",
+  "appliction_upload": "आवेदन अपलोड करें",
+  "check_updates": "अपडेट जांचें",
+  "center_remap_sync": "केंद्र रीमैप सिंक.",
+  "sync_activities": "साथ-साथ करना। गतिविधियाँ",
+  "dashboard": "डैशबोर्ड",
+  "settings": "समायोजन",
+  "notifications": "सूचनाएं",
+  "profile": "प्रोफ़ाइल",
+  "select_language": "भाषा चुने",
+  "select_two_languages": "कृपया डेटा प्रविष्टि के लिए कोई भी दो भाषाएँ चुनें।",
+  "english_mandatory": "सरकारी दिशानिर्देशों के अनुसार चयन के लिए निवासी के लिए अंग्रेजी अनिवार्य है। चयन का क्रम जनसांख्यिकीय डेटा के लिए पृष्ठ दृश्य को जन्म देगा।",
+  "language_selector_note": "कृपया ध्यान दें कि भाषा पूर्व-पंजीकरण के दौरान दर्ज किए गए डेटा पर आधारित हो सकती है।",
+  "cancel": "रद्द करना",
+  "submit": "जमा करना",
+  "go_back": "वापस जाएं",
+  "informed": "सूचित किया",
+  "logo_text": "MOSIP द्वारा संचालित",
+  "get_onboard": "सवार होना",
+  "skip_to_home": "होम पेज पर जाएं"
 }
