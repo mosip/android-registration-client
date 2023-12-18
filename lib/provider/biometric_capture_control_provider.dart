@@ -6,6 +6,8 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   //Variables
   bool _isBiometricCaptureControl = false;
   late String _biometricAttribute;
+  String _biometricAttributePortrait = "";
+  int _biometricCaptureScanBlockTabIndex = 1;
   BiometricAttributeData _iris = BiometricAttributeData(
       title: "Iris",
       attemptNo: 0,
@@ -84,10 +86,22 @@ class BiometricCaptureControlProvider with ChangeNotifier {
     // //notifyListeners();
   }
 
+  int get biometricCaptureScanBlockTabIndex =>
+      _biometricCaptureScanBlockTabIndex;
+  set biometricCaptureScanBlockTabIndex(int value) {
+    _biometricCaptureScanBlockTabIndex = value;
+  }
+
   String get biometricAttribute => _biometricAttribute;
 
   set biometricAttribute(String value) {
     _biometricAttribute = value;
+    // //notifyListeners();
+  }
+
+  String get biometricAttributePortrait => _biometricAttributePortrait;
+  set biometricAttributePortrait(String value) {
+    _biometricAttributePortrait = value;
     // //notifyListeners();
   }
 
@@ -342,7 +356,17 @@ class BiometricCaptureControlProvider with ChangeNotifier {
     return -1;
   }
 
- int returnNoOfAttributes(List<String?> attributes) {
+  avgScore(List<BiometricsDto> list) {
+    double avg = 0;
+    int i;
+    for (i = 0; i < list.length; i++) {
+      avg = avg + list[i].qualityScore!;
+    }
+    avg = avg / i;
+    return avg;
+  }
+
+  int returnNoOfAttributes(List<String?> attributes) {
     int count = 0;
     if (attributes.contains("leftEye") && attributes.contains("rightEye")) {
       count++;
