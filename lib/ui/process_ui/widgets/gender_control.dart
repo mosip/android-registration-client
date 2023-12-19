@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -21,64 +20,78 @@ class GenderControl extends StatefulWidget {
 }
 
 class _CustomDynamicDropDownState extends State<GenderControl> {
-  String? selected;
+  late String selected;
 
   @override
   void initState() {
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey(widget.field.id ?? "")) {
-      _getSelectedValueFromMap("eng");
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (context
+          .read<GlobalProvider>()
+          .fieldInputValue
+          .containsKey(widget.field.id ?? "")) {
+        await _getSelectedValueFromMap("eng");
+      } else {
+        List<String?> data = await context
+            .read<RegistrationTaskProvider>()
+            .getFieldValues(widget.field.subType!, "eng");
+        setState(() {
+          selected = data[0]!;
+        });
+        saveData(selected);
+        _saveDataToMap(selected);
+      }
+    });
+
     super.initState();
   }
 
   void saveData(value) {
-    if (value != null) {
-      if (widget.field.type == 'simpleType') {
-        context
-            .read<RegistrationTaskProvider>()
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
-      } else {
-        context
-            .read<RegistrationTaskProvider>()
-            .addDemographicField(widget.field.id ?? "", value);
-      }
+    if (widget.field.type == 'simpleType') {
+      context
+          .read<RegistrationTaskProvider>()
+          .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
+    } else {
+      context
+          .read<RegistrationTaskProvider>()
+          .addDemographicField(widget.field.id ?? "", value);
     }
   }
 
   void _saveDataToMap(value) {
-    if (value != null) {
-      if (widget.field.type == 'simpleType') {
-        context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.field.id ?? "",
-              value!,
-              "eng",
-              context.read<GlobalProvider>().fieldInputValue,
-            );
-      } else {
-        context.read<GlobalProvider>().setInputMapValue(
-              widget.field.id ?? "",
-              value!,
-              context.read<GlobalProvider>().fieldInputValue,
-            );
-      }
+    if (widget.field.type == 'simpleType') {
+      context.read<GlobalProvider>().setLanguageSpecificValue(
+            widget.field.id ?? "",
+            value,
+            "eng",
+            context.read<GlobalProvider>().fieldInputValue,
+          );
+    } else {
+      context.read<GlobalProvider>().setInputMapValue(
+            widget.field.id ?? "",
+            value,
+            context.read<GlobalProvider>().fieldInputValue,
+          );
     }
   }
 
-  void _getSelectedValueFromMap(String lang) {
-    String response = "";
+  Future<void> _getSelectedValueFromMap(String lang) async {
+    List<String?> data = await context
+        .read<RegistrationTaskProvider>()
+        .getFieldValues(widget.field.subType!, "eng");
+    String response = data[0]!;
     if (widget.field.type == 'simpleType') {
+      // ignore: use_build_context_synchronously
       if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
+        // ignore: use_build_context_synchronously
         response = context
             .read<GlobalProvider>()
             .fieldInputValue[widget.field.id ?? ""][lang];
       }
     } else {
       response =
+          // ignore: use_build_context_synchronously
           context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
     }
     setState(() {
@@ -86,17 +99,45 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     });
   }
 
-  Future<List<String?>> _getFieldValues(String fieldId, String langCode) async {
-    return await context
-        .read<RegistrationTaskProvider>()
-        .getFieldValues(fieldId, langCode);
+  Future<List<Map<String, String?>>> _getFieldValues(
+      String fieldId, String langCode) async {
+    List<List<String?>> labelsData = [];
+    // ignore: use_build_context_synchronously
+    for (var lang in context.read<GlobalProvider>().chosenLang) {
+      String langC = context.read<GlobalProvider>().langToCode(lang);
+      List<String?> data = await context
+          .read<RegistrationTaskProvider>()
+          .getFieldValues(fieldId, langC);
+
+      if (data.isEmpty) {
+        // ignore: use_build_context_synchronously
+        data = await context
+            .read<RegistrationTaskProvider>()
+            .getFieldValues(fieldId, 'eng');
+      }
+      labelsData.add(data);
+    }
+
+    List<Map<String, String?>> labels = [];
+
+    for (var i = 0; i < labelsData[0].length; i++) {
+      labels.add({});
+      // ignore: use_build_context_synchronously
+      List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
+      for (var j = 0; j < choosenLang.length; j++) {
+        labels[labels.length - 1]
+            .putIfAbsent(choosenLang[j], () => labelsData[j][i]);
+      }
+    }
+    return labels;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!, "eng"),
-        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<Map<String, String?>>> snapshot) {
           return Card(
             elevation: 0,
             margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
@@ -111,127 +152,110 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                   ),
                   snapshot.hasData
                       ? Row(
-                          children: snapshot.data!.map((e) {
-                          bool selected = false;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 6),
-                            child: Column(
-                                children: context
-                                    .read<GlobalProvider>()
-                                    .chosenLang
-                                    .map((lang) {
-                              if (lang == "English") {
-                                return ChoiceChip(
-                                  label: SizedBox(
-                                    width: 50,
-                                    child: Text(
-                                      e ?? "",
-                                      textAlign: TextAlign.center,
-                                    ),
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(
+                            snapshot.data!.length + 1,
+                            (index) {
+                              if (index == 0) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Column(
+                                    children: context
+                                        .read<GlobalProvider>()
+                                        .chosenLang
+                                        .map((e) => Chip(
+                                              label: Text(e),
+                                              labelStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                              backgroundColor: Colors.white,
+                                            ))
+                                        .toList(),
                                   ),
-                                  selected: selected,
-                                  elevation: 0,
-                                  disabledColor: Colors.white,
-                                  selectedColor: solidPrimary,
-                                  shape: selected
-                                      ? null
-                                      : RoundedRectangleBorder(
-                                          side: BorderSide(
-                                              color: solidPrimary, width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(32)),
-                                  labelPadding: const EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 8),
-                                  labelStyle: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                      color: selected
-                                          ? Colors.white
-                                          : Colors.black54),
-                                );
-                              } else {
-                                return ChoiceChip(
-                                  label: SizedBox(
-                                    width: 50,
-                                    child: Text(
-                                      e ?? "",
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  selected: selected,
-                                  selectedColor: const Color(0xffEFF3FF),
-                                  elevation: 0,
-                                  disabledColor: Colors.white,
-                                  shape: selected
-                                      ? null
-                                      : RoundedRectangleBorder(
-                                          side: const BorderSide(
-                                              color: Color(0xffC2D0F2),
-                                              width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(32)),
-                                  labelPadding: const EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 8),
-                                  labelStyle: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                      color: selected
-                                          ? solidPrimary
-                                          : Colors.black54),
                                 );
                               }
-                            }).toList()),
-                          );
-                        }).toList())
-
-                      // DropdownButtonFormField(
-                      //     icon: const Icon(null),
-                      //     decoration: InputDecoration(
-                      //       contentPadding:
-                      //           const EdgeInsets.symmetric(horizontal: 16.0),
-                      //       border: OutlineInputBorder(
-                      //         borderRadius: BorderRadius.circular(8.0),
-                      //         borderSide: const BorderSide(
-                      //           color: Colors.grey,
-                      //           width: 1.0,
-                      //         ),
-                      //       ),
-                      //       hintText: "Select Option",
-                      //       hintStyle: const TextStyle(
-                      //         color: AppStyle.appBlackShade3,
-                      //       ),
-                      //     ),
-                      //     items: snapshot.data!
-                      //         .map((option) => DropdownMenuItem(
-                      //               value: option,
-                      //               child: Text(option!),
-                      //             ))
-                      //         .toList(),
-                      //     autovalidateMode: AutovalidateMode.onUserInteraction,
-                      //     value: selected,
-                      //     validator: (value) {
-                      //       if (!widget.field.required! &&
-                      //           widget.field.requiredOn!.isEmpty) {
-                      //         return null;
-                      //       }
-                      //       if (value == null || value.isEmpty) {
-                      //         return 'Please enter a value';
-                      //       }
-                      //       if (!widget.validation.hasMatch(value)) {
-                      //         return 'Invalid input';
-                      //       }
-                      //       return null;
-                      //     },
-                      //     onChanged: (value) {
-                      //       saveData(value);
-                      //       _saveDataToMap(value);
-                      //       setState(() {
-                      //         selected = value!;
-                      //       });
-                      //     },
-                      //   )
-
-                      : const SizedBox.shrink(),
+                              Map<String, String?> e =
+                                  snapshot.data![index - 1];
+                              bool chipSelected =
+                                  selected.toString().toLowerCase() ==
+                                      e["English"].toString().toLowerCase();
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: Column(
+                                  children: context
+                                      .read<GlobalProvider>()
+                                      .chosenLang
+                                      .map(
+                                    (lang) {
+                                      bool isEnglish = lang == "English";
+                                      return InkWell(
+                                        splashColor: Colors.transparent,
+                                        onTap: () {
+                                          setState(() {
+                                            selected = e["English"] ?? "";
+                                          });
+                                          saveData(e["English"]);
+                                          _saveDataToMap(e["English"]);
+                                        },
+                                        child: ChoiceChip(
+                                          label: SizedBox(
+                                            width: 50,
+                                            child: Text(
+                                              e[lang] ?? "",
+                                              overflow: TextOverflow.clip,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontWeight: isEnglish
+                                                      ? FontWeight.w500
+                                                      : FontWeight.w400,
+                                                  fontSize: 12,
+                                                  color: chipSelected
+                                                      ? isEnglish
+                                                          ? Colors.white
+                                                          : solidPrimary
+                                                      : Colors.black),
+                                            ),
+                                          ),
+                                          labelPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 4, horizontal: 8),
+                                          selected: chipSelected,
+                                          elevation: 0,
+                                          selectedColor: isEnglish
+                                              ? solidPrimary
+                                              : const Color(0xffEFF3FF),
+                                          backgroundColor: Colors.white,
+                                          disabledColor: Colors.white,
+                                          shape: chipSelected
+                                              ? null
+                                              : RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: isEnglish
+                                                          ? solidPrimary
+                                                          : const Color(
+                                                              0xffC2D0F2),
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          32)),
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 50,
+                          child: const Center(
+                              child: SizedBox(
+                                  height: 25,
+                                  width: 25,
+                                  child: CircularProgressIndicator())),
+                        ),
                 ],
               ),
             ),

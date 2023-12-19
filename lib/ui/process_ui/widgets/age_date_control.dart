@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -46,7 +44,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   _calculateAgeFromDOB() {
     String dateString = dateController.text;
-    DateTime date = DateTime.parse(dateString.replaceAll("/", "-"));
+    DateTime date =
+        DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
+
     DateTime currentDate = DateTime.now();
     if (date.compareTo(currentDate) < 0) {
       ageController.text =
@@ -58,26 +58,26 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   void saveData() {
     if (dateController.text == "") {
+      context
+          .read<RegistrationTaskProvider>()
+          .removeDemographicField(widget.field.id!);
+      context.read<GlobalProvider>().removeInputMapValue(
+          widget.field.id!, context.read<GlobalProvider>().fieldInputValue);
       return;
     }
-    List<String> date = dateController.text.split("/");
-    print(date.toString());
-    String targetDateString = widget.field.format ??
-        "yyyy/MM/dd"
-            .replaceAll('dd', date[0])
-            .replaceAll('MM', date[1])
-            .replaceAll('yyyy', date[2]);
-
+    String dateString = dateController.text;
+    DateTime date =
+        DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
     context.read<RegistrationTaskProvider>().setDateField(
           widget.field.id ?? "",
           widget.field.subType ?? "",
-          date[0],
-          date[1],
-          date[2],
+          date.day.toString().padLeft(2, '0'),
+          date.month.toString().padLeft(2, '0'),
+          date.year.toString(),
         );
     context.read<GlobalProvider>().setInputMapValue(
           widget.field.id!,
-          targetDateString,
+          dateController.text,
           context.read<GlobalProvider>().fieldInputValue,
         );
     BiometricsApi().getAgeGroup().then((value) {
@@ -90,11 +90,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id)) {
-      String targetDateFormat = widget.field.format ?? "yyyy/MM/dd";
-
       String savedDate =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id];
-      DateTime parsedDate = DateFormat(targetDateFormat).parse(savedDate);
+
+      DateTime parsedDate =
+          DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(savedDate);
       setState(() {
         dateController.text = savedDate;
         ageController.text = calculateYearDifference(parsedDate, DateTime.now())
@@ -115,60 +115,86 @@ class _AgeDateControlState extends State<AgeDateControl> {
   }
 
   void showBottomPopup(BuildContext context) {
-    print("button pressed");
-    showBottomSheet(
-        backgroundColor: Colors.grey.shade100,
+    showModalBottomSheet(
+        backgroundColor: Colors.white,
         context: context,
         enableDrag: true,
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 0),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height / 2,
-              child: CustomCupertinoDatePicker(
-                maxDate: DateTime.now(),
-                minDate: DateTime(1920),
-                itemExtent: 75,
-                diameterRatio: 10,
-                selectionOverlay: Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: const BoxDecoration(
-                    border: Border.symmetric(
-                      horizontal: BorderSide(color: Colors.grey, width: 0.25),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(
+                      width: 50,
+                    ),
+                    Text(
+                      widget.field.label!['eng'] ?? "",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    )
+                  ],
+                ),
+                Container(
+                  height: 2.5,
+                  width: MediaQuery.of(context).size.width,
+                  color: solidPrimary.withOpacity(0.075),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                CustomCupertinoDatePicker(
+                  maxDate: DateTime.now(),
+                  minDate: DateTime(1920),
+                  squeeze: 1,
+                  itemExtent: 50,
+                  diameterRatio: 10,
+                  selectionOverlay: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: solidPrimary.withOpacity(0.075),
                     ),
                   ),
+                  selectedStyle: TextStyle(
+                    color: solidPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                  unselectedStyle: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 15,
+                  ),
+                  disabledStyle: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 15,
+                  ),
+                  onSelectedItemChanged: (selectedDate) {
+                    String targetDateString = widget.field.format ??
+                        "yyyy/MM/dd"
+                            .replaceAll('dd',
+                                selectedDate.day.toString().padLeft(2, "0"))
+                            .replaceAll('MM',
+                                selectedDate.month.toString().padLeft(2, "0"))
+                            .replaceAll('yyyy', selectedDate.year.toString());
+                    setState(() {
+                      dateController.text = targetDateString;
+                    });
+                    _calculateAgeFromDOB();
+                    saveData();
+                  },
                 ),
-                selectedStyle: const TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 24,
-                ),
-                unselectedStyle: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 18,
-                ),
-                disabledStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 18,
-                ),
-                onSelectedItemChanged: (selectedDate) {
-                  String targetDateString = widget.field.format ??
-                      "yyyy/MM/dd"
-                          .replaceAll(
-                              'dd', selectedDate.day.toString().padLeft(2, "0"))
-                          .replaceAll('MM',
-                              selectedDate.month.toString().padLeft(2, "0"))
-                          .replaceAll('yyyy', selectedDate.year.toString());
-                  setState(() {
-                    dateController.text = targetDateString;
-                  });
-                  _calculateAgeFromDOB();
-                  saveData();
-                },
-              ),
+              ],
             ),
           );
         });
@@ -199,6 +225,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
                       child: TextFormField(
                         readOnly: true,
                         controller: dateController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please Enter a value";
+                          }
+                          return null;
+                        },
                         onTap: (() {
                           showBottomPopup(context);
                         }),
@@ -231,13 +263,19 @@ class _AgeDateControlState extends State<AgeDateControl> {
                       child: TextFormField(
                         controller: ageController,
                         keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please Enter a value";
+                          }
+                          return null;
+                        },
                         onChanged: (value) {
                           if (value != "") {
                             _getDateFromAge(value);
-                            saveData();
                           } else {
                             dateController.text = "";
                           }
+                          saveData();
                         },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(

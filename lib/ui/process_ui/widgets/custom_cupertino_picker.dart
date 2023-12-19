@@ -352,9 +352,12 @@ class _CustomCupertinoDatePickerState extends State<CustomCupertinoDatePicker> {
             children: [
               Text(
                 "Day",
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               SizedBox(
@@ -368,9 +371,12 @@ class _CustomCupertinoDatePickerState extends State<CustomCupertinoDatePicker> {
             children: [
               Text(
                 "Month",
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               SizedBox(
@@ -384,9 +390,12 @@ class _CustomCupertinoDatePickerState extends State<CustomCupertinoDatePicker> {
             children: [
               Text(
                 "Year",
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               SizedBox(
