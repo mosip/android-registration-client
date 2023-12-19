@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class DateControl extends StatefulWidget {
@@ -73,11 +75,15 @@ class _DateControlState extends State<DateControl> {
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+      elevation: 5,
+      color: pureWhite,
+      margin: EdgeInsets.symmetric(
+          vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -95,7 +101,8 @@ class _DateControlState extends State<DateControl> {
                 textCapitalization: TextCapitalization.words,
                 textAlign: TextAlign.left,
                 validator: (value) {
-                  if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
+                  if (!widget.field.required! &&
+                      widget.field.requiredOn!.isEmpty) {
                     return null;
                   }
                   if (value == null || value.isEmpty) {

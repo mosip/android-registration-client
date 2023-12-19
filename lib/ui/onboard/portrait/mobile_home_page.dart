@@ -100,8 +100,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
                   color: secondaryColors.elementAt(5),
                 ),
                 title: Text(
-                  "",
-                  // AppLocalizations.of(context)!.settings,
+                  AppLocalizations.of(context)!.settings,
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

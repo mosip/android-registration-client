@@ -123,5 +123,15 @@
   "informed": "أُبلغ",
   "logo_text": "مدعوم من موسيب",
   "get_onboard": "إركب",
-  "skip_to_home": "انتقل إلى المنزل"
+  "skip_to_home": "انتقل إلى المنزل",
+  "continue_text": "يكمل",
+  "authenticate": "المصادقة",
+  "new_registration": "تسجيل جديد",
+  "go_back": "عُد",
+  "informed": "أُبلغ",
+  "sync_packet": "تحميل متزامن",
+  "upload_packet": "تحميل حزمة",
+  "authenticate_using_password": "المصادقة باستخدام كلمة المرور",
+  "registration_acknowledgement": "اعتراف بالتسجيل",
+  "print_text": "طباعة"
 }

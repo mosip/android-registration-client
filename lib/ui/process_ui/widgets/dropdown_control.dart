@@ -172,71 +172,74 @@ class _CustomDropDownState extends State<DropDownControl> {
     _getOptionsList();
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    return Column(children: [
-      Card(
-        elevation: 5,
-        margin: EdgeInsets.symmetric(
-            vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(field: widget.field),
-              const SizedBox(
-                height: 10,
-              ),
-              DropdownButtonFormField<GenericData>(
-                icon: const Icon(null),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
+    return Column(
+      children: [
+        Card(
+          elevation: 5,
+          margin: EdgeInsets.symmetric(
+              vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomLabel(field: widget.field),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField<GenericData>(
+                  icon: const Icon(null),
+                  decoration: InputDecoration(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                    hintText: "Select Option",
+                    hintStyle: const TextStyle(
+                      color: AppStyle.appBlackShade3,
                     ),
                   ),
-                  hintText: "Select Option",
-                  hintStyle: const TextStyle(
-                    color: AppStyle.appBlackShade3,
-                  ),
-                ),
-                items: list
-                    .map((option) => DropdownMenuItem(
-                          value: option,
-                          child: Text(option!.name),
-                        ))
-                    .toList(),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                value: selected,
-                validator: (value) {
-                  if (!widget.field.required! &&
-                      widget.field.requiredOn!.isEmpty) {
+                  items: list
+                      .map((option) => DropdownMenuItem(
+                            value: option,
+                            child: Text(option!.name),
+                          ))
+                      .toList(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  value: selected,
+                  validator: (value) {
+                    if (!widget.field.required! &&
+                        widget.field.requiredOn!.isEmpty) {
+                      return null;
+                    }
+                    if (value == null) {
+                      return 'Please enter a value';
+                    }
+                    if (!widget.validation.hasMatch(value.name)) {
+                      return 'Invalid input';
+                    }
                     return null;
-                  }
-                  if (value == null) {
-                    return 'Please enter a value';
-                  }
-                  if (!widget.validation.hasMatch(value.name)) {
-                    return 'Invalid input';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  if (value != selected) {
-                    saveData(value!.name);
-                    _saveDataToMap(value);
-                    context.read<GlobalProvider>().setLocationHierarchy(
-                        widget.field.group!, value.code, index!);
-                    _getSelectedValueFromMap("eng", list);
-                  }
-                },
-              ),
-            ],
+                  },
+                  onChanged: (value) {
+                    if (value != selected) {
+                      saveData(value!.name);
+                      _saveDataToMap(value);
+                      context.read<GlobalProvider>().setLocationHierarchy(
+                          widget.field.group!, value.code, index!);
+                      _getSelectedValueFromMap("eng", list);
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 }

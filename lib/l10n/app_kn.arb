@@ -123,5 +123,15 @@
   "informed": "ಮಾಹಿತಿ ನೀಡಿದರು",
   "logo_text": "MOSIP ನಿಂದ ನಡೆಸಲ್ಪಡುತ್ತಿದೆ",
   "get_onboard": "ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ",
-  "skip_to_home": "ಮನೆಗೆ ತೆರಳಿ"
+  "skip_to_home": "ಮನೆಗೆ ತೆರಳಿ",
+  "continue_text": "ಮುಂದುವರಿಸಿ",
+  "authenticate": "ಪ್ರಮಾಣಿತಗೊಳಿಸಿ",
+  "new_registration": "ಹೊಸ ನೋಂದಾಯಿ",
+  "go_back": "ಹಿಂತಿರುಗಿ",
+  "informed": "ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ",
+  "sync_packet": "ಸಿಂಕ್ ಅಪ್‌ಲೋಡ್",
+  "upload_packet": "ಅಪ್‌ಲೋಡ್ ಪ್ಯಾಕೆಟ್",
+  "authenticate_using_password": "ಪಾಸ್‌ವರ್ಡ್ ಬಳಸಿ ಅಂಗೀಕರಿಸಿ",
+  "registration_acknowledgement": "ನೋಂದಾಯಿತ ಸ್ವೀಕೃತಿ",
+  "print_text": "ಮುದ್ರಿಸಿ"
 }

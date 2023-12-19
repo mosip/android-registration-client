@@ -123,5 +123,15 @@
   "informed": "INFORMÉE",
   "logo_text": "Propulsé par MOSIP",
   "get_onboard": "MONTER À BORD",
-  "skip_to_home": "PASSEZ À LA MAISON"
+  "skip_to_home": "PASSEZ À LA MAISON",
+  "continue_text": "CONTINUER",
+  "authenticate": "AUTHENTIFIER",
+  "new_registration": "NOUVELLE INSCRIPTION",
+  "go_back": "RETOUR",
+  "informed": "INFORMÉ",
+  "sync_packet": "Téléchargement de synchronisation",
+  "upload_packet": "Télécharger le paquet",
+  "authenticate_using_password": "Authentification en utilisant un mot de passe",
+  "registration_acknowledgement": "Accusé de réception d'inscription",
+  "print_text": "IMPRIMER"
 }

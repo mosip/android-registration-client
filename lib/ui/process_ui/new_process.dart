@@ -270,17 +270,9 @@ class _NewProcessState extends State<NewProcess> {
 
     isExceptionPresent(String id) {
       bool isExceptionPresent = false;
-// <<<<<<< HEAD
       for (BiometricAttributeData x
           in context.read<GlobalProvider>().fieldInputValue[id]) {
         if (x.exceptions.contains(true) || x.title == "Exception") {
-// =======
-      // context
-      //     .read<GlobalProvider>()
-      //     .fieldInputValue[id]
-      //     .forEach((BiometricAttributeData x) {
-      //   if (x.exceptions.contains(true)) {
-// >>>>>>> login-ui
           isExceptionPresent = true;
           break;
         }
@@ -492,7 +484,7 @@ class _NewProcessState extends State<NewProcess> {
                           height: isPortrait ? 68.h : 52.h,
                           child: Center(
                             child: Text(
-                              "GO BACK",
+                              AppLocalizations.of(context)!.go_back,
                               style: TextStyle(
                                 fontSize: isPortrait ? 22 : 16,
                               ),
@@ -513,7 +505,7 @@ class _NewProcessState extends State<NewProcess> {
                           height: isPortrait ? 68.h : 52.h,
                           child: Center(
                             child: Text(
-                              "INFORMED",
+                              AppLocalizations.of(context)!.informed,
                               style: TextStyle(
                                 fontSize: isPortrait ? 22 : 16,
                               ),
@@ -543,7 +535,9 @@ class _NewProcessState extends State<NewProcess> {
                               }
                               globalProvider.syncPacket(globalProvider.regId);
                             },
-                            child: const Text("Sync Packet"))
+                            child:
+                                Text(AppLocalizations.of(context)!.sync_packet),
+                          )
                         : const SizedBox.shrink(),
                     SizedBox(
                       width: 10.w,
@@ -561,7 +555,9 @@ class _NewProcessState extends State<NewProcess> {
                               }
                               globalProvider.uploadPacket(globalProvider.regId);
                             },
-                            child: const Text("Upload Packet"))
+                            child: Text(
+                                AppLocalizations.of(context)!.upload_packet),
+                          )
                         : const SizedBox.shrink(),
                     const Expanded(
                       child: SizedBox(),
@@ -576,13 +572,14 @@ class _NewProcessState extends State<NewProcess> {
                       onPressed: () {
                         continueButtonTap(context, size, newProcess);
                       },
-                      child: Text(
-                          context.read<GlobalProvider>().newProcessTabIndex <=
-                                  size
-                              ? "CONTINUE"
-                              : globalProvider.newProcessTabIndex == size + 1
-                                  ? "AUTHENTICATE"
-                                  : "NEW REGISTRATION"),
+                      child: Text(context
+                                  .read<GlobalProvider>()
+                                  .newProcessTabIndex <=
+                              size
+                          ? AppLocalizations.of(context)!.continue_text
+                          : globalProvider.newProcessTabIndex == size + 1
+                              ? AppLocalizations.of(context)!.authenticate
+                              : AppLocalizations.of(context)!.new_registration),
                     ),
                   ],
                 ),
@@ -848,7 +845,7 @@ class _NewProcessState extends State<NewProcess> {
                 height: 26.h,
               ),
               Text(
-                'Authentication using Password',
+                AppLocalizations.of(context)!.authenticate_using_password,
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: semiBold,

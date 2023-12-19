@@ -123,5 +123,15 @@
   "informed": "सूचित किया",
   "logo_text": "MOSIP द्वारा संचालित",
   "get_onboard": "सवार होना",
-  "skip_to_home": "होम पेज पर जाएं"
+  "skip_to_home": "होम पेज पर जाएं",
+  "continue_text": "जारी रखें",
+  "authenticate": "प्रमाणित करें",
+  "new_registration": "नया पंजीकरण",
+  "go_back": "वापस जाएं",
+  "informed": "सूचित",
+  "sync_packet": "सिंक अपलोड",
+  "upload_packet": "अपलोड पैकेट",
+  "authenticate_using_password": "पासवर्ड का उपयोग करके प्रमाणीकरण",
+  "registration_acknowledgement": "रजिस्ट्रेशन स्वीकृति",
+  "print_text": "प्रिंट"
 }

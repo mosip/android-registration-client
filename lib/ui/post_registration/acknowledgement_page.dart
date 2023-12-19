@@ -6,6 +6,8 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 import 'package:printing/printing.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class AcknowledgementPage extends StatefulWidget {
   const AcknowledgementPage({super.key});
@@ -59,9 +61,9 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Registration Acknowledgement',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.registration_acknowledgement,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
                   color: AppStyle.appBlackShade1,
@@ -87,8 +89,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                   ),
                   child: Center(
                     child: Text(
-                      'PRINT',
-                      style: isMobile ? AppStyle.tabletPortraitButtonText : AppStyle.mobileButtonText,
+                      AppLocalizations.of(context)!.print_text,
+                      style: isMobile
+                          ? AppStyle.tabletPortraitButtonText
+                          : AppStyle.mobileButtonText,
                     ),
                   ),
                 ),
