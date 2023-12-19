@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -31,6 +32,7 @@ class _DateControlState extends State<DateControl> {
   }
 
   void showBottomPopup(BuildContext context) {
+    String dateString = dateController.text;
     showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
@@ -72,7 +74,11 @@ class _DateControlState extends State<DateControl> {
                 ),
                 CustomCupertinoDatePicker(
                   maxDate: DateTime.now(),
-                  minDate: DateTime(1920),
+                  minDate: DateTime(DateTime.now().year - 125),
+                  selectedDate: dateString != ""
+                      ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                          .parse(dateString)
+                      : null,
                   squeeze: 1,
                   itemExtent: 50,
                   diameterRatio: 10,

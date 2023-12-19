@@ -43,6 +43,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
   }
 
   _calculateAgeFromDOB() {
+    if (dateController.text == "") {
+      return;
+    }
     String dateString = dateController.text;
     DateTime date =
         DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
@@ -92,7 +95,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
         .containsKey(widget.field.id)) {
       String savedDate =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id];
-
       DateTime parsedDate =
           DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(savedDate);
       setState(() {
@@ -115,6 +117,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
   }
 
   void showBottomPopup(BuildContext context) {
+    String dateString = dateController.text;
     showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
@@ -156,7 +159,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
                 ),
                 CustomCupertinoDatePicker(
                   maxDate: DateTime.now(),
-                  minDate: DateTime(1920),
+                  minDate: DateTime(DateTime.now().year - 125),
+                  selectedDate: dateString != ""
+                      ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                          .parse(dateString)
+                      : null,
                   squeeze: 1,
                   itemExtent: 50,
                   diameterRatio: 10,
