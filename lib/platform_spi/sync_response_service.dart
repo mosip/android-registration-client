@@ -7,4 +7,5 @@ abstract class SyncResponseService {
   Future<Sync> getUserDetailsSync();
   Future<Sync> getIDSchemaSync();
   Future<Sync> getMasterDataSync();
+  Future<Sync> getCaCertsSync();
 }
