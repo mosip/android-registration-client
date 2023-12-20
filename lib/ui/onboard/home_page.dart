@@ -295,8 +295,7 @@ class _HomePageState extends State<HomePage> {
                                                 height: 30.h,
                                               ),
                                               Text(
-                                                "",
-                                                // AppLocalizations.of(context)!.registration_tasks,
+                                                AppLocalizations.of(context)!.registration_tasks,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyLarge
@@ -378,8 +377,7 @@ class _HomePageState extends State<HomePage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "",
-                                                // AppLocalizations.of(context)!.operation_tasks,
+                                                AppLocalizations.of(context)!.operation_tasks,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyLarge

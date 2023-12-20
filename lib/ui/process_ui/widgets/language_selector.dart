@@ -89,6 +89,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         .getAudit("REG-LOAD-006", "REG-MOD-103");
   }
 
+  _getNotificationLabel() {
+    String notificationLanguage = "";
+    context.watch<GlobalProvider>().chosenLang.forEach((element) {
+      String code = context.read<GlobalProvider>().languageToCodeMapper[element]!;
+      notificationLanguage += " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
+    });
+    return notificationLanguage.substring(3);
+  }
+
   @override
   Widget build(BuildContext context) {
     int minLanguage = context.read<GlobalProvider>().minLanguageCount;
@@ -283,7 +292,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 horizontal: 10.25.w,
               ),
               child: Text(
-                "Notification languages",
+                _getNotificationLabel(),
+                // AppLocalizations.of(context)!.notificationLanguage("eng"),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: semiBold,

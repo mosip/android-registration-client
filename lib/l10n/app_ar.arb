@@ -98,6 +98,15 @@
       }
     }
   },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "upload_document": "يرجى تحميل الوثيقة",
   "synchronize_data": "مزامنة البيانات",
   "registration_tasks": "مهام التسجيل",
@@ -116,7 +125,7 @@
   "select_language": "اختار اللغة",
   "select_two_languages": "يرجى اختيار أي لغتين لإدخال البيانات.",
   "english_mandatory": "اللغة الإنجليزية إلزامية للمقيم للاختيار وفقًا للإرشادات الحكومية. سيؤدي ترتيب الاختيار إلى عرض الصفحة للبيانات الديموغرافية.",
-  "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
+  "language_selector_note": "يرجى ملاحظة أن اللغة قد تعتمد على البيانات التي تم إدخالها أثناء التسجيل المسبق.",
   "cancel": "يلغي",
   "submit": "يُقدِّم",
   "go_back": "عُد",
