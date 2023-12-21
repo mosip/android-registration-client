@@ -18,6 +18,7 @@ class SyncProvider with ChangeNotifier {
   bool _userDetailsSyncSuccess = false;
   bool _idSchemaSyncSuccess = false;
   bool _masterDataSyncSuccess = false;
+  bool _cacertsSyncSuccess = false;
 
   String get lastSuccessfulSyncTime => _lastSuccessfulSyncTime;
   int get currentSyncProgress => _currentSyncProgress;
@@ -29,6 +30,8 @@ class SyncProvider with ChangeNotifier {
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
   bool get idSchemaSyncSuccess => _idSchemaSyncSuccess;
   bool get masterDataSyncSuccess => _masterDataSyncSuccess;
+  bool get cacertsSyncSuccess => _cacertsSyncSuccess;
+
   set isSyncing(bool value) {
     _isSyncing = value;
     notifyListeners();
@@ -111,7 +114,7 @@ class SyncProvider with ChangeNotifier {
             notifyListeners();
             await SyncResponseServiceImpl()
                 .getPolicyKeySync()
-                .then((Sync getAutoSync) {
+                .then((Sync getAutoSync) async {
               setCurrentProgressType(getAutoSync.syncType!);
               if (getAutoSync.errorCode == "") {
                 _masterDataSyncSuccess = true;
@@ -121,6 +124,19 @@ class SyncProvider with ChangeNotifier {
                 log(AppLocalizations.of(context)!.policy_key_sync_failed);
               }
               notifyListeners();
+              await SyncResponseServiceImpl()
+                  .getCaCertsSync()
+                  .then((Sync getAutoSync) {
+                setCurrentProgressType(getAutoSync.syncType!);
+                if (getAutoSync.errorCode == "") {
+                  _cacertsSyncSuccess = true;
+                  _currentSyncProgress = getAutoSync.syncProgress!;
+                  notifyListeners();
+                } else {
+                  log(AppLocalizations.of(context)!.ca_certs_sync_failed);
+                }
+                notifyListeners();
+              });
             });
           });
         });
@@ -133,7 +149,8 @@ class SyncProvider with ChangeNotifier {
         _globalParamsSyncSuccess &&
         _masterDataSyncSuccess &&
         _userDetailsSyncSuccess &&
-        _idSchemaSyncSuccess) {
+        _idSchemaSyncSuccess &&
+        _cacertsSyncSuccess) {
       return true;
     } else {
       return false;

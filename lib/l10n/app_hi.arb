@@ -47,6 +47,7 @@
   "sync_failed": "सिंक्रनाइज़ेशन असफल",
   "sync_failed_message": "कृपया मदद के लिए सिस्टम व्यवस्थापक या पर्यवेक्षक से कनेक्ट करें.",
   "policy_key_sync_failed":"नीति कुंजी सिंक्रनाइज़ेशन विफल",
+  "ca_certs_sync_failed":"सीए प्रमाणपत्र सिंक विफल रहा",
   "global_params_sync_failed":"Global Params Sync विफल",
   "user_details_sync_failed":"उपयोगकर्ता विवरण सिंक्रनाइज़ेशन विफल रहा",
   "id_schema_sync_failed":"IDSchena सिंक्रनाइज़ेशन विफल रहा",

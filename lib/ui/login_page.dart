@@ -774,7 +774,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Consumer<SyncProvider>(
                         builder: (context, syncP, child) {
                           return Text(
-                              "Sync ${syncP.currentSyncProgress.toString()} of 5 ");
+                              "Sync ${syncP.currentSyncProgress.toString()} of 6 ");
                         },
                       )),
                 ],

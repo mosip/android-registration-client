@@ -47,6 +47,7 @@
   "sync_failed": "مزامنة. فشل",
   "sync_failed_message": "يرجى الاتصال بمسؤول النظام أو المشرف للحصول على المساعدة.",
   "policy_key_sync_failed":"فشل مزامنة مفتاح السياسة",
+  "ca_certs_sync_failed":"فشلت مزامنة شهادات CA",
   "global_params_sync_failed":"فشل مزامنة Params العالمية",
   "user_details_sync_failed":"فشل مزامنة تفاصيل المستخدم",
   "id_schema_sync_failed":"فشل مزامنة IDSchema",

@@ -26,4 +26,6 @@ abstract class SyncApi{
   Sync getIDSchemaSync();
   @async
   Sync getMasterDataSync();
+  @async
+  Sync getCaCertsSync();
 }

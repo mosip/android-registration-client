@@ -47,6 +47,7 @@
   "sync_failed": "Synchro. Échoué",
   "sync_failed_message": "Veuillez contacter l'administrateur système ou le superviseur pour obtenir de l'aide.",
   "policy_key_sync_failed":"Échec de la synchronisation de la clé de stratégie",
+  "ca_certs_sync_failed":"Échec de la synchronisation des certificats CA",
   "global_params_sync_failed":"Échec de la synchronisation globale des paramètres",
   "user_details_sync_failed":"Échec de la synchronisation des détails de l'utilisateur",
   "id_schema_sync_failed":"Échec de la synchronisation IDSchema",

@@ -47,6 +47,7 @@
   "sync_failed": "ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "sync_failed_message": "ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಸಿಸ್ಟಂ ನಿರ್ವಾಹಕ ಅಥವಾ ಮೇಲ್ವಿಚಾರಕರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
   "policy_key_sync_failed":"ನೀತಿ ಕೀಲಿ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "ca_certs_sync_failed":"CA ಪ್ರಮಾಣಪತ್ರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "global_params_sync_failed":"ಜಾಗತಿಕ ಪರಮ್ಸ್ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "user_details_sync_failed":"ಬಳಕೆದಾರ ವಿವರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "id_schema_sync_failed":"IDSchena ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
