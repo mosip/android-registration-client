@@ -115,8 +115,6 @@ class BiometricCaptureControlInitialization extends StatelessWidget {
           int.parse(await BiometricsApi()
               .getMapValue("mosip.registration.num_of_fingerprint_retries")),
           "noOfCapturesAllowed");
-
-      
     }
 
     bool isPortrait =

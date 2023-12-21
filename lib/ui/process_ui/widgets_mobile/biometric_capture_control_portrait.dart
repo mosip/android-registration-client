@@ -111,7 +111,7 @@ class _BiometricCaptureControlPortraitState
                     left: 20,
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
                           color: secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
@@ -146,9 +146,9 @@ class _BiometricCaptureControlPortraitState
         SizedBox(
           width: double.infinity,
           child: Card(
-            margin: EdgeInsets.all(0),
+            margin: const EdgeInsets.all(0),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 18, 0, 18),
+              padding: const EdgeInsets.fromLTRB(20, 18, 0, 18),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -202,7 +202,7 @@ class _BiometricCaptureControlPortraitState
                             ),
                           ),
                         )
-                      : SizedBox(
+                      : const SizedBox(
                           height: 52,
                         ),
                 ],
@@ -221,7 +221,7 @@ class _BiometricCaptureControlPortraitState
                                   context.read<GlobalProvider>().ageGroup) ==
                           0)
                       ? Container(
-                          margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                           height: ((((context
                                                   .read<
                                                       BiometricCaptureControlProvider>()
@@ -329,7 +329,7 @@ class _BiometricCaptureControlPortraitState
                           ),
                         )
                       : Container(
-                          margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                           height: ((((context
                                                   .read<
                                                       BiometricCaptureControlProvider>()

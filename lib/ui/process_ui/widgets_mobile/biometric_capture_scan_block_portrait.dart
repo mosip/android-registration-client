@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -175,7 +177,7 @@ class _BiometricCaptureScanBlockPortraitState
                   children: [
                     ...biometricAttributeData.listofImages
                         .map((e) => Image.asset(
-                              "${e}",
+                              "$e",
                               height: 109,
                             ))
                   ],
@@ -240,7 +242,7 @@ class _BiometricCaptureScanBlockPortraitState
                             ? secondaryColors.elementAt(20)
                             : secondaryColors.elementAt(11),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 43,
                   ),
                   Text(
@@ -271,7 +273,7 @@ class _BiometricCaptureScanBlockPortraitState
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 6,
               ),
               Column(
@@ -282,7 +284,7 @@ class _BiometricCaptureScanBlockPortraitState
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 24, color: blackShade1, fontWeight: semiBold),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 29.4,
                   ),
                   Row(
@@ -370,7 +372,7 @@ class _BiometricCaptureScanBlockPortraitState
             ],
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 45,
         ),
         ElevatedButton.icon(
@@ -438,7 +440,7 @@ class _BiometricCaptureScanBlockPortraitState
                 ?.copyWith(fontSize: 27, fontWeight: bold, color: pureWhite),
           ),
           style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 46, vertical: 34),
+            padding: const EdgeInsets.symmetric(horizontal: 46, vertical: 34),
             backgroundColor: (biometricAttributeData.exceptions.contains(false)
                 ? solidPrimary
                 : secondaryColors.elementAt(22)),
@@ -857,10 +859,10 @@ class _BiometricCaptureScanBlockPortraitState
                             children: [
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 50,
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   Text(
                                     "${biometricAttributeData.title} Scan",
                                     style: TextStyle(
@@ -868,7 +870,7 @@ class _BiometricCaptureScanBlockPortraitState
                                         fontWeight: bold,
                                         color: blackShade1),
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   IconButton(
                                       onPressed: () {
                                         Navigator.pop(context);
@@ -1330,10 +1332,10 @@ class _BiometricCaptureScanBlockPortraitState
                             children: [
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 50,
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   Text(
                                     "${biometricAttributeData.title} Scan",
                                     style: TextStyle(
@@ -1341,7 +1343,7 @@ class _BiometricCaptureScanBlockPortraitState
                                         fontWeight: bold,
                                         color: blackShade1),
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   IconButton(
                                       onPressed: () {
                                         Navigator.pop(context);
@@ -1921,7 +1923,7 @@ class _BiometricCaptureScanBlockPortraitState
                                     .read<BiometricCaptureControlProvider>()
                                     .biometricCaptureScanBlockTabIndex ==
                                 1)
-                            ? Border()
+                            ? const Border()
                             : Border(
                                 bottom:
                                     BorderSide(color: solidPrimary, width: 3),
@@ -1965,7 +1967,7 @@ class _BiometricCaptureScanBlockPortraitState
                                     .read<BiometricCaptureControlProvider>()
                                     .biometricCaptureScanBlockTabIndex ==
                                 2)
-                            ? Border()
+                            ? const Border()
                             : Border(
                                 bottom:
                                     BorderSide(color: solidPrimary, width: 3),

@@ -4,11 +4,11 @@ import 'package:registration_client/model/biometrics_dto.dart';
 
 class BiometricCaptureControlProvider with ChangeNotifier {
   //Variables
-  bool _isBiometricCaptureControl = false;
-  late String _biometricAttribute;
-  String _biometricAttributePortrait = "";
-  int _biometricCaptureScanBlockTabIndex = 1;
-  BiometricAttributeData _iris = BiometricAttributeData(
+  bool isBiometricCaptureControl = false;
+  late String biometricAttribute;
+  String biometricAttributePortrait = "";
+  int biometricCaptureScanBlockTabIndex = 1;
+  BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",
       attemptNo: 0,
       exceptionType: "",
@@ -22,7 +22,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       qualityPercentage: 0,
       thresholdPercentage: "0",
       noOfCapturesAllowed: 0);
-  BiometricAttributeData _rightHand = BiometricAttributeData(
+  BiometricAttributeData rightHand = BiometricAttributeData(
       title: "Right Hand",
       attemptNo: 0,
       exceptionType: "",
@@ -33,7 +33,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       qualityPercentage: 0,
       thresholdPercentage: "0",
       noOfCapturesAllowed: 0);
-  BiometricAttributeData _leftHand = BiometricAttributeData(
+  BiometricAttributeData leftHand = BiometricAttributeData(
       title: "Left Hand",
       attemptNo: 0,
       exceptionType: "",
@@ -44,7 +44,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       qualityPercentage: 0,
       thresholdPercentage: "0",
       noOfCapturesAllowed: 0);
-  BiometricAttributeData _thumbs = BiometricAttributeData(
+  BiometricAttributeData thumbs = BiometricAttributeData(
       title: "Thumbs",
       attemptNo: 0,
       exceptionType: "",
@@ -55,7 +55,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       qualityPercentage: 0,
       thresholdPercentage: "0",
       noOfCapturesAllowed: 0);
-  BiometricAttributeData _face = BiometricAttributeData(
+  BiometricAttributeData face = BiometricAttributeData(
       title: "Face",
       attemptNo: 0,
       exceptionType: "",
@@ -66,7 +66,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       qualityPercentage: 0,
       thresholdPercentage: "0",
       noOfCapturesAllowed: 0);
-  BiometricAttributeData _exception = BiometricAttributeData(
+  BiometricAttributeData exception = BiometricAttributeData(
       title: "Exception",
       attemptNo: 0,
       exceptionType: "",
@@ -78,270 +78,206 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       thresholdPercentage: "0",
       noOfCapturesAllowed: 3);
 
-  //Getters and Setters
-  bool get isBiometricCaptureControl => _isBiometricCaptureControl;
-
-  set isBiometricCaptureControl(bool value) {
-    _isBiometricCaptureControl = value;
-    // //notifyListeners();
-  }
-
-  int get biometricCaptureScanBlockTabIndex =>
-      _biometricCaptureScanBlockTabIndex;
-  set biometricCaptureScanBlockTabIndex(int value) {
-    _biometricCaptureScanBlockTabIndex = value;
-  }
-
-  String get biometricAttribute => _biometricAttribute;
-
-  set biometricAttribute(String value) {
-    _biometricAttribute = value;
-    // //notifyListeners();
-  }
-
-  String get biometricAttributePortrait => _biometricAttributePortrait;
-  set biometricAttributePortrait(String value) {
-    _biometricAttributePortrait = value;
-    // //notifyListeners();
-  }
-
-  BiometricAttributeData get iris => _iris;
-  BiometricAttributeData get rightHand => _rightHand;
-  BiometricAttributeData get leftHand => _leftHand;
-  BiometricAttributeData get thumbs => _thumbs;
-  BiometricAttributeData get face => _face;
-  BiometricAttributeData get exception => _exception;
-
-  set iris(BiometricAttributeData value) {
-    _iris = value;
-    // //notifyListeners();
-  }
-
-  set rightHand(BiometricAttributeData value) {
-    _rightHand = value;
-    // //notifyListeners();
-  }
-
-  set leftHand(BiometricAttributeData value) {
-    _leftHand = value;
-    // //notifyListeners();
-  }
-
-  set thumbs(BiometricAttributeData value) {
-    _thumbs = value;
-    // //notifyListeners();
-  }
-
-  set face(BiometricAttributeData value) {
-    _face = value;
-    // //notifyListeners();
-  }
-
-  set exception(BiometricAttributeData value) {
-    _exception = value;
-    //notifyListeners();
-  }
-
   customSetterIris(dynamic value, String valueTitle) {
     if (valueTitle == "title") {
-      _iris.title = value;
+      iris.title = value;
     }
     if (valueTitle == "attemptNo") {
-      _iris.attemptNo = value;
+      iris.attemptNo = value;
     }
     if (valueTitle == "exceptionType") {
-      _iris.exceptionType = value;
+      iris.exceptionType = value;
     }
     if (valueTitle == "exceptions") {
-      _iris.exceptions = value;
+      iris.exceptions = value;
     }
     if (valueTitle == "isScanned") {
-      _iris.isScanned = value;
+      iris.isScanned = value;
     }
     if (valueTitle == "listofImages") {
-      _iris.listofImages = value;
+      iris.listofImages = value;
     }
     if (valueTitle == "listOfBiometricsDto") {
-      _iris.listOfBiometricsDto = value;
+      iris.listOfBiometricsDto = value;
     }
     if (valueTitle == "qualityPercentage") {
-      _iris.qualityPercentage = value.toDouble();
+      iris.qualityPercentage = value.toDouble();
     }
     if (valueTitle == "thresholdPercentage") {
-      _iris.thresholdPercentage = value;
+      iris.thresholdPercentage = value;
     }
     if (valueTitle == "noOfCapturesAllowed") {
-      _iris.noOfCapturesAllowed = value;
+      iris.noOfCapturesAllowed = value;
     }
     //notifyListeners();
   }
 
   customSetterRightHand(dynamic value, String valueTitle) {
     if (valueTitle == "title") {
-      _rightHand.title = value;
+      rightHand.title = value;
     }
     if (valueTitle == "attemptNo") {
-      _rightHand.attemptNo = value;
+      rightHand.attemptNo = value;
     }
     if (valueTitle == "exceptionType") {
-      _rightHand.exceptionType = value;
+      rightHand.exceptionType = value;
     }
     if (valueTitle == "exceptions") {
-      _rightHand.exceptions = value;
+      rightHand.exceptions = value;
     }
     if (valueTitle == "isScanned") {
-      _rightHand.isScanned = value;
+      rightHand.isScanned = value;
     }
     if (valueTitle == "listofImages") {
-      _rightHand.listofImages = value;
+      rightHand.listofImages = value;
     }
     if (valueTitle == "listOfBiometricsDto") {
-      _rightHand.listOfBiometricsDto = value;
+      rightHand.listOfBiometricsDto = value;
     }
     if (valueTitle == "qualityPercentage") {
-      _rightHand.qualityPercentage = value.toDouble();
+      rightHand.qualityPercentage = value.toDouble();
     }
     if (valueTitle == "thresholdPercentage") {
-      _rightHand.thresholdPercentage = value;
+      rightHand.thresholdPercentage = value;
     }
     if (valueTitle == "noOfCapturesAllowed") {
-      _rightHand.noOfCapturesAllowed = value;
+      rightHand.noOfCapturesAllowed = value;
     }
     //notifyListeners();
   }
 
   customSetterLeftHand(dynamic value, String valueTitle) {
     if (valueTitle == "title") {
-      _leftHand.title = value;
+      leftHand.title = value;
     }
     if (valueTitle == "attemptNo") {
-      _leftHand.attemptNo = value;
+      leftHand.attemptNo = value;
     }
     if (valueTitle == "exceptionType") {
-      _leftHand.exceptionType = value;
+      leftHand.exceptionType = value;
     }
     if (valueTitle == "exceptions") {
-      _leftHand.exceptions = value;
+      leftHand.exceptions = value;
     }
     if (valueTitle == "isScanned") {
-      _leftHand.isScanned = value;
+      leftHand.isScanned = value;
     }
     if (valueTitle == "listofImages") {
-      _leftHand.listofImages = value;
+      leftHand.listofImages = value;
     }
     if (valueTitle == "listOfBiometricsDto") {
-      _leftHand.listOfBiometricsDto = value;
+      leftHand.listOfBiometricsDto = value;
     }
     if (valueTitle == "qualityPercentage") {
-      _leftHand.qualityPercentage = value.toDouble();
+      leftHand.qualityPercentage = value.toDouble();
     }
     if (valueTitle == "thresholdPercentage") {
-      _leftHand.thresholdPercentage = value;
+      leftHand.thresholdPercentage = value;
     }
     if (valueTitle == "noOfCapturesAllowed") {
-      _leftHand.noOfCapturesAllowed = value;
+      leftHand.noOfCapturesAllowed = value;
     }
     //notifyListeners();
   }
 
   customSetterThumbs(dynamic value, String valueTitle) {
     if (valueTitle == "title") {
-      _thumbs.title = value;
+      thumbs.title = value;
     }
     if (valueTitle == "attemptNo") {
-      _thumbs.attemptNo = value;
+      thumbs.attemptNo = value;
     }
     if (valueTitle == "exceptionType") {
-      _thumbs.exceptionType = value;
+      thumbs.exceptionType = value;
     }
     if (valueTitle == "exceptions") {
-      _thumbs.exceptions = value;
+      thumbs.exceptions = value;
     }
     if (valueTitle == "isScanned") {
-      _thumbs.isScanned = value;
+      thumbs.isScanned = value;
     }
     if (valueTitle == "listofImages") {
-      _thumbs.listofImages = value;
+      thumbs.listofImages = value;
     }
     if (valueTitle == "listOfBiometricsDto") {
-      _thumbs.listOfBiometricsDto = value;
+      thumbs.listOfBiometricsDto = value;
     }
     if (valueTitle == "qualityPercentage") {
-      _thumbs.qualityPercentage = value.toDouble();
+      thumbs.qualityPercentage = value.toDouble();
     }
     if (valueTitle == "thresholdPercentage") {
-      _thumbs.thresholdPercentage = value;
+      thumbs.thresholdPercentage = value;
     }
     if (valueTitle == "noOfCapturesAllowed") {
-      _thumbs.noOfCapturesAllowed = value;
+      thumbs.noOfCapturesAllowed = value;
     }
     //notifyListeners();
   }
 
   customSetterFace(dynamic value, String valueTitle) {
     if (valueTitle == "title") {
-      _face.title = value;
+      face.title = value;
     }
     if (valueTitle == "attemptNo") {
-      _face.attemptNo = value;
+      face.attemptNo = value;
     }
     if (valueTitle == "exceptionType") {
-      _face.exceptionType = value;
+      face.exceptionType = value;
     }
     if (valueTitle == "exceptions") {
-      _face.exceptions = value;
+      face.exceptions = value;
     }
     if (valueTitle == "isScanned") {
-      _face.isScanned = value;
+      face.isScanned = value;
     }
     if (valueTitle == "listofImages") {
-      _face.listofImages = value;
+      face.listofImages = value;
     }
     if (valueTitle == "listOfBiometricsDto") {
-      _face.listOfBiometricsDto = value;
+      face.listOfBiometricsDto = value;
     }
     if (valueTitle == "qualityPercentage") {
-      _face.qualityPercentage = value.toDouble();
+      face.qualityPercentage = value.toDouble();
     }
     if (valueTitle == "thresholdPercentage") {
-      _face.thresholdPercentage = value;
+      face.thresholdPercentage = value;
     }
     if (valueTitle == "noOfCapturesAllowed") {
-      _face.noOfCapturesAllowed = value;
+      face.noOfCapturesAllowed = value;
     }
     //notifyListeners();
   }
 
   customSetterException(dynamic value, String valueTitle) {
     if (valueTitle == "title") {
-      _exception.title = value;
+      exception.title = value;
     }
     if (valueTitle == "attemptNo") {
-      _exception.attemptNo = value;
+      exception.attemptNo = value;
     }
     if (valueTitle == "exceptionType") {
-      _exception.exceptionType = value;
+      exception.exceptionType = value;
     }
     if (valueTitle == "exceptions") {
-      _exception.exceptions = value;
+      exception.exceptions = value;
     }
     if (valueTitle == "isScanned") {
-      _exception.isScanned = value;
+      exception.isScanned = value;
     }
     if (valueTitle == "listofImages") {
-      _exception.listofImages = value;
+      exception.listofImages = value;
     }
     if (valueTitle == "listOfBiometricsDto") {
-      _exception.listOfBiometricsDto = value;
+      exception.listOfBiometricsDto = value;
     }
     if (valueTitle == "qualityPercentage") {
-      _exception.qualityPercentage = value.toDouble();
+      exception.qualityPercentage = value.toDouble();
     }
     if (valueTitle == "thresholdPercentage") {
-      _exception.thresholdPercentage = value;
+      exception.thresholdPercentage = value;
     }
     if (valueTitle == "noOfCapturesAllowed") {
-      _exception.noOfCapturesAllowed = value;
+      exception.noOfCapturesAllowed = value;
     }
     //notifyListeners();
   }
