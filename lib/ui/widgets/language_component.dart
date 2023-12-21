@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class LanguageComponent extends StatefulWidget {
@@ -30,19 +31,19 @@ class _LanguageComponentState extends State<LanguageComponent> {
         padding: EdgeInsets.only(
           left: 25.w,
           right: 25.w,
-          top: widget.isMobile ? 15.h : 9.h,
-          bottom: widget.isMobile ? 15.h : 9.h,
+          top: widget.isMobile ? isMobileSize ? 9.h : 15.h : 9.h,
+          bottom: widget.isMobile ? isMobileSize ? 9.h : 15.h : 9.h,
         ),
         decoration: BoxDecoration(
           color: widget.isFreezed
               ? AppStyle.languageFreezedColor
               : widget.isSelected
-                  ? AppStyle.appHelpText
+                  ? AppStyle.appButtonBorderText
                   : Colors.transparent,
           border: Border.all(
             width: 1,
             color: widget.isSelected
-                ? AppStyle.appHelpText
+                ? AppStyle.appButtonBorderText
                 : AppStyle.languageSelectedColor,
           ),
           borderRadius: const BorderRadius.all(
@@ -52,9 +53,12 @@ class _LanguageComponentState extends State<LanguageComponent> {
         child: Text(
           widget.title,
           style: TextStyle(
-            fontSize: widget.isMobile ? 24 : 16,
-            color:
-                widget.isFreezed ? AppStyle.appBlack : widget.isSelected ? AppStyle.appWhite : AppStyle.appBlackShade1,
+            fontSize: widget.isMobile ? isMobileSize ? 16 : 24 : 16,
+            color: widget.isFreezed
+                ? AppStyle.appBlack
+                : widget.isSelected
+                    ? AppStyle.appWhite
+                    : AppStyle.appBlackShade1,
           ),
         ),
       ),

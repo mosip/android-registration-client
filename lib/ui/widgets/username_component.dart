@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/widgets/language_component.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class UsernameComponent extends StatefulWidget {
@@ -39,25 +40,27 @@ class _UsernameComponentState extends State<UsernameComponent> {
         SizedBox(
           child: Text(
             AppLocalizations.of(context)!.language,
-            style: widget.isMobile
-                ? AppStyle.tabletPortraitTextfieldHeader
+            style: widget.isMobile ?
+            isMobileSize ? AppStyle.mobileTextfieldHeader
+                : AppStyle.tabletPortraitTextfieldHeader
                 : AppStyle.mobileTextfieldHeader,
           ),
         ),
         SizedBox(
-          height: widget.isMobile ? 14.h : 8.h,
+          height: widget.isMobile ? isMobileSize ? 8.h : 14.h : 8.h,
         ),
         // _getLanguageDropdownButton(context),
         _getLanguageRowList(),
         SizedBox(
-          height: 30.h,
+          height: 27.h,
         ),
         Row(
           children: [
             Text(
               AppLocalizations.of(context)!.username,
               style: widget.isMobile
-                  ? AppStyle.tabletPortraitTextfieldHeader
+              ? isMobileSize  ? AppStyle.mobileTextfieldHeader
+                  : AppStyle.tabletPortraitTextfieldHeader
                   : AppStyle.mobileTextfieldHeader,
             ),
             const Text(
@@ -70,7 +73,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
           height: 11.h,
         ),
         Container(
-          height: widget.isMobile ? 82.h : 52.h,
+          height: widget.isMobile ? isMobileSize ? 52.h : 82.h : 52.h,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(
             horizontal: 17.w,
@@ -89,12 +92,13 @@ class _UsernameComponentState extends State<UsernameComponent> {
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_username,
               hintStyle: widget.isMobile
-                  ? AppStyle.tabletPortraitTextfieldHintText
+              ? isMobileSize ? AppStyle.mobileTextfieldHintText
+                  : AppStyle.tabletPortraitTextfieldHintText
                   : AppStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
             style: TextStyle(
-              fontSize: widget.isMobile ? 22 : 14,
+              fontSize: widget.isMobile ? isMobileSize ? 14 : 22 : 14,
               color: AppStyle.appBlack,
             ),
             onChanged: (v) {
@@ -108,7 +112,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
         InkWell(
           onTap: !widget.isDisabled ? widget.onTap : null,
           child: Container(
-            height: widget.isMobile ? 82.h : 52.h,
+            height: widget.isMobile ? isMobileSize ? 52.h : 82.h : 52.h,
             decoration: BoxDecoration(
               color: !widget.isDisabled
                   ? AppStyle.appSolidPrimary
@@ -127,7 +131,8 @@ class _UsernameComponentState extends State<UsernameComponent> {
               child: Text(
                 AppLocalizations.of(context)!.next_button,
                 style: widget.isMobile
-                    ? AppStyle.tabletPortraitButtonText
+                ? isMobileSize ? AppStyle.mobileButtonText
+                    : AppStyle.tabletPortraitButtonText
                     : AppStyle.mobileButtonText,
               ),
             ),

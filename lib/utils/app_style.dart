@@ -11,7 +11,7 @@ abstract class AppStyle {
   static const Color appSolidPrimary = Color(0xFF1C43A1);
   static const Color appBlueShade1 = Color(0xFF214FBF);
   static const Color appInfoText = Color(0xFFB1C8FF);
-  static const Color appHelpText = Color(0xFF1C43A2);
+  static const Color appButtonBorderText = Color(0xFF1C43A2);
   static const Color appYellow = Color(0xFFFEC401);
   static const Color appOrange = Color(0xFFF97707);
   static const Color appBackButtonBorder = Color(0xFF2A4EA7);
@@ -33,7 +33,7 @@ abstract class AppStyle {
   static TextStyle mobileHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
-    color: appHelpText,
+    color: appWhite,
     letterSpacing: 0.5,
   );
 
@@ -81,21 +81,21 @@ abstract class AppStyle {
 
   static TextStyle mobileWelcomeText = const TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 26,
+    fontSize: 18,
     color: appWhite,
     letterSpacing: 0.5,
   );
   
   static TextStyle mobileCommunityRegClientText = const TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 26,
+    fontSize: 18,
     color: appWhite,
     letterSpacing: 0.5,
   );
 
   static TextStyle mobileInfoText = const TextStyle(
     fontWeight: FontWeight.normal,
-    fontSize: 16,
+    fontSize: 14,
     color: appInfoText,
     letterSpacing: 0.5,
   );
@@ -110,14 +110,14 @@ abstract class AppStyle {
   static TextStyle mobileBackButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 14,
-    color: appHelpText,
+    color: appButtonBorderText,
     letterSpacing: 0.5,
   );
 
   static TextStyle tabletHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 14,
-    color: appHelpText,
+    color: appButtonBorderText,
     letterSpacing: 0,
   );
 
@@ -187,7 +187,7 @@ abstract class AppStyle {
   static TextStyle tabletBackButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 14,
-    color: appHelpText,
+    color: appButtonBorderText,
     letterSpacing: 0,
   );
 
@@ -218,13 +218,25 @@ abstract class AppStyle {
   static TextStyle secondaryButtonText = TextStyle(
     fontWeight: bold,
     fontSize: 21,
-    color: appHelpText
+    color: appButtonBorderText
+  );
+
+  static TextStyle primaryButtonTextSmall = TextStyle(
+    fontWeight: bold,
+    fontSize: 16,
+    color: appWhite
+  );
+
+  static TextStyle secondaryButtonTextSmall = TextStyle(
+    fontWeight: bold,
+    fontSize: 16,
+    color: appButtonBorderText
   );
 
   static TextStyle tabletPortraitHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 22,
-    color: appHelpText,
+    color: appWhite,
     letterSpacing: 0.5,
   );
 
@@ -301,7 +313,7 @@ abstract class AppStyle {
   static TextStyle tabletPortraitBackButtonText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 22,
-    color: appHelpText,
+    color: appButtonBorderText,
     letterSpacing: 0.5,
   );
 }

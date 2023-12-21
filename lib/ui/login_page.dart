@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SingleChildScrollView(
               child: SizedBox(
-                height: h - 94.h,
+                height: h,
                 width: w,
                 child: Column(
                   children: [
@@ -202,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: InkWell(
                         onTap: () {},
                         child: Container(
-                          height: 62.h,
+                          height: isMobileSize ? 46.h : 62.h,
                           width: 129.w,
                           decoration: BoxDecoration(
                             color: Colors.transparent,
@@ -216,25 +216,26 @@ class _LoginPageState extends State<LoginPage> {
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.help,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: AppStyle.appWhite,
-                              ),
+                              style: isMobile ? isMobileSize ? AppStyle.mobileHelpText : AppStyle.tabletPortraitHelpText : AppStyle.mobileHeaderText
+                              // const TextStyle(
+                              //   fontSize: 22,
+                              //   fontWeight: FontWeight.bold,
+                              //   color: AppStyle.appWhite,
+                              // ),
                             ),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: 86.h,
+                      height: isMobileSize ? 72.h : 86.h,
                     ),
                     Expanded(
                       child: Column(
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 92.w : 80.w,
+                              horizontal: isMobile ? isMobileSize ? 20.w : 92.w : 80.w,
                             ),
                             child: isMobile ? _mobileView() : _tabletView(),
                           ),
@@ -261,55 +262,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-    // SafeArea(
-    //   child: Scaffold(
-    //     backgroundColor: AppStyle.appSolidPrimary,
-    //     body: Stack(
-    //       children: [
-    //         Positioned(
-    //           bottom: 0,
-    //           left: 16.w,
-    //           child: _getBuildingsImage(),
-    //         ),
-    //         SizedBox(
-    //           height: h,
-    //           width: w,
-    //           child: SingleChildScrollView(
-    //             child: Column(
-    //               crossAxisAlignment: isMobile
-    //                   ? CrossAxisAlignment.center
-    //                   : CrossAxisAlignment.start,
-    //               children: [
-    //                 _appBarComponent(),
-    // SizedBox(
-    //   height: isMobile ? 62.h : 132.h,
-    // ),
-    // Container(
-    //   padding: EdgeInsets.symmetric(
-    //     horizontal: isMobile ? 92.w : 80.w,
-    //   ),
-    //   child: isMobile ? _mobileView() : _tabletView(),
-    // ),
-    //               ],
-    //             ),
-    //           ),
-    //         ),
-    //         isMachineKeysDialogOpen
-    //             ? Container(
-    //                 color: Colors.transparent.withOpacity(0.5),
-    //                 child: Center(
-    //                   child: MachineKeys(
-    //                     onCloseComponent: () {
-    //                       _toggleMachineKeysDialog();
-    //                     },
-    //                   ),
-    //                 ),
-    //               )
-    //             : const SizedBox(),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   _getIsValidUser() {
@@ -496,7 +448,7 @@ class _LoginPageState extends State<LoginPage> {
 
   _getBottomBar() {
     return Container(
-      height: 94.h,
+      height: isMobileSize ? 62.h : 94.h,
       padding: EdgeInsets.symmetric(
         vertical: 15.h,
       ),
@@ -518,69 +470,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Widget _appBarComponent() {
-  //   return Container(
-  //     height: isMobile ? 94.h : 90.h,
-  //     color: AppStyle.appWhite,
-  //     padding: EdgeInsets.symmetric(
-  //       vertical: 22.h,
-  //       horizontal: isMobile ? 20.w : 80.w,
-  //     ),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         InkWell(
-  //           onLongPress: () {
-  //             _longPressLogoAudit();
-  //             setState(() {
-  //               isMachineKeysDialogOpen = true;
-  //             });
-  //           },
-  //           child: SizedBox(
-  //             height: isMobile ? 51.h : 54.h,
-  //             child: Image.asset(
-  //               appIcon,
-  //               fit: BoxFit.fill,
-  //             ),
-  //           ),
-  //         ),
-  //         InkWell(
-  //           child: Container(
-  //             height: 62.h,
-  //             padding: EdgeInsets.only(
-  //               left: isMobile ? 37.w : 46.w,
-  //               right: isMobile ? 36.w : 47.w,
-  //             ),
-  //             decoration: BoxDecoration(
-  //               border: Border.all(
-  //                 width: 1.h,
-  //                 color: AppStyle.appHelpText,
-  //               ),
-  //               borderRadius: const BorderRadius.all(
-  //                 Radius.circular(5),
-  //               ),
-  //             ),
-  //             child: Center(
-  //               child: Text(
-  //                 AppLocalizations.of(context)!.help,
-  //                 style: isMobile
-  //                     ? AppStyle.tabletPortraitHelpText
-  //                     : AppStyle.mobileHelpText,
-  //               ),
-  //             ),
-  //           ),
-  //           onTap: () {},
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _welcomeTextComponent() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 38.w : 0,
-      ),
+      // padding: EdgeInsets.symmetric(
+      //   horizontal: isMobile ? 38.w : 0,
+      // ),
       child: Column(
         crossAxisAlignment:
             isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
@@ -588,15 +482,17 @@ class _LoginPageState extends State<LoginPage> {
           Text(
             AppLocalizations.of(context)!.welcome,
             style: isMobile
-                ? AppStyle.tabletPortraitWelcomeText
-                : AppStyle.mobileWelcomeText,
+              ? isMobileSize ? AppStyle.mobileWelcomeText
+                : AppStyle.tabletPortraitWelcomeText
+                : AppStyle.tabletWelcomeText,
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
           ),
           Text(
             AppLocalizations.of(context)!.community_reg_text,
             style: isMobile
-                ? AppStyle.tabletPortraitCommunityRegClientText
-                : AppStyle.mobileCommunityRegClientText,
+            ? isMobileSize ? AppStyle.mobileCommunityRegClientText
+                : AppStyle.tabletPortraitCommunityRegClientText
+                : AppStyle.tabletCommunityRegClientText,
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
           )
         ],
@@ -606,13 +502,14 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _infoTextComponent() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 113.w : 0,
-      ),
+      // padding: EdgeInsets.symmetric(
+      //   horizontal: isMobile ? 113.w : 0,
+      // ),
       child: Text(
         AppLocalizations.of(context)!.info_text,
         style: isMobile
-            ? AppStyle.tabletPortraitInfoText
+        ? isMobileSize ? AppStyle.mobileInfoText
+            : AppStyle.tabletPortraitInfoText
             : AppStyle.mobileInfoText,
         textAlign: isMobile ? TextAlign.center : TextAlign.start,
       ),
@@ -626,7 +523,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _welcomeTextComponent(),
         SizedBox(
-          height: isMobile ? 18.h : 16.h,
+          height: isMobile ? isMobileSize ? 12.h : 18.h : 16.h,
         ),
         _infoTextComponent(),
       ],
@@ -635,10 +532,10 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginComponent() {
     return Container(
-      width: isMobile ? 616.w : 424.w,
+      width: isMobile ? isMobileSize ? 358.w : 616.w : 424.w,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 30.w : 20.w,
-        vertical: isMobile ? 30.h : 20.h,
+        horizontal: isMobile ? isMobileSize ? 20.w : 30.w : 20.w,
+        vertical: isMobile ? isMobileSize ? 20.h : 30.h : 20.h,
       ),
       decoration: BoxDecoration(
         color: AppStyle.appWhite,
@@ -654,12 +551,13 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: isMobile ? 16.h : 34.h,
+            height: isMobile ? isMobileSize ? 34.h : 16.h : 34.h,
           ),
           Text(
             AppLocalizations.of(context)!.login_text,
             style: isMobile
-                ? AppStyle.tabletPortraitHeaderText
+            ? isMobileSize ? AppStyle.mobileHeaderText
+                : AppStyle.tabletPortraitHeaderText
                 : AppStyle.mobileHeaderText,
           ),
           SizedBox(
@@ -713,7 +611,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _appCombinedTextComponent(),
         SizedBox(
-          height: 70.h,
+          height: isMobileSize ? 40.h : 70.h,
         ),
         _loginComponent(),
       ],

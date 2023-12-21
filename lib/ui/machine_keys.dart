@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 import 'package:registration_client/utils/file_storage.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -50,7 +51,11 @@ class MachineKeys extends StatelessWidget {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Container(
-      width: isMobile ? 330.w : 670.w,
+      width: isMobile
+          ? isMobileSize
+              ? 358.w
+              : 330.w
+          : 670.w,
       padding: EdgeInsets.only(left: 20.w, right: 19.w),
       decoration: const BoxDecoration(
         color: AppStyle.appWhite,
@@ -70,9 +75,9 @@ class MachineKeys extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.device_credentials,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppStyle.appBlack,
-                      fontSize: 26,
+                      fontSize: isMobileSize ? 18 : 26,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -196,7 +201,7 @@ class MachineKeys extends StatelessWidget {
         });
       },
       child: Container(
-        height: 62.h,
+        height: isMobileSize ? 46.h : 62.h,
         decoration: BoxDecoration(
           color: AppStyle.appSolidPrimary,
           border: Border.all(
@@ -210,7 +215,9 @@ class MachineKeys extends StatelessWidget {
         child: Center(
           child: Text(
             AppLocalizations.of(_context)!.copy_text,
-            style: AppStyle.primaryButtonText,
+            style: isMobileSize
+                ? AppStyle.primaryButtonTextSmall
+                : AppStyle.primaryButtonText,
           ),
         ),
       ),
@@ -221,7 +228,7 @@ class MachineKeys extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 62.h,
+        height: isMobileSize ? 46.h : 62.h,
         decoration: BoxDecoration(
           color: AppStyle.appWhite,
           border: Border.all(
@@ -235,7 +242,9 @@ class MachineKeys extends StatelessWidget {
         child: Center(
           child: Text(
             title,
-            style: AppStyle.secondaryButtonText,
+            style: isMobileSize
+                ? AppStyle.secondaryButtonTextSmall
+                : AppStyle.secondaryButtonText,
           ),
         ),
       ),

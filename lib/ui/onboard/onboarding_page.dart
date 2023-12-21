@@ -87,7 +87,7 @@ class OnboardingPage extends StatelessWidget {
                       title: 'GET ONBOARD',
                       onTap: () {},
                       color: AppStyle.appWhite,
-                      fontColor: AppStyle.appHelpText,
+                      fontColor: AppStyle.appButtonBorderText,
                     ),
                     SizedBox(
                       height: 40.h,
