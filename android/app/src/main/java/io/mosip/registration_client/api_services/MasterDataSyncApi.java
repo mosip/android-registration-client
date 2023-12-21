@@ -5,20 +5,20 @@ import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +32,8 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.dto.http.CACertificateDto;
+import io.mosip.registration.clientmanager.dto.http.CACertificateResponseDto;
 import io.mosip.registration.clientmanager.dto.http.CertificateResponse;
 import io.mosip.registration.clientmanager.dto.http.ClientSettingDto;
 import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
@@ -60,12 +62,15 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
+import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
+import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
+import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import okhttp3.ResponseBody;
@@ -626,5 +631,68 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 .setSyncProgress(Long.valueOf(progress))
                 .setErrorCode(errorCode)
                 .build();
+    }
+
+    @Override
+    public void getCaCertsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        syncCACertificates(result, 0);
+    }
+
+    private void syncCACertificates(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
+        Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
+                BuildConfig.CLIENT_VERSION);
+        call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
+            @Override
+            public void onResponse(Call<ResponseWrapper<CACertificateResponseDto>> call, Response<ResponseWrapper<CACertificateResponseDto>> response) {
+                if (response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(response.body());
+                    String errorMessage = error != null ? error.getMessage() : null;
+                    if (errorMessage == null) {
+                        try {
+                            saveCACertificate(response.body().getResponse().getCertificateDTOList());
+                            result.success(syncResult("CACertificatesSync", 6, ""));
+                            return;
+                        } catch (Throwable t) {
+                            Log.e(TAG, "Failed to sync CA certificates", t);
+                        }
+                    }
+                    result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
+                } else
+                    result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
+            }
+            @Override
+            public void onFailure(Call<ResponseWrapper<CACertificateResponseDto>> call, Throwable t) {
+                result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
+            }
+        });
+    }
+
+    private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
+        if (caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
+            //Data Fix : As createdDateTime is null sometimes
+            caCertificateDtos.forEach(c -> {
+                if (c.getCreatedtimes() == null)
+                    c.setCreatedtimes(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
+            });
+            caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
+
+            for (CACertificateDto cert : caCertificateDtos) {
+                String errorCode = null;
+                try {
+                    if (cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
+                        CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
+                        caCertificateRequestDto.setCertificateData(cert.getCertData());
+                        caCertificateRequestDto.setPartnerDomain(cert.getPartnerDomain());
+                        io.mosip.registration.keymanager.dto.CACertificateResponseDto caCertificateResponseDto = certificateManagerService.uploadCACertificate(caCertificateRequestDto);
+                        Log.i(TAG, caCertificateResponseDto.getStatus());
+                    }
+                } catch (KeymanagerServiceException ex) {
+                    errorCode = ex.getErrorCode();
+                }
+
+                if (errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
+                    throw new KeymanagerServiceException(errorCode, errorCode);
+            }
+        }
     }
 }

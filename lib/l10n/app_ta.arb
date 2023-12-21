@@ -47,6 +47,7 @@
   "sync_failed": "ஒத்திசைவு தோல்வியுற்றது",
   "sync_failed_message": "உதவிக்கு கணினி நிர்வாகி அல்லது மேற்பார்வையாளருடன் இணைக்கவும்.",
   "policy_key_sync_failed":"கொள்கை விசை ஒத்திசைவு தோல்வியுற்றது",
+  "ca_certs_sync_failed":"CA சான்றிதழ்கள் ஒத்திசைவு தோல்வியடைந்தது",
   "global_params_sync_failed":"Global Params Sync தோல்வியுற்றது",
   "user_details_sync_failed":"பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
   "id_schema_sync_failed":"IDSchena Sync Failed",

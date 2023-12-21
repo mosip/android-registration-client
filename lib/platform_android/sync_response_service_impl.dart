@@ -81,4 +81,17 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncTime;
   }
+
+  @override
+  Future<Sync> getCaCertsSync() async {
+    late Sync syncResponse;
+    try {
+      syncResponse = await SyncApi().getCaCertsSync();
+    } on PlatformException {
+      debugPrint('CaCerts Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('CaCertsSync has failed! ${e.toString()}');
+    }
+    return syncResponse;
+  }
 }
