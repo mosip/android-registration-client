@@ -98,5 +98,13 @@
       }
     }
   },
-  "upload_document": "Please Upload The Document"
+  "upload_document": "Please Upload The Document",
+  "scan": "SCAN",
+  "clear": "Clear",
+  "save": "SAVE",
+  "retake": "RETAKE",
+  "reference_number": "Enter Reference Number",
+  "select_value_message": "Please select a value",
+  "invalid_input": "Invalid input",
+  "reference_number_validation": "Please enter reference number"
 }

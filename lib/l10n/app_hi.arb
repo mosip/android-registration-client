@@ -98,5 +98,13 @@
       }
     }
   },
-  "upload_document": "कृपया दस्तावेज़ अपलोड करें"
+  "upload_document": "कृपया दस्तावेज़ अपलोड करें",
+  "scan": "स्कैन",
+  "clear": "निकालना",
+  "save": "बचाना",
+  "retake": "फिर से लेना",
+  "reference_number": "संदर्भ संख्या दर्ज करें",
+  "select_value_message": "कृपया एक मान चुनें",
+  "invalid_input": "अमान्य निवेश",
+  "reference_number_validation": "कृपया संदर्भ संख्या दर्ज करें"
 }

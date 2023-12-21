@@ -67,7 +67,7 @@ dependencies:
   android_alarm_manager_plus: ^3.0.2
   http: ^0.13.6
   flutter_config: ^2.0.2
-  crop_image: ^1.0.11
+  native_image_cropper: ^0.4.0
 
 dev_dependencies:
   flutter_test:

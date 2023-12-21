@@ -98,5 +98,13 @@
       }
     }
   },
-  "upload_document": "ஆவணத்தைப் பதிவேற்றவும்"
+  "upload_document": "ஆவணத்தைப் பதிவேற்றவும்",
+  "scan": "ஊடுகதிர்",
+  "clear": "அகற்று",
+  "save": "சேமிக்கவும்",
+  "retake": "ரீடேக்",
+  "reference_number": "குறிப்பு எண்ணை உள்ளிடவும்",
+  "select_value_message": "மதிப்பைத் தேர்ந்தெடுக்கவும்",
+  "invalid_input": "தவறான உள்ளீடு",
+  "reference_number_validation": "தயவுசெய்து ஆதார் எண்ணை உள்ளிடவும்"
 }

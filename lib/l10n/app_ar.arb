@@ -98,5 +98,13 @@
       }
     }
   },
-  "upload_document": "يرجى تحميل الوثيقة"
+  "upload_document": "يرجى تحميل الوثيقة",
+  "scan": "مسح",
+  "clear": "يزيل",
+  "save": "يحفظ",
+  "retake": "استعادة",
+  "reference_number": "أدخل الرقم المرجعي",
+  "select_value_message": "رجاءا اختر قيمة",
+  "invalid_input": "مدخل غير صالح",
+  "reference_number_validation": "الرجاء إدخال الرقم المرجعي"
 }
