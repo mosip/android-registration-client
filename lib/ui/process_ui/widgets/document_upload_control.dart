@@ -13,6 +13,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/scanner/custom_scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/ui/scanner/preview_screen.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -57,14 +58,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     super.initState();
   }
 
-  Map<String, String> referenceLang = {
-    "ara": "رقم المرجع",
-    "fra": "Numéro de réference",
-    "eng": "Reference Number",
-    "kan": "ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ",
-    "hin": "संदर्भ संख्या",
-    "tam": "குறிப்பு எண்",
-  };
 
   String _getDataFromMap(String lang) {
     String response = "";
@@ -220,6 +213,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
+    List<String> selectedLang = context.read<GlobalProvider>().chosenLang;
+    if (!(widget.field.type == "simpleType")) {
+      selectedLang = ["English"];
+    }
+    String lang = context.read<GlobalProvider>().langToCode(selectedLang.first);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Card(
@@ -307,12 +305,22 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomLabel(field: Field(label: referenceLang,
-                              required: widget
-                                  .field.required,
-                              requiredOn: widget
-                                  .field.requiredOn,
-                            )),
+                            Row(
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.referenceNumber(lang),
+                                  style: TextStyle(fontSize: 14, fontWeight: semiBold),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                if (widget.field.required! || widget.field.requiredOn!.isNotEmpty)
+                                  const Text(
+                                    "*",
+                                    style: TextStyle(color: Colors.red, fontSize: 14),
+                                  )
+                              ],
+                            ),
                              SizedBox(
                               height: 10.h,
                             ),
@@ -537,12 +545,22 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CustomLabel(field: Field(label: referenceLang,
-                                    required: widget
-                                        .field.required,
-                                    requiredOn: widget
-                                        .field.requiredOn,
-                                  )),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(context)!.referenceNumber(lang),
+                                        style: TextStyle(fontSize: 14, fontWeight: semiBold),
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      if (widget.field.required! || widget.field.requiredOn!.isNotEmpty)
+                                        const Text(
+                                          "*",
+                                          style: TextStyle(color: Colors.red, fontSize: 14),
+                                        )
+                                    ],
+                                  ),
                                   SizedBox(
                                     height: 10.h,
                                   ),
@@ -684,7 +702,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       doc.title = snapshot.data[0];
     });
     showModalBottomSheet(
-      isDismissible: false,
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(

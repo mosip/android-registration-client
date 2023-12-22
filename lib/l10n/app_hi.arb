@@ -107,5 +107,14 @@
   "reference_number": "संदर्भ संख्या दर्ज करें",
   "select_value_message": "कृपया एक मान चुनें",
   "invalid_input": "अमान्य निवेश",
-  "reference_number_validation": "कृपया संदर्भ संख्या दर्ज करें"
+  "reference_number_validation": "कृपया संदर्भ संख्या दर्ज करें",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
 }
