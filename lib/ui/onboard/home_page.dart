@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "AppLocalizations.of(context)!.download_pre_registration_data",
+        "title": AppLocalizations.of(context)!.download_pre_registration_data,
         "onTap": () {},
         "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
       },
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",
         ),
-        "title": "AppLocalizations.of(context)!.update_operator_biomterics",
+        "title": AppLocalizations.of(context)!.update_operator_biomterics,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "AppLocalizations.of(context)!.appliction_upload",
+        "title": AppLocalizations.of(context)!.appliction_upload,
         "onTap": () {},
         "subtitle": "3 application(s)"
       },
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Onboarding Yourself.svg",
         ),
-        "title": "AppLocalizations.of(context)!.check_updates",
+        "title": AppLocalizations.of(context)!.check_updates,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -226,7 +226,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "AppLocalizations.of(context)!.center_remap_sync",
+        "title": AppLocalizations.of(context)!.center_remap_sync,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": "AppLocalizations.of(context)!.sync_activities",
+        "title": AppLocalizations.of(context)!.sync_activities,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
