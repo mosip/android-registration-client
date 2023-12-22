@@ -32,6 +32,8 @@ import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/utils/app_style.dart';
 
+import '../../utils/life_cycle_event_handler.dart';
+
 class NewProcess extends StatefulWidget {
   const NewProcess({super.key});
 
@@ -41,7 +43,7 @@ class NewProcess extends StatefulWidget {
   State<NewProcess> createState() => _NewProcessState();
 }
 
-class _NewProcessState extends State<NewProcess> {
+class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
 
@@ -58,6 +60,32 @@ class _NewProcessState extends State<NewProcess> {
   void initState() {
     _registrationScreenLoadedAudit();
     super.initState();
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+      resumeCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+      suspendingCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+    ));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void closeKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   void _showInSnackBar(String value) {
