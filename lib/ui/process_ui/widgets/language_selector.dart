@@ -133,7 +133,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
              ListTile(
               minLeadingWidth: 0,
               title: Text(
-                AppLocalizations.of(context)!.english_mandatory,
+                AppLocalizations.of(context)!.language_mandatory,
                 style: const TextStyle(
                   fontSize: 22,
                 ),
@@ -293,7 +293,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
               ),
               child: Text(
                 _getNotificationLabel(),
-                // AppLocalizations.of(context)!.notificationLanguage("eng"),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: semiBold,

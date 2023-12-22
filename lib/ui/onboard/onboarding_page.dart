@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -30,10 +33,10 @@ class OnboardingPage extends StatelessWidget {
                       Radius.circular(5),
                     ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'HELP',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.help,
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: AppStyle.appWhite,
@@ -50,19 +53,19 @@ class OnboardingPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Hello ',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.hello,
+                          style: const TextStyle(
                             fontSize: 36,
                             color: AppStyle.appWhite,
                           ),
                         ),
                         Text(
-                          'Thomas Mendez,',
-                          style: TextStyle(
+                          context.read<GlobalProvider>().name,
+                          style: const TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
                             color: AppStyle.appWhite,
@@ -74,7 +77,7 @@ class OnboardingPage extends StatelessWidget {
                       height: 7.h,
                     ),
                     Text(
-                      'Please tap \'GET ONBOARD\' to get started with the onboarding process.',
+                      AppLocalizations.of(context)!.onboard_process_help,
                       style: TextStyle(
                         fontSize: 22,
                         color: AppStyle.appWhite.withOpacity(0.6),
@@ -84,7 +87,7 @@ class OnboardingPage extends StatelessWidget {
                       height: 65.h,
                     ),
                     _getButton(
-                      title: 'GET ONBOARD',
+                      title: AppLocalizations.of(context)!.get_onboard,
                       onTap: () {},
                       color: AppStyle.appWhite,
                       fontColor: AppStyle.appHelpText,
@@ -93,7 +96,7 @@ class OnboardingPage extends StatelessWidget {
                       height: 40.h,
                     ),
                     _getButton(
-                      title: 'SKIP TO HOME',
+                      title: AppLocalizations.of(context)!.skip_to_home,
                       onTap: () {},
                       color: Colors.transparent,
                       fontColor: AppStyle.appWhite,
