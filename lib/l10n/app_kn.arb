@@ -109,6 +109,23 @@
     }
   },
   "upload_document": "ದಯವಿಟ್ಟು ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "scan": "ಸ್ಕ್ಯಾನ್",
+  "clear": "ಅಳಿಸಿ",
+  "save": "ಉಳಿಸಿ",
+  "retake": "ರೀಟೇಕ್",
+  "reference_number": "ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "select_value_message": "ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "invalid_input": "ಅಮಾನ್ಯ ಇನ್\u200Cಪುಟ್",
+  "reference_number_validation": "ದಯವಿಟ್ಟು ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "synchronize_data": "ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ",
   "registration_tasks": "ನೋಂದಣಿ ಕಾರ್ಯಗಳು",
   "operation_tasks": "ಕಾರ್ಯಾಚರಣೆಯ ಕಾರ್ಯಗಳು",

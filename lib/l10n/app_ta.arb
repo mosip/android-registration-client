@@ -108,6 +108,15 @@
       }
     }
   },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "upload_document": "ஆவணத்தைப் பதிவேற்றவும்",
   "synchronize_data": "தரவை ஒத்திசைக்கவும்",
   "registration_tasks": "பதிவு பணிகள்",
@@ -154,5 +163,22 @@
   "registration_acknowledgement": "பதிவு அறிந்தார்",
   "print_text": "அச்சு",
   "hello": "வணக்கம்",
-  "onboard_process_help": "ஆன்போர்டிங் செயல்முறையைத் தொடங்க, 'ஆன்போர்டைப் பெறு' என்பதைத் தட்டவும்."
+  "onboard_process_help": "ஆன்போர்டிங் செயல்முறையைத் தொடங்க, 'ஆன்போர்டைப் பெறு' என்பதைத் தட்டவும்.",
+  "scan": "ஊடுகதிர்",
+  "clear": "அகற்று",
+  "save": "சேமிக்கவும்",
+  "retake": "ரீடேக்",
+  "reference_number": "குறிப்பு எண்ணை உள்ளிடவும்",
+  "select_value_message": "மதிப்பைத் தேர்ந்தெடுக்கவும்",
+  "invalid_input": "தவறான உள்ளீடு",
+  "reference_number_validation": "தயவுசெய்து ஆதார் எண்ணை உள்ளிடவும்",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
 }

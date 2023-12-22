@@ -29,6 +29,9 @@ abstract class AppStyle {
   static const Color dropShadow = Color(0X0000000F);
   static const Color iconContainerColor = Color(0XFFF4F7FF);
   static const Color memoryCardColor = Color(0XFFF0F5FF);
+  static const Color appRed = Color(0xFFBE1B1B);
+  static const Color dropDownSelector = Color(0xFF1C429F);
+  static const Color dropDownDividerColor = Color(0xFFBDCDF4);
 
   static TextStyle mobileHelpText = const TextStyle(
     fontWeight: FontWeight.w500,

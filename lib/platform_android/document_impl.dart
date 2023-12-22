@@ -28,8 +28,8 @@ class DocumentImpl implements Document {
   }
 
   @override
-  Future<List<Uint8List?>> getScannedPages(String fieldId) async {
-    List<Uint8List?> scannedPages = [];
+  Future<List<DocumentData?>> getScannedPages(String fieldId) async {
+    List<DocumentData?> scannedPages = [];
     try {
       scannedPages = await DocumentApi().getScannedPages(fieldId);
     } on PlatformException {
