@@ -99,5 +99,22 @@
       }
     }
   },
-  "upload_document": "يرجى تحميل الوثيقة"
+  "upload_document": "يرجى تحميل الوثيقة",
+  "scan": "مسح",
+  "clear": "يزيل",
+  "save": "يحفظ",
+  "retake": "استعادة",
+  "reference_number": "أدخل الرقم المرجعي",
+  "select_value_message": "رجاءا اختر قيمة",
+  "invalid_input": "مدخل غير صالح",
+  "reference_number_validation": "الرجاء إدخال الرقم المرجعي",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
 }

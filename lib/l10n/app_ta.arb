@@ -99,5 +99,22 @@
       }
     }
   },
-  "upload_document": "ஆவணத்தைப் பதிவேற்றவும்"
+  "upload_document": "ஆவணத்தைப் பதிவேற்றவும்",
+  "scan": "ஊடுகதிர்",
+  "clear": "அகற்று",
+  "save": "சேமிக்கவும்",
+  "retake": "ரீடேக்",
+  "reference_number": "குறிப்பு எண்ணை உள்ளிடவும்",
+  "select_value_message": "மதிப்பைத் தேர்ந்தெடுக்கவும்",
+  "invalid_input": "தவறான உள்ளீடு",
+  "reference_number_validation": "தயவுசெய்து ஆதார் எண்ணை உள்ளிடவும்",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
 }

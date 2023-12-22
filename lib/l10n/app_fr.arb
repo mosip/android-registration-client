@@ -99,5 +99,22 @@
       }
     }
   },
-   "upload_document": "Veuillez télécharger le document"
+  "upload_document": "Veuillez télécharger le document",
+  "scan": "ANALYSE",
+  "clear": "clair",
+  "save": "SAUVEGARDER",
+  "retake": "REPRENDRE",
+  "reference_number": "Entrez le numéro de référence",
+  "select_value_message": "Veuillez sélectionner une valeur",
+  "invalid_input": "Entrée invalide",
+  "reference_number_validation": "Veuillez entrer le numéro de référence",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
 }

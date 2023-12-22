@@ -21,6 +21,9 @@ abstract class AppStyle {
   static const Color authIconBackground = Color(0XFFF8FCFF);
   static const Color authIconBorder = Color(0XFFE1EDF5);
   static const Color dividerColor = Color(0XFFE5EBFA);
+  static const Color appRed = Color(0xFFBE1B1B);
+  static const Color dropDownSelector = Color(0xFF1C429F);
+  static const Color dropDownDividerColor = Color(0xFFBDCDF4);
 
   static TextStyle mobileHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
