@@ -69,7 +69,8 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeScannedPages(String field,Uint8List? value, List<Uint8List?> listOfValue) {
+  removeScannedPages(
+      String field, Uint8List? value, List<Uint8List?> listOfValue) {
     _scannedPages[field] = listOfValue;
     _scannedPages[field]!.remove(value);
     notifyListeners();
@@ -123,7 +124,6 @@ class GlobalProvider with ChangeNotifier {
     _mvelValues[field] = value;
     notifyListeners();
   }
-
 
   Process? get currentProcess => _currentProcess;
 
@@ -277,6 +277,11 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  removeInputMapValue(String key, Map<String, dynamic> commonMap) {
+    commonMap.remove(key);
+    notifyListeners();
+  }
+
   setLanguageSpecificValue(String key, dynamic value, String language,
       Map<String, dynamic> commonMap) {
     if (!commonMap.containsKey(key)) {
@@ -290,8 +295,9 @@ class GlobalProvider with ChangeNotifier {
 
   getVersionNoApp() async {
     String versionNoAppTemp = await networkService.getVersionNoApp();
-    if(versionNoAppTemp == "") {
-      versionNoAppTemp = await networkService.getVersionFromGobalParam("mosip.registration.server_version");
+    if (versionNoAppTemp == "") {
+      versionNoAppTemp = await networkService
+          .getVersionFromGobalParam("mosip.registration.server_version");
     }
     String head = "";
     String branchName = "";
@@ -305,7 +311,7 @@ class GlobalProvider with ChangeNotifier {
       } else {
         commitId = head;
       }
-    } catch(e) {
+    } catch (e) {
       debugPrint("Failed fetching git info: $e");
     }
 
@@ -313,7 +319,6 @@ class GlobalProvider with ChangeNotifier {
     commitIdApp = commitId;
     versionNoApp = versionNoAppTemp;
   }
-
 
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
@@ -375,9 +380,9 @@ class GlobalProvider with ChangeNotifier {
       List values = List.empty(growable: true);
       for (var lang in chosenLang) {
         String templateContent = await CommonDetailsApi().getTemplateContent(
-            field.templateName!,
-            langToCode(lang),
-          );
+          field.templateName!,
+          langToCode(lang),
+        );
         values.add(templateContent);
       }
       fieldDisplayValues[field.id!] = values;
@@ -515,7 +520,7 @@ class GlobalProvider with ChangeNotifier {
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
     }
-    for(var element in _optionalLanguages) {
+    for (var element in _optionalLanguages) {
       String lang = _codeToLanguageMapper[element]!;
       languageDataMap[lang] = false;
       mandatoryMap[lang] = false;
@@ -526,7 +531,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   createLanguageCodeMapper() {
-    if(_languageDataList.isEmpty) {
+    if (_languageDataList.isEmpty) {
       _languages = ["eng"];
       _codeToLanguageMapper["eng"] = "English";
       _languageToCodeMapper["English"] = "eng";
@@ -586,7 +591,8 @@ class GlobalProvider with ChangeNotifier {
   List<String> _hierarchyReverse = [];
 
   Map<String?, String?> get locationHierarchyMap => _locationHierarchyMap;
-  Map<String, List<String?>> get groupedHierarchyValues => _groupedHierarchyValues;
+  Map<String, List<String?>> get groupedHierarchyValues =>
+      _groupedHierarchyValues;
   List<String> get hierarchyReverse => _hierarchyReverse;
 
   setLocationHierarchyMap(Map<String, String> value) {
@@ -600,7 +606,8 @@ class GlobalProvider with ChangeNotifier {
   }
 
   initializeLocationHierarchyMap() async {
-    Map<String?, String?> hierarchyMap = await dynamicResponseService.fetchLocationHierarchyMap();
+    Map<String?, String?> hierarchyMap =
+        await dynamicResponseService.fetchLocationHierarchyMap();
     _locationHierarchyMap = hierarchyMap;
     List<String> hReverse = [];
     _locationHierarchyMap.forEach((key, value) {
@@ -623,7 +630,7 @@ class GlobalProvider with ChangeNotifier {
     _groupedHierarchyValues[key] = hValues;
     notifyListeners();
   }
-  
+
   saveScreenHeaderToGlobalParam(String id, String value) async {
     await networkService.saveScreenHeaderToGlobalParam(id, value);
   }
