@@ -14,6 +14,7 @@ import 'package:registration_client/ui/process_ui/widgets/date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/document_upload_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dropdown_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/dynamic_dropdown_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/gender_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
@@ -73,6 +74,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "textbox":
         return TextBoxControl(e: e, validation: regexPattern);
       case "dropdown":
+        if (e.id == "gender") {
+          return GenderControl(field: e, validation: regexPattern);
+        }
         if (e.fieldType == "dynamic") {
           return DynamicDropDownControl(field: e, validation: regexPattern);
         }

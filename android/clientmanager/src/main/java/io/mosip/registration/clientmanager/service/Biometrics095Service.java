@@ -12,6 +12,10 @@ import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.BiometricsService;
+import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
+import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.util.KeyManagerConstant;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -34,13 +38,16 @@ public class Biometrics095Service extends BiometricsService {
     private AuditManagerService auditManagerService;
     private GlobalParamRepository globalParamRepository;
 
+    private ClientCryptoManagerService clientCryptoManagerService;
+
     @Inject
     public Biometrics095Service(Context context, ObjectMapper objectMapper,
-                                AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
+                                AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.auditManagerService = auditManagerService;
         this.globalParamRepository = globalParamRepository;
+        this.clientCryptoManagerService = clientCryptoManagerService;
     }
 
     public CaptureRequest getRCaptureRequest(Modality modality, String deviceId, List<String> exceptionAttributes) {
@@ -210,6 +217,30 @@ public class Biometrics095Service extends BiometricsService {
         }
         //Number of attempts for exception photo is not restricted
         return 0;
+    }
+
+    /**
+     * Validates JWT response from DeviceInfo and Rcapture responses.
+     * if the validation fails, throws BiometricsServiceException with below errors
+     * SBI_INVALID_SIGNATURE
+     * SBI_CERT_PATH_TRUST_FAILED
+     * @param signedData
+     * @param domain
+     */
+    public void validateJWTResponse(final String signedData, final String domain)
+            throws Exception {
+        JWTSignatureVerifyRequestDto jwtSignatureVerifyRequestDto = new JWTSignatureVerifyRequestDto();
+        jwtSignatureVerifyRequestDto.setValidateTrust(true);
+        jwtSignatureVerifyRequestDto.setDomain(domain);
+        jwtSignatureVerifyRequestDto.setJwtSignatureData(signedData);
+
+        JWTSignatureVerifyResponseDto jwtSignatureVerifyResponseDto = clientCryptoManagerService.jwtVerify(jwtSignatureVerifyRequestDto);
+        if(!jwtSignatureVerifyResponseDto.isSignatureValid())
+            throw new BiometricsServiceException(SBIError.SBI_INVALID_SIGNATURE.getErrorCode(), SBIError.SBI_INVALID_SIGNATURE.getErrorMessage());
+
+        if (jwtSignatureVerifyRequestDto.getValidateTrust() && !jwtSignatureVerifyResponseDto.getTrustValid().equals(KeyManagerConstant.TRUST_VALID)) {
+            throw new BiometricsServiceException(SBIError.SBI_CERT_PATH_TRUST_FAILED.getErrorCode(), SBIError.SBI_CERT_PATH_TRUST_FAILED.getErrorMessage());
+        }
     }
 
 }

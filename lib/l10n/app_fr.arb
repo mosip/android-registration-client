@@ -47,6 +47,7 @@
   "sync_failed": "Synchro. Échoué",
   "sync_failed_message": "Veuillez contacter l'administrateur système ou le superviseur pour obtenir de l'aide.",
   "policy_key_sync_failed":"Échec de la synchronisation de la clé de stratégie",
+  "ca_certs_sync_failed":"Échec de la synchronisation des certificats CA",
   "global_params_sync_failed":"Échec de la synchronisation globale des paramètres",
   "user_details_sync_failed":"Échec de la synchronisation des détails de l'utilisateur",
   "id_schema_sync_failed":"Échec de la synchronisation IDSchema",
@@ -124,7 +125,16 @@
   "profile": "Profil",
   "select_language": "Choisir la langue",
   "select_two_languages": "Veuillez sélectionner 2 langues pour la saisie des données.",
-  "language_mandatory": "L'anglais est obligatoire pour que le résident choisisse conformément aux directives du gouvernement. L'ordre de sélection mènera à l'affichage de la page pour les données démographiques.",
+  "language_mandatory": "{mandatoryLanguage} est obligatoire pour que le résident choisisse conformément aux directives du gouvernement. L'ordre de sélection mènera à l'affichage de la page pour les données démographiques.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "French"
+      }
+    }
+  },
   "language_selector_note": "Veuillez noter que la langue peut être basée sur les données saisies lors de la pré-inscription.",
   "cancel": "ANNULER",
   "submit": "SOUMETTRE",

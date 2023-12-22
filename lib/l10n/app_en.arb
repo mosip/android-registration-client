@@ -47,9 +47,10 @@
   "sync_failed": "Sync. Failed",
   "sync_failed_message": "Please connect with the system admin or supervisor for help.",
   "policy_key_sync_failed":"Policy Key Sync Failed",
+  "ca_certs_sync_failed":"CA Certificates Sync Failed",
   "global_params_sync_failed":"Global Params Sync Failed",
   "user_details_sync_failed":"User Details Sync Failed",
-  "id_schema_sync_failed":"IDSchena Sync Failed",
+  "id_schema_sync_failed":"IDSchema Sync Failed",
   "master_data_sync_failed":"Master Data Sync Failed",
   "network_error": "No network found!",
   "delete": "DELETE",
@@ -124,7 +125,16 @@
   "profile": "Notifications",
   "select_language": "Select Language",
   "select_two_languages": "Please select any 2 languages for data entry.",
-  "language_mandatory": "English is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.",
+  "language_mandatory": "{mandatoryLanguage} is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
   "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
   "cancel": "CANCEL",
   "submit": "SUBMIT",

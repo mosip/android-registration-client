@@ -47,6 +47,7 @@
   "sync_failed": "مزامنة. فشل",
   "sync_failed_message": "يرجى الاتصال بمسؤول النظام أو المشرف للحصول على المساعدة.",
   "policy_key_sync_failed":"فشل مزامنة مفتاح السياسة",
+  "ca_certs_sync_failed":"فشلت مزامنة شهادات CA",
   "global_params_sync_failed":"فشل مزامنة Params العالمية",
   "user_details_sync_failed":"فشل مزامنة تفاصيل المستخدم",
   "id_schema_sync_failed":"فشل مزامنة IDSchema",
@@ -124,7 +125,16 @@
   "profile": "حساب تعريفي",
   "select_language": "اختار اللغة",
   "select_two_languages": "يرجى اختيار أي لغتين لإدخال البيانات.",
-  "language_mandatory": "اللغة الإنجليزية إلزامية للمقيم للاختيار وفقًا للإرشادات الحكومية. سيؤدي ترتيب الاختيار إلى عرض الصفحة للبيانات الديموغرافية.",
+  "language_mandatory": "{mandatoryLanguage} إلزامي للمقيم للاختيار وفقًا للإرشادات الحكومية. سيؤدي ترتيب الاختيار إلى عرض الصفحة للبيانات الديموغرافية.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Arabic"
+      }
+    }
+  },
   "language_selector_note": "يرجى ملاحظة أن اللغة قد تعتمد على البيانات التي تم إدخالها أثناء التسجيل المسبق.",
   "cancel": "يلغي",
   "submit": "يُقدِّم",

@@ -23,6 +23,7 @@ class LanguageSelector extends StatefulWidget {
 class _LanguageSelectorState extends State<LanguageSelector> {
   bool isMobile = true;
   String? notificationLanguage;
+  String? mandatoryLanguage;
   _getRegistrationError() {
     return context.read<RegistrationTaskProvider>().registrationStartError;
   }
@@ -79,6 +80,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
 
   @override
   void initState() {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages.first!;
+    mandatoryLanguage = context.read<GlobalProvider>().codeToLanguageMapper[lang];
     _languageSelectorPageLoadedAudit();
     super.initState();
   }
@@ -133,7 +136,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
              ListTile(
               minLeadingWidth: 0,
               title: Text(
-                AppLocalizations.of(context)!.language_mandatory,
+                AppLocalizations.of(context)!.language_mandatory(mandatoryLanguage!),
                 style: const TextStyle(
                   fontSize: 22,
                 ),

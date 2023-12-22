@@ -47,6 +47,7 @@
   "sync_failed": "ஒத்திசைவு தோல்வியுற்றது",
   "sync_failed_message": "உதவிக்கு கணினி நிர்வாகி அல்லது மேற்பார்வையாளருடன் இணைக்கவும்.",
   "policy_key_sync_failed":"கொள்கை விசை ஒத்திசைவு தோல்வியுற்றது",
+  "ca_certs_sync_failed":"CA சான்றிதழ்கள் ஒத்திசைவு தோல்வியடைந்தது",
   "global_params_sync_failed":"Global Params Sync தோல்வியுற்றது",
   "user_details_sync_failed":"பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
   "id_schema_sync_failed":"IDSchena Sync Failed",
@@ -124,7 +125,16 @@
   "profile": "சுயவிவரம்",
   "select_language": "மொழியை தேர்ந்தெடுங்கள்",
   "select_two_languages": "தரவு உள்ளீட்டிற்கு ஏதேனும் 2 மொழிகளைத் தேர்ந்தெடுக்கவும்.",
-  "language_mandatory": "அரசாங்க வழிகாட்டுதல்களின்படி குடியிருப்பாளர் தேர்ந்தெடுக்க ஆங்கிலம் கட்டாயமாகும். தேர்வு வரிசையானது மக்கள்தொகை தரவுகளுக்கான பக்கக் காட்சிக்கு வழிவகுக்கும்.",
+  "language_mandatory": "அரசாங்க வழிகாட்டுதல்களின்படி குடியிருப்பாளர் தேர்ந்தெடுக்க {mandatoryLanguage} கட்டாயமாகும். தேர்வு வரிசையானது மக்கள்தொகை தரவுகளுக்கான பக்கக் காட்சிக்கு வழிவகுக்கும்.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Tamil"
+      }
+    }
+  },
   "language_selector_note": "முன்பதிவின் போது உள்ளிடப்பட்ட தரவின் அடிப்படையில் மொழி இருக்கலாம் என்பதை நினைவில் கொள்ளவும்.",
   "cancel": "ரத்துசெய்",
   "submit": "சமர்ப்பிக்கவும்",

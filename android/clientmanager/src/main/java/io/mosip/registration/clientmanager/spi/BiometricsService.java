@@ -29,30 +29,6 @@ public abstract class BiometricsService {
     public static final String BIOMETRIC_SEPARATOR = "(?<=\\.)(.*)(?=\\.)";
     private static final String DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
-    /**
-     * Validates JWT response from DeviceInfo and Rcapture responses.
-     * if the validation fails, throws BiometricsServiceException with below errors
-     * SBI_INVALID_SIGNATURE
-     * SBI_CERT_PATH_TRUST_FAILED
-     * @param signedData
-     * @param domain
-     */
-    public void validateJWTResponse(final String signedData, final String domain)
-            throws BiometricsServiceException {
-        /*JWTSignatureVerifyRequestDto jwtSignatureVerifyRequestDto = new JWTSignatureVerifyRequestDto();
-        jwtSignatureVerifyRequestDto.setValidateTrust(true);
-        jwtSignatureVerifyRequestDto.setDomain(domain);
-        jwtSignatureVerifyRequestDto.setJwtSignatureData(signedData);
-
-        JWTSignatureVerifyResponseDto jwtSignatureVerifyResponseDto = signatureService.jwtVerify(jwtSignatureVerifyRequestDto);
-        if(!jwtSignatureVerifyResponseDto.isSignatureValid())
-            throw new DeviceException(MDMError.MDM_INVALID_SIGNATURE.getErrorCode(), MDMError.MDM_INVALID_SIGNATURE.getErrorMessage());
-
-        if (jwtSignatureVerifyRequestDto.getValidateTrust() && !jwtSignatureVerifyResponseDto.getTrustValid().equals(SignatureConstant.TRUST_VALID)) {
-            throw new DeviceException(MDMError.MDM_CERT_PATH_TRUST_FAILED.getErrorCode(), MDMError.MDM_CERT_PATH_TRUST_FAILED.getErrorMessage());
-        }*/
-    }
-
     public String getJWTPayLoad(String jwt) throws BiometricsServiceException {
         if (jwt == null || jwt.isEmpty()) {
             throw new BiometricsServiceException(SBIError.SBI_JWT_INVALID.getErrorCode(),

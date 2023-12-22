@@ -10,6 +10,8 @@ import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
+import 'custom_cupertino_picker.dart';
+
 class DateControl extends StatefulWidget {
   const DateControl({super.key, required this.field, required this.validation});
   final Field field;
@@ -30,19 +32,99 @@ class _DateControlState extends State<DateControl> {
     super.initState();
   }
 
-  void _selectDate() async {
-    pickedDate = await showDatePicker(
+  void showBottomPopup(BuildContext context) {
+    String dateString = dateController.text;
+    showModalBottomSheet(
+        backgroundColor: Colors.white,
         context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(DateTime.now().year - 100),
-        lastDate: DateTime.now());
+        enableDrag: true,
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        builder: (context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(
+                      width: 50,
+                    ),
+                    Text(
+                      widget.field.label!['eng'] ?? "",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    )
+                  ],
+                ),
+                Container(
+                  height: 2.5,
+                  width: MediaQuery.of(context).size.width,
+                  color: solidPrimary.withOpacity(0.075),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                CustomCupertinoDatePicker(
+                  maxDate: DateTime.now(),
+                  minDate: DateTime(DateTime.now().year - 125),
+                  selectedDate: dateString != ""
+                      ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                          .parse(dateString)
+                      : null,
+                  squeeze: 1,
+                  itemExtent: 50,
+                  diameterRatio: 10,
+                  selectionOverlay: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: solidPrimary.withOpacity(0.075),
+                    ),
+                  ),
+                  selectedStyle: TextStyle(
+                    color: solidPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                  unselectedStyle: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 15,
+                  ),
+                  disabledStyle: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 15,
+                  ),
+                  onSelectedItemChanged: (selectedDate) {
+                    String targetDateString = widget.field.format ??
+                        "yyyy/MM/dd"
+                            .replaceAll('dd',
+                                selectedDate.day.toString().padLeft(2, "0"))
+                            .replaceAll('MM',
+                                selectedDate.month.toString().padLeft(2, "0"))
+                            .replaceAll('yyyy', selectedDate.year.toString());
+                    setState(() {
+                      dateController.text = targetDateString;
+                    });
+                    _saveData(dateController.text);
+                    _saveDataToMap(dateController.text);
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
 
-    if (pickedDate != null) {
-      DateFormat dateFormat = DateFormat("yyyy/MM/dd");
-      dateController.text = dateFormat.format(pickedDate!).toString();
-    }
-    _saveData(dateController.text);
-    _saveDataToMap(dateController.text);
+  void _selectDate() async {
+    showBottomPopup(context);
   }
 
   _saveData(value) {

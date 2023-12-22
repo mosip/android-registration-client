@@ -47,6 +47,7 @@
   "sync_failed": "सिंक्रनाइज़ेशन असफल",
   "sync_failed_message": "कृपया मदद के लिए सिस्टम व्यवस्थापक या पर्यवेक्षक से कनेक्ट करें.",
   "policy_key_sync_failed":"नीति कुंजी सिंक्रनाइज़ेशन विफल",
+  "ca_certs_sync_failed":"सीए प्रमाणपत्र सिंक विफल रहा",
   "global_params_sync_failed":"Global Params Sync विफल",
   "user_details_sync_failed":"उपयोगकर्ता विवरण सिंक्रनाइज़ेशन विफल रहा",
   "id_schema_sync_failed":"IDSchena सिंक्रनाइज़ेशन विफल रहा",
@@ -124,7 +125,16 @@
   "profile": "प्रोफ़ाइल",
   "select_language": "भाषा चुने",
   "select_two_languages": "कृपया डेटा प्रविष्टि के लिए कोई भी दो भाषाएँ चुनें।",
-  "language_mandatory": "सरकारी दिशानिर्देशों के अनुसार चयन के लिए निवासी के लिए अंग्रेजी अनिवार्य है। चयन का क्रम जनसांख्यिकीय डेटा के लिए पृष्ठ दृश्य को जन्म देगा।",
+  "language_mandatory": "सरकारी दिशानिर्देशों के अनुसार चयन के लिए निवासी के लिए {mandatoryLanguage} अनिवार्य है। चयन का क्रम जनसांख्यिकीय डेटा के लिए पृष्ठ दृश्य को जन्म देगा।",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Hindi"
+      }
+    }
+  },
   "language_selector_note": "कृपया ध्यान दें कि भाषा पूर्व-पंजीकरण के दौरान दर्ज किए गए डेटा पर आधारित हो सकती है।",
   "cancel": "रद्द करना",
   "submit": "जमा करना",

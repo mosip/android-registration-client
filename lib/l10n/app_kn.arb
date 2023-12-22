@@ -47,6 +47,7 @@
   "sync_failed": "ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "sync_failed_message": "ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಸಿಸ್ಟಂ ನಿರ್ವಾಹಕ ಅಥವಾ ಮೇಲ್ವಿಚಾರಕರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
   "policy_key_sync_failed":"ನೀತಿ ಕೀಲಿ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "ca_certs_sync_failed":"CA ಪ್ರಮಾಣಪತ್ರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "global_params_sync_failed":"ಜಾಗತಿಕ ಪರಮ್ಸ್ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "user_details_sync_failed":"ಬಳಕೆದಾರ ವಿವರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "id_schema_sync_failed":"IDSchena ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
@@ -124,7 +125,16 @@
   "profile": "ಪ್ರೊಫೈಲ್",
   "select_language": "ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
   "select_two_languages": "ಡೇಟಾ ನಮೂದುಗಾಗಿ ದಯವಿಟ್ಟು ಯಾವುದೇ 2 ಭಾಷೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
-  "language_mandatory": "ಸರ್ಕಾರಿ ಮಾರ್ಗಸೂಚಿಗಳ ಪ್ರಕಾರ ಆಯ್ಕೆ ಮಾಡಲು ನಿವಾಸಿಗಳಿಗೆ ಇಂಗ್ಲಿಷ್ ಕಡ್ಡಾಯವಾಗಿದೆ. ಆಯ್ಕೆಯ ಕ್ರಮವು ಜನಸಂಖ್ಯಾ ಡೇಟಾಕ್ಕಾಗಿ ಪುಟ ವೀಕ್ಷಣೆಗೆ ಕಾರಣವಾಗುತ್ತದೆ.",
+  "language_mandatory": "ಸರ್ಕಾರಿ ಮಾರ್ಗಸೂಚಿಗಳ ಪ್ರಕಾರ ಆಯ್ಕೆ ಮಾಡಲು ನಿವಾಸಿಗಳಿಗೆ {mandatoryLanguage} ಕಡ್ಡಾಯವಾಗಿದೆ. ಆಯ್ಕೆಯ ಕ್ರಮವು ಜನಸಂಖ್ಯಾ ಡೇಟಾಕ್ಕಾಗಿ ಪುಟ ವೀಕ್ಷಣೆಗೆ ಕಾರಣವಾಗುತ್ತದೆ.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Kannada"
+      }
+    }
+  },
   "language_selector_note": "ಪೂರ್ವ-ನೋಂದಣಿ ಸಮಯದಲ್ಲಿ ನಮೂದಿಸಿದ ಡೇಟಾವನ್ನು ಆಧರಿಸಿ ಭಾಷೆ ಇರಬಹುದು ಎಂಬುದನ್ನು ದಯವಿಟ್ಟು ಗಮನಿಸಿ.",
   "cancel": "ರದ್ದುಮಾಡು",
   "submit": "ಸಲ್ಲಿಸು",
