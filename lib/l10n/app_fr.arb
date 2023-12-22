@@ -99,6 +99,15 @@
       }
     }
   },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+     "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "upload_document": "Veuillez télécharger le document",
   "scan": "ANALYSE",
   "clear": "clair",
@@ -116,5 +125,51 @@
         "type": "String"
       }
     }
-  }
+  },
+  "synchronize_data": "Synchroniser les données",
+  "registration_tasks": "Tâches d'inscription",
+  "operation_tasks": "Tâches opérationnelles",
+  "system_storage_usage": "Utilisation du stockage système",
+  "download_pre_registration_data": "Télécharger les données de pré-inscription",
+  "update_operator_biomterics": "Mettre à jour les données biométriques de l'opérateur",
+  "appliction_upload": "Téléchargement d'application",
+  "check_updates": "Vérifier les mises à jour",
+  "center_remap_sync": "Synchronisation du remappage central.",
+  "sync_activities": "Synchronisation. Activités",
+  "dashboard": "Tableau de bord",
+  "settings": "Paramètres",
+  "notifications": "Notifications",
+  "profile": "Profil",
+  "select_language": "Choisir la langue",
+  "select_two_languages": "Veuillez sélectionner 2 langues pour la saisie des données.",
+  "language_mandatory": "{mandatoryLanguage} est obligatoire pour que le résident choisisse conformément aux directives du gouvernement. L'ordre de sélection mènera à l'affichage de la page pour les données démographiques.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "French"
+      }
+    }
+  },
+  "language_selector_note": "Veuillez noter que la langue peut être basée sur les données saisies lors de la pré-inscription.",
+  "cancel": "ANNULER",
+  "submit": "SOUMETTRE",
+  "go_back": "RETOURNER",
+  "informed": "INFORMÉE",
+  "logo_text": "Propulsé par MOSIP",
+  "get_onboard": "MONTER À BORD",
+  "skip_to_home": "PASSEZ À LA MAISON",
+  "continue_text": "CONTINUER",
+  "authenticate": "AUTHENTIFIER",
+  "new_registration": "NOUVELLE INSCRIPTION",
+  "go_back": "RETOUR",
+  "informed": "INFORMÉ",
+  "sync_packet": "Téléchargement de synchronisation",
+  "upload_packet": "Télécharger le paquet",
+  "authenticate_using_password": "Authentification en utilisant un mot de passe",
+  "registration_acknowledgement": "Accusé de réception d'inscription",
+  "print_text": "IMPRIMER",
+  "hello": "BONJOUR",
+  "onboard_process_help": "Veuillez appuyer sur 'S'INSCRIRE' pour commencer le processus d'intégration."
 }

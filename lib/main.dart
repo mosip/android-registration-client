@@ -83,7 +83,7 @@ class BuildApp extends StatelessWidget {
         ScreenUtil.init(
           context,
           designSize: orientation == Orientation.portrait
-              ? const Size(390, 844)
+              ? const Size(800, 1280)
               : const Size(1024, 768),
           minTextAdapt: true,
           splitScreenMode: true,

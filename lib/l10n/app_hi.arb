@@ -99,6 +99,15 @@
       }
     }
   },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "upload_document": "कृपया दस्तावेज़ अपलोड करें",
   "scan": "स्कैन",
   "clear": "निकालना",
@@ -116,5 +125,51 @@
         "type": "String"
       }
     }
-  }
+  },
+  "synchronize_data": "डेटा सिंक्रनाइज़ करें",
+  "registration_tasks": "पंजीकरण कार्य",
+  "operation_tasks": "परिचालन कार्य",
+  "system_storage_usage": "सिस्टम संग्रहण उपयोग",
+  "download_pre_registration_data": "पूर्व-पंजीकरण डेटा डाउनलोड करें",
+  "update_operator_biomterics": "ऑपरेटर बायोमेट्रिक्स अपडेट करें",
+  "appliction_upload": "आवेदन अपलोड करें",
+  "check_updates": "अपडेट जांचें",
+  "center_remap_sync": "केंद्र रीमैप सिंक.",
+  "sync_activities": "साथ-साथ करना। गतिविधियाँ",
+  "dashboard": "डैशबोर्ड",
+  "settings": "समायोजन",
+  "notifications": "सूचनाएं",
+  "profile": "प्रोफ़ाइल",
+  "select_language": "भाषा चुने",
+  "select_two_languages": "कृपया डेटा प्रविष्टि के लिए कोई भी दो भाषाएँ चुनें।",
+  "language_mandatory": "सरकारी दिशानिर्देशों के अनुसार चयन के लिए निवासी के लिए {mandatoryLanguage} अनिवार्य है। चयन का क्रम जनसांख्यिकीय डेटा के लिए पृष्ठ दृश्य को जन्म देगा।",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Hindi"
+      }
+    }
+  },
+  "language_selector_note": "कृपया ध्यान दें कि भाषा पूर्व-पंजीकरण के दौरान दर्ज किए गए डेटा पर आधारित हो सकती है।",
+  "cancel": "रद्द करना",
+  "submit": "जमा करना",
+  "go_back": "वापस जाएं",
+  "informed": "सूचित किया",
+  "logo_text": "MOSIP द्वारा संचालित",
+  "get_onboard": "सवार होना",
+  "skip_to_home": "होम पेज पर जाएं",
+  "continue_text": "जारी रखें",
+  "authenticate": "प्रमाणित करें",
+  "new_registration": "नया पंजीकरण",
+  "go_back": "वापस जाएं",
+  "informed": "सूचित",
+  "sync_packet": "सिंक अपलोड",
+  "upload_packet": "अपलोड पैकेट",
+  "authenticate_using_password": "पासवर्ड का उपयोग करके प्रमाणीकरण",
+  "registration_acknowledgement": "रजिस्ट्रेशन स्वीकृति",
+  "print_text": "प्रिंट",
+  "hello": "नमस्ते",
+  "onboard_process_help": "कृपया ऑनबोर्डिंग प्रक्रिया आरंभ करने के लिए 'ऑनबोर्ड प्राप्त करें' पर टैप करें।"
 }
