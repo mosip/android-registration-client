@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,8 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control_landscape.dart';
+
 import 'package:registration_client/utils/app_config.dart';
 
 class BiometricCaptureScanBlockPortrait extends StatefulWidget {
@@ -28,52 +31,49 @@ class _BiometricCaptureScanBlockPortraitState
     extends State<BiometricCaptureScanBlockPortrait> {
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+    ]);
+
     context
         .read<BiometricCaptureControlProvider>()
         .biometricCaptureScanBlockTabIndex = 1;
-    if (context
-            .read<BiometricCaptureControlProvider>()
-            .biometricAttributePortrait ==
+
+    super.initState();
+  }
+
+  setInitialState() {
+    if (context.read<BiometricCaptureControlProvider>().biometricAttribute ==
         "Iris") {
       biometricAttributeData =
           context.read<BiometricCaptureControlProvider>().iris;
     }
-    if (context
-            .read<BiometricCaptureControlProvider>()
-            .biometricAttributePortrait ==
+    if (context.read<BiometricCaptureControlProvider>().biometricAttribute ==
         "Right Hand") {
       biometricAttributeData =
           context.read<BiometricCaptureControlProvider>().rightHand;
     }
-    if (context
-            .read<BiometricCaptureControlProvider>()
-            .biometricAttributePortrait ==
+    if (context.read<BiometricCaptureControlProvider>().biometricAttribute ==
         "Left Hand") {
       biometricAttributeData =
           context.read<BiometricCaptureControlProvider>().leftHand;
     }
-    if (context
-            .read<BiometricCaptureControlProvider>()
-            .biometricAttributePortrait ==
+    if (context.read<BiometricCaptureControlProvider>().biometricAttribute ==
         "Thumbs") {
       biometricAttributeData =
           context.read<BiometricCaptureControlProvider>().thumbs;
     }
-    if (context
-            .read<BiometricCaptureControlProvider>()
-            .biometricAttributePortrait ==
+    if (context.read<BiometricCaptureControlProvider>().biometricAttribute ==
         "Face") {
       biometricAttributeData =
           context.read<BiometricCaptureControlProvider>().face;
     }
-    if (context
-            .read<BiometricCaptureControlProvider>()
-            .biometricAttributePortrait ==
+    if (context.read<BiometricCaptureControlProvider>().biometricAttribute ==
         "Exception") {
       biometricAttributeData =
           context.read<BiometricCaptureControlProvider>().exception;
     }
-    super.initState();
   }
 
   _showScanDialogBox(List<Uint8List?> temp) async {
@@ -1799,46 +1799,46 @@ class _BiometricCaptureScanBlockPortraitState
                     right: 5,
                     child: InkWell(
                       onTap: () async {
-                      if (!(biometricAttributeData.exceptions.elementAt(1)) ==
-                          true) {
-                        await BiometricsApi().addBioException(
-                            widget.field.id!, "Thumbs", "rightThumb");
-                        resetAfterException(
-                            widget.field.id!, biometricAttributeData);
-                        biometricAttributeData.isScanned = false;
-                        biometricAttributeData.attemptNo = 0;
-                        biometricAttributeData.listofImages = [
-                          "assets/images/Thumbs@2x.png"
-                        ];
-                        biometricAttributeData.listOfBiometricsDto = [];
-                        biometricAttributeData.qualityPercentage = 0;
-                        biometricAttributeData.thresholdPercentage = "0";
-                      } else {
-                        await BiometricsApi().removeBioException(
-                            widget.field.id!, "Thumbs", "rightThumb");
-                        resetAfterException(
-                            widget.field.id!, biometricAttributeData);
-                        biometricAttributeData.isScanned = false;
-                        biometricAttributeData.attemptNo = 0;
-                        biometricAttributeData.listofImages = [
-                          "assets/images/Thumbs@2x.png"
-                        ];
-                        biometricAttributeData.listOfBiometricsDto = [];
-                        biometricAttributeData.qualityPercentage = 0;
-                        biometricAttributeData.thresholdPercentage = "0";
-                      }
-                      biometricAttributeData.exceptions[1] =
-                          !(biometricAttributeData.exceptions[1]);
-
-                      if (biometricAttributeData.exceptions.contains(true)) {
-                        if (biometricAttributeData.exceptionType.isEmpty) {
-                          biometricAttributeData.exceptionType = "Permanent";
+                        if (!(biometricAttributeData.exceptions.elementAt(1)) ==
+                            true) {
+                          await BiometricsApi().addBioException(
+                              widget.field.id!, "Thumbs", "rightThumb");
+                          resetAfterException(
+                              widget.field.id!, biometricAttributeData);
+                          biometricAttributeData.isScanned = false;
+                          biometricAttributeData.attemptNo = 0;
+                          biometricAttributeData.listofImages = [
+                            "assets/images/Thumbs@2x.png"
+                          ];
+                          biometricAttributeData.listOfBiometricsDto = [];
+                          biometricAttributeData.qualityPercentage = 0;
+                          biometricAttributeData.thresholdPercentage = "0";
+                        } else {
+                          await BiometricsApi().removeBioException(
+                              widget.field.id!, "Thumbs", "rightThumb");
+                          resetAfterException(
+                              widget.field.id!, biometricAttributeData);
+                          biometricAttributeData.isScanned = false;
+                          biometricAttributeData.attemptNo = 0;
+                          biometricAttributeData.listofImages = [
+                            "assets/images/Thumbs@2x.png"
+                          ];
+                          biometricAttributeData.listOfBiometricsDto = [];
+                          biometricAttributeData.qualityPercentage = 0;
+                          biometricAttributeData.thresholdPercentage = "0";
                         }
-                      }
-                      if (!biometricAttributeData.exceptions.contains(true)) {
-                        biometricAttributeData.exceptionType = "";
-                      }
-                    },
+                        biometricAttributeData.exceptions[1] =
+                            !(biometricAttributeData.exceptions[1]);
+
+                        if (biometricAttributeData.exceptions.contains(true)) {
+                          if (biometricAttributeData.exceptionType.isEmpty) {
+                            biometricAttributeData.exceptionType = "Permanent";
+                          }
+                        }
+                        if (!biometricAttributeData.exceptions.contains(true)) {
+                          biometricAttributeData.exceptionType = "";
+                        }
+                      },
                       child: SvgPicture.asset(
                         "assets/svg/R_Thumb.svg",
                         color: (biometricAttributeData.exceptions[1] == true)
@@ -1889,121 +1889,308 @@ class _BiometricCaptureScanBlockPortraitState
     return Container();
   }
 
+  _isExceptionPresent(String id) {
+    bool isExceptionPresent = false;
+    if (context.read<GlobalProvider>().fieldInputValue[id] != null) {
+      context
+          .read<GlobalProvider>()
+          .fieldInputValue[id]
+          .forEach((BiometricAttributeData x) {
+        if (x.exceptions.contains(true)) {
+          isExceptionPresent = true;
+          return isExceptionPresent;
+        }
+      });
+    }
+
+    return isExceptionPresent;
+  }
+
+  _returnBiometricList(List<String?>? list, String id) {
+    List<String> biometricList = [];
+    if (list!.contains("leftEye") && list.contains("rightEye")) {
+      biometricList.add("Iris");
+    }
+    if (list.contains("rightIndex") &&
+        list.contains("rightLittle") &&
+        list.contains("rightRing") &&
+        list.contains("rightMiddle")) {
+      biometricList.add("Right Hand");
+    }
+    if (list.contains("leftIndex") &&
+        list.contains("leftLittle") &&
+        list.contains("leftRing") &&
+        list.contains("leftMiddle")) {
+      biometricList.add("Left Hand");
+    }
+    if (list.contains("rightThumb") && list.contains("rightThumb")) {
+      biometricList.add("Thumbs");
+    }
+    if (list.contains("face")) {
+      biometricList.add("Face");
+    }
+    if (_isExceptionPresent(id) == true) {
+      biometricList.add("Exception");
+    }
+    return biometricList;
+  }
+
+  _getNextElement(List<String> list, String title) {
+    for (int i = 0; i < list.length; i++) {
+      if (list[i] == title) {
+        if (i < list.length - 1) {
+          return list[i + 1];
+        } else {
+          return null;
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
+  }
+
   late BiometricAttributeData biometricAttributeData;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
-      child: SizedBox(
-        height: 1000,
-        child: Column(
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+        setInitialState();
+
+    return Scaffold(
+      bottomNavigationBar: Container(
+        color: pureWhite,
+        padding: EdgeInsets.symmetric(
+          horizontal: 80.w,
+          vertical: 16.h,
+        ),
+        height: 100.h,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(
-              width: double.infinity,
+            const Spacer(),
+            ElevatedButton(
+              style: ButtonStyle(
+                maximumSize:
+                    MaterialStateProperty.all<Size>(const Size(215, 68)),
+                minimumSize:
+                    MaterialStateProperty.all<Size>(const Size(215, 68)),
+              ),
+              onPressed: () {
+                List<String> bioAttributes = (widget
+                            .field.conditionalBioAttributes!.first!.ageGroup!
+                            .compareTo(
+                                context.read<GlobalProvider>().ageGroup) ==
+                        0)
+                    ? _returnBiometricList(
+                        widget.field.conditionalBioAttributes!.first!
+                            .bioAttributes!,
+                        widget.field.id!)
+                    : _returnBiometricList(
+                        widget.field.bioAttributes!, widget.field.id!);
+
+                var nextElement = _getNextElement(
+                    bioAttributes,
+                    context
+                        .read<BiometricCaptureControlProvider>()
+                        .biometricAttribute);
+                if (nextElement != null) {
+                  context
+                      .read<BiometricCaptureControlProvider>()
+                      .biometricAttribute = nextElement;
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              child: Text("NEXT",
+                  style: TextStyle(fontSize: 24, fontWeight: bold)),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        flexibleSpace: SizedBox(
+          width: double.infinity,
+          child: Card(
+            margin: const EdgeInsets.all(0),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 0, 18),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  (widget.field.inputRequired!)
+                      ? RichText(
+                          text: TextSpan(
+                          text: context
+                              .read<GlobalProvider>()
+                              .chooseLanguage(widget.field.label!),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                                  fontSize: 24,
+                                  color: blackShade1,
+                                  fontWeight: semiBold),
+                          children: const [
+                            TextSpan(
+                              text: " *",
+                              style: TextStyle(color: Colors.red, fontSize: 15),
+                            )
+                          ],
+                        ))
+                      : Text(
+                          context
+                              .read<GlobalProvider>()
+                              .chooseLanguage(widget.field.label!),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                                  fontSize: 24,
+                                  color: blackShade1,
+                                  fontWeight: semiBold),
+                        ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 30),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Image.asset(
+                        "assets/images/Group 57951.png",
+                        height: 52,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+          child: SizedBox(
+            height: 1000,
+            child: Column(
               children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      context
-                          .read<BiometricCaptureControlProvider>()
-                          .biometricCaptureScanBlockTabIndex = 1;
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: (context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .biometricCaptureScanBlockTabIndex ==
-                                1)
-                            ? solidPrimary
-                            : pureWhite,
-                        border: (context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .biometricCaptureScanBlockTabIndex ==
-                                1)
-                            ? const Border()
-                            : Border(
-                                bottom:
-                                    BorderSide(color: solidPrimary, width: 3),
-                              ),
-                      ),
-                      height: 84,
-                      child: Center(
-                        child: Text(
-                          "${context.read<BiometricCaptureControlProvider>().biometricAttributePortrait} Scan",
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: semiBold,
-                              color: (context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .biometricCaptureScanBlockTabIndex ==
-                                      1)
-                                  ? pureWhite
-                                  : blackShade1),
-                        ),
-                      ),
-                    ),
-                  ),
+                const SizedBox(
+                  width: double.infinity,
                 ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      context
-                          .read<BiometricCaptureControlProvider>()
-                          .biometricCaptureScanBlockTabIndex = 2;
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: (context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .biometricCaptureScanBlockTabIndex ==
-                                2)
-                            ? solidPrimary
-                            : pureWhite,
-                        border: (context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .biometricCaptureScanBlockTabIndex ==
-                                2)
-                            ? const Border()
-                            : Border(
-                                bottom:
-                                    BorderSide(color: solidPrimary, width: 3),
-                              ),
-                      ),
-                      height: 84,
-                      child: Center(
-                        child: Text(
-                          "Mark Exception",
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: semiBold,
-                              color: (context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .biometricCaptureScanBlockTabIndex ==
-                                      2)
-                                  ? pureWhite
-                                  : blackShade1),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          context
+                              .read<BiometricCaptureControlProvider>()
+                              .biometricCaptureScanBlockTabIndex = 1;
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: (context
+                                        .read<BiometricCaptureControlProvider>()
+                                        .biometricCaptureScanBlockTabIndex ==
+                                    1)
+                                ? solidPrimary
+                                : pureWhite,
+                            border: (context
+                                        .read<BiometricCaptureControlProvider>()
+                                        .biometricCaptureScanBlockTabIndex ==
+                                    1)
+                                ? const Border()
+                                : Border(
+                                    bottom: BorderSide(
+                                        color: solidPrimary, width: 3),
+                                  ),
+                          ),
+                          height: 84,
+                          child: Center(
+                            child: Text(
+                              "${context.read<BiometricCaptureControlProvider>().biometricAttribute} Scan",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: semiBold,
+                                  color: (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .biometricCaptureScanBlockTabIndex ==
+                                          1)
+                                      ? pureWhite
+                                      : blackShade1),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          context
+                              .read<BiometricCaptureControlProvider>()
+                              .biometricCaptureScanBlockTabIndex = 2;
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: (context
+                                        .read<BiometricCaptureControlProvider>()
+                                        .biometricCaptureScanBlockTabIndex ==
+                                    2)
+                                ? solidPrimary
+                                : pureWhite,
+                            border: (context
+                                        .read<BiometricCaptureControlProvider>()
+                                        .biometricCaptureScanBlockTabIndex ==
+                                    2)
+                                ? const Border()
+                                : Border(
+                                    bottom: BorderSide(
+                                        color: solidPrimary, width: 3),
+                                  ),
+                          ),
+                          height: 84,
+                          child: Center(
+                            child: Text(
+                              "Mark Exception",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: semiBold,
+                                  color: (context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .biometricCaptureScanBlockTabIndex ==
+                                          2)
+                                      ? pureWhite
+                                      : blackShade1),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                (context
+                            .read<BiometricCaptureControlProvider>()
+                            .biometricCaptureScanBlockTabIndex ==
+                        1)
+                    ? _scanBlock()
+                    : _exceptionBlock()
               ],
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            (context
-                        .read<BiometricCaptureControlProvider>()
-                        .biometricCaptureScanBlockTabIndex ==
-                    1)
-                ? _scanBlock()
-                : _exceptionBlock()
-          ],
+          ),
         ),
       ),
     );

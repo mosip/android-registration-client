@@ -6,7 +6,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   //Variables
   bool isBiometricCaptureControl = false;
   late String biometricAttribute;
-  String biometricAttributePortrait = "";
+  
   int biometricCaptureScanBlockTabIndex = 1;
   BiometricAttributeData iris = BiometricAttributeData(
       title: "Iris",

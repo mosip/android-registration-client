@@ -47,9 +47,19 @@ class _BiometricCaptureControlPortraitState
         onTap: () {
           context.read<BiometricCaptureControlProvider>().biometricAttribute =
               biometricAttributeData.title;
-          context
-              .read<BiometricCaptureControlProvider>()
-              .biometricAttributePortrait = biometricAttributeData.title;
+          context.read<BiometricCaptureControlProvider>().biometricAttribute =
+              biometricAttributeData.title;
+              final providerCopy=Provider.of<BiometricCaptureControlProvider>(
+                            context,listen: false);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider.value(
+                    
+                        value: providerCopy,
+                        child: BiometricCaptureScanBlockPortrait(
+                            field: widget.field),
+                      )));
         },
         child: Center(
           child: Stack(
@@ -110,8 +120,8 @@ class _BiometricCaptureControlPortraitState
                     top: 20,
                     left: 20,
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
                           color: secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
@@ -128,12 +138,7 @@ class _BiometricCaptureControlPortraitState
         ));
   }
 
-  @override
-  void initState() {
-    context.read<BiometricCaptureControlProvider>().biometricAttributePortrait =
-        "";
-    super.initState();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -184,261 +189,217 @@ class _BiometricCaptureControlPortraitState
                                   color: blackShade1,
                                   fontWeight: semiBold),
                         ),
-                  (context
-                              .read<BiometricCaptureControlProvider>()
-                              .biometricAttributePortrait !=
-                          "")
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 30),
-                          child: InkWell(
-                            onTap: () {
-                              context
-                                  .read<BiometricCaptureControlProvider>()
-                                  .biometricAttributePortrait = "";
-                            },
-                            child: Image.asset(
-                              "assets/images/Group 57951.png",
-                              height: 52.h,
-                            ),
-                          ),
-                        )
-                      : const SizedBox(
-                          height: 52,
-                        ),
+                  const SizedBox(
+                    height: 52,
+                  ),
                 ],
               ),
             ),
           ),
         ),
-        (context
-                    .read<BiometricCaptureControlProvider>()
-                    .biometricAttributePortrait ==
-                "")
-            ? Column(
-                children: [
-                  (widget.field.conditionalBioAttributes!.first!.ageGroup!
-                              .compareTo(
-                                  context.read<GlobalProvider>().ageGroup) ==
-                          0)
-                      ? Container(
-                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                          height: ((((context
-                                                  .read<
-                                                      BiometricCaptureControlProvider>()
-                                                  .returnNoOfAttributes(widget
-                                                      .field
-                                                      .conditionalBioAttributes!
-                                                      .first!
-                                                      .bioAttributes!))
-                                              .toDouble()) /
-                                          2)
-                                      .ceil() *
-                                  335.h) +
-                              70.h,
-                          width: double.infinity,
-                          child: ResponsiveGridList(
-                            minItemWidth: 372.h,
-                            verticalGridSpacing: 17,
-                            horizontalGridMargin: 30,
-                            minItemsPerRow: 2,
-                            maxItemsPerRow: 2,
-                            children: [
-                              if (widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("leftEye") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("rightEye"))
-                                _getBiometricCaptureSelectionBlockMobile(context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .iris),
-                              if (widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("rightIndex") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("rightLittle") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("rightRing") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("rightMiddle"))
-                                _getBiometricCaptureSelectionBlockMobile(context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .rightHand),
-                              if (widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("leftIndex") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("leftLittle") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("leftRing") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("leftMiddle"))
-                                _getBiometricCaptureSelectionBlockMobile(context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .leftHand),
-                              if (widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("leftThumb") &&
-                                  widget.field.conditionalBioAttributes!.first!
-                                      .bioAttributes!
-                                      .contains("rightThumb"))
-                                _getBiometricCaptureSelectionBlockMobile(context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .thumbs),
-                              if (widget.field.conditionalBioAttributes!.first!
-                                  .bioAttributes!
-                                  .contains("face"))
-                                _getBiometricCaptureSelectionBlockMobile(context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .face),
-                              if (context
-                                      .watch<BiometricCaptureControlProvider>()
-                                      .iris
-                                      .exceptions
-                                      .contains(true) ||
-                                  context
-                                      .watch<BiometricCaptureControlProvider>()
-                                      .rightHand
-                                      .exceptions
-                                      .contains(true) ||
-                                  context
-                                      .watch<BiometricCaptureControlProvider>()
-                                      .leftHand
-                                      .exceptions
-                                      .contains(true) ||
-                                  context
-                                      .watch<BiometricCaptureControlProvider>()
-                                      .thumbs
-                                      .exceptions
-                                      .contains(true) ||
-                                  context
-                                      .watch<BiometricCaptureControlProvider>()
-                                      .face
-                                      .exceptions
-                                      .contains(true))
-                                _getBiometricCaptureSelectionBlockMobile(context
-                                    .read<BiometricCaptureControlProvider>()
-                                    .exception),
-                            ],
-                          ),
-                        )
-                      : Container(
-                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                          height: ((((context
-                                                  .read<
-                                                      BiometricCaptureControlProvider>()
-                                                  .returnNoOfAttributes(widget
-                                                      .field.bioAttributes!))
-                                              .toDouble()) /
-                                          2)
-                                      .ceil() *
-                                  335.h) +
-                              70.h,
-                          width: double.infinity,
-                          child: ResponsiveGridList(
-                              minItemWidth: 372.h,
-                              verticalGridSpacing: 17,
-                              horizontalGridMargin: 30,
-                              minItemsPerRow: 2,
-                              maxItemsPerRow: 2,
-                              children: [
-                                if (widget.field.bioAttributes!
-                                        .contains("leftEye") &&
-                                    widget.field.bioAttributes!
-                                        .contains("rightEye"))
-                                  _getBiometricCaptureSelectionBlockMobile(
-                                      context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .iris),
-                                if (widget.field.bioAttributes!
-                                        .contains("rightIndex") &&
-                                    widget.field.bioAttributes!
-                                        .contains("rightLittle") &&
-                                    widget.field.bioAttributes!
-                                        .contains("rightRing") &&
-                                    widget.field.bioAttributes!
-                                        .contains("rightMiddle"))
-                                  _getBiometricCaptureSelectionBlockMobile(
-                                      context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .rightHand),
-                                if (widget.field.bioAttributes!
-                                        .contains("leftIndex") &&
-                                    widget.field.bioAttributes!
-                                        .contains("leftLittle") &&
-                                    widget.field.bioAttributes!
-                                        .contains("leftRing") &&
-                                    widget.field.bioAttributes!
-                                        .contains("leftMiddle"))
-                                  _getBiometricCaptureSelectionBlockMobile(
-                                      context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .leftHand),
-                                if (widget.field.bioAttributes!
-                                        .contains("leftThumb") &&
-                                    widget.field.bioAttributes!
-                                        .contains("rightThumb"))
-                                  _getBiometricCaptureSelectionBlockMobile(
-                                      context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .thumbs),
-                                if (widget.field.bioAttributes!
-                                    .contains("face"))
-                                  _getBiometricCaptureSelectionBlockMobile(
-                                      context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .face),
-                                if (context
-                                        .watch<
-                                            BiometricCaptureControlProvider>()
-                                        .iris
-                                        .exceptions
-                                        .contains(true) ||
-                                    context
-                                        .watch<
-                                            BiometricCaptureControlProvider>()
-                                        .rightHand
-                                        .exceptions
-                                        .contains(true) ||
-                                    context
-                                        .watch<
-                                            BiometricCaptureControlProvider>()
-                                        .leftHand
-                                        .exceptions
-                                        .contains(true) ||
-                                    context
-                                        .watch<
-                                            BiometricCaptureControlProvider>()
-                                        .thumbs
-                                        .exceptions
-                                        .contains(true) ||
-                                    context
-                                        .watch<
-                                            BiometricCaptureControlProvider>()
-                                        .face
-                                        .exceptions
-                                        .contains(true))
-                                  _getBiometricCaptureSelectionBlockMobile(
-                                      context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .exception),
-                              ]),
-                        )
-                ],
-              )
-            : BiometricCaptureScanBlockPortrait(field: widget.field),
+        Column(
+          children: [
+            (widget.field.conditionalBioAttributes!.first!.ageGroup!
+                        .compareTo(context.read<GlobalProvider>().ageGroup) ==
+                    0)
+                ? Container(
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    height: ((((context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .returnNoOfAttributes(widget
+                                                .field
+                                                .conditionalBioAttributes!
+                                                .first!
+                                                .bioAttributes!))
+                                        .toDouble()) /
+                                    2)
+                                .ceil() *
+                            335.h) +
+                        70.h,
+                    width: double.infinity,
+                    child: ResponsiveGridList(
+                      minItemWidth: 372.h,
+                      verticalGridSpacing: 17,
+                      horizontalGridMargin: 30,
+                      minItemsPerRow: 2,
+                      maxItemsPerRow: 2,
+                      children: [
+                        if (widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("leftEye") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("rightEye"))
+                          _getBiometricCaptureSelectionBlockMobile(context
+                              .read<BiometricCaptureControlProvider>()
+                              .iris),
+                        if (widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("rightIndex") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("rightLittle") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("rightRing") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("rightMiddle"))
+                          _getBiometricCaptureSelectionBlockMobile(context
+                              .read<BiometricCaptureControlProvider>()
+                              .rightHand),
+                        if (widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("leftIndex") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("leftLittle") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("leftRing") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("leftMiddle"))
+                          _getBiometricCaptureSelectionBlockMobile(context
+                              .read<BiometricCaptureControlProvider>()
+                              .leftHand),
+                        if (widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("leftThumb") &&
+                            widget.field.conditionalBioAttributes!.first!
+                                .bioAttributes!
+                                .contains("rightThumb"))
+                          _getBiometricCaptureSelectionBlockMobile(context
+                              .read<BiometricCaptureControlProvider>()
+                              .thumbs),
+                        if (widget.field.conditionalBioAttributes!.first!
+                            .bioAttributes!
+                            .contains("face"))
+                          _getBiometricCaptureSelectionBlockMobile(context
+                              .read<BiometricCaptureControlProvider>()
+                              .face),
+                        if (context
+                                .watch<BiometricCaptureControlProvider>()
+                                .iris
+                                .exceptions
+                                .contains(true) ||
+                            context
+                                .watch<BiometricCaptureControlProvider>()
+                                .rightHand
+                                .exceptions
+                                .contains(true) ||
+                            context
+                                .watch<BiometricCaptureControlProvider>()
+                                .leftHand
+                                .exceptions
+                                .contains(true) ||
+                            context
+                                .watch<BiometricCaptureControlProvider>()
+                                .thumbs
+                                .exceptions
+                                .contains(true) ||
+                            context
+                                .watch<BiometricCaptureControlProvider>()
+                                .face
+                                .exceptions
+                                .contains(true))
+                          _getBiometricCaptureSelectionBlockMobile(context
+                              .read<BiometricCaptureControlProvider>()
+                              .exception),
+                      ],
+                    ),
+                  )
+                : Container(
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    height: ((((context
+                                            .read<
+                                                BiometricCaptureControlProvider>()
+                                            .returnNoOfAttributes(
+                                                widget.field.bioAttributes!))
+                                        .toDouble()) /
+                                    2)
+                                .ceil() *
+                            335.h) +
+                        70.h,
+                    width: double.infinity,
+                    child: ResponsiveGridList(
+                        minItemWidth: 372.h,
+                        verticalGridSpacing: 17,
+                        horizontalGridMargin: 30,
+                        minItemsPerRow: 2,
+                        maxItemsPerRow: 2,
+                        children: [
+                          if (widget.field.bioAttributes!.contains("leftEye") &&
+                              widget.field.bioAttributes!.contains("rightEye"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .iris),
+                          if (widget.field.bioAttributes!
+                                  .contains("rightIndex") &&
+                              widget.field.bioAttributes!
+                                  .contains("rightLittle") &&
+                              widget.field.bioAttributes!
+                                  .contains("rightRing") &&
+                              widget.field.bioAttributes!
+                                  .contains("rightMiddle"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .rightHand),
+                          if (widget.field.bioAttributes!
+                                  .contains("leftIndex") &&
+                              widget.field.bioAttributes!
+                                  .contains("leftLittle") &&
+                              widget.field.bioAttributes!
+                                  .contains("leftRing") &&
+                              widget.field.bioAttributes!
+                                  .contains("leftMiddle"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .leftHand),
+                          if (widget.field.bioAttributes!
+                                  .contains("leftThumb") &&
+                              widget.field.bioAttributes!
+                                  .contains("rightThumb"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .thumbs),
+                          if (widget.field.bioAttributes!.contains("face"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .face),
+                          if (context
+                                  .watch<BiometricCaptureControlProvider>()
+                                  .iris
+                                  .exceptions
+                                  .contains(true) ||
+                              context
+                                  .watch<BiometricCaptureControlProvider>()
+                                  .rightHand
+                                  .exceptions
+                                  .contains(true) ||
+                              context
+                                  .watch<BiometricCaptureControlProvider>()
+                                  .leftHand
+                                  .exceptions
+                                  .contains(true) ||
+                              context
+                                  .watch<BiometricCaptureControlProvider>()
+                                  .thumbs
+                                  .exceptions
+                                  .contains(true) ||
+                              context
+                                  .watch<BiometricCaptureControlProvider>()
+                                  .face
+                                  .exceptions
+                                  .contains(true))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .exception),
+                        ]),
+                  )
+          ],
+        ),
       ],
     );
   }
