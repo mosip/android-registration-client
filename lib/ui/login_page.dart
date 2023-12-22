@@ -33,6 +33,8 @@ import 'package:registration_client/ui/widgets/password_component.dart';
 import 'package:registration_client/ui/widgets/username_component.dart';
 import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
 
+import '../utils/life_cycle_event_handler.dart';
+
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";
   const LoginPage({super.key});
@@ -41,7 +43,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   bool isMobile = true;
   bool isLoggingIn = false;
   String username = '';
@@ -64,6 +66,32 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     _initializeAppData();
     super.initState();
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+      resumeCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+      suspendingCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+    ));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void closeKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   _initializeAppData() async {
