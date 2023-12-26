@@ -10,26 +10,36 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class TransliterationOptions;
+@class Sync;
+@class SyncTime;
 
-@interface TransliterationOptions : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithInput:(NSString *)input
-    sourceLanguage:(NSString *)sourceLanguage
-    targetLanguage:(NSString *)targetLanguage;
-@property(nonatomic, copy) NSString * input;
-@property(nonatomic, copy) NSString * sourceLanguage;
-@property(nonatomic, copy) NSString * targetLanguage;
+@interface Sync : NSObject
++ (instancetype)makeWithSyncType:(nullable NSString *)syncType
+    syncProgress:(nullable NSNumber *)syncProgress
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy, nullable) NSString * syncType;
+@property(nonatomic, strong, nullable) NSNumber * syncProgress;
+@property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-/// The codec used by TransliterationApi.
-NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void);
-
-@protocol TransliterationApi
-- (void)transliterateOptions:(TransliterationOptions *)options completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@interface SyncTime : NSObject
++ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
+@property(nonatomic, copy, nullable) NSString * syncTime;
 @end
 
-extern void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *_Nullable api);
+/// The codec used by SyncApi.
+NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
+
+@protocol SyncApi
+- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCaCertsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

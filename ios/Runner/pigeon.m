@@ -26,63 +26,92 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface TransliterationOptions ()
-+ (TransliterationOptions *)fromList:(NSArray *)list;
-+ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list;
+@interface Sync ()
++ (Sync *)fromList:(NSArray *)list;
++ (nullable Sync *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation TransliterationOptions
-+ (instancetype)makeWithInput:(NSString *)input
-    sourceLanguage:(NSString *)sourceLanguage
-    targetLanguage:(NSString *)targetLanguage {
-  TransliterationOptions* pigeonResult = [[TransliterationOptions alloc] init];
-  pigeonResult.input = input;
-  pigeonResult.sourceLanguage = sourceLanguage;
-  pigeonResult.targetLanguage = targetLanguage;
+@interface SyncTime ()
++ (SyncTime *)fromList:(NSArray *)list;
++ (nullable SyncTime *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@implementation Sync
++ (instancetype)makeWithSyncType:(nullable NSString *)syncType
+    syncProgress:(nullable NSNumber *)syncProgress
+    errorCode:(nullable NSString *)errorCode {
+  Sync* pigeonResult = [[Sync alloc] init];
+  pigeonResult.syncType = syncType;
+  pigeonResult.syncProgress = syncProgress;
+  pigeonResult.errorCode = errorCode;
   return pigeonResult;
 }
-+ (TransliterationOptions *)fromList:(NSArray *)list {
-  TransliterationOptions *pigeonResult = [[TransliterationOptions alloc] init];
-  pigeonResult.input = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.input != nil, @"");
-  pigeonResult.sourceLanguage = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.sourceLanguage != nil, @"");
-  pigeonResult.targetLanguage = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.targetLanguage != nil, @"");
++ (Sync *)fromList:(NSArray *)list {
+  Sync *pigeonResult = [[Sync alloc] init];
+  pigeonResult.syncType = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.syncProgress = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
-+ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list {
-  return (list) ? [TransliterationOptions fromList:list] : nil;
++ (nullable Sync *)nullableFromList:(NSArray *)list {
+  return (list) ? [Sync fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.input ?: [NSNull null]),
-    (self.sourceLanguage ?: [NSNull null]),
-    (self.targetLanguage ?: [NSNull null]),
+    (self.syncType ?: [NSNull null]),
+    (self.syncProgress ?: [NSNull null]),
+    (self.errorCode ?: [NSNull null]),
   ];
 }
 @end
 
-@interface TransliterationApiCodecReader : FlutterStandardReader
+@implementation SyncTime
++ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime {
+  SyncTime* pigeonResult = [[SyncTime alloc] init];
+  pigeonResult.syncTime = syncTime;
+  return pigeonResult;
+}
++ (SyncTime *)fromList:(NSArray *)list {
+  SyncTime *pigeonResult = [[SyncTime alloc] init];
+  pigeonResult.syncTime = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable SyncTime *)nullableFromList:(NSArray *)list {
+  return (list) ? [SyncTime fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.syncTime ?: [NSNull null]),
+  ];
+}
 @end
-@implementation TransliterationApiCodecReader
+
+@interface SyncApiCodecReader : FlutterStandardReader
+@end
+@implementation SyncApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [TransliterationOptions fromList:[self readValue]];
+      return [Sync fromList:[self readValue]];
+    case 129: 
+      return [SyncTime fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface TransliterationApiCodecWriter : FlutterStandardWriter
+@interface SyncApiCodecWriter : FlutterStandardWriter
 @end
-@implementation TransliterationApiCodecWriter
+@implementation SyncApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[TransliterationOptions class]]) {
+  if ([value isKindOfClass:[Sync class]]) {
     [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[SyncTime class]]) {
+    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -90,40 +119,140 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface TransliterationApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface SyncApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation TransliterationApiCodecReaderWriter
+@implementation SyncApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[TransliterationApiCodecWriter alloc] initWithData:data];
+  return [[SyncApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[TransliterationApiCodecReader alloc] initWithData:data];
+  return [[SyncApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *SyncApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    TransliterationApiCodecReaderWriter *readerWriter = [[TransliterationApiCodecReaderWriter alloc] init];
+    SyncApiCodecReaderWriter *readerWriter = [[SyncApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *api) {
+void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.TransliterationApi.transliterate"
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getLastSyncTime"
         binaryMessenger:binaryMessenger
-        codec:TransliterationApiGetCodec()];
+        codec:SyncApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(transliterateOptions:completion:)], @"TransliterationApi api (%@) doesn't respond to @selector(transliterateOptions:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getLastSyncTimeWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getLastSyncTimeWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        TransliterationOptions *arg_options = GetNullableObjectAtIndex(args, 0);
-        [api transliterateOptions:arg_options completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getLastSyncTimeWithCompletion:^(SyncTime *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getPolicyKeySync"
+        binaryMessenger:binaryMessenger
+        codec:SyncApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPolicyKeySyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getPolicyKeySyncWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getPolicyKeySyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getGlobalParamsSync"
+        binaryMessenger:binaryMessenger
+        codec:SyncApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getGlobalParamsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getGlobalParamsSyncWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getGlobalParamsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getUserDetailsSync"
+        binaryMessenger:binaryMessenger
+        codec:SyncApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getUserDetailsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getUserDetailsSyncWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getUserDetailsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getIDSchemaSync"
+        binaryMessenger:binaryMessenger
+        codec:SyncApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getIDSchemaSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getIDSchemaSyncWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getIDSchemaSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getMasterDataSync"
+        binaryMessenger:binaryMessenger
+        codec:SyncApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getMasterDataSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getMasterDataSyncWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getMasterDataSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.SyncApi.getCaCertsSync"
+        binaryMessenger:binaryMessenger
+        codec:SyncApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getCaCertsSyncWithCompletion:)], @"SyncApi api (%@) doesn't respond to @selector(getCaCertsSyncWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getCaCertsSyncWithCompletion:^(Sync *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
