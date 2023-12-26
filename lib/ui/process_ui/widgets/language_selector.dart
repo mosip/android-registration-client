@@ -141,7 +141,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   fontSize: 22,
                 ),
               ),
-              leading: const Icon(
+              leading: Icon(
                 Icons.check,
                 color: Colors.green,
               ),

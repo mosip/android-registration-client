@@ -10,36 +10,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class Sync;
-@class SyncTime;
 
-@interface Sync : NSObject
-+ (instancetype)makeWithSyncType:(nullable NSString *)syncType
-    syncProgress:(nullable NSNumber *)syncProgress
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy, nullable) NSString * syncType;
-@property(nonatomic, strong, nullable) NSNumber * syncProgress;
-@property(nonatomic, copy, nullable) NSString * errorCode;
+/// The codec used by BiometricsApi.
+NSObject<FlutterMessageCodec> *BiometricsApiGetCodec(void);
+
+@protocol BiometricsApi
+- (void)invokeDiscoverSbiFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getBestBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)extractImageValuesFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)extractImageValuesByAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)incrementBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)addBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)removeBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getMapValueKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getAgeGroupWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)conditionalBioAttributeValidationFieldId:(NSString *)fieldId expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-@interface SyncTime : NSObject
-+ (instancetype)makeWithSyncTime:(nullable NSString *)syncTime;
-@property(nonatomic, copy, nullable) NSString * syncTime;
-@end
-
-/// The codec used by SyncApi.
-NSObject<FlutterMessageCodec> *SyncApiGetCodec(void);
-
-@protocol SyncApi
-- (void)getLastSyncTimeWithCompletion:(void (^)(SyncTime *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPolicyKeySyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getGlobalParamsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getUserDetailsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getIDSchemaSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getMasterDataSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-- (void)getCaCertsSyncWithCompletion:(void (^)(Sync *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void SyncApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SyncApi> *_Nullable api);
+extern void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<BiometricsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
