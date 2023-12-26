@@ -320,13 +320,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  _navigateToConsentPage();
-                  // if (context.read<GlobalProvider>().chosenLang.length >=
-                  //         minLanguage &&
-                  //     context.read<GlobalProvider>().chosenLang.length <=
-                  //         maxLanguage) {
-                    
-                  // }
+                  if (context.read<GlobalProvider>().chosenLang.length >=
+                          minLanguage &&
+                      context.read<GlobalProvider>().chosenLang.length <=
+                          maxLanguage) {
+                    _navigateToConsentPage();
+                  }
                 },
                 style: ButtonStyle(
                   backgroundColor: (context

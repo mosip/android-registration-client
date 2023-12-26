@@ -406,10 +406,10 @@ class _NewProcessState extends State<NewProcess> {
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
-        // if (globalProvider.formKey.currentState!.validate()) {
-        //   bool customValidator =
-        //       await customValidation(globalProvider.newProcessTabIndex);
-        //   if (customValidator) {
+        if (globalProvider.formKey.currentState!.validate()) {
+          bool customValidator =
+              await customValidation(globalProvider.newProcessTabIndex);
+          if (customValidator) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
               registrationTaskProvider.setAcknowledgementTemplate("");
@@ -420,8 +420,8 @@ class _NewProcessState extends State<NewProcess> {
 
             globalProvider.newProcessTabIndex =
                 globalProvider.newProcessTabIndex + 1;
-        //   }
-        // }
+          }
+        }
         _nextButtonClickedAudit();
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {

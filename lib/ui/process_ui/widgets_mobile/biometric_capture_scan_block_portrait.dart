@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -14,7 +14,6 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control_landscape.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 
@@ -1961,9 +1960,7 @@ class _BiometricCaptureScanBlockPortraitState
   late BiometricAttributeData biometricAttributeData;
   @override
   Widget build(BuildContext context) {
-    bool isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
-        setInitialState();
+    setInitialState();
 
     return Scaffold(
       bottomNavigationBar: Container(
