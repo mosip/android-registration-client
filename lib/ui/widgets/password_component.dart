@@ -46,7 +46,7 @@ class PasswordComponent extends StatelessWidget {
           height: 11.h,
         ),
         Container(
-          height: isMobile ? isMobileSize ? 52.h : 82.h : 52.h,
+          height: isMobile && !isMobileSize ? 82.h : 52.h,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(horizontal: 17.w),
           decoration: BoxDecoration(
@@ -66,13 +66,12 @@ class PasswordComponent extends StatelessWidget {
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_password,
               hintStyle: isMobile
-              ? isMobileSize ? AppStyle.mobileTextfieldHintText
-                  : AppStyle.tabletPortraitTextfieldHintText
+              && !isMobileSize ? AppStyle.tabletPortraitTextfieldHintText
                   : AppStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
             style: TextStyle(
-              fontSize: isMobile ? isMobileSize ? 14 : 22 : 14,
+              fontSize: isMobile && !isMobileSize ? 22 : 14,
               color: AppStyle.appBlack,
             ),
           ),
@@ -87,8 +86,7 @@ class PasswordComponent extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context)!.forgot_password,
               style: isMobile
-              ? isMobileSize ? AppStyle.mobileForgotPasswordText
-                  : AppStyle.tabletPortraitForgotPasswordText
+              && !isMobileSize ? AppStyle.tabletPortraitForgotPasswordText
                   : AppStyle.mobileForgotPasswordText,
             ),
           ),
@@ -99,7 +97,7 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: !isDisabled ? onTapLogin : null,
           child: Container(
-            height: isMobile ? isMobileSize ? 52.h : 82.h : 52.h,
+            height: isMobile && isMobileSize ? 82.h : 52.h,
             decoration: BoxDecoration(
               color: !isDisabled
                   ? AppStyle.appSolidPrimary
@@ -122,8 +120,7 @@ class PasswordComponent extends StatelessWidget {
                   : Text(
                       AppLocalizations.of(context)!.login_button,
                       style: isMobile
-                      ? isMobileSize ? AppStyle.mobileButtonText
-                          : AppStyle.tabletPortraitButtonText
+                      && !isMobileSize ? AppStyle.tabletPortraitButtonText
                           : AppStyle.mobileButtonText,
                     ),
             ),
@@ -135,7 +132,7 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: onTapBack,
           child: Container(
-            height: isMobile ? isMobileSize ? 52.h : 82.h : 52.h,
+            height: isMobile && !isMobileSize ? 82.h : 52.h,
             // width: 318.w,
             decoration: BoxDecoration(
               color: AppStyle.appWhite,
@@ -151,8 +148,7 @@ class PasswordComponent extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context)!.back_button,
                 style: isMobile
-                ? isMobileSize ? AppStyle.mobileBackButtonText
-                    : AppStyle.tabletPortraitBackButtonText
+                && !isMobileSize ? AppStyle.tabletPortraitBackButtonText
                     : AppStyle.mobileBackButtonText,
               ),
             ),

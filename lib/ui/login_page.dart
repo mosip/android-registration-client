@@ -190,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
               width: w,
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, 
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
                       height: 20.h,
@@ -215,10 +215,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: Center(
                             child: Text(AppLocalizations.of(context)!.help,
-                                style: isMobile
-                                    ? isMobileSize
-                                        ? AppStyle.mobileHelpText
-                                        : AppStyle.tabletPortraitHelpText
+                                style: isMobile && !isMobileSize
+                                    ? AppStyle.tabletPortraitHelpText
                                     : AppStyle.mobileHelpText),
                           ),
                         ),
@@ -479,18 +477,16 @@ class _LoginPageState extends State<LoginPage> {
         Text(
           AppLocalizations.of(context)!.welcome,
           style: isMobile
-              ? isMobileSize
-                  ? AppStyle.mobileWelcomeText
-                  : AppStyle.tabletPortraitWelcomeText
+              && !isMobileSize
+                  ? AppStyle.tabletPortraitWelcomeText
               : AppStyle.tabletWelcomeText,
           textAlign: isMobile ? TextAlign.center : TextAlign.start,
         ),
         Text(
           AppLocalizations.of(context)!.community_reg_text,
           style: isMobile
-              ? isMobileSize
-                  ? AppStyle.mobileCommunityRegClientText
-                  : AppStyle.tabletPortraitCommunityRegClientText
+              && !isMobileSize
+                  ? AppStyle.tabletPortraitCommunityRegClientText
               : AppStyle.tabletCommunityRegClientText,
           textAlign: isMobile ? TextAlign.center : TextAlign.start,
         )
@@ -502,9 +498,8 @@ class _LoginPageState extends State<LoginPage> {
     return Text(
       AppLocalizations.of(context)!.info_text,
       style: isMobile
-          ? isMobileSize
-              ? AppStyle.mobileInfoText
-              : AppStyle.tabletPortraitInfoText
+          && !isMobileSize
+              ? AppStyle.tabletPortraitInfoText
           : AppStyle.mobileInfoText,
       textAlign: isMobile ? TextAlign.center : TextAlign.start,
     );
@@ -518,10 +513,9 @@ class _LoginPageState extends State<LoginPage> {
         _welcomeTextComponent(),
         SizedBox(
           height: isMobile
-              ? isMobileSize
-                  ? 12.h
-                  : 18.h
-              : 16.h,
+              && !isMobileSize
+                  ? 18.h
+              : 12.h,
         ),
         _infoTextComponent(),
       ],
@@ -537,14 +531,12 @@ class _LoginPageState extends State<LoginPage> {
           : 424.w,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile
-            ? isMobileSize
-                ? 20.w
-                : 30.w
+            && !isMobileSize
+                ? 30.w
             : 20.w,
         vertical: isMobile
-            ? isMobileSize
-                ? 20.h
-                : 30.h
+            && !isMobileSize
+                ? 30.h
             : 20.h,
       ),
       decoration: BoxDecoration(
@@ -562,17 +554,15 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           SizedBox(
             height: isMobile
-                ? isMobileSize
-                    ? 34.h
-                    : 16.h
+                && !isMobileSize
+                    ? 16.h
                 : 34.h,
           ),
           Text(
             AppLocalizations.of(context)!.login_text,
             style: isMobile
-                ? isMobileSize
-                    ? AppStyle.mobileHeaderText
-                    : AppStyle.tabletPortraitHeaderText
+                && !isMobileSize
+                    ? AppStyle.tabletPortraitHeaderText
                 : AppStyle.mobileHeaderText,
           ),
           SizedBox(

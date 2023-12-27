@@ -31,8 +31,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
         padding: EdgeInsets.only(
           left: 25.w,
           right: 25.w,
-          top: widget.isMobile ? isMobileSize ? 9.h : 15.h : 9.h,
-          bottom: widget.isMobile ? isMobileSize ? 9.h : 15.h : 9.h,
+          top: widget.isMobile && !isMobileSize ? 15.h : 9.h,
+          bottom: widget.isMobile && !isMobileSize ? 15.h : 9.h,
         ),
         decoration: BoxDecoration(
           color: widget.isFreezed
@@ -53,7 +53,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
         child: Text(
           widget.title,
           style: TextStyle(
-            fontSize: widget.isMobile ? isMobileSize ? 16 : 24 : 16,
+            fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
             color: widget.isFreezed
                 ? AppStyle.appBlack
                 : widget.isSelected
