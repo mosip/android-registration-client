@@ -413,15 +413,15 @@ class _NewProcessState extends State<NewProcess> {
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
-        if (/*globalProvider.formKey.currentState!.validate()*/true) {
-          // bool customValidator =
-          //     await customValidation(globalProvider.newProcessTabIndex);
-          if (/*customValidator*/true) {
+        if (globalProvider.formKey.currentState!.validate()) {
+          bool customValidator =
+              await customValidation(globalProvider.newProcessTabIndex);
+          if (customValidator) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
               registrationTaskProvider.setAcknowledgementTemplate("");
               registrationTaskProvider.setPreviewTemplate("");
-              // registrationTaskProvider.getAcknowledgementTemplate(false);
+              registrationTaskProvider.getAcknowledgementTemplate(false);
               registrationTaskProvider.getPreviewTemplate(true);
             }
 
@@ -481,12 +481,12 @@ class _NewProcessState extends State<NewProcess> {
                     Expanded(
                       child: OutlinedButton(
                         child: SizedBox(
-                          height: isPortrait ? 68.h : 52.h,
+                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.go_back,
                               style: TextStyle(
-                                fontSize: isPortrait ? 22 : 16,
+                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
                               ),
                             ),
                           ),
@@ -502,12 +502,12 @@ class _NewProcessState extends State<NewProcess> {
                     Expanded(
                       child: ElevatedButton(
                         child: SizedBox(
-                          height: isPortrait ? 68.h : 52.h,
+                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.informed,
                               style: TextStyle(
-                                fontSize: isPortrait ? 22 : 16,
+                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
                               ),
                             ),
                           ),
@@ -600,7 +600,7 @@ class _NewProcessState extends State<NewProcess> {
                         ],
                       ),
                 Container(
-                  padding: isMobile
+                  padding: isMobile && !isMobileSize
                       ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
                       : const EdgeInsets.fromLTRB(0, 0, 0, 0),
                   decoration: const BoxDecoration(

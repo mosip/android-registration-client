@@ -24,7 +24,6 @@ import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/dashboard/dashboard_mobile.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
@@ -186,11 +185,12 @@ class _LoginPageState extends State<LoginPage> {
               left: 16.w,
               child: _getBuildingsImage(),
             ),
-            SingleChildScrollView(
-              child: SizedBox(
-                height: h,
-                width: w,
+            SizedBox(
+              height: h,
+              width: w,
+              child: SingleChildScrollView(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min, 
                   children: [
                     SizedBox(
                       height: 20.h,
@@ -214,15 +214,12 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.help,
-                              style: isMobile ? isMobileSize ? AppStyle.mobileHelpText : AppStyle.tabletPortraitHelpText : AppStyle.mobileHeaderText
-                              // const TextStyle(
-                              //   fontSize: 22,
-                              //   fontWeight: FontWeight.bold,
-                              //   color: AppStyle.appWhite,
-                              // ),
-                            ),
+                            child: Text(AppLocalizations.of(context)!.help,
+                                style: isMobile
+                                    ? isMobileSize
+                                        ? AppStyle.mobileHelpText
+                                        : AppStyle.tabletPortraitHelpText
+                                    : AppStyle.mobileHelpText),
                           ),
                         ),
                       ),
@@ -230,12 +227,16 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                       height: isMobileSize ? 72.h : 86.h,
                     ),
-                    Expanded(
+                    Flexible(
                       child: Column(
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? isMobileSize ? 20.w : 92.w : 80.w,
+                              horizontal: isMobile
+                                  ? isMobileSize
+                                      ? 20.w
+                                      : 92.w
+                                  : 80.w,
                             ),
                             child: isMobile ? _mobileView() : _tabletView(),
                           ),
@@ -436,10 +437,10 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: const HomePage(),
-            tablet: const HomePage(),
+          builder: (context) => const Responsive(
+            mobile: HomePage(),
+            desktop: HomePage(),
+            tablet: HomePage(),
           ),
         ),
       );
@@ -448,7 +449,7 @@ class _LoginPageState extends State<LoginPage> {
 
   _getBottomBar() {
     return Container(
-      height: isMobileSize ? 62.h : 94.h,
+      height: isMobile && !isMobileSize ? 94.h : 62.h,
       padding: EdgeInsets.symmetric(
         vertical: 15.h,
       ),
@@ -471,48 +472,41 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _welcomeTextComponent() {
-    return Container(
-      // padding: EdgeInsets.symmetric(
-      //   horizontal: isMobile ? 38.w : 0,
-      // ),
-      child: Column(
-        crossAxisAlignment:
-            isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.welcome,
-            style: isMobile
-              ? isMobileSize ? AppStyle.mobileWelcomeText
-                : AppStyle.tabletPortraitWelcomeText
-                : AppStyle.tabletWelcomeText,
-            textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          ),
-          Text(
-            AppLocalizations.of(context)!.community_reg_text,
-            style: isMobile
-            ? isMobileSize ? AppStyle.mobileCommunityRegClientText
-                : AppStyle.tabletPortraitCommunityRegClientText
-                : AppStyle.tabletCommunityRegClientText,
-            textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          )
-        ],
-      ),
+    return Column(
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.welcome,
+          style: isMobile
+              ? isMobileSize
+                  ? AppStyle.mobileWelcomeText
+                  : AppStyle.tabletPortraitWelcomeText
+              : AppStyle.tabletWelcomeText,
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        ),
+        Text(
+          AppLocalizations.of(context)!.community_reg_text,
+          style: isMobile
+              ? isMobileSize
+                  ? AppStyle.mobileCommunityRegClientText
+                  : AppStyle.tabletPortraitCommunityRegClientText
+              : AppStyle.tabletCommunityRegClientText,
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        )
+      ],
     );
   }
 
   Widget _infoTextComponent() {
-    return Container(
-      // padding: EdgeInsets.symmetric(
-      //   horizontal: isMobile ? 113.w : 0,
-      // ),
-      child: Text(
-        AppLocalizations.of(context)!.info_text,
-        style: isMobile
-        ? isMobileSize ? AppStyle.mobileInfoText
-            : AppStyle.tabletPortraitInfoText
-            : AppStyle.mobileInfoText,
-        textAlign: isMobile ? TextAlign.center : TextAlign.start,
-      ),
+    return Text(
+      AppLocalizations.of(context)!.info_text,
+      style: isMobile
+          ? isMobileSize
+              ? AppStyle.mobileInfoText
+              : AppStyle.tabletPortraitInfoText
+          : AppStyle.mobileInfoText,
+      textAlign: isMobile ? TextAlign.center : TextAlign.start,
     );
   }
 
@@ -523,7 +517,11 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _welcomeTextComponent(),
         SizedBox(
-          height: isMobile ? isMobileSize ? 12.h : 18.h : 16.h,
+          height: isMobile
+              ? isMobileSize
+                  ? 12.h
+                  : 18.h
+              : 16.h,
         ),
         _infoTextComponent(),
       ],
@@ -532,10 +530,22 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginComponent() {
     return Container(
-      width: isMobile ? isMobileSize ? 358.w : 616.w : 424.w,
+      width: isMobile
+          ? isMobileSize
+              ? 358.w
+              : 616.w
+          : 424.w,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? isMobileSize ? 20.w : 30.w : 20.w,
-        vertical: isMobile ? isMobileSize ? 20.h : 30.h : 20.h,
+        horizontal: isMobile
+            ? isMobileSize
+                ? 20.w
+                : 30.w
+            : 20.w,
+        vertical: isMobile
+            ? isMobileSize
+                ? 20.h
+                : 30.h
+            : 20.h,
       ),
       decoration: BoxDecoration(
         color: AppStyle.appWhite,
@@ -551,13 +561,18 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: isMobile ? isMobileSize ? 34.h : 16.h : 34.h,
+            height: isMobile
+                ? isMobileSize
+                    ? 34.h
+                    : 16.h
+                : 34.h,
           ),
           Text(
             AppLocalizations.of(context)!.login_text,
             style: isMobile
-            ? isMobileSize ? AppStyle.mobileHeaderText
-                : AppStyle.tabletPortraitHeaderText
+                ? isMobileSize
+                    ? AppStyle.mobileHeaderText
+                    : AppStyle.tabletPortraitHeaderText
                 : AppStyle.mobileHeaderText,
           ),
           SizedBox(
