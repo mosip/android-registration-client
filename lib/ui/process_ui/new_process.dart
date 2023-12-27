@@ -510,12 +510,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                     Expanded(
                       child: OutlinedButton(
                         child: SizedBox(
-                          height: isPortrait ? 68.h : 52.h,
+                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.go_back,
                               style: TextStyle(
-                                fontSize: isPortrait ? 22 : 16,
+                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
                               ),
                             ),
                           ),
@@ -531,12 +531,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                     Expanded(
                       child: ElevatedButton(
                         child: SizedBox(
-                          height: isPortrait ? 68.h : 52.h,
+                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.informed,
                               style: TextStyle(
-                                fontSize: isPortrait ? 22 : 16,
+                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
                               ),
                             ),
                           ),
@@ -629,7 +629,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                         ],
                       ),
                 Container(
-                  padding: isMobile
+                  padding: isMobile && !isMobileSize
                       ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
                       : const EdgeInsets.fromLTRB(0, 0, 0, 0),
                   decoration: const BoxDecoration(

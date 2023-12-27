@@ -24,7 +24,6 @@ import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/dashboard/dashboard_mobile.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
@@ -214,11 +213,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
               left: 16.w,
               child: _getBuildingsImage(),
             ),
-            SingleChildScrollView(
-              child: SizedBox(
-                height: h - 94.h,
-                width: w,
+            SizedBox(
+              height: h,
+              width: w,
+              child: SingleChildScrollView(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
                       height: 20.h,
@@ -230,7 +230,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       child: InkWell(
                         onTap: () {},
                         child: Container(
-                          height: 62.h,
+                          height: isMobileSize ? 46.h : 62.h,
                           width: 129.w,
                           decoration: BoxDecoration(
                             color: Colors.transparent,
@@ -242,27 +242,28 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                             ),
                           ),
                           child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.help,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: AppStyle.appWhite,
-                              ),
-                            ),
+                            child: Text(AppLocalizations.of(context)!.help,
+                                style: isMobile && !isMobileSize
+                                    ? AppStyle.tabletPortraitHelpText
+                                    : AppStyle.mobileHelpText),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: 86.h,
+                      height: isMobileSize ? 72.h : 86.h,
                     ),
-                    Expanded(
+                    Flexible(
                       child: Column(
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 92.w : 80.w,
+              
+                              horizontal: isMobile
+                                  ? isMobileSize
+                                      ? 20.w
+                                      : 92.w
+                                  : 80.w,
                             ),
                             child: isMobile ? _mobileView() : _tabletView(),
                           ),
@@ -512,10 +513,10 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: const HomePage(),
-            tablet: const HomePage(),
+          builder: (context) => const Responsive(
+            mobile: HomePage(),
+            desktop: HomePage(),
+            tablet: HomePage(),
           ),
         ),
       );
@@ -524,7 +525,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _getBottomBar() {
     return Container(
-      height: 94.h,
+      height: isMobile && !isMobileSize ? 94.h : 62.h,
       padding: EdgeInsets.symmetric(
         vertical: 15.h,
       ),
@@ -605,45 +606,38 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   // }
 
   Widget _welcomeTextComponent() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 38.w : 0,
-      ),
-      child: Column(
-        crossAxisAlignment:
-            isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.welcome,
-            style: isMobile
-                ? AppStyle.tabletPortraitWelcomeText
-                : AppStyle.mobileWelcomeText,
-            textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          ),
-          Text(
-            AppLocalizations.of(context)!.community_reg_text,
-            style: isMobile
-                ? AppStyle.tabletPortraitCommunityRegClientText
-                : AppStyle.mobileCommunityRegClientText,
-            textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          )
-        ],
-      ),
+    return Column(
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.welcome,
+          style: isMobile
+              && !isMobileSize
+                  ? AppStyle.tabletPortraitWelcomeText
+              : AppStyle.tabletWelcomeText,
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        ),
+        Text(
+          AppLocalizations.of(context)!.community_reg_text,
+          style: isMobile
+              && !isMobileSize
+                  ? AppStyle.tabletPortraitCommunityRegClientText
+              : AppStyle.tabletCommunityRegClientText,
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        )
+      ],
     );
   }
 
   Widget _infoTextComponent() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 113.w : 0,
-      ),
-      child: Text(
-        AppLocalizations.of(context)!.info_text,
-        style: isMobile
-            ? AppStyle.tabletPortraitInfoText
-            : AppStyle.mobileInfoText,
-        textAlign: isMobile ? TextAlign.center : TextAlign.start,
-      ),
+    return Text(
+      AppLocalizations.of(context)!.info_text,
+      style: isMobile
+          && !isMobileSize
+              ? AppStyle.tabletPortraitInfoText
+          : AppStyle.mobileInfoText,
+      textAlign: isMobile ? TextAlign.center : TextAlign.start,
     );
   }
 
@@ -654,7 +648,10 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       children: [
         _welcomeTextComponent(),
         SizedBox(
-          height: isMobile ? 18.h : 16.h,
+          height: isMobile
+              && !isMobileSize
+                  ? 18.h
+              : 12.h,
         ),
         _infoTextComponent(),
       ],
@@ -663,10 +660,20 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   Widget _loginComponent() {
     return Container(
-      width: isMobile ? 616.w : 424.w,
+      width: isMobile
+          ? isMobileSize
+              ? 358.w
+              : 616.w
+          : 424.w,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 30.w : 20.w,
-        vertical: isMobile ? 30.h : 20.h,
+        horizontal: isMobile
+            && !isMobileSize
+                ? 30.w
+            : 20.w,
+        vertical: isMobile
+            && !isMobileSize
+                ? 30.h
+            : 20.h,
       ),
       decoration: BoxDecoration(
         color: AppStyle.appWhite,
@@ -682,12 +689,16 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: isMobile ? 16.h : 34.h,
+            height: isMobile
+                && !isMobileSize
+                    ? 16.h
+                : 34.h,
           ),
           Text(
             AppLocalizations.of(context)!.login_text,
             style: isMobile
-                ? AppStyle.tabletPortraitHeaderText
+                && !isMobileSize
+                    ? AppStyle.tabletPortraitHeaderText
                 : AppStyle.mobileHeaderText,
           ),
           SizedBox(
@@ -741,7 +752,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       children: [
         _appCombinedTextComponent(),
         SizedBox(
-          height: 70.h,
+          height: isMobileSize ? 40.h : 70.h,
         ),
         _loginComponent(),
       ],

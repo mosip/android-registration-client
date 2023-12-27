@@ -110,250 +110,152 @@ class _LanguageSelectorState extends State<LanguageSelector> {
       title: Text(
         AppLocalizations.of(context)!.select_language,
         style: TextStyle(
-            fontSize: isMobile ? 24 : 18, fontWeight: FontWeight.bold),
+            fontSize: isMobile && !isMobileSize ? 24 : 18, fontWeight: FontWeight.bold),
       ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+      contentPadding: EdgeInsets.symmetric(horizontal: isMobileSize ? 5.w : 20.w, vertical: 20.h),
       content: SizedBox(
-        width: isMobile ? 644.w : 824.32.w,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Divider(),
-            ListTile(
-              minLeadingWidth: 0,
-              title: Text(
-                AppLocalizations.of(context)!.select_two_languages,
-                style: const TextStyle(
-                  fontSize: 22,
+        width: isMobile && !isMobileSize ? 644.w : 824.32.w,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(),
+              ListTile(
+                minLeadingWidth: 0,
+                title: Text(
+                  AppLocalizations.of(context)!.select_two_languages,
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 14 : 22,
+                  ),
+                ),
+                leading: const Icon(
+                  Icons.check,
+                  color: Colors.green,
                 ),
               ),
-              leading: const Icon(
-                Icons.check,
-                color: Colors.green,
-              ),
-            ),
-             ListTile(
-              minLeadingWidth: 0,
-              title: Text(
-                AppLocalizations.of(context)!.language_mandatory(mandatoryLanguage!),
-                style: const TextStyle(
-                  fontSize: 22,
+               ListTile(
+                minLeadingWidth: 0,
+                title: Text(
+                  AppLocalizations.of(context)!.language_mandatory(mandatoryLanguage!),
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 14 : 22,
+                  ),
+                ),
+                leading: const Icon(
+                  Icons.check,
+                  color: Colors.green,
                 ),
               ),
-              leading: Icon(
-                Icons.check,
-                color: Colors.green,
+              SizedBox(
+                height: 45.h,
               ),
-            ),
-            SizedBox(
-              height: 45.h,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.25.w,
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10.25.w,
+                ),
+                child: Wrap(
+                    spacing: 8.w,
+                    runSpacing: 8.h,
+                    children: context.watch<GlobalProvider>().languages.map((e) {
+                      return LanguageComponent(
+                        title: context
+                            .watch<GlobalProvider>()
+                            .codeToLanguageMapper[e]!,
+                        isSelected: context
+                            .read<GlobalProvider>()
+                            .chosenLang
+                            .contains(context
+                                .watch<GlobalProvider>()
+                                .codeToLanguageMapper[e]!),
+                        onTap: () {
+                          context.read<GlobalProvider>().addRemoveLang(
+                              context
+                                  .read<GlobalProvider>()
+                                  .codeToLanguageMapper[e]!,
+                              !context.read<GlobalProvider>().chosenLang.contains(
+                                  context
+                                      .read<GlobalProvider>()
+                                      .codeToLanguageMapper[e]!));
+                        },
+                        isMobile: true,
+                        isFreezed:
+                            context.read<GlobalProvider>().mandatoryLanguageMap[
+                                    context
+                                        .watch<GlobalProvider>()
+                                        .codeToLanguageMapper[e]!] ??
+                                false,
+                      );
+                    }).toList()),
               ),
-              child: Wrap(
+              SizedBox(
+                height: isMobile ? 42.h : 31.h,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10.25.w,
+                ),
+                child: Text(
+                  _getNotificationLabel(),
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 10 : 16,
+                    fontWeight: semiBold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15.h,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10.25.w,
+                ),
+                child: Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
-                  children: context.watch<GlobalProvider>().languages.map((e) {
+                  children: context
+                      .watch<GlobalProvider>()
+                      .notificationLanguages
+                      .map((e) {
                     return LanguageComponent(
-                      title: context
-                          .watch<GlobalProvider>()
-                          .codeToLanguageMapper[e]!,
+                      title: e!,
                       isSelected: context
-                          .read<GlobalProvider>()
-                          .chosenLang
-                          .contains(context
                               .watch<GlobalProvider>()
-                              .codeToLanguageMapper[e]!),
+                              .fieldInputValue["preferredLang"] ==
+                          e,
                       onTap: () {
-                        context.read<GlobalProvider>().addRemoveLang(
-                            context
-                                .read<GlobalProvider>()
-                                .codeToLanguageMapper[e]!,
-                            !context.read<GlobalProvider>().chosenLang.contains(
-                                context
-                                    .read<GlobalProvider>()
-                                    .codeToLanguageMapper[e]!));
+                        context.read<GlobalProvider>().setInputMapValue(
+                              "preferredLang",
+                              e,
+                              context.read<GlobalProvider>().fieldInputValue,
+                            );
                       },
-                      isMobile: true,
-                      isFreezed:
-                          context.read<GlobalProvider>().mandatoryLanguageMap[
-                                  context
-                                      .watch<GlobalProvider>()
-                                      .codeToLanguageMapper[e]!] ??
-                              false,
+                      isMobile: isMobile,
+                      isFreezed: false,
                     );
-                  }).toList()),
-            ),
-            // (size.width >= 512)
-            //     ? Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            //         ...context.watch<GlobalProvider>().languageMap.entries.map(
-            //               (e) => Row(
-            //                 children: [
-            //                   const SizedBox(
-            //                     width: 40,
-            //                   ),
-            //                   Checkbox(
-            //                     value: e.value,
-            //                     onChanged: context
-            //                                 .read<GlobalProvider>()
-            //                                 .mandatoryLanguageMap[e.key] ??
-            //                             false
-            //                         ? null
-            //                         : (bool? newValue) {
-            //                             if (!(context
-            //                                     .read<GlobalProvider>()
-            //                                     .mandatoryLanguageMap[e.key] ??
-            //                                 false)) {
-            //                               context
-            //                                   .read<GlobalProvider>()
-            //                                   .addRemoveLang(e.key, newValue!);
-            //                             }
-            //                           },
-            //                     activeColor: solidPrimary,
-            //                   ),
-            //                   Text(
-            //                     e.key,
-            //                     style: Theme.of(context)
-            //                         .textTheme
-            //                         .titleSmall
-            //                         ?.copyWith(
-            //                             color: context
-            //                                             .read<GlobalProvider>()
-            //                                             .mandatoryLanguageMap[
-            //                                         e.key] ??
-            //                                     false
-            //                                 ? Colors.grey
-            //                                 : const Color(0xff333333)),
-            //                   )
-            //                 ],
-            //               ),
-            //             )
-            //       ])
-            //     : Column(
-            //         children: [
-            //           ...context
-            //               .watch<GlobalProvider>()
-            //               .languageMap
-            //               .entries
-            //               .map(
-            //                 (e) => Row(
-            //                   children: [
-            //                     const SizedBox(
-            //                       width: 40,
-            //                     ),
-            //                     Checkbox(
-            //                       value: e.value,
-            //                       onChanged: context
-            //                                   .read<GlobalProvider>()
-            //                                   .mandatoryLanguageMap[e.key] ??
-            //                               false
-            //                           ? null
-            //                           : (bool? newValue) {
-            //                               if (!(context
-            //                                           .read<GlobalProvider>()
-            //                                           .mandatoryLanguageMap[
-            //                                       e.key] ??
-            //                                   false)) {
-            //                                 context
-            //                                     .read<GlobalProvider>()
-            //                                     .addRemoveLang(
-            //                                         e.key, newValue!);
-            //                               }
-            //                             },
-            //                       activeColor: solidPrimary,
-            //                     ),
-            //                     Text(
-            //                       e.key,
-            //                       style: Theme.of(context)
-            //                           .textTheme
-            //                           .titleSmall
-            //                           ?.copyWith(
-            //                             color: context
-            //                                         .read<GlobalProvider>()
-            //                                         .langToCode(e.key) ==
-            //                                     context
-            //                                         .read<GlobalProvider>()
-            //                                         .selectedLanguage
-            //                                 ? Colors.grey
-            //                                 : AppStyle.appBlackShade1,
-            //                           ),
-            //                     )
-            //                   ],
-            //                 ),
-            //               )
-            //         ],
-            //       ),
-            // const Spacer(),
-            SizedBox(
-              height: isMobile ? 42.h : 31.h,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.25.w,
-              ),
-              child: Text(
-                _getNotificationLabel(),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: semiBold,
+                  }).toList(),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 15.h,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.25.w,
+              SizedBox(
+                height: 24.h,
               ),
-              child: Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
-                children: context
-                    .watch<GlobalProvider>()
-                    .notificationLanguages
-                    .map((e) {
-                  return LanguageComponent(
-                    title: e!,
-                    isSelected: context
-                            .watch<GlobalProvider>()
-                            .fieldInputValue["preferredLang"] ==
-                        e,
-                    onTap: () {
-                      context.read<GlobalProvider>().setInputMapValue(
-                            "preferredLang",
-                            e,
-                            context.read<GlobalProvider>().fieldInputValue,
-                          );
-                    },
-                    isMobile: isMobile,
-                    isFreezed: false,
-                  );
-                }).toList(),
-              ),
-            ),
-            SizedBox(
-              height: 24.h,
-            ),
-            Container(
-              padding: const EdgeInsets.all(12),
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              color: const Color(0xffFFFAF0),
-              child: Text(
-                AppLocalizations.of(context)!.language_selector_note,
-                style: const TextStyle(
-                  color: Color(
-                    0xff764B00,
+              Container(
+                padding: const EdgeInsets.all(12),
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                color: const Color(0xffFFFAF0),
+                child: Text(
+                  AppLocalizations.of(context)!.language_selector_note,
+                  style: TextStyle(
+                    color: const Color(
+                      0xff764B00,
+                    ),
+                    fontSize: isMobileSize ? 14 : 22,
                   ),
-                  fontSize: 22,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [
@@ -363,10 +265,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         ),
         Row(
           children: [
-            const Expanded(
+            isMobileSize ? const SizedBox() : const Expanded(
               child: SizedBox(),
             ),
-            const Expanded(
+            isMobileSize ? const SizedBox() : const Expanded(
               child: SizedBox(),
             ),
             Expanded(
@@ -375,12 +277,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   Navigator.of(context).pop();
                 },
                 child: SizedBox(
-                  height: isMobile ? 62.h : 37.h,
+                  height: isMobile && !isMobileSize ? 62.h : 37.h,
                   child: Center(
                     child: Text(
                       AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
-                        fontSize: isMobile ? 18 : 14,
+                        fontSize: isMobile && !isMobileSize ? 18 : 14,
                       ),
                     ),
                   ),
@@ -423,12 +325,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                       : MaterialStateProperty.all<Color>(Colors.grey),
                 ),
                 child: SizedBox(
-                  height: isMobile ? 62.h : 37.h,
+                  height: isMobile && !isMobileSize ? 62.h : 37.h,
                   child: Center(
                     child: Text(
                       AppLocalizations.of(context)!.submit,
                       style: TextStyle(
-                        fontSize: isMobile ? 18 : 14,
+                        fontSize: isMobile && !isMobileSize ? 18 : 14,
                       ),
                     ),
                   ),
