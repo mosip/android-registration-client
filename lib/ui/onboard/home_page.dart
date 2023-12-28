@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> {
       },
     ];
 
-    return isMobile && !isMobileSize
+    return isMobile
         ? MobileHomePage(
             operationalTasks: operationalTasks,
             getProcessUI: (BuildContext context, Process process) {

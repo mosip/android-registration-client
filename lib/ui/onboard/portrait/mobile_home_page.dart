@@ -28,27 +28,25 @@ class _MobileHomePageState extends State<MobileHomePage> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _getBottomNavigationBar(),
-        body: SingleChildScrollView(
-          child: Container(
-            height: ScreenUtil().screenHeight,
-            width: ScreenUtil().screenWidth,
-            padding: EdgeInsets.symmetric(
-              // horizontal: 20.w,
-              vertical: 14.h,
-            ),
-            margin: EdgeInsets.only(
-              top: 14.h,
-            ),
-            color: AppStyle.appBlueShade,
-            child: TasksPage(
-              operationalTasks: widget.operationalTasks,
-              getProcessUI: (BuildContext context, Process process) {
-                widget.getProcessUI(context, process);
-              },
-              syncData: (BuildContext context) {
-                widget.syncData(context);
-              },
-            ),
+        body: Container(
+          height: ScreenUtil().screenHeight,
+          width: ScreenUtil().screenWidth,
+          padding: EdgeInsets.symmetric(
+            // horizontal: 20.w,
+            vertical: 14.h,
+          ),
+          margin: EdgeInsets.only(
+            top: 14.h,
+          ),
+          color: AppStyle.appBlueShade,
+          child: TasksPage(
+            operationalTasks: widget.operationalTasks,
+            getProcessUI: (BuildContext context, Process process) {
+              widget.getProcessUI(context, process);
+            },
+            syncData: (BuildContext context) {
+              widget.syncData(context);
+            },
           ),
         ),
       ),
@@ -57,7 +55,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
 
   _getBottomNavigationBar() {
     return Container(
-        height: 94.h,
+        height: isMobileSize ? 84.h : 94.h,
         padding: EdgeInsets.symmetric(
           vertical: 15.h,
         ),
@@ -84,10 +82,11 @@ class _MobileHomePageState extends State<MobileHomePage> {
                 ),
                 title: Text(
                   AppLocalizations.of(context)!.dashboard,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: solidPrimary),
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 10 : 14,
+                    fontWeight: semiBold,
+                    color: secondaryColors.elementAt(5),
+                  ),
                 ),
                 ontap: () {},
               ),
@@ -101,10 +100,11 @@ class _MobileHomePageState extends State<MobileHomePage> {
                 ),
                 title: Text(
                   AppLocalizations.of(context)!.settings,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: secondaryColors.elementAt(5)),
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 10 : 14,
+                    fontWeight: semiBold,
+                    color: secondaryColors.elementAt(5),
+                  ),
                 ),
                 ontap: () {},
               ),
@@ -132,10 +132,11 @@ class _MobileHomePageState extends State<MobileHomePage> {
                 ),
                 title: Text(
                   AppLocalizations.of(context)!.notifications,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: secondaryColors.elementAt(5)),
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 10 : 14,
+                    fontWeight: semiBold,
+                    color: secondaryColors.elementAt(5),
+                  ),
                 ),
                 ontap: () {},
               ),
@@ -149,10 +150,11 @@ class _MobileHomePageState extends State<MobileHomePage> {
                 ),
                 title: Text(
                   AppLocalizations.of(context)!.profile,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: secondaryColors.elementAt(5)),
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 10 : 14,
+                    fontWeight: semiBold,
+                    color: secondaryColors.elementAt(5),
+                  ),
                 ),
                 ontap: () {},
               ),

@@ -26,7 +26,7 @@ class OnboardLandingPageNavbarIcon extends StatelessWidget {
           children: [
             SvgPicture.asset(imagePath),
             SizedBox(
-              height: 3.h,
+              height: 5.h,
             ),
             title,
           ],
