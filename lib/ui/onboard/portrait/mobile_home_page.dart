@@ -57,7 +57,8 @@ class _MobileHomePageState extends State<MobileHomePage> {
     return Container(
         height: isMobileSize ? 84.h : 94.h,
         padding: EdgeInsets.symmetric(
-          vertical: 15.h,
+          vertical: 17.h,
+          horizontal: 20.w
         ),
         decoration: const BoxDecoration(
           color: AppStyle.appWhite,
@@ -71,93 +72,83 @@ class _MobileHomePageState extends State<MobileHomePage> {
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: dashboardIcon,
-                icon: Icon(
-                  Icons.home,
-                  color: solidPrimary,
-                ),
-                title: Text(
-                  AppLocalizations.of(context)!.dashboard,
-                  style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 14,
-                    fontWeight: semiBold,
-                    color: secondaryColors.elementAt(5),
-                  ),
-                ),
-                ontap: () {},
+            OnboardLandingPageNavbarIcon(
+              imagePath: dashboardIcon,
+              icon: Icon(
+                Icons.home,
+                color: solidPrimary,
               ),
-            ),
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: settingsIcon,
-                icon: Icon(
-                  Icons.settings,
+              title: Text(
+                AppLocalizations.of(context)!.dashboard,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
                   color: secondaryColors.elementAt(5),
                 ),
-                title: Text(
-                  AppLocalizations.of(context)!.settings,
-                  style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 14,
-                    fontWeight: semiBold,
-                    color: secondaryColors.elementAt(5),
-                  ),
-                ),
-                ontap: () {},
               ),
+              ontap: () {},
             ),
-            Expanded(
-              child: InkWell(
-                onTap: () {},
-                child: SizedBox(
-                  height: 54.h,
-                  child: Center(
-                    child: Image.asset(
-                      appIconLogoOnly,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
+            OnboardLandingPageNavbarIcon(
+              imagePath: settingsIcon,
+              icon: Icon(
+                Icons.settings,
+                color: secondaryColors.elementAt(5),
               ),
-            ),
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: notificationIcon,
-                icon: Icon(
-                  Icons.notifications,
+              title: Text(
+                AppLocalizations.of(context)!.settings,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
                   color: secondaryColors.elementAt(5),
                 ),
-                title: Text(
-                  AppLocalizations.of(context)!.notifications,
-                  style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 14,
-                    fontWeight: semiBold,
-                    color: secondaryColors.elementAt(5),
+              ),
+              ontap: () {},
+            ),
+            InkWell(
+              onTap: () {},
+              child: SizedBox(
+                height: 54.h,
+                child: Center(
+                  child: Image.asset(
+                    appIconLogoOnly,
+                    fit: BoxFit.fill,
                   ),
                 ),
-                ontap: () {},
               ),
             ),
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: dashboardIcon,
-                icon: Icon(
-                  Icons.home,
+            OnboardLandingPageNavbarIcon(
+              imagePath: notificationIcon,
+              icon: Icon(
+                Icons.notifications,
+                color: secondaryColors.elementAt(5),
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.notifications,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
                   color: secondaryColors.elementAt(5),
                 ),
-                title: Text(
-                  AppLocalizations.of(context)!.profile,
-                  style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 14,
-                    fontWeight: semiBold,
-                    color: secondaryColors.elementAt(5),
-                  ),
-                ),
-                ontap: () {},
               ),
+              ontap: () {},
+            ),
+            OnboardLandingPageNavbarIcon(
+              imagePath: dashboardIcon,
+              icon: Icon(
+                Icons.home,
+                color: secondaryColors.elementAt(5),
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.profile,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
+                  color: secondaryColors.elementAt(5),
+                ),
+              ),
+              ontap: () {},
             )
           ],
         ));
