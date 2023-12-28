@@ -144,70 +144,6 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   }
 
   _getTasks() {
-    // return Wrap(
-    //   spacing: 8.w,
-    //   runSpacing: 8.h,
-    //   children:
-    //       context.watch<RegistrationTaskProvider>().listOfProcesses.map((e) {
-    // return InkWell(
-    //   onTap: () {
-    //     widget.getProcessUI(
-    //       context,
-    //       Process.fromJson(
-    //         jsonDecode(
-    //           e.toString(),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    //   child: Container(
-    //     height: 435.h,
-    //     width: 372.w,
-    //     decoration: BoxDecoration(
-    //       border: Border.all(
-    //         color: AppStyle.appWhite,
-    //       ),
-    //       borderRadius: const BorderRadius.all(
-    //         Radius.circular(6),
-    //       ),
-    //       color: AppStyle.appWhite,
-    //       boxShadow: const [
-    //         BoxShadow(
-    //           color: AppStyle.greyBorderShade,
-    //           offset: Offset(3.0, 3.0),
-    //           blurRadius: 6.0,
-    //           spreadRadius: 0.0,
-    //         ),
-    //       ],
-    //     ),
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: [
-    //         SizedBox(
-    //           height: 49.08.h,
-    //           width: 67.73.w,
-    //           child: Image.asset(
-    //             "assets/images/${Process.fromJson(jsonDecode(e.toString())).icon ?? ""}",
-    //             fit: BoxFit.fill,
-    //           ),
-    //         ),
-    //         SizedBox(
-    //           height: 38.17.h,
-    //         ),
-    //         Text(
-    //           Process.fromJson(jsonDecode(e.toString())).label!["eng"]!,
-    //           style: const TextStyle(
-    //             fontSize: 27,
-    //             color: AppStyle.appBlackShade1,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
-    //   }).toList(),
-    // );
-
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: GridView.builder(
@@ -276,6 +212,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                           .label!["eng"]!,
                       style: TextStyle(
                         fontSize: isMobileSize ? 18 : 27,
+                        fontWeight: semiBold,
                         color: AppStyle.appBlackShade1,
                       ),
                     ),
