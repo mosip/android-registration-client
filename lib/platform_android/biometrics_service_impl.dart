@@ -109,10 +109,10 @@ class BiometricsServiceImpl implements BiometricsService {
   }
 
   @override
-  Future<String> getThresholdValue(String key) async {
+  Future<String> getMapValue(String key) async {
     String response = '';
     try {
-      response = await BiometricsApi().getThresholdValue(key);
+      response = await BiometricsApi().getMapValue(key);
     } on PlatformException {
       debugPrint('BiomtericsApi call failed!');
     } catch (e) {

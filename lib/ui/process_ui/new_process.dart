@@ -484,6 +484,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
             globalProvider.newProcessTabIndex + 1;
       }
     }
+    
 
     return SafeArea(
       child: Scaffold(

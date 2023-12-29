@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -342,7 +343,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     }
 
     @Override
-    public void getThresholdValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
+    public void getMapValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
       String response=globalParamRepository.getCachedStringGlobalParam(key);
       result.success(response);
     }
