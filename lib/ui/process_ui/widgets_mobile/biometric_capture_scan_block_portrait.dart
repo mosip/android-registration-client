@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+// ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
 
@@ -74,18 +74,14 @@ class _BiometricCaptureScanBlockPortraitState
           context.read<BiometricCaptureControlProvider>().exception;
     }
   }
-
-  _showScanDialogBox(List<Uint8List?> temp) async {
-    int currentAttemptNo = await BiometricsApi().getBioAttempt(
-        widget.field.id!, biometricAttributeData.title.replaceAll(" ", ""));
-    showDialog<String>(
+_showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
+    return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         content: SizedBox(
           height: 610,
           width: 760,
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(
                 height: 26,
@@ -136,7 +132,15 @@ class _BiometricCaptureScanBlockPortraitState
         ),
       ),
     );
-  }
+ 
+}
+  
+
+  _showScanDialogBox(List<Uint8List?> temp) async {
+    int currentAttemptNo = await BiometricsApi().getBioAttempt(
+        widget.field.id!, biometricAttributeData.title.replaceAll(" ", ""));
+        _showCustomAlert(currentAttemptNo,temp);
+     }
 
   generateList(String key, BiometricAttributeData data) {
     List<BiometricAttributeData> list = [];
@@ -411,9 +415,9 @@ class _BiometricCaptureScanBlockPortraitState
                     );
                   }
                 });
-                biometricAttributeData.qualityPercentage = context
-                    .read<BiometricCaptureControlProvider>()
-                    .avgScore(biometricAttributeData.listOfBiometricsDto);
+                biometricAttributeData.qualityPercentage =
+                    biometricCaptureControlProvider
+                        .avgScore(biometricAttributeData.listOfBiometricsDto);
                 await BiometricsApi()
                     .extractImageValues(widget.field.id!,
                         biometricAttributeData.title.replaceAll(" ", ""))
@@ -1958,9 +1962,12 @@ class _BiometricCaptureScanBlockPortraitState
   }
 
   late BiometricAttributeData biometricAttributeData;
+  late BiometricCaptureControlProvider biometricCaptureControlProvider;
   @override
   Widget build(BuildContext context) {
     setInitialState();
+    biometricCaptureControlProvider =
+        Provider.of<BiometricCaptureControlProvider>(context, listen: false);
 
     return Scaffold(
       bottomNavigationBar: Container(
