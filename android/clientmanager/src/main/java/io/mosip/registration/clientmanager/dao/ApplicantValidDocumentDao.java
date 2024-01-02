@@ -17,6 +17,9 @@ public interface ApplicantValidDocumentDao {
     @Query("select distinct doc_type_code from applicant_valid_doc where doc_cat_code=:docCategoryCode")
     List<String> findAllDocTypesByDocCategory(String docCategoryCode);
 
+    @Query("select name from document_type where code=:code and lang_code=:langCode")
+    List<String> getDBValue(String code,String langCode);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ApplicantValidDocument applicantValidDocument);
 }

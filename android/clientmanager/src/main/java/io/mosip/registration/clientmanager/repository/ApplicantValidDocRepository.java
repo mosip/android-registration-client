@@ -6,6 +6,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicantValidDocRepository {
@@ -18,11 +20,18 @@ public class ApplicantValidDocRepository {
     }
 
     public List<String> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
-        if (applicantType == null)
-            return this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
-
-        return this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
-                categoryCode);
+        List<String> nameList;
+        List<String> documentList = new ArrayList<>();
+        if (applicantType == null) {
+            nameList = this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
+        }else {
+            nameList = this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
+                    categoryCode);
+        }
+        nameList.forEach((v) -> {
+            documentList.add(this.applicantValidDocumentDao.getDBValue(v,langCode).get(0));
+        });
+        return documentList;
     }
 
     public void saveApplicantValidDocument(JSONObject jsonObject, String defaultAppTypeCode) throws JSONException {
