@@ -7,12 +7,13 @@ import 'package:registration_client/utils/app_config.dart';
 import '../../../provider/sync_provider.dart';
 
 class HomePageCard extends StatefulWidget {
-  const HomePageCard(
-      {super.key,
-      required this.icon,
-      required this.title,
-      required this.index,
-      required this.ontap});
+  const HomePageCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.index,
+    required this.ontap,
+  });
   final Widget icon;
   final String title;
   final int index;

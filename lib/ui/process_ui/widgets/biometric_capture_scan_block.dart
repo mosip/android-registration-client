@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 
-class BiometricCaptureScanBlock extends StatefulWidget {
+class BiometricCaptureScanBlock extends StatelessWidget {
   const BiometricCaptureScanBlock({
     super.key,
     required this.title,
@@ -19,12 +19,6 @@ class BiometricCaptureScanBlock extends StatefulWidget {
   // List<Uint8List?> listOfUint8List=[];
 
   @override
-  State<BiometricCaptureScanBlock> createState() =>
-      _BiometricCaptureScanBlockState();
-}
-
-class _BiometricCaptureScanBlockState extends State<BiometricCaptureScanBlock> {
-  @override
   Widget build(BuildContext context) {
     return Container(
       height: 547.h,
@@ -38,12 +32,12 @@ class _BiometricCaptureScanBlockState extends State<BiometricCaptureScanBlock> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 16, 0, 36),
             child: Text(
-              widget.title,
+              title,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 18, fontWeight: semiBold, color: blackShade1),
             ),
           ),
-          widget.middleBlock,
+          middleBlock,
         ],
       ),
     );

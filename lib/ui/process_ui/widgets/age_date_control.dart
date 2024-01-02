@@ -1,15 +1,16 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
+import 'custom_cupertino_picker.dart';
 import 'custom_label.dart';
 
 class AgeDateControl extends StatefulWidget {
@@ -24,56 +25,13 @@ class AgeDateControl extends StatefulWidget {
 }
 
 class _AgeDateControlState extends State<AgeDateControl> {
-  TextEditingController dayController = TextEditingController();
-
-  TextEditingController monthController = TextEditingController();
-  TextEditingController yearController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
   TextEditingController ageController = TextEditingController();
-
-  final dayFocus = FocusNode();
-  final monthFocus = FocusNode();
-  final yearFocus = FocusNode();
 
   @override
   void initState() {
     _getSavedDate();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    dayController.dispose();
-    monthController.dispose();
-    yearController.dispose();
-
-    dayFocus.dispose();
-    monthFocus.dispose();
-    yearFocus.dispose();
-
-    super.dispose();
-  }
-
-  void focusNextField(FocusNode currentFocus, FocusNode nextFocus) {
-    currentFocus.unfocus();
-    FocusScope.of(context).requestFocus(nextFocus);
-  }
-
-  void _removeFocusFromAll(String currentTab) {
-    switch (currentTab) {
-      case "day":
-        monthFocus.unfocus();
-        yearFocus.unfocus();
-        break;
-      case "month":
-        dayFocus.unfocus();
-        yearFocus.unfocus();
-        break;
-      case "year":
-        dayFocus.unfocus();
-        monthFocus.unfocus();
-        break;
-      default:
-    }
   }
 
   int calculateYearDifference(DateTime date1, DateTime date2) {
@@ -86,8 +44,13 @@ class _AgeDateControlState extends State<AgeDateControl> {
   }
 
   _calculateAgeFromDOB() {
-    DateTime date = DateTime.parse(
-        "${yearController.text}-${monthController.text.padLeft(2, '0')}-${dayController.text.padLeft(2, '0')}");
+    if (dateController.text == "") {
+      return;
+    }
+    String dateString = dateController.text;
+    DateTime date =
+        DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
+
     DateTime currentDate = DateTime.now();
     if (date.compareTo(currentDate) < 0) {
       ageController.text =
@@ -97,54 +60,28 @@ class _AgeDateControlState extends State<AgeDateControl> {
     }
   }
 
-  String? fieldValidation(value, message) {
-    try {
-      String targetDateString = widget.field.format ??
-          "yyyy/MM/dd"
-              .replaceAll('dd', dayController.text.padLeft(2, '0'))
-              .replaceAll('MM', monthController.text.padLeft(2, '0'))
-              .replaceAll('yyyy', yearController.text);
-
-      if (value == "") {
-        return 'Empty';
-      }
-      if (!widget.validation.hasMatch(targetDateString)) {
-        return message;
-      }
-      return null;
-    } catch (e) {
-      log("error");
-      return "";
-    }
-  }
-
-  _invalidDateText() {
-    DateTime date = DateTime.parse(
-        "${yearController.text}-${monthController.text.padLeft(2, '0')}-${dayController.text.padLeft(2, '0')}");
-    DateTime currentDate = DateTime.now();
-    if (date.compareTo(currentDate) > 0) {
-      return "Invalid date!";
-    }
-    return null;
-  }
-
   void saveData() {
-    String targetDateString = widget.field.format ??
-        "yyyy/MM/dd"
-            .replaceAll('dd', dayController.text.padLeft(2, '0'))
-            .replaceAll('MM', monthController.text.padLeft(2, '0'))
-            .replaceAll('yyyy', yearController.text);
-
+    if (dateController.text == "") {
+      context
+          .read<RegistrationTaskProvider>()
+          .removeDemographicField(widget.field.id!);
+      context.read<GlobalProvider>().removeInputMapValue(
+          widget.field.id!, context.read<GlobalProvider>().fieldInputValue);
+      return;
+    }
+    String dateString = dateController.text;
+    DateTime date =
+        DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
     context.read<RegistrationTaskProvider>().setDateField(
           widget.field.id ?? "",
           widget.field.subType ?? "",
-          dayController.text.padLeft(2, '0'),
-          monthController.text.padLeft(2, '0'),
-          yearController.text,
+          date.day.toString().padLeft(2, '0'),
+          date.month.toString().padLeft(2, '0'),
+          date.year.toString(),
         );
     context.read<GlobalProvider>().setInputMapValue(
           widget.field.id!,
-          targetDateString,
+          dateController.text,
           context.read<GlobalProvider>().fieldInputValue,
         );
     BiometricsApi().getAgeGroup().then((value) {
@@ -157,20 +94,16 @@ class _AgeDateControlState extends State<AgeDateControl> {
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id)) {
-      String targetDateFormat = widget.field.format ?? "yyyy/MM/dd";
-
       String savedDate =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id];
-      DateTime parsedDate = DateFormat(targetDateFormat).parse(savedDate);
-      dayController.text = parsedDate.day.toString().padLeft(2, '0');
-      monthController.text = parsedDate.month.toString().padLeft(2, '0');
-      yearController.text = parsedDate.year.toString();
-      ageController.text = calculateYearDifference(
-              DateTime.parse(
-                  "${yearController.text}-${monthController.text.padLeft(2, '0')}-${dayController.text.padLeft(2, '0')}"),
-              DateTime.now())
-          .abs()
-          .toString();
+      DateTime parsedDate =
+          DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(savedDate);
+      setState(() {
+        dateController.text = savedDate;
+        ageController.text = calculateYearDifference(parsedDate, DateTime.now())
+            .abs()
+            .toString();
+      });
     }
   }
 
@@ -178,18 +111,114 @@ class _AgeDateControlState extends State<AgeDateControl> {
     int age = int.parse(value);
     DateTime currentDate = DateTime.now();
     DateTime calculatedDate = DateTime(currentDate.year - age, 1, 1);
-    dayController.text = calculatedDate.day.toString().padLeft(2, '0');
-    monthController.text = calculatedDate.month.toString().padLeft(2, '0');
-    yearController.text = calculatedDate.year.toString();
+    setState(() {
+      dateController.text = DateFormat(widget.field.format ?? "yyyy/MM/dd")
+          .format(calculatedDate);
+    });
+  }
+
+  void showBottomPopup(BuildContext context) {
+    String dateString = dateController.text;
+    showModalBottomSheet(
+        backgroundColor: Colors.white,
+        context: context,
+        enableDrag: true,
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        builder: (context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(
+                      width: 50,
+                    ),
+                    Text(
+                      widget.field.label!['eng'] ?? "",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    )
+                  ],
+                ),
+                Container(
+                  height: 2.5,
+                  width: MediaQuery.of(context).size.width,
+                  color: solidPrimary.withOpacity(0.075),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                CustomCupertinoDatePicker(
+                  maxDate: DateTime.now(),
+                  minDate: DateTime(DateTime.now().year - 125),
+                  selectedDate: dateString != ""
+                      ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                          .parse(dateString)
+                      : null,
+                  squeeze: 1,
+                  itemExtent: 50,
+                  diameterRatio: 10,
+                  selectionOverlay: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: solidPrimary.withOpacity(0.075),
+                    ),
+                  ),
+                  selectedStyle: TextStyle(
+                    color: solidPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                  unselectedStyle: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 15,
+                  ),
+                  disabledStyle: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 15,
+                  ),
+                  onSelectedItemChanged: (selectedDate) {
+                    String targetDateString = widget.field.format ??
+                        "yyyy/MM/dd"
+                            .replaceAll('dd',
+                                selectedDate.day.toString().padLeft(2, "0"))
+                            .replaceAll('MM',
+                                selectedDate.month.toString().padLeft(2, "0"))
+                            .replaceAll('yyyy', selectedDate.year.toString());
+                    setState(() {
+                      dateController.text = targetDateString;
+                    });
+                    _calculateAgeFromDOB();
+                    saveData();
+                  },
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+      elevation: 5,
+      color: pureWhite,
+      margin: EdgeInsets.symmetric(
+          vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -204,125 +233,123 @@ class _AgeDateControlState extends State<AgeDateControl> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Flexible(
+                      flex: 3,
                       child: TextFormField(
-                        onTap: () => _removeFocusFromAll("day"),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        readOnly: true,
+                        controller: dateController,
                         validator: (value) {
-                          String? valid = fieldValidation(value, "dd");
-                          if (valid == null) {
-                            return _invalidDateText();
+                          if (value == null || value.isEmpty) {
+                            return "Please Enter a value";
                           }
-                          return valid;
+                          return null;
                         },
-                        onChanged: (value) {
-                          if (value.length == 2 &&
-                              monthController.text.length == 2 &&
-                              yearController.text.length == 4) {
-                            _calculateAgeFromDOB();
-                          } else {
-                            ageController.text = "";
-                          }
-                          if (value.length >= 2) {
-                            focusNextField(dayFocus, monthFocus);
-                          }
-                          saveData();
-                        },
-                        maxLength: 2,
-                        focusNode: dayFocus,
-                        keyboardType: TextInputType.number,
-                        controller: dayController,
+                        onTap: (() {
+                          showBottomPopup(context);
+                        }),
+                        textAlign: TextAlign.center,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle:const TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14),
-                          counterText: "",
-                          hintText: 'DD',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: const BorderSide(
-                                color: Color(0xff9B9B9F), width: 1),
+                          hintStyle: const TextStyle(
+// <<<<<<< HEAD
+//                               color: AppStyle.appBlackShade3, fontSize: 14),
+//                           counterText: "",
+//                           hintText: 'DD',
+//                           border: OutlineInputBorder(
+//                             borderRadius: BorderRadius.circular(8.0),
+//                             borderSide: const BorderSide(
+//                                 color: Color(0xff9B9B9F), width: 1),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 8.0),
+//                     Flexible(
+//                       child: TextFormField(
+//                         onTap: () => _removeFocusFromAll("month"),
+//                         autovalidateMode: AutovalidateMode.onUserInteraction,
+//                         validator: (value) {
+//                           String? valid = fieldValidation(value, "MM");
+//                           if (valid == null) {
+//                             return _invalidDateText();
+//                           }
+//                           return valid;
+//                         },
+//                         onChanged: (value) {
+//                           if (value.length == 2 &&
+//                               monthController.text.length == 2 &&
+//                               yearController.text.length == 4) {
+//                             _calculateAgeFromDOB();
+//                           } else {
+//                             ageController.text = "";
+//                           }
+//                           if (value.length >= 2) {
+//                             focusNextField(monthFocus, yearFocus);
+//                           }
+//                           saveData();
+//                         },
+//                         maxLength: 2,
+//                         focusNode: monthFocus,
+//                         keyboardType: TextInputType.number,
+//                         controller: monthController,
+//                         decoration: InputDecoration(
+//                           contentPadding: const EdgeInsets.symmetric(
+//                               vertical: 12, horizontal: 16),
+//                           hintStyle: const TextStyle(
+//                               color: AppStyle.appBlackShade3, fontSize: 14),
+//                           counterText: "",
+//                           hintText: 'MM',
+//                           border: OutlineInputBorder(
+//                             borderRadius: BorderRadius.circular(8.0),
+//                             borderSide: const BorderSide(
+//                                 color: Color(0xff9B9B9F), width: 1),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 8.0),
+//                     Flexible(
+//                       child: TextFormField(
+//                         validator: (value) {
+//                           String? valid = fieldValidation(value, "yyyy");
+//                           if (valid == null) {
+//                             return _invalidDateText();
+//                           }
+//                           return valid;
+//                         },
+//                         onChanged: (value) {
+//                           if (value.length == 4 &&
+//                               dayController.text.length == 2 &&
+//                               monthController.text.length == 2) {
+//                             _calculateAgeFromDOB();
+//                           } else {
+//                             ageController.text = "";
+//                           }
+//                           saveData();
+//                         },
+//                         onTap: () => _removeFocusFromAll("year"),
+//                         autovalidateMode: AutovalidateMode.onUserInteraction,
+//                         maxLength: 4,
+//                         focusNode: yearFocus,
+//                         controller: yearController,
+//                         keyboardType: TextInputType.number,
+//                         decoration: InputDecoration(
+//                           contentPadding: const EdgeInsets.symmetric(
+//                               vertical: 12, horizontal: 16),
+//                           hintStyle: const TextStyle(
+//                               color: AppStyle.appBlackShade3, fontSize: 14),
+//                           counterText: "",
+//                           hintText: 'YYYY',
+// =======
+                            color: AppStyle.appBlackShade3,
+                            fontSize: 14,
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextFormField(
-                        onTap: () => _removeFocusFromAll("month"),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          String? valid = fieldValidation(value, "MM");
-                          if (valid == null) {
-                            return _invalidDateText();
-                          }
-                          return valid;
-                        },
-                        onChanged: (value) {
-                          if (value.length == 2 &&
-                              monthController.text.length == 2 &&
-                              yearController.text.length == 4) {
-                            _calculateAgeFromDOB();
-                          } else {
-                            ageController.text = "";
-                          }
-                          if (value.length >= 2) {
-                            focusNextField(monthFocus, yearFocus);
-                          }
-                          saveData();
-                        },
-                        maxLength: 2,
-                        focusNode: monthFocus,
-                        keyboardType: TextInputType.number,
-                        controller: monthController,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          hintStyle:const TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14),
-                          counterText: "",
-                          hintText: 'MM',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: const BorderSide(
-                                color: Color(0xff9B9B9F), width: 1),
+                          hintText: widget.field.format ?? "yyyy/MM/dd",
+                          prefixIcon: Icon(
+                            Icons.calendar_month,
+                            color: solidPrimary,
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextFormField(
-                        validator: (value) {
-                          String? valid = fieldValidation(value, "yyyy");
-                          if (valid == null) {
-                            return _invalidDateText();
-                          }
-                          return valid;
-                        },
-                        onChanged: (value) {
-                          if (value.length == 4 &&
-                              dayController.text.length == 2 &&
-                              monthController.text.length == 2) {
-                            _calculateAgeFromDOB();
-                          } else {
-                            ageController.text = "";
-                          }
-                          saveData();
-                        },
-                        onTap: () => _removeFocusFromAll("year"),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        maxLength: 4,
-                        focusNode: yearFocus,
-                        controller: yearController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          hintStyle:const TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14),
-                          counterText: "",
-                          hintText: 'YYYY',
+// >>>>>>> feature-flutter-mosip
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: const BorderSide(
@@ -335,24 +362,28 @@ class _AgeDateControlState extends State<AgeDateControl> {
                     const Text("OR"),
                     const SizedBox(width: 12),
                     Flexible(
+                      flex: 1,
                       child: TextFormField(
-                        // readOnly: true,
                         controller: ageController,
                         keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please Enter a value";
+                          }
+                          return null;
+                        },
                         onChanged: (value) {
                           if (value != "") {
                             _getDateFromAge(value);
-                            saveData();
                           } else {
-                            dayController.text = "";
-                            monthController.text = "";
-                            yearController.text = "";
+                            dateController.text = "";
                           }
+                          saveData();
                         },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          hintStyle:const TextStyle(
+                          hintStyle: const TextStyle(
                               color: AppStyle.appBlackShade3, fontSize: 14),
                           hintText: 'Age',
                           border: OutlineInputBorder(

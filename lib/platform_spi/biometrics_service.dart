@@ -23,7 +23,7 @@ abstract class BiometricsService {
 
   Future<String> removeBioException(String fieldId, String modality, String attribute);
 
-  Future<String> getThresholdValue(String key);
+  Future<String> getMapValue(String key);
 
   Future<String> getAgeGroup();
 

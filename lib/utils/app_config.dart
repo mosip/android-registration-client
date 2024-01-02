@@ -6,6 +6,11 @@ String appIconLogoOnly = 'assets/images/MOSIP Logo Only.png';
 String buildingsX = 'assets/images/buildings.png';
 String buildingsXX = 'assets/images/buildings@2x.png';
 double appIconScale = 8;
+String dashboardIcon = 'assets/svg/Dashboard.svg';
+String notificationIcon = 'assets/svg/Notifications.svg';
+String settingsIcon = 'assets/svg/Settings.svg';
+String mosipLogo = 'assets/svg/MOSIP Logo.svg';
+String syncDataIcon = 'assets/svg/Synchronising Data.svg';
 Color solidPrimary = const Color(0xFF1C43A1);
 
 Color backgroundColor = const Color(0xFFF8FCFF);
@@ -42,6 +47,11 @@ List<Color> secondaryColors = [
   const Color(0xFFF8F8F8),
   const Color(0xFF848484),
   const Color(0xFFC11717),
+  const Color(0xFFF7F7F7),
+  const Color(0xFFCCCCCC),
+  const Color(0xFFFFF7EB),
+  const Color(0xFFA8781E),
+  const Color(0xFFFF0202),
 ];
 FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;

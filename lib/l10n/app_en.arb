@@ -99,6 +99,15 @@
       }
     }
   },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "upload_document": "Please Upload The Document",
   "scan": "SCAN",
   "clear": "Clear",
@@ -116,5 +125,51 @@
         "type": "String"
       }
     }
-  }
+  },
+  "synchronize_data": "Synchronize Data",
+  "registration_tasks": "Registration Tasks",
+  "operation_tasks": "Operational Tasks",
+  "system_storage_usage": "System Storage Usage",
+  "download_pre_registration_data": "Download Pre-Registration Data",
+  "update_operator_biomterics": "Update Operator Biometrics",
+  "appliction_upload": "Application Upload",
+  "check_updates": "Check Updates",
+  "center_remap_sync": "Center Remap Sync.",
+  "sync_activities": "Sync. Activities",
+  "dashboard": "Dashboard",
+  "settings": "Settings",
+  "notifications": "Notifications",
+  "profile": "Notifications",
+  "select_language": "Select Language",
+  "select_two_languages": "Please select any 2 languages for data entry.",
+  "language_mandatory": "{mandatoryLanguage} is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
+  "cancel": "CANCEL",
+  "submit": "SUBMIT",
+  "go_back": "GO BACK",
+  "informed": "INFORMED",
+  "logo_text": "Powered by MOSIP",
+  "get_onboard": "GET ONBOARD",
+  "skip_to_home": "SKIP TO HOME",
+  "continue_text": "CONTINUE",
+  "authenticate": "AUTHENTICATE",
+  "new_registration": "NEW REGISTRATION",
+  "go_back": "GO BACK",
+  "informed": "INFORMED",
+  "sync_packet": "Sync Upload",
+  "upload_packet": "Upload Packet",
+  "authenticate_using_password": "Authentication using Password",
+  "registration_acknowledgement": "Registration Acknowledgement",
+  "print_text": "PRINT",
+  "hello": "HELLO",
+  "onboard_process_help": "Please tap 'GET ONBOARD' to get started with the onboarding process."
 }

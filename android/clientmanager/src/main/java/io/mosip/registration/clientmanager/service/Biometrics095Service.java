@@ -148,6 +148,7 @@ public class Biometrics095Service extends BiometricsService {
             serialNo = digitalId.getSerialNo();
         } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.DEVICE_INFO_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
+            Toast.makeText(context, "No SBI found!", Toast.LENGTH_LONG).show();
             throw e;
         } catch (Exception e) {
             auditManagerService.audit(AuditEvent.DEVICE_INFO_PARSE_FAILED, Components.REGISTRATION, e.getMessage());

@@ -33,7 +33,7 @@ dependencies:
   freezed: ^2.1.0+1
   freezed_annotation: ^2.1.0
   json_annotation: ^4.8.0
-  flutter_svg: ^2.0.4
+  flutter_svg: ^2.0.9
   provider: ^6.0.5
   # flutter_html: ^2.2.1
   file_picker: ^5.2.8

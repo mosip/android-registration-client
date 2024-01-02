@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
@@ -12,11 +13,14 @@ class ButtonControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
+      elevation: 5,
       color: pureWhite,
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
+        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

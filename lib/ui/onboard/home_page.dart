@@ -7,12 +7,18 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/common/tablet_footer.dart';
+import 'package:registration_client/ui/common/tablet_header.dart';
+import 'package:registration_client/ui/common/tablet_navbar.dart';
+import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
+import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -21,7 +27,6 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'widgets/home_page_card.dart';
 
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
@@ -35,6 +40,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isMobile = true;
   @override
   void initState() {
     _fetchProcessSpec();
@@ -77,6 +83,7 @@ class _HomePageState extends State<HomePage> {
 
   void _fetchProcessSpec() async {
     await _getNewProcessSpecAction();
+    await _getFieldValues("preferredLang", "eng");
     await _getCenterNameAction();
     await _homePageLoadedAudit();
   }
@@ -87,6 +94,17 @@ class _HomePageState extends State<HomePage> {
 
   _initializeLocationHierarchy() async {
     await context.read<GlobalProvider>().initializeLocationHierarchyMap();
+  }
+
+  _getFieldValues(String fieldId, String langCode) async {
+    List<String?> fieldValues = await context
+        .read<RegistrationTaskProvider>()
+        .getFieldValues(fieldId, langCode);
+    _setNotificationLanguages(fieldValues);
+  }
+
+  _setNotificationLanguages(List<String?> fieldValues) {
+    context.read<GlobalProvider>().setNotificationLanguages(fieldValues);
   }
 
   _homePageLoadedAudit() async {
@@ -144,10 +162,6 @@ class _HomePageState extends State<HomePage> {
     await context.read<RegistrationTaskProvider>().getListOfProcesses();
   }
 
-  // _getUiSchemaAction(BuildContext context) async {
-  //   await context.read<RegistrationTaskProvider>().getUISchema();
-  // }
-
   _getCenterNameAction() async {
     String regCenterId = context.read<GlobalProvider>().centerId;
 
@@ -160,6 +174,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     double w = ScreenUtil().screenWidth;
+    isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     List<Map<String, dynamic>> operationalTasks = [
       {
         "icon": SvgPicture.asset(
@@ -169,204 +184,262 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": "Sync Data",
         "onTap": syncData,
+        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
+            .format(DateTime.parse(
+                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                .toLocal())
+            .toString(),
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
-          width: 20,
-          height: 20,
         ),
-        "title": "Download Pre-Registration Data",
+        "title": AppLocalizations.of(context)!.download_pre_registration_data,
         "onTap": () {},
+        "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",
-          width: 20,
-          height: 20,
         ),
-        "title": "Update Operator Biometrics",
+        "title": AppLocalizations.of(context)!.update_operator_biomterics,
         "onTap": () {},
+        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
-          width: 20,
-          height: 20,
         ),
-        "title": "Application Upload",
+        "title": AppLocalizations.of(context)!.appliction_upload,
         "onTap": () {},
+        "subtitle": "3 application(s)"
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Onboarding Yourself.svg",
-          width: 20,
-          height: 20,
         ),
-        "title": "Pending Approval",
+        "title": AppLocalizations.of(context)!.check_updates,
         "onTap": () {},
+        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
-          width: 20,
-          height: 20,
         ),
-        "title": "Check Update",
+        "title": AppLocalizations.of(context)!.center_remap_sync,
         "onTap": () {},
+        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
-          width: 20,
-          height: 20,
         ),
-        "title": "Center Remap Sync.",
+        "title": AppLocalizations.of(context)!.sync_activities,
         "onTap": () {},
+        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
     ];
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xff214FBF), Color(0xff1C43A1)],
-              ),
-            ),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: w < 512 ? 0 : 60,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                      Text(
-                        "Registration Tasks",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: semiBold,
-                            fontSize: 18),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ResponsiveGridList(
-                        shrinkWrap: true,
-                        minItemWidth: 300,
-                        horizontalGridSpacing: 8,
-                        verticalGridSpacing: 8,
-                        children: List.generate(
-                            context
-                                .watch<RegistrationTaskProvider>()
-                                .listOfProcesses
-                                .length,
-                            (index) => HomePageCard(
-                                  icon: Image.asset(
-                                    "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon ?? ""}",
-                                    width: 20,
-                                    height: 20,
-                                  ),
-                                  index: index + 1,
-                                  title: Process.fromJson(jsonDecode(context
-                                          .watch<RegistrationTaskProvider>()
-                                          .listOfProcesses
-                                          .elementAt(index)
-                                          .toString()))
-                                      .label!["eng"]!,
-                                  ontap: () {
-                                    getProcessUI(
-                                      context,
-                                      Process.fromJson(
-                                        jsonDecode(
-                                          context
-                                              .read<RegistrationTaskProvider>()
-                                              .listOfProcesses
-                                              .elementAt(index)
-                                              .toString(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                )),
-                      ),
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: w < 512 ? 0 : 60,
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: w < 512 ? 0 : 60,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Operational Tasks",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: semiBold),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ResponsiveGridList(
-                        shrinkWrap: true,
-                        minItemWidth: 300,
-                        horizontalGridSpacing: 12,
-                        verticalGridSpacing: 12,
-                        children: List.generate(
-                          operationalTasks.length,
-                          (index) {
-                            return HomePageCard(
-                              index: index,
-                              icon: operationalTasks[index]["icon"],
-                              title: operationalTasks[index]["title"] as String,
-                              ontap: () =>
-                                  operationalTasks[index]["onTap"](context),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 4.h,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: w < 512 ? 0 : 60,
-                ),
-              ],
-            ),
+    return isMobile
+        ? MobileHomePage(
+            operationalTasks: operationalTasks,
+            getProcessUI: (BuildContext context, Process process) {
+              getProcessUI(context, process);
+            },
+            syncData: (BuildContext context) {
+              syncData(context);
+            },
           )
-        ],
-      ),
-    );
+        : Scaffold(
+            backgroundColor: Colors.white,
+            body: Row(
+              children: [
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraint) {
+                      return SingleChildScrollView(
+                        controller: ScrollController(),
+                        child: Column(
+                          children: [
+                            const TabletHeader(),
+                            const TabletNavbar(),
+                            AnnotatedRegion<SystemUiOverlayStyle>(
+                              value: const SystemUiOverlayStyle(
+                                statusBarColor: Colors.transparent,
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(20),
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Color(0xff214FBF),
+                                          Color(0xff1C43A1)
+                                        ],
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: w < 512 ? 0 : 60,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height: 30.h,
+                                              ),
+                                              Text(
+                                                AppLocalizations.of(context)!.registration_tasks,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.copyWith(
+                                                        color: Colors.white,
+                                                        fontWeight: semiBold,
+                                                        fontSize: 18),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              ResponsiveGridList(
+                                                shrinkWrap: true,
+                                                minItemWidth: 300,
+                                                horizontalGridSpacing: 8,
+                                                verticalGridSpacing: 8,
+                                                children: List.generate(
+                                                    context
+                                                        .watch<
+                                                            RegistrationTaskProvider>()
+                                                        .listOfProcesses
+                                                        .length,
+                                                    (index) => HomePageCard(
+                                                          icon: Image.asset(
+                                                            "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon ?? ""}",
+                                                            width: 20,
+                                                            height: 20,
+                                                          ),
+                                                          index: index + 1,
+                                                          title: Process.fromJson(
+                                                                  jsonDecode(context
+                                                                      .watch<
+                                                                          RegistrationTaskProvider>()
+                                                                      .listOfProcesses
+                                                                      .elementAt(
+                                                                          index)
+                                                                      .toString()))
+                                                              .label!["eng"]!,
+                                                          ontap: () {
+                                                            getProcessUI(
+                                                              context,
+                                                              Process.fromJson(
+                                                                jsonDecode(
+                                                                  context
+                                                                      .read<
+                                                                          RegistrationTaskProvider>()
+                                                                      .listOfProcesses
+                                                                      .elementAt(
+                                                                          index)
+                                                                      .toString(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        )),
+                                              ),
+                                              SizedBox(
+                                                height: 30.h,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: w < 512 ? 0 : 60,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: w < 512 ? 0 : 60,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                AppLocalizations.of(context)!.operation_tasks,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.copyWith(
+                                                        fontWeight: semiBold),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              ResponsiveGridList(
+                                                shrinkWrap: true,
+                                                minItemWidth: 300,
+                                                horizontalGridSpacing: 12,
+                                                verticalGridSpacing: 12,
+                                                children: List.generate(
+                                                  operationalTasks.length,
+                                                  (index) {
+                                                    return HomePageCard(
+                                                      index: index,
+                                                      icon: operationalTasks[
+                                                          index]["icon"],
+                                                      title: operationalTasks[
+                                                              index]["title"]
+                                                          as String,
+                                                      ontap: () =>
+                                                          operationalTasks[
+                                                                      index]
+                                                                  ["onTap"](
+                                                              context),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 4.h,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: w < 512 ? 0 : 60,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            context.watch<GlobalProvider>().currentIndex != 0
+                                ? const TabletFooter()
+                                : const SizedBox.shrink(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
+          );
   }
 }

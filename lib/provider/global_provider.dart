@@ -69,7 +69,8 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeScannedPages(String field,Uint8List? value, List<Uint8List?> listOfValue) {
+  removeScannedPages(
+      String field, Uint8List? value, List<Uint8List?> listOfValue) {
     _scannedPages[field] = listOfValue;
     _scannedPages[field]!.remove(value);
     notifyListeners();
@@ -123,7 +124,6 @@ class GlobalProvider with ChangeNotifier {
     _mvelValues[field] = value;
     notifyListeners();
   }
-
 
   Process? get currentProcess => _currentProcess;
 
@@ -277,6 +277,11 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  removeInputMapValue(String key, Map<String, dynamic> commonMap) {
+    commonMap.remove(key);
+    notifyListeners();
+  }
+
   setLanguageSpecificValue(String key, dynamic value, String language,
       Map<String, dynamic> commonMap) {
     if (!commonMap.containsKey(key)) {
@@ -290,8 +295,9 @@ class GlobalProvider with ChangeNotifier {
 
   getVersionNoApp() async {
     String versionNoAppTemp = await networkService.getVersionNoApp();
-    if(versionNoAppTemp == "") {
-      versionNoAppTemp = await networkService.getVersionFromGobalParam("mosip.registration.server_version");
+    if (versionNoAppTemp == "") {
+      versionNoAppTemp = await networkService
+          .getVersionFromGobalParam("mosip.registration.server_version");
     }
     String head = "";
     String branchName = "";
@@ -305,7 +311,7 @@ class GlobalProvider with ChangeNotifier {
       } else {
         commitId = head;
       }
-    } catch(e) {
+    } catch (e) {
       debugPrint("Failed fetching git info: $e");
     }
 
@@ -313,7 +319,6 @@ class GlobalProvider with ChangeNotifier {
     commitIdApp = commitId;
     versionNoApp = versionNoAppTemp;
   }
-
 
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
@@ -336,7 +341,7 @@ class GlobalProvider with ChangeNotifier {
 
   getThresholdValues() async {
     for (var e in thresholdValuesMap.keys) {
-      thresholdValuesMap[e] = await BiometricsApi().getThresholdValue(e);
+      thresholdValuesMap[e] = await BiometricsApi().getMapValue(e);
     }
   }
 
@@ -375,9 +380,9 @@ class GlobalProvider with ChangeNotifier {
       List values = List.empty(growable: true);
       for (var lang in chosenLang) {
         String templateContent = await CommonDetailsApi().getTemplateContent(
-            field.templateName!,
-            langToCode(lang),
-          );
+          field.templateName!,
+          langToCode(lang),
+        );
         values.add(templateContent);
       }
       fieldDisplayValues[field.id!] = values;
@@ -433,6 +438,8 @@ class GlobalProvider with ChangeNotifier {
   int _minLanguageCount = 0;
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
+  List<String?> _notificationLanguages = [];
+
 
   List<LanguageData?> get languageDataList => _languageDataList;
   Map<String, String> get codeToLanguageMapper => _codeToLanguageMapper;
@@ -443,6 +450,7 @@ class GlobalProvider with ChangeNotifier {
   int get minLanguageCount => _minLanguageCount;
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
+  List<String?> get notificationLanguages => _notificationLanguages;
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
@@ -496,6 +504,11 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  setNotificationLanguages(List<String?> value) {
+    _notificationLanguages = value;
+    notifyListeners();
+  }
+
   setLanguageConfigData() async {
     _mandatoryLanguages = await processSpecService.getMandatoryLanguageCodes();
     _optionalLanguages = await processSpecService.getOptionalLanguageCodes();
@@ -515,7 +528,7 @@ class GlobalProvider with ChangeNotifier {
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
     }
-    for(var element in _optionalLanguages) {
+    for (var element in _optionalLanguages) {
       String lang = _codeToLanguageMapper[element]!;
       languageDataMap[lang] = false;
       mandatoryMap[lang] = false;
@@ -526,7 +539,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   createLanguageCodeMapper() {
-    if(_languageDataList.isEmpty) {
+    if (_languageDataList.isEmpty) {
       _languages = ["eng"];
       _codeToLanguageMapper["eng"] = "English";
       _languageToCodeMapper["English"] = "eng";
@@ -586,7 +599,8 @@ class GlobalProvider with ChangeNotifier {
   List<String> _hierarchyReverse = [];
 
   Map<String?, String?> get locationHierarchyMap => _locationHierarchyMap;
-  Map<String, List<String?>> get groupedHierarchyValues => _groupedHierarchyValues;
+  Map<String, List<String?>> get groupedHierarchyValues =>
+      _groupedHierarchyValues;
   List<String> get hierarchyReverse => _hierarchyReverse;
 
   setLocationHierarchyMap(Map<String, String> value) {
@@ -600,7 +614,8 @@ class GlobalProvider with ChangeNotifier {
   }
 
   initializeLocationHierarchyMap() async {
-    Map<String?, String?> hierarchyMap = await dynamicResponseService.fetchLocationHierarchyMap();
+    Map<String?, String?> hierarchyMap =
+        await dynamicResponseService.fetchLocationHierarchyMap();
     _locationHierarchyMap = hierarchyMap;
     List<String> hReverse = [];
     _locationHierarchyMap.forEach((key, value) {
@@ -623,7 +638,7 @@ class GlobalProvider with ChangeNotifier {
     _groupedHierarchyValues[key] = hValues;
     notifyListeners();
   }
-  
+
   saveScreenHeaderToGlobalParam(String id, String value) async {
     await networkService.saveScreenHeaderToGlobalParam(id, value);
   }

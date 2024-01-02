@@ -99,6 +99,15 @@
       }
     }
   },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "upload_document": "يرجى تحميل الوثيقة",
   "scan": "مسح",
   "clear": "يزيل",
@@ -116,5 +125,51 @@
         "type": "String"
       }
     }
-  }
+  },
+  "synchronize_data": "مزامنة البيانات",
+  "registration_tasks": "مهام التسجيل",
+  "operation_tasks": "المهام التشغيلية",
+  "system_storage_usage": "استخدام تخزين النظام",
+  "download_pre_registration_data": "تنزيل بيانات التسجيل المسبق",
+  "update_operator_biomterics": "تحديث القياسات الحيوية للمشغل",
+  "appliction_upload": "تحميل التطبيق",
+  "check_updates": "تفقد التحديث",
+  "center_remap_sync": "مركز إعادة رسم خريطة المزامنة.",
+  "sync_activities": "مزامنة. أنشطة",
+  "dashboard": "لوحة القيادة",
+  "settings": "إعدادات",
+  "notifications": "إشعارات",
+  "profile": "حساب تعريفي",
+  "select_language": "اختار اللغة",
+  "select_two_languages": "يرجى اختيار أي لغتين لإدخال البيانات.",
+  "language_mandatory": "{mandatoryLanguage} إلزامي للمقيم للاختيار وفقًا للإرشادات الحكومية. سيؤدي ترتيب الاختيار إلى عرض الصفحة للبيانات الديموغرافية.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Arabic"
+      }
+    }
+  },
+  "language_selector_note": "يرجى ملاحظة أن اللغة قد تعتمد على البيانات التي تم إدخالها أثناء التسجيل المسبق.",
+  "cancel": "يلغي",
+  "submit": "يُقدِّم",
+  "go_back": "عُد",
+  "informed": "أُبلغ",
+  "logo_text": "مدعوم من موسيب",
+  "get_onboard": "إركب",
+  "skip_to_home": "انتقل إلى المنزل",
+  "continue_text": "يكمل",
+  "authenticate": "المصادقة",
+  "new_registration": "تسجيل جديد",
+  "go_back": "عُد",
+  "informed": "أُبلغ",
+  "sync_packet": "تحميل متزامن",
+  "upload_packet": "تحميل حزمة",
+  "authenticate_using_password": "المصادقة باستخدام كلمة المرور",
+  "registration_acknowledgement": "اعتراف بالتسجيل",
+  "print_text": "طباعة",
+  "hello": "مرحبًا",
+  "onboard_process_help": "الرجاء الضغط على 'البدء في الانضمام' للبدء في عملية الإعداد."
 }
