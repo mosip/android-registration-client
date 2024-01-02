@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -178,20 +177,6 @@ class _HomePageState extends State<HomePage> {
     List<Map<String, dynamic>> operationalTasks = [
       {
         "icon": SvgPicture.asset(
-          "assets/svg/Synchronising Data.svg",
-          width: 20,
-          height: 20,
-        ),
-        "title": "Sync Data",
-        "onTap": syncData,
-        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
-            .format(DateTime.parse(
-                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                .toLocal())
-            .toString(),
-      },
-      {
-        "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
         "title": AppLocalizations.of(context)!.download_pre_registration_data,
@@ -261,8 +246,8 @@ class _HomePageState extends State<HomePage> {
                         controller: ScrollController(),
                         child: Column(
                           children: [
-                            const TabletHeader(),
-                            const TabletNavbar(),
+                            isMobileSize ? const SizedBox() : const TabletHeader(),
+                            isMobileSize ? const SizedBox() : const TabletNavbar(),
                             AnnotatedRegion<SystemUiOverlayStyle>(
                               value: const SystemUiOverlayStyle(
                                 statusBarColor: Colors.transparent,

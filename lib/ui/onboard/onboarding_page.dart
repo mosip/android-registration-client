@@ -90,7 +90,7 @@ class OnboardingPage extends StatelessWidget {
                       title: AppLocalizations.of(context)!.get_onboard,
                       onTap: () {},
                       color: AppStyle.appWhite,
-                      fontColor: AppStyle.appHelpText,
+                      fontColor: AppStyle.appSolidPrimary,
                     ),
                     SizedBox(
                       height: 40.h,

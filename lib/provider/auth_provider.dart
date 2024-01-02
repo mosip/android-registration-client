@@ -123,7 +123,7 @@ class AuthProvider with ChangeNotifier {
 
   authenticateUser(String username, String password, bool isConnected) async {
     final authResponse = await auth.login(username, password, isConnected);
-
+    _isDefault = authResponse.isDefault;
     setIsLoggingIn(true);
     if (authResponse.errorCode != null) {
       _loginError = authResponse.errorCode!;
@@ -134,8 +134,10 @@ class AuthProvider with ChangeNotifier {
     } else if(!isCenterActive) {
       _loginError = "REG_CENTER_INACTIVE";
       _isLoggedIn = false;
+    } else if(!_isDefault) {
+      _loginError = "DEFAULT_NOT_FOUND";
+      _isLoggedIn = false;
     } else {
-      _isDefault = authResponse.isDefault;
       _isOfficer = authResponse.isOfficer;
       _isSupervisor = authResponse.isSupervisor;
       _isLoggedIn = true;

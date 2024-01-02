@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -31,7 +32,8 @@ class PasswordComponent extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.password,
               style: isMobile
-                  ? AppStyle.tabletPortraitTextfieldHeader
+              ? isMobileSize ? AppStyle.mobileTextfieldHeader
+                  : AppStyle.tabletPortraitTextfieldHeader
                   : AppStyle.mobileTextfieldHeader,
             ),
             const Text(
@@ -44,7 +46,7 @@ class PasswordComponent extends StatelessWidget {
           height: 11.h,
         ),
         Container(
-          height: isMobile ? 82.h : 52.h,
+          height: isMobile && !isMobileSize ? 82.h : 52.h,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(horizontal: 17.w),
           decoration: BoxDecoration(
@@ -64,12 +66,12 @@ class PasswordComponent extends StatelessWidget {
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_password,
               hintStyle: isMobile
-                  ? AppStyle.tabletPortraitTextfieldHintText
+              && !isMobileSize ? AppStyle.tabletPortraitTextfieldHintText
                   : AppStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
             style: TextStyle(
-              fontSize: isMobile ? 22 : 14,
+              fontSize: isMobile && !isMobileSize ? 22 : 14,
               color: AppStyle.appBlack,
             ),
           ),
@@ -84,7 +86,7 @@ class PasswordComponent extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context)!.forgot_password,
               style: isMobile
-                  ? AppStyle.tabletPortraitForgotPasswordText
+              && !isMobileSize ? AppStyle.tabletPortraitForgotPasswordText
                   : AppStyle.mobileForgotPasswordText,
             ),
           ),
@@ -95,7 +97,7 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: !isDisabled ? onTapLogin : null,
           child: Container(
-            height: isMobile ? 82.h : 52.h,
+            height: isMobile && !isMobileSize ? 82.h : 52.h,
             decoration: BoxDecoration(
               color: !isDisabled
                   ? AppStyle.appSolidPrimary
@@ -118,7 +120,7 @@ class PasswordComponent extends StatelessWidget {
                   : Text(
                       AppLocalizations.of(context)!.login_button,
                       style: isMobile
-                          ? AppStyle.tabletPortraitButtonText
+                      && !isMobileSize ? AppStyle.tabletPortraitButtonText
                           : AppStyle.mobileButtonText,
                     ),
             ),
@@ -130,7 +132,7 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: onTapBack,
           child: Container(
-            height: isMobile ? 82.h : 52.h,
+            height: isMobile && !isMobileSize ? 82.h : 52.h,
             // width: 318.w,
             decoration: BoxDecoration(
               color: AppStyle.appWhite,
@@ -146,7 +148,7 @@ class PasswordComponent extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context)!.back_button,
                 style: isMobile
-                    ? AppStyle.tabletPortraitBackButtonText
+                && !isMobileSize ? AppStyle.tabletPortraitBackButtonText
                     : AppStyle.mobileBackButtonText,
               ),
             ),

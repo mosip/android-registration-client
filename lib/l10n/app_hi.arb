@@ -171,5 +171,6 @@
   "registration_acknowledgement": "रजिस्ट्रेशन स्वीकृति",
   "print_text": "प्रिंट",
   "hello": "नमस्ते",
-  "onboard_process_help": "कृपया ऑनबोर्डिंग प्रक्रिया आरंभ करने के लिए 'ऑनबोर्ड प्राप्त करें' पर टैप करें।"
+  "onboard_process_help": "कृपया ऑनबोर्डिंग प्रक्रिया आरंभ करने के लिए 'ऑनबोर्ड प्राप्त करें' पर टैप करें।",
+  "default_not_found": "Required default role not found"
 }

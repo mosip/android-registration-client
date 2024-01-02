@@ -180,5 +180,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "default_not_found": "Required default role not found"
 }
