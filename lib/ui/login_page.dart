@@ -1,4 +1,3 @@
-
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +9,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -20,18 +18,20 @@ import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/onboard/home_page.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_mobile.dart';
-import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
 import 'package:registration_client/ui/widgets/username_component.dart';
 import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
+
+import '../utils/life_cycle_event_handler.dart';
 
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";
@@ -41,7 +41,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   bool isMobile = true;
   bool isLoggingIn = false;
   String username = '';
@@ -64,6 +64,32 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     _initializeAppData();
     super.initState();
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+      resumeCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+      suspendingCallBack: () async {
+        if (mounted) {
+          setState(() {
+            closeKeyboard();
+          });
+        }
+      },
+    ));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void closeKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   _initializeAppData() async {
@@ -73,13 +99,13 @@ class _LoginPageState extends State<LoginPage> {
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
     String version = _fetchVersionNoApp();
-    if(version.startsWith("1.1.5")) {
+    if (version.startsWith("1.1.5")) {
       await _saveAllHeaders();
     }
     await _loginPageLoadedAudit();
   }
 
-   _setVersionNoApp() async {
+  _setVersionNoApp() async {
     await context.read<GlobalProvider>().getVersionNoApp();
   }
 
@@ -90,10 +116,9 @@ class _LoginPageState extends State<LoginPage> {
 
   _saveVersionToGlobalParam() async {
     String version = context.read<GlobalProvider>().versionNoApp;
-    if(version.isNotEmpty) {
-      await context
-        .read<GlobalProvider>()
-        .saveVersionToGlobalParam("mosip.registration.server_version", version);
+    if (version.isNotEmpty) {
+      await context.read<GlobalProvider>().saveVersionToGlobalParam(
+          "mosip.registration.server_version", version);
     }
   }
 
@@ -107,35 +132,43 @@ class _LoginPageState extends State<LoginPage> {
 
   _saveNewRegistrationScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("newRegistrationProcess_$header", AppLocalizations.of(context)!.newRegistrationProcess(header));
+      await _saveHeader("newRegistrationProcess_$header",
+          AppLocalizations.of(context)!.newRegistrationProcess(header));
     }
   }
+
   _saveConsentScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("consentScreenName_$header", AppLocalizations.of(context)!.consentScreenName(header));
+      await _saveHeader("consentScreenName_$header",
+          AppLocalizations.of(context)!.consentScreenName(header));
     }
   }
 
   _saveDemographicScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("demographicsScreenName_$header", AppLocalizations.of(context)!.demographicsScreenName(header));
+      await _saveHeader("demographicsScreenName_$header",
+          AppLocalizations.of(context)!.demographicsScreenName(header));
     }
   }
 
   _saveDocumentScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("documentsScreenName_$header", AppLocalizations.of(context)!.documentsScreenName(header));
+      await _saveHeader("documentsScreenName_$header",
+          AppLocalizations.of(context)!.documentsScreenName(header));
     }
   }
 
   _saveBiometricScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("biometricsScreenName_$header", AppLocalizations.of(context)!.biometricsScreenName(header));
+      await _saveHeader("biometricsScreenName_$header",
+          AppLocalizations.of(context)!.biometricsScreenName(header));
     }
   }
-  
+
   _saveHeader(String id, String value) async {
-    await context.read<GlobalProvider>().saveScreenHeaderToGlobalParam(id, value);
+    await context
+        .read<GlobalProvider>()
+        .saveScreenHeaderToGlobalParam(id, value);
   }
 
   _initializeMachineData() async {
@@ -151,11 +184,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _loginPageLoadedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-LOAD-001", "REG-MOD-101");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-001", "REG-MOD-101");
   }
 
   _longPressLogoAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-AUTH-002", "REG-MOD-101");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -166,56 +203,141 @@ class _LoginPageState extends State<LoginPage> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
 
-    return
-      SafeArea(
-            child: Scaffold(
-              backgroundColor: AppStyle.appSolidPrimary,
-              body: Stack(
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    left: 16.w,
-                    child: _getBuildingsImage(),
-                  ),
-                  SizedBox(
-                    height: h,
-                    width: w,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: isMobile
-                            ? CrossAxisAlignment.center
-                            : CrossAxisAlignment.start,
-                        children: [
-                          _appBarComponent(),
-                          SizedBox(
-                            height: isMobile ? 50.h : 132.h,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppStyle.appSolidPrimary,
+        bottomNavigationBar: _getBottomBar(),
+        body: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 16.w,
+              child: _getBuildingsImage(),
+            ),
+            SingleChildScrollView(
+              child: SizedBox(
+                height: h - 94.h,
+                width: w,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 20.w : 80.w),
+                      child: InkWell(
+                        onTap: () {},
+                        child: Container(
+                          height: 62.h,
+                          width: 129.w,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: AppStyle.appWhite,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(5),
+                            ),
                           ),
+                          child: Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.help,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: AppStyle.appWhite,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 86.h,
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 16.w : 80.w,
+                              horizontal: isMobile ? 92.w : 80.w,
                             ),
                             child: isMobile ? _mobileView() : _tabletView(),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  isMachineKeysDialogOpen
-                      ? Container(
-                          color: Colors.transparent.withOpacity(0.5),
-                          child: Center(
-                            child: MachineKeys(
-                              onCloseComponent: () {
-                                _toggleMachineKeysDialog();
-                              },
-                            ),
-                          ),
-                        )
-                      : const SizedBox(),
-                ],
+                  ],
+                ),
               ),
             ),
-          );
+            isMachineKeysDialogOpen
+                ? Container(
+                    color: Colors.transparent.withOpacity(0.5),
+                    child: Center(
+                      child: MachineKeys(
+                        onCloseComponent: () {
+                          _toggleMachineKeysDialog();
+                        },
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
+          ],
+        ),
+      ),
+    );
+    // SafeArea(
+    //   child: Scaffold(
+    //     backgroundColor: AppStyle.appSolidPrimary,
+    //     body: Stack(
+    //       children: [
+    //         Positioned(
+    //           bottom: 0,
+    //           left: 16.w,
+    //           child: _getBuildingsImage(),
+    //         ),
+    //         SizedBox(
+    //           height: h,
+    //           width: w,
+    //           child: SingleChildScrollView(
+    //             child: Column(
+    //               crossAxisAlignment: isMobile
+    //                   ? CrossAxisAlignment.center
+    //                   : CrossAxisAlignment.start,
+    //               children: [
+    //                 _appBarComponent(),
+    // SizedBox(
+    //   height: isMobile ? 62.h : 132.h,
+    // ),
+    // Container(
+    //   padding: EdgeInsets.symmetric(
+    //     horizontal: isMobile ? 92.w : 80.w,
+    //   ),
+    //   child: isMobile ? _mobileView() : _tabletView(),
+    // ),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //         isMachineKeysDialogOpen
+    //             ? Container(
+    //                 color: Colors.transparent.withOpacity(0.5),
+    //                 child: Center(
+    //                   child: MachineKeys(
+    //                     onCloseComponent: () {
+    //                       _toggleMachineKeysDialog();
+    //                     },
+    //                   ),
+    //                 ),
+    //               )
+    //             : const SizedBox(),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   _getIsValidUser() {
@@ -235,7 +357,7 @@ class _LoginPageState extends State<LoginPage> {
     context.read<GlobalProvider>().setName(user.name!);
     context.read<GlobalProvider>().setCenterName(user.centerName!);
   }
-  
+
   _getUsernameIncorrectErrorText() {
     return AppLocalizations.of(context)!.username_incorrect;
   }
@@ -290,7 +412,7 @@ class _LoginPageState extends State<LoginPage> {
         .authenticateUser(username, password, isConnected);
   }
 
-   _getIsConnected() {
+  _getIsConnected() {
     return context.read<ConnectivityProvider>().isConnected;
   }
 
@@ -392,76 +514,100 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(
           builder: (context) => Responsive(
             mobile: DashBoardMobileView(),
-            desktop: DashBoardTabletView(),
-            tablet: DashBoardTabletView(),
+            desktop: const HomePage(),
+            tablet: const HomePage(),
           ),
         ),
       );
     }
   }
 
-  Widget _appBarComponent() {
+  _getBottomBar() {
     return Container(
-      height: 90.h,
-      color: AppStyle.appWhite,
+      height: 94.h,
       padding: EdgeInsets.symmetric(
-        vertical: 22.h,
-        horizontal: isMobile ? 16.w : 80.w,
+        vertical: 15.h,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          InkWell(
-            onLongPress: () {
-              _longPressLogoAudit();
-              setState(() {
-                isMachineKeysDialogOpen = true;
-              });
-            },
-            child: SizedBox(
-              height: isMobile ? 46.h : 54.h,
-              child: Image.asset(
-                appIcon,
-                fit: BoxFit.fill,
-              ),
-            ),
+      color: AppStyle.appWhite,
+      child: Center(
+        child: InkWell(
+          onLongPress: () {
+            _longPressLogoAudit();
+            setState(() {
+              isMachineKeysDialogOpen = true;
+            });
+          },
+          child: Image.asset(
+            appIcon,
+            fit: BoxFit.fill,
           ),
-          InkWell(
-            child: Container(
-              height: 46.h,
-              padding: EdgeInsets.only(
-                left: 46.w,
-                right: 47.w,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 1.h,
-                  color: AppStyle.appHelpText,
-                ),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(5),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  AppLocalizations.of(context)!.help,
-                  style: AppStyle.mobileHelpText,
-                ),
-              ),
-            ),
-            onTap: () {
-              log("Health Check: ${FlutterConfig.get("HEALTH_CHECK_URL")}");
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
 
+  // Widget _appBarComponent() {
+  //   return Container(
+  //     height: isMobile ? 94.h : 90.h,
+  //     color: AppStyle.appWhite,
+  //     padding: EdgeInsets.symmetric(
+  //       vertical: 22.h,
+  //       horizontal: isMobile ? 20.w : 80.w,
+  //     ),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         InkWell(
+  //           onLongPress: () {
+  //             _longPressLogoAudit();
+  //             setState(() {
+  //               isMachineKeysDialogOpen = true;
+  //             });
+  //           },
+  //           child: SizedBox(
+  //             height: isMobile ? 51.h : 54.h,
+  //             child: Image.asset(
+  //               appIcon,
+  //               fit: BoxFit.fill,
+  //             ),
+  //           ),
+  //         ),
+  //         InkWell(
+  //           child: Container(
+  //             height: 62.h,
+  //             padding: EdgeInsets.only(
+  //               left: isMobile ? 37.w : 46.w,
+  //               right: isMobile ? 36.w : 47.w,
+  //             ),
+  //             decoration: BoxDecoration(
+  //               border: Border.all(
+  //                 width: 1.h,
+  //                 color: AppStyle.appHelpText,
+  //               ),
+  //               borderRadius: const BorderRadius.all(
+  //                 Radius.circular(5),
+  //               ),
+  //             ),
+  //             child: Center(
+  //               child: Text(
+  //                 AppLocalizations.of(context)!.help,
+  //                 style: isMobile
+  //                     ? AppStyle.tabletPortraitHelpText
+  //                     : AppStyle.mobileHelpText,
+  //               ),
+  //             ),
+  //           ),
+  //           onTap: () {},
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _welcomeTextComponent() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 41.w : 0,
+        horizontal: isMobile ? 38.w : 0,
       ),
       child: Column(
         crossAxisAlignment:
@@ -469,12 +615,16 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Text(
             AppLocalizations.of(context)!.welcome,
-            style: AppStyle.mobileWelcomeText,
+            style: isMobile
+                ? AppStyle.tabletPortraitWelcomeText
+                : AppStyle.mobileWelcomeText,
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
           ),
           Text(
             AppLocalizations.of(context)!.community_reg_text,
-            style: AppStyle.mobileCommunityRegClientText,
+            style: isMobile
+                ? AppStyle.tabletPortraitCommunityRegClientText
+                : AppStyle.mobileCommunityRegClientText,
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
           )
         ],
@@ -485,11 +635,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget _infoTextComponent() {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 52.w : 0,
+        horizontal: isMobile ? 113.w : 0,
       ),
       child: Text(
         AppLocalizations.of(context)!.info_text,
-        style: AppStyle.mobileInfoText,
+        style: isMobile
+            ? AppStyle.tabletPortraitInfoText
+            : AppStyle.mobileInfoText,
         textAlign: isMobile ? TextAlign.center : TextAlign.start,
       ),
     );
@@ -502,7 +654,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _welcomeTextComponent(),
         SizedBox(
-          height: isMobile ? 12.h : 16.h,
+          height: isMobile ? 18.h : 16.h,
         ),
         _infoTextComponent(),
       ],
@@ -511,10 +663,10 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginComponent() {
     return Container(
-      width: isMobile ? 358.w : 424.w,
+      width: isMobile ? 616.w : 424.w,
       padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 20.h,
+        horizontal: isMobile ? 30.w : 20.w,
+        vertical: isMobile ? 30.h : 20.h,
       ),
       decoration: BoxDecoration(
         color: AppStyle.appWhite,
@@ -530,20 +682,22 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: 34.h,
+            height: isMobile ? 16.h : 34.h,
           ),
           Text(
             AppLocalizations.of(context)!.login_text,
-            style: AppStyle.mobileHeaderText,
+            style: isMobile
+                ? AppStyle.tabletPortraitHeaderText
+                : AppStyle.mobileHeaderText,
           ),
           SizedBox(
-            height: context.watch<AuthProvider>().isValidUser ? 41.h : 38.h,
+            height: context.watch<AuthProvider>().isValidUser ? 42.h : 38.h,
           ),
           !context.watch<AuthProvider>().isValidUser
               ? UsernameComponent(
                   onTap: _onNextButtonPressed,
-                  isDisabled: username.trim().isEmpty ||
-                      username.trim().length > 50,
+                  isDisabled:
+                      username.trim().isEmpty || username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
                   mp: context.watch<GlobalProvider>().codeToLanguageMapper,
@@ -558,8 +712,9 @@ class _LoginPageState extends State<LoginPage> {
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: _onLoginButtonPressed,
+                  isMobile: isMobile,
                   onTapBack: () {
-                    password="";
+                    password = "";
                     FocusManager.instance.primaryFocus?.unfocus();
                     context.read<AuthProvider>().setIsValidUser(false);
                     setState(() {
@@ -586,7 +741,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _appCombinedTextComponent(),
         SizedBox(
-          height: 40.h,
+          height: 70.h,
         ),
         _loginComponent(),
       ],
@@ -621,8 +776,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _getBuildingsImage() {
     return SizedBox(
-      height: isMobile ? (162.48).h : (293.48).h,
-      width: isMobile ? (222.28).w : (400.28).w,
+      height: isMobile ? (350.48).h : (293.48).h,
+      width: isMobile ? (478.28).w : (400.28).w,
       child: Image.asset(
         isMobile ? buildingsX : buildingsXX,
         fit: BoxFit.fill,
@@ -643,7 +798,7 @@ class _LoginPageState extends State<LoginPage> {
       });
       showSyncResultDialog();
     }
-    
+
     await _initializeLanguageData();
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {

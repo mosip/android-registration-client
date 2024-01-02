@@ -99,5 +99,77 @@
       }
     }
   },
-  "upload_document": "ದಯವಿಟ್ಟು ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ"
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "upload_document": "ದಯವಿಟ್ಟು ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "scan": "ಸ್ಕ್ಯಾನ್",
+  "clear": "ಅಳಿಸಿ",
+  "save": "ಉಳಿಸಿ",
+  "retake": "ರೀಟೇಕ್",
+  "reference_number": "ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "select_value_message": "ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "invalid_input": "ಅಮಾನ್ಯ ಇನ್\u200Cಪುಟ್",
+  "reference_number_validation": "ದಯವಿಟ್ಟು ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "synchronize_data": "ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ",
+  "registration_tasks": "ನೋಂದಣಿ ಕಾರ್ಯಗಳು",
+  "operation_tasks": "ಕಾರ್ಯಾಚರಣೆಯ ಕಾರ್ಯಗಳು",
+  "system_storage_usage": "ಸಿಸ್ಟಮ್ ಶೇಖರಣಾ ಬಳಕೆ",
+  "download_pre_registration_data": "ಪೂರ್ವ-ನೋಂದಣಿ ಡೇಟಾವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "update_operator_biomterics": "ಆಪರೇಟರ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್ ಅನ್ನು ನವೀಕರಿಸಿ",
+  "appliction_upload": "ಅಪ್ಲಿಕೇಶನ್ ಅಪ್ಲೋಡ್",
+  "check_updates": "ನವೀಕರಣಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
+  "center_remap_sync": "ಕೇಂದ್ರ ರೀಮ್ಯಾಪ್ ಸಿಂಕ್.",
+  "sync_activities": "ಸಿಂಕ್ ಮಾಡಿ. ಚಟುವಟಿಕೆಗಳು",
+  "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+  "settings": "ಸಂಯೋಜನೆಗಳು",
+  "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+  "profile": "ಪ್ರೊಫೈಲ್",
+  "select_language": "ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "select_two_languages": "ಡೇಟಾ ನಮೂದುಗಾಗಿ ದಯವಿಟ್ಟು ಯಾವುದೇ 2 ಭಾಷೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+  "language_mandatory": "ಸರ್ಕಾರಿ ಮಾರ್ಗಸೂಚಿಗಳ ಪ್ರಕಾರ ಆಯ್ಕೆ ಮಾಡಲು ನಿವಾಸಿಗಳಿಗೆ {mandatoryLanguage} ಕಡ್ಡಾಯವಾಗಿದೆ. ಆಯ್ಕೆಯ ಕ್ರಮವು ಜನಸಂಖ್ಯಾ ಡೇಟಾಕ್ಕಾಗಿ ಪುಟ ವೀಕ್ಷಣೆಗೆ ಕಾರಣವಾಗುತ್ತದೆ.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Kannada"
+      }
+    }
+  },
+  "language_selector_note": "ಪೂರ್ವ-ನೋಂದಣಿ ಸಮಯದಲ್ಲಿ ನಮೂದಿಸಿದ ಡೇಟಾವನ್ನು ಆಧರಿಸಿ ಭಾಷೆ ಇರಬಹುದು ಎಂಬುದನ್ನು ದಯವಿಟ್ಟು ಗಮನಿಸಿ.",
+  "cancel": "ರದ್ದುಮಾಡು",
+  "submit": "ಸಲ್ಲಿಸು",
+  "go_back": "ಹಿಂದೆ ಹೋಗು",
+  "informed": "ಮಾಹಿತಿ ನೀಡಿದರು",
+  "logo_text": "MOSIP ನಿಂದ ನಡೆಸಲ್ಪಡುತ್ತಿದೆ",
+  "get_onboard": "ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ",
+  "skip_to_home": "ಮನೆಗೆ ತೆರಳಿ",
+  "continue_text": "ಮುಂದುವರಿಸಿ",
+  "authenticate": "ಪ್ರಮಾಣಿತಗೊಳಿಸಿ",
+  "new_registration": "ಹೊಸ ನೋಂದಾಯಿ",
+  "go_back": "ಹಿಂತಿರುಗಿ",
+  "informed": "ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ",
+  "sync_packet": "ಸಿಂಕ್ ಅಪ್‌ಲೋಡ್",
+  "upload_packet": "ಅಪ್‌ಲೋಡ್ ಪ್ಯಾಕೆಟ್",
+  "authenticate_using_password": "ಪಾಸ್‌ವರ್ಡ್ ಬಳಸಿ ಅಂಗೀಕರಿಸಿ",
+  "registration_acknowledgement": "ನೋಂದಾಯಿತ ಸ್ವೀಕೃತಿ",
+  "print_text": "ಮುದ್ರಿಸಿ",
+  "hello": "ಹಲೋ",
+  "onboard_process_help": "ಆನ್‌ಬೋರ್ಡಿಂಗ್ ಪ್ರಕ್ರಿಯೆಯೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು 'ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ' ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ."
 }

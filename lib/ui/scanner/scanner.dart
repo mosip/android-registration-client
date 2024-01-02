@@ -583,10 +583,13 @@ class _ScannerState extends State<Scanner> {
         compressQuality: 100,
         uiSettings: [
           AndroidUiSettings(
-              toolbarTitle: 'Cropper',
-              toolbarColor: Colors.transparent,
-              toolbarWidgetColor: Colors.black,
+              //toolbarTitle: 'Cropper',
+             // toolbarColor: Colors.transparent,
+             // toolbarWidgetColor: Colors.black,
               initAspectRatio: CropAspectRatioPreset.original,
+              hideBottomControls: true,
+              backgroundColor: Colors.white,
+              cropGridColor: Colors.indigo,
               lockAspectRatio: false),
           IOSUiSettings(
             title: 'Cropper',

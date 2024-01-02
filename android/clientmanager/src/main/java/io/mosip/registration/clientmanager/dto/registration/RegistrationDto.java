@@ -187,10 +187,10 @@ public class RegistrationDto extends Observable {
         }
     }
 
-    public List<byte[]> getScannedPages(String fieldId) {
+    public List<DocumentDto> getScannedPages(String fieldId) {
         DocumentDto documentDto = this.documents.get(fieldId);
         if( documentDto != null ) {
-            return this.documents.get(fieldId).getContent();
+            return Collections.singletonList(documentDto);
         }
         return Collections.EMPTY_LIST;
     }
