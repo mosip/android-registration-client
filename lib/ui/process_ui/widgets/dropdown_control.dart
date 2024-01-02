@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
@@ -44,16 +45,18 @@ class _CustomDropDownState extends State<DropDownControl> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     setState(() {
-      index = context.read<GlobalProvider>().hierarchyReverse.indexOf(widget.field.subType!);
+      index = context
+          .read<GlobalProvider>()
+          .hierarchyReverse
+          .indexOf(widget.field.subType!);
     });
     _getOptionsList();
   }
 
   void saveData(value) {
     for (int i = index! + 1; i < maxLen; i++) {
-      context
-          .read<RegistrationTaskProvider>()
-          .removeDemographicField(context.read<GlobalProvider>().hierarchyReverse[i]);
+      context.read<RegistrationTaskProvider>().removeDemographicField(
+          context.read<GlobalProvider>().hierarchyReverse[i]);
     }
     if (value != null) {
       if (widget.field.type == 'simpleType') {
@@ -71,14 +74,14 @@ class _CustomDropDownState extends State<DropDownControl> {
   void _saveDataToMap(GenericData? value) {
     for (int i = index! + 1; i < maxLen; i++) {
       context.read<GlobalProvider>().removeFieldFromMap(
-        "${widget.field.group}${context.read<GlobalProvider>().hierarchyReverse[i]}",
+            "${widget.field.group}${context.read<GlobalProvider>().hierarchyReverse[i]}",
             context.read<GlobalProvider>().fieldInputValue,
           );
     }
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
-          "${widget.field.group}${widget.field.subType}",
+              "${widget.field.group}${widget.field.subType}",
               value,
               "eng",
               context.read<GlobalProvider>().fieldInputValue,
@@ -96,17 +99,20 @@ class _CustomDropDownState extends State<DropDownControl> {
   void _getSelectedValueFromMap(String lang, List<GenericData?> list) {
     GenericData? response;
     if (widget.field.type == 'simpleType') {
-      if ((context.read<GlobalProvider>().fieldInputValue["${widget.field.group}${widget.field.subType}"]
+      if ((context.read<GlobalProvider>().fieldInputValue[
+                  "${widget.field.group}${widget.field.subType}"]
               as Map<String, dynamic>)
           .containsKey(lang)) {
         response = context
-            .read<GlobalProvider>()
-            .fieldInputValue["${widget.field.group}${widget.field.subType}"][lang] as GenericData;
+                .read<GlobalProvider>()
+                .fieldInputValue["${widget.field.group}${widget.field.subType}"]
+            [lang] as GenericData;
       }
     } else {
       response = context
-          .read<GlobalProvider>()
-          .fieldInputValue["${widget.field.group}${widget.field.subType}"] as GenericData;
+              .read<GlobalProvider>()
+              .fieldInputValue["${widget.field.group}${widget.field.subType}"]
+          as GenericData;
     }
     setState(() {
       for (var element in list) {
@@ -144,8 +150,9 @@ class _CustomDropDownState extends State<DropDownControl> {
     if (index == 1) {
       temp = await _getLocationValues("$index", "eng");
     } else {
-      var parentCode =
-          context.watch<GlobalProvider>().groupedHierarchyValues[widget.field.group]![index! - 1];
+      var parentCode = context
+          .watch<GlobalProvider>()
+          .groupedHierarchyValues[widget.field.group]![index! - 1];
       temp = await _getLocationValuesBasedOnParent(
           parentCode, widget.field.subType!, "eng");
     }
@@ -163,71 +170,76 @@ class _CustomDropDownState extends State<DropDownControl> {
   @override
   Widget build(BuildContext context) {
     _getOptionsList();
-    return Column(children: [
-      Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomLabel(field: widget.field),
-              const SizedBox(
-                height: 10,
-              ),
-              DropdownButtonFormField<GenericData>(
-                icon: const Icon(null),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    return Column(
+      children: [
+        Card(
+          elevation: 5,
+          margin: EdgeInsets.symmetric(
+              vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomLabel(field: widget.field),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField<GenericData>(
+                  icon: const Icon(null),
+                  decoration: InputDecoration(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                    hintText: "Select Option",
+                    hintStyle: const TextStyle(
+                      color: AppStyle.appBlackShade3,
                     ),
                   ),
-                  hintText: "Select Option",
-                  hintStyle: const TextStyle(
-                    color: AppStyle.appBlackShade3,
-                  ),
-                ),
-                items: list
-                    .map((option) => DropdownMenuItem(
-                          value: option,
-                          child: Text(option!.name),
-                        ))
-                    .toList(),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                value: selected,
-                validator: (value) {
-                  if (!widget.field.required! &&
-                      widget.field.requiredOn!.isEmpty) {
+                  items: list
+                      .map((option) => DropdownMenuItem(
+                            value: option,
+                            child: Text(option!.name),
+                          ))
+                      .toList(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  value: selected,
+                  validator: (value) {
+                    if (!widget.field.required! &&
+                        widget.field.requiredOn!.isEmpty) {
+                      return null;
+                    }
+                    if (value == null) {
+                      return 'Please enter a value';
+                    }
+                    if (!widget.validation.hasMatch(value.name)) {
+                      return 'Invalid input';
+                    }
                     return null;
-                  }
-                  if (value == null) {
-                    return 'Please enter a value';
-                  }
-                  if (!widget.validation.hasMatch(value.name)) {
-                    return 'Invalid input';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  if (value != selected) {
-                    saveData(value!.name);
-                    _saveDataToMap(value);
-                    context
-                        .read<GlobalProvider>()
-                        .setLocationHierarchy(widget.field.group!, value.code, index!);
-                    _getSelectedValueFromMap("eng", list);
-                  }
-                },
-              ),
-            ],
+                  },
+                  onChanged: (value) {
+                    if (value != selected) {
+                      saveData(value!.name);
+                      _saveDataToMap(value);
+                      context.read<GlobalProvider>().setLocationHierarchy(
+                          widget.field.group!, value.code, index!);
+                      _getSelectedValueFromMap("eng", list);
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 }

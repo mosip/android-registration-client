@@ -9,6 +9,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
+
 import 'package:registration_client/ui/process_ui/widgets/checkbox_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/document_upload_control.dart';
@@ -19,6 +20,7 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
+
 import '../../../platform_spi/registration_service.dart';
 import 'radio_button_control.dart';
 
@@ -49,6 +51,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       }
     }
 
+    if(e.id == "preferredLang") {
+      return const SizedBox.shrink();
+    }
+
     switch (e.controlType) {
       case "checkbox":
         if (e.subType == "gender") {
@@ -58,7 +64,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        return BiometricCaptureControl(field: e);
+        return BiometricCaptureControl(e: e);
       case "button":
         if (e.subType == "preferredLang") {
           return ButtonControl(field: e);

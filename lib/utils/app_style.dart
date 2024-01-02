@@ -5,6 +5,7 @@ abstract class AppStyle {
   static const Color appWhite = Color(0xFFffffff);
   static const Color appBlack = Color(0xFF000000);
   static const Color appBlackShade1 = Color(0xFF333333);
+  static const Color appBlackShade2 = Color(0xFF6F6E6E);
   static const Color appBlackShade3 = Color(0xFF999999);
   static const Color appGreyShade = Color(0xFF9B9B9F);
   static const Color appSolidPrimary = Color(0xFF1C43A1);
@@ -21,6 +22,16 @@ abstract class AppStyle {
   static const Color authIconBackground = Color(0XFFF8FCFF);
   static const Color authIconBorder = Color(0XFFE1EDF5);
   static const Color dividerColor = Color(0XFFE5EBFA);
+  static const Color languageSelectedColor = Color(0XFF1C429F);
+  static const Color languageFreezedColor = Color(0XFFD9E3FF);
+  static const Color appBlueShade = Color(0XFFFAFBFF);
+  static const Color greyBorderShade = Color(0XFFEAEAEA);
+  static const Color dropShadow = Color(0X0000000F);
+  static const Color iconContainerColor = Color(0XFFF4F7FF);
+  static const Color memoryCardColor = Color(0XFFF0F5FF);
+  static const Color appRed = Color(0xFFBE1B1B);
+  static const Color dropDownSelector = Color(0xFF1C429F);
+  static const Color dropDownDividerColor = Color(0xFFBDCDF4);
 
   static TextStyle mobileHelpText = const TextStyle(
     fontWeight: FontWeight.w500,
@@ -199,5 +210,101 @@ abstract class AppStyle {
     fontWeight: semiBold,
     fontSize: 20,
     color: appBlack
+  );
+
+  static TextStyle primaryButtonText = TextStyle(
+    fontWeight: bold,
+    fontSize: 21,
+    color: appWhite
+  );
+
+  static TextStyle secondaryButtonText = TextStyle(
+    fontWeight: bold,
+    fontSize: 21,
+    color: appHelpText
+  );
+
+  static TextStyle tabletPortraitHelpText = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
+    color: appHelpText,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitHeaderText = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 36,
+    color: appBlackShade1,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitTextfieldHeader = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
+    color: appBlackShade1,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitDropdownText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 22,
+    color: appBlackShade1,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitTextfieldHintText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 22,
+    color: appBlackShade3,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitDropdownHintText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 22,
+    color: appBlackShade3,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitButtonText = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 22,
+    color: appWhite,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitWelcomeText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 36,
+    color: appWhite,
+    letterSpacing: 0.5,
+  );
+  
+  static TextStyle tabletPortraitCommunityRegClientText = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 36,
+    color: appWhite,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitInfoText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 26,
+    color: appInfoText,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitForgotPasswordText = const TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
+    color: appSolidPrimary,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle tabletPortraitBackButtonText = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 22,
+    color: appHelpText,
+    letterSpacing: 0.5,
   );
 }

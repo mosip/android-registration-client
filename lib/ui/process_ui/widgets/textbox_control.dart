@@ -3,9 +3,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
@@ -113,106 +115,117 @@ class _TextBoxControlState extends State<TextBoxControl>
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
     if (!(widget.e.type == "simpleType")) {
       choosenLang = ["English"];
     }
 
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+      elevation: 5,
+      color: pureWhite,
+      margin: EdgeInsets.symmetric(
+          vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          CustomLabel(field: widget.e),
-          const SizedBox(
-            height: 10,
-          ),
-          ResponsiveGridList(
-            //Setting primary listener false
-            listViewBuilderOptions: ListViewBuilderOptions(primary: false),
-            shrinkWrap: true,
-            minItemWidth: 400,
-            horizontalGridSpacing: 16,
-            verticalGridSpacing: 12,
-            children: choosenLang.map((code) {
-              String lang = context.read<GlobalProvider>().langToCode(code);
-              setState(() {
-                controllerMap.putIfAbsent(lang,
-                    () => TextEditingController(text: _getDataFromMap(lang)));
-              });
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: controllerMap[lang],
-                  textCapitalization: TextCapitalization.words,
-                  onChanged: (value) async {
-                    if (lang ==
-                        context.read<GlobalProvider>().mandatoryLanguages[0]) {
-                      for (var target in choosenLang) {
-                        if (target != "English") {
-                          // ignore: use_build_context_synchronously
-                          String targetCode =
-                              context.read<GlobalProvider>().langToCode(target);
-                          try {
-                            String result = await TransliterationServiceImpl()
-                                .transliterate(TransliterationOptions(
-                                    input: value,
-                                    sourceLanguage: lang.substring(0, 2),
-                                    targetLanguage:
-                                        targetCode.substring(0, 2)));
-                            if (result != "") {
-                              _saveDataToMap(result, targetCode);
-                              saveData(result, targetCode);
-                              setState(() {
-                                controllerMap[targetCode]!.text = result;
-                              });
-                              log("Transliteration success : $result");
+        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomLabel(field: widget.e),
+            const SizedBox(
+              height: 10,
+            ),
+            ResponsiveGridList(
+              //Setting primary listener false
+              listViewBuilderOptions: ListViewBuilderOptions(primary: false),
+              shrinkWrap: true,
+              minItemWidth: 400,
+              horizontalGridSpacing: 16,
+              verticalGridSpacing: 12,
+              children: choosenLang.map((code) {
+                String lang = context.read<GlobalProvider>().langToCode(code);
+                setState(() {
+                  controllerMap.putIfAbsent(lang,
+                      () => TextEditingController(text: _getDataFromMap(lang)));
+                });
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: controllerMap[lang],
+                    textCapitalization: TextCapitalization.words,
+                    onChanged: (value) async {
+                      if (lang ==
+                          context
+                              .read<GlobalProvider>()
+                              .mandatoryLanguages[0]) {
+                        for (var target in choosenLang) {
+                          if (target != "English") {
+                            // ignore: use_build_context_synchronously
+                            String targetCode = context
+                                .read<GlobalProvider>()
+                                .langToCode(target);
+                            try {
+                              String result = await TransliterationServiceImpl()
+                                  .transliterate(TransliterationOptions(
+                                      input: value,
+                                      sourceLanguage: lang.substring(0, 2),
+                                      targetLanguage:
+                                          targetCode.substring(0, 2)));
+                              if (result != "") {
+                                _saveDataToMap(result, targetCode);
+                                saveData(result, targetCode);
+                                setState(() {
+                                  controllerMap[targetCode]!.text = result;
+                                });
+                                log("Transliteration success : $result");
+                              }
+                            } catch (e) {
+                              log("Transliteration failed : $e");
                             }
-                          } catch (e) {
-                            log("Transliteration failed : $e");
                           }
                         }
                       }
-                    }
-                    _saveDataToMap(value, lang);
-                    saveData(value, lang);
-                  },
-                  validator: (value) {
-                    if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
+                      _saveDataToMap(value, lang);
+                      saveData(value, lang);
+                    },
+                    validator: (value) {
+                      if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
+                        if (value == null || value.isEmpty) {
+                          return null;
+                        } else if (!widget.validation.hasMatch(value)) {
+                          return 'Invalid input';
+                        }
+                      }
                       if (value == null || value.isEmpty) {
-                        return null;
-                      } else if (!widget.validation.hasMatch(value)) {
+                        return 'Please enter a value';
+                      }
+                      if (!widget.validation.hasMatch(value)) {
                         return 'Invalid input';
                       }
-                    }
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a value';
-                    }
-                    if (!widget.validation.hasMatch(value)) {
-                      return 'Invalid input';
-                    }
-                    return null;
-                  },
-                  textAlign: (lang == 'ara') ? TextAlign.right : TextAlign.left,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: const BorderSide(
-                          color: AppStyle.appGreyShade, width: 1),
+                      return null;
+                    },
+                    textAlign:
+                        (lang == 'ara') ? TextAlign.right : TextAlign.left,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                            color: AppStyle.appGreyShade, width: 1),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 16),
+                      hintText: widget.e.label![lang],
+                      hintStyle: const TextStyle(
+                          color: AppStyle.appBlackShade3, fontSize: 14),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 16),
-                    hintText: widget.e.label![lang],
-                    hintStyle: const TextStyle(
-                        color: AppStyle.appBlackShade3, fontSize: 14),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-        ]),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
     );
   }
