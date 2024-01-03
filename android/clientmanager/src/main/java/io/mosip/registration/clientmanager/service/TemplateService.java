@@ -49,7 +49,7 @@ public class TemplateService {
     private static final String TAG = TemplateService.class.getSimpleName();
     private static final String SLASH = "/";
     private static final String TEMPLATE_TYPE_CODE = "reg-android-preview-template-part";
-    private static final String ACK_TEMPLATE_TYPE_CODE = "reg-android-ack-template-part";
+    private static final String ACK_TEMPLATE_TYPE_CODE = "reg-ack-template-part";
 
     private Context appContext;
 

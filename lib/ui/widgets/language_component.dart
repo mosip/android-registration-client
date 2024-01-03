@@ -25,7 +25,11 @@ class _LanguageComponentState extends State<LanguageComponent> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onTap,
+      onTap: (){
+        if(!widget.isFreezed){
+          widget.onTap();
+        }
+      },
       child: Container(
         padding: EdgeInsets.only(
           left: 25.w,

@@ -447,10 +447,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
           if (customValidator) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-              registrationTaskProvider.setAcknowledgementTemplate("");
               registrationTaskProvider.setPreviewTemplate("");
-              registrationTaskProvider.getAcknowledgementTemplate(false);
-              registrationTaskProvider.getPreviewTemplate(true);
+              registrationTaskProvider.setAcknowledgementTemplate("");
+              await registrationTaskProvider.getPreviewTemplate(true);
+              await registrationTaskProvider.getAcknowledgementTemplate(false);
             }
 
             globalProvider.newProcessTabIndex =
