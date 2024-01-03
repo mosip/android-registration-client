@@ -49,7 +49,7 @@ public class TemplateService {
     private static final String TAG = TemplateService.class.getSimpleName();
     private static final String SLASH = "/";
     private static final String TEMPLATE_TYPE_CODE = "reg-android-preview-template-part";
-    private static final String ACK_TEMPLATE_TYPE_CODE = "reg-android-ack-template-part";
+    private static final String ACK_TEMPLATE_TYPE_CODE = "reg-ack-template-part";
 
     private Context appContext;
 
@@ -277,7 +277,7 @@ public class TemplateService {
     private void generateQRCode(VelocityContext velocityContext,RegistrationDto registrationDto){
         Bitmap qrBitmap = QRCode.from(registrationDto.getRId()).bitmap();
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            qrBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
+            qrBitmap.compress(Bitmap.CompressFormat.JPEG, 75 , byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
             velocityContext.put("QRCodeSource", "\"data:image/jpeg;base64," + encodedBytes + "\"");
@@ -291,7 +291,7 @@ public class TemplateService {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 if (isPreview) {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 65, byteArrayOutputStream);
                 } else {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 }
@@ -310,7 +310,7 @@ public class TemplateService {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 if (isPreview) {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 65, byteArrayOutputStream);
                 } else {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 }
@@ -352,7 +352,7 @@ public class TemplateService {
     private String getImage(int imagePath) {
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
             Bitmap bitmap = BitmapFactory.decodeResource(appContext.getResources(), imagePath);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 65, byteStream);
             byte[] byteArray = byteStream.toByteArray();
             String imageEncodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
             return "data:image/jpeg;base64," + imageEncodedBytes;
