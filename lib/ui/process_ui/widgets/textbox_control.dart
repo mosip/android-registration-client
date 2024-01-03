@@ -5,6 +5,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -195,14 +197,18 @@ class _TextBoxControlState extends State<TextBoxControl>
                         if (value == null || value.isEmpty) {
                           return null;
                         } else if (!widget.validation.hasMatch(value)) {
-                          return 'Invalid input';
+                          return AppLocalizations.of(context)!
+                              .demographicsScreenInvalidMessage(lang);
                         }
                       }
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a value';
+                        log(lang);
+                        return AppLocalizations.of(context)!
+                            .demographicsScreenEmptyMessage(lang);
                       }
                       if (!widget.validation.hasMatch(value)) {
-                        return 'Invalid input';
+                        return AppLocalizations.of(context)!
+                            .demographicsScreenInvalidMessage(lang);
                       }
                       return null;
                     },
