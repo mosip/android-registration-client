@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class OnboardLandingPageNavbarIcon extends StatelessWidget {
@@ -20,17 +19,12 @@ class OnboardLandingPageNavbarIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: ontap,
-      child: SizedBox(
-        height: 56.h,
-        child: Column(
-          children: [
-            SvgPicture.asset(imagePath),
-            SizedBox(
-              height: 3.h,
-            ),
-            title,
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SvgPicture.asset(imagePath),
+          title,
+        ],
       ),
     );
   }

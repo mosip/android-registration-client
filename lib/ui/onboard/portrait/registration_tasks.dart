@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -38,7 +39,19 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
         SizedBox(
           height: 26.h,
         ),
-        _getSyncDataProvider(),
+        isMobileSize
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: HomePageCard(
+                  index: 0,
+                  icon: SvgPicture.asset(
+                    syncDataIcon,
+                  ),
+                  title: AppLocalizations.of(context)!.synchronize_data,
+                  ontap: () => widget.syncData(context),
+                ),
+              )
+            : _getSyncDataProvider(),
         SizedBox(
           height: 16.h,
         ),
@@ -131,68 +144,83 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   }
 
   _getTasks() {
-    return Wrap(
-      spacing: 8.w,
-      runSpacing: 8.h,
-      children:
-          context.watch<RegistrationTaskProvider>().listOfProcesses.map((e) {
-        return InkWell(
-          onTap: () {
-            widget.getProcessUI(
-              context,
-              Process.fromJson(
-                jsonDecode(
-                  e.toString(),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: GridView.builder(
+          itemCount:
+              context.watch<RegistrationTaskProvider>().listOfProcesses.length,
+          shrinkWrap: true,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 8.h,
+            crossAxisSpacing: 8.w,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return InkWell(
+              onTap: () {
+                widget.getProcessUI(
+                  context,
+                  Process.fromJson(
+                    jsonDecode(
+                      context
+                          .read<RegistrationTaskProvider>()
+                          .listOfProcesses
+                          .elementAt(index)
+                          .toString(),
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppStyle.appWhite,
+                  ),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(6),
+                  ),
+                  color: AppStyle.appWhite,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: AppStyle.greyBorderShade,
+                      offset: Offset(3.0, 3.0),
+                      blurRadius: 6.0,
+                      spreadRadius: 0.0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      // height: 49.08.h,
+                      // width: 67.73.w,
+                      child: Image.asset(
+                        "assets/images/${Process.fromJson(jsonDecode(context.watch<RegistrationTaskProvider>().listOfProcesses.elementAt(index).toString())).icon ?? ""}",
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 38.17.h,
+                    ),
+                    Text(
+                      Process.fromJson(jsonDecode(context
+                              .watch<RegistrationTaskProvider>()
+                              .listOfProcesses
+                              .elementAt(index)
+                              .toString()))
+                          .label!["eng"]!,
+                      style: TextStyle(
+                        fontSize: isMobileSize ? 18 : 27,
+                        fontWeight: semiBold,
+                        color: AppStyle.appBlackShade1,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
-          },
-          child: Container(
-            height: 435.h,
-            width: 372.w,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppStyle.appWhite,
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(6),
-              ),
-              color: AppStyle.appWhite,
-              boxShadow: const [
-                BoxShadow(
-                  color: AppStyle.greyBorderShade,
-                  offset: Offset(3.0, 3.0),
-                  blurRadius: 6.0,
-                  spreadRadius: 0.0,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 49.08.h,
-                  width: 67.73.w,
-                  child: Image.asset(
-                    "assets/images/${Process.fromJson(jsonDecode(e.toString())).icon ?? ""}",
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                SizedBox(
-                  height: 38.17.h,
-                ),
-                Text(
-                  Process.fromJson(jsonDecode(e.toString())).label!["eng"]!,
-                  style: const TextStyle(
-                    fontSize: 27,
-                    color: AppStyle.appBlackShade1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
+          }),
     );
   }
 }

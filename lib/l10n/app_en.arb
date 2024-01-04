@@ -157,7 +157,7 @@
   "dashboard": "Dashboard",
   "settings": "Settings",
   "notifications": "Notifications",
-  "profile": "Notifications",
+  "profile": "Profile",
   "select_language": "Select Language",
   "select_two_languages": "Please select any 2 languages for data entry.",
   "language_mandatory": "{mandatoryLanguage} is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.",
@@ -189,5 +189,6 @@
   "registration_acknowledgement": "Registration Acknowledgement",
   "print_text": "PRINT",
   "hello": "HELLO",
-  "onboard_process_help": "Please tap 'GET ONBOARD' to get started with the onboarding process."
+  "onboard_process_help": "Please tap 'GET ONBOARD' to get started with the onboarding process.",
+  "default_not_found": "Required role not found!"
 }
