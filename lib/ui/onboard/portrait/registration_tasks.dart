@@ -163,7 +163,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                   Process.fromJson(
                     jsonDecode(
                       context
-                          .watch<RegistrationTaskProvider>()
+                          .read<RegistrationTaskProvider>()
                           .listOfProcesses
                           .elementAt(index)
                           .toString(),

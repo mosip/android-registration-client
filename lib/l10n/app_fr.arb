@@ -172,5 +172,5 @@
   "print_text": "IMPRIMER",
   "hello": "BONJOUR",
   "onboard_process_help": "Veuillez appuyer sur 'S'INSCRIRE' pour commencer le processus d'intégration.",
-  "default_not_found": "Required default role not found"
+  "default_not_found": "Rôle requis introuvable!"
 }

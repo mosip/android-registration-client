@@ -172,5 +172,5 @@
   "print_text": "طباعة",
   "hello": "مرحبًا",
   "onboard_process_help": "الرجاء الضغط على 'البدء في الانضمام' للبدء في عملية الإعداد.",
-  "default_not_found": "Required default role not found"
+  "default_not_found": "الدور المطلوب غير موجود!"
 }

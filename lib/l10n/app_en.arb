@@ -172,5 +172,5 @@
   "print_text": "PRINT",
   "hello": "HELLO",
   "onboard_process_help": "Please tap 'GET ONBOARD' to get started with the onboarding process.",
-  "default_not_found": "Required default role not found"
+  "default_not_found": "Required role not found!"
 }

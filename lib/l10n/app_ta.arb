@@ -181,5 +181,5 @@
       }
     }
   },
-  "default_not_found": "Required default role not found"
+  "default_not_found": "தேவையான பங்கு கிடைக்கவில்லை!"
 }

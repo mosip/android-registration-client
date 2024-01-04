@@ -172,5 +172,5 @@
   "print_text": "ಮುದ್ರಿಸಿ",
   "hello": "ಹಲೋ",
   "onboard_process_help": "ಆನ್‌ಬೋರ್ಡಿಂಗ್ ಪ್ರಕ್ರಿಯೆಯೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು 'ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ' ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.",
-  "default_not_found": "Required default role not found"
+  "default_not_found": "ಅಗತ್ಯವಿರುವ ಪಾತ್ರ ಕಂಡುಬಂದಿಲ್ಲ!"
 }

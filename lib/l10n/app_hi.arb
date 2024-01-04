@@ -172,5 +172,5 @@
   "print_text": "प्रिंट",
   "hello": "नमस्ते",
   "onboard_process_help": "कृपया ऑनबोर्डिंग प्रक्रिया आरंभ करने के लिए 'ऑनबोर्ड प्राप्त करें' पर टैप करें।",
-  "default_not_found": "Required default role not found"
+  "default_not_found": "आवश्यक भूमिका नहीं मिली!"
 }

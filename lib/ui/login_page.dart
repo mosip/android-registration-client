@@ -727,8 +727,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 125.h : 280.h,
-              width: isMobile ? 125.w : 280.w,
+              height: isMobile && isMobileSize ? 210.h : 280.h,
+              width: isMobile && isMobileSize ? 210.w : 280.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Padding(
@@ -738,8 +738,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: isMobile ? 40.h : 100.h,
-                      width: isMobile ? 40.w : 100.w,
+                      height: isMobile && isMobileSize ? 40.h : 100.h,
+                      width: isMobile && isMobileSize ? 40.w : 100.w,
                       child: syncProvider.isAllSyncSuccessful()
                           ? SvgPicture.asset(
                               "assets/svg/Success Message Icon.svg")
@@ -751,7 +751,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                     ),
                     DefaultTextStyle(
                       style: TextStyle(
-                          fontSize: isMobile ? 12 : 18,
+                          fontSize: isMobile && isMobileSize ? 10 : 18,
                           color: Colors.black87,
                           fontWeight: FontWeight.bold),
                       child: Text(
@@ -765,7 +765,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                     const SizedBox(),
                     DefaultTextStyle(
                       style: TextStyle(
-                          fontSize: isMobile ? 7 : 12,
+                          fontSize: isMobile && isMobileSize ? 8 : 12,
                           color: const Color.fromARGB(221, 80, 79, 79),
                           fontWeight: FontWeight.w900),
                       child: Text(
@@ -797,8 +797,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 125.h : 280.h,
-              width: isMobile ? 125.w : 280.w,
+              height: isMobile && isMobileSize ? 210.h : 280.h,
+              width: isMobile && isMobileSize ? 210.w : 280.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Column(
@@ -810,8 +810,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       Image.asset(
                         appIconLogoOnly,
                         fit: BoxFit.scaleDown,
-                        height: isMobile ? 35.h : 90.h,
-                        width: isMobile ? 35.w : 90.w,
+                        height: isMobile && isMobileSize ? 35.h : 90.h,
+                        width: isMobile && isMobileSize ? 35.w : 90.w,
                       ),
                       Transform.scale(
                         scale: isMobile ? 1.4 : 2.8,
@@ -831,7 +831,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   ),
                   DefaultTextStyle(
                       style: TextStyle(
-                          fontSize: isMobile ? 9 : 15,
+                          fontSize: isMobile && isMobileSize ? 12 : 15,
                           color: const Color.fromARGB(221, 80, 79, 79),
                           fontWeight: FontWeight.w900),
                       child: Consumer<SyncProvider>(
