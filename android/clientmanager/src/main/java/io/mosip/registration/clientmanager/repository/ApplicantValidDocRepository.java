@@ -29,7 +29,9 @@ public class ApplicantValidDocRepository {
                     categoryCode);
         }
         nameList.forEach((v) -> {
-            documentList.add(this.applicantValidDocumentDao.getDBValue(v,langCode).get(0));
+            if(v!=null) {
+                documentList.add(this.applicantValidDocumentDao.findAllDocTypesByLanguageCode(v, langCode).get(0));
+            }
         });
         return documentList;
     }
