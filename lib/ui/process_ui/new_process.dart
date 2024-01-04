@@ -441,10 +441,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
-        if (globalProvider.formKey.currentState!.validate()) {
-          bool customValidator =
-              await customValidation(globalProvider.newProcessTabIndex);
-          if (customValidator) {
+        // if (globalProvider.formKey.currentState!.validate()) {
+          // bool customValidator =
+          //     await customValidation(globalProvider.newProcessTabIndex);
+          if (true) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
               registrationTaskProvider.setPreviewTemplate("");
@@ -455,7 +455,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
             globalProvider.newProcessTabIndex =
                 globalProvider.newProcessTabIndex + 1;
-          }
+          // }
         }
         _nextButtonClickedAudit();
       } else {
