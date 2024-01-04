@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +42,7 @@ class NewProcess extends StatefulWidget {
   State<NewProcess> createState() => _NewProcessState();
 }
 
-class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
+class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   bool isPortrait = true;
@@ -276,6 +275,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
     return context.read<ConnectivityProvider>().isConnected;
   }
 
+  bool continueButton = false;
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
@@ -353,11 +353,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                   .containsKey(screen.fields!.elementAt(i)!.subType)) &&
               !(context.read<GlobalProvider>().fieldInputValue.containsKey(
                   "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-            log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
+            // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
 
-            if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
-              _showInSnackBar(AppLocalizations.of(context)!.upload_document);
-            }
+            // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
+            //   _showInSnackBar(AppLocalizations.of(context)!.upload_document);
+            // }
             isValid = false;
 
             break;
@@ -447,10 +447,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
           if (customValidator) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-              registrationTaskProvider.setAcknowledgementTemplate("");
               registrationTaskProvider.setPreviewTemplate("");
-              registrationTaskProvider.getAcknowledgementTemplate(false);
-              registrationTaskProvider.getPreviewTemplate(true);
+              registrationTaskProvider.setAcknowledgementTemplate("");
+              await registrationTaskProvider.getPreviewTemplate(true);
+              await registrationTaskProvider.getAcknowledgementTemplate(false);
             }
 
             globalProvider.newProcessTabIndex =
@@ -484,7 +484,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
             globalProvider.newProcessTabIndex + 1;
       }
     }
-    
+
+    customValidation(globalProvider.newProcessTabIndex).then((value) {
+      continueButton = value;
+    });
 
     return SafeArea(
       child: Scaffold(
@@ -597,6 +600,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                             const Size(209, 52)),
                         minimumSize: MaterialStateProperty.all<Size>(
                             const Size(209, 52)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            continueButton ? solidPrimary : Colors.grey),
                       ),
                       onPressed: () {
                         continueButtonTap(context, size, newProcess);
