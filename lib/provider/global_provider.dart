@@ -438,7 +438,7 @@ class GlobalProvider with ChangeNotifier {
   int _minLanguageCount = 0;
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
-  List<String?> _notificationLanguages = [];
+  List<DynamicFieldData?> _notificationLanguages = [];
 
 
   List<LanguageData?> get languageDataList => _languageDataList;
@@ -450,7 +450,7 @@ class GlobalProvider with ChangeNotifier {
   int get minLanguageCount => _minLanguageCount;
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
-  List<String?> get notificationLanguages => _notificationLanguages;
+  List<DynamicFieldData?> get notificationLanguages => _notificationLanguages;
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
@@ -504,7 +504,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setNotificationLanguages(List<String?> value) {
+  setNotificationLanguages(List<DynamicFieldData?> value) {
     _notificationLanguages = value;
     notifyListeners();
   }

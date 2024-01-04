@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -19,7 +20,7 @@ class RadioButtonControl extends StatefulWidget {
 }
 
 class _RadioFormFieldState extends State<RadioButtonControl> {
-  Future<List<String?>> _getFieldValues(
+  Future<List<DynamicFieldData?>> _getFieldValues(
       String fieldName, String langCode) async {
     return await context
         .read<RegistrationTaskProvider>()
@@ -39,12 +40,21 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     super.initState();
   }
 
-  void _getSelectedValueFromMap(String lang) {
+  void _getSelectedValueFromMap(String lang) async {
     String response = "";
+    String updatedValue = "";
     response =
         context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang];
+    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
+    for (var element in data) {
+      if(element!.code == response){
+        setState(() {
+          updatedValue = element.name;
+        });
+      }
+    }
     setState(() {
-      selectedOption = response.toLowerCase();
+      selectedOption = updatedValue.toLowerCase();
     });
   }
 
@@ -60,9 +70,9 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
           "eng",
           context.read<GlobalProvider>().fieldInputValue,
         );
-    setState(() {
-      selectedOption = value;
-    });
+    // setState(() {
+    //   selectedOption = value;
+    // });
   }
 
   @override
@@ -71,7 +81,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
       future: _getFieldValues(widget.field.subType!, "eng"),
-      builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Card(
@@ -114,10 +124,16 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                             children: snapshot.data!
                                 .map(
                                   (e) => SelectableCard(
-                                    title: e!,
-                                    value: e.toLowerCase(),
+                                    title: e!.name,
+                                    value: e.name.toLowerCase(),
                                     groupValue: selectedOption,
-                                    onChanged: handleOptionChange,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedOption = value;
+                                      });
+                                      handleOptionChange(e.code);
+                                    }
+                                    //handleOptionChange,
                                   ),
                                 )
                                 .toList(),

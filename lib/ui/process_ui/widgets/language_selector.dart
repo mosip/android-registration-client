@@ -317,15 +317,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     .notificationLanguages
                     .map((e) {
                   return LanguageComponent(
-                    title: e!,
+                    title: e!.name,
                     isSelected: context
                             .watch<GlobalProvider>()
                             .fieldInputValue["preferredLang"] ==
-                        e,
+                        e.name,
                     onTap: () {
                       context.read<GlobalProvider>().setInputMapValue(
                             "preferredLang",
-                            e,
+                            e.name,
                             context.read<GlobalProvider>().fieldInputValue,
                           );
                     },

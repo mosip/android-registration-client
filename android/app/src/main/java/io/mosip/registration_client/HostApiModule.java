@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -43,6 +44,7 @@ import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
+import io.mosip.registration_client.api_services.DocumentCategoryApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
@@ -193,6 +195,12 @@ public class HostApiModule {
     @Singleton
     AuditDetailsApi getAuditDetailsApi(AuditManagerService auditManagerService) {
         return new AuditDetailsApi(auditManagerService);
+    }
+
+    @Provides
+    @Singleton
+    DocumentCategoryApi getDocumentCategoryApi(RegistrationService registrationService, FileSignatureDao fileSignatureRepository, GlobalParamRepository globalParamRepository, MasterDataService masterDataService) {
+        return new DocumentCategoryApi(registrationService,fileSignatureRepository,globalParamRepository,masterDataService,appContext);
     }
 }
 

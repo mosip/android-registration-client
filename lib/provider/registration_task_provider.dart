@@ -152,7 +152,7 @@ class RegistrationTaskProvider with ChangeNotifier {
     await demographics.setConsentField(consentData);
   }
 
-  Future<List<String?>> getFieldValues(
+  Future<List<DynamicFieldData?>> getFieldValues(
       String fieldName, String langCode) async {
     return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
   }

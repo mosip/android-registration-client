@@ -97,4 +97,23 @@ public class GlobalParamRepository {
     public String getCachedStringGlobalParam(String key) {
         return globalParamMap.get(key);
     }
+
+    public String getCachedStringAgeGroup(){
+        String ageGroupValue = globalParamMap.get(RegistrationConstants.AGE_GROUP_CONFIG);
+        return ageGroupValue;
+    }
+
+    public String getCachedStringMAVELScript(){
+        String scriptValue = globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
+        return scriptValue;
+    }
+
+    public String getCachedResponseSignatureAppId(){
+        String responseSignatureAppId = globalParamMap.get(RegistrationConstants.RESPONSE_SIGNATURE_PUBLIC_KEY_APP_ID);
+        return responseSignatureAppId;
+    }
+    public String getCachedResponseSignatureRefId(){
+        String responseSignatureRefId = globalParamMap.get(RegistrationConstants.RESPONSE_SIGNATURE_PUBLIC_KEY_REF_ID);
+        return responseSignatureRefId;
+    }
 }
