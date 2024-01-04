@@ -75,7 +75,8 @@ class _BiometricCaptureScanBlockPortraitState
           context.read<BiometricCaptureControlProvider>().exception;
     }
   }
-_showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
+
+  _showCustomAlert(int currentAttemptNo, List<Uint8List?> temp) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -133,15 +134,13 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
         ),
       ),
     );
- 
-}
-  
+  }
 
   _showScanDialogBox(List<Uint8List?> temp) async {
     int currentAttemptNo = await BiometricsApi().getBioAttempt(
         widget.field.id!, biometricAttributeData.title.replaceAll(" ", ""));
-        _showCustomAlert(currentAttemptNo,temp);
-     }
+    _showCustomAlert(currentAttemptNo, temp);
+  }
 
   generateList(String key, BiometricAttributeData data) {
     List<BiometricAttributeData> list = [];
@@ -205,7 +204,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
             color: pureWhite,
             border: Border.all(color: secondaryColors.elementAt(14), width: 1),
           ),
-          height: 315,
+          height: 333.h,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -599,7 +598,8 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                     maxLines: 10,
                     decoration: InputDecoration(
                       fillColor: pureWhite,
-                      hintText: AppLocalizations.of(context)!.add_comments_for_marking_the_exception,
+                      hintText: AppLocalizations.of(context)!
+                          .add_comments_for_marking_the_exception,
                       hintStyle: TextStyle(
                           fontSize: 28,
                           fontWeight: regular,
@@ -2085,7 +2085,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
           child: SizedBox(
-            height: 1000,
+            height: 1100,
             child: Column(
               children: [
                 const SizedBox(
