@@ -13,8 +13,10 @@ class OnboardingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        bottomNavigationBar: _getBottomBar(),
         backgroundColor: AppStyle.appSolidPrimary,
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               alignment: Alignment.centerRight,
@@ -22,7 +24,7 @@ class OnboardingPage extends StatelessWidget {
               child: InkWell(
                 onTap: () {},
                 child: Container(
-                  height: 62.h,
+                  height: isMobileSize ? 46.h : 62.h,
                   width: 129.w,
                   decoration: BoxDecoration(
                     color: Colors.transparent,
@@ -36,8 +38,8 @@ class OnboardingPage extends StatelessWidget {
                   child: Center(
                     child: Text(
                       AppLocalizations.of(context)!.help,
-                      style: const TextStyle(
-                        fontSize: 22,
+                      style: TextStyle(
+                        fontSize: isMobileSize ? 16 : 22,
                         fontWeight: FontWeight.bold,
                         color: AppStyle.appWhite,
                       ),
@@ -57,16 +59,16 @@ class OnboardingPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!.hello,
-                          style: const TextStyle(
-                            fontSize: 36,
+                          "${AppLocalizations.of(context)!.hello}, ",
+                          style: TextStyle(
+                            fontSize: isMobileSize ? 28 : 36,
                             color: AppStyle.appWhite,
                           ),
                         ),
                         Text(
                           context.read<GlobalProvider>().name,
-                          style: const TextStyle(
-                            fontSize: 36,
+                          style: TextStyle(
+                            fontSize: isMobileSize ? 28 : 36,
                             fontWeight: FontWeight.bold,
                             color: AppStyle.appWhite,
                           ),
@@ -79,9 +81,10 @@ class OnboardingPage extends StatelessWidget {
                     Text(
                       AppLocalizations.of(context)!.onboard_process_help,
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: isMobileSize ? 16 : 22,
                         color: AppStyle.appWhite.withOpacity(0.6),
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     SizedBox(
                       height: 65.h,
@@ -97,7 +100,9 @@ class OnboardingPage extends StatelessWidget {
                     ),
                     _getButton(
                       title: AppLocalizations.of(context)!.skip_to_home,
-                      onTap: () {},
+                      onTap: () {
+                        context.read<GlobalProvider>().setCurrentIndex(1);
+                      },
                       color: Colors.transparent,
                       fontColor: AppStyle.appWhite,
                     ),
@@ -108,7 +113,6 @@ class OnboardingPage extends StatelessWidget {
                 ),
               ),
             ),
-            _getBottomBar(),
           ],
         ),
       ),
@@ -117,7 +121,7 @@ class OnboardingPage extends StatelessWidget {
 
   _getBottomBar() {
     return Container(
-      height: 94.h,
+      height: !isMobileSize ? 94.h : 62.h,
       padding: EdgeInsets.symmetric(
         vertical: 15.h,
       ),
@@ -138,9 +142,10 @@ class OnboardingPage extends StatelessWidget {
     required Color fontColor,
   }) {
     return InkWell(
+      onTap: onTap,
       child: Container(
-        height: 102.h,
-        width: 540.w,
+        height: isMobileSize ? 62.h : 102.h,
+        width: isMobileSize ? 350.w : 540.w,
         decoration: BoxDecoration(
           color: color,
           border: Border.all(
@@ -154,7 +159,7 @@ class OnboardingPage extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 22,
+              fontSize: isMobileSize ? 16 : 22,
               fontWeight: FontWeight.bold,
               color: fontColor,
             ),
