@@ -14,6 +14,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 
@@ -74,7 +75,8 @@ class _BiometricCaptureScanBlockPortraitState
           context.read<BiometricCaptureControlProvider>().exception;
     }
   }
-_showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
+
+  _showCustomAlert(int currentAttemptNo, List<Uint8List?> temp) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -87,7 +89,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                 height: 26,
               ),
               Text(
-                "${biometricAttributeData.title.replaceAll(" ", "")} Capture",
+                "${biometricAttributeData.title.replaceAll(" ", "")} ${AppLocalizations.of(context)!.capture}",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontSize: 28, fontWeight: bold, color: blackShade1),
               ),
@@ -119,7 +121,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                     borderRadius: BorderRadius.circular(6)),
                 child: Center(
                   child: Text(
-                    "${biometricAttributeData.noOfCapturesAllowed - currentAttemptNo} attempts left",
+                    "${biometricAttributeData.noOfCapturesAllowed - currentAttemptNo} ${AppLocalizations.of(context)!.attempts_left}",
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: semiBold,
@@ -132,15 +134,13 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
         ),
       ),
     );
- 
-}
-  
+  }
 
   _showScanDialogBox(List<Uint8List?> temp) async {
     int currentAttemptNo = await BiometricsApi().getBioAttempt(
         widget.field.id!, biometricAttributeData.title.replaceAll(" ", ""));
-        _showCustomAlert(currentAttemptNo,temp);
-     }
+    _showCustomAlert(currentAttemptNo, temp);
+  }
 
   generateList(String key, BiometricAttributeData data) {
     List<BiometricAttributeData> list = [];
@@ -204,7 +204,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
             color: pureWhite,
             border: Border.all(color: secondaryColors.elementAt(14), width: 1),
           ),
-          height: 315,
+          height: 333.h,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -214,13 +214,13 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 18),
                 child: Text(
-                  "Quality",
+                  AppLocalizations.of(context)!.quality,
                   style: TextStyle(
                       fontSize: 24, color: blackShade1, fontWeight: semiBold),
                 ),
               ),
               Text(
-                "Threshold ${biometricAttributeData.thresholdPercentage}%",
+                "${AppLocalizations.of(context)!.threshold} ${biometricAttributeData.thresholdPercentage}%",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontSize: 23,
                       fontWeight: regular,
@@ -283,7 +283,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Attempts",
+                    AppLocalizations.of(context)!.attempts,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 24, color: blackShade1, fontWeight: semiBold),
                   ),
@@ -436,7 +436,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
             size: 36.6,
           ),
           label: Text(
-            "SCAN",
+            AppLocalizations.of(context)!.scan,
             style: Theme.of(context)
                 .textTheme
                 .bodySmall
@@ -495,7 +495,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                     height: 40,
                   ),
                   Text(
-                    "Exception Type",
+                    AppLocalizations.of(context)!.exception_type,
                     style: TextStyle(
                         fontSize: 25, fontWeight: semiBold, color: blackShade1),
                   ),
@@ -531,7 +531,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                           ),
                         ),
                         child: Text(
-                          "Permanent",
+                          AppLocalizations.of(context)!.permanent,
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w400,
@@ -571,7 +571,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                           ),
                         ),
                         child: Text(
-                          "Temporary",
+                          AppLocalizations.of(context)!.temporary,
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w400,
@@ -587,7 +587,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                     height: 40,
                   ),
                   Text(
-                    "Comments",
+                    AppLocalizations.of(context)!.comments,
                     style: TextStyle(
                         fontSize: 25, fontWeight: semiBold, color: blackShade1),
                   ),
@@ -598,7 +598,8 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                     maxLines: 10,
                     decoration: InputDecoration(
                       fillColor: pureWhite,
-                      hintText: "Add comments for marking the exception",
+                      hintText: AppLocalizations.of(context)!
+                          .add_comments_for_marking_the_exception,
                       hintStyle: TextStyle(
                           fontSize: 28,
                           fontWeight: regular,
@@ -620,7 +621,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                     borderRadius: BorderRadius.circular(6)),
                 child: Center(
                   child: Text(
-                    "Marking exceptions on ${biometricAttributeData.title} is not allowed",
+                    "${AppLocalizations.of(context)!.marking_exceptions_on} ${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.is_not_allowed}",
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: semiBold,
@@ -867,7 +868,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                                   ),
                                   const Spacer(),
                                   Text(
-                                    "${biometricAttributeData.title} Scan",
+                                    "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
                                     style: TextStyle(
                                         fontSize: 28,
                                         fontWeight: bold,
@@ -1340,7 +1341,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                                   ),
                                   const Spacer(),
                                   Text(
-                                    "${biometricAttributeData.title} Scan",
+                                    "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
                                     style: TextStyle(
                                         fontSize: 28,
                                         fontWeight: bold,
@@ -2014,7 +2015,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                   Navigator.pop(context);
                 }
               },
-              child: Text("NEXT",
+              child: Text(AppLocalizations.of(context)!.next_button,
                   style: TextStyle(fontSize: 24, fontWeight: bold)),
             ),
           ],
@@ -2084,7 +2085,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
           child: SizedBox(
-            height: 1000,
+            height: 1100,
             child: Column(
               children: [
                 const SizedBox(
@@ -2121,7 +2122,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                           height: 84,
                           child: Center(
                             child: Text(
-                              "${context.read<BiometricCaptureControlProvider>().biometricAttribute} Scan",
+                              "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
                               style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: semiBold,
@@ -2165,7 +2166,7 @@ _showCustomAlert(int currentAttemptNo,List<Uint8List?> temp){
                           height: 84,
                           child: Center(
                             child: Text(
-                              "Mark Exception",
+                              AppLocalizations.of(context)!.mark_exception,
                               style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: semiBold,
