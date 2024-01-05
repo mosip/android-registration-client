@@ -10,34 +10,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class AuthResponse;
+@class TransliterationOptions;
 
-@interface AuthResponse : NSObject
+@interface TransliterationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithResponse:(NSString *)response
-    username:(NSString *)username
-    isOfficer:(NSNumber *)isOfficer
-    isDefault:(NSNumber *)isDefault
-    isSupervisor:(NSNumber *)isSupervisor
-    isOperator:(NSNumber *)isOperator
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * response;
-@property(nonatomic, copy) NSString * username;
-@property(nonatomic, strong) NSNumber * isOfficer;
-@property(nonatomic, strong) NSNumber * isDefault;
-@property(nonatomic, strong) NSNumber * isSupervisor;
-@property(nonatomic, strong) NSNumber * isOperator;
-@property(nonatomic, copy, nullable) NSString * errorCode;
++ (instancetype)makeWithInput:(NSString *)input
+    sourceLanguage:(NSString *)sourceLanguage
+    targetLanguage:(NSString *)targetLanguage;
+@property(nonatomic, copy) NSString * input;
+@property(nonatomic, copy) NSString * sourceLanguage;
+@property(nonatomic, copy) NSString * targetLanguage;
 @end
 
-/// The codec used by AuthResponseApi.
-NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void);
+/// The codec used by TransliterationApi.
+NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void);
 
-@protocol AuthResponseApi
-- (void)loginUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(AuthResponse *_Nullable, FlutterError *_Nullable))completion;
+@protocol TransliterationApi
+- (void)transliterateOptions:(TransliterationOptions *)options completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *_Nullable api);
+extern void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

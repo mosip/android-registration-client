@@ -26,81 +26,62 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface AuthResponse ()
-+ (AuthResponse *)fromList:(NSArray *)list;
-+ (nullable AuthResponse *)nullableFromList:(NSArray *)list;
+@interface TransliterationOptions ()
++ (TransliterationOptions *)fromList:(NSArray *)list;
++ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation AuthResponse
-+ (instancetype)makeWithResponse:(NSString *)response
-    username:(NSString *)username
-    isOfficer:(NSNumber *)isOfficer
-    isDefault:(NSNumber *)isDefault
-    isSupervisor:(NSNumber *)isSupervisor
-    isOperator:(NSNumber *)isOperator
-    errorCode:(nullable NSString *)errorCode {
-  AuthResponse* pigeonResult = [[AuthResponse alloc] init];
-  pigeonResult.response = response;
-  pigeonResult.username = username;
-  pigeonResult.isOfficer = isOfficer;
-  pigeonResult.isDefault = isDefault;
-  pigeonResult.isSupervisor = isSupervisor;
-  pigeonResult.isOperator = isOperator;
-  pigeonResult.errorCode = errorCode;
+@implementation TransliterationOptions
++ (instancetype)makeWithInput:(NSString *)input
+    sourceLanguage:(NSString *)sourceLanguage
+    targetLanguage:(NSString *)targetLanguage {
+  TransliterationOptions* pigeonResult = [[TransliterationOptions alloc] init];
+  pigeonResult.input = input;
+  pigeonResult.sourceLanguage = sourceLanguage;
+  pigeonResult.targetLanguage = targetLanguage;
   return pigeonResult;
 }
-+ (AuthResponse *)fromList:(NSArray *)list {
-  AuthResponse *pigeonResult = [[AuthResponse alloc] init];
-  pigeonResult.response = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.response != nil, @"");
-  pigeonResult.username = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.username != nil, @"");
-  pigeonResult.isOfficer = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.isOfficer != nil, @"");
-  pigeonResult.isDefault = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.isDefault != nil, @"");
-  pigeonResult.isSupervisor = GetNullableObjectAtIndex(list, 4);
-  NSAssert(pigeonResult.isSupervisor != nil, @"");
-  pigeonResult.isOperator = GetNullableObjectAtIndex(list, 5);
-  NSAssert(pigeonResult.isOperator != nil, @"");
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 6);
++ (TransliterationOptions *)fromList:(NSArray *)list {
+  TransliterationOptions *pigeonResult = [[TransliterationOptions alloc] init];
+  pigeonResult.input = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.input != nil, @"");
+  pigeonResult.sourceLanguage = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.sourceLanguage != nil, @"");
+  pigeonResult.targetLanguage = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.targetLanguage != nil, @"");
   return pigeonResult;
 }
-+ (nullable AuthResponse *)nullableFromList:(NSArray *)list {
-  return (list) ? [AuthResponse fromList:list] : nil;
++ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list {
+  return (list) ? [TransliterationOptions fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.response ?: [NSNull null]),
-    (self.username ?: [NSNull null]),
-    (self.isOfficer ?: [NSNull null]),
-    (self.isDefault ?: [NSNull null]),
-    (self.isSupervisor ?: [NSNull null]),
-    (self.isOperator ?: [NSNull null]),
-    (self.errorCode ?: [NSNull null]),
+    (self.input ?: [NSNull null]),
+    (self.sourceLanguage ?: [NSNull null]),
+    (self.targetLanguage ?: [NSNull null]),
   ];
 }
 @end
 
-@interface AuthResponseApiCodecReader : FlutterStandardReader
+@interface TransliterationApiCodecReader : FlutterStandardReader
 @end
-@implementation AuthResponseApiCodecReader
+@implementation TransliterationApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [AuthResponse fromList:[self readValue]];
+      return [TransliterationOptions fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface AuthResponseApiCodecWriter : FlutterStandardWriter
+@interface TransliterationApiCodecWriter : FlutterStandardWriter
 @end
-@implementation AuthResponseApiCodecWriter
+@implementation TransliterationApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[AuthResponse class]]) {
+  if ([value isKindOfClass:[TransliterationOptions class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else {
@@ -109,42 +90,40 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface AuthResponseApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface TransliterationApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation AuthResponseApiCodecReaderWriter
+@implementation TransliterationApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[AuthResponseApiCodecWriter alloc] initWithData:data];
+  return [[TransliterationApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[AuthResponseApiCodecReader alloc] initWithData:data];
+  return [[TransliterationApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    AuthResponseApiCodecReaderWriter *readerWriter = [[AuthResponseApiCodecReaderWriter alloc] init];
+    TransliterationApiCodecReaderWriter *readerWriter = [[TransliterationApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *api) {
+void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.AuthResponseApi.login"
+        initWithName:@"dev.flutter.pigeon.registration_client.TransliterationApi.transliterate"
         binaryMessenger:binaryMessenger
-        codec:AuthResponseApiGetCodec()];
+        codec:TransliterationApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(loginUsername:password:isConnected:completion:)], @"AuthResponseApi api (%@) doesn't respond to @selector(loginUsername:password:isConnected:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(transliterateOptions:completion:)], @"TransliterationApi api (%@) doesn't respond to @selector(transliterateOptions:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_username = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_password = GetNullableObjectAtIndex(args, 1);
-        NSNumber *arg_isConnected = GetNullableObjectAtIndex(args, 2);
-        [api loginUsername:arg_username password:arg_password isConnected:arg_isConnected completion:^(AuthResponse *_Nullable output, FlutterError *_Nullable error) {
+        TransliterationOptions *arg_options = GetNullableObjectAtIndex(args, 0);
+        [api transliterateOptions:arg_options completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
