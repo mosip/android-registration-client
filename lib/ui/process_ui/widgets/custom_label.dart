@@ -21,15 +21,15 @@ class CustomLabel extends StatelessWidget {
         children: [
           Text(
             context.read<GlobalProvider>().chooseLanguage(field.label!),
-            style: TextStyle(fontSize: isPortrait ? 18 : 14, fontWeight: semiBold),
+            style: TextStyle(fontSize: isPortrait && !isMobileSize ? 18 : 14, fontWeight: semiBold),
           ),
           const SizedBox(
             width: 5,
           ),
           if (field.required! || field.requiredOn!.isNotEmpty)
-            const Text(
+            Text(
               "*",
-              style: TextStyle(color: Colors.red, fontSize: 14),
+              style: TextStyle(color: Colors.red, fontSize: isPortrait && !isMobileSize ? 18 : 14),
             )
         ],
       ),

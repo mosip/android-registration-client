@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
+import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
@@ -18,7 +19,6 @@ class OperationalTasks extends StatefulWidget {
 }
 
 class _OperationalTasksState extends State<OperationalTasks> {
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -34,7 +34,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
 
   _getMemoryProvider() {
     return Container(
-      height: 186.h,
+      // height: 186.h,
       color: AppStyle.appWhite,
       width: ScreenUtil().screenWidth,
       padding: EdgeInsets.only(
@@ -93,7 +93,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   Text(
                     'System Storage Usage',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: isMobileSize ? 16 : 24,
                       fontWeight: semiBold,
                       color: AppStyle.appBlackShade1,
                     ),
@@ -111,27 +111,38 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   SizedBox(
                     height: 10.h,
                   ),
-                  const Row(
+                  Row(
                     children: [
                       Text(
                         'Used: 286 GB (72% used)',
                         style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0XFF4E4E4E),
+                          fontSize: isMobileSize ? 14 : 20,
+                          color: const Color(0XFF4E4E4E),
                         ),
                       ),
-                      Expanded(
+                      const Expanded(
                         child: SizedBox(),
                       ),
-                      Text(
-                        'Available: 192 GB',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0XFF4E4E4E),
-                        ),
-                      )
+                      !isMobileSize
+                          ? Text(
+                              'Available: 192 GB',
+                              style: TextStyle(
+                                fontSize: isMobileSize ? 14 : 20,
+                                color: const Color(0XFF4E4E4E),
+                              ),
+                            )
+                          : const SizedBox.shrink()
                     ],
                   ),
+                  isMobileSize
+                      ? Text(
+                          'Available: 192 GB',
+                          style: TextStyle(
+                            fontSize: isMobileSize ? 14 : 20,
+                            color: const Color(0XFF4E4E4E),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ],
               ),
             ),
@@ -148,13 +159,26 @@ class _OperationalTasksState extends State<OperationalTasks> {
       children: List.generate(
         widget.operationalTasks.length,
         (index) {
-          return TaskCard(
-            index: index,
-            icon: widget.operationalTasks[index]["icon"],
-            title: widget.operationalTasks[index]["title"] as String,
-            ontap: () => widget.operationalTasks[index]["onTap"](context),
-            subtitle: widget.operationalTasks[index]["subtitle"],
-          );
+          return isMobileSize
+              ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                  ),
+                  child: HomePageCard(
+                    index: index,
+                    icon: widget.operationalTasks[index]["icon"],
+                    title: widget.operationalTasks[index]["title"] as String,
+                    ontap: () =>
+                        widget.operationalTasks[index]["onTap"](context),
+                  ),
+                )
+              : TaskCard(
+                  index: index,
+                  icon: widget.operationalTasks[index]["icon"],
+                  title: widget.operationalTasks[index]["title"] as String,
+                  ontap: () => widget.operationalTasks[index]["onTap"](context),
+                  subtitle: widget.operationalTasks[index]["subtitle"],
+                );
         },
       ),
     );

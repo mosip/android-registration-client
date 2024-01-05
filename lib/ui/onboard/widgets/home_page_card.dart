@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +49,7 @@ class _HomePageCardState extends State<HomePageCard> {
 
     return Card(
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        contentPadding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 12.h),
         onTap: widget.ontap,
         leading: Container(
           padding: const EdgeInsets.all(10),
