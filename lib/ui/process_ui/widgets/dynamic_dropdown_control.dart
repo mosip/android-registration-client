@@ -22,7 +22,7 @@ class DynamicDropDownControl extends StatefulWidget {
 }
 
 class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
-  String? selected;
+  DynamicFieldData? selected;
 
   @override
   void initState() {
@@ -69,7 +69,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   void _getSelectedValueFromMap(String lang) async {
-    String response = "";
+    DynamicFieldData? response;
     String updatedValue = "";
     if (widget.field.type == 'simpleType') {
       if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
@@ -85,15 +85,12 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     }
     List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
     for (var element in data) {
-      if(element!.code == response){
+      if(element!.code == response!.code){
         setState(() {
-          updatedValue = element.name;
+          selected = response;
         });
       }
     }
-    setState(() {
-      selected = updatedValue.toLowerCase();
-    });
   }
 
   Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
@@ -122,7 +119,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                     height: 10,
                   ),
                   snapshot.hasData
-                      ? DropdownButtonFormField(
+                      ? DropdownButtonFormField<DynamicFieldData>(
                           icon: const Icon(null),
                           decoration: InputDecoration(
                             contentPadding:
@@ -141,8 +138,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
-                                    value: option!.name.toLowerCase(),
-                                    child: Text(option.name),
+                                    value: option,
+                                    child: Text(option!.name),
                                   ))
                               .toList(),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -155,13 +152,13 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             if (value == null) {
                               return 'Please enter a value';
                             }
-                            if (!widget.validation.hasMatch(value)) {
+                            if (!widget.validation.hasMatch(value.name)) {
                               return 'Invalid input';
                             }
                             return null;
                           },
                           onChanged: (value) {
-                            saveData(value);
+                            saveData(value!.code);
                             _saveDataToMap(value);
                             setState(() {
                               selected = value;

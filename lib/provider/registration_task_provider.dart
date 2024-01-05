@@ -5,6 +5,7 @@ import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_spi/demographic_service.dart';
 import 'package:registration_client/platform_spi/document.dart';
+import 'package:registration_client/platform_spi/document_category_service.dart';
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/platform_spi/registration_service.dart';
@@ -15,6 +16,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   final DemographicService demographics = DemographicService();
   final Document document = Document();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
+  final DocumentCategory documentCategory = DocumentCategory();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
@@ -186,5 +188,9 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   removeDocument(String fieldId, int pageIndex) async {
     await document.removeDocument(fieldId, pageIndex);
+  }
+
+  Future<List<String?>> getDocumentType(String categoryCode,String langCode) async {
+    return await documentCategory.getDocumentCategories(categoryCode,langCode);
   }
 }

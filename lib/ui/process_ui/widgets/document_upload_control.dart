@@ -199,6 +199,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .getDocumentValues(fieldName, langCode, applicantType);
   }
 
+  Future<List<String?>> _getDocumentType(String categoryCode, String langCode) async {
+    return await context.read<RegistrationTaskProvider>().getDocumentType(categoryCode, langCode);
+  }
+
   void _deleteImage(Field e, Uint8List? item) async {
     for(int i =0;i<imageBytesList.length;i++){
       if(imageBytesList[i] == item){
@@ -213,11 +217,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
-    List<String> selectedLang = context.read<GlobalProvider>().chosenLang;
-    if (!(widget.field.type == "simpleType")) {
-      selectedLang = ["English"];
-    }
-    String lang = context.read<GlobalProvider>().langToCode(selectedLang.first);
+    String lang = context.read<GlobalProvider>().selectedLanguage;
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Card(
@@ -467,8 +467,9 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                             child: FutureBuilder(
-                                future: _getDocumentValues(
-                                    widget.field.subType!, "eng", null),
+                                future: _getDocumentType(widget.field.subType!, "eng"),
+                                // _getDocumentValues(
+                                //     widget.field.subType!, "eng", null),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
