@@ -61,6 +61,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                 .setIsDefault(false)
                 .setIsOfficer(false)
                 .setIsSupervisor(false)
+                .setIsOperator(false)
                 .setErrorCode(errorCode)
                 .build();
 

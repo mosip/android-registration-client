@@ -440,10 +440,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         snackbarText = AppLocalizations.of(context)!.center_inactive;
         break;
 
-      case "DEFAULT_NOT_FOUND":
-        snackbarText = AppLocalizations.of(context)!.default_not_found;
-        break;
-
       case "":
         return;
 
