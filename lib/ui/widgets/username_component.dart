@@ -145,6 +145,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
       children: widget.languages.map((e) {
         return LanguageComponent(
           title: widget.mp[e]!,
+          isDisabled: context.read<GlobalProvider>().disabledLanguageMap[e] ?? false,
           isSelected: context.read<GlobalProvider>().selectedLanguage == e,
           onTap: () {
             selectedLanguage = e;
