@@ -28,11 +28,14 @@ public class ApplicantValidDocRepository {
             docTypeList = this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
                     categoryCode);
         }
-            for(int i=0;i< docTypeList.size();i++) {
-                if (docTypeList.get(i) != null) {
-                    documentList.add(this.applicantValidDocumentDao.findAllDocTypesByLanguageCode(docTypeList.get(i), langCode).get(i));
+        docTypeList.forEach((v) -> {
+            if(v!=null) {
+                List<String> docListByLang = this.applicantValidDocumentDao.findAllDocTypesByLanguageCode(v, langCode);
+                if (docListByLang != null && !docListByLang.isEmpty()) {
+                    documentList.add(docListByLang.get(0));
                 }
-          }
+            }
+        });
         return documentList;
     }
 
