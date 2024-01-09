@@ -6,9 +6,10 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   //Variables
   bool isBiometricCaptureControl = false;
   late String biometricAttribute;
-  
+
   int biometricCaptureScanBlockTabIndex = 1;
   BiometricAttributeData iris = BiometricAttributeData(
+      viewTitle: "",
       title: "Iris",
       attemptNo: 0,
       exceptionType: "",
@@ -24,6 +25,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       noOfCapturesAllowed: 0);
   BiometricAttributeData rightHand = BiometricAttributeData(
       title: "Right Hand",
+      viewTitle: "",
       attemptNo: 0,
       exceptionType: "",
       exceptions: [false, false, false, false],
@@ -36,6 +38,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   BiometricAttributeData leftHand = BiometricAttributeData(
       title: "Left Hand",
       attemptNo: 0,
+      viewTitle: "",
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
@@ -47,6 +50,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   BiometricAttributeData thumbs = BiometricAttributeData(
       title: "Thumbs",
       attemptNo: 0,
+      viewTitle: "",
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
@@ -58,6 +62,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   BiometricAttributeData face = BiometricAttributeData(
       title: "Face",
       attemptNo: 0,
+      viewTitle: "",
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
@@ -69,6 +74,7 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   BiometricAttributeData exception = BiometricAttributeData(
       title: "Exception",
       attemptNo: 0,
+      viewTitle: "",
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
