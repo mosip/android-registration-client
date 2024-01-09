@@ -123,6 +123,14 @@ class _TextBoxControlState extends State<TextBoxControl>
     if (!(widget.e.type == "simpleType")) {
       choosenLang = ["English"];
     }
+    Map<String, String> tranliterationLangMapper = {
+      "eng": "Latin",
+      "fra": "French",
+      "ara": "Arabic",
+      "hin": "Devanagari",
+      "kan": "Kannada",
+      "tam": "Tamil",
+    };
 
     return Card(
       elevation: 5,
@@ -172,17 +180,18 @@ class _TextBoxControlState extends State<TextBoxControl>
                               String result = await TransliterationServiceImpl()
                                   .transliterate(TransliterationOptions(
                                       input: value,
-                                      sourceLanguage: lang.substring(0, 2),
-                                      targetLanguage:
-                                          targetCode.substring(0, 2)));
-                              if (result != "") {
-                                _saveDataToMap(result, targetCode);
-                                saveData(result, targetCode);
-                                setState(() {
-                                  controllerMap[targetCode]!.text = result;
-                                });
-                                log("Transliteration success : $result");
-                              }
+                                      sourceLanguage:
+                                          tranliterationLangMapper[lang] ??
+                                              "eng",
+                                      targetLanguage: tranliterationLangMapper[
+                                              targetCode] ??
+                                          "eng"));
+                              _saveDataToMap(result, targetCode);
+                              saveData(result, targetCode);
+                              setState(() {
+                                controllerMap[targetCode]!.text = result;
+                              });
+                              log("Transliteration success : $result");
                             } catch (e) {
                               log("Transliteration failed : $e");
                             }
@@ -202,7 +211,6 @@ class _TextBoxControlState extends State<TextBoxControl>
                         }
                       }
                       if (value == null || value.isEmpty) {
-                        log(lang);
                         return AppLocalizations.of(context)!
                             .demographicsScreenEmptyMessage(lang);
                       }
