@@ -576,7 +576,7 @@ class GlobalProvider with ChangeNotifier {
       _languages = ["eng"];
       _codeToLanguageMapper["eng"] = "English";
       _languageToCodeMapper["English"] = "eng";
-      _disabledLanguageMap["eng"] = true;
+      _disabledLanguageMap["eng"] = false;
       return;
     }
     List<String> languageList = [];
