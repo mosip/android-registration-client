@@ -20,19 +20,19 @@ public class ApplicantValidDocRepository {
     }
 
     public List<String> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
-        List<String> nameList;
-        List<String> documentList = new ArrayList<>();
+        List<String> docTypeList;
+        ArrayList<String> documentList = new ArrayList<>();
         if (applicantType == null) {
-            nameList = this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
+            docTypeList = this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
         }else {
-            nameList = this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
+            docTypeList = this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
                     categoryCode);
         }
-        nameList.forEach((v) -> {
-            if(v!=null) {
-                documentList.add(this.applicantValidDocumentDao.findAllDocTypesByLanguageCode(v, langCode).get(0));
-            }
-        });
+            for(int i=0;i< docTypeList.size();i++) {
+                if (docTypeList.get(i) != null) {
+                    documentList.add(this.applicantValidDocumentDao.findAllDocTypesByLanguageCode(docTypeList.get(i), langCode).get(i));
+                }
+          }
         return documentList;
     }
 
