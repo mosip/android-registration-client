@@ -26,112 +26,115 @@ class _TasksPageState extends State<TasksPage> {
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            SizedBox(
-              width: 20.w,
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    currentIndex = 0;
-                  });
-                },
-                child: Container(
-                  height: 84.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: currentIndex == 0
-                          ? AppStyle.appSolidPrimary
-                          : AppStyle.greyBorderShade,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(6),
-                      topRight: Radius.circular(6),
-                    ),
-                    color: currentIndex == 0
-                        ? AppStyle.appSolidPrimary
-                        : AppStyle.appWhite,
-                  ),
-                  child: Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.registration_tasks,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: semiBold,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        currentIndex = 0;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 28.h,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: currentIndex == 0
+                              ? AppStyle.appSolidPrimary
+                              : AppStyle.greyBorderShade,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(6),
+                          topRight: Radius.circular(6),
+                        ),
                         color: currentIndex == 0
-                            ? AppStyle.appWhite
-                            : AppStyle.appBlack,
+                            ? AppStyle.appSolidPrimary
+                            : AppStyle.appWhite,
+                      ),
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.registration_tasks,
+                          style: TextStyle(
+                            fontSize: isMobileSize ? 14 : 24,
+                            fontWeight: semiBold,
+                            color: currentIndex == 0
+                                ? AppStyle.appWhite
+                                : AppStyle.appBlack,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    currentIndex = 1;
-                  });
-                },
-                child: Container(
-                  height: 84.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: currentIndex == 1
-                          ? AppStyle.appSolidPrimary
-                          : AppStyle.greyBorderShade,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(6),
-                      topRight: Radius.circular(6),
-                    ),
-                    color: currentIndex == 1
-                        ? AppStyle.appSolidPrimary
-                        : AppStyle.appWhite,
-                  ),
-                  child: Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.operation_tasks,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: semiBold,
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        currentIndex = 1;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 28.h,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: currentIndex == 1
+                              ? AppStyle.appSolidPrimary
+                              : AppStyle.greyBorderShade,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(6),
+                          topRight: Radius.circular(6),
+                        ),
                         color: currentIndex == 1
-                            ? AppStyle.appWhite
-                            : AppStyle.appBlack,
+                            ? AppStyle.appSolidPrimary
+                            : AppStyle.appWhite,
+                      ),
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.operation_tasks,
+                          style: TextStyle(
+                            fontSize: isMobileSize ? 14 : 24,
+                            fontWeight: semiBold,
+                            color: currentIndex == 1
+                                ? AppStyle.appWhite
+                                : AppStyle.appBlack,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-            SizedBox(
-              width: 20.w,
-            ),
-          ],
-        ),
-        Container(
-          color: AppStyle.appSolidPrimary,
-          height: 2.5.h,
-          margin: EdgeInsets.symmetric(horizontal: 20.w),
-        ),
-        currentIndex == 0
-            ? RegistrationTasks(
-                getProcessUI: (BuildContext context, Process process) {
-                  widget.getProcessUI(context, process);
-                },
-                syncData: (BuildContext context) {
-                  widget.syncData(context);
-                },
-              )
-            : OperationalTasks(
-                operationalTasks: widget.operationalTasks,
-              ),
-      ],
+          ),
+          Container(
+            color: AppStyle.appSolidPrimary,
+            height: 2.5.h,
+            margin: EdgeInsets.symmetric(horizontal: 20.w),
+          ),
+          currentIndex == 0
+              ? RegistrationTasks(
+                  getProcessUI: (BuildContext context, Process process) {
+                    widget.getProcessUI(context, process);
+                  },
+                  syncData: (BuildContext context) {
+                    widget.syncData(context);
+                  },
+                )
+              : OperationalTasks(
+                  operationalTasks: widget.operationalTasks,
+                ),
+        ],
+      ),
     );
   }
 }

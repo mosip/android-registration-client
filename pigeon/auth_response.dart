@@ -6,6 +6,7 @@ class AuthResponse {
   final bool isOfficer;
   final bool isDefault;
   final bool isSupervisor;
+  final bool isOperator;
   final String? errorCode;
 
   AuthResponse({
@@ -14,6 +15,7 @@ class AuthResponse {
     required this.isOfficer,
     required this.isDefault,
     required this.isSupervisor,
+    required this.isOperator,
     this.errorCode, 
   });
 }

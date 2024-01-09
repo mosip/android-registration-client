@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
-
-import '../onboard/onboard_landing_page.dart';
-import '../onboard/home_page.dart';
-
-import '../common/mobile_navbar.dart';
+import 'package:registration_client/ui/common/mobile_navbar.dart';
+import 'package:registration_client/ui/onboard/home_page.dart';
+import 'package:registration_client/ui/onboard/onboarding_page.dart';
 
 class DashBoardMobileView extends StatelessWidget {
   DashBoardMobileView({Key? key}) : super(key: key);
 
   final List<Widget> _pages = [
-    const OnboardLandingPage(),
+    const OnboardingPage(),
     const HomePage()
   ];
 
