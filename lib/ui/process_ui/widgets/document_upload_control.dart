@@ -231,7 +231,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   children: [
                     FutureBuilder(
                         future: _getDocumentValues(
-                            widget.field.subType!, "eng", null),
+                            widget.field.subType!, lang, null),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
@@ -468,7 +468,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         Expanded(
                             child: FutureBuilder(
                                 future: _getDocumentValues(
-                                    widget.field.subType!, "eng", null),
+                                    widget.field.subType!, lang, null),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
