@@ -120,7 +120,7 @@
   "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
   "@notificationLanguage": {
     "description": "Notification Language Label",
-     "placeholders": {
+    "placeholders": {
       "language": {
         "type": "String"
       }

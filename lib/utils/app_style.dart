@@ -291,7 +291,7 @@ abstract class AppStyle {
     color: appWhite,
     letterSpacing: 0.5,
   );
-  
+
   static TextStyle tabletPortraitCommunityRegClientText = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 36,
