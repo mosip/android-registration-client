@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppStyle.appSolidPrimary,
+        backgroundColor: appSolidPrimary,
         bottomNavigationBar: _getBottomBar(),
         body: Stack(
           children: [
@@ -235,7 +235,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                           decoration: BoxDecoration(
                             color: Colors.transparent,
                             border: Border.all(
-                              color: AppStyle.appWhite,
+                              color: appWhite,
                             ),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(5),
@@ -244,8 +244,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                           child: Center(
                             child: Text(AppLocalizations.of(context)!.help,
                                 style: isMobile && !isMobileSize
-                                    ? AppStyle.tabletPortraitHelpText
-                                    : AppStyle.mobileHelpText),
+                                    ? AppTextStyle.tabletPortraitHelpText
+                                    : AppTextStyle.mobileHelpText),
                           ),
                         ),
                       ),
@@ -480,7 +480,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       padding: EdgeInsets.symmetric(
         vertical: 15.h,
       ),
-      color: AppStyle.appWhite,
+      color: appWhite,
       child: Center(
         child: InkWell(
           onLongPress: () {
@@ -506,15 +506,15 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         Text(
           AppLocalizations.of(context)!.welcome,
           style: isMobile && !isMobileSize
-              ? AppStyle.tabletPortraitWelcomeText
-              : AppStyle.tabletWelcomeText,
+              ? AppTextStyle.tabletPortraitWelcomeText
+              : AppTextStyle.tabletWelcomeText,
           textAlign: isMobile ? TextAlign.center : TextAlign.start,
         ),
         Text(
           AppLocalizations.of(context)!.community_reg_text,
           style: isMobile && !isMobileSize
-              ? AppStyle.tabletPortraitCommunityRegClientText
-              : AppStyle.tabletCommunityRegClientText,
+              ? AppTextStyle.tabletPortraitCommunityRegClientText
+              : AppTextStyle.tabletCommunityRegClientText,
           textAlign: isMobile ? TextAlign.center : TextAlign.start,
         )
       ],
@@ -525,8 +525,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     return Text(
       AppLocalizations.of(context)!.info_text,
       style: isMobile && !isMobileSize
-          ? AppStyle.tabletPortraitInfoText
-          : AppStyle.mobileInfoText,
+          ? AppTextStyle.tabletPortraitInfoText
+          : AppTextStyle.mobileInfoText,
       textAlign: isMobile ? TextAlign.center : TextAlign.start,
     );
   }
@@ -557,7 +557,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         vertical: isMobile && !isMobileSize ? 30.h : 20.h,
       ),
       decoration: BoxDecoration(
-        color: AppStyle.appWhite,
+        color: appWhite,
         border: Border.all(
           width: 1.w,
         ),
@@ -575,8 +575,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           Text(
             AppLocalizations.of(context)!.login_text,
             style: isMobile && !isMobileSize
-                ? AppStyle.tabletPortraitHeaderText
-                : AppStyle.mobileHeaderText,
+                ? AppTextStyle.tabletPortraitHeaderText
+                : AppTextStyle.mobileHeaderText,
           ),
           SizedBox(
             height: context.watch<AuthProvider>().isValidUser ? 42.h : 38.h,

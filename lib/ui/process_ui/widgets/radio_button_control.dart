@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -190,7 +189,7 @@ class SelectableCard extends StatelessWidget {
                   fontSize: 14,
                   color: value == groupValue
                       ? Colors.white
-                      : AppStyle.appBlackShade1,
+                      : appBlackShade1,
                   fontWeight: regular,
                 ),
               ),

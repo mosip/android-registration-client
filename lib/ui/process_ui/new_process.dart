@@ -496,7 +496,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           decoration: BoxDecoration(
             border: const Border(
               top: BorderSide(
-                color: AppStyle.dividerColor,
+                color: dividerColor,
                 width: 1,
               ),
             ),
@@ -883,7 +883,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: semiBold,
-                    color: AppStyle.appBlack),
+                    color: appBlack),
               ),
               SizedBox(
                 height: 35.h,
@@ -893,13 +893,13 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   Text(
                     AppLocalizations.of(context)!.username,
                     style: isPortrait
-                        ? AppStyle.tabletPortraitTextfieldHeader
-                        : AppStyle.mobileTextfieldHeader,
+                        ? AppTextStyle.tabletPortraitTextfieldHeader
+                        : AppTextStyle.mobileTextfieldHeader,
                   ),
                   const Text(
                     ' *',
                     style: TextStyle(
-                      color: AppStyle.mandatoryField,
+                      color: mandatoryField,
                     ),
                   ),
                 ],
@@ -916,12 +916,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   Text(
                     AppLocalizations.of(context)!.password,
                     style: isPortrait
-                        ? AppStyle.tabletPortraitTextfieldHeader
-                        : AppStyle.mobileTextfieldHeader,
+                        ? AppTextStyle.tabletPortraitTextfieldHeader
+                        : AppTextStyle.mobileTextfieldHeader,
                   ),
                   const Text(
                     ' *',
-                    style: TextStyle(color: AppStyle.mandatoryField),
+                    style: TextStyle(color: mandatoryField),
                   ),
                 ],
               ),
@@ -943,10 +943,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppStyle.authIconBorder,
+          color: authIconBorder,
           width: 2,
         ),
-        color: AppStyle.authIconBackground,
+        color: authIconBackground,
       ),
       child: Center(
         child: Image.asset('assets/images/Registering an Individual@2x.png'),
@@ -965,7 +965,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -975,8 +975,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_username,
           hintStyle: isPortrait
-              ? AppStyle.tabletPortraitTextfieldHintText
-              : AppStyle.mobileTextfieldHintText,
+              ? AppTextStyle.tabletPortraitTextfieldHintText
+              : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {
@@ -999,7 +999,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -1010,8 +1010,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_password,
           hintStyle: isPortrait
-              ? AppStyle.tabletPortraitTextfieldHintText
-              : AppStyle.mobileTextfieldHintText,
+              ? AppTextStyle.tabletPortraitTextfieldHintText
+              : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {

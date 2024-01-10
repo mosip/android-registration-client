@@ -58,7 +58,7 @@ class MachineKeys extends StatelessWidget {
           : 670.w,
       padding: EdgeInsets.only(left: 20.w, right: 19.w),
       decoration: const BoxDecoration(
-        color: AppStyle.appWhite,
+        color: appWhite,
         borderRadius: BorderRadius.all(
           Radius.circular(12),
         ),
@@ -76,7 +76,7 @@ class MachineKeys extends StatelessWidget {
                   Text(
                     AppLocalizations.of(context)!.device_credentials,
                     style: TextStyle(
-                      color: AppStyle.appBlack,
+                      color: appBlack,
                       fontSize: isMobileSize ? 18 : 26,
                       fontWeight: FontWeight.bold,
                     ),
@@ -85,14 +85,14 @@ class MachineKeys extends StatelessWidget {
                     onPressed: onCloseComponent,
                     icon: const Icon(
                       Icons.close,
-                      color: AppStyle.appBlack,
+                      color: appBlack,
                     ),
                   ),
                 ],
               ),
             ),
             Divider(
-              color: AppStyle.dividerColor,
+              color: dividerColor,
               height: 1.h,
             ),
             // Container(
@@ -203,10 +203,10 @@ class MachineKeys extends StatelessWidget {
       child: Container(
         height: isMobileSize ? 46.h : 62.h,
         decoration: BoxDecoration(
-          color: AppStyle.appSolidPrimary,
+          color: appSolidPrimary,
           border: Border.all(
             width: 1.w,
-            color: AppStyle.appBlueShade1,
+            color: appBlueShade1,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(5),
@@ -216,8 +216,8 @@ class MachineKeys extends StatelessWidget {
           child: Text(
             AppLocalizations.of(_context)!.copy_text,
             style: isMobileSize
-                ? AppStyle.primaryButtonTextSmall
-                : AppStyle.primaryButtonText,
+                ? AppTextStyle.primaryButtonTextSmall
+                : AppTextStyle.primaryButtonText,
           ),
         ),
       ),
@@ -230,10 +230,10 @@ class MachineKeys extends StatelessWidget {
       child: Container(
         height: isMobileSize ? 46.h : 62.h,
         decoration: BoxDecoration(
-          color: AppStyle.appWhite,
+          color: appWhite,
           border: Border.all(
             width: 1.w,
-            color: AppStyle.appBlueShade1,
+            color: appBlueShade1,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(5),
@@ -243,8 +243,8 @@ class MachineKeys extends StatelessWidget {
           child: Text(
             title,
             style: isMobileSize
-                ? AppStyle.secondaryButtonTextSmall
-                : AppStyle.secondaryButtonText,
+                ? AppTextStyle.secondaryButtonTextSmall
+                : AppTextStyle.secondaryButtonText,
           ),
         ),
       ),

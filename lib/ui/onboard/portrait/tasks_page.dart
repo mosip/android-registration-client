@@ -4,7 +4,6 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/ui/onboard/portrait/operational_tasks.dart';
 import 'package:registration_client/ui/onboard/portrait/registration_tasks.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TasksPage extends StatefulWidget {
@@ -47,16 +46,16 @@ class _TasksPageState extends State<TasksPage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: currentIndex == 0
-                              ? AppStyle.appSolidPrimary
-                              : AppStyle.greyBorderShade,
+                              ? appSolidPrimary
+                              : greyBorderShade,
                         ),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(6),
                           topRight: Radius.circular(6),
                         ),
                         color: currentIndex == 0
-                            ? AppStyle.appSolidPrimary
-                            : AppStyle.appWhite,
+                            ? appSolidPrimary
+                            : appWhite,
                       ),
                       child: Center(
                         child: Text(
@@ -65,8 +64,8 @@ class _TasksPageState extends State<TasksPage> {
                             fontSize: isMobileSize ? 14 : 24,
                             fontWeight: semiBold,
                             color: currentIndex == 0
-                                ? AppStyle.appWhite
-                                : AppStyle.appBlack,
+                                ? appWhite
+                                : appBlack,
                           ),
                         ),
                       ),
@@ -87,16 +86,16 @@ class _TasksPageState extends State<TasksPage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: currentIndex == 1
-                              ? AppStyle.appSolidPrimary
-                              : AppStyle.greyBorderShade,
+                              ? appSolidPrimary
+                              : greyBorderShade,
                         ),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(6),
                           topRight: Radius.circular(6),
                         ),
                         color: currentIndex == 1
-                            ? AppStyle.appSolidPrimary
-                            : AppStyle.appWhite,
+                            ? appSolidPrimary
+                            : appWhite,
                       ),
                       child: Center(
                         child: Text(
@@ -105,8 +104,8 @@ class _TasksPageState extends State<TasksPage> {
                             fontSize: isMobileSize ? 14 : 24,
                             fontWeight: semiBold,
                             color: currentIndex == 1
-                                ? AppStyle.appWhite
-                                : AppStyle.appBlack,
+                                ? appWhite
+                                : appBlack,
                           ),
                         ),
                       ),
@@ -117,7 +116,7 @@ class _TasksPageState extends State<TasksPage> {
             ),
           ),
           Container(
-            color: AppStyle.appSolidPrimary,
+            color: appSolidPrimary,
             height: 2.5.h,
             margin: EdgeInsets.symmetric(horizontal: 20.w),
           ),

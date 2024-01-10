@@ -10,7 +10,6 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegistrationTasks extends StatefulWidget {
@@ -76,15 +75,15 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
         ),
         decoration: BoxDecoration(
           border: Border.all(
-            color: AppStyle.appWhite,
+            color: appWhite,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(6),
           ),
-          color: AppStyle.appWhite,
+          color: appWhite,
           boxShadow: const [
             BoxShadow(
-              color: AppStyle.greyBorderShade,
+              color: greyBorderShade,
               offset: Offset(-3.0, -3.0),
               blurRadius: 6.0,
               spreadRadius: 0.0,
@@ -98,12 +97,12 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               width: 78.h,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: AppStyle.appWhite,
+                  color: appWhite,
                 ),
                 borderRadius: const BorderRadius.all(
                   Radius.circular(10),
                 ),
-                color: AppStyle.iconContainerColor,
+                color: iconContainerColor,
               ),
               child: Transform.scale(
                 scale: 0.5,
@@ -120,7 +119,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: semiBold,
-                color: AppStyle.appBlackShade1,
+                color: appBlackShade1,
               ),
             ),
             const Expanded(
@@ -134,7 +133,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                   .toString(),
               style: const TextStyle(
                 fontSize: 18,
-                color: AppStyle.appBlackShade2,
+                color: appBlackShade2,
               ),
             )
           ],
@@ -174,15 +173,15 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: AppStyle.appWhite,
+                    color: appWhite,
                   ),
                   borderRadius: const BorderRadius.all(
                     Radius.circular(6),
                   ),
-                  color: AppStyle.appWhite,
+                  color: appWhite,
                   boxShadow: const [
                     BoxShadow(
-                      color: AppStyle.greyBorderShade,
+                      color: greyBorderShade,
                       offset: Offset(3.0, 3.0),
                       blurRadius: 6.0,
                       spreadRadius: 0.0,
@@ -213,7 +212,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                       style: TextStyle(
                         fontSize: isMobileSize ? 18 : 27,
                         fontWeight: semiBold,
-                        color: AppStyle.appBlackShade1,
+                        color: appBlackShade1,
                       ),
                     ),
                   ],

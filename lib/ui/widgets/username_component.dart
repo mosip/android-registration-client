@@ -41,8 +41,8 @@ class _UsernameComponentState extends State<UsernameComponent> {
           child: Text(
             AppLocalizations.of(context)!.language,
             style: widget.isMobile && !isMobileSize
-                ? AppStyle.tabletPortraitTextfieldHeader
-                : AppStyle.mobileTextfieldHeader,
+                ? AppTextStyle.tabletPortraitTextfieldHeader
+                : AppTextStyle.mobileTextfieldHeader,
           ),
         ),
         SizedBox(
@@ -57,12 +57,12 @@ class _UsernameComponentState extends State<UsernameComponent> {
             Text(
               AppLocalizations.of(context)!.username,
               style: widget.isMobile && !isMobileSize
-                  ? AppStyle.tabletPortraitTextfieldHeader
-                  : AppStyle.mobileTextfieldHeader,
+                  ? AppTextStyle.tabletPortraitTextfieldHeader
+                  : AppTextStyle.mobileTextfieldHeader,
             ),
             const Text(
               ' *',
-              style: TextStyle(color: AppStyle.mandatoryField),
+              style: TextStyle(color: mandatoryField),
             ),
           ],
         ),
@@ -78,7 +78,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
           decoration: BoxDecoration(
             border: Border.all(
               width: 1.h,
-              color: AppStyle.appGreyShade,
+              color: appGreyShade,
             ),
             borderRadius: const BorderRadius.all(
               Radius.circular(6),
@@ -89,13 +89,13 @@ class _UsernameComponentState extends State<UsernameComponent> {
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_username,
               hintStyle: widget.isMobile && !isMobileSize
-                  ? AppStyle.tabletPortraitTextfieldHintText
-                  : AppStyle.mobileTextfieldHintText,
+                  ? AppTextStyle.tabletPortraitTextfieldHintText
+                  : AppTextStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
             style: TextStyle(
               fontSize: widget.isMobile && !isMobileSize ? 22 : 14,
-              color: AppStyle.appBlack,
+              color: appBlack,
             ),
             onChanged: (v) {
               widget.onChanged(v);
@@ -111,13 +111,13 @@ class _UsernameComponentState extends State<UsernameComponent> {
             height: widget.isMobile && !isMobileSize ? 82.h : 52.h,
             decoration: BoxDecoration(
               color: !widget.isDisabled
-                  ? AppStyle.appSolidPrimary
-                  : AppStyle.appGreyShade,
+                  ? appSolidPrimary
+                  : appGreyShade,
               border: Border.all(
                 width: 1.w,
                 color: !widget.isDisabled
-                    ? AppStyle.appBlueShade1
-                    : AppStyle.appGreyShade,
+                    ? appBlueShade1
+                    : appGreyShade,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -127,8 +127,8 @@ class _UsernameComponentState extends State<UsernameComponent> {
               child: Text(
                 AppLocalizations.of(context)!.next_button,
                 style: widget.isMobile && !isMobileSize
-                    ? AppStyle.tabletPortraitButtonText
-                    : AppStyle.mobileButtonText,
+                    ? AppTextStyle.tabletPortraitButtonText
+                    : AppTextStyle.mobileButtonText,
               ),
             ),
           ),
