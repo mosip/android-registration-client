@@ -14,6 +14,7 @@ import 'package:registration_client/platform_spi/machine_key_service.dart';
 import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
+import 'package:registration_client/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
@@ -525,21 +526,11 @@ class GlobalProvider with ChangeNotifier {
   }
 
   setDisabledLanguage(String langCode) async {
-    String code = getTwoLanguageCode(langCode);
+    String code = languageCodeToLocale[langCode]!;
     String filepath = "assets/l10n/app_$code.arb";
     bool isPresent = await isFilePresent(filepath);
     _disabledLanguageMap[langCode] = !isPresent;
     notifyListeners();
-  }
-
-  getTwoLanguageCode(String code) {
-    if(code == "kan") {
-      return "kn";
-    } else if(code == "spa") {
-      return "es";
-    }
-    
-    return code.substring(0, 2);
   }
 
   setLanguageConfigData() async {
@@ -616,12 +607,7 @@ class GlobalProvider with ChangeNotifier {
       return;
     }
     _selectedLanguage = code;
-    if (code == "kan") {
-      _appLocale = const Locale("kn");
-    } else {
-      String localeCode = code.substring(0, 2);
-      _appLocale = Locale(localeCode);
-    }
+    _appLocale = Locale(languageCodeToLocale[code]!);
     notifyListeners();
   }
 
