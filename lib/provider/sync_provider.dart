@@ -64,6 +64,85 @@ class SyncProvider with ChangeNotifier {
 
   autoSync(BuildContext context) async {
     await SyncResponseServiceImpl().getLastSyncTime();
+    // await SyncResponseServiceImpl()
+    //     .getGlobalParamsSync()
+    //     .then((Sync getAutoSync) async {
+    //   setCurrentProgressType(getAutoSync.syncType!);
+    //   if (getAutoSync.errorCode == "") {
+    //     _policyKeySyncSuccess = true;
+    //     _currentSyncProgress = getAutoSync.syncProgress!;
+    //     notifyListeners();
+    //   } else {
+    //     log(AppLocalizations.of(context)!.global_params_sync_failed);
+    //   }
+    //   notifyListeners();
+    //   await SyncResponseServiceImpl()
+    //       .getMasterDataSync()
+    //       .then((Sync getAutoSync) async {
+    //     setCurrentProgressType(getAutoSync.syncType!);
+    //     if (getAutoSync.errorCode == "") {
+    //       _globalParamsSyncSuccess = true;
+    //       _currentSyncProgress = getAutoSync.syncProgress!;
+    //       notifyListeners();
+    //     } else {
+    //       log(AppLocalizations.of(context)!.master_data_sync_failed);
+    //     }
+    //     notifyListeners();
+    //     await SyncResponseServiceImpl()
+    //         .getUserDetailsSync()
+    //         .then((Sync getAutoSync) async {
+    //       setCurrentProgressType(getAutoSync.syncType!);
+    //       if (getAutoSync.errorCode == "") {
+    //         _userDetailsSyncSuccess = true;
+    //         _currentSyncProgress = getAutoSync.syncProgress!;
+    //         notifyListeners();
+    //       } else {
+    //         log(AppLocalizations.of(context)!.user_details_sync_failed);
+    //       }
+    //       notifyListeners();
+    //       await SyncResponseServiceImpl()
+    //           .getIDSchemaSync()
+    //           .then((Sync getAutoSync) async {
+    //         setCurrentProgressType(getAutoSync.syncType!);
+    //         if (getAutoSync.errorCode == "") {
+    //           _idSchemaSyncSuccess = true;
+    //           _currentSyncProgress = getAutoSync.syncProgress!;
+    //           notifyListeners();
+    //         } else {
+    //           log(AppLocalizations.of(context)!.id_schema_sync_failed);
+    //         }
+    //         notifyListeners();
+    //         await SyncResponseServiceImpl()
+    //             .getPolicyKeySync()
+    //             .then((Sync getAutoSync) async {
+    //           setCurrentProgressType(getAutoSync.syncType!);
+    //           if (getAutoSync.errorCode == "") {
+    //             _masterDataSyncSuccess = true;
+    //             _currentSyncProgress = getAutoSync.syncProgress!;
+    //             notifyListeners();
+    //           } else {
+    //             log(AppLocalizations.of(context)!.policy_key_sync_failed);
+    //           }
+    //           notifyListeners();
+    //           await SyncResponseServiceImpl()
+    //               .getCaCertsSync()
+    //               .then((Sync getAutoSync) {
+    //             setCurrentProgressType(getAutoSync.syncType!);
+    //             if (getAutoSync.errorCode == "") {
+    //               _cacertsSyncSuccess = true;
+    //               _currentSyncProgress = getAutoSync.syncProgress!;
+    //               notifyListeners();
+    //             } else {
+    //               log(AppLocalizations.of(context)!.ca_certs_sync_failed);
+    //             }
+    //             notifyListeners();
+    //           });
+    //         });
+    //       });
+    //     });
+    //   });
+    // });
+
     await SyncResponseServiceImpl()
         .getGlobalParamsSync()
         .then((Sync getAutoSync) async {
@@ -76,71 +155,75 @@ class SyncProvider with ChangeNotifier {
         log(AppLocalizations.of(context)!.global_params_sync_failed);
       }
       notifyListeners();
-      await SyncResponseServiceImpl()
-          .getMasterDataSync()
-          .then((Sync getAutoSync) async {
-        setCurrentProgressType(getAutoSync.syncType!);
-        if (getAutoSync.errorCode == "") {
-          _globalParamsSyncSuccess = true;
-          _currentSyncProgress = getAutoSync.syncProgress!;
-          notifyListeners();
-        } else {
-          log(AppLocalizations.of(context)!.master_data_sync_failed);
-        }
+    });
+
+    await SyncResponseServiceImpl()
+        .getMasterDataSync()
+        .then((Sync getAutoSync) async {
+      setCurrentProgressType(getAutoSync.syncType!);
+      if (getAutoSync.errorCode == "") {
+        _globalParamsSyncSuccess = true;
+        _currentSyncProgress = getAutoSync.syncProgress!;
         notifyListeners();
-        await SyncResponseServiceImpl()
-            .getUserDetailsSync()
-            .then((Sync getAutoSync) async {
-          setCurrentProgressType(getAutoSync.syncType!);
-          if (getAutoSync.errorCode == "") {
-            _userDetailsSyncSuccess = true;
-            _currentSyncProgress = getAutoSync.syncProgress!;
-            notifyListeners();
-          } else {
-            log(AppLocalizations.of(context)!.user_details_sync_failed);
-          }
-          notifyListeners();
-          await SyncResponseServiceImpl()
-              .getIDSchemaSync()
-              .then((Sync getAutoSync) async {
-            setCurrentProgressType(getAutoSync.syncType!);
-            if (getAutoSync.errorCode == "") {
-              _idSchemaSyncSuccess = true;
-              _currentSyncProgress = getAutoSync.syncProgress!;
-              notifyListeners();
-            } else {
-              log(AppLocalizations.of(context)!.id_schema_sync_failed);
-            }
-            notifyListeners();
-            await SyncResponseServiceImpl()
-                .getPolicyKeySync()
-                .then((Sync getAutoSync) async {
-              setCurrentProgressType(getAutoSync.syncType!);
-              if (getAutoSync.errorCode == "") {
-                _masterDataSyncSuccess = true;
-                _currentSyncProgress = getAutoSync.syncProgress!;
-                notifyListeners();
-              } else {
-                log(AppLocalizations.of(context)!.policy_key_sync_failed);
-              }
-              notifyListeners();
-              await SyncResponseServiceImpl()
-                  .getCaCertsSync()
-                  .then((Sync getAutoSync) {
-                setCurrentProgressType(getAutoSync.syncType!);
-                if (getAutoSync.errorCode == "") {
-                  _cacertsSyncSuccess = true;
-                  _currentSyncProgress = getAutoSync.syncProgress!;
-                  notifyListeners();
-                } else {
-                  log(AppLocalizations.of(context)!.ca_certs_sync_failed);
-                }
-                notifyListeners();
-              });
-            });
-          });
-        });
-      });
+      } else {
+        log(AppLocalizations.of(context)!.master_data_sync_failed);
+      }
+      log("sync function executed!");
+      notifyListeners();
+    });
+
+    await SyncResponseServiceImpl()
+        .getUserDetailsSync()
+        .then((Sync getAutoSync) async {
+      setCurrentProgressType(getAutoSync.syncType!);
+      if (getAutoSync.errorCode == "") {
+        _userDetailsSyncSuccess = true;
+        _currentSyncProgress = getAutoSync.syncProgress!;
+        notifyListeners();
+      } else {
+        log(AppLocalizations.of(context)!.user_details_sync_failed);
+      }
+      notifyListeners();
+    });
+
+    await SyncResponseServiceImpl()
+        .getIDSchemaSync()
+        .then((Sync getAutoSync) async {
+      setCurrentProgressType(getAutoSync.syncType!);
+      if (getAutoSync.errorCode == "") {
+        _idSchemaSyncSuccess = true;
+        _currentSyncProgress = getAutoSync.syncProgress!;
+        notifyListeners();
+      } else {
+        log(AppLocalizations.of(context)!.id_schema_sync_failed);
+      }
+      notifyListeners();
+    });
+
+    await SyncResponseServiceImpl()
+        .getPolicyKeySync()
+        .then((Sync getAutoSync) async {
+      setCurrentProgressType(getAutoSync.syncType!);
+      if (getAutoSync.errorCode == "") {
+        _masterDataSyncSuccess = true;
+        _currentSyncProgress = getAutoSync.syncProgress!;
+        notifyListeners();
+      } else {
+        log(AppLocalizations.of(context)!.policy_key_sync_failed);
+      }
+      notifyListeners();
+    });
+
+    await SyncResponseServiceImpl().getCaCertsSync().then((Sync getAutoSync) {
+      setCurrentProgressType(getAutoSync.syncType!);
+      if (getAutoSync.errorCode == "") {
+        _cacertsSyncSuccess = true;
+        _currentSyncProgress = getAutoSync.syncProgress!;
+        notifyListeners();
+      } else {
+        log(AppLocalizations.of(context)!.ca_certs_sync_failed);
+      }
+      notifyListeners();
     });
   }
 

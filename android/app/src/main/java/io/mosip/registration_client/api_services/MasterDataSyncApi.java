@@ -103,6 +103,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     AuditManagerService auditManagerService;
     Context context;
     private String regCenterId;
+    Boolean isMasterSyncFailed = false;
 
     @Inject
     public MasterDataSyncApi(ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository, SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository, IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
@@ -343,12 +344,19 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     private void syncMasterData(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
 
+        if(retryNo > master_data_recursive_sync_max_retry || isMasterSyncFailed) {
+            Log.e(getClass().getSimpleName(), "result: " + retryNo + " " + isMasterSyncFailed);
+            result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
+            return;
+        }
+
         Map<String, String> queryParams = new HashMap<>();
 
         try {
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
             Log.e(TAG, "MasterData : not able to get client key index", e);
+            isMasterSyncFailed = true;
             result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
             return;
         }
@@ -380,20 +388,27 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
                                 //rerunning master data to sync completed master data
                                 syncMasterData(result, retryNo + 1);
+                                Log.e(getClass().getSimpleName(), "recursive call passed! " + retryNo);
                             } else {
+                                isMasterSyncFailed = true;
+                                Log.e(getClass().getSimpleName(), "recursive call failed to sync!");
                                 result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                                return;
                             }
                         } else {
+                            isMasterSyncFailed = false;
+                            Log.e(getClass().getSimpleName(), "sync successful!");
                             result.success(syncResult("MasterDataSync", 2, ""));
-                            return;
                         }
-                    } else
+                    } else {
+                        isMasterSyncFailed = true;
+                        Log.e(getClass().getSimpleName(), "Some error occurred!");
+                        result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
+                    }
+                } else {
+                    isMasterSyncFailed = true;
+                    Log.e(getClass().getSimpleName(), "response failed!");
                     result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                    return;
-                } else
-                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                return;
+                }
             }
 
             @Override
