@@ -47,8 +47,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
                   : Colors.transparent,
           border: Border.all(
             width: 1,
-            color: widget.isDisabled ? appBlackShade3 :
-            widget.isSelected
+            color: widget.isSelected
                 ? appButtonBorderText
                 : languageSelectedColor,
           ),
@@ -60,8 +59,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
           widget.title,
           style: TextStyle(
             fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
-            color: widget.isDisabled ? appBlackShade3 :
-            widget.isFreezed
+            color: widget.isFreezed
                 ? appBlack
                 : widget.isSelected
                     ? appWhite
