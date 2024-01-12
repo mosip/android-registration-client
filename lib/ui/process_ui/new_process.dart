@@ -980,7 +980,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         ),
         style: TextStyle(
           fontSize: isPortrait && !isMobileSize ? 22 : 14,
-          color: AppStyle.appBlack,
+          color: appBlack,
         ),
         onChanged: (v) {
           setState(() {
@@ -1018,7 +1018,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         ),
         style: TextStyle(
           fontSize: isPortrait && !isMobileSize ? 22 : 14,
-          color: AppStyle.appBlack,
+          color: appBlack,
         ),
         onChanged: (v) {
           setState(() {
