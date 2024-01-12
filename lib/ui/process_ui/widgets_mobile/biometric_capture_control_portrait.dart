@@ -14,6 +14,7 @@ import 'package:registration_client/ui/process_ui/widgets_mobile/biometric_captu
 
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BiometricCaptureControlPortrait extends StatefulWidget {
   const BiometricCaptureControlPortrait({super.key, required this.field});
@@ -94,7 +95,7 @@ class _BiometricCaptureControlPortraitState
                       height: 10.h,
                     ),
                     Text(
-                      "${biometricAttributeData.title} Scan",
+                      "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: semiBold,

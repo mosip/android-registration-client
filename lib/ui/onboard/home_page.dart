@@ -261,8 +261,8 @@ class _HomePageState extends State<HomePage> {
                         controller: ScrollController(),
                         child: Column(
                           children: [
-                            const TabletHeader(),
-                            const TabletNavbar(),
+                            isMobileSize ? const SizedBox() : const TabletHeader(),
+                            isMobileSize ? const SizedBox() : const TabletNavbar(),
                             AnnotatedRegion<SystemUiOverlayStyle>(
                               value: const SystemUiOverlayStyle(
                                 statusBarColor: Colors.transparent,

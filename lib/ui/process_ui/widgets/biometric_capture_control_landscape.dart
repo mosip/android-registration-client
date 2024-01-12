@@ -16,6 +16,7 @@ import 'package:registration_client/ui/process_ui/widgets/biometric_capture_scan
 import 'package:registration_client/ui/process_ui/widgets/biometric_scan_middle_block.dart';
 
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BiometricCaptureControlLandscape extends StatefulWidget {
   const BiometricCaptureControlLandscape({super.key, required this.field});
@@ -342,7 +343,7 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Iris")
                   BiometricCaptureScanBlock(
-                    title: "IrisScan",
+                    title: "${AppLocalizations.of(context)!.iris} ${AppLocalizations.of(context)!.scan}",
                     middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -357,7 +358,7 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Right Hand")
                   BiometricCaptureScanBlock(
-                      title: "RightHandScan",
+                      title: "${AppLocalizations.of(context)!.right_hand} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -372,7 +373,7 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Left Hand")
                   BiometricCaptureScanBlock(
-                      title: "LeftHandScan",
+                      title: "${AppLocalizations.of(context)!.left_hand} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -387,7 +388,7 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Thumbs")
                   BiometricCaptureScanBlock(
-                      title: "ThumbsScan",
+                      title: "${AppLocalizations.of(context)!.thumbs} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -402,7 +403,7 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Face")
                   BiometricCaptureScanBlock(
-                      title: "FaceScan",
+                      title: "${AppLocalizations.of(context)!.face} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -417,7 +418,7 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Exception")
                   BiometricCaptureScanBlock(
-                      title: "ExceptionScan",
+                      title: "${AppLocalizations.of(context)!.exception} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -442,7 +443,7 @@ class _BiometricCaptureControlLandscapeState
                             Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text("LEFT",
+                                Text(AppLocalizations.of(context)!.left,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
@@ -579,7 +580,7 @@ class _BiometricCaptureControlLandscapeState
                             Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text("RIGHT",
+                                Text(AppLocalizations.of(context)!.right,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
@@ -732,7 +733,7 @@ class _BiometricCaptureControlLandscapeState
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text("Right Hand",
+                              Text(AppLocalizations.of(context)!.right_hand,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -1252,7 +1253,7 @@ class _BiometricCaptureControlLandscapeState
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text("Left Hand",
+                              Text(AppLocalizations.of(context)!.left_hand,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -1769,7 +1770,7 @@ class _BiometricCaptureControlLandscapeState
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text("Thumbs",
+                              Text(AppLocalizations.of(context)!.thumbs,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -2046,7 +2047,7 @@ class _BiometricCaptureControlLandscapeState
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text("Face",
+                              Text(AppLocalizations.of(context)!.face,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
@@ -2083,7 +2084,7 @@ class _BiometricCaptureControlLandscapeState
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text("Exception",
+                              Text(AppLocalizations.of(context)!.exception,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge

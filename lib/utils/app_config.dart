@@ -72,3 +72,4 @@ List<String> lang = [
 // bool get isDesktop => ScreenUtil().screenWidth > 1160;
 
 bool get isDesktop => ScreenUtil().screenWidth > 1160;
+bool get isMobileSize => ScreenUtil().screenWidth < 750;
