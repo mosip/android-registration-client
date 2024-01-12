@@ -73,12 +73,14 @@ class MachineKeys extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.device_credentials,
-                    style: TextStyle(
-                      color: appBlack,
-                      fontSize: isMobileSize ? 18 : 26,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.device_credentials,
+                      style: TextStyle(
+                        color: appBlack,
+                        fontSize: isMobileSize ? 18 : 26,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   IconButton(
