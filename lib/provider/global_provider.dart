@@ -14,6 +14,7 @@ import 'package:registration_client/platform_spi/machine_key_service.dart';
 import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
+import 'package:registration_client/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
@@ -439,7 +440,7 @@ class GlobalProvider with ChangeNotifier {
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
   List<String?> _notificationLanguages = [];
-
+  Map<String, bool> _disabledLanguageMap = {};
 
   List<LanguageData?> get languageDataList => _languageDataList;
   Map<String, String> get codeToLanguageMapper => _codeToLanguageMapper;
@@ -451,11 +452,12 @@ class GlobalProvider with ChangeNotifier {
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
   List<String?> get notificationLanguages => _notificationLanguages;
+  Map<String, bool> get disabledLanguageMap => _disabledLanguageMap;
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
-    createLanguageCodeMapper();
+    await createLanguageCodeMapper();
     notifyListeners();
   }
 
@@ -509,6 +511,28 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  setDisabledLanguages(Map<String, bool> value) {
+    _disabledLanguageMap = value;
+    notifyListeners();
+  }
+
+  Future<bool> isFilePresent(String filePath) async {
+    try {
+      await rootBundle.load(filePath);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  setDisabledLanguage(String langCode) async {
+    String code = languageCodeToLocale[langCode]!;
+    String filepath = "assets/l10n/app_$code.arb";
+    bool isPresent = await isFilePresent(filepath);
+    _disabledLanguageMap[langCode] = !isPresent;
+    notifyListeners();
+  }
+
   setLanguageConfigData() async {
     _mandatoryLanguages = await processSpecService.getMandatoryLanguageCodes();
     _optionalLanguages = await processSpecService.getOptionalLanguageCodes();
@@ -538,11 +562,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  createLanguageCodeMapper() {
+  createLanguageCodeMapper() async {
     if (_languageDataList.isEmpty) {
       _languages = ["eng"];
       _codeToLanguageMapper["eng"] = "English";
       _languageToCodeMapper["English"] = "eng";
+      _disabledLanguageMap["eng"] = false;
       return;
     }
     List<String> languageList = [];
@@ -550,6 +575,7 @@ class GlobalProvider with ChangeNotifier {
       languageList.add(element!.code);
       _codeToLanguageMapper[element.code] = element.name;
       _languageToCodeMapper[element.name] = element.code;
+      await setDisabledLanguage(element.code);
     }
     _languages = languageList;
   }
@@ -581,12 +607,7 @@ class GlobalProvider with ChangeNotifier {
       return;
     }
     _selectedLanguage = code;
-    if (code == "kan") {
-      _appLocale = const Locale("kn");
-    } else {
-      String localeCode = code.substring(0, 2);
-      _appLocale = Locale(localeCode);
-    }
+    _appLocale = Locale(languageCodeToLocale[code]!);
     notifyListeners();
   }
 
