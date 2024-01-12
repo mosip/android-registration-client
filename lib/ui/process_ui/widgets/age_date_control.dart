@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -341,7 +340,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
 //                           counterText: "",
 //                           hintText: 'YYYY',
 // =======
-                            color: AppStyle.appBlackShade3,
+                            color: appBlackShade3,
                             fontSize: 14,
                           ),
                           hintText: widget.field.format ?? "yyyy/MM/dd",
@@ -384,7 +383,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           hintStyle: const TextStyle(
-                              color: AppStyle.appBlackShade3, fontSize: 14),
+                              color: appBlackShade3, fontSize: 14),
                           hintText: 'Age',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),

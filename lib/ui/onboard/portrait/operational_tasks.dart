@@ -5,7 +5,6 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 class OperationalTasks extends StatefulWidget {
   const OperationalTasks({
@@ -35,7 +34,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
   _getMemoryProvider() {
     return Container(
       // height: 186.h,
-      color: AppStyle.appWhite,
+      color: appWhite,
       width: ScreenUtil().screenWidth,
       padding: EdgeInsets.only(
         left: 20.w,
@@ -51,15 +50,15 @@ class _OperationalTasksState extends State<OperationalTasks> {
         ),
         decoration: BoxDecoration(
           border: Border.all(
-            color: AppStyle.appWhite,
+            color: appWhite,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(6),
           ),
-          color: AppStyle.memoryCardColor,
+          color: memoryCardColor,
           boxShadow: const [
             BoxShadow(
-              color: AppStyle.greyBorderShade,
+              color: greyBorderShade,
               offset: Offset(-3.0, -3.0),
               blurRadius: 6.0,
               spreadRadius: 0.0,
@@ -73,7 +72,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
               height: 83.h,
               width: 83.h,
               decoration: const BoxDecoration(
-                color: AppStyle.appWhite,
+                color: appWhite,
                 shape: BoxShape.circle,
               ),
               child: Transform.scale(
@@ -95,7 +94,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                     style: TextStyle(
                       fontSize: isMobileSize ? 16 : 24,
                       fontWeight: semiBold,
-                      color: AppStyle.appBlackShade1,
+                      color: appBlackShade1,
                     ),
                   ),
                   SizedBox(
@@ -104,8 +103,8 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   LinearPercentIndicator(
                     lineHeight: 10.h,
                     percent: 0.72,
-                    backgroundColor: AppStyle.appWhite,
-                    progressColor: AppStyle.appSolidPrimary,
+                    backgroundColor: appWhite,
+                    progressColor: appSolidPrimary,
                     barRadius: const Radius.circular(10),
                   ),
                   SizedBox(

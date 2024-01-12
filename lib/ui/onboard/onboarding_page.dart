@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -14,7 +13,7 @@ class OnboardingPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _getBottomBar(),
-        backgroundColor: AppStyle.appSolidPrimary,
+        backgroundColor: appSolidPrimary,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -29,7 +28,7 @@ class OnboardingPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(
-                      color: AppStyle.appWhite,
+                      color: appWhite,
                     ),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(5),
@@ -41,7 +40,7 @@ class OnboardingPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: isMobileSize ? 16 : 22,
                         fontWeight: FontWeight.bold,
-                        color: AppStyle.appWhite,
+                        color: appWhite,
                       ),
                     ),
                   ),
@@ -62,7 +61,7 @@ class OnboardingPage extends StatelessWidget {
                           "${AppLocalizations.of(context)!.hello}, ",
                           style: TextStyle(
                             fontSize: isMobileSize ? 28 : 36,
-                            color: AppStyle.appWhite,
+                            color: appWhite,
                           ),
                         ),
                         Text(
@@ -70,7 +69,7 @@ class OnboardingPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: isMobileSize ? 28 : 36,
                             fontWeight: FontWeight.bold,
-                            color: AppStyle.appWhite,
+                            color: appWhite,
                           ),
                         )
                       ],
@@ -82,7 +81,7 @@ class OnboardingPage extends StatelessWidget {
                       AppLocalizations.of(context)!.onboard_process_help,
                       style: TextStyle(
                         fontSize: isMobileSize ? 16 : 22,
-                        color: AppStyle.appWhite.withOpacity(0.6),
+                        color: appWhite.withOpacity(0.6),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -92,8 +91,8 @@ class OnboardingPage extends StatelessWidget {
                     _getButton(
                       title: AppLocalizations.of(context)!.get_onboard,
                       onTap: () {},
-                      color: AppStyle.appWhite,
-                      fontColor: AppStyle.appSolidPrimary,
+                      color: appWhite,
+                      fontColor: appSolidPrimary,
                     ),
                     SizedBox(
                       height: 40.h,
@@ -104,7 +103,7 @@ class OnboardingPage extends StatelessWidget {
                         context.read<GlobalProvider>().setCurrentIndex(1);
                       },
                       color: Colors.transparent,
-                      fontColor: AppStyle.appWhite,
+                      fontColor: appWhite,
                     ),
                     SizedBox(
                       height: 40.h,
@@ -125,7 +124,7 @@ class OnboardingPage extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         vertical: 15.h,
       ),
-      color: AppStyle.appWhite,
+      color: appWhite,
       child: Center(
         child: Image.asset(
           appIcon,
@@ -149,7 +148,7 @@ class OnboardingPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           border: Border.all(
-            color: AppStyle.appWhite,
+            color: appWhite,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(5),
