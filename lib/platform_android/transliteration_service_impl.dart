@@ -16,7 +16,7 @@ class TransliterationServiceImpl implements TransliterationService {
 
   @override
   Future<String> transliterate(TransliterationOptions options) async {
-    late String result;
+    String result = "";
     try {
       result = await TransliterationApi().transliterate(options);
     } on PlatformException {
