@@ -4,7 +4,6 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
 import 'package:registration_client/ui/onboard/widgets/onboard_landing_page_navbar_icon.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MobileHomePage extends StatefulWidget {
@@ -38,7 +37,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
           margin: EdgeInsets.only(
             top: 14.h,
           ),
-          color: AppStyle.appBlueShade,
+          color: appBlueShade,
           child: TasksPage(
             operationalTasks: widget.operationalTasks,
             getProcessUI: (BuildContext context, Process process) {
@@ -61,10 +60,10 @@ class _MobileHomePageState extends State<MobileHomePage> {
           horizontal: 20.w
         ),
         decoration: const BoxDecoration(
-          color: AppStyle.appWhite,
+          color: appWhite,
           boxShadow: [
             BoxShadow(
-              color: AppStyle.greyBorderShade,
+              color: greyBorderShade,
               offset: Offset(0.0, -3.0),
               blurRadius: 6.0,
               spreadRadius: 0.0,

@@ -32,13 +32,13 @@ class PasswordComponent extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.password,
               style: isMobile
-              ? isMobileSize ? AppStyle.mobileTextfieldHeader
-                  : AppStyle.tabletPortraitTextfieldHeader
-                  : AppStyle.mobileTextfieldHeader,
+              ? isMobileSize ? AppTextStyle.mobileTextfieldHeader
+                  : AppTextStyle.tabletPortraitTextfieldHeader
+                  : AppTextStyle.mobileTextfieldHeader,
             ),
             const Text(
               ' *',
-              style: TextStyle(color: AppStyle.mandatoryField),
+              style: TextStyle(color: mandatoryField),
             ),
           ],
         ),
@@ -52,7 +52,7 @@ class PasswordComponent extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(
               width: 1.h,
-              color: AppStyle.appGreyShade,
+              color: appGreyShade,
             ),
             borderRadius: const BorderRadius.all(
               Radius.circular(6),
@@ -66,13 +66,13 @@ class PasswordComponent extends StatelessWidget {
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_password,
               hintStyle: isMobile
-              && !isMobileSize ? AppStyle.tabletPortraitTextfieldHintText
-                  : AppStyle.mobileTextfieldHintText,
+              && !isMobileSize ? AppTextStyle.tabletPortraitTextfieldHintText
+                  : AppTextStyle.mobileTextfieldHintText,
               border: InputBorder.none,
             ),
             style: TextStyle(
               fontSize: isMobile && !isMobileSize ? 22 : 14,
-              color: AppStyle.appBlack,
+              color: appBlack,
             ),
           ),
         ),
@@ -86,8 +86,8 @@ class PasswordComponent extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context)!.forgot_password,
               style: isMobile
-              && !isMobileSize ? AppStyle.tabletPortraitForgotPasswordText
-                  : AppStyle.mobileForgotPasswordText,
+              && !isMobileSize ? AppTextStyle.tabletPortraitForgotPasswordText
+                  : AppTextStyle.mobileForgotPasswordText,
             ),
           ),
         ),
@@ -100,13 +100,13 @@ class PasswordComponent extends StatelessWidget {
             height: isMobile && !isMobileSize ? 82.h : 52.h,
             decoration: BoxDecoration(
               color: !isDisabled
-                  ? AppStyle.appSolidPrimary
-                  : AppStyle.buttonDisabled,
+                  ? appSolidPrimary
+                  : buttonDisabled,
               border: Border.all(
                 width: 1.w,
                 color: !isDisabled
-                    ? AppStyle.appBlueShade1
-                    : AppStyle.buttonDisabled,
+                    ? appBlueShade1
+                    : buttonDisabled,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -115,13 +115,13 @@ class PasswordComponent extends StatelessWidget {
             child: Center(
               child: isLoggingIn
                   ? const CircularProgressIndicator(
-                      color: AppStyle.appWhite,
+                      color: appWhite,
                     )
                   : Text(
                       AppLocalizations.of(context)!.login_button,
                       style: isMobile
-                      && !isMobileSize ? AppStyle.tabletPortraitButtonText
-                          : AppStyle.mobileButtonText,
+                      && !isMobileSize ? AppTextStyle.tabletPortraitButtonText
+                          : AppTextStyle.mobileButtonText,
                     ),
             ),
           ),
@@ -135,10 +135,10 @@ class PasswordComponent extends StatelessWidget {
             height: isMobile && !isMobileSize ? 82.h : 52.h,
             // width: 318.w,
             decoration: BoxDecoration(
-              color: AppStyle.appWhite,
+              color: appWhite,
               border: Border.all(
                 width: 1.w,
-                color: AppStyle.appBackButtonBorder,
+                color: appBackButtonBorder,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -148,8 +148,8 @@ class PasswordComponent extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context)!.back_button,
                 style: isMobile
-                && !isMobileSize ? AppStyle.tabletPortraitBackButtonText
-                    : AppStyle.mobileBackButtonText,
+                && !isMobileSize ? AppTextStyle.tabletPortraitBackButtonText
+                    : AppTextStyle.mobileBackButtonText,
               ),
             ),
           ),

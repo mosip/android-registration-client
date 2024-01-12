@@ -8,7 +8,6 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 import 'custom_cupertino_picker.dart';
 
@@ -199,7 +198,7 @@ class _DateControlState extends State<DateControl> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                     borderSide: const BorderSide(
-                        color: AppStyle.appGreyShade, width: 1),
+                        color: appGreyShade, width: 1),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 14,
@@ -207,7 +206,7 @@ class _DateControlState extends State<DateControl> {
                   ),
                   hintText: "dd/mm/yyyy",
                   hintStyle: const TextStyle(
-                    color: AppStyle.appBlackShade3,
+                    color: appBlackShade3,
                     fontSize: 14,
                   ),
                 ),

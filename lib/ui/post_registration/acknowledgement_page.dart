@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 import 'package:printing/printing.dart';
@@ -66,7 +67,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
-                  color: AppStyle.appBlackShade1,
+                  color: appBlackShade1,
                 ),
               ),
               InkWell(
@@ -78,10 +79,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                   height: 42.h,
                   width: 170.w,
                   decoration: BoxDecoration(
-                    color: AppStyle.appSolidPrimary,
+                    color: appSolidPrimary,
                     border: Border.all(
                       width: 1.w,
-                      color: AppStyle.appBlueShade1,
+                      color: appBlueShade1,
                     ),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(5),
@@ -91,8 +92,8 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                     child: Text(
                       AppLocalizations.of(context)!.print_text,
                       style: isMobile
-                          ? AppStyle.tabletPortraitButtonText
-                          : AppStyle.mobileButtonText,
+                          ? AppTextStyle.tabletPortraitButtonText
+                          : AppTextStyle.mobileButtonText,
                     ),
                   ),
                 ),

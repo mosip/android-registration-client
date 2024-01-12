@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
-import 'package:registration_client/utils/app_style.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -126,7 +126,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             ),
                             hintText: "Select Option",
                             hintStyle: const TextStyle(
-                              color: AppStyle.appBlackShade3,
+                              color: appBlackShade3,
                             ),
                           ),
                           items: snapshot.data!
