@@ -11,12 +11,14 @@ class LanguageComponent extends StatefulWidget {
     required this.onTap,
     required this.isMobile,
     required this.isFreezed,
+    required this.isDisabled,
   });
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
   final bool isMobile;
   final bool isFreezed;
+  final bool isDisabled;
 
   @override
   State<LanguageComponent> createState() => _LanguageComponentState();
@@ -27,7 +29,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        if(!widget.isFreezed){
+        if(!widget.isFreezed && !widget.isDisabled){
           widget.onTap();
         }
       },
@@ -46,7 +48,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
                   : Colors.transparent,
           border: Border.all(
             width: 1,
-            color: widget.isSelected
+            color: widget.isDisabled ? AppStyle.appBlackShade3 :
+            widget.isSelected
                 ? AppStyle.appButtonBorderText
                 : AppStyle.languageSelectedColor,
           ),
@@ -58,7 +61,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
           widget.title,
           style: TextStyle(
             fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
-            color: widget.isFreezed
+            color: widget.isDisabled ? AppStyle.appBlackShade3 :
+            widget.isFreezed
                 ? AppStyle.appBlack
                 : widget.isSelected
                     ? AppStyle.appWhite
