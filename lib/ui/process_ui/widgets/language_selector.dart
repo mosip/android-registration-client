@@ -81,7 +81,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   @override
   void initState() {
     String lang = context.read<GlobalProvider>().mandatoryLanguages.first!;
-    mandatoryLanguage = context.read<GlobalProvider>().codeToLanguageMapper[lang];
+    mandatoryLanguage =
+        context.read<GlobalProvider>().codeToLanguageMapper[lang];
     _languageSelectorPageLoadedAudit();
     super.initState();
   }
@@ -95,8 +96,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   _getNotificationLabel() {
     String notificationLanguage = "";
     context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code = context.read<GlobalProvider>().languageToCodeMapper[element]!;
-      notificationLanguage += " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
+      String code =
+          context.read<GlobalProvider>().languageToCodeMapper[element]!;
+      notificationLanguage +=
+          " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
     });
     return notificationLanguage.substring(3);
   }
@@ -110,9 +113,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
       title: Text(
         AppLocalizations.of(context)!.select_language,
         style: TextStyle(
-            fontSize: isMobile && !isMobileSize ? 24 : 18, fontWeight: FontWeight.bold),
+            fontSize: isMobile && !isMobileSize ? 24 : 18,
+            fontWeight: FontWeight.bold),
       ),
-      contentPadding: EdgeInsets.symmetric(horizontal: isMobileSize ? 5.w : 20.w, vertical: 20.h),
+      contentPadding: EdgeInsets.symmetric(
+          horizontal: isMobileSize ? 5.w : 20.w, vertical: 20.h),
       content: SizedBox(
         width: isMobile && !isMobileSize ? 644.w : 824.32.w,
         child: SingleChildScrollView(
@@ -134,10 +139,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   color: Colors.green,
                 ),
               ),
-               ListTile(
+              ListTile(
                 minLeadingWidth: 0,
                 title: Text(
-                  AppLocalizations.of(context)!.language_mandatory(mandatoryLanguage!),
+                  AppLocalizations.of(context)!
+                      .language_mandatory(mandatoryLanguage!),
                   style: TextStyle(
                     fontSize: isMobileSize ? 14 : 22,
                   ),
@@ -157,11 +163,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 child: Wrap(
                     spacing: 8.w,
                     runSpacing: 8.h,
-                    children: context.watch<GlobalProvider>().languages.map((e) {
+                    children:
+                        context.watch<GlobalProvider>().languages.map((e) {
                       return LanguageComponent(
                         title: context
                             .watch<GlobalProvider>()
                             .codeToLanguageMapper[e]!,
+                        isDisabled: context
+                            .read<GlobalProvider>()
+                            .disabledLanguageMap[e] ?? false,
                         isSelected: context
                             .read<GlobalProvider>()
                             .chosenLang
@@ -173,8 +183,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                               context
                                   .read<GlobalProvider>()
                                   .codeToLanguageMapper[e]!,
-                              !context.read<GlobalProvider>().chosenLang.contains(
-                                  context
+                              !context
+                                  .read<GlobalProvider>()
+                                  .chosenLang
+                                  .contains(context
                                       .read<GlobalProvider>()
                                       .codeToLanguageMapper[e]!));
                         },
@@ -219,6 +231,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                       .map((e) {
                     return LanguageComponent(
                       title: e!,
+                      isDisabled: false,
                       isSelected: context
                               .watch<GlobalProvider>()
                               .fieldInputValue["preferredLang"] ==
@@ -265,12 +278,16 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         ),
         Row(
           children: [
-            isMobileSize ? const SizedBox() : const Expanded(
-              child: SizedBox(),
-            ),
-            isMobileSize ? const SizedBox() : const Expanded(
-              child: SizedBox(),
-            ),
+            isMobileSize
+                ? const SizedBox()
+                : const Expanded(
+                    child: SizedBox(),
+                  ),
+            isMobileSize
+                ? const SizedBox()
+                : const Expanded(
+                    child: SizedBox(),
+                  ),
             Expanded(
               child: OutlinedButton(
                 onPressed: () {

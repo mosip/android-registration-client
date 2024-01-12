@@ -115,10 +115,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _saveVersionToGlobalParam() async {
     String version = context.read<GlobalProvider>().versionNoApp;
-    if (version.isNotEmpty) {
-      await context.read<GlobalProvider>().saveVersionToGlobalParam(
-          "mosip.registration.server_version", version);
-    }
+    await context
+        .read<GlobalProvider>()
+        .saveVersionToGlobalParam("mosip.registration.server_version", version);
   }
 
   _saveAllHeaders() async {

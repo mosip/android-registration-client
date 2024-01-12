@@ -10,12 +10,14 @@ class LanguageComponent extends StatefulWidget {
     required this.onTap,
     required this.isMobile,
     required this.isFreezed,
+    required this.isDisabled,
   });
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
   final bool isMobile;
   final bool isFreezed;
+  final bool isDisabled;
 
   @override
   State<LanguageComponent> createState() => _LanguageComponentState();
@@ -26,7 +28,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        if(!widget.isFreezed){
+        if(!widget.isFreezed && !widget.isDisabled){
           widget.onTap();
         }
       },

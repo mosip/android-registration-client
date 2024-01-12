@@ -859,7 +859,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           height: 30.h,
         ),
         Container(
-          width: 376.w,
+          width: isPortrait && !isMobileSize ? 566.w : 376.w,
           padding: EdgeInsets.only(
             top: 24.h,
             bottom: 28.h,
@@ -881,7 +881,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               Text(
                 AppLocalizations.of(context)!.authenticate_using_password,
                 style: TextStyle(
-                    fontSize: 18,
+                    fontSize: isPortrait && !isMobileSize ? 24 : 18,
                     fontWeight: semiBold,
                     color: appBlack),
               ),
@@ -956,10 +956,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   _getUsernameTextField() {
     return Container(
-      height: 52.h,
+      height: isPortrait && !isMobileSize ? 82.h : 52.h,
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.symmetric(
-        vertical: 12.h,
         horizontal: 12.w,
       ),
       decoration: BoxDecoration(
@@ -979,6 +978,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
         ),
+        style: TextStyle(
+          fontSize: isPortrait && !isMobileSize ? 22 : 14,
+          color: AppStyle.appBlack,
+        ),
         onChanged: (v) {
           setState(() {
             username = v;
@@ -990,10 +993,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   _getPasswordTextField() {
     return Container(
-      height: 52.h,
+      height: isPortrait && !isMobileSize ? 82.h : 52.h,
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.symmetric(
-        vertical: 12.h,
         horizontal: 12.w,
       ),
       decoration: BoxDecoration(
@@ -1013,6 +1015,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               ? AppTextStyle.tabletPortraitTextfieldHintText
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
+        ),
+        style: TextStyle(
+          fontSize: isPortrait && !isMobileSize ? 22 : 14,
+          color: AppStyle.appBlack,
         ),
         onChanged: (v) {
           setState(() {

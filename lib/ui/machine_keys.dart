@@ -54,7 +54,7 @@ class MachineKeys extends StatelessWidget {
       width: isMobile
           ? isMobileSize
               ? 358.w
-              : 330.w
+              : 566.w
           : 670.w,
       padding: EdgeInsets.only(left: 20.w, right: 19.w),
       decoration: const BoxDecoration(
@@ -95,27 +95,9 @@ class MachineKeys extends StatelessWidget {
               color: dividerColor,
               height: 1.h,
             ),
-            // Container(
-            //   padding: EdgeInsets.symmetric(
-            //     vertical: 20.h,
-            //   ),
-            //   child: SelectableText(
-            //     machineDetails,
-            //     textDirection: TextDirection.ltr,
-            //     style: const TextStyle(
-            //       fontWeight: FontWeight.w500,
-            //       fontSize: 16,
-            //     ),
-            //   ),
-            // ),
-            // Divider(
-            //   color: AppStyle.dividerColor,
-            //   height: 1.h,
-            // ),
             SizedBox(
               height: 20.h,
             ),
-            // isMobile ? _mobileView() : _tabletView(),
             _copyButton(),
             SizedBox(
               height: 20.h,
@@ -154,45 +136,6 @@ class MachineKeys extends StatelessWidget {
     );
   }
 
-  // Widget _buttonRow() {
-  //   return Row(
-  //     children: [
-  //       // Expanded(child: _downloadButton()),
-  //       SizedBox(
-  //         width: 10.w,
-  //       ),
-  //       Expanded(child: _copyButton()),
-  //     ],
-  //   );
-  // }
-
-  // Widget _mobileView() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.center,
-  //     children: [
-  //       _buttonRow(),
-  //       SizedBox(
-  //         height: 29.h,
-  //       ),
-  //       _shareButton(),
-  //     ],
-  //   );
-  // }
-
-  // Widget _tabletView() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       Expanded(
-  //         child: _shareButton(),
-  //       ),
-  //       Expanded(
-  //         child: _buttonRow(),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget _copyButton() {
     return InkWell(
       onTap: () {
@@ -201,7 +144,7 @@ class MachineKeys extends StatelessWidget {
         });
       },
       child: Container(
-        height: isMobileSize ? 46.h : 62.h,
+        height: isMobile && !isMobileSize ? 94.h : 62.h,
         decoration: BoxDecoration(
           color: appSolidPrimary,
           border: Border.all(
@@ -228,7 +171,7 @@ class MachineKeys extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: isMobileSize ? 46.h : 62.h,
+        height: isMobile && !isMobileSize ? 94.h : 62.h,
         decoration: BoxDecoration(
           color: appWhite,
           border: Border.all(
@@ -250,28 +193,4 @@ class MachineKeys extends StatelessWidget {
       ),
     );
   }
-
-  // _shareButton() {
-  //   return InkWell(
-  //     child: Row(
-  //       children: [
-  //         const Icon(
-  //           Icons.share,
-  //           color: AppStyle.appSolidPrimary,
-  //         ),
-  //         SizedBox(
-  //           width: 5.w,
-  //         ),
-  //         const Text(
-  //           'SHARE',
-  //           style: TextStyle(
-  //             color: AppStyle.appSolidPrimary,
-  //             fontSize: 14,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
