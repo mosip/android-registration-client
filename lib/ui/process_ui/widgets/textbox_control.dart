@@ -166,26 +166,24 @@ class _TextBoxControlState extends State<TextBoxControl>
                     controller: controllerMap[lang],
                     textCapitalization: TextCapitalization.words,
                     onChanged: (value) async {
-                      if (lang ==
-                          context
+                      String mandatoryLanguageCode = context
                               .read<GlobalProvider>()
-                              .mandatoryLanguages[0]) {
+                              .mandatoryLanguages[0] ??
+                          "eng";
+                      if (lang == mandatoryLanguageCode) {
                         for (var target in choosenLang) {
-                          if (target != "English") {
-                            // ignore: use_build_context_synchronously
-                            String targetCode = context
-                                .read<GlobalProvider>()
-                                .langToCode(target);
+                          String targetCode =
+                              context.read<GlobalProvider>().langToCode(target);
+                          if (targetCode != mandatoryLanguageCode) {
+                            log("$mandatoryLanguageCode ----> $targetCode");
                             try {
                               String result = await TransliterationServiceImpl()
                                   .transliterate(TransliterationOptions(
                                       input: value,
-                                      sourceLanguage:
-                                          tranliterationLangMapper[lang] ??
-                                              "eng",
+                                      sourceLanguage: "Any",
                                       targetLanguage: tranliterationLangMapper[
                                               targetCode] ??
-                                          "eng"));
+                                          targetCode.substring(0, 2)));
                               _saveDataToMap(result, targetCode);
                               saveData(result, targetCode);
                               setState(() {
