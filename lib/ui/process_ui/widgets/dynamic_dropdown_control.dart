@@ -25,11 +25,12 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
 
   @override
   void initState() {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     if (context
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id ?? "")) {
-      _getSelectedValueFromMap("eng");
+      _getSelectedValueFromMap(lang);
     }
     super.initState();
   }
@@ -37,9 +38,12 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   void saveData(value) {
     if (value != null) {
       if (widget.field.type == 'simpleType') {
-        context
+        context.read<GlobalProvider>().chosenLang.forEach((element) {
+          String code = context.read<GlobalProvider>().languageToCodeMapper[element]!;
+          context
             .read<RegistrationTaskProvider>()
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
+        });
       } else {
         context
             .read<RegistrationTaskProvider>()
@@ -49,12 +53,13 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   void _saveDataToMap(value) {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
               widget.field.id ?? "",
               value!,
-              "eng",
+              lang,
               context.read<GlobalProvider>().fieldInputValue,
             );
       } else {
@@ -97,7 +102,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
-        future: _getFieldValues(widget.field.subType!, "eng"),
+        future: _getFieldValues(widget.field.subType!, context.read<GlobalProvider>().selectedLanguage),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
             elevation: 5,
