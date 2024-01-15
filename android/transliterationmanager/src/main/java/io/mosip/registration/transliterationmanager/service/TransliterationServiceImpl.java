@@ -12,9 +12,6 @@ public class TransliterationServiceImpl implements TransliterationService {
         }
         Transliterator transliterator = Transliterator.getInstance(inputCode+"-"+outputCode);
         String transliteratedResult = transliterator.transliterate(input);
-        if(input.equalsIgnoreCase(transliteratedResult)){
-            return "";
-        }
         return transliteratedResult;
     }
 }

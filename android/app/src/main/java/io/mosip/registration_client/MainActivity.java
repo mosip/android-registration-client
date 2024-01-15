@@ -37,6 +37,7 @@ import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.entity.Registration;
@@ -47,6 +48,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
@@ -170,11 +172,8 @@ public class MainActivity extends FlutterActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("REGISTRATION_PACKET_SYNC")) {
-                syncRegistrationPackets(context);
-            }
             if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
-                uploadRegistrationPackets(context);
+                syncRegistrationPackets(context);
             }
         }
     };
@@ -182,11 +181,6 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent serviceIntentSync = new Intent(this, SyncBackgroundService.class);
-        createBackgroundTask(serviceIntentSync, "registrationPacketSyncJob");
-        IntentFilter intentFilterSync = new IntentFilter("REGISTRATION_PACKET_SYNC");
-        registerReceiver(broadcastReceiver, intentFilterSync);
 
         Intent serviceIntentUpload = new Intent(this, UploadBackgroundService.class);
         createBackgroundTask(serviceIntentUpload, "registrationPacketUploadJob");
@@ -224,6 +218,7 @@ public class MainActivity extends FlutterActivity {
             long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
             Log.d(getClass().getSimpleName(), String.valueOf(delay)+ " Next Execution");
 
+//            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), 30000, pendingIntent);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
             } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -239,10 +234,28 @@ public class MainActivity extends FlutterActivity {
             Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
             Integer batchSize = getBatchSize();
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
+            if(registrationList.isEmpty()){
+                uploadRegistrationPackets(context);
+                return;
+            }
             for (Registration value : registrationList) {
                 try {
                     Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
-                    packetService.syncRegistration(value.getPacketId());
+                    packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
+                        @Override
+                        public void inProgress(String RID) {
+                            //Do nothing
+                        }
+
+                        @Override
+                        public void onComplete(String RID, PacketTaskStatus status) {
+                            Log.d(getClass().getSimpleName(), status+RID);
+                            if(RID == registrationList.get(registrationList.size() - 1).getPacketId()){
+                                Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+                                uploadRegistrationPackets(context);
+                            }
+                        }
+                    });
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
