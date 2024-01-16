@@ -96,10 +96,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     await _initializeAppLanguageData();
     await _initializeLocationHierarchy();
     await _setGitAttributes();
-    String version = _fetchVersionNoApp();
-    if (version.startsWith("1.1.5")) {
-      await _saveAllHeaders();
-    }
     await _loginPageLoadedAudit();
   }
 
@@ -389,6 +385,10 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
+    String version = _fetchVersionNoApp();
+    if (version.startsWith("1.1.5")) {
+      await _saveAllHeaders();
+    }
     await _authenticateUser(isConnected);
 
     bool isTrue = _getIsLoggedIn();
