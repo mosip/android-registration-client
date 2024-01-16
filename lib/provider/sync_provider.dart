@@ -168,7 +168,6 @@ class SyncProvider with ChangeNotifier {
       } else {
         log(AppLocalizations.of(context)!.master_data_sync_failed);
       }
-      log("sync function executed!");
       notifyListeners();
     });
 
