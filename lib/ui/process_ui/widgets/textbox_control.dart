@@ -122,6 +122,14 @@ class _TextBoxControlState extends State<TextBoxControl>
     if (!(widget.e.type == "simpleType")) {
       choosenLang = ["English"];
     }
+    Map<String, String> tranliterationLangMapper = {
+      "eng": "Latin",
+      "fra": "French",
+      "ara": "Arabic",
+      "hin": "Devanagari",
+      "kan": "Kannada",
+      "tam": "Tamil",
+    };
 
     return Card(
       elevation: 5,
@@ -157,31 +165,30 @@ class _TextBoxControlState extends State<TextBoxControl>
                     controller: controllerMap[lang],
                     textCapitalization: TextCapitalization.words,
                     onChanged: (value) async {
-                      if (lang ==
-                          context
+                      String mandatoryLanguageCode = context
                               .read<GlobalProvider>()
-                              .mandatoryLanguages[0]) {
+                              .mandatoryLanguages[0] ??
+                          "eng";
+                      if (lang == mandatoryLanguageCode) {
                         for (var target in choosenLang) {
-                          if (target != "English") {
-                            // ignore: use_build_context_synchronously
-                            String targetCode = context
-                                .read<GlobalProvider>()
-                                .langToCode(target);
+                          String targetCode =
+                              context.read<GlobalProvider>().langToCode(target);
+                          if (targetCode != mandatoryLanguageCode) {
+                            log("$mandatoryLanguageCode ----> $targetCode");
                             try {
                               String result = await TransliterationServiceImpl()
                                   .transliterate(TransliterationOptions(
                                       input: value,
-                                      sourceLanguage: lang.substring(0, 2),
-                                      targetLanguage:
+                                      sourceLanguage: "Any",
+                                      targetLanguage: tranliterationLangMapper[
+                                              targetCode] ??
                                           targetCode.substring(0, 2)));
-                              if (result != "") {
-                                _saveDataToMap(result, targetCode);
-                                saveData(result, targetCode);
-                                setState(() {
-                                  controllerMap[targetCode]!.text = result;
-                                });
-                                log("Transliteration success : $result");
-                              }
+                              _saveDataToMap(result, targetCode);
+                              saveData(result, targetCode);
+                              setState(() {
+                                controllerMap[targetCode]!.text = result;
+                              });
+                              log("Transliteration success : $result");
                             } catch (e) {
                               log("Transliteration failed : $e");
                             }
@@ -201,7 +208,6 @@ class _TextBoxControlState extends State<TextBoxControl>
                         }
                       }
                       if (value == null || value.isEmpty) {
-                        log(lang);
                         return AppLocalizations.of(context)!
                             .demographicsScreenEmptyMessage(lang);
                       }
