@@ -24,12 +24,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   @override
   void initState() {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (context
           .read<GlobalProvider>()
           .fieldInputValue
           .containsKey(widget.field.id ?? "")) {
-        await _getSelectedValueFromMap("eng");
+        await _getSelectedValueFromMap(lang);
       } else {
         List<String?> data = await context
             .read<RegistrationTaskProvider>()
@@ -47,9 +48,12 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   void saveData(value) {
     if (widget.field.type == 'simpleType') {
-      context
-          .read<RegistrationTaskProvider>()
-          .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
+      context.read<GlobalProvider>().chosenLang.forEach((element) {
+          String code = context.read<GlobalProvider>().languageToCodeMapper[element]!;
+          context
+            .read<RegistrationTaskProvider>()
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
+        });
     } else {
       context
           .read<RegistrationTaskProvider>()
@@ -58,11 +62,12 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
   }
 
   void _saveDataToMap(value) {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     if (widget.field.type == 'simpleType') {
       context.read<GlobalProvider>().setLanguageSpecificValue(
             widget.field.id ?? "",
             value,
-            "eng",
+            lang,
             context.read<GlobalProvider>().fieldInputValue,
           );
     } else {
