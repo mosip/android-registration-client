@@ -124,11 +124,15 @@ class _BiometricCaptureControlPortraitState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
-                          color: secondaryColors.elementAt(11),
+                          color: (biometricAttributeData.qualityPercentage.toInt() <
+                                int.parse(
+                                    biometricAttributeData.thresholdPercentage))
+                            ? secondaryColors.elementAt(20)
+                            : secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
                       child: Text(
-                          "${biometricAttributeData.thresholdPercentage}%",
+                          "${biometricAttributeData.qualityPercentage}%",
                           style: TextStyle(
                               fontSize: 20,
                               color: pureWhite,
@@ -198,6 +202,7 @@ class _BiometricCaptureControlPortraitState
             ),
           ),
         ),
+       SizedBox(height: 15.h,),
         Column(
           children: [
             (widget.field.conditionalBioAttributes!.first!.ageGroup!

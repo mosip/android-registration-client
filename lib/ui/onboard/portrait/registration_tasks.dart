@@ -26,6 +26,7 @@ class RegistrationTasks extends StatefulWidget {
 }
 
 class _RegistrationTasksState extends State<RegistrationTasks> {
+  bool isPortrait= true;
   @override
   void initState() {
     super.initState();
@@ -33,6 +34,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
 
   @override
   Widget build(BuildContext context) {
+    isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Column(
       children: [
         SizedBox(
@@ -150,9 +152,9 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               context.watch<RegistrationTaskProvider>().listOfProcesses.length,
           shrinkWrap: true,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 8.h,
-            crossAxisSpacing: 8.w,
+            crossAxisCount: (isPortrait)?2:4,
+            mainAxisSpacing: (isPortrait)?8.h:1.h,
+            crossAxisSpacing:(isPortrait)? 8.w:1.w,
           ),
           itemBuilder: (BuildContext context, int index) {
             return InkWell(

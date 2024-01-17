@@ -29,12 +29,13 @@ class BiometricCaptureScanBlockPortrait extends StatefulWidget {
 
 class _BiometricCaptureScanBlockPortraitState
     extends State<BiometricCaptureScanBlockPortrait> {
+      bool isPortrait=true;
   @override
   void initState() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.portraitUp,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitDown,
+    //   DeviceOrientation.portraitUp,
+    // ]);
 
     context
         .read<BiometricCaptureControlProvider>()
@@ -174,6 +175,7 @@ class _BiometricCaptureScanBlockPortraitState
             border: Border.all(color: secondaryColors.elementAt(14), width: 1),
           ),
           height: 353,
+          width: (isPortrait)?double.infinity:760.w,
           child: (biometricAttributeData.isScanned == false)
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -475,13 +477,16 @@ class _BiometricCaptureScanBlockPortraitState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: pureWhite,
-            border: Border.all(color: secondaryColors.elementAt(14), width: 1),
+        Center(
+          child: Container(
+            decoration: BoxDecoration(
+              color: pureWhite,
+              border: Border.all(color: secondaryColors.elementAt(14), width: 1),
+            ),
+            height: 353,
+            width: (isPortrait)?double.infinity:760.w,
+            child: _returnExceptionImage(),
           ),
-          height: 353,
-          child: _returnExceptionImage(),
         ),
         const SizedBox(
           height: 40,
@@ -1951,21 +1956,23 @@ class _BiometricCaptureScanBlockPortraitState
     }
   }
 
-  @override
-  void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   SystemChrome.setPreferredOrientations([
+  //     DeviceOrientation.landscapeRight,
+  //     DeviceOrientation.landscapeLeft,
+  //     DeviceOrientation.portraitUp,
+  //     DeviceOrientation.portraitDown,
+  //   ]);
+  //   super.dispose();
+  // }
 
   late BiometricAttributeData biometricAttributeData;
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
   @override
   Widget build(BuildContext context) {
+   isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     setInitialState();
     biometricCaptureControlProvider =
         Provider.of<BiometricCaptureControlProvider>(context, listen: false);
