@@ -18,13 +18,12 @@ import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
-import 'package:registration_client/ui/onboard/home_page.dart';
+import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/dashboard/dashboard_mobile.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
@@ -116,10 +115,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _saveVersionToGlobalParam() async {
     String version = context.read<GlobalProvider>().versionNoApp;
-    if (version.isNotEmpty) {
-      await context.read<GlobalProvider>().saveVersionToGlobalParam(
-          "mosip.registration.server_version", version);
-    }
+    await context
+        .read<GlobalProvider>()
+        .saveVersionToGlobalParam("mosip.registration.server_version", version);
   }
 
   _saveAllHeaders() async {
@@ -205,7 +203,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppStyle.appSolidPrimary,
+        backgroundColor: appSolidPrimary,
         bottomNavigationBar: _getBottomBar(),
         body: Stack(
           children: [
@@ -214,11 +212,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
               left: 16.w,
               child: _getBuildingsImage(),
             ),
-            SingleChildScrollView(
-              child: SizedBox(
-                height: h - 94.h,
-                width: w,
+            SizedBox(
+              height: h,
+              width: w,
+              child: SingleChildScrollView(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
                       height: 20.h,
@@ -230,39 +229,39 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       child: InkWell(
                         onTap: () {},
                         child: Container(
-                          height: 62.h,
+                          height: isMobileSize ? 46.h : 62.h,
                           width: 129.w,
                           decoration: BoxDecoration(
                             color: Colors.transparent,
                             border: Border.all(
-                              color: AppStyle.appWhite,
+                              color: appWhite,
                             ),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(5),
                             ),
                           ),
                           child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.help,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: AppStyle.appWhite,
-                              ),
-                            ),
+                            child: Text(AppLocalizations.of(context)!.help,
+                                style: isMobile && !isMobileSize
+                                    ? AppTextStyle.tabletPortraitHelpText
+                                    : AppTextStyle.mobileHelpText),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: 86.h,
+                      height: isMobileSize ? 72.h : 86.h,
                     ),
-                    Expanded(
+                    Flexible(
                       child: Column(
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 92.w : 80.w,
+                              horizontal: isMobile
+                                  ? isMobileSize
+                                      ? 20.w
+                                      : 92.w
+                                  : 80.w,
                             ),
                             child: isMobile ? _mobileView() : _tabletView(),
                           ),
@@ -289,55 +288,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         ),
       ),
     );
-    // SafeArea(
-    //   child: Scaffold(
-    //     backgroundColor: AppStyle.appSolidPrimary,
-    //     body: Stack(
-    //       children: [
-    //         Positioned(
-    //           bottom: 0,
-    //           left: 16.w,
-    //           child: _getBuildingsImage(),
-    //         ),
-    //         SizedBox(
-    //           height: h,
-    //           width: w,
-    //           child: SingleChildScrollView(
-    //             child: Column(
-    //               crossAxisAlignment: isMobile
-    //                   ? CrossAxisAlignment.center
-    //                   : CrossAxisAlignment.start,
-    //               children: [
-    //                 _appBarComponent(),
-    // SizedBox(
-    //   height: isMobile ? 62.h : 132.h,
-    // ),
-    // Container(
-    //   padding: EdgeInsets.symmetric(
-    //     horizontal: isMobile ? 92.w : 80.w,
-    //   ),
-    //   child: isMobile ? _mobileView() : _tabletView(),
-    // ),
-    //               ],
-    //             ),
-    //           ),
-    //         ),
-    //         isMachineKeysDialogOpen
-    //             ? Container(
-    //                 color: Colors.transparent.withOpacity(0.5),
-    //                 child: Center(
-    //                   child: MachineKeys(
-    //                     onCloseComponent: () {
-    //                       _toggleMachineKeysDialog();
-    //                     },
-    //                   ),
-    //                 ),
-    //               )
-    //             : const SizedBox(),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   _getIsValidUser() {
@@ -503,19 +453,20 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   _navigateToHomePage() {
     if (context.read<AuthProvider>().isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
+
       if (context.read<AuthProvider>().isOnboarded ||
-          context.read<AuthProvider>().isDefault ||
-          (context.read<AuthProvider>().isSupervisor &&
-              context.read<AuthProvider>().isOfficer)) {
+          context.read<AuthProvider>().isDefault) {
         context.read<GlobalProvider>().setCurrentIndex(1);
+      } else {
+        context.read<GlobalProvider>().setCurrentIndex(0);
       }
 
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => Responsive(
-            mobile: DashBoardMobileView(),
-            desktop: const HomePage(),
-            tablet: const HomePage(),
+            mobile: DashBoardTabletView(),
+            desktop: DashBoardTabletView(),
+            tablet: DashBoardTabletView(),
           ),
         ),
       );
@@ -524,11 +475,11 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _getBottomBar() {
     return Container(
-      height: 94.h,
+      height: isMobile && !isMobileSize ? 94.h : 62.h,
       padding: EdgeInsets.symmetric(
         vertical: 15.h,
       ),
-      color: AppStyle.appWhite,
+      color: appWhite,
       child: Center(
         child: InkWell(
           onLongPress: () {
@@ -546,104 +497,36 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     );
   }
 
-  // Widget _appBarComponent() {
-  //   return Container(
-  //     height: isMobile ? 94.h : 90.h,
-  //     color: AppStyle.appWhite,
-  //     padding: EdgeInsets.symmetric(
-  //       vertical: 22.h,
-  //       horizontal: isMobile ? 20.w : 80.w,
-  //     ),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         InkWell(
-  //           onLongPress: () {
-  //             _longPressLogoAudit();
-  //             setState(() {
-  //               isMachineKeysDialogOpen = true;
-  //             });
-  //           },
-  //           child: SizedBox(
-  //             height: isMobile ? 51.h : 54.h,
-  //             child: Image.asset(
-  //               appIcon,
-  //               fit: BoxFit.fill,
-  //             ),
-  //           ),
-  //         ),
-  //         InkWell(
-  //           child: Container(
-  //             height: 62.h,
-  //             padding: EdgeInsets.only(
-  //               left: isMobile ? 37.w : 46.w,
-  //               right: isMobile ? 36.w : 47.w,
-  //             ),
-  //             decoration: BoxDecoration(
-  //               border: Border.all(
-  //                 width: 1.h,
-  //                 color: AppStyle.appHelpText,
-  //               ),
-  //               borderRadius: const BorderRadius.all(
-  //                 Radius.circular(5),
-  //               ),
-  //             ),
-  //             child: Center(
-  //               child: Text(
-  //                 AppLocalizations.of(context)!.help,
-  //                 style: isMobile
-  //                     ? AppStyle.tabletPortraitHelpText
-  //                     : AppStyle.mobileHelpText,
-  //               ),
-  //             ),
-  //           ),
-  //           onTap: () {},
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _welcomeTextComponent() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 38.w : 0,
-      ),
-      child: Column(
-        crossAxisAlignment:
-            isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.welcome,
-            style: isMobile
-                ? AppStyle.tabletPortraitWelcomeText
-                : AppStyle.mobileWelcomeText,
-            textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          ),
-          Text(
-            AppLocalizations.of(context)!.community_reg_text,
-            style: isMobile
-                ? AppStyle.tabletPortraitCommunityRegClientText
-                : AppStyle.mobileCommunityRegClientText,
-            textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          )
-        ],
-      ),
+    return Column(
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.welcome,
+          style: isMobile && !isMobileSize
+              ? AppTextStyle.tabletPortraitWelcomeText
+              : AppTextStyle.tabletWelcomeText,
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        ),
+        Text(
+          AppLocalizations.of(context)!.community_reg_text,
+          style: isMobile && !isMobileSize
+              ? AppTextStyle.tabletPortraitCommunityRegClientText
+              : AppTextStyle.tabletCommunityRegClientText,
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        )
+      ],
     );
   }
 
   Widget _infoTextComponent() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 113.w : 0,
-      ),
-      child: Text(
-        AppLocalizations.of(context)!.info_text,
-        style: isMobile
-            ? AppStyle.tabletPortraitInfoText
-            : AppStyle.mobileInfoText,
-        textAlign: isMobile ? TextAlign.center : TextAlign.start,
-      ),
+    return Text(
+      AppLocalizations.of(context)!.info_text,
+      style: isMobile && !isMobileSize
+          ? AppTextStyle.tabletPortraitInfoText
+          : AppTextStyle.mobileInfoText,
+      textAlign: isMobile ? TextAlign.center : TextAlign.start,
     );
   }
 
@@ -654,7 +537,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       children: [
         _welcomeTextComponent(),
         SizedBox(
-          height: isMobile ? 18.h : 16.h,
+          height: isMobile && !isMobileSize ? 18.h : 12.h,
         ),
         _infoTextComponent(),
       ],
@@ -663,13 +546,17 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   Widget _loginComponent() {
     return Container(
-      width: isMobile ? 616.w : 424.w,
+      width: isMobile
+          ? isMobileSize
+              ? 358.w
+              : 616.w
+          : 424.w,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 30.w : 20.w,
-        vertical: isMobile ? 30.h : 20.h,
+        horizontal: isMobile && !isMobileSize ? 30.w : 20.w,
+        vertical: isMobile && !isMobileSize ? 30.h : 20.h,
       ),
       decoration: BoxDecoration(
-        color: AppStyle.appWhite,
+        color: appWhite,
         border: Border.all(
           width: 1.w,
         ),
@@ -682,13 +569,13 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: isMobile ? 16.h : 34.h,
+            height: isMobile && !isMobileSize ? 16.h : 34.h,
           ),
           Text(
             AppLocalizations.of(context)!.login_text,
-            style: isMobile
-                ? AppStyle.tabletPortraitHeaderText
-                : AppStyle.mobileHeaderText,
+            style: isMobile && !isMobileSize
+                ? AppTextStyle.tabletPortraitHeaderText
+                : AppTextStyle.mobileHeaderText,
           ),
           SizedBox(
             height: context.watch<AuthProvider>().isValidUser ? 42.h : 38.h,
@@ -741,7 +628,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       children: [
         _appCombinedTextComponent(),
         SizedBox(
-          height: 70.h,
+          height: isMobileSize ? 40.h : 70.h,
         ),
         _loginComponent(),
       ],
@@ -819,8 +706,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 125.h : 280.h,
-              width: isMobile ? 125.w : 280.w,
+              height: isMobile && isMobileSize ? 210.h : 280.h,
+              width: isMobile && isMobileSize ? 210.w : 280.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Padding(
@@ -830,8 +717,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: isMobile ? 40.h : 100.h,
-                      width: isMobile ? 40.w : 100.w,
+                      height: isMobile && isMobileSize ? 40.h : 100.h,
+                      width: isMobile && isMobileSize ? 40.w : 100.w,
                       child: syncProvider.isAllSyncSuccessful()
                           ? SvgPicture.asset(
                               "assets/svg/Success Message Icon.svg")
@@ -843,7 +730,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                     ),
                     DefaultTextStyle(
                       style: TextStyle(
-                          fontSize: isMobile ? 12 : 18,
+                          fontSize: isMobile && isMobileSize ? 10 : 18,
                           color: Colors.black87,
                           fontWeight: FontWeight.bold),
                       child: Text(
@@ -857,7 +744,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                     const SizedBox(),
                     DefaultTextStyle(
                       style: TextStyle(
-                          fontSize: isMobile ? 7 : 12,
+                          fontSize: isMobile && isMobileSize ? 8 : 12,
                           color: const Color.fromARGB(221, 80, 79, 79),
                           fontWeight: FontWeight.w900),
                       child: Text(
@@ -889,8 +776,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile ? 125.h : 280.h,
-              width: isMobile ? 125.w : 280.w,
+              height: isMobile && isMobileSize ? 210.h : 280.h,
+              width: isMobile && isMobileSize ? 210.w : 280.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15), color: pureWhite),
               child: Column(
@@ -902,8 +789,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       Image.asset(
                         appIconLogoOnly,
                         fit: BoxFit.scaleDown,
-                        height: isMobile ? 35.h : 90.h,
-                        width: isMobile ? 35.w : 90.w,
+                        height: isMobile && isMobileSize ? 35.h : 90.h,
+                        width: isMobile && isMobileSize ? 35.w : 90.w,
                       ),
                       Transform.scale(
                         scale: isMobile ? 1.4 : 2.8,
@@ -923,7 +810,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   ),
                   DefaultTextStyle(
                       style: TextStyle(
-                          fontSize: isMobile ? 9 : 15,
+                          fontSize: isMobile && isMobileSize ? 12 : 15,
                           color: const Color.fromARGB(221, 80, 79, 79),
                           fontWeight: FontWeight.w900),
                       child: Consumer<SyncProvider>(

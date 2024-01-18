@@ -90,6 +90,24 @@
       }
     }
   },
+"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
+  "@demographicsScreenEmptyMessage": {
+    "description": "Demographic Screen Empty Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
+  "@demographicsScreenInvalidMessage": {
+    "description": "Demographic Screen Invalid Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
   "@biometricsScreenName": {
     "description": "Biometric Screen Name",
@@ -102,7 +120,7 @@
   "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
   "@notificationLanguage": {
     "description": "Notification Language Label",
-     "placeholders": {
+    "placeholders": {
       "language": {
         "type": "String"
       }
@@ -171,5 +189,29 @@
   "registration_acknowledgement": "Accusé de réception d'inscription",
   "print_text": "IMPRIMER",
   "hello": "BONJOUR",
-  "onboard_process_help": "Veuillez appuyer sur 'S'INSCRIRE' pour commencer le processus d'intégration."
+  "onboard_process_help": "Veuillez appuyer sur 'S'INSCRIRE' pour commencer le processus d'intégration.",
+  "default_not_found": "Rôle requis introuvable!",
+  "mark_exception": "Marquer l'exception",
+  "threshold": "Seuil",
+  "quality": "Qualité",
+  "attempts": "Tentatives",
+  "comments": "Commentaires",
+  "exception_type": "Type d'exception",
+  "permanent": "Permanent",
+  "temporary": "Temporaire",
+  "exceptions": "Des exceptions",
+  "add_comments_for_marking_the_exception": "Ajouter des commentaires pour marquer l'exception",
+  "rescan":"Réanalyser",
+  "marking_exceptions_on":"Marquage des exceptions sur",
+  "is_not_allowed":"n'est pas autorisé",
+  "capture":"Capturer",
+  "attempts_left":"tentatives restantes",
+  "left_hand": "Main gauche",
+  "left": "Gauche",
+  "right": "Droite",
+  "right_hand": "Main droite",
+  "iris": "Iris",
+  "thumbs": "Pouces",
+  "exception":"Exception",
+  "face": "Visage"
 }

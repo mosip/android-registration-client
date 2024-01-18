@@ -90,6 +90,24 @@
       }
     }
   },
+"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
+  "@demographicsScreenEmptyMessage": {
+    "description": "Demographic Screen Empty Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
+  "@demographicsScreenInvalidMessage": {
+    "description": "Demographic Screen Invalid Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
   "@biometricsScreenName": {
     "description": "Biometric Screen Name",
@@ -171,5 +189,29 @@
   "registration_acknowledgement": "ನೋಂದಾಯಿತ ಸ್ವೀಕೃತಿ",
   "print_text": "ಮುದ್ರಿಸಿ",
   "hello": "ಹಲೋ",
-  "onboard_process_help": "ಆನ್‌ಬೋರ್ಡಿಂಗ್ ಪ್ರಕ್ರಿಯೆಯೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು 'ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ' ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ."
+  "onboard_process_help": "ಆನ್‌ಬೋರ್ಡಿಂಗ್ ಪ್ರಕ್ರಿಯೆಯೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು 'ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ' ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.",
+  "default_not_found": "ಅಗತ್ಯವಿರುವ ಪಾತ್ರ ಕಂಡುಬಂದಿಲ್ಲ!",
+  "mark_exception": "ಅಂಶಗೊಳಿಸಲು ಅನುಮತಿಸಿ",
+  "threshold": "ಸೀಮಾಂಕ",
+  "quality": "ಗುಣಮಟ್ಟ",
+  "attempts": "ಪ್ರಯಾಸಗಳು",
+  "comments": "ಕೊರಗುಗಳು",
+  "exception_type": "ಅಂಶದ ಪ್ರಕಾರ",
+  "permanent": "ಸ್ಥಾಯಿ",
+  "temporary": "ಕ್ಷಣಿಕ",
+  "exceptions": "ಅಂಶಗಳು",
+  "add_comments_for_marking_the_exception": "ಅಂಶವನ್ನು ಅಂಶಗೊಳಿಸಲು ಕೊರಗಳನ್ನು ಸೇರಿಸಿ",
+  "rescan":"ಮರು ಸ್ಕ್ಯಾನ್",
+  "marking_exceptions_on":"ವಿನಾಯಿತಿಗಳನ್ನು ಗುರುತಿಸಲಾಗುತ್ತಿದೆ",
+  "is_not_allowed":"ಅನುಮತಿಸಲಾಗುವುದಿಲ್ಲ",
+  "capture":"ಸೆರೆಹಿಡಿಯಿರಿ",
+  "attempts_left":"ಪ್ರಯತ್ನಗಳು ಉಳಿದಿವೆ",
+  "left_hand": "ಎಡ ಕೈ",
+  "left": "ಎಡ",
+  "right": "ಬಲ",
+  "right_hand": "ಬಲ ಕೈ",
+  "iris": "ಐರಿಸ್",
+  "thumbs": "ಬೆರಳುಗಳು",
+  "exception":"ವಿನಾಯಿತಿ",
+  "face": "ಮುಖ"
 }

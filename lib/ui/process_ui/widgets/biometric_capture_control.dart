@@ -9,6 +9,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control_landscape.dart';
 import 'package:registration_client/ui/process_ui/widgets_mobile/biometric_capture_control_portrait.dart';
 import 'package:registration_client/utils/stateful_wrapper.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BiometricCaptureControl extends StatelessWidget {
   const BiometricCaptureControl({super.key, required this.e});
@@ -32,6 +33,18 @@ class BiometricCaptureControlInitialization extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     setInitialBioAttribute() async {
+      context.read<BiometricCaptureControlProvider>().iris.viewTitle =
+          AppLocalizations.of(context)!.iris;
+      context.read<BiometricCaptureControlProvider>().leftHand.viewTitle =
+          AppLocalizations.of(context)!.left_hand;
+      context.read<BiometricCaptureControlProvider>().rightHand.viewTitle =
+          AppLocalizations.of(context)!.right_hand;
+      context.read<BiometricCaptureControlProvider>().thumbs.viewTitle =
+          AppLocalizations.of(context)!.thumbs;
+      context.read<BiometricCaptureControlProvider>().face.viewTitle =
+          AppLocalizations.of(context)!.face;
+      context.read<BiometricCaptureControlProvider>().exception.viewTitle =
+          AppLocalizations.of(context)!.exception;
       if (field.conditionalBioAttributes!.first!.ageGroup!
               .compareTo(context.read<GlobalProvider>().ageGroup) ==
           0) {

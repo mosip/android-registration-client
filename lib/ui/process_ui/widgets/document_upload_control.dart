@@ -17,7 +17,6 @@ import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
-import '../../../utils/app_style.dart';
 import 'custom_label.dart';
 
 class DocumentUploadControl extends StatefulWidget {
@@ -231,7 +230,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   children: [
                     FutureBuilder(
                         future: _getDocumentValues(
-                            widget.field.subType!, "eng", null),
+                            widget.field.subType!, lang, null),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
@@ -353,13 +352,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                   borderSide: const BorderSide(
-                                      color: AppStyle.appGreyShade, width: 1),
+                                      color: appGreyShade, width: 1),
                                 ),
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 16.w),
                                 hintText: AppLocalizations.of(context)!.reference_number,
                                 hintStyle: const TextStyle(
-                                    color: AppStyle.appBlackShade3, fontSize: 14),
+                                    color: appBlackShade3, fontSize: 14),
                               ),
                             ),
                           ],
@@ -468,7 +467,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         Expanded(
                             child: FutureBuilder(
                                 future: _getDocumentValues(
-                                    widget.field.subType!, "eng", null),
+                                    widget.field.subType!, lang, null),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
@@ -593,13 +592,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8.0),
                                         borderSide: BorderSide(
-                                            color: AppStyle.appGreyShade, width: 1.w),
+                                            color: appGreyShade, width: 1.w),
                                       ),
                                       contentPadding: EdgeInsets.symmetric(
                                           vertical: 14.h, horizontal: 16.w),
                                       hintText: AppLocalizations.of(context)!.reference_number,
                                       hintStyle: const TextStyle(
-                                          color: AppStyle.appBlackShade3, fontSize: 14),
+                                          color: appBlackShade3, fontSize: 14),
                                     ),
                                   ),
                                 ],
@@ -734,7 +733,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     Navigator.of(context).pop();
                   }, child: Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child:  Text(AppLocalizations.of(context)!.clear,style: const TextStyle(color: AppStyle.appRed,fontSize: 22,fontWeight: FontWeight.w500)),
+                    child:  Text(AppLocalizations.of(context)!.clear,style: const TextStyle(color: appRed,fontSize: 22,fontWeight: FontWeight.w500)),
                   )),
                    Expanded(
                      child: Padding(
@@ -758,7 +757,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   ))
                 ],
               ),
-              const Divider(color: AppStyle.dropDownDividerColor,thickness: 1,),
+              const Divider(color: dropDownDividerColor,thickness: 1,),
           Expanded(
             flex:3,
             child: CupertinoPicker(
@@ -781,10 +780,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     title: Center(
                       child: Text(
                         snapshot.data[i],
-                        style: const TextStyle(fontSize: 22,color: AppStyle.dropDownSelector,fontWeight: FontWeight.w500),
+                        style: const TextStyle(fontSize: 22,color: dropDownSelector,fontWeight: FontWeight.w500),
                       ),
                     ),
-                    trailing: Icon(Icons.check,size: 30,color: (snapshot.data[i] == documentController.text)? AppStyle.dropDownSelector:Colors.white,)
+                    trailing: Icon(Icons.check,size: 30,color: (snapshot.data[i] == documentController.text)? dropDownSelector:Colors.white,)
                   ),
                   ],
               ],

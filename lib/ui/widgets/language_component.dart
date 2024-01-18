@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:registration_client/utils/app_style.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 class LanguageComponent extends StatefulWidget {
   const LanguageComponent({
@@ -10,12 +10,14 @@ class LanguageComponent extends StatefulWidget {
     required this.onTap,
     required this.isMobile,
     required this.isFreezed,
+    required this.isDisabled,
   });
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
   final bool isMobile;
   final bool isFreezed;
+  final bool isDisabled;
 
   @override
   State<LanguageComponent> createState() => _LanguageComponentState();
@@ -25,25 +27,29 @@ class _LanguageComponentState extends State<LanguageComponent> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onTap,
+      onTap: (){
+        if(!widget.isFreezed && !widget.isDisabled){
+          widget.onTap();
+        }
+      },
       child: Container(
         padding: EdgeInsets.only(
           left: 25.w,
           right: 25.w,
-          top: widget.isMobile ? 15.h : 9.h,
-          bottom: widget.isMobile ? 15.h : 9.h,
+          top: widget.isMobile && !isMobileSize ? 15.h : 9.h,
+          bottom: widget.isMobile && !isMobileSize ? 15.h : 9.h,
         ),
         decoration: BoxDecoration(
           color: widget.isFreezed
-              ? AppStyle.languageFreezedColor
+              ? languageFreezedColor
               : widget.isSelected
-                  ? AppStyle.appHelpText
+                  ? appButtonBorderText
                   : Colors.transparent,
           border: Border.all(
             width: 1,
             color: widget.isSelected
-                ? AppStyle.appHelpText
-                : AppStyle.languageSelectedColor,
+                ? appButtonBorderText
+                : languageSelectedColor,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(36),
@@ -52,9 +58,12 @@ class _LanguageComponentState extends State<LanguageComponent> {
         child: Text(
           widget.title,
           style: TextStyle(
-            fontSize: widget.isMobile ? 24 : 16,
-            color:
-                widget.isFreezed ? AppStyle.appBlack : widget.isSelected ? AppStyle.appWhite : AppStyle.appBlackShade1,
+            fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
+            color: widget.isFreezed
+                ? appBlack
+                : widget.isSelected
+                    ? appWhite
+                    : appBlackShade1,
           ),
         ),
       ),
