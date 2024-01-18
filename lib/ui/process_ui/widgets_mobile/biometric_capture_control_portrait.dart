@@ -127,7 +127,7 @@ class _BiometricCaptureControlPortraitState
                           color: (biometricAttributeData.qualityPercentage.toInt() <
                                 int.parse(
                                     biometricAttributeData.thresholdPercentage))
-                            ? secondaryColors.elementAt(20)
+                            ? secondaryColors.elementAt(26)
                             : secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
