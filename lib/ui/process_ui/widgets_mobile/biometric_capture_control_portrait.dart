@@ -124,12 +124,13 @@ class _BiometricCaptureControlPortraitState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
-                          color: (biometricAttributeData.qualityPercentage
-                                      .toInt() <
-                                  int.parse(biometricAttributeData
-                                      .thresholdPercentage))
-                              ? secondaryColors.elementAt(20)
-                              : secondaryColors.elementAt(11),
+
+                          color: (biometricAttributeData.qualityPercentage.toInt() <
+                                int.parse(
+                                    biometricAttributeData.thresholdPercentage))
+                            ? secondaryColors.elementAt(26)
+                            : secondaryColors.elementAt(11),
+
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
                       child: Text(

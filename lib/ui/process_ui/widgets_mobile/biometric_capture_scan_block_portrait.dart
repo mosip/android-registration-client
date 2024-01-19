@@ -29,7 +29,7 @@ class BiometricCaptureScanBlockPortrait extends StatefulWidget {
 
 class _BiometricCaptureScanBlockPortraitState
     extends State<BiometricCaptureScanBlockPortrait> {
-      bool isPortrait=true;
+  bool isPortrait = true;
   @override
   void initState() {
     // SystemChrome.setPreferredOrientations([
@@ -175,7 +175,7 @@ class _BiometricCaptureScanBlockPortraitState
             border: Border.all(color: secondaryColors.elementAt(14), width: 1),
           ),
           height: 353,
-          width: (isPortrait)?double.infinity:760.w,
+          width: (isPortrait) ? double.infinity : 760.w,
           child: (biometricAttributeData.isScanned == false)
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -244,7 +244,7 @@ class _BiometricCaptureScanBlockPortraitState
                         (biometricAttributeData.qualityPercentage.toInt() <
                                 int.parse(
                                     biometricAttributeData.thresholdPercentage))
-                            ? secondaryColors.elementAt(20)
+                            ? secondaryColors.elementAt(26)
                             : secondaryColors.elementAt(11),
                   ),
                   const SizedBox(
@@ -481,10 +481,11 @@ class _BiometricCaptureScanBlockPortraitState
           child: Container(
             decoration: BoxDecoration(
               color: pureWhite,
-              border: Border.all(color: secondaryColors.elementAt(14), width: 1),
+              border:
+                  Border.all(color: secondaryColors.elementAt(14), width: 1),
             ),
             height: 353,
-            width: (isPortrait)?double.infinity:760.w,
+            width: (isPortrait) ? double.infinity : 760.w,
             child: _returnExceptionImage(),
           ),
         ),
@@ -1971,8 +1972,7 @@ class _BiometricCaptureScanBlockPortraitState
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
   @override
   Widget build(BuildContext context) {
-   isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+    isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     setInitialState();
     biometricCaptureControlProvider =
         Provider.of<BiometricCaptureControlProvider>(context, listen: false);
