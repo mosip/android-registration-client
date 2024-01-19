@@ -22,7 +22,7 @@ class DynamicDropDownControl extends StatefulWidget {
 }
 
 class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
-  DynamicFieldData? selected;
+  String? selected;
 
   @override
   void initState() {
@@ -36,7 +36,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   void saveData(value) {
+    debugPrint("one0..");
     if (value != null) {
+      debugPrint("one1..");
       if (widget.field.type == 'simpleType') {
         context
             .read<RegistrationTaskProvider>()
@@ -53,14 +55,14 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.field.id ?? "",
+              "${widget.field.group}${widget.field.subType}",
               value!,
               "eng",
               context.read<GlobalProvider>().fieldInputValue,
             );
       } else {
         context.read<GlobalProvider>().setInputMapValue(
-              widget.field.id ?? "",
+              "${widget.field.group}${widget.field.subType}",
               value!,
               context.read<GlobalProvider>().fieldInputValue,
             );
@@ -69,7 +71,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   void _getSelectedValueFromMap(String lang) async {
-    DynamicFieldData? response;
+    String response = "";
     String updatedValue = "";
     if (widget.field.type == 'simpleType') {
       if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
@@ -83,9 +85,21 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
       response =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
     }
+    // List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
+    // for (var element in data) {
+    //   if(element!.code == response){
+    //     setState(() {
+    //       updatedValue = element.name;
+    //     });
+    //   }
+    // }
+    // setState(() {
+    //   selected = updatedValue;
+    // });
+    debugPrint("response value..."+response.toString());
     List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
-    for (var element in data) {
-      if(element!.code == response!.code){
+   for (var element in data) {
+      if(element!.code == response){
         setState(() {
           selected = response;
         });
@@ -119,7 +133,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                     height: 10,
                   ),
                   snapshot.hasData
-                      ? DropdownButtonFormField<DynamicFieldData>(
+                      ? DropdownButtonFormField(
                           icon: const Icon(null),
                           decoration: InputDecoration(
                             contentPadding:
@@ -138,8 +152,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
-                                    value: option,
-                                    child: Text(option!.name),
+                                    value: option!.name,
+                                    child: Text(option.name),
                                   ))
                               .toList(),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -152,13 +166,25 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             if (value == null) {
                               return 'Please enter a value';
                             }
-                            if (!widget.validation.hasMatch(value.name)) {
+                            if (!widget.validation.hasMatch(value)) {
                               return 'Invalid input';
                             }
                             return null;
                           },
                           onChanged: (value) {
-                            saveData(value!.code);
+                            debugPrint("helloo.......");
+                            debugPrint("Value is>>>>>>>>>>>>>>>>>>>>>>.......$value");
+                            debugPrint(snapshot.data!.length.toString());
+                            for (var e in snapshot.data!) {
+                              debugPrint("Hey.. Inside the map.......");
+                              debugPrint(e!.name);
+                              if(e!.name == value){
+                                debugPrint("$value");
+                                debugPrint(e.name);
+                                debugPrint("true");
+                                saveData(e.code);
+                              }
+                            }
                             _saveDataToMap(value);
                             setState(() {
                               selected = value;

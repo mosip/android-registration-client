@@ -37,8 +37,10 @@ import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
@@ -199,8 +201,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DocumentCategoryApi getDocumentCategoryApi(RegistrationService registrationService, FileSignatureDao fileSignatureRepository, GlobalParamRepository globalParamRepository, MasterDataService masterDataService) {
-        return new DocumentCategoryApi(registrationService,fileSignatureRepository,globalParamRepository,masterDataService,appContext);
+    DocumentCategoryApi getDocumentCategoryApi(RegistrationService registrationService, FileSignatureDao fileSignatureRepository, GlobalParamRepository globalParamRepository, MasterDataService masterDataService, CertificateManagerService certificateManagerService, CryptoManagerService cryptoManagerServiceImpl) {
+        return new DocumentCategoryApi(registrationService,fileSignatureRepository,globalParamRepository,masterDataService,certificateManagerService,cryptoManagerServiceImpl,appContext);
     }
 }
 

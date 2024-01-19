@@ -33,12 +33,15 @@ class DocumentUploadControl extends StatefulWidget {
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
+  late Future<List<String?>> myGetDocumentCategoryFuture;
+
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
   void initState() {
     //load from the map
     if(mounted) {
       getScannedDocuments(widget.field);
+      myGetDocumentCategoryFuture = _getDocumentType(widget.field.subType!, "eng");
     }
 
     if (context
@@ -467,7 +470,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                             child: FutureBuilder(
-                                future: _getDocumentType(widget.field.subType!, "eng"),
+                                future: myGetDocumentCategoryFuture,
+                                //_getDocumentType(widget.field.subType!, "eng"),
                                 // _getDocumentValues(
                                 //     widget.field.subType!, "eng", null),
                                 builder: (BuildContext context,

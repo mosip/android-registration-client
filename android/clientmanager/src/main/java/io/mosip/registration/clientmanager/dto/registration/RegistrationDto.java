@@ -384,6 +384,8 @@ public class RegistrationDto extends Observable {
         if(!allIdentityDetails.containsKey(RegistrationConstants.AGE))
             allIdentityDetails.put(RegistrationConstants.AGE, 0);
 
+        Log.i("all mavel data","mavel data"+allIdentityDetails);
+
         return allIdentityDetails;
     }
 

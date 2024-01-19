@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.repository;
 
+import android.util.Log;
+
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.entity.ApplicantValidDocument;
 import org.json.JSONException;
@@ -20,7 +22,8 @@ public class ApplicantValidDocRepository {
     public List<String> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
         if (applicantType == null)
             return this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
-
+        Log.i(getClass().getSimpleName(),"getDocList.... : "+this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
+                categoryCode));
         return this.applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType,
                 categoryCode);
     }

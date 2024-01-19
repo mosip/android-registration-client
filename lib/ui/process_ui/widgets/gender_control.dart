@@ -38,7 +38,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
         setState(() {
           selected = data[0]!.name;
         });
-        saveData(selected);
+        saveData(data[0]!.code);
         _saveDataToMap(selected);
       }
     });
