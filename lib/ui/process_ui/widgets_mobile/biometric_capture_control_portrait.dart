@@ -50,13 +50,13 @@ class _BiometricCaptureControlPortraitState
               biometricAttributeData.title;
           context.read<BiometricCaptureControlProvider>().biometricAttribute =
               biometricAttributeData.title;
-              final providerCopy=Provider.of<BiometricCaptureControlProvider>(
-                            context,listen: false);
+          final providerCopy = Provider.of<BiometricCaptureControlProvider>(
+              context,
+              listen: false);
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => ChangeNotifierProvider.value(
-                    
                         value: providerCopy,
                         child: BiometricCaptureScanBlockPortrait(
                             field: widget.field),
@@ -124,11 +124,12 @@ class _BiometricCaptureControlPortraitState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
-                          color: (biometricAttributeData.qualityPercentage.toInt() <
-                                int.parse(
-                                    biometricAttributeData.thresholdPercentage))
-                            ? secondaryColors.elementAt(20)
-                            : secondaryColors.elementAt(11),
+                          color: (biometricAttributeData.qualityPercentage
+                                      .toInt() <
+                                  int.parse(biometricAttributeData
+                                      .thresholdPercentage))
+                              ? secondaryColors.elementAt(20)
+                              : secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
                       child: Text(
@@ -142,8 +143,6 @@ class _BiometricCaptureControlPortraitState
           ),
         ));
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +201,9 @@ class _BiometricCaptureControlPortraitState
             ),
           ),
         ),
-       SizedBox(height: 15.h,),
+        SizedBox(
+          height: 15.h,
+        ),
         Column(
           children: [
             (widget.field.conditionalBioAttributes!.first!.ageGroup!
@@ -225,6 +226,8 @@ class _BiometricCaptureControlPortraitState
                         70.h,
                     width: double.infinity,
                     child: ResponsiveGridList(
+                      listViewBuilderOptions: ListViewBuilderOptions(
+                          physics: const NeverScrollableScrollPhysics()),
                       minItemWidth: 372.h,
                       verticalGridSpacing: 17,
                       horizontalGridMargin: 30,
@@ -330,6 +333,8 @@ class _BiometricCaptureControlPortraitState
                         70.h,
                     width: double.infinity,
                     child: ResponsiveGridList(
+                        listViewBuilderOptions: ListViewBuilderOptions(
+                            physics: const NeverScrollableScrollPhysics()),
                         minItemWidth: 372.h,
                         verticalGridSpacing: 17,
                         horizontalGridMargin: 30,
