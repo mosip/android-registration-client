@@ -313,11 +313,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 const SizedBox(
                                   width: 5,
                                 ),
-                                if (widget.field.required! || widget.field.requiredOn!.isNotEmpty)
-                                  const Text(
-                                    "*",
-                                    style: TextStyle(color: Colors.red, fontSize: 14),
-                                  )
                               ],
                             ),
                              SizedBox(
@@ -330,22 +325,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               onChanged: (value) {
                                 doc.referenceNumber = value;
                                 referenceNumber = value;
-                              },
-                              validator: (value) {
-                                if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
-                                  if (value == null || value.isEmpty) {
-                                    return null;
-                                  } else if (!widget.validation.hasMatch(value)) {
-                                    return AppLocalizations.of(context)!.invalid_input;
-                                  }
-                                }
-                                if (value == null || value.isEmpty) {
-                                  return AppLocalizations.of(context)!.reference_number_validation;
-                                }
-                                if (!widget.validation.hasMatch(value)) {
-                                  return AppLocalizations.of(context)!.invalid_input;
-                                }
-                                return null;
                               },
                               textAlign: TextAlign.left,
                               decoration: InputDecoration(
@@ -380,7 +359,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(100.w, 50.h),
                                 ),
-                                onPressed: (documentController.text == "" || referenceNumber == "")
+                                onPressed: (documentController.text == "")
                                   ? null :() async {
                                   _documentScanClickedAudit();
                                   var doc = await Navigator.push(
@@ -553,11 +532,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       const SizedBox(
                                         width: 5,
                                       ),
-                                      if (widget.field.required! || widget.field.requiredOn!.isNotEmpty)
-                                        const Text(
-                                          "*",
-                                          style: TextStyle(color: Colors.red, fontSize: 14),
-                                        )
                                     ],
                                   ),
                                   SizedBox(
@@ -570,22 +544,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     onChanged: (value) {
                                       doc.referenceNumber = value;
                                       referenceNumber = value;
-                                    },
-                                    validator: (value) {
-                                      if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
-                                        if (value == null || value.isEmpty) {
-                                          return null;
-                                        } else if (!widget.validation.hasMatch(value)) {
-                                          return AppLocalizations.of(context)!.invalid_input;
-                                        }
-                                      }
-                                      if (value == null || value.isEmpty) {
-                                        return AppLocalizations.of(context)!.reference_number_validation;
-                                      }
-                                      if (!widget.validation.hasMatch(value)) {
-                                        return AppLocalizations.of(context)!.invalid_input;
-                                      }
-                                      return null;
                                     },
                                     textAlign: TextAlign.left,
                                     decoration: InputDecoration(
@@ -613,7 +571,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               style: ElevatedButton.styleFrom(
                                 minimumSize: Size(100.w, 46.h),
                               ),
-                              onPressed: (documentController.text == "" || referenceNumber == "")
+                              onPressed: (documentController.text == "")
                                   ? null :() async {
                                 var doc = await Navigator.push(
                                   context,
