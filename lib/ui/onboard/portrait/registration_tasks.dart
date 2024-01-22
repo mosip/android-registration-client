@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
@@ -208,7 +209,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                               .listOfProcesses
                               .elementAt(index)
                               .toString()))
-                          .label!["eng"]!,
+                          .label![context.read<GlobalProvider>().selectedLanguage]!,
                       style: TextStyle(
                         fontSize: isMobileSize ? 18 : 27,
                         fontWeight: semiBold,
