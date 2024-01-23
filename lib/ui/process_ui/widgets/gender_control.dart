@@ -34,7 +34,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
       } else {
         List<String?> data = await context
             .read<RegistrationTaskProvider>()
-            .getFieldValues(widget.field.subType!, "eng");
+            .getFieldValues(widget.field.subType!, lang);
         setState(() {
           selected = data[0]!;
         });
@@ -140,6 +140,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   @override
   Widget build(BuildContext context) {
+    String mandatoryLangCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
+    String mandatoryLang = context
+            .read<GlobalProvider>()
+            .codeToLanguageMapper[mandatoryLangCode] ??
+        "English";
+
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!, "eng"),
         builder: (BuildContext context,
@@ -184,7 +191,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                   snapshot.data![index - 1];
                               bool chipSelected =
                                   selected.toString().toLowerCase() ==
-                                      e["English"].toString().toLowerCase();
+                                      e[mandatoryLang].toString().toLowerCase();
                               return Padding(
                                 padding: const EdgeInsets.only(right: 6),
                                 child: Column(
@@ -193,26 +200,16 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                       .chosenLang
                                       .map(
                                     (lang) {
-                                      String mandatoryLangCode = context
-                                              .read<GlobalProvider>()
-                                              .mandatoryLanguages[0] ??
-                                          "eng";
-                                      String mandatoryLang = context
-                                                  .read<GlobalProvider>()
-                                                  .codeToLanguageMapper[
-                                              mandatoryLangCode] ??
-                                          "English";
-
                                       bool isMandatoryLang =
                                           lang == mandatoryLang;
                                       return InkWell(
                                         splashColor: Colors.transparent,
                                         onTap: () {
                                           setState(() {
-                                            selected = e["English"] ?? "";
+                                            selected = e[mandatoryLang] ?? "";
                                           });
-                                          saveData(e["English"]);
-                                          _saveDataToMap(e["English"]);
+                                          saveData(e[mandatoryLang]);
+                                          _saveDataToMap(e[mandatoryLang]);
                                         },
                                         child: ChoiceChip(
                                           label: SizedBox(

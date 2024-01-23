@@ -124,7 +124,7 @@ class _TextBoxControlState extends State<TextBoxControl>
     }
     Map<String, String> tranliterationLangMapper = {
       "eng": "Latin",
-      "fra": "French",
+      "fra": "fr",
       "ara": "Arabic",
       "hin": "Devanagari",
       "kan": "Kannada",
