@@ -49,11 +49,12 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
   void saveData(value) {
     if (widget.field.type == 'simpleType') {
       context.read<GlobalProvider>().chosenLang.forEach((element) {
-          String code = context.read<GlobalProvider>().languageToCodeMapper[element]!;
-          context
+        String code =
+            context.read<GlobalProvider>().languageToCodeMapper[element]!;
+        context
             .read<RegistrationTaskProvider>()
             .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
-        });
+      });
     } else {
       context
           .read<RegistrationTaskProvider>()
@@ -192,7 +193,18 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                       .chosenLang
                                       .map(
                                     (lang) {
-                                      bool isEnglish = lang == "English";
+                                      String mandatoryLangCode = context
+                                              .read<GlobalProvider>()
+                                              .mandatoryLanguages[0] ??
+                                          "eng";
+                                      String mandatoryLang = context
+                                                  .read<GlobalProvider>()
+                                                  .codeToLanguageMapper[
+                                              mandatoryLangCode] ??
+                                          "English";
+
+                                      bool isMandatoryLang =
+                                          lang == mandatoryLang;
                                       return InkWell(
                                         splashColor: Colors.transparent,
                                         onTap: () {
@@ -210,12 +222,12 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                               overflow: TextOverflow.clip,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                  fontWeight: isEnglish
+                                                  fontWeight: isMandatoryLang
                                                       ? FontWeight.w500
                                                       : FontWeight.w400,
                                                   fontSize: 12,
                                                   color: chipSelected
-                                                      ? isEnglish
+                                                      ? isMandatoryLang
                                                           ? Colors.white
                                                           : solidPrimary
                                                       : Colors.black),
@@ -226,7 +238,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                                   vertical: 4, horizontal: 8),
                                           selected: chipSelected,
                                           elevation: 0,
-                                          selectedColor: isEnglish
+                                          selectedColor: isMandatoryLang
                                               ? solidPrimary
                                               : const Color(0xffEFF3FF),
                                           backgroundColor: Colors.white,
@@ -235,7 +247,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                               ? null
                                               : RoundedRectangleBorder(
                                                   side: BorderSide(
-                                                      color: isEnglish
+                                                      color: isMandatoryLang
                                                           ? solidPrimary
                                                           : const Color(
                                                               0xffC2D0F2),

@@ -131,6 +131,9 @@ class _TextBoxControlState extends State<TextBoxControl>
       "tam": "Tamil",
     };
 
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
+
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -165,10 +168,6 @@ class _TextBoxControlState extends State<TextBoxControl>
                     controller: controllerMap[lang],
                     textCapitalization: TextCapitalization.words,
                     onChanged: (value) async {
-                      String mandatoryLanguageCode = context
-                              .read<GlobalProvider>()
-                              .mandatoryLanguages[0] ??
-                          "eng";
                       if (lang == mandatoryLanguageCode) {
                         for (var target in choosenLang) {
                           String targetCode =
@@ -204,16 +203,19 @@ class _TextBoxControlState extends State<TextBoxControl>
                           return null;
                         } else if (!widget.validation.hasMatch(value)) {
                           return AppLocalizations.of(context)!
-                              .demographicsScreenInvalidMessage(lang);
+                              .demographicsScreenInvalidMessage(
+                                  mandatoryLanguageCode);
                         }
                       }
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenEmptyMessage(lang);
+                            .demographicsScreenEmptyMessage(
+                                mandatoryLanguageCode);
                       }
                       if (!widget.validation.hasMatch(value)) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenInvalidMessage(lang);
+                            .demographicsScreenInvalidMessage(
+                                mandatoryLanguageCode);
                       }
                       return null;
                     },
@@ -222,14 +224,14 @@ class _TextBoxControlState extends State<TextBoxControl>
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
-                        borderSide: const BorderSide(
-                            color: appGreyShade, width: 1),
+                        borderSide:
+                            const BorderSide(color: appGreyShade, width: 1),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 14, horizontal: 16),
                       hintText: widget.e.label![lang],
-                      hintStyle: const TextStyle(
-                          color: appBlackShade3, fontSize: 14),
+                      hintStyle:
+                          const TextStyle(color: appBlackShade3, fontSize: 14),
                     ),
                   ),
                 );
