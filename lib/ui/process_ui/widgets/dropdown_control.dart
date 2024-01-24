@@ -10,6 +10,8 @@ import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class DropDownControl extends StatefulWidget {
   const DropDownControl({
     super.key,
@@ -155,13 +157,16 @@ class _CustomDropDownState extends State<DropDownControl> {
     List<GenericData?> temp;
     String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     if (index == 1) {
-      temp = await _getLocationValues("$index", context.read<GlobalProvider>().selectedLanguage);
+      temp = await _getLocationValues(
+          "$index", context.read<GlobalProvider>().selectedLanguage);
     } else {
       var parentCode = context
           .watch<GlobalProvider>()
           .groupedHierarchyValues[widget.field.group]![index! - 1];
       temp = await _getLocationValuesBasedOnParent(
-          parentCode, widget.field.subType!, context.read<GlobalProvider>().selectedLanguage);
+          parentCode,
+          widget.field.subType!,
+          context.read<GlobalProvider>().selectedLanguage);
     }
     setState(() {
       selected = null;
@@ -179,6 +184,8 @@ class _CustomDropDownState extends State<DropDownControl> {
     _getOptionsList();
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return Column(
       children: [
         Card(
@@ -225,10 +232,14 @@ class _CustomDropDownState extends State<DropDownControl> {
                       return null;
                     }
                     if (value == null) {
-                      return 'Please enter a value';
+                      return AppLocalizations.of(context)!
+                          .demographicsScreenEmptyMessage(
+                              mandatoryLanguageCode);
                     }
                     if (!widget.validation.hasMatch(value.name)) {
-                      return 'Invalid input';
+                      return AppLocalizations.of(context)!
+                          .demographicsScreenInvalidMessage(
+                              mandatoryLanguageCode);
                     }
                     return null;
                   },
