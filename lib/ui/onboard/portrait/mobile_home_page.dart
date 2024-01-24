@@ -4,7 +4,6 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
 import 'package:registration_client/ui/onboard/widgets/onboard_landing_page_navbar_icon.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MobileHomePage extends StatefulWidget {
@@ -28,27 +27,25 @@ class _MobileHomePageState extends State<MobileHomePage> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _getBottomNavigationBar(),
-        body: SingleChildScrollView(
-          child: Container(
-            height: ScreenUtil().screenHeight,
-            width: ScreenUtil().screenWidth,
-            padding: EdgeInsets.symmetric(
-              // horizontal: 20.w,
-              vertical: 14.h,
-            ),
-            margin: EdgeInsets.only(
-              top: 14.h,
-            ),
-            color: AppStyle.appBlueShade,
-            child: TasksPage(
-              operationalTasks: widget.operationalTasks,
-              getProcessUI: (BuildContext context, Process process) {
-                widget.getProcessUI(context, process);
-              },
-              syncData: (BuildContext context) {
-                widget.syncData(context);
-              },
-            ),
+        body: Container(
+          height: ScreenUtil().screenHeight,
+          width: ScreenUtil().screenWidth,
+          padding: EdgeInsets.symmetric(
+            // horizontal: 20.w,
+            vertical: 14.h,
+          ),
+          margin: EdgeInsets.only(
+            top: 14.h,
+          ),
+          color: appBlueShade,
+          child: TasksPage(
+            operationalTasks: widget.operationalTasks,
+            getProcessUI: (BuildContext context, Process process) {
+              widget.getProcessUI(context, process);
+            },
+            syncData: (BuildContext context) {
+              widget.syncData(context);
+            },
           ),
         ),
       ),
@@ -57,15 +54,16 @@ class _MobileHomePageState extends State<MobileHomePage> {
 
   _getBottomNavigationBar() {
     return Container(
-        height: 94.h,
+        height: isMobileSize ? 84.h : 94.h,
         padding: EdgeInsets.symmetric(
-          vertical: 15.h,
+          vertical: 17.h,
+          horizontal: 20.w
         ),
         decoration: const BoxDecoration(
-          color: AppStyle.appWhite,
+          color: appWhite,
           boxShadow: [
             BoxShadow(
-              color: AppStyle.greyBorderShade,
+              color: greyBorderShade,
               offset: Offset(0.0, -3.0),
               blurRadius: 6.0,
               spreadRadius: 0.0,
@@ -73,89 +71,83 @@ class _MobileHomePageState extends State<MobileHomePage> {
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: dashboardIcon,
-                icon: Icon(
-                  Icons.home,
-                  color: solidPrimary,
-                ),
-                title: Text(
-                  AppLocalizations.of(context)!.dashboard,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: solidPrimary),
-                ),
-                ontap: () {},
+            OnboardLandingPageNavbarIcon(
+              imagePath: dashboardIcon,
+              icon: Icon(
+                Icons.home,
+                color: solidPrimary,
               ),
-            ),
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: settingsIcon,
-                icon: Icon(
-                  Icons.settings,
+              title: Text(
+                AppLocalizations.of(context)!.dashboard,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
                   color: secondaryColors.elementAt(5),
                 ),
-                title: Text(
-                  AppLocalizations.of(context)!.settings,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: secondaryColors.elementAt(5)),
-                ),
-                ontap: () {},
               ),
+              ontap: () {},
             ),
-            Expanded(
-              child: InkWell(
-                onTap: () {},
-                child: SizedBox(
-                  height: 54.h,
-                  child: Center(
-                    child: Image.asset(
-                      appIconLogoOnly,
-                      fit: BoxFit.fill,
-                    ),
+            OnboardLandingPageNavbarIcon(
+              imagePath: settingsIcon,
+              icon: Icon(
+                Icons.settings,
+                color: secondaryColors.elementAt(5),
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.settings,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
+                  color: secondaryColors.elementAt(5),
+                ),
+              ),
+              ontap: () {},
+            ),
+            InkWell(
+              onTap: () {},
+              child: SizedBox(
+                height: 54.h,
+                child: Center(
+                  child: Image.asset(
+                    appIconLogoOnly,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
             ),
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: notificationIcon,
-                icon: Icon(
-                  Icons.notifications,
+            OnboardLandingPageNavbarIcon(
+              imagePath: notificationIcon,
+              icon: Icon(
+                Icons.notifications,
+                color: secondaryColors.elementAt(5),
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.notifications,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
                   color: secondaryColors.elementAt(5),
                 ),
-                title: Text(
-                  AppLocalizations.of(context)!.notifications,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: secondaryColors.elementAt(5)),
-                ),
-                ontap: () {},
               ),
+              ontap: () {},
             ),
-            Expanded(
-              child: OnboardLandingPageNavbarIcon(
-                imagePath: dashboardIcon,
-                icon: Icon(
-                  Icons.home,
+            OnboardLandingPageNavbarIcon(
+              imagePath: dashboardIcon,
+              icon: Icon(
+                Icons.home,
+                color: secondaryColors.elementAt(5),
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.profile,
+                style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 14,
+                  fontWeight: semiBold,
                   color: secondaryColors.elementAt(5),
                 ),
-                title: Text(
-                  AppLocalizations.of(context)!.profile,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: secondaryColors.elementAt(5)),
-                ),
-                ontap: () {},
               ),
+              ontap: () {},
             )
           ],
         ));

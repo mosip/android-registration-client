@@ -61,6 +61,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                 .setIsDefault(false)
                 .setIsOfficer(false)
                 .setIsSupervisor(false)
+                .setIsOperator(false)
                 .setErrorCode(errorCode)
                 .build();
 
@@ -83,7 +84,8 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                                     .setResponse(wrapper.getResponse())
                                     .setUsername(sharedPreferences.getString(USER_NAME, username))
                                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
-                                    .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
+                                    .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
+                                    .setIsOperator(sharedPreferences.getBoolean(IS_OPERATOR, false))
                                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
                                     .build();
                             result.success(authResponse);
@@ -143,7 +145,8 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     .setResponse(token)
                     .setUsername(sharedPreferences.getString(USER_NAME, username))
                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
-                    .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
+                    .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
+                    .setIsOperator(sharedPreferences.getBoolean(IS_OPERATOR, false))
                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
                     .build();
             result.success(authResponse);

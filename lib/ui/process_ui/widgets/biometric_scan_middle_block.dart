@@ -12,6 +12,7 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../provider/global_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BiometricScanMiddleBlock extends StatefulWidget {
   const BiometricScanMiddleBlock(
@@ -144,7 +145,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "${widget.parameterTitle} Capture",
+                    "${widget.biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.capture}",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 18, fontWeight: bold, color: blackShade1),
                   ),
@@ -201,7 +202,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                           });
                         }
                       },
-                      child: const Text("RESCAN"),
+                      child: Text(AppLocalizations.of(context)!.rescan),
                     ),
                     SizedBox(
                       width: 10.w,
@@ -247,7 +248,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                         setState(() {});
                         _navigateBack();
                       },
-                      child: const Text("SAVE"),
+                      child: Text(AppLocalizations.of(context)!.save),
                     ),
                   ],
                 ),
@@ -319,7 +320,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
               size: 14,
             ),
             label: Text(
-              "SCAN",
+              AppLocalizations.of(context)!.scan,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontSize: 14,
                   fontWeight: bold,
@@ -357,7 +358,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Attempts",
+                        AppLocalizations.of(context)!.attempts,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontSize: 14,
                               color: secondaryColors.elementAt(1),
@@ -370,7 +371,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Exceptions",
+                        AppLocalizations.of(context)!.exceptions,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontSize: 14,
                               color: secondaryColors.elementAt(1),
@@ -395,12 +396,12 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  "Quality",
+                  AppLocalizations.of(context)!.quality,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontSize: 14, fontWeight: semiBold, color: blackShade1),
                 ),
                 Text(
-                  "Threshold ${widget.biometricAttributeData.thresholdPercentage}%",
+                  "${AppLocalizations.of(context)!.threshold} ${widget.biometricAttributeData.thresholdPercentage}%",
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 14,
                         fontWeight: regular,
@@ -441,7 +442,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Attempts",
+                      AppLocalizations.of(context)!.attempts,
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge

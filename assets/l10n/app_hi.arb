@@ -90,6 +90,24 @@
       }
     }
   },
+"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
+  "@demographicsScreenEmptyMessage": {
+    "description": "Demographic Screen Empty Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
+  "@demographicsScreenInvalidMessage": {
+    "description": "Demographic Screen Invalid Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
   "@biometricsScreenName": {
     "description": "Biometric Screen Name",
@@ -171,5 +189,29 @@
   "registration_acknowledgement": "रजिस्ट्रेशन स्वीकृति",
   "print_text": "प्रिंट",
   "hello": "नमस्ते",
-  "onboard_process_help": "कृपया ऑनबोर्डिंग प्रक्रिया आरंभ करने के लिए 'ऑनबोर्ड प्राप्त करें' पर टैप करें।"
+  "onboard_process_help": "कृपया ऑनबोर्डिंग प्रक्रिया आरंभ करने के लिए 'ऑनबोर्ड प्राप्त करें' पर टैप करें।",
+  "default_not_found": "आवश्यक भूमिका नहीं मिली!",
+  "mark_exception": "अस्तित्व चिह्नित करें",
+  "threshold": "सीमा",
+  "quality": "गुणवत्ता",
+  "attempts": "प्रयास",
+  "comments": "टिप्पणियाँ",
+  "exception_type": "अस्तित्व प्रकार",
+  "permanent": "स्थायी",
+  "temporary": "अस्थायी",
+  "exceptions": "अस्तित्वाएं",
+  "add_comments_for_marking_the_exception": "अस्तित्व चिह्नित करने के लिए टिप्पणियाँ जोड़ें",
+  "rescan":"पुन: स्कैन",
+  "marking_exceptions_on":"अपवादों को चिह्नित करना",
+  "is_not_allowed":"अनुमति नहीं है",
+  "capture":"कब्जा",
+  "attempts_left":"प्रयास बाकी हैं",
+  "left_hand": "बाएं हाथ",
+  "left": "बाएं",
+  "right": "दाएं",
+  "right_hand": "दाएं हाथ",
+  "iris": "आईरिस",
+  "thumbs": "अंगूठे",
+  "exception":"अपवाद",
+  "face": "चेहरा"
 }

@@ -8,9 +8,10 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 import 'custom_cupertino_picker.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DateControl extends StatefulWidget {
   const DateControl({super.key, required this.field, required this.validation});
@@ -159,6 +160,8 @@ class _DateControlState extends State<DateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -188,18 +191,20 @@ class _DateControlState extends State<DateControl> {
                     return null;
                   }
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a value';
+                    return AppLocalizations.of(context)!
+                        .demographicsScreenEmptyMessage(mandatoryLanguageCode);
                   }
                   if (!widget.validation.hasMatch(value)) {
-                    return 'Invalid input';
+                    return AppLocalizations.of(context)!
+                        .demographicsScreenInvalidMessage(
+                            mandatoryLanguageCode);
                   }
                   return null;
                 },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(
-                        color: AppStyle.appGreyShade, width: 1),
+                    borderSide: const BorderSide(color: appGreyShade, width: 1),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 14,
@@ -207,7 +212,7 @@ class _DateControlState extends State<DateControl> {
                   ),
                   hintText: "dd/mm/yyyy",
                   hintStyle: const TextStyle(
-                    color: AppStyle.appBlackShade3,
+                    color: appBlackShade3,
                     fontSize: 14,
                   ),
                 ),

@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
-import 'package:registration_client/utils/app_style.dart';
+import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DropDownControl extends StatefulWidget {
   const DropDownControl({
@@ -60,9 +62,14 @@ class _CustomDropDownState extends State<DropDownControl> {
     }
     if (value != null) {
       if (widget.field.type == 'simpleType') {
-        context
-            .read<RegistrationTaskProvider>()
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
+        context.read<GlobalProvider>().chosenLang.forEach((element) {
+          String code =
+              context.read<GlobalProvider>().languageToCodeMapper[element]!;
+          context
+              .read<RegistrationTaskProvider>()
+              .addSimpleTypeDemographicField(
+                  widget.field.id ?? "", value, code);
+        });
       } else {
         context
             .read<RegistrationTaskProvider>()
@@ -72,6 +79,7 @@ class _CustomDropDownState extends State<DropDownControl> {
   }
 
   void _saveDataToMap(GenericData? value) {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     for (int i = index! + 1; i < maxLen; i++) {
       context.read<GlobalProvider>().removeFieldFromMap(
             "${widget.field.group}${context.read<GlobalProvider>().hierarchyReverse[i]}",
@@ -83,7 +91,7 @@ class _CustomDropDownState extends State<DropDownControl> {
         context.read<GlobalProvider>().setLanguageSpecificValue(
               "${widget.field.group}${widget.field.subType}",
               value,
-              "eng",
+              lang,
               context.read<GlobalProvider>().fieldInputValue,
             );
       } else {
@@ -147,14 +155,18 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   _getOptionsList() async {
     List<GenericData?> temp;
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     if (index == 1) {
-      temp = await _getLocationValues("$index", "eng");
+      temp = await _getLocationValues(
+          "$index", context.read<GlobalProvider>().selectedLanguage);
     } else {
       var parentCode = context
           .watch<GlobalProvider>()
           .groupedHierarchyValues[widget.field.group]![index! - 1];
       temp = await _getLocationValuesBasedOnParent(
-          parentCode, widget.field.subType!, "eng");
+          parentCode,
+          widget.field.subType!,
+          context.read<GlobalProvider>().selectedLanguage);
     }
     setState(() {
       selected = null;
@@ -163,7 +175,7 @@ class _CustomDropDownState extends State<DropDownControl> {
       list = temp;
     });
     if (_isFieldIdPresent()) {
-      _getSelectedValueFromMap("eng", list);
+      _getSelectedValueFromMap(lang, list);
     }
   }
 
@@ -172,6 +184,8 @@ class _CustomDropDownState extends State<DropDownControl> {
     _getOptionsList();
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return Column(
       children: [
         Card(
@@ -201,7 +215,7 @@ class _CustomDropDownState extends State<DropDownControl> {
                     ),
                     hintText: "Select Option",
                     hintStyle: const TextStyle(
-                      color: AppStyle.appBlackShade3,
+                      color: appBlackShade3,
                     ),
                   ),
                   items: list
@@ -218,10 +232,14 @@ class _CustomDropDownState extends State<DropDownControl> {
                       return null;
                     }
                     if (value == null) {
-                      return 'Please enter a value';
+                      return AppLocalizations.of(context)!
+                          .demographicsScreenEmptyMessage(
+                              mandatoryLanguageCode);
                     }
                     if (!widget.validation.hasMatch(value.name)) {
-                      return 'Invalid input';
+                      return AppLocalizations.of(context)!
+                          .demographicsScreenInvalidMessage(
+                              mandatoryLanguageCode);
                     }
                     return null;
                   },
@@ -231,7 +249,9 @@ class _CustomDropDownState extends State<DropDownControl> {
                       _saveDataToMap(value);
                       context.read<GlobalProvider>().setLocationHierarchy(
                           widget.field.group!, value.code, index!);
-                      _getSelectedValueFromMap("eng", list);
+                      String lang =
+                          context.read<GlobalProvider>().mandatoryLanguages[0]!;
+                      _getSelectedValueFromMap(lang, list);
                     }
                   },
                 ),

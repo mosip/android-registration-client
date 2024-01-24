@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 class TaskCard extends StatefulWidget {
   const TaskCard({
@@ -28,7 +27,7 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 10.0,
-      color: AppStyle.appWhite,
+      color: appWhite,
       margin: EdgeInsets.symmetric(
         horizontal: 20.w,
         vertical: 10.h,
@@ -58,7 +57,7 @@ class _TaskCardState extends State<TaskCard> {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: semiBold,
                   fontSize: 24,
-                  color: AppStyle.appBlackShade1,
+                  color: appBlackShade1,
                 ),
           ),
           subtitle: Padding(
@@ -67,7 +66,7 @@ class _TaskCardState extends State<TaskCard> {
               widget.subtitle,
               style: const TextStyle(
                 fontSize: 18,
-                color: AppStyle.appBlackShade2,
+                color: appBlackShade2,
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:registration_client/model/biometrics_dto.dart';
 
 class BiometricAttributeData {
   String title;
+  String viewTitle;
   int attemptNo;
   bool isScanned;
   List<bool> exceptions;
@@ -13,6 +14,7 @@ class BiometricAttributeData {
   int noOfCapturesAllowed;
   BiometricAttributeData({
     required this.title,
+    required this.viewTitle,
     required this.attemptNo,
     required this.isScanned,
     required this.exceptions,

@@ -50,7 +50,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: semiBold,
-                    color: AppStyle.appBlack),
+                    color: appBlack),
               ),
               SizedBox(
                 height: 35.h,
@@ -59,12 +59,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.username,
-                    style: AppStyle.tabletPortraitTextfieldHeader,
+                    style: AppTextStyle.tabletPortraitTextfieldHeader,
                   ),
                   const Text(
                     ' *',
                     style: TextStyle(
-                      color: AppStyle.mandatoryField,
+                      color: mandatoryField,
                     ),
                   ),
                 ],
@@ -80,11 +80,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.password,
-                    style: AppStyle.tabletPortraitTextfieldHeader,
+                    style: AppTextStyle.tabletPortraitTextfieldHeader,
                   ),
                   const Text(
                     ' *',
-                    style: TextStyle(color: AppStyle.mandatoryField),
+                    style: TextStyle(color: mandatoryField),
                   ),
                 ],
               ),
@@ -106,10 +106,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppStyle.authIconBorder,
+          color: authIconBorder,
           width: 2,
         ),
-        color: AppStyle.authIconBackground,
+        color: authIconBackground,
       ),
       child: Center(
         child: Image.asset('assets/images/Registering an Individual@2x.png'),
@@ -128,7 +128,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -137,7 +137,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       child: TextField(
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_username,
-          hintStyle: AppStyle.tabletPortraitTextfieldHintText,
+          hintStyle: AppTextStyle.tabletPortraitTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {
@@ -158,7 +158,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -168,7 +168,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         obscureText: true,
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_password,
-          hintStyle: AppStyle.tabletPortraitTextfieldHintText,
+          hintStyle: AppTextStyle.tabletPortraitTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {

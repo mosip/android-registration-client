@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -31,11 +30,12 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   @override
   void initState() {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     if (context
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id)) {
-      _getSelectedValueFromMap("eng");
+      _getSelectedValueFromMap(lang);
     }
     super.initState();
   }
@@ -61,18 +61,16 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   String? selectedOption;
 
   void handleOptionChange(String? value) {
-    context
-        .read<RegistrationTaskProvider>()
-        .addSimpleTypeDemographicField(widget.field.id ?? "", value!, "eng");
-    context.read<GlobalProvider>().setLanguageSpecificValue(
-          widget.field.id ?? "",
-          value,
-          "eng",
-          context.read<GlobalProvider>().fieldInputValue,
-        );
-    // setState(() {
-    //   selectedOption = value;
-    // });
+    context.read<GlobalProvider>().chosenLang.forEach((element) {
+      String code =
+          context.read<GlobalProvider>().languageToCodeMapper[element]!;
+      context
+          .read<RegistrationTaskProvider>()
+          .addSimpleTypeDemographicField(widget.field.id ?? "", value!, code);
+    });
+    setState(() {
+      selectedOption = value;
+    });
   }
 
   @override
@@ -80,8 +78,9 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
-      future: _getFieldValues(widget.field.subType!, "eng"),
-      builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
+      future: _getFieldValues(widget.field.subType!,
+          context.read<GlobalProvider>().selectedLanguage),
+      builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Card(
@@ -204,9 +203,7 @@ class SelectableCard extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: 14,
-                  color: value == groupValue
-                      ? Colors.white
-                      : AppStyle.appBlackShade1,
+                  color: value == groupValue ? Colors.white : appBlackShade1,
                   fontWeight: regular,
                 ),
               ),

@@ -118,6 +118,7 @@ class _HomePageState extends State<HomePage> {
     String result;
     try {
       result = await HomePage.platform.invokeMethod("masterDataSync");
+      await HomePage.platform.invokeMethod("batchJob");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }
@@ -262,8 +263,12 @@ class _HomePageState extends State<HomePage> {
                         controller: ScrollController(),
                         child: Column(
                           children: [
-                            const TabletHeader(),
-                            const TabletNavbar(),
+                            isMobileSize
+                                ? const SizedBox()
+                                : const TabletHeader(),
+                            isMobileSize
+                                ? const SizedBox()
+                                : const TabletNavbar(),
                             AnnotatedRegion<SystemUiOverlayStyle>(
                               value: const SystemUiOverlayStyle(
                                 statusBarColor: Colors.transparent,
@@ -296,7 +301,8 @@ class _HomePageState extends State<HomePage> {
                                                 height: 30.h,
                                               ),
                                               Text(
-                                                AppLocalizations.of(context)!.registration_tasks,
+                                                AppLocalizations.of(context)!
+                                                    .registration_tasks,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyLarge
@@ -378,7 +384,8 @@ class _HomePageState extends State<HomePage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                AppLocalizations.of(context)!.operation_tasks,
+                                                AppLocalizations.of(context)!
+                                                    .operation_tasks,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyLarge

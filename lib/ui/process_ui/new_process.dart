@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +42,7 @@ class NewProcess extends StatefulWidget {
   State<NewProcess> createState() => _NewProcessState();
 }
 
-class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
+class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   bool isPortrait = true;
@@ -276,6 +275,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
     return context.read<ConnectivityProvider>().isConnected;
   }
 
+  bool continueButton = false;
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
@@ -353,11 +353,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                   .containsKey(screen.fields!.elementAt(i)!.subType)) &&
               !(context.read<GlobalProvider>().fieldInputValue.containsKey(
                   "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-            log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
+            // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
 
-            if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
-              _showInSnackBar(AppLocalizations.of(context)!.upload_document);
-            }
+            // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
+            //   _showInSnackBar(AppLocalizations.of(context)!.upload_document);
+            // }
             isValid = false;
 
             break;
@@ -447,10 +447,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
           if (customValidator) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-              registrationTaskProvider.setAcknowledgementTemplate("");
               registrationTaskProvider.setPreviewTemplate("");
-              registrationTaskProvider.getAcknowledgementTemplate(false);
-              registrationTaskProvider.getPreviewTemplate(true);
+              registrationTaskProvider.setAcknowledgementTemplate("");
+              await registrationTaskProvider.getPreviewTemplate(true);
+              await registrationTaskProvider.getAcknowledgementTemplate(false);
             }
 
             globalProvider.newProcessTabIndex =
@@ -484,7 +484,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
             globalProvider.newProcessTabIndex + 1;
       }
     }
-    
+
+    customValidation(globalProvider.newProcessTabIndex).then((value) {
+      continueButton = value;
+    });
 
     return SafeArea(
       child: Scaffold(
@@ -493,7 +496,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
           decoration: BoxDecoration(
             border: const Border(
               top: BorderSide(
-                color: AppStyle.dividerColor,
+                color: dividerColor,
                 width: 1,
               ),
             ),
@@ -510,12 +513,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                     Expanded(
                       child: OutlinedButton(
                         child: SizedBox(
-                          height: isPortrait ? 68.h : 52.h,
+                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.go_back,
                               style: TextStyle(
-                                fontSize: isPortrait ? 22 : 16,
+                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
                               ),
                             ),
                           ),
@@ -531,12 +534,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                     Expanded(
                       child: ElevatedButton(
                         child: SizedBox(
-                          height: isPortrait ? 68.h : 52.h,
+                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.informed,
                               style: TextStyle(
-                                fontSize: isPortrait ? 22 : 16,
+                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
                               ),
                             ),
                           ),
@@ -597,6 +600,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                             const Size(209, 52)),
                         minimumSize: MaterialStateProperty.all<Size>(
                             const Size(209, 52)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            continueButton ? solidPrimary : Colors.grey),
                       ),
                       onPressed: () {
                         continueButtonTap(context, size, newProcess);
@@ -629,7 +634,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                         ],
                       ),
                 Container(
-                  padding: isMobile
+                  padding: isMobile && !isMobileSize
                       ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
                       : const EdgeInsets.fromLTRB(0, 0, 0, 0),
                   decoration: const BoxDecoration(
@@ -854,7 +859,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
           height: 30.h,
         ),
         Container(
-          width: 376.w,
+          width: isPortrait && !isMobileSize ? 566.w : 376.w,
           padding: EdgeInsets.only(
             top: 24.h,
             bottom: 28.h,
@@ -876,9 +881,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
               Text(
                 AppLocalizations.of(context)!.authenticate_using_password,
                 style: TextStyle(
-                    fontSize: 18,
+                    fontSize: isPortrait && !isMobileSize ? 24 : 18,
                     fontWeight: semiBold,
-                    color: AppStyle.appBlack),
+                    color: appBlack),
               ),
               SizedBox(
                 height: 35.h,
@@ -888,13 +893,13 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                   Text(
                     AppLocalizations.of(context)!.username,
                     style: isPortrait
-                        ? AppStyle.tabletPortraitTextfieldHeader
-                        : AppStyle.mobileTextfieldHeader,
+                        ? AppTextStyle.tabletPortraitTextfieldHeader
+                        : AppTextStyle.mobileTextfieldHeader,
                   ),
                   const Text(
                     ' *',
                     style: TextStyle(
-                      color: AppStyle.mandatoryField,
+                      color: mandatoryField,
                     ),
                   ),
                 ],
@@ -911,12 +916,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
                   Text(
                     AppLocalizations.of(context)!.password,
                     style: isPortrait
-                        ? AppStyle.tabletPortraitTextfieldHeader
-                        : AppStyle.mobileTextfieldHeader,
+                        ? AppTextStyle.tabletPortraitTextfieldHeader
+                        : AppTextStyle.mobileTextfieldHeader,
                   ),
                   const Text(
                     ' *',
-                    style: TextStyle(color: AppStyle.mandatoryField),
+                    style: TextStyle(color: mandatoryField),
                   ),
                 ],
               ),
@@ -938,10 +943,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppStyle.authIconBorder,
+          color: authIconBorder,
           width: 2,
         ),
-        color: AppStyle.authIconBackground,
+        color: authIconBackground,
       ),
       child: Center(
         child: Image.asset('assets/images/Registering an Individual@2x.png'),
@@ -951,16 +956,15 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
 
   _getUsernameTextField() {
     return Container(
-      height: 52.h,
+      height: isPortrait && !isMobileSize ? 82.h : 52.h,
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.symmetric(
-        vertical: 12.h,
         horizontal: 12.w,
       ),
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -970,9 +974,13 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_username,
           hintStyle: isPortrait
-              ? AppStyle.tabletPortraitTextfieldHintText
-              : AppStyle.mobileTextfieldHintText,
+              ? AppTextStyle.tabletPortraitTextfieldHintText
+              : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
+        ),
+        style: TextStyle(
+          fontSize: isPortrait && !isMobileSize ? 22 : 14,
+          color: appBlack,
         ),
         onChanged: (v) {
           setState(() {
@@ -985,16 +993,15 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
 
   _getPasswordTextField() {
     return Container(
-      height: 52.h,
+      height: isPortrait && !isMobileSize ? 82.h : 52.h,
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.symmetric(
-        vertical: 12.h,
         horizontal: 12.w,
       ),
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -1005,9 +1012,13 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver{
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_password,
           hintStyle: isPortrait
-              ? AppStyle.tabletPortraitTextfieldHintText
-              : AppStyle.mobileTextfieldHintText,
+              ? AppTextStyle.tabletPortraitTextfieldHintText
+              : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
+        ),
+        style: TextStyle(
+          fontSize: isPortrait && !isMobileSize ? 22 : 14,
+          color: appBlack,
         ),
         onChanged: (v) {
           setState(() {
