@@ -212,6 +212,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     List<String> selectedLang = context.read<GlobalProvider>().chosenLang;
     if (!(widget.field.type == "simpleType")) {
       selectedLang = ["English"];
@@ -442,8 +444,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
               : Column(
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
+                          flex: 2,
                             child: FutureBuilder(
                                 future: _getDocumentValues(
                                     widget.field.subType!, lang, null),
@@ -504,6 +509,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                               hintStyle: const TextStyle(
                                                   color: Colors.grey, fontSize: 14),
                                               suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
+                                              helperText: "",
                                             ),
                                           )
                                               : const SizedBox.shrink(),
@@ -513,6 +519,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   );
                                 })),
                         Expanded(
+                          flex: 2,
                           child: Card(
                             elevation: 0,
                             margin: EdgeInsets.symmetric(
@@ -527,7 +534,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     children: [
                                       Text(
                                         AppLocalizations.of(context)!.referenceNumber(lang),
-                                        style: TextStyle(fontSize: 14, fontWeight: semiBold),
+                                        style: TextStyle(fontSize: isPortrait && !isMobileSize ? 18 : 14, fontWeight: semiBold),
                                       ),
                                       const SizedBox(
                                         width: 5,
@@ -535,7 +542,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 10.h,
+                                    height: 13.h,
                                   ),
                                   TextFormField(
                                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -557,6 +564,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       hintText: AppLocalizations.of(context)!.reference_number,
                                       hintStyle: const TextStyle(
                                           color: appBlackShade3, fontSize: 14),
+                                      helperText: "",
                                     ),
                                   ),
                                 ],
@@ -565,11 +573,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                           ),
                         ),
                         Expanded(
+                          flex: 1,
                           child: Padding(
-                            padding: EdgeInsets.only(top: 20.h,left: 10.w),
+                            padding: EdgeInsets.only(top:10.h,left: 10.w),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                minimumSize: Size(100.w, 46.h),
+                                minimumSize: Size(100.w, 48.h),
                               ),
                               onPressed: (documentController.text == "")
                                   ? null :() async {
