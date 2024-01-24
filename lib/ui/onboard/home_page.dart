@@ -117,6 +117,7 @@ class _HomePageState extends State<HomePage> {
     String result;
     try {
       result = await HomePage.platform.invokeMethod("masterDataSync");
+      await HomePage.platform.invokeMethod("batchJob");
     } on PlatformException catch (e) {
       result = "Some Error Occurred: $e";
     }
