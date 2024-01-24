@@ -180,7 +180,7 @@ class _BiometricCaptureControlPortraitState
                               ?.copyWith(
                                   fontSize: (isMobileSize)?16.w:24.w,
                                   color: blackShade1,
-                                  fontWeight: semiBold),
+                                  fontWeight: semiBold,overflow: TextOverflow.ellipsis),
                           children: const [
                             TextSpan(
                               text: " *",
@@ -198,7 +198,7 @@ class _BiometricCaptureControlPortraitState
                               ?.copyWith(
                                   fontSize: (isMobileSize)?16.w:24.w,
                                   color: blackShade1,
-                                  fontWeight: semiBold),
+                                  fontWeight: semiBold,overflow: TextOverflow.ellipsis),
                         ),
                   // SizedBox(
                   //   height: (isMobileSize)?20.h:52.h,
