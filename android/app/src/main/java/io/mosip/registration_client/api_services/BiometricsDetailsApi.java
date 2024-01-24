@@ -490,8 +490,8 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             intent.setAction(RegistrationConstants.DISCOVERY_INTENT_ACTION);
             queryPackage(intent);
             DiscoverRequest discoverRequest = new DiscoverRequest();
-            discoverRequest.setType(currentModality == Modality.EXCEPTION_PHOTO ? SingleType.FACE.name() :
-                    currentModality.getSingleType().name());
+            discoverRequest.setType(currentModality == Modality.EXCEPTION_PHOTO ? SingleType.FACE.value() :
+                    currentModality.getSingleType().value());
             intent.putExtra(RegistrationConstants.SBI_INTENT_REQUEST_KEY, objectMapper.writeValueAsBytes(discoverRequest));
             activity.startActivityForResult(intent, 1);
         } catch (Exception ex) {
@@ -578,7 +578,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             biometricsDtoList.forEach( dto -> {
                 try {
                     this.registrationService.getRegistrationDto().addBiometric(fieldId,
-                            currentModality == Modality.EXCEPTION_PHOTO ? currentModality.getAttributes().get(0) :
+                            (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE) ? currentModality.getAttributes().get(0) :
                                     Modality.getBioAttribute(dto.getBioSubType()), currentAttempt, dto);
 
                     result1.success("Ok");
