@@ -12,6 +12,8 @@ import '../../../provider/global_provider.dart';
 import 'custom_cupertino_picker.dart';
 import 'custom_label.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class AgeDateControl extends StatefulWidget {
   const AgeDateControl(
       {super.key, required this.validation, required this.field});
@@ -211,6 +213,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -238,7 +242,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         controller: dateController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please Enter a value";
+                            return AppLocalizations.of(context)!
+                                .demographicsScreenEmptyMessage(
+                                    mandatoryLanguageCode);
                           }
                           return null;
                         },
@@ -250,96 +256,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           hintStyle: const TextStyle(
-// <<<<<<< HEAD
-//                               color: AppStyle.appBlackShade3, fontSize: 14),
-//                           counterText: "",
-//                           hintText: 'DD',
-//                           border: OutlineInputBorder(
-//                             borderRadius: BorderRadius.circular(8.0),
-//                             borderSide: const BorderSide(
-//                                 color: Color(0xff9B9B9F), width: 1),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(width: 8.0),
-//                     Flexible(
-//                       child: TextFormField(
-//                         onTap: () => _removeFocusFromAll("month"),
-//                         autovalidateMode: AutovalidateMode.onUserInteraction,
-//                         validator: (value) {
-//                           String? valid = fieldValidation(value, "MM");
-//                           if (valid == null) {
-//                             return _invalidDateText();
-//                           }
-//                           return valid;
-//                         },
-//                         onChanged: (value) {
-//                           if (value.length == 2 &&
-//                               monthController.text.length == 2 &&
-//                               yearController.text.length == 4) {
-//                             _calculateAgeFromDOB();
-//                           } else {
-//                             ageController.text = "";
-//                           }
-//                           if (value.length >= 2) {
-//                             focusNextField(monthFocus, yearFocus);
-//                           }
-//                           saveData();
-//                         },
-//                         maxLength: 2,
-//                         focusNode: monthFocus,
-//                         keyboardType: TextInputType.number,
-//                         controller: monthController,
-//                         decoration: InputDecoration(
-//                           contentPadding: const EdgeInsets.symmetric(
-//                               vertical: 12, horizontal: 16),
-//                           hintStyle: const TextStyle(
-//                               color: AppStyle.appBlackShade3, fontSize: 14),
-//                           counterText: "",
-//                           hintText: 'MM',
-//                           border: OutlineInputBorder(
-//                             borderRadius: BorderRadius.circular(8.0),
-//                             borderSide: const BorderSide(
-//                                 color: Color(0xff9B9B9F), width: 1),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(width: 8.0),
-//                     Flexible(
-//                       child: TextFormField(
-//                         validator: (value) {
-//                           String? valid = fieldValidation(value, "yyyy");
-//                           if (valid == null) {
-//                             return _invalidDateText();
-//                           }
-//                           return valid;
-//                         },
-//                         onChanged: (value) {
-//                           if (value.length == 4 &&
-//                               dayController.text.length == 2 &&
-//                               monthController.text.length == 2) {
-//                             _calculateAgeFromDOB();
-//                           } else {
-//                             ageController.text = "";
-//                           }
-//                           saveData();
-//                         },
-//                         onTap: () => _removeFocusFromAll("year"),
-//                         autovalidateMode: AutovalidateMode.onUserInteraction,
-//                         maxLength: 4,
-//                         focusNode: yearFocus,
-//                         controller: yearController,
-//                         keyboardType: TextInputType.number,
-//                         decoration: InputDecoration(
-//                           contentPadding: const EdgeInsets.symmetric(
-//                               vertical: 12, horizontal: 16),
-//                           hintStyle: const TextStyle(
-//                               color: AppStyle.appBlackShade3, fontSize: 14),
-//                           counterText: "",
-//                           hintText: 'YYYY',
-// =======
                             color: appBlackShade3,
                             fontSize: 14,
                           ),
@@ -348,7 +264,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
                             Icons.calendar_month,
                             color: solidPrimary,
                           ),
-// >>>>>>> feature-flutter-mosip
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: const BorderSide(
@@ -367,7 +282,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please Enter a value";
+                            return AppLocalizations.of(context)!
+                                .demographicsScreenEmptyMessage(
+                                    mandatoryLanguageCode);
                           }
                           return null;
                         },
