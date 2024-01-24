@@ -212,6 +212,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     List<String> selectedLang = context.read<GlobalProvider>().chosenLang;
     if (!(widget.field.type == "simpleType")) {
       selectedLang = ["English"];
@@ -313,11 +315,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 const SizedBox(
                                   width: 5,
                                 ),
-                                if (widget.field.required! || widget.field.requiredOn!.isNotEmpty)
-                                  const Text(
-                                    "*",
-                                    style: TextStyle(color: Colors.red, fontSize: 14),
-                                  )
                               ],
                             ),
                              SizedBox(
@@ -330,22 +327,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               onChanged: (value) {
                                 doc.referenceNumber = value;
                                 referenceNumber = value;
-                              },
-                              validator: (value) {
-                                if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
-                                  if (value == null || value.isEmpty) {
-                                    return null;
-                                  } else if (!widget.validation.hasMatch(value)) {
-                                    return AppLocalizations.of(context)!.invalid_input;
-                                  }
-                                }
-                                if (value == null || value.isEmpty) {
-                                  return AppLocalizations.of(context)!.reference_number_validation;
-                                }
-                                if (!widget.validation.hasMatch(value)) {
-                                  return AppLocalizations.of(context)!.invalid_input;
-                                }
-                                return null;
                               },
                               textAlign: TextAlign.left,
                               decoration: InputDecoration(
@@ -380,7 +361,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(100.w, 50.h),
                                 ),
-                                onPressed: (documentController.text == "" || referenceNumber == "")
+                                onPressed: (documentController.text == "")
                                   ? null :() async {
                                   _documentScanClickedAudit();
                                   var doc = await Navigator.push(
@@ -463,8 +444,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
               : Column(
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
+                          flex: 2,
                             child: FutureBuilder(
                                 future: _getDocumentValues(
                                     widget.field.subType!, lang, null),
@@ -525,6 +509,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                               hintStyle: const TextStyle(
                                                   color: Colors.grey, fontSize: 14),
                                               suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
+                                              helperText: "",
                                             ),
                                           )
                                               : const SizedBox.shrink(),
@@ -534,6 +519,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   );
                                 })),
                         Expanded(
+                          flex: 2,
                           child: Card(
                             elevation: 0,
                             margin: EdgeInsets.symmetric(
@@ -548,20 +534,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     children: [
                                       Text(
                                         AppLocalizations.of(context)!.referenceNumber(lang),
-                                        style: TextStyle(fontSize: 14, fontWeight: semiBold),
+                                        style: TextStyle(fontSize: isPortrait && !isMobileSize ? 18 : 14, fontWeight: semiBold),
                                       ),
                                       const SizedBox(
                                         width: 5,
                                       ),
-                                      if (widget.field.required! || widget.field.requiredOn!.isNotEmpty)
-                                        const Text(
-                                          "*",
-                                          style: TextStyle(color: Colors.red, fontSize: 14),
-                                        )
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 10.h,
+                                    height: 13.h,
                                   ),
                                   TextFormField(
                                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -570,22 +551,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     onChanged: (value) {
                                       doc.referenceNumber = value;
                                       referenceNumber = value;
-                                    },
-                                    validator: (value) {
-                                      if (!widget.field.required! && widget.field.requiredOn!.isEmpty) {
-                                        if (value == null || value.isEmpty) {
-                                          return null;
-                                        } else if (!widget.validation.hasMatch(value)) {
-                                          return AppLocalizations.of(context)!.invalid_input;
-                                        }
-                                      }
-                                      if (value == null || value.isEmpty) {
-                                        return AppLocalizations.of(context)!.reference_number_validation;
-                                      }
-                                      if (!widget.validation.hasMatch(value)) {
-                                        return AppLocalizations.of(context)!.invalid_input;
-                                      }
-                                      return null;
                                     },
                                     textAlign: TextAlign.left,
                                     decoration: InputDecoration(
@@ -599,6 +564,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       hintText: AppLocalizations.of(context)!.reference_number,
                                       hintStyle: const TextStyle(
                                           color: appBlackShade3, fontSize: 14),
+                                      helperText: "",
                                     ),
                                   ),
                                 ],
@@ -607,13 +573,14 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                           ),
                         ),
                         Expanded(
+                          flex: 1,
                           child: Padding(
-                            padding: EdgeInsets.only(top: 20.h,left: 10.w),
+                            padding: EdgeInsets.only(top:10.h,left: 10.w),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                minimumSize: Size(100.w, 46.h),
+                                minimumSize: Size(100.w, 48.h),
                               ),
-                              onPressed: (documentController.text == "" || referenceNumber == "")
+                              onPressed: (documentController.text == "")
                                   ? null :() async {
                                 var doc = await Navigator.push(
                                   context,
