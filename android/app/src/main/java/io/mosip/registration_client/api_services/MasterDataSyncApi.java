@@ -140,8 +140,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null)
+        if (centerMachineDto == null) {
+            result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
             return;
+        }
 
         Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
                 centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
@@ -160,19 +162,17 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         result.success(syncResult("PolicyKeySync", 5, ""));
                         return;
                     }
-                    Log.e(TAG, "Policy Sync Failed:" + error.toString());
+                    Log.e(TAG, "Policy Sync Failed");
                     result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
                     return;
                 }
                 result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
-                return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CertificateResponse>> call, Throwable t) {
                 Log.e(TAG,"Policy Sync Failed:", t);
                 result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
-                return;
             }
         });
     }
@@ -193,19 +193,18 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     if (error == null) {
                         saveGlobalParams(response.body().getResponse());
                         result.success(syncResult("GlobalParamsSync", 1, ""));
-                        return;
-                    } else
+                    } else {
+                        result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
+                    }
+                } else {
                     result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-                    return;
-                } else
-                result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-                return;
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
+                Log.e(TAG, "Global Params Sync Failed.", t);
                 result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-                return;
             }
         });
     }
@@ -280,20 +279,18 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         saveUserDetails(response.body().getResponse().getUserDetails());
                         MasterDataSyncPigeon.Sync sync = syncResult("UserDetailsSync", 3, "");
                         result.success(syncResult("UserDetailsSync", 3, ""));
-                        return;
-                    } else
+                    } else {
+                        result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
+                    }
+                } else {
                     result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-                    return;
-                } else
-                result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-                return;
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<UserDetailResponse>> call, Throwable t) {
-
+                Log.e(TAG, "User Details Sync Failed.", t);
                 result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-                return;
             }
         });
     }
@@ -321,15 +318,12 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
                         result.success(syncResult("LatestIDSchemaSync", 4, ""));
-                        return;
-
                     } catch (Exception e) {
                         result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
-                        Log.e(TAG, "Failed to save IDSchema", e);
                     }
-                } else
-                result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
-
+                } else {
+                    result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
+                }
             }
 
             @Override
@@ -382,22 +376,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 syncMasterData(result, retryNo + 1);
                             } else {
                                 result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                                return;
                             }
                         } else {
                             result.success(syncResult("MasterDataSync", 2, ""));
-                            return;
                         }
-                    } else
+                    } else {
+                        result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
+                    }
+                } else {
                     result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                    return;
-                } else
-                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                return;
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
+                Log.e(TAG, "Master Data Sync Failed.", t);
                 result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
             }
         });
