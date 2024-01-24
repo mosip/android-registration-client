@@ -174,6 +174,7 @@ public class MainActivity extends FlutterActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
                 syncRegistrationPackets(context);
+                createBackgroundTask("registrationPacketUploadJob");
             }
         }
     };
@@ -181,9 +182,7 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent serviceIntentUpload = new Intent(this, UploadBackgroundService.class);
-        createBackgroundTask(serviceIntentUpload, "registrationPacketUploadJob");
+        createBackgroundTask("registrationPacketUploadJob");
         IntentFilter intentFilterUpload = new IntentFilter("REGISTRATION_PACKET_UPLOAD");
         registerReceiver(broadcastReceiver, intentFilterUpload);
     }
@@ -194,7 +193,8 @@ public class MainActivity extends FlutterActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    void createBackgroundTask(Intent intent, String api){
+    void createBackgroundTask(String api){
+        Intent intent = new Intent(this, UploadBackgroundService.class);
         PendingIntent pendingIntent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             pendingIntent = PendingIntent.getForegroundService(
@@ -342,6 +342,9 @@ public class MainActivity extends FlutterActivity {
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
+                                    break;
+                                case "batchJob":
+                                    syncRegistrationPackets(this);
                                     break;
                                 default:
                                     result.notImplemented();

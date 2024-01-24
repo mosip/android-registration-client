@@ -34,7 +34,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
       } else {
         List<String?> data = await context
             .read<RegistrationTaskProvider>()
-            .getFieldValues(widget.field.subType!, "eng");
+            .getFieldValues(widget.field.subType!, lang);
         setState(() {
           selected = data[0]!;
         });
@@ -49,11 +49,12 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
   void saveData(value) {
     if (widget.field.type == 'simpleType') {
       context.read<GlobalProvider>().chosenLang.forEach((element) {
-          String code = context.read<GlobalProvider>().languageToCodeMapper[element]!;
-          context
+        String code =
+            context.read<GlobalProvider>().languageToCodeMapper[element]!;
+        context
             .read<RegistrationTaskProvider>()
             .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
-        });
+      });
     } else {
       context
           .read<RegistrationTaskProvider>()
@@ -139,6 +140,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   @override
   Widget build(BuildContext context) {
+    String mandatoryLangCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
+    String mandatoryLang = context
+            .read<GlobalProvider>()
+            .codeToLanguageMapper[mandatoryLangCode] ??
+        "English";
+
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!, "eng"),
         builder: (BuildContext context,
@@ -183,7 +191,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                   snapshot.data![index - 1];
                               bool chipSelected =
                                   selected.toString().toLowerCase() ==
-                                      e["English"].toString().toLowerCase();
+                                      e[mandatoryLang].toString().toLowerCase();
                               return Padding(
                                 padding: const EdgeInsets.only(right: 6),
                                 child: Column(
@@ -192,15 +200,16 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                       .chosenLang
                                       .map(
                                     (lang) {
-                                      bool isEnglish = lang == "English";
+                                      bool isMandatoryLang =
+                                          lang == mandatoryLang;
                                       return InkWell(
                                         splashColor: Colors.transparent,
                                         onTap: () {
                                           setState(() {
-                                            selected = e["English"] ?? "";
+                                            selected = e[mandatoryLang] ?? "";
                                           });
-                                          saveData(e["English"]);
-                                          _saveDataToMap(e["English"]);
+                                          saveData(e[mandatoryLang]);
+                                          _saveDataToMap(e[mandatoryLang]);
                                         },
                                         child: ChoiceChip(
                                           label: SizedBox(
@@ -210,12 +219,12 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                               overflow: TextOverflow.clip,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                  fontWeight: isEnglish
+                                                  fontWeight: isMandatoryLang
                                                       ? FontWeight.w500
                                                       : FontWeight.w400,
                                                   fontSize: 12,
                                                   color: chipSelected
-                                                      ? isEnglish
+                                                      ? isMandatoryLang
                                                           ? Colors.white
                                                           : solidPrimary
                                                       : Colors.black),
@@ -226,7 +235,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                                   vertical: 4, horizontal: 8),
                                           selected: chipSelected,
                                           elevation: 0,
-                                          selectedColor: isEnglish
+                                          selectedColor: isMandatoryLang
                                               ? solidPrimary
                                               : const Color(0xffEFF3FF),
                                           backgroundColor: Colors.white,
@@ -235,7 +244,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                               ? null
                                               : RoundedRectangleBorder(
                                                   side: BorderSide(
-                                                      color: isEnglish
+                                                      color: isMandatoryLang
                                                           ? solidPrimary
                                                           : const Color(
                                                               0xffC2D0F2),
