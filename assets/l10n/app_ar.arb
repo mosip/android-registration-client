@@ -213,5 +213,8 @@
   "iris": "القزحية",
   "thumbs": "الأبهام",
   "exception":"استثناء",
-  "face": "الوجه" 
+  "face": "الوجه",
+  "preview_page": "معاينة",
+  "packet_auth_page": "المصادقة",
+  "acknowledgement_page": "الاعتراف" 
 }

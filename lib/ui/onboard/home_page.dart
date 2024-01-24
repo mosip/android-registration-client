@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
           width: 20,
           height: 20,
         ),
-        "title": "Sync Data",
+        "title": AppLocalizations.of(context)!.synchronize_data,
         "onTap": syncData,
         "subtitle": DateFormat("EEEE d MMMM, hh:mma")
             .format(DateTime.parse(

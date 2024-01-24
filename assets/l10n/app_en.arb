@@ -213,6 +213,8 @@
   "right_hand":"Right Hand",
   "iris":"Iris",
   "thumbs":"Thumbs",
-  "face":"Face"
-
+  "face":"Face",
+  "preview_page": "Preview",
+  "packet_auth_page": "Authentication",
+  "acknowledgement_page": "Acknowledgement"
 }
