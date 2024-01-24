@@ -154,7 +154,8 @@ class _OperationalTasksState extends State<OperationalTasks> {
   _getTasks() {
     return ListView(
       shrinkWrap: true,
-      scrollDirection: Axis.vertical,
+      // scrollDirection: Axis.vertical,
+      physics: const NeverScrollableScrollPhysics(),
       children: List.generate(
         widget.operationalTasks.length,
         (index) {
