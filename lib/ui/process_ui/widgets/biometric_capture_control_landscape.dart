@@ -1,3 +1,4 @@
+// This view is now deprecated and is not being used.
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -475,8 +476,8 @@ class _BiometricCaptureControlLandscapeState
                                               .customSetterIris(0, "attemptNo");
                                           biometricCaptureControlProvider
                                               .customSetterIris([
-                                            "assets/images/Left Eye@2x.png",
-                                            "assets/images/Right Eye@2x.png"
+                                            "assets/svg/Left Eye.svg",
+                                            "assets/svg/Right Eye.svg"
                                           ], "listofImages");
                                           List<BiometricsDto> listOfBiometrics =
                                               [];
@@ -507,8 +508,8 @@ class _BiometricCaptureControlLandscapeState
                                               .customSetterIris(0, "attemptNo");
                                           biometricCaptureControlProvider
                                               .customSetterIris([
-                                            "assets/images/Left Eye@2x.png",
-                                            "assets/images/Right Eye@2x.png"
+                                            "assets/svg/Left Eye.svg",
+                                            "assets/svg/Right Eye.svg"
                                           ], "listofImages");
                                           List<BiometricsDto> listOfBiometrics =
                                               [];
@@ -555,7 +556,7 @@ class _BiometricCaptureControlLandscapeState
                                         }
                                       },
                                       child: Image.asset(
-                                        "assets/images/Left Eye@2x.png",
+                                        "assets/svg/Left Eye.svg",
                                         height: 72,
                                       ),
                                     ),
@@ -612,8 +613,8 @@ class _BiometricCaptureControlLandscapeState
                                               .customSetterIris(0, "attemptNo");
                                           biometricCaptureControlProvider
                                               .customSetterIris([
-                                            "assets/images/Left Eye@2x.png",
-                                            "assets/images/Right Eye@2x.png"
+                                            "assets/svg/Left Eye.svg",
+                                            "assets/svg/Right Eye.svg"
                                           ], "listofImages");
                                           List<BiometricsDto> listOfBiometrics =
                                               [];
@@ -644,8 +645,8 @@ class _BiometricCaptureControlLandscapeState
                                               .customSetterIris(0, "attemptNo");
                                           biometricCaptureControlProvider
                                               .customSetterIris([
-                                            "assets/images/Left Eye@2x.png",
-                                            "assets/images/Right Eye@2x.png"
+                                            "assets/svg/Left Eye.svg",
+                                            "assets/svg/Right Eye.svg"
                                           ], "listofImages");
                                           List<BiometricsDto> listOfBiometrics =
                                               [];
@@ -692,7 +693,7 @@ class _BiometricCaptureControlLandscapeState
                                         }
                                       },
                                       child: Image.asset(
-                                        "assets/images/Right Eye@2x.png",
+                                        "assets/svg/Right Eye.svg",
                                         height: 72,
                                       ),
                                     ),
@@ -744,7 +745,7 @@ class _BiometricCaptureControlLandscapeState
                               Stack(
                                 children: [
                                   Image.asset(
-                                    "assets/images/Right Hand@2x.png",
+                                    "assets/svg/Right Hand.svg",
                                     height: 114,
                                   ),
                                   Positioned(
@@ -774,7 +775,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -806,7 +807,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -896,7 +897,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -928,7 +929,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1016,7 +1017,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1048,7 +1049,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1136,7 +1137,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1168,7 +1169,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand([
-                                              "assets/images/Right Hand@2x.png"
+                                              "assets/svg/Right Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1264,7 +1265,7 @@ class _BiometricCaptureControlLandscapeState
                               Stack(
                                 children: [
                                   Image.asset(
-                                    "assets/images/Left Hand@2x.png",
+                                    "assets/svg/Left Hand.svg",
                                     height: 114,
                                   ),
                                   Positioned(
@@ -1294,7 +1295,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1326,7 +1327,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1414,7 +1415,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1446,7 +1447,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1534,7 +1535,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1566,7 +1567,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1654,7 +1655,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1686,7 +1687,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand([
-                                              "assets/images/Left Hand@2x.png"
+                                              "assets/svg/Left Hand.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1781,7 +1782,7 @@ class _BiometricCaptureControlLandscapeState
                               Stack(
                                 children: [
                                   Image.asset(
-                                    "assets/images/Thumbs@2x.png",
+                                    "assets/svg/Thumbs.svg",
                                     height: 114,
                                   ),
                                   Positioned(
@@ -1812,7 +1813,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterThumbs([
-                                              "assets/images/Thumbs@2x.png"
+                                              "assets/svg/Thumbs.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1844,7 +1845,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterThumbs([
-                                              "assets/images/Thumbs@2x.png"
+                                              "assets/svg/Thumbs.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1932,7 +1933,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterThumbs([
-                                              "assets/images/Thumbs@2x.png"
+                                              "assets/svg/Thumbs.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
@@ -1964,7 +1965,7 @@ class _BiometricCaptureControlLandscapeState
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
                                                 .customSetterThumbs([
-                                              "assets/images/Thumbs@2x.png"
+                                              "assets/svg/Thumbs.svg"
                                             ], "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];

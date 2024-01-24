@@ -83,6 +83,7 @@ List<Color> secondaryColors = [
   const Color(0xFFFFF7EB),
   const Color(0xFFA8781E),
   const Color(0xFFFF0202),
+  const Color(0xFFC4102B),
 ];
 FontWeight regular = FontWeight.w300;
 FontWeight bold = FontWeight.bold;

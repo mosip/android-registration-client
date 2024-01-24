@@ -170,8 +170,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                             .watch<GlobalProvider>()
                             .codeToLanguageMapper[e]!,
                         isDisabled: context
-                            .read<GlobalProvider>()
-                            .disabledLanguageMap[e] ?? false,
+                                .read<GlobalProvider>()
+                                .disabledLanguageMap[e] ??
+                            false,
                         isSelected: context
                             .read<GlobalProvider>()
                             .chosenLang
