@@ -573,8 +573,15 @@ class GlobalProvider with ChangeNotifier {
       return;
     }
     List<String> languageList = [];
+    _codeToLanguageMapper = {};
+    for(var element in _mandatoryLanguages) {
+      languageList.add(element!);
+      _codeToLanguageMapper[element] = element;
+    }
     for (var element in _languageDataList) {
-      languageList.add(element!.code);
+      if(_codeToLanguageMapper[element!.code] == null) {
+        languageList.add(element.code);
+      }
       _codeToLanguageMapper[element.code] = element.name;
       _languageToCodeMapper[element.name] = element.code;
       await setDisabledLanguage(element.code);
