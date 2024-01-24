@@ -213,5 +213,8 @@
   "iris": "ಐರಿಸ್",
   "thumbs": "ಬೆರಳುಗಳು",
   "exception":"ವಿನಾಯಿತಿ",
-  "face": "ಮುಖ"
+  "face": "ಮುಖ",
+  "preview_page": "ಪೂರ್ವದರು",
+  "packet_auth_page": "ಪ್ರಮಾಣಿಕತೆ",
+  "acknowledgement_page": "ಅರ್ಹಿಚ್ಛೆ"
 }

@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
@@ -26,6 +27,7 @@ class RegistrationTasks extends StatefulWidget {
 }
 
 class _RegistrationTasksState extends State<RegistrationTasks> {
+  bool isPortrait= true;
   @override
   void initState() {
     super.initState();
@@ -33,6 +35,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
 
   @override
   Widget build(BuildContext context) {
+    isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Column(
       children: [
         SizedBox(
@@ -150,9 +153,9 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               context.watch<RegistrationTaskProvider>().listOfProcesses.length,
           shrinkWrap: true,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 8.h,
-            crossAxisSpacing: 8.w,
+            crossAxisCount: (isPortrait)?2:4,
+            mainAxisSpacing: (isPortrait)?8.h:1.h,
+            crossAxisSpacing:(isPortrait)? 8.w:1.w,
           ),
           itemBuilder: (BuildContext context, int index) {
             return InkWell(
@@ -208,7 +211,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                               .listOfProcesses
                               .elementAt(index)
                               .toString()))
-                          .label!["eng"]!,
+                          .label![context.read<GlobalProvider>().selectedLanguage]!,
                       style: TextStyle(
                         fontSize: isMobileSize ? 18 : 27,
                         fontWeight: semiBold,

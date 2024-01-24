@@ -127,7 +127,7 @@
     }
   },
   "upload_document": "Please Upload The Document",
-  "scan": "SCAN",
+  "scan": "Scan",
   "clear": "Clear",
   "save": "SAVE",
   "retake": "RETAKE",
@@ -213,6 +213,8 @@
   "right_hand":"Right Hand",
   "iris":"Iris",
   "thumbs":"Thumbs",
-  "face":"Face"
-
+  "face":"Face",
+  "preview_page": "Preview",
+  "packet_auth_page": "Authentication",
+  "acknowledgement_page": "Acknowledgement"
 }

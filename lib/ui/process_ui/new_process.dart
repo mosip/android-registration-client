@@ -47,10 +47,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late RegistrationTaskProvider registrationTaskProvider;
   bool isPortrait = true;
 
-  final List<String> postRegistrationTabs = [
+  List<String> postRegistrationTabs = [
     'Preview',
     'Authentication',
-    'Acknowledgement'
+    'Acknowledgement',
   ];
 
   String username = '';
@@ -278,6 +278,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   bool continueButton = false;
   @override
   Widget build(BuildContext context) {
+    postRegistrationTabs = [
+    AppLocalizations.of(context)!.preview_page,
+    AppLocalizations.of(context)!.packet_auth_page,
+    AppLocalizations.of(context)!.acknowledgement_page,
+  ];
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
@@ -441,10 +446,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
-        if (globalProvider.formKey.currentState!.validate()) {
-          bool customValidator =
-              await customValidation(globalProvider.newProcessTabIndex);
-          if (customValidator) {
+        bool customValidator =
+            await customValidation(globalProvider.newProcessTabIndex);
+        if (customValidator) {
+          if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
               registrationTaskProvider.setPreviewTemplate("");
@@ -457,6 +462,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 globalProvider.newProcessTabIndex + 1;
           }
         }
+
         _nextButtonClickedAudit();
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {
@@ -656,7 +662,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                             ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
                             : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
                         child: Text(
-                          newProcess.label!["eng"]!,
+                          newProcess.label![context.read<GlobalProvider>().selectedLanguage]!,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -768,7 +774,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                                                     index < size
                                                         ? newProcess
                                                             .screens![index]!
-                                                            .label!["eng"]!
+                                                            .label![context.read<GlobalProvider>().selectedLanguage]!
                                                         : postRegistrationTabs[
                                                             index - size],
                                                     style: Theme.of(context)
