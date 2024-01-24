@@ -300,6 +300,10 @@ class GlobalProvider with ChangeNotifier {
       versionNoAppTemp = await networkService
           .getVersionFromGobalParam("mosip.registration.server_version");
     }
+    versionNoApp = versionNoAppTemp;
+  }
+
+  setGitHeadAttributes() async {
     String head = "";
     String branchName = "";
     String commitId = "";
@@ -317,7 +321,6 @@ class GlobalProvider with ChangeNotifier {
     }
     branchNameApp = branchName;
     commitIdApp = commitId;
-    versionNoApp = versionNoAppTemp;
   }
 
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
