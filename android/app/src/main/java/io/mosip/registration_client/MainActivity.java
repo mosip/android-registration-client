@@ -36,6 +36,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
@@ -241,6 +243,7 @@ public class MainActivity extends FlutterActivity {
             for (Registration value : registrationList) {
                 try {
                     Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
+                    auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
                     packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
                         @Override
                         public void inProgress(String RID) {
@@ -271,6 +274,7 @@ public class MainActivity extends FlutterActivity {
             for (Registration value : registrationList) {
                 try {
                     Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                    auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
                     packetService.uploadRegistration(value.getPacketId());
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
