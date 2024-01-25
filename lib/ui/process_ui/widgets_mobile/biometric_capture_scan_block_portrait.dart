@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 // ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
@@ -83,17 +90,36 @@ class _BiometricCaptureScanBlockPortraitState
       builder: (BuildContext context) => SingleChildScrollView(
         child: AlertDialog(
           content: SizedBox(
-            height: (isMobileSize)?410.h:610.h,
+            height: (isMobileSize) ? 410.h : 610.h,
             width: 760.w,
             child: Column(
               children: [
                 const SizedBox(
                   height: 26,
                 ),
-                Text(
-                  "${biometricAttributeData.title.replaceAll(" ", "")} ${AppLocalizations.of(context)!.capture}",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: 28, fontWeight: bold, color: blackShade1),
+                Row(
+                  children: [
+                    const Spacer(),
+                    const SizedBox(
+                      width: 28,
+                    ),
+                    Text(
+                      "${biometricAttributeData.title.replaceAll(" ", "")} ${AppLocalizations.of(context)!.capture}",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontSize: 28, fontWeight: bold, color: blackShade1),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.close,
+                          color: blackShade1,
+                          weight: 25,
+                          size: 28,
+                        )),
+                  ],
                 ),
                 Divider(
                   height: 66,
@@ -459,7 +485,9 @@ class _BiometricCaptureScanBlockPortraitState
                 ?.copyWith(fontSize: 27, fontWeight: bold, color: pureWhite),
           ),
           style: OutlinedButton.styleFrom(
-            padding: (isMobileSize)?const EdgeInsets.symmetric(horizontal: 35, vertical: 25):const EdgeInsets.symmetric(horizontal: 46, vertical: 34),
+            padding: (isMobileSize)
+                ? const EdgeInsets.symmetric(horizontal: 35, vertical: 25)
+                : const EdgeInsets.symmetric(horizontal: 46, vertical: 34),
             backgroundColor: (biometricAttributeData.exceptions.contains(false)
                 ? solidPrimary
                 : secondaryColors.elementAt(22)),
@@ -532,7 +560,8 @@ class _BiometricCaptureScanBlockPortraitState
                           onPressed: () {
                             if (biometricAttributeData.exceptions
                                 .contains(true)) {
-                              biometricAttributeData.exceptionType = "Permanent";
+                              biometricAttributeData.exceptionType =
+                                  "Permanent";
                             }
                           },
                           style: ButtonStyle(
@@ -547,7 +576,8 @@ class _BiometricCaptureScanBlockPortraitState
                               ),
                             ),
                             side: MaterialStateProperty.all<BorderSide>(
-                                BorderSide(color: secondaryColors.elementAt(12))),
+                                BorderSide(
+                                    color: secondaryColors.elementAt(12))),
                             padding:
                                 MaterialStateProperty.all<EdgeInsetsGeometry>(
                               EdgeInsets.symmetric(
@@ -575,7 +605,8 @@ class _BiometricCaptureScanBlockPortraitState
                           onPressed: () {
                             if (biometricAttributeData.exceptions
                                 .contains(true)) {
-                              biometricAttributeData.exceptionType = "Temporary";
+                              biometricAttributeData.exceptionType =
+                                  "Temporary";
                             }
                           },
                           style: ButtonStyle(
@@ -590,7 +621,8 @@ class _BiometricCaptureScanBlockPortraitState
                               ),
                             ),
                             side: MaterialStateProperty.all<BorderSide>(
-                                BorderSide(color: secondaryColors.elementAt(12))),
+                                BorderSide(
+                                    color: secondaryColors.elementAt(12))),
                             padding:
                                 MaterialStateProperty.all<EdgeInsetsGeometry>(
                               EdgeInsets.symmetric(
