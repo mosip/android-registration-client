@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 package io.mosip.registration_client.api_services;
 
 import android.app.Activity;
@@ -7,6 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -342,7 +350,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     }
 
     @Override
-    public void getThresholdValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
+    public void getMapValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
       String response=globalParamRepository.getCachedStringGlobalParam(key);
       result.success(response);
     }
@@ -489,8 +497,8 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             intent.setAction(RegistrationConstants.DISCOVERY_INTENT_ACTION);
             queryPackage(intent);
             DiscoverRequest discoverRequest = new DiscoverRequest();
-            discoverRequest.setType(currentModality == Modality.EXCEPTION_PHOTO ? SingleType.FACE.name() :
-                    currentModality.getSingleType().name());
+            discoverRequest.setType(currentModality == Modality.EXCEPTION_PHOTO ? SingleType.FACE.value() :
+                    currentModality.getSingleType().value());
             intent.putExtra(RegistrationConstants.SBI_INTENT_REQUEST_KEY, objectMapper.writeValueAsBytes(discoverRequest));
             activity.startActivityForResult(intent, 1);
         } catch (Exception ex) {
@@ -577,7 +585,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             biometricsDtoList.forEach( dto -> {
                 try {
                     this.registrationService.getRegistrationDto().addBiometric(fieldId,
-                            currentModality == Modality.EXCEPTION_PHOTO ? currentModality.getAttributes().get(0) :
+                            (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE) ? currentModality.getAttributes().get(0) :
                                     Modality.getBioAttribute(dto.getBioSubType()), currentAttempt, dto);
 
                     result1.success("Ok");

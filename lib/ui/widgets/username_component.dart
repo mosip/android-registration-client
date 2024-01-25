@@ -1,9 +1,17 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/widgets/language_component.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 class UsernameComponent extends StatefulWidget {
@@ -37,28 +45,31 @@ class _UsernameComponentState extends State<UsernameComponent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 17.h,
           child: Text(
             AppLocalizations.of(context)!.language,
-            style: AppStyle.mobileTextfieldHeader,
+            style: widget.isMobile && !isMobileSize
+                ? AppTextStyle.tabletPortraitTextfieldHeader
+                : AppTextStyle.mobileTextfieldHeader,
           ),
         ),
         SizedBox(
-          height: 8.h,
+          height: widget.isMobile && !isMobileSize ? 14.h : 8.h,
         ),
-        _getLanguageDropdownButton(context),
+        _getLanguageRowList(),
         SizedBox(
-          height: 30.h,
+          height: 27.h,
         ),
         Row(
           children: [
             Text(
               AppLocalizations.of(context)!.username,
-              style: AppStyle.mobileTextfieldHeader,
+              style: widget.isMobile && !isMobileSize
+                  ? AppTextStyle.tabletPortraitTextfieldHeader
+                  : AppTextStyle.mobileTextfieldHeader,
             ),
             const Text(
               ' *',
-              style: TextStyle(color: AppStyle.mandatoryField),
+              style: TextStyle(color: mandatoryField),
             ),
           ],
         ),
@@ -66,7 +77,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
           height: 11.h,
         ),
         Container(
-          height: 52.h,
+          height: widget.isMobile && !isMobileSize ? 82.h : 52.h,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(
             horizontal: 17.w,
@@ -74,7 +85,7 @@ class _UsernameComponentState extends State<UsernameComponent> {
           decoration: BoxDecoration(
             border: Border.all(
               width: 1.h,
-              color: AppStyle.appGreyShade,
+              color: appGreyShade,
             ),
             borderRadius: const BorderRadius.all(
               Radius.circular(6),
@@ -84,8 +95,14 @@ class _UsernameComponentState extends State<UsernameComponent> {
             // controller: usernameController,
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_username,
-              hintStyle: AppStyle.mobileTextfieldHintText,
+              hintStyle: widget.isMobile && !isMobileSize
+                  ? AppTextStyle.tabletPortraitTextfieldHintText
+                  : AppTextStyle.mobileTextfieldHintText,
               border: InputBorder.none,
+            ),
+            style: TextStyle(
+              fontSize: widget.isMobile && !isMobileSize ? 22 : 14,
+              color: appBlack,
             ),
             onChanged: (v) {
               widget.onChanged(v);
@@ -98,16 +115,16 @@ class _UsernameComponentState extends State<UsernameComponent> {
         InkWell(
           onTap: !widget.isDisabled ? widget.onTap : null,
           child: Container(
-            height: 52.h,
+            height: widget.isMobile && !isMobileSize ? 82.h : 52.h,
             decoration: BoxDecoration(
               color: !widget.isDisabled
-                  ? AppStyle.appSolidPrimary
-                  : AppStyle.appGreyShade,
+                  ? appSolidPrimary
+                  : appGreyShade,
               border: Border.all(
                 width: 1.w,
                 color: !widget.isDisabled
-                    ? AppStyle.appBlueShade1
-                    : AppStyle.appGreyShade,
+                    ? appBlueShade1
+                    : appGreyShade,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -116,7 +133,9 @@ class _UsernameComponentState extends State<UsernameComponent> {
             child: Center(
               child: Text(
                 AppLocalizations.of(context)!.next_button,
-                style: AppStyle.mobileButtonText,
+                style: widget.isMobile && !isMobileSize
+                    ? AppTextStyle.tabletPortraitButtonText
+                    : AppTextStyle.mobileButtonText,
               ),
             ),
           ),
@@ -125,91 +144,24 @@ class _UsernameComponentState extends State<UsernameComponent> {
     );
   }
 
-  List<DropdownMenuItem<String>> _addDividersAfterItems(List<String?> items) {
-    List<DropdownMenuItem<String>> menuItems = [];
-    for (var item in items) {
-      menuItems.addAll(
-        [
-          DropdownMenuItem<String>(
-            value: item,
-            child: Text(
-              widget.mp[item]!,
-              style: AppStyle.mobileDropdownText,
-            ),
-          ),
-          //If it's last item, we will not add Divider after it.
-          if (item != items.last)
-            const DropdownMenuItem<String>(
-              enabled: false,
-              child: Divider(),
-            ),
-        ],
-      );
-    }
-    return menuItems;
-  }
-
-  List<double> _getCustomItemsHeights() {
-    List<double> itemsHeights = [];
-    for (var i = 0; i < (widget.languages.length * 2) - 1; i++) {
-      if (i.isEven) {
-        itemsHeights.add(52.h);
-      }
-      if (i.isOdd) {
-        itemsHeights.add(4.h);
-      }
-    }
-    return itemsHeights;
-  }
-
-  _getLanguageDropdownButton(BuildContext context) {
+  _getLanguageRowList() {
     final appLanguage = Provider.of<GlobalProvider>(context, listen: false);
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        items: _addDividersAfterItems(widget.languages),
-        value: context.read<GlobalProvider>().selectedLanguage,
-        onChanged: (newValue) {
-          selectedLanguage = newValue;
-          appLanguage.toggleLocale(newValue!);
-        },
-        hint: Text(
-          'Select a value!',
-          style: AppStyle.mobileDropdownHintText,
-        ),
-        buttonStyleData: ButtonStyleData(
-          height: 52.h,
-          width: widget.isMobile ? 318.w : 384.w,
-          padding: EdgeInsets.only(
-            left: 17.w,
-            right: (14.42).w,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              width: 1.h,
-              color: AppStyle.appGreyShade,
-            ),
-          ),
-        ),
-        dropdownStyleData: DropdownStyleData(
-          maxHeight: 164.h,
-          decoration: BoxDecoration(
-              color: AppStyle.appWhite,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                width: 1.h,
-                color: AppStyle.appGreyShade,
-              )),
-        ),
-        menuItemStyleData: MenuItemStyleData(
-          customHeights: _getCustomItemsHeights(),
-        ),
-        iconStyleData: const IconStyleData(
-            icon: Icon(
-          Icons.keyboard_arrow_down_outlined,
-          color: AppStyle.appGreyShade,
-        )),
-      ),
+    return Wrap(
+      spacing: 8.w,
+      runSpacing: 8.h,
+      children: widget.languages.map((e) {
+        return LanguageComponent(
+          title: widget.mp[e] ?? "",
+          isDisabled: context.read<GlobalProvider>().disabledLanguageMap[e] ?? false,
+          isSelected: context.read<GlobalProvider>().selectedLanguage == e,
+          onTap: () {
+            selectedLanguage = e;
+            appLanguage.toggleLocale(e!);
+          },
+          isMobile: widget.isMobile,
+          isFreezed: false,
+        );
+      }).toList(),
     );
   }
 }

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 package io.mosip.registration_client;
 
 import android.app.Notification;
@@ -25,7 +32,7 @@ public class UploadBackgroundService extends Service {
         createNotificationChannel();
         Notification notification = createNotification();
         startForeground(NOTIFICATION_ID, notification);
-        Log.d(getClass().getSimpleName(), "Upload Packets in background activity");
+        Log.d(getClass().getSimpleName(), "Sync & Upload Packets in background activity");
         Intent broadcastIntent = new Intent("REGISTRATION_PACKET_UPLOAD");
         sendBroadcast(broadcastIntent);
         return START_STICKY;

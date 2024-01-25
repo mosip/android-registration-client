@@ -1,0 +1,229 @@
+{
+  "english": "English",
+  "arabic": "العربية",
+  "french": "Français",
+  "hindi": "हिंदी",
+  "kannada": "ಕನ್ನಡ",
+  "tamil": "தமிழ்",
+  "locale": "tam",
+  "help": "உதவி",
+  "mosip": "MOSIP",
+  "welcome": "உங்களை வரவேற்கிறோம்",
+  "community_reg_text": "சமூக பதிவு கிளையன்ட்!",
+  "info_text": "அம்சங்களை அணுக உள்நுழைக.",
+  "login_text": "உள்நுழைவு",
+  "language": "மொழி",
+  "username": "பயனர் பெயர்",
+  "enter_username": "பயனர்பெயரை உள்ளிடவும்",
+  "next_button": "அடுத்தவர்",
+  "password": "அடையாளச் சொல்",
+  "enter_password": "கடவுச்சொல்லை உள்ளிடவும்",
+  "forgot_password": "கடவுச்சொல் மறந்துவிட்டதா?",
+  "login_button": "உள்நுழைவு",
+  "back_button": "முதுகு",
+  "user_validated": "பயனர் சரிபார்க்கப்பட்டது!",
+  "username_required": "பயனர் பெயர் தேவை!",
+  "password_required": "கடவுச்சொல் தேவை!",
+  "username_exceed": "பயனர்பெயர் 50 எழுத்துகளுக்கு மிகாமல் இருக்க வேண்டும்!",
+  "password_exceed": "கடவுச்சொல் 50 எழுத்துகளுக்கு மிகாமல் இருக்க வேண்டும்!",
+  "username_incorrect": "பயனர் காணப்படவில்லை!",
+  "device_credentials": "சாதன நற்சான்றிதழ்",
+  "copy_text": "உரை நகல்",
+  "download_json": "JSON பதிவிறக்க",
+  "copy_message": "இயந்திர விவரங்கள் கிளிப்போர்டில் நகலெடுக்கப்பட்டன!",
+  "download_message": "கோப்பு பதிவிறக்கங்களில் சேமிக்கப்பட்டது!",
+  "logout": "உள்நுழைவு",
+  "login_failed": "உள்நுழைவு தோல்வியுற்றது. மீண்டும் முயற்சி செய்!",
+  "password_incorrect": "கடவுச்சொல் தவறானது!",
+  "machine_not_found": "இயந்திரம் கிடைக்கவில்லை!",
+  "network_error": "உள்நுழைவு தோல்வியுற்றது. நெட்வொர்க் இணைப்பை சரிபார்க்கவும்!",
+  "cred_expired": "நற்சான்றிதழ்கள் காணப்படவில்லை அல்லது காலாவதியாகவில்லை. ஆன்லைன் உள்நுழைவை முயற்சிக்கவும்!",
+  "not_initialized": "இயந்திரத்தை துவக்க முடியவில்லை!",
+  "invalid_user": "பயனர்பெயர் செல்லாது!",
+  "machine_inactive": "இயந்திரம் செயலில் இல்லை!",
+  "center_inactive": "மையம் செயல்படவில்லை!",
+  "sync_completed_succesfully": "ஒத்திசைவு வெற்றிகரமாக நிறைவடைந்தது",
+  "sync_completed_message": "கணினி சில வினாடிகளில் மறுதொடக்கம் செய்யப்படும் மற்றும் நீங்கள் உள்நுழைவு பக்கத்திற்கு திருப்பிவிடப்படுவீர்கள்.",
+  "sync_failed": "ஒத்திசைவு தோல்வியுற்றது",
+  "sync_failed_message": "உதவிக்கு கணினி நிர்வாகி அல்லது மேற்பார்வையாளருடன் இணைக்கவும்.",
+  "policy_key_sync_failed":"கொள்கை விசை ஒத்திசைவு தோல்வியுற்றது",
+  "ca_certs_sync_failed":"CA சான்றிதழ்கள் ஒத்திசைவு தோல்வியடைந்தது",
+  "global_params_sync_failed":"Global Params Sync தோல்வியுற்றது",
+  "user_details_sync_failed":"பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
+  "id_schema_sync_failed":"IDSchena Sync Failed",
+  "master_data_sync_failed":"Master Data Sync தோல்வியுற்றது",
+  "network_error": "நெட்வொர்க் இல்லை!",
+  "delete": "அழி",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
+  "@demographicsScreenEmptyMessage": {
+    "description": "Demographic Screen Empty Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
+  "@demographicsScreenInvalidMessage": {
+    "description": "Demographic Screen Invalid Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "upload_document": "ஆவணத்தைப் பதிவேற்றவும்",
+  "synchronize_data": "தரவை ஒத்திசைக்கவும்",
+  "registration_tasks": "பதிவு பணிகள்",
+  "operation_tasks": "செயல்பாட்டு பணிகள்",
+  "system_storage_usage": "கணினி சேமிப்பக பயன்பாடு",
+  "download_pre_registration_data": "முன் பதிவுத் தரவைப் பதிவிறக்கவும்",
+  "update_operator_biomterics": "ஆபரேட்டர் பயோமெட்ரிக்ஸைப் புதுப்பிக்கவும்",
+  "appliction_upload": "விண்ணப்பப் பதிவேற்றம்",
+  "check_updates": "புதுப்பிப்புகளைச் சரிபார்க்கவும்",
+  "center_remap_sync": "மைய ரீமேப் ஒத்திசைவு.",
+  "sync_activities": "ஒத்திசை செயல்பாடுகள்",
+  "dashboard": "டாஷ்போர்டு",
+  "settings": "அமைப்புகள்",
+  "notifications": "அறிவிப்புகள்",
+  "profile": "சுயவிவரம்",
+  "select_language": "மொழியை தேர்ந்தெடுங்கள்",
+  "select_two_languages": "தரவு உள்ளீட்டிற்கு ஏதேனும் 2 மொழிகளைத் தேர்ந்தெடுக்கவும்.",
+  "language_mandatory": "அரசாங்க வழிகாட்டுதல்களின்படி குடியிருப்பாளர் தேர்ந்தெடுக்க {mandatoryLanguage} கட்டாயமாகும். தேர்வு வரிசையானது மக்கள்தொகை தரவுகளுக்கான பக்கக் காட்சிக்கு வழிவகுக்கும்.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Tamil"
+      }
+    }
+  },
+  "mark_exception": "விசாரிக்கப்பட்ட விதிவிலக்கு",
+  "threshold": "அளவுக்கு",
+  "quality": "உயர்தரம்",
+  "attempts": "முயற்சிகள்",
+  "comments": "கருத்துகள்",
+  "exception_type": "விதிவிலக்கு வகை",
+  "permanent": "நிரந்தர",
+  "temporary": "குறிப்பிடுக",
+  "exceptions": "விதிவிலக்குகள்",
+  "add_comments_for_marking_the_exception": "விசாரிக்கப்பட்ட விதிவிலக்குக்கு கருத்துகளை சேர்க்கவும்",
+  "rescan":"மறு ஆய்வு",
+  "marking_exceptions_on":"விதிவிலக்குகளைக் குறிப்பது இயக்கத்தில் உள்ளது",
+  "is_not_allowed":"அனுமதிக்கப்படவில்லை",
+  "capture":"பிடிப்பு",
+  "attempts_left":"முயற்சிகள் எஞ்சியுள்ளன",
+  "left_hand": "இடது கை",
+  "left": "இடது",
+  "right": "வலது",
+  "right_hand": "வலது கை",
+  "iris": "ஐரிஸ்",
+  "thumbs": "முழுகுமதி",
+  "face": "முகம்",
+  "exception":"விதிவிலக்கு",
+  "language_selector_note": "முன்பதிவின் போது உள்ளிடப்பட்ட தரவின் அடிப்படையில் மொழி இருக்கலாம் என்பதை நினைவில் கொள்ளவும்.",
+  "cancel": "ரத்துசெய்",
+  "submit": "சமர்ப்பிக்கவும்",
+  "go_back": "திரும்பி செல்",
+  "informed": "தெரிவிக்கப்பட்டது",
+  "logo_text": "MOSIP மூலம் இயக்கப்படுகிறது",
+  "get_onboard": "இணையத்தில் பெறவும்",
+  "skip_to_home": "வீட்டிற்கு செல்க",
+  "continue_text": "தொடர்க",
+  "authenticate": "அங்கீகரிக்க",
+  "new_registration": "புதிய பதிவு",
+  "go_back": "பின்செல்",
+  "informed": "அறிந்தவர்",
+  "sync_packet": "ஒருமை பரிமாற்றம்",
+  "upload_packet": "பதிவேற்று பட்டியல்",
+  "authenticate_using_password": "கடவுச்சொல் பயன்படுத்தி அங்கீகரித்தல்",
+  "registration_acknowledgement": "பதிவு அறிந்தார்",
+  "print_text": "அச்சு",
+  "hello": "வணக்கம்",
+  "onboard_process_help": "ஆன்போர்டிங் செயல்முறையைத் தொடங்க, 'ஆன்போர்டைப் பெறு' என்பதைத் தட்டவும்.",
+  "scan": "ஊடுகதிர்",
+  "clear": "அகற்று",
+  "save": "சேமிக்கவும்",
+  "retake": "ரீடேக்",
+  "reference_number": "குறிப்பு எண்ணை உள்ளிடவும்",
+  "select_value_message": "மதிப்பைத் தேர்ந்தெடுக்கவும்",
+  "invalid_input": "தவறான உள்ளீடு",
+  "reference_number_validation": "தயவுசெய்து ஆதார் எண்ணை உள்ளிடவும்",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "default_not_found": "தேவையான பங்கு கிடைக்கவில்லை!",
+  "preview_page": "முன்னோக்கி",
+  "packet_auth_page": "அங்கீகாரம்",
+  "acknowledgement_page": "அறிவுசெய்தல்"
+}

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -50,7 +57,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: semiBold,
-                    color: AppStyle.appBlack),
+                    color: appBlack),
               ),
               SizedBox(
                 height: 35.h,
@@ -59,12 +66,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.username,
-                    style: AppStyle.mobileTextfieldHeader,
+                    style: AppTextStyle.tabletPortraitTextfieldHeader,
                   ),
                   const Text(
                     ' *',
                     style: TextStyle(
-                      color: AppStyle.mandatoryField,
+                      color: mandatoryField,
                     ),
                   ),
                 ],
@@ -80,11 +87,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.password,
-                    style: AppStyle.mobileTextfieldHeader,
+                    style: AppTextStyle.tabletPortraitTextfieldHeader,
                   ),
                   const Text(
                     ' *',
-                    style: TextStyle(color: AppStyle.mandatoryField),
+                    style: TextStyle(color: mandatoryField),
                   ),
                 ],
               ),
@@ -106,10 +113,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppStyle.authIconBorder,
+          color: authIconBorder,
           width: 2,
         ),
-        color: AppStyle.authIconBackground,
+        color: authIconBackground,
       ),
       child: Center(
         child: Image.asset('assets/images/Registering an Individual@2x.png'),
@@ -128,7 +135,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -137,7 +144,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       child: TextField(
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_username,
-          hintStyle: AppStyle.mobileTextfieldHintText,
+          hintStyle: AppTextStyle.tabletPortraitTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {
@@ -158,7 +165,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1.h,
-          color: AppStyle.appGreyShade,
+          color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
           Radius.circular(6),
@@ -168,7 +175,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         obscureText: true,
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.enter_password,
-          hintStyle: AppStyle.mobileTextfieldHintText,
+          hintStyle: AppTextStyle.tabletPortraitTextfieldHintText,
           border: InputBorder.none,
         ),
         onChanged: (v) {

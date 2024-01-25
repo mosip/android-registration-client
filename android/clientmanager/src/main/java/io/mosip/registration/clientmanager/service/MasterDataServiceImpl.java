@@ -186,7 +186,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                     }
                 });
             }, 0);
-            //syncCACertificates();
+            syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
@@ -563,11 +563,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                 Log.e(TAG, "Failed to parse the data", e);
             }
         }
-
-        if (!foundErrors) {
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
-        }
     }
 
     private void downloadUrlData(Path path, JSONObject jsonObject) {

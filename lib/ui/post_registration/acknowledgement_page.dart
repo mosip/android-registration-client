@@ -1,11 +1,21 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 import 'package:printing/printing.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class AcknowledgementPage extends StatefulWidget {
   const AcknowledgementPage({super.key});
@@ -16,7 +26,8 @@ class AcknowledgementPage extends StatefulWidget {
 
 class _AcknowledgementPageState extends State<AcknowledgementPage> {
   WebViewPlusController? _controller;
-  double _height = 1;
+  double _height = ScreenUtil().screenHeight;
+  bool isMobile = true;
 
   @override
   void initState() {
@@ -25,13 +36,13 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
 
   _printHtmlToPdf() async {
     String htmlContent =
-        context.read<RegistrationTaskProvider>().previewTemplate;
+        context.read<RegistrationTaskProvider>().acknowledgementTemplate;
 
     await Printing.layoutPdf(
-    onLayout: (format) async => await Printing.convertHtml(
-          format: format,
-          html: htmlContent,
-        ));
+        onLayout: (format) async => await Printing.convertHtml(
+              format: format,
+              html: htmlContent,
+            ));
   }
 
   _registrationAcknowledgementPageLoadedAudit() async {
@@ -39,13 +50,16 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   }
 
   _printAcknowledgementAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-0012", "REG-MOD-103");
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-EVT-0012", "REG-MOD-103");
   }
 
   @override
   Widget build(BuildContext context) {
+    isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return SizedBox(
-      height: ScreenUtil().screenHeight,
+      height: _height,
       width: ScreenUtil().screenWidth,
       child: Column(
         children: [
@@ -55,12 +69,12 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Registration Acknowledgement',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.registration_acknowledgement,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
-                  color: AppStyle.appBlackShade1,
+                  color: appBlackShade1,
                 ),
               ),
               InkWell(
@@ -72,10 +86,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                   height: 42.h,
                   width: 170.w,
                   decoration: BoxDecoration(
-                    color: AppStyle.appSolidPrimary,
+                    color: appSolidPrimary,
                     border: Border.all(
                       width: 1.w,
-                      color: AppStyle.appBlueShade1,
+                      color: appBlueShade1,
                     ),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(5),
@@ -83,8 +97,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                   ),
                   child: Center(
                     child: Text(
-                      'PRINT',
-                      style: AppStyle.mobileButtonText,
+                      AppLocalizations.of(context)!.print_text,
+                      style: isMobile
+                          ? AppTextStyle.tabletPortraitButtonText
+                          : AppTextStyle.mobileButtonText,
                     ),
                   ),
                 ),
@@ -96,20 +112,21 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
           ),
           Expanded(
             child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 SizedBox(
-                  height: _height + 150.h,
+                  height: _height,
                   child: WebViewPlus(
                     onWebViewCreated: (controller) {
                       _controller = controller;
                       controller.loadString(context
                           .read<RegistrationTaskProvider>()
-                          .previewTemplate);
+                          .acknowledgementTemplate);
                     },
                     onPageFinished: (url) {
                       _controller!.getHeight().then((double height) {
                         setState(() {
-                          _height = height;
+                          _height = height + 250.h;
                         });
                         _registrationAcknowledgementPageLoadedAudit();
                       });

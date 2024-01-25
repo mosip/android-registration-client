@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
@@ -109,10 +116,10 @@ class BiometricsServiceImpl implements BiometricsService {
   }
 
   @override
-  Future<String> getThresholdValue(String key) async {
+  Future<String> getMapValue(String key) async {
     String response = '';
     try {
-      response = await BiometricsApi().getThresholdValue(key);
+      response = await BiometricsApi().getMapValue(key);
     } on PlatformException {
       debugPrint('BiomtericsApi call failed!');
     } catch (e) {

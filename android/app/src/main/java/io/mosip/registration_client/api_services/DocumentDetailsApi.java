@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 package io.mosip.registration_client.api_services;
 
 import android.util.Log;
@@ -11,6 +18,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration_client.model.DocumentDataPigeon;
@@ -46,11 +54,17 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
     }
 
     @Override
-    public void getScannedPages(@NonNull String fieldId, @NonNull DocumentDataPigeon.Result<List<byte[]>> result) {
-        List<byte[]> scannedPages = new ArrayList<>();
+    public void getScannedPages(@NonNull String fieldId, @NonNull DocumentDataPigeon.Result<List<DocumentDataPigeon.DocumentData>> result) {
+        List<DocumentDataPigeon.DocumentData> scannedPages = new ArrayList<>();
         try {
-
-            scannedPages = this.registrationService.getRegistrationDto().getScannedPages(fieldId);
+            List<DocumentDto> scannedValues = this.registrationService.getRegistrationDto().getScannedPages(fieldId);
+            scannedValues.forEach((v) -> {
+                DocumentDataPigeon.DocumentData data = new DocumentDataPigeon.DocumentData.Builder()
+                        .setDoc(v.getContent())
+                        .setReferenceNumber(v.getRefNumber())
+                        .build();
+                scannedPages.add(data);
+            });
             result.success(scannedPages);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Getting ScannedPages failed!" + Arrays.toString(e.getStackTrace()));

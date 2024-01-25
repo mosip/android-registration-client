@@ -83,6 +83,8 @@ public enum KeyManagerErrorCode {
     CERTIFICATE_EXIST_ERROR("KER-PCM-003", "Certificate already exists in store."),
     CERTIFICATE_DATES_NOT_VALID("KER-PCM-004", "Certificate Dates are not valid."),
     ROOT_CA_NOT_FOUND("KER-PCM-005", "Root CA Certificate not found."),
+    CERT_NOT_VALID("KER-JWS-107", "Signature verification certificate not valid."),
+    VERIFY_ERROR("KER-JWS-105", "Error - Unable to verify the data."),
 
     INTERNAL_SERVER_ERROR("KER-CRY-500", "Internal server error");
 

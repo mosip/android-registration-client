@@ -169,6 +169,7 @@ void main() {
               onTapLogin: () {},
               isDisabled: false,
               isLoggingIn: false,
+              isMobile: true,
             ),
           ),
         )),

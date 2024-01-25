@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 package io.mosip.registration_client.api_services;
 
 import android.content.Context;
@@ -61,6 +68,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                 .setIsDefault(false)
                 .setIsOfficer(false)
                 .setIsSupervisor(false)
+                .setIsOperator(false)
                 .setErrorCode(errorCode)
                 .build();
 
@@ -83,7 +91,8 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                                     .setResponse(wrapper.getResponse())
                                     .setUsername(sharedPreferences.getString(USER_NAME, username))
                                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
-                                    .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
+                                    .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
+                                    .setIsOperator(sharedPreferences.getBoolean(IS_OPERATOR, false))
                                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
                                     .build();
                             result.success(authResponse);
@@ -143,7 +152,8 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     .setResponse(token)
                     .setUsername(sharedPreferences.getString(USER_NAME, username))
                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
-                    .setIsOfficer(sharedPreferences.getBoolean(IS_OPERATOR, false))
+                    .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
+                    .setIsOperator(sharedPreferences.getBoolean(IS_OPERATOR, false))
                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
                     .build();
             result.success(authResponse);

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -19,105 +26,114 @@ class HtmlBoxControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Card(
       color: pureWhite,
-      margin: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+      elevation: 5,
+      margin: isPortrait
+          ? EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 8.h)
+          : EdgeInsets.fromLTRB(0, 24.h, 0, 8.h),
       child: Column(
         children: [
           const SizedBox(
             width: double.infinity,
           ),
-          SizedBox(
-              height: 40.h,
-              child: Row(
-                children: [
-                  for (int i = 0;
-                      i < context.watch<GlobalProvider>().chosenLang.length;
-                      i++)
-                    isMobile
-                        ? Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                context.read<GlobalProvider>().htmlBoxTabIndex =
-                                    i;
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.only(top: 10),
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(8),
-                                    topRight: Radius.circular(8),
-                                  ),
+          Row(
+            children: [
+              for (int i = 0;
+                  i < context.watch<GlobalProvider>().chosenLang.length;
+                  i++)
+                isMobile
+                    ? Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            context.read<GlobalProvider>().htmlBoxTabIndex =
+                                i;
+                          },
+                          child: Container(
+                            padding: EdgeInsets.only(top: 25.h, bottom: 24.h, left: 37.w, right: 36.w),
+                            height: 70.h,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                                topRight: Radius.circular(8),
+                              ),
+                              color: (context
+                                          .watch<GlobalProvider>()
+                                          .htmlBoxTabIndex ==
+                                      i)
+                                  ? solidPrimary
+                                  : pureWhite,
+                            ),
+                            child: Text(
+                              context
+                                  .read<GlobalProvider>()
+                                  .chosenLang
+                                  .elementAt(i),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18,
                                   color: (context
                                               .watch<GlobalProvider>()
                                               .htmlBoxTabIndex ==
                                           i)
-                                      ? solidPrimary
-                                      : pureWhite,
-                                ),
-                                child: Text(
-                                  context.read<GlobalProvider>().chosenLang.elementAt(i),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: (context
-                                                  .watch<GlobalProvider>()
-                                                  .htmlBoxTabIndex ==
-                                              i)
-                                          ? pureWhite
-                                          : blackShade1,
-                                      fontWeight: semiBold),
-                                ),
-                              ),
+                                      ? pureWhite
+                                      : blackShade1,
+                                  fontWeight: semiBold),
                             ),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              context.read<GlobalProvider>().htmlBoxTabIndex =
-                                  i;
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.only(top: 10),
-                              height: 40.h,
-                              width: 116,
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(8),
-                                  topRight: Radius.circular(8),
-                                ),
+                          ),
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          context.read<GlobalProvider>().htmlBoxTabIndex =
+                              i;
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(top: 25.h, bottom: 24.h, left: 37.w, right: 36.w),
+                          height: 70.h,
+                          // width: 116,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
+                            color: (context
+                                        .watch<GlobalProvider>()
+                                        .htmlBoxTabIndex ==
+                                    i)
+                                ? solidPrimary
+                                : pureWhite,
+                          ),
+                          child: Text(
+                            context
+                                .read<GlobalProvider>()
+                                .chosenLang
+                                .elementAt(i),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18,
                                 color: (context
                                             .watch<GlobalProvider>()
                                             .htmlBoxTabIndex ==
                                         i)
-                                    ? solidPrimary
-                                    : pureWhite,
-                              ),
-                              child: Text(
-                                context.read<GlobalProvider>().chosenLang.elementAt(i),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: (context
-                                                .watch<GlobalProvider>()
-                                                .htmlBoxTabIndex ==
-                                            i)
-                                        ? pureWhite
-                                        : blackShade1,
-                                    fontWeight: semiBold),
-                              ),
-                            ),
+                                    ? pureWhite
+                                    : blackShade1,
+                                fontWeight: semiBold),
                           ),
-                ],
-              )),
+                        ),
+                      ),
+            ],
+          ),
           Divider(
             thickness: 3,
             color: solidPrimary,
             height: 0,
           ),
           Container(
-            height: 341.h,
+            height: isPortrait ? 756.h : 341.h,  
             padding: const EdgeInsets.all(18),
             child: HtmlRenderer(field: field),
           ),

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Registration Client</string>
+    <string name="app_name">Android Registration Client</string>
     <string name="packet_sync_id">mosip.registration.sync</string>
     <string name="packet_external_status_id">mosip.registration.packet.external.status</string>
     <string name="packet_sync_version">1.0</string>

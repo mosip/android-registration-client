@@ -1,0 +1,220 @@
+{
+  "english": "English",
+  "arabic": "العربية",
+  "french": "Français",
+  "hindi": "हिंदी",
+  "kannada": "ಕನ್ನಡ",
+  "tamil": "தமிழ்",
+  "locale": "ara",
+  "help": "تعليمات",
+  "mosip": "موسيب",
+  "welcome": "مرحبا بكم في",
+  "community_reg_text": "عميل تسجيل المجتمع!",
+  "info_text": "يرجى تسجيل الدخول للوصول إلى الميزات.",
+  "login_text": "تسجيل الدخول",
+  "language": "اللغة",
+  "username": "اسم المستخدم",
+  "enter_username": "أدخل اسم المستخدم",
+  "next_button": "مقبل",
+  "password": "شعار",
+  "enter_password": "أدخل كلمة المرور",
+  "forgot_password": "نسيت كلمة المرور?",
+  "login_button": "تسجيل الدخول",
+  "back_button": "ظهر",
+  "user_validated": "تم التحقق من صحة المستخدم!",
+  "username_required": "اسم المستخدم مطلوب!",
+  "password_required": "كلمة المرور مطلوبة!",
+  "username_exceed": "يجب ألا يتجاوز اسم المستخدم 50 حرفا!",
+  "password_exceed": "يجب ألا تتجاوز كلمة المرور 50 حرفا!",
+  "username_incorrect": "لم يتم العثور على المستخدم!",
+  "device_credentials": "بيانات اعتماد الجهاز",
+  "copy_text": "نسخ النص",
+  "download_json": "تنزيل  جيسون",
+  "copy_message": "تفاصيل الجهاز نسخ إلى الحافظة!",
+  "download_message": "تم حفظ الملف للتنزيلات!",
+  "logout": "الخروج",
+  "login_failed": "فشل تسجيل الدخول. حاول مرة أخرى!",
+  "password_incorrect": "كلمة المرور غير صحيحة!",
+  "machine_not_found": "لم يتم العثور على الجهاز!",
+  "network_error": "فشل تسجيل الدخول. تحقق من اتصال الشبكة!",
+  "cred_expired": "لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!",
+  "not_initialized": "تعذر تهيئة الجهاز!",
+  "invalid_user": "اسم المستخدم غير صالح!",
+  "machine_inactive": "الآلة غير نشطة!",
+  "center_inactive": "المركز غير نشط!",
+  "sync_completed_succesfully": "مزامنة. تم بنجاح",
+  "sync_completed_message": "سيُعاد تشغيل النظام في غضون ثوانٍ قليلة وستتم إعادة توجيهك إلى صفحة تسجيل الدخول.",
+  "sync_failed": "مزامنة. فشل",
+  "sync_failed_message": "يرجى الاتصال بمسؤول النظام أو المشرف للحصول على المساعدة.",
+  "policy_key_sync_failed":"فشل مزامنة مفتاح السياسة",
+  "ca_certs_sync_failed":"فشلت مزامنة شهادات CA",
+  "global_params_sync_failed":"فشل مزامنة Params العالمية",
+  "user_details_sync_failed":"فشل مزامنة تفاصيل المستخدم",
+  "id_schema_sync_failed":"فشل مزامنة IDSchema",
+  "master_data_sync_failed":"فشل مزامنة البيانات الرئيسية",
+  "network_error": "لم يتم العثور على شبكة!",
+  "delete": "يمسح",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
+  "@demographicsScreenEmptyMessage": {
+    "description": "Demographic Screen Empty Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
+  "@demographicsScreenInvalidMessage": {
+    "description": "Demographic Screen Invalid Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "upload_document": "يرجى تحميل الوثيقة",
+  "scan": "مسح",
+  "clear": "يزيل",
+  "save": "يحفظ",
+  "retake": "استعادة",
+  "reference_number": "أدخل الرقم المرجعي",
+  "select_value_message": "رجاءا اختر قيمة",
+  "invalid_input": "مدخل غير صالح",
+  "reference_number_validation": "الرجاء إدخال الرقم المرجعي",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "synchronize_data": "مزامنة البيانات",
+  "registration_tasks": "مهام التسجيل",
+  "operation_tasks": "المهام التشغيلية",
+  "system_storage_usage": "استخدام تخزين النظام",
+  "download_pre_registration_data": "تنزيل بيانات التسجيل المسبق",
+  "update_operator_biomterics": "تحديث القياسات الحيوية للمشغل",
+  "appliction_upload": "تحميل التطبيق",
+  "check_updates": "تفقد التحديث",
+  "center_remap_sync": "مركز إعادة رسم خريطة المزامنة.",
+  "sync_activities": "مزامنة. أنشطة",
+  "dashboard": "لوحة القيادة",
+  "settings": "إعدادات",
+  "notifications": "إشعارات",
+  "profile": "حساب تعريفي",
+  "select_language": "اختار اللغة",
+  "select_two_languages": "يرجى اختيار أي لغتين لإدخال البيانات.",
+  "language_mandatory": "{mandatoryLanguage} إلزامي للمقيم للاختيار وفقًا للإرشادات الحكومية. سيؤدي ترتيب الاختيار إلى عرض الصفحة للبيانات الديموغرافية.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Arabic"
+      }
+    }
+  },
+  "language_selector_note": "يرجى ملاحظة أن اللغة قد تعتمد على البيانات التي تم إدخالها أثناء التسجيل المسبق.",
+  "cancel": "يلغي",
+  "submit": "يُقدِّم",
+  "go_back": "عُد",
+  "informed": "أُبلغ",
+  "logo_text": "مدعوم من موسيب",
+  "get_onboard": "إركب",
+  "skip_to_home": "انتقل إلى المنزل",
+  "continue_text": "يكمل",
+  "authenticate": "المصادقة",
+  "new_registration": "تسجيل جديد",
+  "go_back": "عُد",
+  "informed": "أُبلغ",
+  "sync_packet": "تحميل متزامن",
+  "upload_packet": "تحميل حزمة",
+  "authenticate_using_password": "المصادقة باستخدام كلمة المرور",
+  "registration_acknowledgement": "اعتراف بالتسجيل",
+  "print_text": "طباعة",
+  "hello": "مرحبًا",
+  "onboard_process_help": "الرجاء الضغط على 'البدء في الانضمام' للبدء في عملية الإعداد.",
+  "default_not_found": "الدور المطلوب غير موجود!",
+  "mark_exception": "وضع علامة استثناء",
+  "threshold": "الحد",
+  "quality": "الجودة",
+  "attempts": "المحاولات",
+  "comments": "التعليقات",
+  "exception_type": "نوع الاستثناء",
+  "permanent": "دائم",
+  "temporary": "مؤقت",
+  "exceptions": "الاستثناءات",
+  "add_comments_for_marking_the_exception": "إضافة تعليقات لوضع علامة الاستثناء",
+  "rescan":"إعادة المسح",
+  "marking_exceptions_on":"وضع علامة على الاستثناءات على",
+  "is_not_allowed":"غير مسموح",
+  "capture":"يأسر",
+  "attempts_left":"محاولات اليسار",
+  "left_hand": "اليد اليسرى",
+  "left": "اليسار",
+  "right": "اليمين",
+  "right_hand": "اليد اليمنى",
+  "iris": "القزحية",
+  "thumbs": "الأبهام",
+  "exception":"استثناء",
+  "face": "الوجه",
+  "preview_page": "معاينة",
+  "packet_auth_page": "المصادقة",
+  "acknowledgement_page": "الاعتراف" 
+}

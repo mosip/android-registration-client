@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -583,10 +590,13 @@ class _ScannerState extends State<Scanner> {
         compressQuality: 100,
         uiSettings: [
           AndroidUiSettings(
-              toolbarTitle: 'Cropper',
-              toolbarColor: Colors.transparent,
-              toolbarWidgetColor: Colors.black,
+              //toolbarTitle: 'Cropper',
+             // toolbarColor: Colors.transparent,
+             // toolbarWidgetColor: Colors.black,
               initAspectRatio: CropAspectRatioPreset.original,
+              hideBottomControls: true,
+              backgroundColor: Colors.white,
+              cropGridColor: Colors.indigo,
               lockAspectRatio: false),
           IOSUiSettings(
             title: 'Cropper',

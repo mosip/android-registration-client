@@ -1,0 +1,220 @@
+{
+  "english": "English",
+  "arabic": "العربية",
+  "french": "Français",
+  "hindi": "हिंदी",
+  "kannada": "ಕನ್ನಡ",
+  "tamil": "தமிழ்",
+  "locale": "eng",
+  "help": "HELP",
+  "mosip": "MOSIP",
+  "welcome": "Welcome to",
+  "community_reg_text": "Community Registration Client!",
+  "info_text": "Please login to access the features.",
+  "login_text": "Login",
+  "language": "Language",
+  "username": "Username",
+  "enter_username": "Enter Username",
+  "next_button": "NEXT",
+  "password": "Password",
+  "enter_password": "Enter Password",
+  "forgot_password": "Forgot Password?",
+  "login_button": "LOGIN",
+  "back_button": "BACK",
+  "user_validated": "User Validated!",
+  "username_required": "Username is required!",
+  "password_required": "Password is required!",
+  "username_exceed": "Username should not exceed 50 characters!",
+  "password_exceed": "Password should not exceed 50 characters!",
+  "username_incorrect": "User not found!",
+  "device_credentials": "Device Credentials",
+  "copy_text": "Copy Text",
+  "download_json": "Download JSON",
+  "copy_message": "Machine Details copied to clipboard!",
+  "download_message": "File Saved to Downloads!",
+  "logout": "LOGOUT",
+  "login_failed": "Login Failed. Try Again!",
+  "password_incorrect": "Password incorrect!",
+  "machine_not_found": "Machine not found!",
+  "network_error": "Login failed. Check network connection!",
+  "cred_expired": "Credentials not found or are expired. Please try online login!",
+  "not_initialized": "Machine could not be initialized!",
+  "invalid_user": "Username invalid!",
+  "machine_inactive": "Machine is not active!",
+  "center_inactive": "Center is not active!",
+  "sync_completed_succesfully": "Sync Completed Successfully",
+  "sync_completed_message": "System will restart in a few seconds and you will be redirected to login page.",
+  "sync_failed": "Sync. Failed",
+  "sync_failed_message": "Please connect with the system admin or supervisor for help.",
+  "policy_key_sync_failed":"Policy Key Sync Failed",
+  "ca_certs_sync_failed":"CA Certificates Sync Failed",
+  "global_params_sync_failed":"Global Params Sync Failed",
+  "user_details_sync_failed":"User Details Sync Failed",
+  "id_schema_sync_failed":"IDSchema Sync Failed",
+  "master_data_sync_failed":"Master Data Sync Failed",
+  "network_error": "No network found!",
+  "delete": "DELETE",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
+  "@demographicsScreenEmptyMessage": {
+    "description": "Demographic Screen Empty Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
+  "@demographicsScreenInvalidMessage": {
+    "description": "Demographic Screen Invalid Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "upload_document": "Please Upload The Document",
+  "scan": "Scan",
+  "clear": "Clear",
+  "save": "SAVE",
+  "retake": "RETAKE",
+  "reference_number": "Enter Reference Number",
+  "select_value_message": "Please select a value",
+  "invalid_input": "Invalid input",
+  "reference_number_validation": "Please enter reference number",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "synchronize_data": "Synchronize Data",
+  "registration_tasks": "Registration Tasks",
+  "operation_tasks": "Operational Tasks",
+  "system_storage_usage": "System Storage Usage",
+  "download_pre_registration_data": "Download Pre-Registration Data",
+  "update_operator_biomterics": "Update Operator Biometrics",
+  "appliction_upload": "Application Upload",
+  "check_updates": "Check Updates",
+  "center_remap_sync": "Center Remap Sync.",
+  "sync_activities": "Sync. Activities",
+  "dashboard": "Dashboard",
+  "settings": "Settings",
+  "notifications": "Notifications",
+  "profile": "Profile",
+  "select_language": "Select Language",
+  "select_two_languages": "Please select any 2 languages for data entry.",
+  "language_mandatory": "{mandatoryLanguage} is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
+  "cancel": "CANCEL",
+  "submit": "SUBMIT",
+  "go_back": "GO BACK",
+  "informed": "INFORMED",
+  "logo_text": "Powered by MOSIP",
+  "get_onboard": "GET ONBOARD",
+  "skip_to_home": "SKIP TO HOME",
+  "continue_text": "CONTINUE",
+  "authenticate": "AUTHENTICATE",
+  "new_registration": "NEW REGISTRATION",
+  "go_back": "GO BACK",
+  "informed": "INFORMED",
+  "sync_packet": "Sync Upload",
+  "upload_packet": "Upload Packet",
+  "authenticate_using_password": "Authentication using Password",
+  "registration_acknowledgement": "Registration Acknowledgement",
+  "print_text": "PRINT",
+  "hello": "HELLO",
+  "onboard_process_help": "Please tap 'GET ONBOARD' to get started with the onboarding process.",
+  "default_not_found": "Required role not found!",
+  "mark_exception":"Mark Exception",
+  "threshold":"Threshold",
+  "quality":"Quality",
+  "attempts":"Attempts",
+  "comments":"Comments",
+  "exception_type":"Exception Type",
+  "permanent":"Permanent",
+  "temporary":"Temporary",
+  "exceptions":"Exceptions",
+  "exception":"Exception",
+  "add_comments_for_marking_the_exception":"Add comments for marking the exception",
+  "rescan":"RESCAN",
+  "marking_exceptions_on":"Marking exceptions on",
+  "is_not_allowed":"is not allowed",
+  "capture":"Capture",
+  "attempts_left":"attempts left",
+  "left_hand":"Left Hand",
+  "left":"Left",
+  "right":"Right",
+  "right_hand":"Right Hand",
+  "iris":"Iris",
+  "thumbs":"Thumbs",
+  "face":"Face",
+  "preview_page": "Preview",
+  "packet_auth_page": "Authentication",
+  "acknowledgement_page": "Acknowledgement"
+}

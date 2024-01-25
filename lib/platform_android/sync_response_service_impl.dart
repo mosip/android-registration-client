@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
@@ -80,5 +87,18 @@ class SyncResponseServiceImpl implements SyncResponseService {
       debugPrint('Unable to get last sync time! ${e.toString()}');
     }
     return syncTime;
+  }
+
+  @override
+  Future<Sync> getCaCertsSync() async {
+    late Sync syncResponse;
+    try {
+      syncResponse = await SyncApi().getCaCertsSync();
+    } on PlatformException {
+      debugPrint('CaCerts Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('CaCertsSync has failed! ${e.toString()}');
+    }
+    return syncResponse;
   }
 }

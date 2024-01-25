@@ -1,0 +1,220 @@
+{
+  "english": "English",
+  "arabic": "العربية",
+  "french": "Français",
+  "hindi": "हिंदी",
+  "kannada": "ಕನ್ನಡ",
+  "tamil": "தமிழ்",
+  "locale": "kan",
+  "help": "ಸಹಾಯ",
+  "mosip": "MOSIP",
+  "welcome": "ಇದಕ್ಕೆ ಸ್ವಾಗತ",
+  "community_reg_text": "ಸಮುದಾಯ ನೋಂದಣಿ ಕ್ಲೈಂಟ್!",
+  "info_text": "ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಪ್ರವೇಶಿಸಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ.",
+  "login_text": "ಲಾಗಿನ್ ಮಾಡಿ",
+  "language": "ಭಾಷೆ",
+  "username": "ಬಳಕೆದಾರ ಹೆಸರು",
+  "enter_username": "ಬಳಕೆದಾರ ಹೆಸರು ನಮೂದಿಸಿ",
+  "next_button": "ಮುಂದೆ",
+  "password": "ಪಾಸ್ ವರ್ಡ್",
+  "enter_password": "ಪಾಸ್ ವರ್ಡ್ ನಮೂದಿಸಿ",
+  "forgot_password": "ಪಾಸ್ ವರ್ಡ್ ಮರೆತಿದ್ದೀರಾ?",
+  "login_button": "ಲಾಗಿನ್",
+  "back_button": "ಹಿಂದೆ",
+  "user_validated": "ಬಳಕೆದಾರ ಮೌಲ್ಯೀಕರಿಸಲಾಗಿದೆ!",
+  "username_required": "ಬಳಕೆದಾರ ಹೆಸರು ಅಗತ್ಯವಿದೆ!",
+  "password_required": "ಪಾಸ್ ವರ್ಡ್ ಅಗತ್ಯವಿದೆ!",
+  "username_exceed": "ಬಳಕೆದಾರಹೆಸರು 50 ಅಕ್ಷರಗಳನ್ನು ಮೀರಬಾರದು!",
+  "password_exceed": "ಪಾಸ್ ವರ್ಡ್ 50 ಅಕ್ಷರಗಳನ್ನು ಮೀರಬಾರದು!",
+  "username_incorrect": "ಬಳಕೆದಾರ ಸಿಗಲಿಲ್ಲ!",
+  "device_credentials": "ಸಾಧನ ರುಜುವಾತುಗಳು",
+  "copy_text": "ಪಠ್ಯ ನಕಲಿಸು",
+  "download_json": "ಡೌನ್ಲೋಡ್ JSON",
+  "copy_message": "ಯಂತ್ರದ ವಿವರಗಳನ್ನು ಕ್ಲಿಪ್ ಬೋರ್ಡ್ ಗೆ ನಕಲಿಸಲಾಗಿದೆ!",
+  "download_message": "ಡೌನ್ ಲೋಡ್ ಗಳಿಗೆ ಫೈಲ್ ಉಳಿಸಲಾಗಿದೆ!",
+  "logout": "ಲಾಗ್ ಔಟ್",
+  "login_failed": "ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು!",
+  "password_incorrect": "ಪಾಸ್ ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ!",
+  "machine_not_found": "ಯಂತ್ರ ಸಿಗಲಿಲ್ಲ!",
+  "network_error": "ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ!",
+  "cred_expired": "ರುಜುವಾತುಗಳು ಸಿಗಲಿಲ್ಲ ಅಥವಾ ಅವಧಿ ಮೀರಿದವು. ದಯವಿಟ್ಟು ಆನ್ ಲೈನ್ ಲಾಗಿನ್ ಪ್ರಯತ್ನಿಸಿ!",
+  "not_initialized": "ಯಂತ್ರವನ್ನು ಆರಂಭಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ!",
+  "invalid_user": "ಬಳಕೆದಾರ ಹೆಸರು ಅಮಾನ್ಯ!",
+  "machine_inactive": "ಯಂತ್ರ ಸಕ್ರಿಯವಾಗಿಲ್ಲ!",
+  "center_inactive": "ಕೇಂದ್ರವು ಸಕ್ರಿಯವಾಗಿಲ್ಲ!",
+  "sync_completed_succesfully": "ಸಿಂಕ್ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣಗೊಂಡಿದೆ",
+  "sync_completed_message": "ಸಿಸ್ಟಮ್ ಕೆಲವೇ ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮರುಪ್ರಾರಂಭವಾಗುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮನ್ನು ಲಾಗಿನ್ ಪುಟಕ್ಕೆ ಮರುನಿರ್ದೇಶಿಸಲಾಗುತ್ತದೆ.",
+  "sync_failed": "ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "sync_failed_message": "ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಸಿಸ್ಟಂ ನಿರ್ವಾಹಕ ಅಥವಾ ಮೇಲ್ವಿಚಾರಕರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  "policy_key_sync_failed":"ನೀತಿ ಕೀಲಿ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "ca_certs_sync_failed":"CA ಪ್ರಮಾಣಪತ್ರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "global_params_sync_failed":"ಜಾಗತಿಕ ಪರಮ್ಸ್ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "user_details_sync_failed":"ಬಳಕೆದಾರ ವಿವರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "id_schema_sync_failed":"IDSchena ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "master_data_sync_failed":"ಮಾಸ್ಟರ್ ಡೇಟಾ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "network_error": "ಯಾವುದೇ ನೆಟ್ವರ್ಕ್ ಸಿಗಲಿಲ್ಲ!",
+  "delete": "ಅಳಿಸಿ",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
+  "@demographicsScreenEmptyMessage": {
+    "description": "Demographic Screen Empty Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
+  "@demographicsScreenInvalidMessage": {
+    "description": "Demographic Screen Invalid Validation Message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "upload_document": "ದಯವಿಟ್ಟು ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "scan": "ಸ್ಕ್ಯಾನ್",
+  "clear": "ಅಳಿಸಿ",
+  "save": "ಉಳಿಸಿ",
+  "retake": "ರೀಟೇಕ್",
+  "reference_number": "ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "select_value_message": "ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "invalid_input": "ಅಮಾನ್ಯ ಇನ್\u200Cಪುಟ್",
+  "reference_number_validation": "ದಯವಿಟ್ಟು ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "synchronize_data": "ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ",
+  "registration_tasks": "ನೋಂದಣಿ ಕಾರ್ಯಗಳು",
+  "operation_tasks": "ಕಾರ್ಯಾಚರಣೆಯ ಕಾರ್ಯಗಳು",
+  "system_storage_usage": "ಸಿಸ್ಟಮ್ ಶೇಖರಣಾ ಬಳಕೆ",
+  "download_pre_registration_data": "ಪೂರ್ವ-ನೋಂದಣಿ ಡೇಟಾವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "update_operator_biomterics": "ಆಪರೇಟರ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್ ಅನ್ನು ನವೀಕರಿಸಿ",
+  "appliction_upload": "ಅಪ್ಲಿಕೇಶನ್ ಅಪ್ಲೋಡ್",
+  "check_updates": "ನವೀಕರಣಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
+  "center_remap_sync": "ಕೇಂದ್ರ ರೀಮ್ಯಾಪ್ ಸಿಂಕ್.",
+  "sync_activities": "ಸಿಂಕ್ ಮಾಡಿ. ಚಟುವಟಿಕೆಗಳು",
+  "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+  "settings": "ಸಂಯೋಜನೆಗಳು",
+  "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+  "profile": "ಪ್ರೊಫೈಲ್",
+  "select_language": "ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "select_two_languages": "ಡೇಟಾ ನಮೂದುಗಾಗಿ ದಯವಿಟ್ಟು ಯಾವುದೇ 2 ಭಾಷೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+  "language_mandatory": "ಸರ್ಕಾರಿ ಮಾರ್ಗಸೂಚಿಗಳ ಪ್ರಕಾರ ಆಯ್ಕೆ ಮಾಡಲು ನಿವಾಸಿಗಳಿಗೆ {mandatoryLanguage} ಕಡ್ಡಾಯವಾಗಿದೆ. ಆಯ್ಕೆಯ ಕ್ರಮವು ಜನಸಂಖ್ಯಾ ಡೇಟಾಕ್ಕಾಗಿ ಪುಟ ವೀಕ್ಷಣೆಗೆ ಕಾರಣವಾಗುತ್ತದೆ.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Kannada"
+      }
+    }
+  },
+  "language_selector_note": "ಪೂರ್ವ-ನೋಂದಣಿ ಸಮಯದಲ್ಲಿ ನಮೂದಿಸಿದ ಡೇಟಾವನ್ನು ಆಧರಿಸಿ ಭಾಷೆ ಇರಬಹುದು ಎಂಬುದನ್ನು ದಯವಿಟ್ಟು ಗಮನಿಸಿ.",
+  "cancel": "ರದ್ದುಮಾಡು",
+  "submit": "ಸಲ್ಲಿಸು",
+  "go_back": "ಹಿಂದೆ ಹೋಗು",
+  "informed": "ಮಾಹಿತಿ ನೀಡಿದರು",
+  "logo_text": "MOSIP ನಿಂದ ನಡೆಸಲ್ಪಡುತ್ತಿದೆ",
+  "get_onboard": "ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ",
+  "skip_to_home": "ಮನೆಗೆ ತೆರಳಿ",
+  "continue_text": "ಮುಂದುವರಿಸಿ",
+  "authenticate": "ಪ್ರಮಾಣಿತಗೊಳಿಸಿ",
+  "new_registration": "ಹೊಸ ನೋಂದಾಯಿ",
+  "go_back": "ಹಿಂತಿರುಗಿ",
+  "informed": "ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ",
+  "sync_packet": "ಸಿಂಕ್ ಅಪ್‌ಲೋಡ್",
+  "upload_packet": "ಅಪ್‌ಲೋಡ್ ಪ್ಯಾಕೆಟ್",
+  "authenticate_using_password": "ಪಾಸ್‌ವರ್ಡ್ ಬಳಸಿ ಅಂಗೀಕರಿಸಿ",
+  "registration_acknowledgement": "ನೋಂದಾಯಿತ ಸ್ವೀಕೃತಿ",
+  "print_text": "ಮುದ್ರಿಸಿ",
+  "hello": "ಹಲೋ",
+  "onboard_process_help": "ಆನ್‌ಬೋರ್ಡಿಂಗ್ ಪ್ರಕ್ರಿಯೆಯೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು 'ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ' ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.",
+  "default_not_found": "ಅಗತ್ಯವಿರುವ ಪಾತ್ರ ಕಂಡುಬಂದಿಲ್ಲ!",
+  "mark_exception": "ಅಂಶಗೊಳಿಸಲು ಅನುಮತಿಸಿ",
+  "threshold": "ಸೀಮಾಂಕ",
+  "quality": "ಗುಣಮಟ್ಟ",
+  "attempts": "ಪ್ರಯಾಸಗಳು",
+  "comments": "ಕೊರಗುಗಳು",
+  "exception_type": "ಅಂಶದ ಪ್ರಕಾರ",
+  "permanent": "ಸ್ಥಾಯಿ",
+  "temporary": "ಕ್ಷಣಿಕ",
+  "exceptions": "ಅಂಶಗಳು",
+  "add_comments_for_marking_the_exception": "ಅಂಶವನ್ನು ಅಂಶಗೊಳಿಸಲು ಕೊರಗಳನ್ನು ಸೇರಿಸಿ",
+  "rescan":"ಮರು ಸ್ಕ್ಯಾನ್",
+  "marking_exceptions_on":"ವಿನಾಯಿತಿಗಳನ್ನು ಗುರುತಿಸಲಾಗುತ್ತಿದೆ",
+  "is_not_allowed":"ಅನುಮತಿಸಲಾಗುವುದಿಲ್ಲ",
+  "capture":"ಸೆರೆಹಿಡಿಯಿರಿ",
+  "attempts_left":"ಪ್ರಯತ್ನಗಳು ಉಳಿದಿವೆ",
+  "left_hand": "ಎಡ ಕೈ",
+  "left": "ಎಡ",
+  "right": "ಬಲ",
+  "right_hand": "ಬಲ ಕೈ",
+  "iris": "ಐರಿಸ್",
+  "thumbs": "ಬೆರಳುಗಳು",
+  "exception":"ವಿನಾಯಿತಿ",
+  "face": "ಮುಖ",
+  "preview_page": "ಪೂರ್ವದರು",
+  "packet_auth_page": "ಪ್ರಮಾಣಿಕತೆ",
+  "acknowledgement_page": "ಅರ್ಹಿಚ್ಛೆ"
+}

@@ -68,6 +68,16 @@ dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
     implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.47'
+
+    implementation 'com.madgag.spongycastle:core:1.58.0.0'
+
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
+    implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.13.3'
+    implementation 'org.bitbucket.b_c:jose4j:0.6.5'
+
 }
 
 sonarqube {

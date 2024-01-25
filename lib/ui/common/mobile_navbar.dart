@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,6 +25,7 @@ class MobileNavbar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             OnboardLandingPageNavbarIcon(
+              imagePath: "",
                 icon: Icon(
                   Icons.home,
                   color: solidPrimary,
@@ -31,6 +39,7 @@ class MobileNavbar extends StatelessWidget {
                 ),
                 ontap: () {}),
             OnboardLandingPageNavbarIcon(
+              imagePath: "",
                 icon: Icon(
                   Icons.settings,
                   color: secondaryColors.elementAt(5),
@@ -44,6 +53,7 @@ class MobileNavbar extends StatelessWidget {
                 ),
                 ontap: () {}),
             OnboardLandingPageNavbarIcon(
+              imagePath: "",
                 icon: Icon(
                   Icons.notifications,
                   color: secondaryColors.elementAt(5),
@@ -57,6 +67,7 @@ class MobileNavbar extends StatelessWidget {
                 ),
                 ontap: () {}),
             OnboardLandingPageNavbarIcon(
+              imagePath: "",
                 icon: Icon(
                   Icons.home,
                   color: secondaryColors.elementAt(5),

@@ -1,51 +1,27 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/common/tablet_footer.dart';
-import 'package:registration_client/ui/common/tablet_header.dart';
-import 'package:registration_client/ui/common/tablet_navbar.dart';
+import 'package:registration_client/ui/onboard/onboarding_page.dart';
 
-import '../onboard/onboard_landing_page.dart';
 import '../onboard/home_page.dart';
 
 class DashBoardTabletView extends StatelessWidget {
   DashBoardTabletView({Key? key}) : super(key: key);
 
   final List<Widget> _pages = [
-    const OnboardLandingPage(),
+    const OnboardingPage(),
     const HomePage(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Row(
-        children: [
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraint) {
-                return SingleChildScrollView(
-                  controller: ScrollController(),
-                  child: Column(
-                    children: [
-                      const TabletHeader(),
-                      const TabletNavbar(),
-                      _pages[context.watch<GlobalProvider>().currentIndex],
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      context.watch<GlobalProvider>().currentIndex != 0
-                          ? const TabletFooter()
-                          : const SizedBox.shrink(),
-                    ],
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      ),
-    );
+    return _pages[context.watch<GlobalProvider>().currentIndex];
   }
 }

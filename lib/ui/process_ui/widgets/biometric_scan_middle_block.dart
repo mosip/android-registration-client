@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -12,6 +19,7 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../provider/global_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BiometricScanMiddleBlock extends StatefulWidget {
   const BiometricScanMiddleBlock(
@@ -144,7 +152,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "${widget.parameterTitle} Capture",
+                    "${widget.biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.capture}",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 18, fontWeight: bold, color: blackShade1),
                   ),
@@ -199,14 +207,9 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                               .then((value) {
                             temp = value;
                           });
-                          await BiometricsApi().incrementBioAttempt(
-                              widget.field.id!, widget.parameterTitle);
-                          widget.biometricAttributeData.attemptNo =
-                              await BiometricsApi().getBioAttempt(
-                                  widget.field.id!, widget.parameterTitle);
                         }
                       },
-                      child: const Text("RESCAN"),
+                      child: Text(AppLocalizations.of(context)!.rescan),
                     ),
                     SizedBox(
                       width: 10.w,
@@ -218,6 +221,11 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       onPressed: () async {
                         widget.biometricAttributeData.listOfBiometricsDto
                             .clear();
+                        await BiometricsApi().incrementBioAttempt(
+                            widget.field.id!, widget.parameterTitle);
+                        widget.biometricAttributeData.attemptNo =
+                            await BiometricsApi().getBioAttempt(
+                                widget.field.id!, widget.parameterTitle);
                         await BiometricsApi()
                             .getBestBiometrics(
                                 widget.field.id!, widget.parameterTitle)
@@ -247,7 +255,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                         setState(() {});
                         _navigateBack();
                       },
-                      child: const Text("SAVE"),
+                      child: Text(AppLocalizations.of(context)!.save),
                     ),
                   ],
                 ),
@@ -261,6 +269,9 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
 
   @override
   Widget build(BuildContext context) {
+    (widget.biometricAttributeData.exceptions.contains(false))
+        ? true
+        : generateList("${widget.field.id}", widget.biometricAttributeData);
     return SizedBox(
       height: 460.h,
       child: Column(
@@ -288,38 +299,50 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                 ),
           OutlinedButton.icon(
             onPressed: () async {
-              if (widget.biometricAttributeData.attemptNo <
-                  widget.biometricAttributeData.noOfCapturesAllowed) {
-                List<Uint8List?> temp = [];
-                await BiometricsApi()
-                    .invokeDiscoverSbi(widget.field.id!, widget.parameterTitle);
-                await BiometricsApi()
-                    .getBestBiometrics(widget.field.id!, widget.parameterTitle)
-                    .then((value) {});
-                await BiometricsApi()
-                    .extractImageValues(widget.field.id!, widget.parameterTitle)
-                    .then((value) {
-                  temp = value;
-                });
-                await BiometricsApi().incrementBioAttempt(
-                    widget.field.id!, widget.parameterTitle);
-                widget.biometricAttributeData.attemptNo = await BiometricsApi()
-                    .getBioAttempt(widget.field.id!, widget.parameterTitle);
-                _showScanDialogBox(temp);
+              if (widget.biometricAttributeData.exceptions.contains(false)) {
+                if (widget.biometricAttributeData.attemptNo <
+                    widget.biometricAttributeData.noOfCapturesAllowed) {
+                  List<Uint8List?> temp = [];
+                  await BiometricsApi().invokeDiscoverSbi(
+                      widget.field.id!, widget.parameterTitle);
+                  await BiometricsApi()
+                      .getBestBiometrics(
+                          widget.field.id!, widget.parameterTitle)
+                      .then((value) {});
+                  await BiometricsApi()
+                      .extractImageValues(
+                          widget.field.id!, widget.parameterTitle)
+                      .then((value) {
+                    temp = value;
+                  });
+                  _showScanDialogBox(temp);
+                }
               }
             },
             icon: Icon(
               Icons.crop_free,
-              color: solidPrimary,
+              color: (widget.biometricAttributeData.exceptions.contains(false))
+                  ? solidPrimary
+                  : secondaryColors.elementAt(2),
               size: 14,
             ),
             label: Text(
-              "SCAN",
+              AppLocalizations.of(context)!.scan,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 14, fontWeight: bold, color: solidPrimary),
+                  fontSize: 14,
+                  fontWeight: bold,
+                  color:
+                      (widget.biometricAttributeData.exceptions.contains(false))
+                          ? solidPrimary
+                          : secondaryColors.elementAt(2)),
             ),
             style: OutlinedButton.styleFrom(
-              side: BorderSide(color: solidPrimary, width: 1),
+              side: BorderSide(
+                  color:
+                      (widget.biometricAttributeData.exceptions.contains(false))
+                          ? solidPrimary
+                          : secondaryColors.elementAt(2),
+                  width: 1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -342,7 +365,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Attempts",
+                        AppLocalizations.of(context)!.attempts,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontSize: 14,
                               color: secondaryColors.elementAt(1),
@@ -355,7 +378,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Exceptions",
+                        AppLocalizations.of(context)!.exceptions,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontSize: 14,
                               color: secondaryColors.elementAt(1),
@@ -380,12 +403,12 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  "Quality",
+                  AppLocalizations.of(context)!.quality,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontSize: 14, fontWeight: semiBold, color: blackShade1),
                 ),
                 Text(
-                  "Threshold ${widget.biometricAttributeData.thresholdPercentage}%",
+                  "${AppLocalizations.of(context)!.threshold} ${widget.biometricAttributeData.thresholdPercentage}%",
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 14,
                         fontWeight: regular,
@@ -403,11 +426,11 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       backgroundColor: Colors.grey,
                       progressColor: (widget
                                   .biometricAttributeData.qualityPercentage
-                                  .toInt() >
+                                  .toInt() <
                               int.parse(widget
                                   .biometricAttributeData.thresholdPercentage))
-                          ? secondaryColors.elementAt(11)
-                          : secondaryColors.elementAt(20),
+                          ? secondaryColors.elementAt(26)
+                          : secondaryColors.elementAt(11),
                     ),
                     SizedBox(
                       width: 16.h,
@@ -426,7 +449,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Attempts",
+                      AppLocalizations.of(context)!.attempts,
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge

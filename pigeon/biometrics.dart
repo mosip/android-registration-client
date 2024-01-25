@@ -31,7 +31,7 @@ abstract class BiometricsApi {
   String removeBioException(String fieldId, String modality, String attribute);
 
   @async
-  String getThresholdValue(String key);
+  String getMapValue(String key);
 
   @async
   String getAgeGroup();

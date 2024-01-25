@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:registration_client/utils/app_style.dart';
 
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
@@ -29,11 +36,12 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   @override
   void initState() {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     if (context
         .read<GlobalProvider>()
         .fieldInputValue
         .containsKey(widget.field.id)) {
-      _getSelectedValueFromMap("eng");
+      _getSelectedValueFromMap(lang);
     }
     super.initState();
   }
@@ -50,15 +58,13 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   String? selectedOption;
 
   void handleOptionChange(String? value) {
-    context
-        .read<RegistrationTaskProvider>()
-        .addSimpleTypeDemographicField(widget.field.id ?? "", value!, "eng");
-    context.read<GlobalProvider>().setLanguageSpecificValue(
-          widget.field.id ?? "",
-          value,
-          "eng",
-          context.read<GlobalProvider>().fieldInputValue,
-        );
+    context.read<GlobalProvider>().chosenLang.forEach((element) {
+      String code =
+          context.read<GlobalProvider>().languageToCodeMapper[element]!;
+      context
+          .read<RegistrationTaskProvider>()
+          .addSimpleTypeDemographicField(widget.field.id ?? "", value!, code);
+    });
     setState(() {
       selectedOption = value;
     });
@@ -66,16 +72,21 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
-      future: _getFieldValues(widget.field.subType!, "eng"),
+      future: _getFieldValues(widget.field.subType!,
+          context.read<GlobalProvider>().selectedLanguage),
       builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Card(
-            elevation: 0,
-            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+            elevation: 5,
+            color: pureWhite,
+            margin: EdgeInsets.symmetric(
+                vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -183,9 +194,7 @@ class SelectableCard extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: 14,
-                  color: value == groupValue
-                      ? Colors.white
-                      : AppStyle.appBlackShade1,
+                  color: value == groupValue ? Colors.white : appBlackShade1,
                   fontWeight: regular,
                 ),
               ),

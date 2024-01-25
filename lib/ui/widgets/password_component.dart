@@ -1,5 +1,13 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -11,6 +19,7 @@ class PasswordComponent extends StatelessWidget {
     required this.onChanged,
     required this.isLoggingIn,
     required this.isDisabled,
+    required this.isMobile,
   }) : super(key: key);
 
   final VoidCallback onTapLogin;
@@ -18,6 +27,7 @@ class PasswordComponent extends StatelessWidget {
   final Function onChanged;
   final bool isLoggingIn;
   final bool isDisabled;
+  final bool isMobile;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +38,14 @@ class PasswordComponent extends StatelessWidget {
           children: [
             Text(
               AppLocalizations.of(context)!.password,
-              style: AppStyle.mobileTextfieldHeader,
+              style: isMobile
+              ? isMobileSize ? AppTextStyle.mobileTextfieldHeader
+                  : AppTextStyle.tabletPortraitTextfieldHeader
+                  : AppTextStyle.mobileTextfieldHeader,
             ),
             const Text(
               ' *',
-              style: TextStyle(color: AppStyle.mandatoryField),
+              style: TextStyle(color: mandatoryField),
             ),
           ],
         ),
@@ -40,13 +53,13 @@ class PasswordComponent extends StatelessWidget {
           height: 11.h,
         ),
         Container(
-          height: 52.h,
+          height: isMobile && !isMobileSize ? 82.h : 52.h,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(horizontal: 17.w),
           decoration: BoxDecoration(
             border: Border.all(
               width: 1.h,
-              color: AppStyle.appGreyShade,
+              color: appGreyShade,
             ),
             borderRadius: const BorderRadius.all(
               Radius.circular(6),
@@ -59,8 +72,14 @@ class PasswordComponent extends StatelessWidget {
             },
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.enter_password,
-              hintStyle: AppStyle.mobileTextfieldHintText,
+              hintStyle: isMobile
+              && !isMobileSize ? AppTextStyle.tabletPortraitTextfieldHintText
+                  : AppTextStyle.mobileTextfieldHintText,
               border: InputBorder.none,
+            ),
+            style: TextStyle(
+              fontSize: isMobile && !isMobileSize ? 22 : 14,
+              color: appBlack,
             ),
           ),
         ),
@@ -70,11 +89,12 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: () {},
           child: Container(
-            height: 17.h,
             alignment: Alignment.centerRight,
             child: Text(
               AppLocalizations.of(context)!.forgot_password,
-              style: AppStyle.mobileForgotPasswordText,
+              style: isMobile
+              && !isMobileSize ? AppTextStyle.tabletPortraitForgotPasswordText
+                  : AppTextStyle.mobileForgotPasswordText,
             ),
           ),
         ),
@@ -84,12 +104,16 @@ class PasswordComponent extends StatelessWidget {
         InkWell(
           onTap: !isDisabled ? onTapLogin : null,
           child: Container(
-            height: 52.h,
+            height: isMobile && !isMobileSize ? 82.h : 52.h,
             decoration: BoxDecoration(
-              color: !isDisabled ? AppStyle.appSolidPrimary : AppStyle.buttonDisabled,
+              color: !isDisabled
+                  ? appSolidPrimary
+                  : buttonDisabled,
               border: Border.all(
                 width: 1.w,
-                color: !isDisabled ? AppStyle.appBlueShade1 : AppStyle.buttonDisabled,
+                color: !isDisabled
+                    ? appBlueShade1
+                    : buttonDisabled,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -98,28 +122,30 @@ class PasswordComponent extends StatelessWidget {
             child: Center(
               child: isLoggingIn
                   ? const CircularProgressIndicator(
-                      color: AppStyle.appWhite,
+                      color: appWhite,
                     )
                   : Text(
                       AppLocalizations.of(context)!.login_button,
-                      style: AppStyle.mobileButtonText,
+                      style: isMobile
+                      && !isMobileSize ? AppTextStyle.tabletPortraitButtonText
+                          : AppTextStyle.mobileButtonText,
                     ),
             ),
           ),
         ),
         SizedBox(
-          height: 10.h,
+          height: 20.h,
         ),
         InkWell(
           onTap: onTapBack,
           child: Container(
-            height: 52.h,
+            height: isMobile && !isMobileSize ? 82.h : 52.h,
             // width: 318.w,
             decoration: BoxDecoration(
-              color: AppStyle.appWhite,
+              color: appWhite,
               border: Border.all(
                 width: 1.w,
-                color: AppStyle.appBackButtonBorder,
+                color: appBackButtonBorder,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -128,7 +154,9 @@ class PasswordComponent extends StatelessWidget {
             child: Center(
               child: Text(
                 AppLocalizations.of(context)!.back_button,
-                style: AppStyle.mobileBackButtonText,
+                style: isMobile
+                && !isMobileSize ? AppTextStyle.tabletPortraitBackButtonText
+                    : AppTextStyle.mobileBackButtonText,
               ),
             ),
           ),

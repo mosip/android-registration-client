@@ -66,7 +66,7 @@ public class CertificateManagerUtilTest {
 
     @Test(expected = KeymanagerServiceException.class)
     public void convertToCertificate_null_cert_test() {
-        CertificateManagerUtil.convertToCertificate(null);
+        CertificateManagerUtil.convertToCertificate((String) null);
     }
 
     @Test(expected = KeymanagerServiceException.class)

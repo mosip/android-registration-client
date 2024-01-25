@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BiometricCaptureExceptionBlock extends StatefulWidget {
   const BiometricCaptureExceptionBlock(
@@ -34,7 +42,7 @@ class _BiometricCaptureExceptionBlockState
             padding: const EdgeInsets.fromLTRB(0, 16, 0, 36),
             child: Center(
               child: Text(
-                "Mark Exception",
+                AppLocalizations.of(context)!.mark_exception,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontSize: 18, fontWeight: semiBold, color: blackShade1),
               ),
@@ -47,7 +55,7 @@ class _BiometricCaptureExceptionBlockState
                 child: Padding(
               padding: EdgeInsets.only(top: 27.h),
               child: Text(
-                "Marking exceptions on ${widget.attribute.title.toLowerCase()} are not allowed",
+                "${AppLocalizations.of(context)!.marking_exceptions_on} ${widget.attribute.viewTitle.toLowerCase()} ${AppLocalizations.of(context)!.is_not_allowed}",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontSize: 14, fontWeight: regular, color: blackShade1),
               ),
@@ -60,7 +68,7 @@ class _BiometricCaptureExceptionBlockState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Exception Type",
+                        AppLocalizations.of(context)!.exception_type,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontSize: 14,
                             fontWeight: semiBold,
@@ -91,7 +99,7 @@ class _BiometricCaptureExceptionBlockState
                                 width: 8.w,
                               ),
                               Text(
-                                "Permanent",
+                                AppLocalizations.of(context)!.permanent,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge
@@ -125,7 +133,7 @@ class _BiometricCaptureExceptionBlockState
                                 width: 8.w,
                               ),
                               Text(
-                                "Temporary",
+                                AppLocalizations.of(context)!.temporary,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge
@@ -150,7 +158,7 @@ class _BiometricCaptureExceptionBlockState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Comments",
+                        AppLocalizations.of(context)!.comments,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontSize: 14,
                             fontWeight: semiBold,
@@ -171,7 +179,8 @@ class _BiometricCaptureExceptionBlockState
                                 color: secondaryColors.elementAt(14),
                               ),
                             ),
-                            hintText: "Add comments for marking the exception",
+                            hintText: AppLocalizations.of(context)!
+                                .add_comments_for_marking_the_exception,
                             hintStyle: Theme.of(context)
                                 .textTheme
                                 .bodyLarge

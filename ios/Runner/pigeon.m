@@ -26,27 +26,105 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-NSObject<FlutterMessageCodec> *AuditResponseApiGetCodec(void) {
+@interface TransliterationOptions ()
++ (TransliterationOptions *)fromList:(NSArray *)list;
++ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@implementation TransliterationOptions
++ (instancetype)makeWithInput:(NSString *)input
+    sourceLanguage:(NSString *)sourceLanguage
+    targetLanguage:(NSString *)targetLanguage {
+  TransliterationOptions* pigeonResult = [[TransliterationOptions alloc] init];
+  pigeonResult.input = input;
+  pigeonResult.sourceLanguage = sourceLanguage;
+  pigeonResult.targetLanguage = targetLanguage;
+  return pigeonResult;
+}
++ (TransliterationOptions *)fromList:(NSArray *)list {
+  TransliterationOptions *pigeonResult = [[TransliterationOptions alloc] init];
+  pigeonResult.input = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.input != nil, @"");
+  pigeonResult.sourceLanguage = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.sourceLanguage != nil, @"");
+  pigeonResult.targetLanguage = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.targetLanguage != nil, @"");
+  return pigeonResult;
+}
++ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list {
+  return (list) ? [TransliterationOptions fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.input ?: [NSNull null]),
+    (self.sourceLanguage ?: [NSNull null]),
+    (self.targetLanguage ?: [NSNull null]),
+  ];
+}
+@end
+
+@interface TransliterationApiCodecReader : FlutterStandardReader
+@end
+@implementation TransliterationApiCodecReader
+- (nullable id)readValueOfType:(UInt8)type {
+  switch (type) {
+    case 128: 
+      return [TransliterationOptions fromList:[self readValue]];
+    default:
+      return [super readValueOfType:type];
+  }
+}
+@end
+
+@interface TransliterationApiCodecWriter : FlutterStandardWriter
+@end
+@implementation TransliterationApiCodecWriter
+- (void)writeValue:(id)value {
+  if ([value isKindOfClass:[TransliterationOptions class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else {
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface TransliterationApiCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation TransliterationApiCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[TransliterationApiCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[TransliterationApiCodecReader alloc] initWithData:data];
+}
+@end
+
+NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    TransliterationApiCodecReaderWriter *readerWriter = [[TransliterationApiCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
   return sSharedObject;
 }
 
-void AuditResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuditResponseApi> *api) {
+void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.AuditResponseApi.audit"
+        initWithName:@"dev.flutter.pigeon.registration_client.TransliterationApi.transliterate"
         binaryMessenger:binaryMessenger
-        codec:AuditResponseApiGetCodec()];
+        codec:TransliterationApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(auditId:componentId:completion:)], @"AuditResponseApi api (%@) doesn't respond to @selector(auditId:componentId:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(transliterateOptions:completion:)], @"TransliterationApi api (%@) doesn't respond to @selector(transliterateOptions:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_componentId = GetNullableObjectAtIndex(args, 1);
-        [api auditId:arg_id componentId:arg_componentId completion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
+        TransliterationOptions *arg_options = GetNullableObjectAtIndex(args, 0);
+        [api transliterateOptions:arg_options completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
         }];
       }];
     } else {

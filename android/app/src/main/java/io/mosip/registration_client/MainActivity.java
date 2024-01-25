@@ -1,7 +1,8 @@
 /*
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
 */
 
 package io.mosip.registration_client;
@@ -36,7 +37,10 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.entity.Registration;
@@ -47,6 +51,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
@@ -56,6 +61,8 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+
+import io.mosip.registration.transliterationmanager.service.TransliterationServiceImpl;
 import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
@@ -68,6 +75,7 @@ import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
+import io.mosip.registration_client.api_services.TransliterationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuditResponsePigeon;
 import io.mosip.registration_client.model.AuthResponsePigeon;
@@ -80,6 +88,7 @@ import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
+import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 
@@ -166,11 +175,9 @@ public class MainActivity extends FlutterActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("REGISTRATION_PACKET_SYNC")) {
-                syncRegistrationPackets(context);
-            }
             if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
-                uploadRegistrationPackets(context);
+                syncRegistrationPackets(context);
+                createBackgroundTask("registrationPacketUploadJob");
             }
         }
     };
@@ -178,14 +185,7 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent serviceIntentSync = new Intent(this, SyncBackgroundService.class);
-        createBackgroundTask(serviceIntentSync, "registrationPacketSyncJob");
-        IntentFilter intentFilterSync = new IntentFilter("REGISTRATION_PACKET_SYNC");
-        registerReceiver(broadcastReceiver, intentFilterSync);
-
-        Intent serviceIntentUpload = new Intent(this, UploadBackgroundService.class);
-        createBackgroundTask(serviceIntentUpload, "registrationPacketUploadJob");
+        createBackgroundTask("registrationPacketUploadJob");
         IntentFilter intentFilterUpload = new IntentFilter("REGISTRATION_PACKET_UPLOAD");
         registerReceiver(broadcastReceiver, intentFilterUpload);
     }
@@ -196,7 +196,8 @@ public class MainActivity extends FlutterActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    void createBackgroundTask(Intent intent, String api){
+    void createBackgroundTask(String api){
+        Intent intent = new Intent(this, UploadBackgroundService.class);
         PendingIntent pendingIntent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             pendingIntent = PendingIntent.getForegroundService(
@@ -220,6 +221,7 @@ public class MainActivity extends FlutterActivity {
             long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
             Log.d(getClass().getSimpleName(), String.valueOf(delay)+ " Next Execution");
 
+//            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), 30000, pendingIntent);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
             } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -235,10 +237,29 @@ public class MainActivity extends FlutterActivity {
             Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
             Integer batchSize = getBatchSize();
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
+            if(registrationList.isEmpty()){
+                uploadRegistrationPackets(context);
+                return;
+            }
             for (Registration value : registrationList) {
                 try {
                     Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
-                    packetService.syncRegistration(value.getPacketId());
+                    auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
+                    packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
+                        @Override
+                        public void inProgress(String RID) {
+                            //Do nothing
+                        }
+
+                        @Override
+                        public void onComplete(String RID, PacketTaskStatus status) {
+                            Log.d(getClass().getSimpleName(), status+RID);
+                            if(RID == registrationList.get(registrationList.size() - 1).getPacketId()){
+                                Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+                                uploadRegistrationPackets(context);
+                            }
+                        }
+                    });
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
@@ -254,6 +275,7 @@ public class MainActivity extends FlutterActivity {
             for (Registration value : registrationList) {
                 try {
                     Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                    auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
                     packetService.uploadRegistration(value.getPacketId());
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
@@ -312,7 +334,8 @@ public class MainActivity extends FlutterActivity {
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
-        
+
+        TransliterationPigeon.TransliterationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),new TransliterationApi(new TransliterationServiceImpl()));
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
@@ -324,6 +347,9 @@ public class MainActivity extends FlutterActivity {
                                 case "masterDataSync":
                                     new SyncActivityService().clickSyncMasterData(result,
                                             auditManagerService, masterDataService);
+                                    break;
+                                case "batchJob":
+                                    syncRegistrationPackets(this);
                                     break;
                                 default:
                                     result.notImplemented();
