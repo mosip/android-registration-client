@@ -63,6 +63,7 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _fieldDisplayValues = {};
 
   Map<String, dynamic> _fieldInputValue = {};
+  Map<String,dynamic> _completeException={};
 
   Map<String, bool> _mvelValues = {};
 
@@ -212,12 +213,30 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Map<String,dynamic> get completeException=>_completeException;
+  set completeException(Map<String,dynamic> value){
+    _completeException=value;
+    notifyListeners();
+  }
+
   set mvelValues(Map<String, bool> value) {
     _mvelValues = value;
     notifyListeners();
   }
 
   //Functions
+  setCompleteExceptionByKey(String key,dynamic value){
+    completeException[key]=value;
+    notifyListeners();
+  }
+  getCompleteExceptionByKey(String key){
+    if(completeException.containsKey(key)){
+      return completeException[key];
+    }
+    else{
+      return [];
+    }
+  }
 
   setCurrentIndex(int value) {
     _currentIndex = value;
