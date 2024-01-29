@@ -2199,7 +2199,7 @@ class _BiometricCaptureScanBlockPortraitState
     if (_isExceptionPresentOnUI(id) == true) {
       biometricList.add("Exception");
     }
-    print(biometricList.toString());
+
     return biometricList;
   }
 
