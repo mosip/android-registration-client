@@ -132,7 +132,7 @@ class _BiometricCaptureScanBlockPortraitState
                     ...temp.map(
                       (e) => Image.memory(
                         e!,
-                        height: (isMobileSize) ? 130.h : 275.h,
+                        height: (isMobileSize) ? 130.h : 260.h,
                       ),
                     ),
                   ],
