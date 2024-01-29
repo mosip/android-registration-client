@@ -518,6 +518,100 @@ class _BiometricCaptureScanBlockPortraitState
     }
   }
 
+  updateExceptionList(String attribute) {
+    if (attribute == "Iris") {
+      if (!context
+          .read<BiometricCaptureControlProvider>()
+          .iris
+          .exceptions
+          .contains(false)) {
+        context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .add("Iris");
+      } else {
+        if (context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .contains("Iris")) {
+          context
+              .read<BiometricCaptureControlProvider>()
+              .completeExceptionList
+              .remove("Iris");
+        }
+      }
+    }
+    if (attribute == "Right Hand") {
+      if (!context
+          .read<BiometricCaptureControlProvider>()
+          .rightHand
+          .exceptions
+          .contains(false)) {
+        context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .add("Right Hand");
+      } else {
+        if (context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .contains("Right Hand")) {
+          context
+              .read<BiometricCaptureControlProvider>()
+              .completeExceptionList
+              .remove("Right Hand");
+        }
+      }
+    }
+    if (attribute == "Left Hand") {
+      if (!context
+          .read<BiometricCaptureControlProvider>()
+          .leftHand
+          .exceptions
+          .contains(false)) {
+        context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .add("Left Hand");
+      } else {
+        if (context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .contains("Left Hand")) {
+          context
+              .read<BiometricCaptureControlProvider>()
+              .completeExceptionList
+              .remove("Left Hand");
+        }
+      }
+    }
+    if (attribute == "Thumbs") {
+      if (!context
+          .read<BiometricCaptureControlProvider>()
+          .thumbs
+          .exceptions
+          .contains(false)) {
+        context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .add("Thumbs");
+      } else {
+        if (context
+            .read<BiometricCaptureControlProvider>()
+            .completeExceptionList
+            .contains("Thumbs")) {
+          context
+              .read<BiometricCaptureControlProvider>()
+              .completeExceptionList
+              .remove("Thumbs");
+        }
+      }
+    }
+
+    context.read<GlobalProvider>().completeException[widget.field.id!] =
+        context.read<BiometricCaptureControlProvider>().completeExceptionList;
+  }
+
   Widget _exceptionBlock() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -767,6 +861,7 @@ class _BiometricCaptureScanBlockPortraitState
                               .contains(true)) {
                             biometricAttributeData.exceptionType = "";
                           }
+                          updateExceptionList("Iris");
                         },
                         child: SvgPicture.asset(
                           "assets/svg/left_iris.svg",
@@ -841,6 +936,7 @@ class _BiometricCaptureScanBlockPortraitState
                               .contains(true)) {
                             biometricAttributeData.exceptionType = "";
                           }
+                          updateExceptionList("Iris");
                         },
                         child: SvgPicture.asset(
                           "assets/svg/right_iris.svg",
@@ -1059,6 +1155,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                 biometricAttributeData
                                                     .exceptionType = "";
                                               }
+                                              updateExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_1.svg",
@@ -1148,6 +1245,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                 biometricAttributeData
                                                     .exceptionType = "";
                                               }
+                                              updateExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_2.svg",
@@ -1237,6 +1335,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                 biometricAttributeData
                                                     .exceptionType = "";
                                               }
+                                              updateExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_3.svg",
@@ -1326,6 +1425,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                 biometricAttributeData
                                                     .exceptionType = "";
                                               }
+                                              updateExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_4.svg",
@@ -1561,6 +1661,7 @@ class _BiometricCaptureScanBlockPortraitState
                                               biometricAttributeData
                                                   .exceptionType = "";
                                             }
+                                            updateExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_1.svg",
@@ -1649,6 +1750,7 @@ class _BiometricCaptureScanBlockPortraitState
                                               biometricAttributeData
                                                   .exceptionType = "";
                                             }
+                                            updateExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_2.svg",
@@ -1736,6 +1838,7 @@ class _BiometricCaptureScanBlockPortraitState
                                               biometricAttributeData
                                                   .exceptionType = "";
                                             }
+                                            updateExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_3.svg",
@@ -1823,6 +1926,7 @@ class _BiometricCaptureScanBlockPortraitState
                                               biometricAttributeData
                                                   .exceptionType = "";
                                             }
+                                            updateExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_4.svg",
@@ -1917,6 +2021,7 @@ class _BiometricCaptureScanBlockPortraitState
                       if (!biometricAttributeData.exceptions.contains(true)) {
                         biometricAttributeData.exceptionType = "";
                       }
+                      updateExceptionList("Thumbs");
                     },
                     child: SvgPicture.asset(
                       "assets/svg/L_Thumb.svg",
@@ -1970,6 +2075,7 @@ class _BiometricCaptureScanBlockPortraitState
                         if (!biometricAttributeData.exceptions.contains(true)) {
                           biometricAttributeData.exceptionType = "";
                         }
+                        updateExceptionList("Thumbs");
                       },
                       child: SvgPicture.asset(
                         "assets/svg/R_Thumb.svg",
@@ -2021,19 +2127,48 @@ class _BiometricCaptureScanBlockPortraitState
     return Container();
   }
 
-  _isExceptionPresent(String id) {
+  _isExceptionPresentOnUI(String id) {
     bool isExceptionPresent = false;
-    if (context.read<GlobalProvider>().fieldInputValue[id] != null) {
-      context
-          .read<GlobalProvider>()
-          .fieldInputValue[id]
-          .forEach((BiometricAttributeData x) {
-        if (x.exceptions.contains(true)) {
-          isExceptionPresent = true;
-          return isExceptionPresent;
-        }
-      });
+    if (context
+        .read<BiometricCaptureControlProvider>()
+        .iris
+        .exceptions
+        .contains(true)) {
+      return true;
     }
+    if (context
+        .read<BiometricCaptureControlProvider>()
+        .rightHand
+        .exceptions
+        .contains(true)) {
+      return true;
+    }
+    if (context
+        .read<BiometricCaptureControlProvider>()
+        .leftHand
+        .exceptions
+        .contains(true)) {
+      return true;
+    }
+    if (context
+        .read<BiometricCaptureControlProvider>()
+        .thumbs
+        .exceptions
+        .contains(true)) {
+      return true;
+    }
+
+    // if (context.read<GlobalProvider>().fieldInputValue[id] != null) {
+    //   context
+    //       .read<GlobalProvider>()
+    //       .fieldInputValue[id]
+    //       .forEach((BiometricAttributeData x) {
+    //     if (x.exceptions.contains(true)) {
+    //       isExceptionPresent = true;
+    //       return isExceptionPresent;
+    //     }
+    //   });
+    // }
 
     return isExceptionPresent;
   }
@@ -2061,9 +2196,10 @@ class _BiometricCaptureScanBlockPortraitState
     if (list.contains("face")) {
       biometricList.add("Face");
     }
-    if (_isExceptionPresent(id) == true) {
+    if (_isExceptionPresentOnUI(id) == true) {
       biometricList.add("Exception");
     }
+    print(biometricList.toString());
     return biometricList;
   }
 
