@@ -62,6 +62,7 @@ List<Color> appColors = [
  const Color appRed = Color(0xFFBE1B1B);
  const Color dropDownSelector = Color(0xFF1C429F);
  const Color dropDownDividerColor = Color(0xFFBDCDF4);
+ const Color buttonGreyBorderColor = Color(0xFF707070);
 
 List<Color> secondaryColors = [
   const Color(0xFF214FBF),

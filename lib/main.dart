@@ -77,6 +77,7 @@ class BuildApp extends StatelessWidget {
       locale: Provider.of<GlobalProvider>(context).appLocal,
       theme: ThemeData(
           colorScheme: ColorScheme.light(primary: solidPrimary),
+          useMaterial3: true,
           primaryColor: solidPrimary,
           textTheme: const TextTheme(
             titleLarge: TextStyle(fontSize: 24),

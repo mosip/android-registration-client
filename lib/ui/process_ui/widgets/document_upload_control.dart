@@ -230,6 +230,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Card(
         elevation: 3,
+        color: appWhite,
+        surfaceTintColor: Colors.transparent,
         margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 14.w),
@@ -367,6 +369,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(100.w, 50.h),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
                                 ),
                                 onPressed: (documentController.text == "")
                                   ? null :() async {
@@ -586,6 +589,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 minimumSize: Size(100.w, 48.h),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                backgroundColor: solidPrimary
                               ),
                               onPressed: (documentController.text == "")
                                   ? null :() async {
