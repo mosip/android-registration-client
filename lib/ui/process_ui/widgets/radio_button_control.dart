@@ -80,7 +80,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     return FutureBuilder(
       future: _getFieldValues(widget.field.subType!,
           context.read<GlobalProvider>().selectedLanguage),
-      builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Card(

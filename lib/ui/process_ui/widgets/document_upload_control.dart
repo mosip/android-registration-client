@@ -37,10 +37,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
   void initState() {
+    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     //load from the map
     if(mounted) {
       getScannedDocuments(widget.field);
-      myGetDocumentCategoryFuture = _getDocumentType(widget.field.subType!, "eng");
+      myGetDocumentCategoryFuture = _getDocumentType(widget.field.subType!, lang);
     }
 
     if (context
@@ -232,8 +233,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FutureBuilder(
-                        future: _getDocumentValues(
-                            widget.field.subType!, lang, null),
+                        future: myGetDocumentCategoryFuture,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
@@ -469,8 +469,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       children: [
                         Expanded(
                             child: FutureBuilder(
-                                future: _getDocumentValues(
-                                    widget.field.subType!, lang, null),
+                                future: myGetDocumentCategoryFuture,
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(

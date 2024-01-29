@@ -201,8 +201,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DocumentCategoryApi getDocumentCategoryApi(RegistrationService registrationService, FileSignatureDao fileSignatureRepository, GlobalParamRepository globalParamRepository, MasterDataService masterDataService, CertificateManagerService certificateManagerService, CryptoManagerService cryptoManagerServiceImpl) {
-        return new DocumentCategoryApi(registrationService,fileSignatureRepository,globalParamRepository,masterDataService,certificateManagerService,cryptoManagerServiceImpl,appContext);
+    DocumentCategoryApi getDocumentCategoryApi(RegistrationService registrationService, FileSignatureDao fileSignatureRepository, GlobalParamRepository globalParamRepository, MasterDataService masterDataService, CertificateManagerService certificateManagerService, CryptoManagerService cryptoManagerServiceImpl, ClientCryptoManagerService clientCryptoManagerService) {
+        return new DocumentCategoryApi(registrationService,fileSignatureRepository,globalParamRepository,masterDataService,certificateManagerService,cryptoManagerServiceImpl,clientCryptoManagerService,appContext);
     }
 }
 

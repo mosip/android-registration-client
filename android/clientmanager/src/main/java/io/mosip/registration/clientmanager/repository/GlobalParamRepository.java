@@ -1,6 +1,5 @@
 package io.mosip.registration.clientmanager.repository;
 
-import android.util.Log;
 
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
@@ -13,7 +12,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -99,21 +97,10 @@ public class GlobalParamRepository {
     }
 
     public String getCachedStringAgeGroup(){
-        String ageGroupValue = globalParamMap.get(RegistrationConstants.AGE_GROUP_CONFIG);
-        return ageGroupValue;
+        return globalParamMap.get(RegistrationConstants.AGE_GROUP_CONFIG);
     }
 
     public String getCachedStringMAVELScript(){
-        String scriptValue = globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
-        return scriptValue;
-    }
-
-    public String getCachedResponseSignatureAppId(){
-        String responseSignatureAppId = globalParamMap.get(RegistrationConstants.RESPONSE_SIGNATURE_PUBLIC_KEY_APP_ID);
-        return responseSignatureAppId;
-    }
-    public String getCachedResponseSignatureRefId(){
-        String responseSignatureRefId = globalParamMap.get(RegistrationConstants.RESPONSE_SIGNATURE_PUBLIC_KEY_REF_ID);
-        return responseSignatureRefId;
+        return globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
     }
 }

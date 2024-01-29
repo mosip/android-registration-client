@@ -79,7 +79,6 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
 
   void _getSelectedValueFromMap(String lang) async {
     String response = "";
-    String updatedValue = "";
     if (widget.field.type == 'simpleType') {
       if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
@@ -92,21 +91,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
       response =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
     }
-    // List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
-    // for (var element in data) {
-    //   if(element!.code == response){
-    //     setState(() {
-    //       updatedValue = element.name;
-    //     });
-    //   }
-    // }
-    // setState(() {
-    //   selected = updatedValue;
-    // });
-    debugPrint("response value..."+response.toString());
     List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
-   for (var element in data) {
-      if(element!.code == response){
+    for (var element in data) {
+      if(element!.name == response){
         setState(() {
           selected = response;
         });
@@ -129,7 +116,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!,
             context.read<GlobalProvider>().selectedLanguage),
-        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
             elevation: 5,
             margin: EdgeInsets.symmetric(
@@ -187,16 +174,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             return null;
                           },
                           onChanged: (value) {
-                            debugPrint("helloo.......");
-                            debugPrint("Value is>>>>>>>>>>>>>>>>>>>>>>.......$value");
-                            debugPrint(snapshot.data!.length.toString());
+
                             for (var e in snapshot.data!) {
-                              debugPrint("Hey.. Inside the map.......");
-                              debugPrint(e!.name);
                               if(e!.name == value){
-                                debugPrint("$value");
-                                debugPrint(e.name);
-                                debugPrint("true");
                                 saveData(e.code);
                               }
                             }

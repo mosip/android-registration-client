@@ -162,6 +162,9 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void manualSync() {
+        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
+        if (centerMachineDto == null)
+            return;
         try {
             syncMasterData(() -> {
                 Log.i(TAG, "manualSync: MasterData sync completed");
@@ -173,9 +176,16 @@ public class MasterDataServiceImpl implements MasterDataService {
                             try {
                                 syncGlobalParamsData(() -> {
                                     Log.i(TAG, "manualSync: GlobalParamsData sync completed");
-                                    syncCertificate(() -> {
-                                        Log.i(TAG, "manualSync: Certificate sync completed");
-                                    });
+                                    try {
+                                        syncCertificate(() -> {
+                                            Log.i(TAG, "manualSync: Certificate sync completed");
+                                            syncCertificate(() -> {
+                                                Log.i(TAG, "manualSync: Certificate kernel sync completed");
+                                            }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY");
+                                        }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId());
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "manualSync: Certificate sync data sync failed", e);
+                                    }
                                 });
                             } catch (Exception e) {
                                 Log.e(TAG, "manualSync: Global params data sync failed", e);
@@ -196,16 +206,16 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void syncCertificate() {
         syncCertificate(() -> {
-        });
+        },"","","","");
     }
 
-    private void syncCertificate(Runnable onFinish) {
+    private void syncCertificate(Runnable onFinish,String APP_ID, String REF_ID, String SET_APP_ID, String SET_REF_ID) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null)
             return;
 
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
-                centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(APP_ID,
+                REF_ID, BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
@@ -213,8 +223,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId("REGISTRATION");
-                        certificateRequestDto.setReferenceId(centerMachineDto.getMachineRefId());
+                        certificateRequestDto.setApplicationId(SET_APP_ID);
+                        certificateRequestDto.setReferenceId(SET_REF_ID);
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();

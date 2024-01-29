@@ -12,7 +12,6 @@ import org.mvel2.MVEL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
@@ -34,7 +32,6 @@ import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
-import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -71,7 +68,7 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
 
     @Inject
-    public DocumentCategoryApi(RegistrationService registrationService,FileSignatureDao fileSignatureRepository,GlobalParamRepository globalParamRepository,MasterDataService masterDataService,CertificateManagerService certificateManagerService,CryptoManagerService cryptoManagerServiceImpl,Context context) {
+    public DocumentCategoryApi(RegistrationService registrationService,FileSignatureDao fileSignatureRepository,GlobalParamRepository globalParamRepository,MasterDataService masterDataService,CertificateManagerService certificateManagerService,CryptoManagerService cryptoManagerServiceImpl,ClientCryptoManagerService clientCryptoManagerService,Context context) {
         this.registrationService = registrationService;
         this.context = context;
         this.fileSignatureRepository = fileSignatureRepository;
@@ -80,6 +77,7 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
         this.masterDataService = masterDataService;
         this.certificateManagerService = certificateManagerService;
         this.cryptoManagerServiceImpl = cryptoManagerServiceImpl;
+        this.clientCryptoManagerService = clientCryptoManagerService;
     }
     @Override
     public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode, @NonNull DocumentCategoryPigeon.Result<List<String>> result) {
@@ -87,9 +85,7 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
         try {
             Map<String, Object> dataContext = this.registrationService.getRegistrationDto().getMVELDataContext();
             String applicantTypeCode = this.evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
-            Log.i(getClass().getSimpleName(),"applicantType : "+applicantTypeCode+categoryCode+langCode);
             documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
-            Log.i(getClass().getSimpleName(),"documentList.. : "+documentCategory);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
         }
@@ -108,12 +104,8 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
             Map context = new HashMap();
             MVEL.eval(getScript(scriptName), context);
-            Log.i(getClass().getSimpleName(),"mvel script.... : "+getScript(scriptName));
-            Log.i(getClass().getSimpleName(),"data context..... : "+dataContext);
-            Log.i(getClass().getSimpleName(),"age groups..... : "+ageGroups);
             context.put("identity", dataContext);
             context.put("ageGroups", ageGroups);
-            Log.i(getClass().getSimpleName(),"mvel script.... : "+MVEL.eval("return getApplicantType();", context, String.class));
             return MVEL.eval("return getApplicantType();", context, String.class);
         } catch (Throwable t) {
             Log.e(getClass().getSimpleName(),"Failed to evaluate mvel script", t);
@@ -157,20 +149,17 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
 
     private boolean validateScriptSignature(String signature, String actualData) throws Exception {
-        Log.i(getClass().getSimpleName(),"certificate data1 :");
+
         String certificateData = this.certificateManagerService.getCertificate("SERVER-RESPONSE", "SIGN-VERIFY");
-        Log.i(getClass().getSimpleName(),"certificate data : "+certificateData);
-        Certificate certificateDto = this.cryptoManagerServiceImpl.convertToCertificate(certificateData);
 
         JWTSignatureVerifyRequestDto jwtSignatureVerifyRequestDto = new JWTSignatureVerifyRequestDto();
         jwtSignatureVerifyRequestDto.setJwtSignatureData(signature);
         jwtSignatureVerifyRequestDto.setActualData(CryptoUtil.encodeToURLSafeBase64(actualData.getBytes(StandardCharsets.UTF_8)));
-        jwtSignatureVerifyRequestDto.setCertificateData(certificateDto.getType());
+        jwtSignatureVerifyRequestDto.setCertificateData(certificateData);
 
-        JWTSignatureVerifyResponseDto verifyResponseDto =  clientCryptoManagerService.jwtVerify(jwtSignatureVerifyRequestDto);
+        JWTSignatureVerifyResponseDto verifyResponseDto =  this.clientCryptoManagerService.jwtVerify(jwtSignatureVerifyRequestDto);
 
         return verifyResponseDto.isSignatureValid();
-        //return true;
     }
 
 }

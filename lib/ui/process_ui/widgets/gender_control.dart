@@ -22,6 +22,7 @@ class GenderControl extends StatefulWidget {
 
 class _CustomDynamicDropDownState extends State<GenderControl> {
   late String selected;
+  late List<DynamicFieldData?> fieldValueData;
 
   @override
   void initState() {
@@ -33,13 +34,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
           .containsKey(widget.field.id ?? "")) {
         await _getSelectedValueFromMap(lang);
       } else {
-        List<DynamicFieldData?> data = await context
+        fieldValueData = await context
             .read<RegistrationTaskProvider>()
             .getFieldValues(widget.field.subType!, lang);
         setState(() {
-          selected = data[0]!.name;
+          selected = fieldValueData[0]!.name;
         });
-        saveData(data[0]!.code);
+        saveData(fieldValueData[0]!.code);
         _saveDataToMap(selected);
       }
     });
@@ -209,7 +210,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           setState(() {
                                             selected = e[mandatoryLang] ?? "";
                                           });
-                                          saveData(e[mandatoryLang]);
+                                          for (var e in fieldValueData) {
+                                            if(e!.name == selected){
+                                              saveData(e.code);
+                                            }
+                                          }
                                           _saveDataToMap(e[mandatoryLang]);
                                         },
                                         child: ChoiceChip(
