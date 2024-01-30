@@ -143,7 +143,7 @@ class _TextBoxControlState extends State<TextBoxControl>
 
     return Card(
       elevation: 5,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: transparentColor,
       color: pureWhite,
       margin: EdgeInsets.symmetric(
           vertical: 1.h, horizontal: isPortrait ? 16.w : 0),

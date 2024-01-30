@@ -231,7 +231,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       child: Card(
         elevation: 3,
         color: appWhite,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: transparentColor,
         margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 14.w),
@@ -412,6 +412,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
+                                  surfaceTintColor: transparentColor,
+                                  color: appWhite,
                                   child: Column(
                                     children: [
                                       InkWell(
@@ -630,6 +632,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
+                                  color: appWhite,
+                                  surfaceTintColor: transparentColor,
                                   child: Column(
                                     children: [
                                       InkWell(

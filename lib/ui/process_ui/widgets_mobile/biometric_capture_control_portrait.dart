@@ -169,7 +169,7 @@ class _BiometricCaptureControlPortraitState
         SizedBox(
           width: double.infinity,
           child: Card(
-            surfaceTintColor: Colors.transparent,
+            surfaceTintColor: transparentColor,
             color: appWhite,
             margin: const EdgeInsets.all(0),
             child: Padding(

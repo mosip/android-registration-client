@@ -117,7 +117,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     int maxLanguage = context.read<GlobalProvider>().maxLanguageCount;
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return AlertDialog(
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: transparentColor,
       backgroundColor: appWhite,
       title: Text(
         AppLocalizations.of(context)!.select_language,

@@ -83,6 +83,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
           child: Card(
             elevation: 5,
             color: pureWhite,
+            surfaceTintColor: transparentColor,
             margin: EdgeInsets.symmetric(
                 vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
             child: Padding(
@@ -170,6 +171,7 @@ class SelectableCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       color: groupValue == value ? solidPrimary : Colors.white,
+      surfaceTintColor: transparentColor,
       elevation: 0,
       child: InkWell(
         onTap: () {

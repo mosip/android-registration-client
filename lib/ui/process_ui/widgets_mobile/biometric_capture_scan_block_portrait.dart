@@ -2167,7 +2167,7 @@ class _BiometricCaptureScanBlockPortraitState
               height: (isMobileSize) ? 60 : 70,
               child: Card(
                 color: appWhite,
-                surfaceTintColor: Colors.transparent,
+                surfaceTintColor: transparentColor,
                 margin: const EdgeInsets.all(0),
                 child: Padding(
                   padding: (isMobileSize)

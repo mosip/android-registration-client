@@ -31,7 +31,7 @@ class HtmlBoxControl extends StatelessWidget {
 
     return Card(
       color: Colors.white,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: transparentColor,
       elevation: 5,
       margin: isPortrait
           ? EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 8.h)
