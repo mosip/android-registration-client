@@ -26,6 +26,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Inject;
@@ -175,7 +178,10 @@ public class MainActivity extends FlutterActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
                 syncRegistrationPackets(context);
-                createBackgroundTask("registrationPacketUploadJob");
+                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+                scheduler.schedule(()-> {
+                    createBackgroundTask("registrationPacketUploadJob");
+                }, 1, TimeUnit.MINUTES);
             }
         }
     };
@@ -281,6 +287,7 @@ public class MainActivity extends FlutterActivity {
     }
 
     private Integer getBatchSize(){
+        // Default batch size is 4
         List<GlobalParam> globalParams = globalParamDao.getGlobalParams();
         for (GlobalParam value : globalParams) {
             if (Objects.equals(value.getId(), "mosip.registration.packet_upload_batch_size")) {
@@ -291,12 +298,16 @@ public class MainActivity extends FlutterActivity {
     }
 
     private long getIntervalMillis(String api){
-        AtomicLong alarmTime = new AtomicLong(System.currentTimeMillis()+60000);
+        // Default time to next execution is 60s
+        long minTime = System.currentTimeMillis()+60000;
+        AtomicLong alarmTime = new AtomicLong(minTime);
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
         for (SyncJobDef value : syncJobs) {
             if (Objects.equals(value.getApiName(), api)) {
                 Log.d(getClass().getSimpleName(), String.valueOf(value.getSyncFreq()) + " Cron Expression");
-                alarmTime.set(CronParserUtil.getNextExecutionTimeInMillis(String.valueOf(value.getSyncFreq())));
+//                long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(String.valueOf(value.getSyncFreq()));
+                long nextExecution = CronParserUtil.getNextExecutionTimeInMillis("0 20,45 * ? * *");
+                alarmTime.set(nextExecution);
             }
         }
         return alarmTime.get();
