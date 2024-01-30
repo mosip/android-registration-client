@@ -213,5 +213,8 @@
   "iris": "Iris",
   "thumbs": "Pouces",
   "exception":"Exception",
-  "face": "Visage"
+  "face": "Visage",
+  "preview_page": "Aperçu",
+  "packet_auth_page": "Authentification",
+  "acknowledgement_page": "Accusé de réception"
 }

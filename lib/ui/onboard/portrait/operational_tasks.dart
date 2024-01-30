@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -154,7 +161,8 @@ class _OperationalTasksState extends State<OperationalTasks> {
   _getTasks() {
     return ListView(
       shrinkWrap: true,
-      scrollDirection: Axis.vertical,
+      // scrollDirection: Axis.vertical,
+      physics: const NeverScrollableScrollPhysics(),
       children: List.generate(
         widget.operationalTasks.length,
         (index) {

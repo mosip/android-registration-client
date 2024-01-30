@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -170,8 +177,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                             .watch<GlobalProvider>()
                             .codeToLanguageMapper[e]!,
                         isDisabled: context
-                            .read<GlobalProvider>()
-                            .disabledLanguageMap[e] ?? false,
+                                .read<GlobalProvider>()
+                                .disabledLanguageMap[e] ??
+                            false,
                         isSelected: context
                             .read<GlobalProvider>()
                             .chosenLang

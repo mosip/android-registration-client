@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -422,7 +429,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                   .toInt() <
                               int.parse(widget
                                   .biometricAttributeData.thresholdPercentage))
-                          ? secondaryColors.elementAt(20)
+                          ? secondaryColors.elementAt(26)
                           : secondaryColors.elementAt(11),
                     ),
                     SizedBox(
