@@ -35,7 +35,7 @@ class _TaskCardState extends State<TaskCard> {
     return Card(
       elevation: 10.0,
       color: appWhite,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: transparentColor,
       margin: EdgeInsets.symmetric(
         horizontal: 20.w,
         vertical: 10.h,

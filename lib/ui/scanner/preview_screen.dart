@@ -27,7 +27,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 1,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: transparentColor,
         backgroundColor: appWhite,
       ),
       body: Padding(

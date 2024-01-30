@@ -90,7 +90,7 @@ class _BiometricCaptureScanBlockPortraitState
       builder: (BuildContext context) => SingleChildScrollView(
         child: AlertDialog(
           backgroundColor: appWhite,
-          surfaceTintColor: Colors.transparent,
+          surfaceTintColor: transparentColor,
           content: SizedBox(
             height: (isMobileSize) ? 410.h : 610.h,
             width: 760.w,

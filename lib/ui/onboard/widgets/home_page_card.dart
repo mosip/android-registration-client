@@ -55,7 +55,7 @@ class _HomePageCardState extends State<HomePageCard> {
     updateSubTitle(widget.index);
 
     return Card(
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: transparentColor,
       color: appWhite,
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 12.h),

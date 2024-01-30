@@ -143,7 +143,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         backgroundColor: appWhite,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: transparentColor,
         content: SizedBox(
           height: 539.h,
           width: 768.w,
