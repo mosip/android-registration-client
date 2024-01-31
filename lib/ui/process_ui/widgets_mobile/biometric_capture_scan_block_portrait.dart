@@ -1362,7 +1362,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .addBioException(
                                                         widget.field.id!,
                                                         "RightHand",
-                                                        "rightIndex");
+                                                        "rightLittle");
                                                 resetAfterException(
                                                     widget.field.id!,
                                                     biometricAttributeData);
