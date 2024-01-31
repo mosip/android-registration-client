@@ -183,7 +183,7 @@
   "new_registration": "नया पंजीकरण",
   "go_back": "वापस जाएं",
   "informed": "सूचित",
-  "sync_packet": "सिंक अपलोड",
+  "sync_packet": "पैकेट सिंक करें",
   "upload_packet": "अपलोड पैकेट",
   "authenticate_using_password": "पासवर्ड का उपयोग करके प्रमाणीकरण",
   "registration_acknowledgement": "रजिस्ट्रेशन स्वीकृति",
