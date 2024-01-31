@@ -183,7 +183,7 @@
   "new_registration": "NOUVELLE INSCRIPTION",
   "go_back": "RETOUR",
   "informed": "INFORMÉ",
-  "sync_packet": "Téléchargement de synchronisation",
+  "sync_packet": "Paquet de synchronisation",
   "upload_packet": "Télécharger le paquet",
   "authenticate_using_password": "Authentification en utilisant un mot de passe",
   "registration_acknowledgement": "Accusé de réception d'inscription",
