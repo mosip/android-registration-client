@@ -6,6 +6,7 @@
 */
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -172,11 +173,18 @@ class _HtmlRendererState extends State<HtmlRenderer> {
                 .langToCode(context.read<GlobalProvider>().chosenLang[i]));
       });
     }
+    String lang = context
+                .read<GlobalProvider>()
+                .langToCode(context.read<GlobalProvider>().chosenLang[context.watch<GlobalProvider>().htmlBoxTabIndex]);
+    log(lang);
     return SingleChildScrollView(
       child: Html(
         data:
             context.watch<GlobalProvider>().fieldDisplayValues[widget.field.id]
                 [context.watch<GlobalProvider>().htmlBoxTabIndex],
+        style: {
+     'html':  Style(textAlign: lang == 'ara'?TextAlign.right: TextAlign.left),
+    },
       ),
       // Text(context.watch<GlobalProvider>().fieldDisplayValues[field.id][context.watch<GlobalProvider>().htmlBoxTabIndex])
     );
