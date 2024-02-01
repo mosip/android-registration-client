@@ -309,8 +309,7 @@ public class MainActivity extends FlutterActivity {
         for (SyncJobDef value : syncJobs) {
             if (Objects.equals(value.getApiName(), api)) {
                 Log.d(getClass().getSimpleName(), String.valueOf(value.getSyncFreq()) + " Cron Expression");
-//                long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(String.valueOf(value.getSyncFreq()));
-                long nextExecution = CronParserUtil.getNextExecutionTimeInMillis("0 20,45 * ? * *");
+                long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(String.valueOf(value.getSyncFreq()));
                 alarmTime.set(nextExecution);
             }
         }
