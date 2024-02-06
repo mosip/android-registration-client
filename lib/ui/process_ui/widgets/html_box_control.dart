@@ -7,6 +7,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -183,7 +184,7 @@ class _HtmlRendererState extends State<HtmlRenderer> {
             context.watch<GlobalProvider>().fieldDisplayValues[widget.field.id]
                 [context.watch<GlobalProvider>().htmlBoxTabIndex],
         style: {
-     'html':  Style(textAlign: lang == 'ara'?TextAlign.right: TextAlign.left),
+     'html':  Style(textAlign: Bidi.isRtlLanguage(lang.substring(0,2)) ? TextAlign.right : TextAlign.left),
     },
       ),
       // Text(context.watch<GlobalProvider>().fieldDisplayValues[field.id][context.watch<GlobalProvider>().htmlBoxTabIndex])
