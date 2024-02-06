@@ -98,8 +98,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
       response =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
     }
-    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
+    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
     for (var element in data) {
+      debugPrint("valuee.......${element!.name}....$response");
       if(element!.name == response){
         setState(() {
           selected = response;
@@ -183,7 +184,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           onChanged: (value) {
 
                             for (var e in snapshot.data!) {
+                              debugPrint("set name...${e!.name}....$value");
                               if(e!.name == value){
+                                debugPrint("set name1...");
                                 saveData(e.code);
                               }
                             }

@@ -147,6 +147,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
 
     private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, @NonNull String APP_ID, @NonNull String REF_ID, @NonNull String SET_APP_ID, @NonNull String SET_REF_ID) {
+        Log.i("get kernel sync","main function");
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
@@ -599,10 +600,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         }
        try {
            syncPolicyKey(result,REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId() );
-           syncPolicyKey(result,KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY" );
        } catch (Exception e) {
            e.printStackTrace();
        }
+        return;
+    }
+
+    @Override
+    public void getKernelCertsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        try {
+            Log.i("get kernel sync","inside the function");
+            //syncPolicyKey(result,REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId() );
+            syncPolicyKey(result,KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY" );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return;
     }
 

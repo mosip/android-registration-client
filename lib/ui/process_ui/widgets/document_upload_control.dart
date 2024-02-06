@@ -47,6 +47,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     //load from the map
     if(mounted) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _removeExceptionData(widget.field));
       getScannedDocuments(widget.field);
       myGetDocumentCategoryFuture = _getDocumentType(widget.field.subType!, lang);
     }
@@ -138,6 +140,17 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   _setValueInMap() {
     context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
+  }
+
+  _removeExceptionData(Field e) async {
+    if (context.read<GlobalProvider>().exceptionAttributes.isEmpty){
+      if(e.subType!.contains("POE")) {
+        context.read<RegistrationTaskProvider>().removeDocumentField(e.id!);
+        context.read<GlobalProvider>().removeFieldFromMap(
+            e.id!, context.read<GlobalProvider>().fieldInputValue);
+        context.read<RegistrationTaskProvider>().removeDemographicField(e.id!);
+      }
+    }
   }
 
   Future<void> getScannedDocuments(Field e) async {
