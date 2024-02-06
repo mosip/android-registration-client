@@ -183,7 +183,7 @@
   "new_registration": "NEW REGISTRATION",
   "go_back": "GO BACK",
   "informed": "INFORMED",
-  "sync_packet": "Sync Upload",
+  "sync_packet": "Sync Packet",
   "upload_packet": "Upload Packet",
   "authenticate_using_password": "Authentication using Password",
   "registration_acknowledgement": "Registration Acknowledgement",
