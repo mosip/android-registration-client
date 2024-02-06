@@ -159,6 +159,8 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
         builder: (BuildContext context,
             AsyncSnapshot<List<Map<String, String?>>> snapshot) {
           return Card(
+            color: appWhite,
+            surfaceTintColor: transparentColor,
             elevation: 0,
             margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
             child: Padding(
@@ -184,6 +186,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                         .read<GlobalProvider>()
                                         .chosenLang
                                         .map((e) => Chip(
+                                      side: const BorderSide(color: appWhite),
                                               label: Text(e),
                                               labelStyle: Theme.of(context)
                                                   .textTheme
@@ -210,7 +213,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                       bool isMandatoryLang =
                                           lang == mandatoryLang;
                                       return InkWell(
-                                        splashColor: Colors.transparent,
+                                        splashColor: transparentColor,
                                         onTap: () {
                                           setState(() {
                                             selected = e[mandatoryLang] ?? "";
@@ -248,7 +251,10 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           backgroundColor: Colors.white,
                                           disabledColor: Colors.white,
                                           shape: chipSelected
-                                              ? null
+                                              ? RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  32))
                                               : RoundedRectangleBorder(
                                                   side: BorderSide(
                                                       color: isMandatoryLang

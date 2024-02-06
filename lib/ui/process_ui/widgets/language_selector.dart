@@ -117,6 +117,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     int maxLanguage = context.read<GlobalProvider>().maxLanguageCount;
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return AlertDialog(
+      surfaceTintColor: transparentColor,
+      backgroundColor: appWhite,
       title: Text(
         AppLocalizations.of(context)!.select_language,
         style: TextStyle(
@@ -301,6 +303,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: appWhite,
+                    side: BorderSide(color: solidPrimary),
+                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0)))),
                 child: SizedBox(
                   height: isMobile && !isMobileSize ? 62.h : 37.h,
                   child: Center(
@@ -348,7 +354,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                               null)
                       ? MaterialStateProperty.all<Color>(solidPrimary)
                       : MaterialStateProperty.all<Color>(Colors.grey),
-                ),
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)))
+
+    ),
                 child: SizedBox(
                   height: isMobile && !isMobileSize ? 62.h : 37.h,
                   child: Center(
@@ -356,6 +364,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                       AppLocalizations.of(context)!.submit,
                       style: TextStyle(
                         fontSize: isMobile && !isMobileSize ? 18 : 14,
+                        color: appWhite
                       ),
                     ),
                   ),

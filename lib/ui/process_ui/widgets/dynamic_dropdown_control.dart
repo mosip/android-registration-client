@@ -119,6 +119,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
             context.read<GlobalProvider>().selectedLanguage),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
+            surfaceTintColor: transparentColor,
+            color: appWhite,
             elevation: 5,
             margin: EdgeInsets.symmetric(
                 vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
