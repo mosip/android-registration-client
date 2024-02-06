@@ -23,7 +23,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -63,15 +62,15 @@ public class TemplateService {
         this.identitySchemaRepository = identitySchemaRepository;
     }
 
-    public String getTemplate(RegistrationDto registrationDto, boolean isPreview) throws Exception {
+    public String getTemplate(RegistrationDto registrationDto, boolean isPreview, String langArg) throws Exception {
         StringWriter writer = new StringWriter();
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.init();
 
         String templateText = isPreview ? this.masterDataService.getPreviewTemplateContent(TEMPLATE_TYPE_CODE,
-                registrationDto.getSelectedLanguages().get(0)) :
+                langArg) :
                 this.masterDataService.getPreviewTemplateContent(ACK_TEMPLATE_TYPE_CODE,
-                registrationDto.getSelectedLanguages().get(0));
+                        langArg);
 
         InputStream is = new ByteArrayInputStream(templateText.getBytes(StandardCharsets.UTF_8));
 

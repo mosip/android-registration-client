@@ -452,6 +452,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
+      String langCode = context.read<GlobalProvider>().selectedLanguage;
       if (globalProvider.newProcessTabIndex < size) {
         bool customValidator =
             await customValidation(globalProvider.newProcessTabIndex);
@@ -461,8 +462,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 newProcess.screens!.length - 1) {
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(true);
-              await registrationTaskProvider.getAcknowledgementTemplate(false);
+              await registrationTaskProvider.getPreviewTemplate(true,langCode);
+              await registrationTaskProvider.getAcknowledgementTemplate(false,langCode);
             }
 
             globalProvider.newProcessTabIndex =

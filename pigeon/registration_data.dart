@@ -19,7 +19,7 @@ abstract class RegistrationDataApi {
   bool evaluateMVEL(String fieldData, String expression);
 
   @async
-  String getPreviewTemplate(bool isPreview);
+  String getPreviewTemplate(bool isPreview,String lang);
 
   @async
   RegistrationSubmitResponse submitRegistrationDto(String makerName);

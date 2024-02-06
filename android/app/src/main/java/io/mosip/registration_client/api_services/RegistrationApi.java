@@ -74,11 +74,11 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
+    public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull String langArg, @NonNull RegistrationDataPigeon.Result<String> result) {
         String template = "";
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            template = this.templateService.getTemplate(this.registrationDto, isPreview);
+            template = this.templateService.getTemplate(this.registrationDto, isPreview, langArg);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch template failed: ", e);
         }
