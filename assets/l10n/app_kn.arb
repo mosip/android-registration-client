@@ -183,7 +183,7 @@
   "new_registration": "ಹೊಸ ನೋಂದಾಯಿ",
   "go_back": "ಹಿಂತಿರುಗಿ",
   "informed": "ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ",
-  "sync_packet": "ಸಿಂಕ್ ಪ್ಯಾಕೆಟ್",
+  "sync_packet": "ಸಿಂಕ್ ಅಪ್‌ಲೋಡ್",
   "upload_packet": "ಅಪ್‌ಲೋಡ್ ಪ್ಯಾಕೆಟ್",
   "authenticate_using_password": "ಪಾಸ್‌ವರ್ಡ್ ಬಳಸಿ ಅಂಗೀಕರಿಸಿ",
   "registration_acknowledgement": "ನೋಂದಾಯಿತ ಸ್ವೀಕೃತಿ",
@@ -216,5 +216,8 @@
   "face": "ಮುಖ",
   "preview_page": "ಪೂರ್ವದರು",
   "packet_auth_page": "ಪ್ರಮಾಣಿಕತೆ",
-  "acknowledgement_page": "ಅರ್ಹಿಚ್ಛೆ"
+  "acknowledgement_page": "ಅರ್ಹಿಚ್ಛೆ",
+  "demographic_information": "ಜನಸಂಖ್ಯಾ ಮಾಹಿತಿ",
+  "documents": "ದಾಖಲೆಗಳು",
+  "biometrics": "ಬಯೋಮೆಟ್ರಿಕ್ಸ್"
 }

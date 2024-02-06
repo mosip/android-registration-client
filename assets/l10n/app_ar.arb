@@ -183,7 +183,7 @@
   "new_registration": "تسجيل جديد",
   "go_back": "عُد",
   "informed": "أُبلغ",
-  "sync_packet": "حزمة المزامنة",
+  "sync_packet": "تحميل متزامن",
   "upload_packet": "تحميل حزمة",
   "authenticate_using_password": "المصادقة باستخدام كلمة المرور",
   "registration_acknowledgement": "اعتراف بالتسجيل",
@@ -216,5 +216,8 @@
   "face": "الوجه",
   "preview_page": "معاينة",
   "packet_auth_page": "المصادقة",
-  "acknowledgement_page": "الاعتراف" 
+  "acknowledgement_page": "الاعتراف",
+  "demographic_information": "المعلومات الديموغرافية",
+  "documents": "وثائق",
+  "biometrics": "القياسات الحيوية"
 }

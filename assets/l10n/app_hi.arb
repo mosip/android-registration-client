@@ -183,7 +183,7 @@
   "new_registration": "नया पंजीकरण",
   "go_back": "वापस जाएं",
   "informed": "सूचित",
-  "sync_packet": "पैकेट सिंक करें",
+  "sync_packet": "सिंक अपलोड",
   "upload_packet": "अपलोड पैकेट",
   "authenticate_using_password": "पासवर्ड का उपयोग करके प्रमाणीकरण",
   "registration_acknowledgement": "रजिस्ट्रेशन स्वीकृति",
@@ -216,5 +216,8 @@
   "face": "चेहरा",
   "preview_page": "पूर्वावलोकन",
   "packet_auth_page": "प्रमाणीकरण",
-  "acknowledgement_page": "पुनर्निर्देशन"
+  "acknowledgement_page": "पुनर्निर्देशन",
+  "demographic_information": "जनसांख्यिकीय जानकारी",
+  "documents": "दस्तावेज़",
+  "biometrics": "बॉयोमेट्रिक्स"
 }
