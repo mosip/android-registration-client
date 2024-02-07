@@ -183,7 +183,7 @@
   "new_registration": "NOUVELLE INSCRIPTION",
   "go_back": "RETOUR",
   "informed": "INFORMÉ",
-  "sync_packet": "Paquet de synchronisation",
+  "sync_packet": "Téléchargement de synchronisation",
   "upload_packet": "Télécharger le paquet",
   "authenticate_using_password": "Authentification en utilisant un mot de passe",
   "registration_acknowledgement": "Accusé de réception d'inscription",
@@ -216,5 +216,8 @@
   "face": "Visage",
   "preview_page": "Aperçu",
   "packet_auth_page": "Authentification",
-  "acknowledgement_page": "Accusé de réception"
+  "acknowledgement_page": "Accusé de réception",
+  "demographic_information": "Informations démographiques",
+  "documents": "Documents",
+  "biometrics": "Biométrie"
 }

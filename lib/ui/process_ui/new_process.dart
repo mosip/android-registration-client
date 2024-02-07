@@ -60,6 +60,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     'Acknowledgement',
   ];
 
+  Map<String, String>? templateTitleMap;
+
   String username = '';
   String password = '';
 
@@ -467,10 +469,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
+              templateTitleMap = {'demographicInfo': AppLocalizations.of(context)!.demographic_information ?? "Demographic Information", 'documents': AppLocalizations.of(context)!.documents ?? "Documents", 'bioMetrics': AppLocalizations.of(context)!.biometrics ?? "Biometrics"};
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(true);
-              await registrationTaskProvider.getAcknowledgementTemplate(false);
+              await registrationTaskProvider.getPreviewTemplate(true,templateTitleMap!);
+              await registrationTaskProvider.getAcknowledgementTemplate(false,templateTitleMap!);
             }
 
             globalProvider.newProcessTabIndex =

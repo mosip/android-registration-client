@@ -198,7 +198,7 @@
   "new_registration": "புதிய பதிவு",
   "go_back": "பின்செல்",
   "informed": "அறிந்தவர்",
-  "sync_packet": "ஒத்திசைவு பாக்கெட்",
+  "sync_packet": "ஒருமை பரிமாற்றம்",
   "upload_packet": "பதிவேற்று பட்டியல்",
   "authenticate_using_password": "கடவுச்சொல் பயன்படுத்தி அங்கீகரித்தல்",
   "registration_acknowledgement": "பதிவு அறிந்தார்",
@@ -225,5 +225,8 @@
   "default_not_found": "தேவையான பங்கு கிடைக்கவில்லை!",
   "preview_page": "முன்னோக்கி",
   "packet_auth_page": "அங்கீகாரம்",
-  "acknowledgement_page": "அறிவுசெய்தல்"
+  "acknowledgement_page": "அறிவுசெய்தல்",
+  "demographic_information": "மக்கள்தொகை தகவல்",
+  "documents": "ஆவணங்கள்",
+  "biometrics": "பயோமெட்ரிக்ஸ்"
 }

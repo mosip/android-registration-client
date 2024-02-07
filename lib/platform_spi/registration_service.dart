@@ -11,7 +11,7 @@ import 'package:registration_client/platform_android/registration_service_impl.d
 abstract class RegistrationService {
   Future<String> startRegistration(List<String> languages);
   Future<bool> evaluateMVEL(String fieldData, String expression);
-  Future<String> getPreviewTemplate(bool isPreview);
+  Future<String> getPreviewTemplate(bool isPreview,Map<String,String> templateValues);
   Future<RegistrationSubmitResponse> submitRegistrationDto(String makerName);
 
   factory RegistrationService() => getRegistrationServiceImpl();

@@ -23,7 +23,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +62,7 @@ public class TemplateService {
         this.identitySchemaRepository = identitySchemaRepository;
     }
 
-    public String getTemplate(RegistrationDto registrationDto, boolean isPreview) throws Exception {
+    public String getTemplate(RegistrationDto registrationDto, boolean isPreview, Map<String, String> templateTitleValues) throws Exception {
         StringWriter writer = new StringWriter();
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.init();
@@ -82,7 +81,7 @@ public class TemplateService {
             throw new Exception("No Schema found");
         List<FieldSpecDto> schemaFields = identitySchemaRepository.getAllFieldSpec(appContext, version);
 
-        setBasicDetails(isPreview, registrationDto, velocityContext);
+        setBasicDetails(isPreview, registrationDto, templateTitleValues, velocityContext);
 
         Map<String, Map<String, Object>> demographicsData = new HashMap<>();
         Map<String, Map<String, Object>> documentsData = new HashMap<>();
@@ -363,7 +362,7 @@ public class TemplateService {
     }
 
 
-    private void setBasicDetails(boolean isPreview, RegistrationDto registrationDto, VelocityContext velocityContext) {
+    private void setBasicDetails(boolean isPreview, RegistrationDto registrationDto, Map<String, String> templateTitleValues, VelocityContext velocityContext) {
         generateQRCode(velocityContext,registrationDto);
         velocityContext.put("isPreview", isPreview);
         velocityContext.put("ApplicationIDLabel", appContext.getString(R.string.app_id));
@@ -375,10 +374,10 @@ public class TemplateService {
         velocityContext.put("Date", currentTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a")));
         velocityContext.put("DateLabel", appContext.getString(R.string.date));
 
-        velocityContext.put("DemographicInfo", appContext.getString(R.string.demographic_info));
+        velocityContext.put("DemographicInfo", templateTitleValues.get("demographicInfo"));
         velocityContext.put("Photo", appContext.getString(R.string.photo));
-        velocityContext.put("DocumentsLabel", appContext.getString(R.string.documents));
-        velocityContext.put("BiometricsLabel", appContext.getString(R.string.biometrics));
+        velocityContext.put("DocumentsLabel", templateTitleValues.get("documents"));
+        velocityContext.put("BiometricsLabel", templateTitleValues.get("bioMetrics"));
         velocityContext.put("FaceLabel", appContext.getString(R.string.face_label));
         velocityContext.put("ExceptionPhotoLabel", appContext.getString(R.string.exception_photo_label));
         velocityContext.put("RONameLabel", appContext.getString(R.string.ro_label));
