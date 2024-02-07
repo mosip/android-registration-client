@@ -266,7 +266,7 @@ public class RegistrationDto extends Observable {
     public void removeBioException(String fieldId, Modality modality, String attribute) {
         String key = String.format(BIO_KEY, fieldId, modality.name());
         EXCEPTIONS.putIfAbsent(key, new HashSet<>());
-        EXCEPTIONS.remove(key);
+        EXCEPTIONS.get(key).remove(attribute);
         resetBioCapture(fieldId, modality);
     }
 
