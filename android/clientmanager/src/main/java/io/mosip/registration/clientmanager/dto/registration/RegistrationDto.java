@@ -267,7 +267,6 @@ public class RegistrationDto extends Observable {
         String key = String.format(BIO_KEY, fieldId, modality.name());
         EXCEPTIONS.putIfAbsent(key, new HashSet<>());
         EXCEPTIONS.remove(key);
-        Log.i("","value document...."+this.documents.get(0));
         resetBioCapture(fieldId, modality);
     }
 
@@ -387,7 +386,6 @@ public class RegistrationDto extends Observable {
         if(!allIdentityDetails.containsKey(RegistrationConstants.AGE))
             allIdentityDetails.put(RegistrationConstants.AGE, 0);
 
-     Log.i("get all biometrics data","get all dto.."+this.EXCEPTIONS.size());
         return allIdentityDetails;
     }
 
