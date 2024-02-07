@@ -8,6 +8,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -227,7 +228,7 @@ class _TextBoxControlState extends State<TextBoxControl>
                       return null;
                     },
                     textAlign:
-                        (lang == 'ara') ? TextAlign.right : TextAlign.left,
+                        Bidi.isRtlLanguage(lang.substring(0,2)) ? TextAlign.right : TextAlign.left,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
