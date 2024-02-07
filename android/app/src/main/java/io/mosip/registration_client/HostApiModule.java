@@ -185,7 +185,8 @@ public class HostApiModule {
             SyncJobDefRepository syncJobDefRepository,
             LanguageRepository languageRepository,
             JobManagerService jobManagerService,
-            AuditManagerService auditManagerService) {
+            AuditManagerService auditManagerService,
+            MasterDataService masterDataService) {
         return new MasterDataSyncApi( clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
@@ -195,7 +196,7 @@ public class HostApiModule {
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
                 syncJobDefRepository, languageRepository,jobManagerService,
-                auditManagerService
+                auditManagerService,masterDataService
                 );
     }
 

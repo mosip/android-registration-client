@@ -47,8 +47,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     //load from the map
     if(mounted) {
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => _removeExceptionData(widget.field));
+      _removeExceptionData(widget.field);
       getScannedDocuments(widget.field);
       myGetDocumentCategoryFuture = _getDocumentType(widget.field.subType!, lang);
     }

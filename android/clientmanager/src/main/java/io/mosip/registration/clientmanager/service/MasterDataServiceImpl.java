@@ -577,7 +577,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
     }
 
-    private void downloadUrlData(Path path, JSONObject jsonObject) {
+    public void downloadUrlData(Path path, JSONObject jsonObject) {
         Log.i(TAG, "Started downloading mvel script: " + path.toString());
         try {
             String headers = jsonObject.getString("headers");

@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -66,8 +67,10 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
@@ -112,6 +115,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     Context context;
     private String regCenterId;
 
+    MasterDataService masterDataService;
+
     @Inject
     public MasterDataSyncApi(ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository, SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository, IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
                              ApplicantValidDocRepository applicantValidDocRepository,
@@ -122,7 +127,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              SyncJobDefRepository syncJobDefRepository,
                              LanguageRepository languageRepository,
                              JobManagerService jobManagerService,
-                             AuditManagerService auditManagerService) {
+                             AuditManagerService auditManagerService,
+                             MasterDataService masterDataService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -143,11 +149,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
         this.auditManagerService = auditManagerService;
+        this.masterDataService = masterDataService;
     }
 
 
     private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, @NonNull String APP_ID, @NonNull String REF_ID, @NonNull String SET_APP_ID, @NonNull String SET_REF_ID) {
-        Log.i("get kernel sync","main function");
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
@@ -416,6 +422,14 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         break;
                     case "dynamic":
                         saveDynamicData(masterData.getData());
+                        break;
+                    case "script":
+                        CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
+                        cryptoRequestDto.setValue(masterData.getData());
+                        CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
+                        byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
+                        masterDataService.downloadUrlData(Paths.get(context.getFilesDir().getAbsolutePath(), masterData.getEntityName()), new JSONObject(new String(data)));
+                        break;
                 }
             } catch (Throwable e) {
                 foundErrors = true;
@@ -428,6 +442,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
         }
     }
+
 
     private JSONArray getDecryptedDataList(String data) throws JSONException {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
@@ -609,8 +624,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     @Override
     public void getKernelCertsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
-            Log.i("get kernel sync","inside the function");
-            //syncPolicyKey(result,REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId() );
             syncPolicyKey(result,KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY" );
         } catch (Exception e) {
             e.printStackTrace();
