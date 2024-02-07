@@ -298,18 +298,23 @@ public class MainActivity extends FlutterActivity {
     }
 
     private long getIntervalMillis(String api){
-        // Default time to next execution is 60s
-        long minTime = System.currentTimeMillis()+60000;
-        AtomicLong alarmTime = new AtomicLong(minTime);
+        // AtomicLong alarmTime = new AtomicLong(System.currentTimeMillis());
+        
+        // Default everyday at Noon - 12pm
+        String cronExp = "0 0 12 * * ?";
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
         for (SyncJobDef value : syncJobs) {
             if (Objects.equals(value.getApiName(), api)) {
-                Log.d(getClass().getSimpleName(), String.valueOf(value.getSyncFreq()) + " Cron Expression");
-                long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(String.valueOf(value.getSyncFreq()));
-                alarmTime.set(nextExecution);
+                Log.d(getClass().getSimpleName(), api + " Cron Expression : " + String.valueOf(value.getSyncFreq()));
+                cronExp = String.valueOf(value.getSyncFreq());
+                break;
             }
         }
-        return alarmTime.get();
+        long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(cronExp);
+        Log.d(getClass().getSimpleName(), " Next Execution : " + String.valueOf(nextExecution));
+        return nextExecution;
+        // alarmTime.set(nextExecution);
+        // return alarmTime.get();
     }
 
     public void initializeAppComponent() {
