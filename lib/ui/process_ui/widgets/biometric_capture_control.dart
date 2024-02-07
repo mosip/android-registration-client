@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
@@ -6,7 +13,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control_landscape.dart';
+// import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control_landscape.dart';
 import 'package:registration_client/ui/process_ui/widgets_mobile/biometric_capture_control_portrait.dart';
 import 'package:registration_client/utils/stateful_wrapper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -132,8 +139,8 @@ class BiometricCaptureControlInitialization extends StatelessWidget {
           "noOfCapturesAllowed");
     }
 
-    bool isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+    // bool isPortrait =
+    //     MediaQuery.of(context).orientation == Orientation.portrait;
 
     context.read<BiometricCaptureControlProvider>().customSetterIris(
         context
@@ -248,8 +255,11 @@ class BiometricCaptureControlInitialization extends StatelessWidget {
           setInitialBioAttribute()
               .then((value) => debugPrint("State Initialized"));
         },
-        child: (isPortrait)
-            ? BiometricCaptureControlPortrait(field: field)
-            : BiometricCaptureControlLandscape(field: field));
+        child: BiometricCaptureControlPortrait(field: field));
   }
 }
+
+//This is the condition we used when two different UIs were present for portrait and landscape.
+// (isPortrait)
+//             ? BiometricCaptureControlPortrait(field: field)
+//             : BiometricCaptureControlLandscape(field: field)

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
@@ -56,6 +63,7 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _fieldDisplayValues = {};
 
   Map<String, dynamic> _fieldInputValue = {};
+  Map<String,dynamic> _completeException={};
 
   Map<String, bool> _mvelValues = {};
 
@@ -205,12 +213,30 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Map<String,dynamic> get completeException=>_completeException;
+  set completeException(Map<String,dynamic> value){
+    _completeException=value;
+    notifyListeners();
+  }
+
   set mvelValues(Map<String, bool> value) {
     _mvelValues = value;
     notifyListeners();
   }
 
   //Functions
+  setCompleteExceptionByKey(String key,dynamic value){
+    completeException[key]=value;
+    notifyListeners();
+  }
+  getCompleteExceptionByKey(String key){
+    if(completeException.containsKey(key)){
+      return completeException[key];
+    }
+    else{
+      return [];
+    }
+  }
 
   setCurrentIndex(int value) {
     _currentIndex = value;
@@ -300,6 +326,10 @@ class GlobalProvider with ChangeNotifier {
       versionNoAppTemp = await networkService
           .getVersionFromGobalParam("mosip.registration.server_version");
     }
+    versionNoApp = versionNoAppTemp;
+  }
+
+  setGitHeadAttributes() async {
     String head = "";
     String branchName = "";
     String commitId = "";
@@ -318,7 +348,6 @@ class GlobalProvider with ChangeNotifier {
 
     branchNameApp = branchName;
     commitIdApp = commitId;
-    versionNoApp = versionNoAppTemp;
   }
 
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
@@ -458,6 +487,8 @@ class GlobalProvider with ChangeNotifier {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
     await createLanguageCodeMapper();
+    String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
+    await toggleLocale(mandatoryLang);
     notifyListeners();
   }
 
@@ -571,8 +602,15 @@ class GlobalProvider with ChangeNotifier {
       return;
     }
     List<String> languageList = [];
+    _codeToLanguageMapper = {};
+    for(var element in _mandatoryLanguages) {
+      languageList.add(element!);
+      _codeToLanguageMapper[element] = element;
+    }
     for (var element in _languageDataList) {
-      languageList.add(element!.code);
+      if(_codeToLanguageMapper[element!.code] == null) {
+        languageList.add(element.code);
+      }
       _codeToLanguageMapper[element.code] = element.name;
       _languageToCodeMapper[element.name] = element.code;
       await setDisabledLanguage(element.code);

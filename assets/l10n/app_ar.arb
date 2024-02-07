@@ -183,7 +183,7 @@
   "new_registration": "تسجيل جديد",
   "go_back": "عُد",
   "informed": "أُبلغ",
-  "sync_packet": "تحميل متزامن",
+  "sync_packet": "حزمة المزامنة",
   "upload_packet": "تحميل حزمة",
   "authenticate_using_password": "المصادقة باستخدام كلمة المرور",
   "registration_acknowledgement": "اعتراف بالتسجيل",
@@ -213,5 +213,8 @@
   "iris": "القزحية",
   "thumbs": "الأبهام",
   "exception":"استثناء",
-  "face": "الوجه" 
+  "face": "الوجه",
+  "preview_page": "معاينة",
+  "packet_auth_page": "المصادقة",
+  "acknowledgement_page": "الاعتراف" 
 }

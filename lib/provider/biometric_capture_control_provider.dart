@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/biometrics_dto.dart';
@@ -8,6 +15,12 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   late String biometricAttribute;
 
   int biometricCaptureScanBlockTabIndex = 1;
+  List<String> _completeExceptionList=[];
+  List<String> get completeExceptionList=> _completeExceptionList;
+  set completeExceptionList(List<String> value){
+    _completeExceptionList=value;
+    notifyListeners();
+  }
   BiometricAttributeData iris = BiometricAttributeData(
       viewTitle: "",
       title: "Iris",
@@ -15,22 +28,23 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
-      listofImages: [
-        "assets/images/Left Eye@2x.png",
-        "assets/images/Right Eye@2x.png"
-      ],
+      listofImages: ["assets/svg/Left Eye.svg", "assets/svg/Right Eye.svg"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
       thresholdPercentage: "0",
-      noOfCapturesAllowed: 0);
+      noOfCapturesAllowed: 0,
+      imageHeightMobile: 109,
+      imageHeightTablet: 89);
   BiometricAttributeData rightHand = BiometricAttributeData(
       title: "Right Hand",
+      imageHeightMobile: 209,
+      imageHeightTablet: 300,
       viewTitle: "",
       attemptNo: 0,
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
-      listofImages: ["assets/images/Right Hand@2x.png"],
+      listofImages: ["assets/svg/Right Hand.svg"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
       thresholdPercentage: "0",
@@ -38,11 +52,13 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   BiometricAttributeData leftHand = BiometricAttributeData(
       title: "Left Hand",
       attemptNo: 0,
+      imageHeightMobile: 209,
+      imageHeightTablet: 300,
       viewTitle: "",
       exceptionType: "",
       exceptions: [false, false, false, false],
       isScanned: false,
-      listofImages: ["assets/images/Left Hand@2x.png"],
+      listofImages: ["assets/svg/Left Hand.svg"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
       thresholdPercentage: "0",
@@ -51,22 +67,26 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       title: "Thumbs",
       attemptNo: 0,
       viewTitle: "",
+      imageHeightMobile: 209,
+      imageHeightTablet: 300,
       exceptionType: "",
       exceptions: [false, false],
       isScanned: false,
-      listofImages: ["assets/images/Thumbs@2x.png"],
+      listofImages: ["assets/svg/Thumbs.svg"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
       thresholdPercentage: "0",
       noOfCapturesAllowed: 0);
   BiometricAttributeData face = BiometricAttributeData(
       title: "Face",
+      imageHeightMobile: 209,
+      imageHeightTablet: 300,
       attemptNo: 0,
       viewTitle: "",
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
-      listofImages: ["assets/images/Face@2x.png"],
+      listofImages: ["assets/svg/Face.svg"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
       thresholdPercentage: "0",
@@ -75,10 +95,12 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       title: "Exception",
       attemptNo: 0,
       viewTitle: "",
+      imageHeightMobile: 209,
+      imageHeightTablet: 300,
       exceptionType: "",
       exceptions: [false],
       isScanned: false,
-      listofImages: ["assets/images/Exception@2x.png"],
+      listofImages: ["assets/svg/Exception.svg"],
       listOfBiometricsDto: [],
       qualityPercentage: 0,
       thresholdPercentage: "0",

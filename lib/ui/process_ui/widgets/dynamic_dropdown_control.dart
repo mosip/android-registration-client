@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,6 +15,8 @@ import 'package:registration_client/utils/app_config.dart';
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DynamicDropDownControl extends StatefulWidget {
   const DynamicDropDownControl(
@@ -39,10 +48,12 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().chosenLang.forEach((element) {
-          String code = context.read<GlobalProvider>().languageToCodeMapper[element]!;
+          String code =
+              context.read<GlobalProvider>().languageToCodeMapper[element]!;
           context
-            .read<RegistrationTaskProvider>()
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
+              .read<RegistrationTaskProvider>()
+              .addSimpleTypeDemographicField(
+                  widget.field.id ?? "", value, code);
         });
       } else {
         context
@@ -101,12 +112,16 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return FutureBuilder(
-        future: _getFieldValues(widget.field.subType!, context.read<GlobalProvider>().selectedLanguage),
+        future: _getFieldValues(widget.field.subType!,
+            context.read<GlobalProvider>().selectedLanguage),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
             elevation: 5,
-            margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
+            margin: EdgeInsets.symmetric(
+                vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
               child: Column(
@@ -148,10 +163,14 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                               return null;
                             }
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a value';
+                              return AppLocalizations.of(context)!
+                                  .demographicsScreenEmptyMessage(
+                                      mandatoryLanguageCode);
                             }
                             if (!widget.validation.hasMatch(value)) {
-                              return 'Invalid input';
+                              return AppLocalizations.of(context)!
+                                  .demographicsScreenInvalidMessage(
+                                      mandatoryLanguageCode);
                             }
                             return null;
                           },

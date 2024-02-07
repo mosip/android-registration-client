@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -47,7 +54,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
                   : Colors.transparent,
           border: Border.all(
             width: 1,
-            color: widget.isSelected
+            color: widget.isDisabled ? appBlackShade3 :
+            widget.isSelected
                 ? appButtonBorderText
                 : languageSelectedColor,
           ),
@@ -59,7 +67,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
           widget.title,
           style: TextStyle(
             fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
-            color: widget.isFreezed
+            color: widget.isDisabled ? appBlackShade3 :
+            widget.isFreezed
                 ? appBlack
                 : widget.isSelected
                     ? appWhite

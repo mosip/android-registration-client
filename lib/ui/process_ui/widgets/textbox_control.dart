@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 // ignore_for_file: deprecated_member_use
 
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -124,12 +132,15 @@ class _TextBoxControlState extends State<TextBoxControl>
     }
     Map<String, String> tranliterationLangMapper = {
       "eng": "Latin",
-      "fra": "French",
+      "fra": "fr",
       "ara": "Arabic",
       "hin": "Devanagari",
       "kan": "Kannada",
       "tam": "Tamil",
     };
+
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
 
     return Card(
       elevation: 5,
@@ -165,10 +176,6 @@ class _TextBoxControlState extends State<TextBoxControl>
                     controller: controllerMap[lang],
                     textCapitalization: TextCapitalization.words,
                     onChanged: (value) async {
-                      String mandatoryLanguageCode = context
-                              .read<GlobalProvider>()
-                              .mandatoryLanguages[0] ??
-                          "eng";
                       if (lang == mandatoryLanguageCode) {
                         for (var target in choosenLang) {
                           String targetCode =
@@ -204,32 +211,35 @@ class _TextBoxControlState extends State<TextBoxControl>
                           return null;
                         } else if (!widget.validation.hasMatch(value)) {
                           return AppLocalizations.of(context)!
-                              .demographicsScreenInvalidMessage(lang);
+                              .demographicsScreenInvalidMessage(
+                                  mandatoryLanguageCode);
                         }
                       }
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenEmptyMessage(lang);
+                            .demographicsScreenEmptyMessage(
+                                mandatoryLanguageCode);
                       }
                       if (!widget.validation.hasMatch(value)) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenInvalidMessage(lang);
+                            .demographicsScreenInvalidMessage(
+                                mandatoryLanguageCode);
                       }
                       return null;
                     },
                     textAlign:
-                        (lang == 'ara') ? TextAlign.right : TextAlign.left,
+                        Bidi.isRtlLanguage(lang.substring(0,2)) ? TextAlign.right : TextAlign.left,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
-                        borderSide: const BorderSide(
-                            color: appGreyShade, width: 1),
+                        borderSide:
+                            const BorderSide(color: appGreyShade, width: 1),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 14, horizontal: 16),
                       hintText: widget.e.label![lang],
-                      hintStyle: const TextStyle(
-                          color: appBlackShade3, fontSize: 14),
+                      hintStyle:
+                          const TextStyle(color: appBlackShade3, fontSize: 14),
                     ),
                   ),
                 );

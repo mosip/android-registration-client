@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Modular Open Source Identity Platform
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +17,8 @@ import 'package:registration_client/ui/process_ui/widgets/custom_label.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import 'custom_cupertino_picker.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DateControl extends StatefulWidget {
   const DateControl({super.key, required this.field, required this.validation});
@@ -158,6 +167,8 @@ class _DateControlState extends State<DateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    String mandatoryLanguageCode =
+        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -187,18 +198,20 @@ class _DateControlState extends State<DateControl> {
                     return null;
                   }
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a value';
+                    return AppLocalizations.of(context)!
+                        .demographicsScreenEmptyMessage(mandatoryLanguageCode);
                   }
                   if (!widget.validation.hasMatch(value)) {
-                    return 'Invalid input';
+                    return AppLocalizations.of(context)!
+                        .demographicsScreenInvalidMessage(
+                            mandatoryLanguageCode);
                   }
                   return null;
                 },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(
-                        color: appGreyShade, width: 1),
+                    borderSide: const BorderSide(color: appGreyShade, width: 1),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 14,
