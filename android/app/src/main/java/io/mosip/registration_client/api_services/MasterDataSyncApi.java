@@ -13,7 +13,6 @@ import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -67,7 +66,6 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
-import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -81,7 +79,6 @@ import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import okhttp3.ResponseBody;
@@ -705,6 +702,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
         if (caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
+            Log.i(TAG, "Started saving cacertificates with size: "+caCertificateDtos.size());
             //Data Fix : As createdDateTime is null sometimes
             caCertificateDtos.forEach(c -> {
                 if (c.getCreatedtimes() == null)
@@ -713,7 +711,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
 
             for (CACertificateDto cert : caCertificateDtos) {
-                String errorCode = null;
                 try {
                     if (cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
                         CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
@@ -723,11 +720,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         Log.i(TAG, caCertificateResponseDto.getStatus());
                     }
                 } catch (KeymanagerServiceException ex) {
-                    errorCode = ex.getErrorCode();
+                    Log.e(TAG, "Failed to save CA cert : " + cert.getCertId());
                 }
-
-                if (errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
-                    throw new KeymanagerServiceException(errorCode, errorCode);
             }
         }
     }
