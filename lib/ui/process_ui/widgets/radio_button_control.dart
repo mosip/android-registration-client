@@ -74,6 +74,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
       context
           .read<RegistrationTaskProvider>()
           .addSimpleTypeDemographicField(widget.field.id ?? "", value!, code);
+      context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = value;
     });
     setState(() {
       selectedOption = value;
