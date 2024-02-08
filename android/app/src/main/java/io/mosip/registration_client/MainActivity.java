@@ -7,6 +7,8 @@
 
 package io.mosip.registration_client;
 
+import io.mosip.registration.clientmanager.constant.ClientManagerConstant;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -298,14 +300,12 @@ public class MainActivity extends FlutterActivity {
                 return Integer.parseInt(value.getValue());
             }
         }
-        return 4;
+        return ClientManagerConstant.DEFAULT_BATCH_SIZE;
     }
 
     private long getIntervalMillis(String api){
-        // AtomicLong alarmTime = new AtomicLong(System.currentTimeMillis());
-        
         // Default everyday at Noon - 12pm
-        String cronExp = "0 0 12 * * ?";
+        String cronExp = ClientManagerConstant.DEFAULT_UPLOAD_CRON;
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
         for (SyncJobDef value : syncJobs) {
             if (Objects.equals(value.getApiName(), api)) {
@@ -317,8 +317,6 @@ public class MainActivity extends FlutterActivity {
         long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(cronExp);
         Log.d(getClass().getSimpleName(), " Next Execution : " + String.valueOf(nextExecution));
         return nextExecution;
-        // alarmTime.set(nextExecution);
-        // return alarmTime.get();
     }
 
     public void initializeAppComponent() {
