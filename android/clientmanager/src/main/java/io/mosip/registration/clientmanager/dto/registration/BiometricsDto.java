@@ -13,7 +13,7 @@ public class BiometricsDto {
     private String bioSubType;
     private String bioValue;
     private String specVersion;
-    private boolean isException;
+    private boolean isBioException;
     private String decodedBioResponse;
     private String signature;
     private boolean isForceCaptured;
@@ -22,7 +22,7 @@ public class BiometricsDto {
     private float qualityScore;
 
     public void setIsException(boolean exception) {
-        isException = exception;
+        isBioException = exception;
     }
 
     public void setIsForceCaptured(boolean forceCaptured) {
