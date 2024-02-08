@@ -26,7 +26,6 @@ class SyncProvider with ChangeNotifier {
   bool _idSchemaSyncSuccess = false;
   bool _masterDataSyncSuccess = false;
   bool _cacertsSyncSuccess = false;
-  bool _kernelCertsSyncSuccess = false;
 
   String get lastSuccessfulSyncTime => _lastSuccessfulSyncTime;
   int get currentSyncProgress => _currentSyncProgress;
@@ -39,7 +38,6 @@ class SyncProvider with ChangeNotifier {
   bool get idSchemaSyncSuccess => _idSchemaSyncSuccess;
   bool get masterDataSyncSuccess => _masterDataSyncSuccess;
   bool get cacertsSyncSuccess => _cacertsSyncSuccess;
-  bool get kernelCertsSyncSuccess => _kernelCertsSyncSuccess;
 
   set isSyncing(bool value) {
     _isSyncing = value;
@@ -233,18 +231,6 @@ class SyncProvider with ChangeNotifier {
       }
       notifyListeners();
     });
-
-    await SyncResponseServiceImpl().getKernelCertsSync().then((Sync getAutoSync) {
-      setCurrentProgressType(getAutoSync.syncType!);
-      if (getAutoSync.errorCode == "") {
-        _kernelCertsSyncSuccess = true;
-        _currentSyncProgress = getAutoSync.syncProgress!;
-        notifyListeners();
-      } else {
-        log(AppLocalizations.of(context)!.ca_certs_sync_failed);
-      }
-      notifyListeners();
-    });
   }
 
   bool isAllSyncSuccessful() {
@@ -253,7 +239,7 @@ class SyncProvider with ChangeNotifier {
         _masterDataSyncSuccess &&
         _userDetailsSyncSuccess &&
         _idSchemaSyncSuccess &&
-        _cacertsSyncSuccess && _kernelCertsSyncSuccess) {
+        _cacertsSyncSuccess) {
       return true;
     } else {
       return false;
