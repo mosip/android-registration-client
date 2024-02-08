@@ -518,6 +518,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
         if (caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
+            Log.i(TAG, "Started saving cacertificates with size: "+caCertificateDtos.size());
             //Data Fix : As createdDateTime is null sometimes
             caCertificateDtos.forEach(c -> {
                 if (c.getCreatedtimes() == null)
@@ -526,7 +527,6 @@ public class MasterDataServiceImpl implements MasterDataService {
             caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
 
             for (CACertificateDto cert : caCertificateDtos) {
-                String errorCode = null;
                 try {
                     if (cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
                         CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
@@ -536,11 +536,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                         Log.i(TAG, caCertificateResponseDto.getStatus());
                     }
                 } catch (KeymanagerServiceException ex) {
-                    errorCode = ex.getErrorCode();
+                    Log.e(TAG, "Failed to save CA cert : " + cert.getCertId());
                 }
-
-                if (errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
-                    throw new KeymanagerServiceException(errorCode, errorCode);
             }
         }
     }
