@@ -145,7 +145,7 @@ class _BiometricCaptureControlPortraitState
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
                       child: Text(
-                          "${biometricAttributeData.qualityPercentage}%",
+                          "${biometricAttributeData.qualityPercentage.toInt()}%",
                           style: TextStyle(
                               fontSize: 20,
                               color: pureWhite,

@@ -1,11 +1,14 @@
 package io.mosip.registration.clientmanager.spi;
 
+import org.json.JSONObject;
+
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public interface MasterDataService {
@@ -136,6 +139,5 @@ public interface MasterDataService {
 
     String getGlobalParamValue(String id);
 
-    List<Location> findAllLocationsByLangCode(String langCode);
-
+    void downloadUrlData(Path path, JSONObject jsonObject);
 }
