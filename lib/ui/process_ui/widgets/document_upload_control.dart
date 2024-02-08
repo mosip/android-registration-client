@@ -44,6 +44,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   void initState() {
     //load from the map
     if(mounted) {
+      // Get scanned docs
       getScannedDocuments(widget.field);
     }
 
