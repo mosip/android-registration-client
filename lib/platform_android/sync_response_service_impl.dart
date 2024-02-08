@@ -101,17 +101,4 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncResponse;
   }
-
-  @override
-  Future<Sync> getKernelCertsSync() async {
-    late Sync syncResponse;
-    try {
-      syncResponse = await SyncApi().getKernelCertsSync();
-    } on PlatformException {
-      debugPrint('KernelCerts Api call failed, PlatformException');
-    } catch (e) {
-      debugPrint('KernelCertsSync has failed! ${e.toString()}');
-    }
-    return syncResponse;
-  }
 }
