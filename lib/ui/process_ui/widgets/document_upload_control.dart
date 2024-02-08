@@ -39,17 +39,13 @@ class DocumentUploadControl extends StatefulWidget {
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
-  late Future<List<String?>> myGetDocumentCategoryFuture;
-
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
   void initState() {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+
     //load from the map
     if(mounted) {
-      _removeExceptionData(widget.field);
       getScannedDocuments(widget.field);
-      myGetDocumentCategoryFuture = _getDocumentType(widget.field.subType!, lang);
     }
 
     if (context
@@ -141,17 +137,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = doc;
   }
 
-  _removeExceptionData(Field e) async {
-    if (context.read<GlobalProvider>().exceptionAttributes.isEmpty){
-      if(e.subType!.contains("POE")) {
-        context.read<RegistrationTaskProvider>().removeDocumentField(e.id!);
-        context.read<GlobalProvider>().removeFieldFromMap(
-            e.id!, context.read<GlobalProvider>().fieldInputValue);
-        context.read<RegistrationTaskProvider>().removeDemographicField(e.id!);
-      }
-    }
-  }
-
   Future<void> getScannedDocuments(Field e) async {
     try {
       imageBytesList.clear();
@@ -221,10 +206,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .getDocumentValues(fieldName, langCode, applicantType);
   }
 
-  Future<List<String?>> _getDocumentType(String categoryCode, String langCode) async {
-    return await context.read<RegistrationTaskProvider>().getDocumentType(categoryCode, langCode);
-  }
-
   void _deleteImage(Field e, Uint8List? item) async {
     for(int i =0;i<imageBytesList.length;i++){
       if(imageBytesList[i] == item){
@@ -258,7 +239,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FutureBuilder(
-                        future: myGetDocumentCategoryFuture,
+                        future: _getDocumentValues(
+                            widget.field.subType!, lang, null),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
@@ -476,7 +458,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         Expanded(
                           flex: 2,
                             child: FutureBuilder(
-                                future: myGetDocumentCategoryFuture,
+                                future: _getDocumentValues(
+                                    widget.field.subType!, lang, null),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
