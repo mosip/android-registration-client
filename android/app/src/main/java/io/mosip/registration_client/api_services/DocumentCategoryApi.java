@@ -107,8 +107,8 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
             context.put("identity", dataContext);
             context.put("ageGroups", ageGroups);
             return MVEL.eval("return getApplicantType();", context, String.class);
-        } catch (Throwable t) {
-            Log.e(getClass().getSimpleName(),"Failed to evaluate mvel script", t);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(),"Failed to evaluate mvel script", e);
         }
         return null;
     }
@@ -141,8 +141,8 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
             }
             SCRIPT_CACHE.put(scriptName, new String(bytes));
 
-        } catch (Throwable t) {
-            Log.e(getClass().getSimpleName(),"Failed to get mvel script", t);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(),"Failed to get mvel script", e);
         }
         return SCRIPT_CACHE.get(scriptName);
     }

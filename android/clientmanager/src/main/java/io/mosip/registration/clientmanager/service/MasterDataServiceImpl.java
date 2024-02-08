@@ -6,6 +6,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -209,13 +211,13 @@ public class MasterDataServiceImpl implements MasterDataService {
         },"","","","");
     }
 
-    private void syncCertificate(Runnable onFinish,String APP_ID, String REF_ID, String SET_APP_ID, String SET_REF_ID) {
+    private void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null)
             return;
 
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(APP_ID,
-                REF_ID, BuildConfig.CLIENT_VERSION);
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(applicationId,
+                referenceId, BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
@@ -223,8 +225,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId(SET_APP_ID);
-                        certificateRequestDto.setReferenceId(SET_REF_ID);
+                        certificateRequestDto.setApplicationId(setApplicationId);
+                        certificateRequestDto.setReferenceId(setReferenceId);
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();

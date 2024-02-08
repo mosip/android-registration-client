@@ -153,15 +153,15 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
 
-    private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, @NonNull String APP_ID, @NonNull String REF_ID, @NonNull String SET_APP_ID, @NonNull String SET_REF_ID) {
+    private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, @NonNull String applicationId, @NonNull String referenceId, @NonNull String setApplicationId, @NonNull String setReferenceId) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
             return;
         }
 
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(APP_ID,
-                REF_ID, BuildConfig.CLIENT_VERSION);
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(applicationId,
+                referenceId, BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
@@ -169,8 +169,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId(SET_APP_ID);
-                        certificateRequestDto.setReferenceId(SET_REF_ID);
+                        certificateRequestDto.setApplicationId(setApplicationId);
+                        certificateRequestDto.setReferenceId(setReferenceId);
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         Log.i(TAG, "Policy Sync");
