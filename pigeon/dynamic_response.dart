@@ -27,20 +27,10 @@ class LanguageData {
   });
 }
 
-class DynamicFieldData{
-  final String code;
-  final String name;
-
-  DynamicFieldData({
-    required this.code,
-    required this.name,
-  });
-}
-
 @HostApi()
 abstract class DynamicResponseApi {
   @async
-  List<DynamicFieldData> getFieldValues(String fieldName, String langCode);
+  List<String> getFieldValues(String fieldName, String langCode);
 
   @async
   List<GenericData> getLocationValues(

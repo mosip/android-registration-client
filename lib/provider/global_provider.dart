@@ -468,7 +468,7 @@ class GlobalProvider with ChangeNotifier {
   int _minLanguageCount = 0;
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
-  List<DynamicFieldData?> _notificationLanguages = [];
+  List<String?> _notificationLanguages = [];
   Map<String, bool> _disabledLanguageMap = {};
 
   List<LanguageData?> get languageDataList => _languageDataList;
@@ -480,11 +480,8 @@ class GlobalProvider with ChangeNotifier {
   int get minLanguageCount => _minLanguageCount;
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
-  List<DynamicFieldData?> get notificationLanguages => _notificationLanguages;
+  List<String?> get notificationLanguages => _notificationLanguages;
   Map<String, bool> get disabledLanguageMap => _disabledLanguageMap;
-  List<String> _exceptionAttributes = [];
-
-  List<String> get exceptionAttributes => _exceptionAttributes;
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
@@ -492,11 +489,6 @@ class GlobalProvider with ChangeNotifier {
     await createLanguageCodeMapper();
     String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
     await toggleLocale(mandatoryLang);
-    notifyListeners();
-  }
-
-  set exceptionAttributes(List<String> value){
-    _exceptionAttributes = value;
     notifyListeners();
   }
 
@@ -545,7 +537,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setNotificationLanguages(List<DynamicFieldData?> value) {
+  setNotificationLanguages(List<String?> value) {
     _notificationLanguages = value;
     notifyListeners();
   }

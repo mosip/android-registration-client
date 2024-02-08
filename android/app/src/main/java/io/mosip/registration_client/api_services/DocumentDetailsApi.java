@@ -78,10 +78,6 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
 
     @Override
     public void removeDocumentField(@NonNull String fieldId, @NonNull DocumentDataPigeon.Result<Void> result) {
-        try {
-            this.registrationService.getRegistrationDto().removeDocumentField(fieldId);
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Remove Document failed!" + Arrays.toString(e.getStackTrace()));
-        }
+
     }
 }
