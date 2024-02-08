@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.repository;
 
+import android.util.Log;
 
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
@@ -12,6 +13,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -94,13 +96,5 @@ public class GlobalParamRepository {
 
     public String getCachedStringGlobalParam(String key) {
         return globalParamMap.get(key);
-    }
-
-    public String getCachedStringAgeGroup(){
-        return globalParamMap.get(RegistrationConstants.AGE_GROUP_CONFIG);
-    }
-
-    public String getCachedStringMAVELScript(){
-        return globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
     }
 }
