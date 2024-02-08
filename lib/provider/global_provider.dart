@@ -1,10 +1,3 @@
-/*
- * Copyright (c) Modular Open Source Identity Platform
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
-*/
-
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
@@ -21,7 +14,6 @@ import 'package:registration_client/platform_spi/machine_key_service.dart';
 import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
-import 'package:registration_client/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
@@ -63,7 +55,6 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _fieldDisplayValues = {};
 
   Map<String, dynamic> _fieldInputValue = {};
-  Map<String,dynamic> _completeException={};
 
   Map<String, bool> _mvelValues = {};
 
@@ -78,8 +69,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeScannedPages(
-      String field, Uint8List? value, List<Uint8List?> listOfValue) {
+  removeScannedPages(String field,Uint8List? value, List<Uint8List?> listOfValue) {
     _scannedPages[field] = listOfValue;
     _scannedPages[field]!.remove(value);
     notifyListeners();
@@ -133,6 +123,7 @@ class GlobalProvider with ChangeNotifier {
     _mvelValues[field] = value;
     notifyListeners();
   }
+
 
   Process? get currentProcess => _currentProcess;
 
@@ -213,30 +204,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String,dynamic> get completeException=>_completeException;
-  set completeException(Map<String,dynamic> value){
-    _completeException=value;
-    notifyListeners();
-  }
-
   set mvelValues(Map<String, bool> value) {
     _mvelValues = value;
     notifyListeners();
   }
 
   //Functions
-  setCompleteExceptionByKey(String key,dynamic value){
-    completeException[key]=value;
-    notifyListeners();
-  }
-  getCompleteExceptionByKey(String key){
-    if(completeException.containsKey(key)){
-      return completeException[key];
-    }
-    else{
-      return [];
-    }
-  }
 
   setCurrentIndex(int value) {
     _currentIndex = value;
@@ -304,11 +277,6 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeInputMapValue(String key, Map<String, dynamic> commonMap) {
-    commonMap.remove(key);
-    notifyListeners();
-  }
-
   setLanguageSpecificValue(String key, dynamic value, String language,
       Map<String, dynamic> commonMap) {
     if (!commonMap.containsKey(key)) {
@@ -322,45 +290,22 @@ class GlobalProvider with ChangeNotifier {
 
   getVersionNoApp() async {
     String versionNoAppTemp = await networkService.getVersionNoApp();
-    if (versionNoAppTemp == "") {
-      versionNoAppTemp = await networkService
-          .getVersionFromGobalParam("mosip.registration.server_version");
+    if(versionNoAppTemp == "") {
+      versionNoAppTemp = await networkService.getVersionFromGobalParam("mosip.registration.server_version");
     }
+    final head = await rootBundle.loadString('.git/HEAD');
+    final commitId = await rootBundle.loadString('.git/ORIG_HEAD');
+
+    final branch = head.split('/').last;
+
+    branchNameApp = branch;
+    commitIdApp = commitId;
     versionNoApp = versionNoAppTemp;
   }
 
-  setGitHeadAttributes() async {
-    String head = "";
-    String branchName = "";
-    String commitId = "";
-    try {
-      head = await rootBundle.loadString('.git/HEAD');
-      branchName = head.split('/').last;
-      if (head.startsWith('ref: ')) {
-        branchName = head.split('ref: refs/heads/').last.trim();
-        commitId = await rootBundle.loadString('.git/refs/heads/$branchName');
-      } else {
-        commitId = head;
-      }
-    } catch (e) {
-      debugPrint("Failed fetching git info: $e");
-    }
-
-    branchNameApp = branchName;
-    commitIdApp = commitId;
-  }
 
   removeFieldFromMap(String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
-    notifyListeners();
-  }
-
-  removeValidFromMap(String key,Uint8List? item, Map<String, dynamic> commonMap) {
-    if(commonMap[key].listofImages!=null && commonMap[key].listofImages.length>=1) {
-      commonMap[key].listofImages.remove(item);
-    }else{
-      commonMap.remove(key);
-    }
     notifyListeners();
   }
 
@@ -371,7 +316,7 @@ class GlobalProvider with ChangeNotifier {
 
   getThresholdValues() async {
     for (var e in thresholdValuesMap.keys) {
-      thresholdValuesMap[e] = await BiometricsApi().getMapValue(e);
+      thresholdValuesMap[e] = await BiometricsApi().getThresholdValue(e);
     }
   }
 
@@ -410,9 +355,9 @@ class GlobalProvider with ChangeNotifier {
       List values = List.empty(growable: true);
       for (var lang in chosenLang) {
         String templateContent = await CommonDetailsApi().getTemplateContent(
-          field.templateName!,
-          langToCode(lang),
-        );
+            field.templateName!,
+            langToCode(lang),
+          );
         values.add(templateContent);
       }
       fieldDisplayValues[field.id!] = values;
@@ -468,8 +413,6 @@ class GlobalProvider with ChangeNotifier {
   int _minLanguageCount = 0;
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
-  List<String?> _notificationLanguages = [];
-  Map<String, bool> _disabledLanguageMap = {};
 
   List<LanguageData?> get languageDataList => _languageDataList;
   Map<String, String> get codeToLanguageMapper => _codeToLanguageMapper;
@@ -480,15 +423,11 @@ class GlobalProvider with ChangeNotifier {
   int get minLanguageCount => _minLanguageCount;
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
-  List<String?> get notificationLanguages => _notificationLanguages;
-  Map<String, bool> get disabledLanguageMap => _disabledLanguageMap;
 
   initializeLanguageDataList() async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
-    await createLanguageCodeMapper();
-    String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
-    await toggleLocale(mandatoryLang);
+    createLanguageCodeMapper();
     notifyListeners();
   }
 
@@ -537,33 +476,6 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setNotificationLanguages(List<String?> value) {
-    _notificationLanguages = value;
-    notifyListeners();
-  }
-
-  setDisabledLanguages(Map<String, bool> value) {
-    _disabledLanguageMap = value;
-    notifyListeners();
-  }
-
-  Future<bool> isFilePresent(String filePath) async {
-    try {
-      await rootBundle.load(filePath);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  setDisabledLanguage(String langCode) async {
-    String code = languageCodeToLocale[langCode]!;
-    String filepath = "assets/l10n/app_$code.arb";
-    bool isPresent = await isFilePresent(filepath);
-    _disabledLanguageMap[langCode] = !isPresent;
-    notifyListeners();
-  }
-
   setLanguageConfigData() async {
     _mandatoryLanguages = await processSpecService.getMandatoryLanguageCodes();
     _optionalLanguages = await processSpecService.getOptionalLanguageCodes();
@@ -583,7 +495,7 @@ class GlobalProvider with ChangeNotifier {
       mandatoryMap[lang] = true;
       _chosenLang.add(lang);
     }
-    for (var element in _optionalLanguages) {
+    for(var element in _optionalLanguages) {
       String lang = _codeToLanguageMapper[element]!;
       languageDataMap[lang] = false;
       mandatoryMap[lang] = false;
@@ -593,29 +505,20 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  createLanguageCodeMapper() async {
-    if (_languageDataList.isEmpty) {
+  createLanguageCodeMapper() {
+    if(_languageDataList.isEmpty) {
       _languages = ["eng"];
       _codeToLanguageMapper["eng"] = "English";
       _languageToCodeMapper["English"] = "eng";
-      _disabledLanguageMap["eng"] = false;
       return;
     }
     List<String> languageList = [];
-    _codeToLanguageMapper = {};
-    for(var element in _mandatoryLanguages) {
-      languageList.add(element!);
-      _codeToLanguageMapper[element] = element;
-    }
     for (var element in _languageDataList) {
-      if(_codeToLanguageMapper[element!.code] == null) {
-        languageList.add(element.code);
-      }
+      languageList.add(element!.code);
       _codeToLanguageMapper[element.code] = element.name;
       _languageToCodeMapper[element.name] = element.code;
-      await setDisabledLanguage(element.code);
+      _languages = languageList;
     }
-    _languages = languageList;
   }
 
   // App Language
@@ -645,7 +548,12 @@ class GlobalProvider with ChangeNotifier {
       return;
     }
     _selectedLanguage = code;
-    _appLocale = Locale(languageCodeToLocale[code]!);
+    if (code == "kan") {
+      _appLocale = const Locale("kn");
+    } else {
+      String localeCode = code.substring(0, 2);
+      _appLocale = Locale(localeCode);
+    }
     notifyListeners();
   }
 
@@ -658,8 +566,7 @@ class GlobalProvider with ChangeNotifier {
   List<String> _hierarchyReverse = [];
 
   Map<String?, String?> get locationHierarchyMap => _locationHierarchyMap;
-  Map<String, List<String?>> get groupedHierarchyValues =>
-      _groupedHierarchyValues;
+  Map<String, List<String?>> get groupedHierarchyValues => _groupedHierarchyValues;
   List<String> get hierarchyReverse => _hierarchyReverse;
 
   setLocationHierarchyMap(Map<String, String> value) {
@@ -673,8 +580,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   initializeLocationHierarchyMap() async {
-    Map<String?, String?> hierarchyMap =
-        await dynamicResponseService.fetchLocationHierarchyMap();
+    Map<String?, String?> hierarchyMap = await dynamicResponseService.fetchLocationHierarchyMap();
     _locationHierarchyMap = hierarchyMap;
     List<String> hReverse = [];
     _locationHierarchyMap.forEach((key, value) {
@@ -696,9 +602,5 @@ class GlobalProvider with ChangeNotifier {
     });
     _groupedHierarchyValues[key] = hValues;
     notifyListeners();
-  }
-
-  saveScreenHeaderToGlobalParam(String id, String value) async {
-    await networkService.saveScreenHeaderToGlobalParam(id, value);
   }
 }

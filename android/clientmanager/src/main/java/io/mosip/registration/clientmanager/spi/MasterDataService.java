@@ -135,4 +135,7 @@ public interface MasterDataService {
     void saveGlobalParam(String id, String value);
 
     String getGlobalParamValue(String id);
+
+    List<Location> findAllLocationsByLangCode(String langCode);
+
 }

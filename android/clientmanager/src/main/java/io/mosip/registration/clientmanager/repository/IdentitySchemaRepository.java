@@ -36,10 +36,8 @@ public class IdentitySchemaRepository {
 
     private IdentitySchemaDao identitySchemaDao;
     private GlobalParamRepository globalParamRepository;
-    private TemplateRepository templateRepository;
 
-    public IdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
-        this.templateRepository = templateRepository;
+    public IdentitySchemaRepository(GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaDao = identitySchemaDao;
     }
@@ -133,7 +131,6 @@ public class IdentitySchemaRepository {
 
             String primaryLanguage = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRIMARY_LANGUAGE);
             String secondaryLanguage = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SECONDARY_LANGUAGE);
-
             List<String> allowedBioAttributes = new ArrayList<>(Arrays.asList(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.ALLOWED_BIO_ATTRIBUTES).split(",")));
 
             HashMap<String, AgeGroupConfigDto> ageGroupAttributes = new HashMap<>();
@@ -142,6 +139,7 @@ public class IdentitySchemaRepository {
             jsonObject.keys().forEachRemaining(key -> {
                 ObjectMapper objectMapper = new ObjectMapper();
                 try {
+                    Log.i(TAG, "Agegroup Config: "+jsonObject.get(key).toString());
                     AgeGroupConfigDto ageGroupConfigDto = objectMapper.readValue(jsonObject.get(key).toString(), AgeGroupConfigDto.class);
                     ageGroupAttributes.put(key, ageGroupConfigDto);
                     if (ageGroupConfigDto.getIsGuardianAuthRequired()) {
@@ -154,9 +152,8 @@ public class IdentitySchemaRepository {
             Log.i(TAG, "Agegroup config parsing completed");
 
             HashMap<String, String> processLabel = new HashMap<>();
-            processLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("newRegistrationProcess_"+primaryLanguage));
-            if (secondaryLanguage != null)
-                processLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("newRegistrationProcess_"+secondaryLanguage));
+            processLabel.put(primaryLanguage, "New Registration");
+            processLabel.put(secondaryLanguage, "Nouvelle inscription"); //TODO set labels from properties
 
             ProcessSpecDto newProcess = new ProcessSpecDto("NEW", 1, "NEW", true, processLabel, processLabel, "NewReg.png", null, null);
 
@@ -230,14 +227,12 @@ public class IdentitySchemaRepository {
             List<ScreenSpecDto> screens = new ArrayList<>();
             //Consent Screen
             Map<String, String> consentScreenLabel = new HashMap<>();
-            consentScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("consentScreenName_"+primaryLanguage));
-            if (secondaryLanguage != null)
-                consentScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("consentScreenName_"+secondaryLanguage));
+            consentScreenLabel.put(primaryLanguage, "Consent");
+            consentScreenLabel.put(secondaryLanguage, "Consentement");
             List<FieldSpecDto> consentFields = new ArrayList<>();
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                String consentScreenTemplateName = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.CONSENT_SCREEN_TEMPLATE_NAME);
-                JsonNode jsonArray = objectMapper.readTree(templateRepository.getTemplate(consentScreenTemplateName, primaryLanguage));
+                JsonNode jsonArray = objectMapper.readTree(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.CONSENT_SCREEN_CONTENT));
                 for (JsonNode element : jsonArray) {
                     FieldSpecDto field = objectMapper.treeToValue(element, FieldSpecDto.class);
                     consentFields.add(field);
@@ -251,27 +246,24 @@ public class IdentitySchemaRepository {
 
             //Demographic screen
             Map<String, String> demoScreenLabel = new HashMap<>();
-            demoScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("demographicsScreenName_"+primaryLanguage));
-            if (secondaryLanguage != null)
-                demoScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("demographicsScreenName_"+secondaryLanguage));
+            demoScreenLabel.put(primaryLanguage, "Demographic Details");
+            demoScreenLabel.put(secondaryLanguage, "Détails démographiques");
             ScreenSpecDto demographicScreen = new ScreenSpecDto("DemographicDetails", demoScreenLabel, demographics, 2);
             screens.add(demographicScreen);
             Log.i(TAG, "Building demographics screen completed");
 
             //Documents screen
             Map<String, String> docScreenLabel = new HashMap<>();
-            docScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("documentsScreenName_"+primaryLanguage));
-            if (secondaryLanguage != null)
-                docScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("documentsScreenName_"+secondaryLanguage));
+            docScreenLabel.put(primaryLanguage, "Document Upload");
+            docScreenLabel.put(secondaryLanguage, "Des documents");
             ScreenSpecDto documentsScreen = new ScreenSpecDto("Documents", docScreenLabel, documents, 3);
             screens.add(documentsScreen);
             Log.i(TAG, "Building documents screen completed");
 
             //Biometrics screen
             Map<String, String> bioScreenLabel = new HashMap<>();
-            bioScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("biometricsScreenName_"+primaryLanguage));
-            if (secondaryLanguage != null)
-                bioScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("biometricsScreenName_"+secondaryLanguage));
+            bioScreenLabel.put(primaryLanguage, "Biometric Details");
+            bioScreenLabel.put(secondaryLanguage, "Détails biométriques");
             ScreenSpecDto biometricsScreen = new ScreenSpecDto("BiometricDetails", bioScreenLabel, biometrics, 4);
             screens.add(biometricsScreen);
             Log.i(TAG, "Building biometrics screen completed");

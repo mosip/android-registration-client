@@ -186,7 +186,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                     }
                 });
             }, 0);
-            syncCACertificates();
+            //syncCACertificates();
         } catch (Exception ex) {
             Log.e(TAG, "Data Sync failed", ex);
             Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
@@ -563,8 +563,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                 Log.e(TAG, "Failed to parse the data", e);
             }
         }
+
+        if (!foundErrors) {
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
+        }
     }
 
     private void downloadUrlData(Path path, JSONObject jsonObject) {
@@ -812,6 +815,9 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public List<GenericValueDto> findLocationByHierarchyLevel(int hierarchyLevel, String langCode) {
+//        Integer level = getHierarchyLevel(hierarchyLevelName);
+//        if (level == null)
+//            return Collections.EMPTY_LIST;
         return this.locationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
     }
 
@@ -822,6 +828,9 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public String getTemplateContent(String templateName, String langCode) {
+        if(templateName.equalsIgnoreCase("Registration Consent")){
+            return "<!DOCTYPE html><html><head><title>Consent</title></head><body><div>I understand that the data collected about me during registration by the said authority includes <br><br>&#x2022 Name <br> &#x2022 Date of birth <br> &#x2022 Gender <br> &#x2022 Address <br> &#x2022 Contact details <br> &#x2022 Documents<br> &#x2022 Biometrics <br> <br>I also understand that this information will be stored and processed for the purpose of verifying my identity in order to access various services, or to comply with a legal obligation. I give my consent for the collection of this data for this purpose</div></body></html>";
+        }
         return templateRepository.getTemplate(templateName, langCode);
     }
 
@@ -839,7 +848,6 @@ public class MasterDataServiceImpl implements MasterDataService {
     public List<Location> findAllLocationsByLangCode(String langCode) {
         return locationRepository.findAllLocationsByLangCode(langCode);
     }
-
     @Override
     public void saveGlobalParam(String id, String value) {
         globalParamRepository.saveGlobalParam(id, value);
@@ -850,4 +858,6 @@ public class MasterDataServiceImpl implements MasterDataService {
         String value = globalParamRepository.getGlobalParamValue(id);
         return value == null ? "" : value;
     }
+
+
 }

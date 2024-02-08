@@ -1,10 +1,3 @@
-/*
- * Copyright (c) Modular Open Source Identity Platform
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
-*/
-
 package io.mosip.registration_client.api_services;
 
 import static android.content.ContentValues.TAG;
@@ -12,20 +5,20 @@ import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,8 +32,6 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
-import io.mosip.registration.clientmanager.dto.http.CACertificateDto;
-import io.mosip.registration.clientmanager.dto.http.CACertificateResponseDto;
 import io.mosip.registration.clientmanager.dto.http.CertificateResponse;
 import io.mosip.registration.clientmanager.dto.http.ClientSettingDto;
 import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
@@ -69,15 +60,12 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
-import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
-import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import okhttp3.ResponseBody;
@@ -147,10 +135,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null) {
-            result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
+        if (centerMachineDto == null)
             return;
-        }
 
         Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
                 centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
@@ -169,17 +155,19 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         result.success(syncResult("PolicyKeySync", 5, ""));
                         return;
                     }
-                    Log.e(TAG, "Policy Sync Failed");
+                    Log.e(TAG, "Policy Sync Failed:" + error.toString());
                     result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
                     return;
                 }
                 result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
+                return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CertificateResponse>> call, Throwable t) {
                 Log.e(TAG,"Policy Sync Failed:", t);
                 result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
+                return;
             }
         });
     }
@@ -200,18 +188,19 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     if (error == null) {
                         saveGlobalParams(response.body().getResponse());
                         result.success(syncResult("GlobalParamsSync", 1, ""));
-                    } else {
-                        result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-                    }
-                } else {
+                        return;
+                    } else
                     result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-                }
+                    return;
+                } else
+                result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
+                return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
-                Log.e(TAG, "Global Params Sync Failed.", t);
                 result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
+                return;
             }
         });
     }
@@ -286,18 +275,20 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         saveUserDetails(response.body().getResponse().getUserDetails());
                         MasterDataSyncPigeon.Sync sync = syncResult("UserDetailsSync", 3, "");
                         result.success(syncResult("UserDetailsSync", 3, ""));
-                    } else {
-                        result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-                    }
-                } else {
+                        return;
+                    } else
                     result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-                }
+                    return;
+                } else
+                result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
+                return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<UserDetailResponse>> call, Throwable t) {
-                Log.e(TAG, "User Details Sync Failed.", t);
+
                 result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
+                return;
             }
         });
     }
@@ -325,12 +316,15 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
                         result.success(syncResult("LatestIDSchemaSync", 4, ""));
+                        return;
+
                     } catch (Exception e) {
                         result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
+                        Log.e(TAG, "Failed to save IDSchema", e);
                     }
-                } else {
-                    result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
-                }
+                } else
+                result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
+
             }
 
             @Override
@@ -383,21 +377,22 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 syncMasterData(result, retryNo + 1);
                             } else {
                                 result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
+                                return;
                             }
                         } else {
                             result.success(syncResult("MasterDataSync", 2, ""));
+                            return;
                         }
-                    } else {
-                        result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                    }
-                } else {
+                    } else
                     result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                }
+                    return;
+                } else
+                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
+                return;
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
-                Log.e(TAG, "Master Data Sync Failed.", t);
                 result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
             }
         });
@@ -631,68 +626,5 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 .setSyncProgress(Long.valueOf(progress))
                 .setErrorCode(errorCode)
                 .build();
-    }
-
-    @Override
-    public void getCaCertsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncCACertificates(result, 0);
-    }
-
-    private void syncCACertificates(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
-        Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
-                BuildConfig.CLIENT_VERSION);
-        call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
-            @Override
-            public void onResponse(Call<ResponseWrapper<CACertificateResponseDto>> call, Response<ResponseWrapper<CACertificateResponseDto>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    String errorMessage = error != null ? error.getMessage() : null;
-                    if (errorMessage == null) {
-                        try {
-                            saveCACertificate(response.body().getResponse().getCertificateDTOList());
-                            result.success(syncResult("CACertificatesSync", 6, ""));
-                            return;
-                        } catch (Throwable t) {
-                            Log.e(TAG, "Failed to sync CA certificates", t);
-                        }
-                    }
-                    result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
-                } else
-                    result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
-            }
-            @Override
-            public void onFailure(Call<ResponseWrapper<CACertificateResponseDto>> call, Throwable t) {
-                result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
-            }
-        });
-    }
-
-    private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
-        if (caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
-            //Data Fix : As createdDateTime is null sometimes
-            caCertificateDtos.forEach(c -> {
-                if (c.getCreatedtimes() == null)
-                    c.setCreatedtimes(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
-            });
-            caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
-
-            for (CACertificateDto cert : caCertificateDtos) {
-                String errorCode = null;
-                try {
-                    if (cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
-                        CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
-                        caCertificateRequestDto.setCertificateData(cert.getCertData());
-                        caCertificateRequestDto.setPartnerDomain(cert.getPartnerDomain());
-                        io.mosip.registration.keymanager.dto.CACertificateResponseDto caCertificateResponseDto = certificateManagerService.uploadCACertificate(caCertificateRequestDto);
-                        Log.i(TAG, caCertificateResponseDto.getStatus());
-                    }
-                } catch (KeymanagerServiceException ex) {
-                    errorCode = ex.getErrorCode();
-                }
-
-                if (errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
-                    throw new KeymanagerServiceException(errorCode, errorCode);
-            }
-        }
     }
 }
