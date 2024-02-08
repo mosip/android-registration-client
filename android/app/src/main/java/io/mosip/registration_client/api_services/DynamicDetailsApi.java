@@ -41,16 +41,12 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
 
 
     @Override
-    public void getFieldValues(@NonNull String fieldName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.DynamicFieldData>> result) {
-        List<DynamicResponsePigeon.DynamicFieldData> response = new ArrayList<>();
+    public void getFieldValues(@NonNull String fieldName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<String>> result) {
+        List<String> response = new ArrayList<>();
         try {
             List<GenericValueDto> genericValueDtoList = this.masterDataService.getFieldValues(fieldName, langCode);
             genericValueDtoList.forEach((dto) -> {
-                DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
-                        .setCode(dto.getCode())
-                        .setName(dto.getName())
-                        .build();
-                response.add(data);
+                response.add(dto.getName());
             });
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch field values: " + Arrays.toString(e.getStackTrace()));
