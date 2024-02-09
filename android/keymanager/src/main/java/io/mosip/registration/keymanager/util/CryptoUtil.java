@@ -57,11 +57,4 @@ public class CryptoUtil {
         }
     }
 
-    public static String encodeToURLSafeBase64(byte[] data) {
-        if (data == null) {
-            return null;
-        }
-        return base64encoder.encodeToString(data);
-    }
-
 }

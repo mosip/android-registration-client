@@ -28,6 +28,4 @@ abstract class SyncApi{
   Sync getMasterDataSync();
   @async
   Sync getCaCertsSync();
-  @async
-  Sync getKernelCertsSync();
 }

@@ -6,8 +6,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -164,9 +162,6 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void manualSync() {
-        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null)
-            return;
         try {
             syncMasterData(() -> {
                 Log.i(TAG, "manualSync: MasterData sync completed");
@@ -178,16 +173,9 @@ public class MasterDataServiceImpl implements MasterDataService {
                             try {
                                 syncGlobalParamsData(() -> {
                                     Log.i(TAG, "manualSync: GlobalParamsData sync completed");
-                                    try {
-                                        syncCertificate(() -> {
-                                            Log.i(TAG, "manualSync: Certificate sync completed");
-                                            syncCertificate(() -> {
-                                                Log.i(TAG, "manualSync: Certificate kernel sync completed");
-                                            }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY");
-                                        }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId());
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "manualSync: Certificate sync data sync failed", e);
-                                    }
+                                    syncCertificate(() -> {
+                                        Log.i(TAG, "manualSync: Certificate sync completed");
+                                    });
                                 });
                             } catch (Exception e) {
                                 Log.e(TAG, "manualSync: Global params data sync failed", e);
@@ -208,16 +196,16 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void syncCertificate() {
         syncCertificate(() -> {
-        },"","","","");
+        });
     }
 
-    private void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId) {
+    private void syncCertificate(Runnable onFinish) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null)
             return;
 
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(applicationId,
-                referenceId, BuildConfig.CLIENT_VERSION);
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
+                centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
@@ -225,8 +213,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId(setApplicationId);
-                        certificateRequestDto.setReferenceId(setReferenceId);
+                        certificateRequestDto.setApplicationId("REGISTRATION");
+                        certificateRequestDto.setReferenceId(centerMachineDto.getMachineRefId());
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
@@ -518,6 +506,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
         if (caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
+            Log.i(TAG, "Started saving cacertificates with size: "+caCertificateDtos.size());
             //Data Fix : As createdDateTime is null sometimes
             caCertificateDtos.forEach(c -> {
                 if (c.getCreatedtimes() == null)
@@ -526,7 +515,6 @@ public class MasterDataServiceImpl implements MasterDataService {
             caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
 
             for (CACertificateDto cert : caCertificateDtos) {
-                String errorCode = null;
                 try {
                     if (cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
                         CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
@@ -536,11 +524,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                         Log.i(TAG, caCertificateResponseDto.getStatus());
                     }
                 } catch (KeymanagerServiceException ex) {
-                    errorCode = ex.getErrorCode();
+                    Log.e(TAG, "Failed to save CA cert : " + cert.getCertId());
                 }
-
-                if (errorCode != null && !errorCode.equals(KeyManagerErrorCode.CERTIFICATE_EXIST_ERROR.getErrorCode()))
-                    throw new KeymanagerServiceException(errorCode, errorCode);
             }
         }
     }
@@ -579,7 +564,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
     }
 
-    public void downloadUrlData(Path path, JSONObject jsonObject) {
+    private void downloadUrlData(Path path, JSONObject jsonObject) {
         Log.i(TAG, "Started downloading mvel script: " + path.toString());
         try {
             String headers = jsonObject.getString("headers");
