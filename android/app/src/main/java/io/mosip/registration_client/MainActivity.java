@@ -245,6 +245,11 @@ public class MainActivity extends FlutterActivity {
             Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
             Integer batchSize = getBatchSize();
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
+
+//          Variable is accessed within inner class. Needs to be declared final also it is modified too in the inner class
+//          Solution: using final array variable with one element that can be altered
+            final Integer[] remainingPack = {registrationList.size()};
+
             if(registrationList.isEmpty()){
                 uploadRegistrationPackets(context);
                 return;
@@ -261,8 +266,9 @@ public class MainActivity extends FlutterActivity {
 
                         @Override
                         public void onComplete(String RID, PacketTaskStatus status) {
-                            Log.d(getClass().getSimpleName(), status+RID);
-                            if(RID == registrationList.get(registrationList.size() - 1).getPacketId()){
+                            remainingPack[0] -= 1;
+                            Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
+                            if(remainingPack[0] == 0){
                                 Log.d(getClass().getSimpleName(), "Last Packet"+RID);
                                 uploadRegistrationPackets(context);
                             }
