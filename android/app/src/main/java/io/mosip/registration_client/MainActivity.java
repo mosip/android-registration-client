@@ -246,8 +246,10 @@ public class MainActivity extends FlutterActivity {
             Integer batchSize = getBatchSize();
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
 
-
+//          Variable is accessed within inner class. Needs to be declared final also it is modified too in the inner class
+//          Solution: using final array variable with one element that can be altered
             final Integer[] remainingPack = {registrationList.size()};
+
             if(registrationList.isEmpty()){
                 uploadRegistrationPackets(context);
                 return;
