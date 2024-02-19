@@ -3,7 +3,13 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.mosip.registration.clientmanager.BuildConfig;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
@@ -16,6 +22,9 @@ import io.mosip.registration.keymanager.dto.CryptoManagerRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoManagerResponseDto;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.ProcessedLevelType;
+import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
 import io.mosip.registration.packetmanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
@@ -29,10 +38,13 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 
 public class UserOnboardService {
 
@@ -42,6 +54,8 @@ public class UserOnboardService {
     public static final String AUTH_HASH = "hash";
     public static String ONBOARD_CERT_THUMBPRINT = "thumbprint";
     private static final String APPLICATION_ID = "IDA";
+
+    private static final String APPLICATION_NAME = "Android Registration Client";
     private static final String REFERENCE_ID = "INTERNAL";
     public static final String CERTIFICATE = "certificate";
     public static final String ID = "id";
@@ -82,16 +96,27 @@ public class UserOnboardService {
     private AuditManagerService auditManagerService;
     private ObjectMapper objectMapper;
 
+    private RegistrationConstants registrationConstants;
+
+//    private UserOnboardDAO userOnBoardDao;
+
+    private Map<String, BiometricsDto> operatorBiometrics;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserOnboardService.class);
+
+
+    private static final String BIOMETRIC_KEY_PATTERN = "%s_%s_%s";
+
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
                               CertificateManagerService certificateManagerService,
-                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService) {
+                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService,RegistrationConstants registrationConstants) {
         this.context = context;
         this.certificateManagerService = certificateManagerService;
         this.syncRestService = syncRestService;
         this.cryptoManagerService = cryptoManagerService;
         this.objectMapper = objectMapper;
         this.auditManagerService = auditManagerService;
+        this.registrationConstants=registrationConstants;
     }
 
     public boolean onboardOperator(@NonNull List<BiometricsDto> biometrics) {
@@ -401,4 +426,235 @@ public class UserOnboardService {
         }
 
     }
+
+
+    public void initializeOperatorBiometric() {
+        operatorBiometrics = new HashMap<String, BiometricsDto>();
+    }
+
+
+    public BiometricsDto addOperatorBiometrics(String operatorType, String uiSchemaAttribute, BiometricsDto value) {
+        LOGGER.debug( APPLICATION_NAME, APPLICATION_ID,
+                "addOperatorBiometrics >>> operatorType :: " + operatorType + " bioAttribute :: " + uiSchemaAttribute);
+
+        operatorBiometrics.put(String.format(BIOMETRIC_KEY_PATTERN, operatorType, uiSchemaAttribute, ""), value);
+        return value;
+    }
+
+
+    public void addOperatorBiometricException(String operatorType, String bioAttribute) {
+        LOGGER.debug( APPLICATION_NAME, APPLICATION_ID,
+                "addOperatorBiometricException >>> operatorType :: " + operatorType + " bioAttribute :: "
+                        + bioAttribute);
+        operatorBiometrics.remove(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, ""));
+        operatorBiometrics.put(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, "exp"), null);
+    }
+
+
+    public void removeOperatorBiometrics(String operatorType, String bioAttribute) {
+        LOGGER.debug( APPLICATION_NAME, APPLICATION_ID,
+                "removeOperatorBiometrics >>>> operatorType :: " + operatorType + " bioAttribute :: " + bioAttribute);
+        operatorBiometrics.remove(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, ""));
+    }
+
+
+    public void removeOperatorBiometricException(String operatorType, String bioAttribute) {
+        LOGGER.debug( APPLICATION_NAME, APPLICATION_ID,
+                "removeOperatorBiometricException >>>>> operatorType :: " + operatorType + " bioAttribute :: "
+                        + bioAttribute);
+        operatorBiometrics.remove(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, "exp"));
+    }
+
+
+    public List<BiometricsDto> getAllBiometrics() {
+        if (Objects.isNull(operatorBiometrics))
+            return null;
+
+        return operatorBiometrics.entrySet().stream().filter(m -> m.getKey().endsWith("_")).map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<BiometricsDto> getAllBiometricExceptions() {
+        if (Objects.isNull(operatorBiometrics))
+            return null;
+
+        return operatorBiometrics.entrySet().stream().filter(m -> m.getKey().endsWith("_exp")).map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+    }
+
+
+    public boolean isBiometricException(String operatorType, String bioAttribute) {
+        if (Objects.isNull(operatorBiometrics))
+            return false;
+
+        Optional<String> result = operatorBiometrics.entrySet().stream()
+                .filter(m -> m.getKey()
+                        .equalsIgnoreCase(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, "exp")))
+                .map(Map.Entry::getKey).findFirst();
+
+        return result.isPresent() ? true : false;
+    }
+
+
+    public List<BiometricsDto> getBiometrics(String operatorType, List<String> attributeNames) {
+        if (Objects.isNull(operatorBiometrics))
+            return null;
+
+        List<BiometricsDto> list = new ArrayList<>();
+        attributeNames.forEach(name -> {
+            Optional<BiometricsDto> result = operatorBiometrics.entrySet().stream()
+                    .filter(m -> m.getKey().equals(String.format(BIOMETRIC_KEY_PATTERN, operatorType, name, "")))
+                    .map(Map.Entry::getValue).findFirst();
+
+            if (result.isPresent())
+                list.add(result.get());
+        });
+        return list;
+    }
+
+    private byte[] getCertificateThumbprint(Certificate cert) {
+        try {
+            return DigestUtils.sha256(cert.getEncoded());
+        } catch (CertificateEncodingException e) {
+            LOGGER.error( APPLICATION_NAME, APPLICATION_ID, "Failed to get cert thumbprint >> " +
+                    ExceptionUtils.getStackTrace(e));
+        }
+        return new byte[]{};
+    }
+
+//    public Timestamp getLastUpdatedTime(String usrId) {
+//        return userOnBoardDao.getLastUpdatedTime(usrId);
+//    }
+
+    private String getDomainUriValue() {
+        String pattern = String.valueOf(ApplicationContext.map().getOrDefault(RegistrationConstants.ID_AUTH_DOMAIN_URI,
+                DOMAIN_URI_VALUE));
+        return serviceDelegateUtil.prepareURLByHostName(pattern);
+    }
+
+    private String getSubTypesAsString(BiometricType bioType, String bioAttribute) {
+        List<String> subtypes = new LinkedList<>();
+        switch (bioType) {
+            case FINGER:
+                subtypes.add(bioAttribute.contains("left") ? SingleAnySubtypeType.LEFT.value()
+                        : SingleAnySubtypeType.RIGHT.value());
+                if (bioAttribute.toLowerCase().contains("thumb"))
+                    subtypes.add(SingleAnySubtypeType.THUMB.value());
+                else {
+                    String val = bioAttribute.toLowerCase().replace("left", "").replace("right", "");
+                    subtypes.add(SingleAnySubtypeType.fromValue(StringUtils.capitalizeFirstLetter(val).concat("Finger"))
+                            .value());
+                }
+                break;
+            case IRIS:
+                subtypes.add(bioAttribute.contains("left") ? SingleAnySubtypeType.LEFT.value()
+                        : SingleAnySubtypeType.RIGHT.value());
+                break;
+            case FACE:
+                break;
+            default:
+                break;
+        }
+        return String.join(" ", subtypes);
+    }
+
+
+
+    private ResponseDTO save(List<BiometricsDto> biometrics) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        String onBoardingResponse = RegistrationConstants.EMPTY;
+
+        LOGGER.info(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID, "Entering save method");
+
+        try {
+            List<BiometricsDto> fingerprintsList = getBiometricsByModality(RegistrationConstants.FINGERPRINT_UPPERCASE,
+                    biometrics);
+            List<BiometricsDto> irisList = getBiometricsByModality(RegistrationConstants.IRIS, biometrics);
+            List<BiometricsDto> face = getBiometricsByModality(RegistrationConstants.FACE, biometrics);
+
+            List<BIR> fpTemplates = getExtractedTemplates(fingerprintsList);
+            List<BIR> irisTemplates = getExtractedTemplates(irisList);
+            List<BIR> faceTemplates = getExtractedTemplates(face);
+
+            List<BIR> templates = Stream.of(fpTemplates, irisTemplates, faceTemplates).flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+
+            onBoardingResponse = userOnBoardDao.insertExtractedTemplates(templates);
+            if (onBoardingResponse.equalsIgnoreCase(RegistrationConstants.SUCCESS)) {
+                LOGGER.info(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID, "operator details inserted");
+
+                if ((RegistrationConstants.SUCCESS).equalsIgnoreCase(userOnBoardDao.save())) {
+                    LOGGER.info(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID,
+                            "center user machine details inserted");
+
+                    setSuccessResponse(responseDTO, RegistrationConstants.USER_ON_BOARDING_SUCCESS_MSG, null);
+
+                    LOGGER.info(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID, "user onboarding sucessful");
+                }
+            }
+        } catch (RegBaseUncheckedException | BiometricException uncheckedException) {
+            LOGGER.error(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID, uncheckedException.getMessage()
+                    + onBoardingResponse + ExceptionUtils.getStackTrace(uncheckedException));
+
+            setErrorResponse(responseDTO, RegistrationConstants.USER_ON_BOARDING_ERROR_RESPONSE, null);
+
+        }
+        return responseDTO;
+    }
+
+    private List<BIR> getExtractedTemplates(List<BiometricsDto> biometrics) throws BiometricException {
+        List<BIR> templates = new ArrayList<>();
+        if (biometrics != null && !biometrics.isEmpty()) {
+            List<BIR> birList = new ArrayList<>();
+            for (BiometricsDto biometricsDto : biometrics) {
+                BIR bir = birBuilder.buildBir(biometricsDto, ProcessedLevelType.RAW);
+                LOGGER.debug(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID, "Adding bir");
+                birList.add(bir);
+            }
+
+            templates = bioAPIFactory
+                    .getBioProvider(BiometricType.fromValue(birList.get(0).getBdbInfo().getType().get(0).value()),
+                            BiometricFunction.EXTRACT)
+                    .extractTemplate(birList, null);
+        }
+        return templates;
+    }
+
+    private List<BiometricsDto> getBiometricsByModality(String modality, List<BiometricsDto> biometrics) {
+        return biometrics.stream().filter(dto -> dto.getModalityName().toLowerCase().contains(modality.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    @Counted(recordFailuresOnly = true)
+    private Boolean userOnBoardStatusFlag(@MetricTag("userid") String userId, Map<String, Object> onBoardResponseMap, ResponseDTO responseDTO) {
+
+        Boolean userOnbaordFlag = false;
+
+        if (null != onBoardResponseMap && null != onBoardResponseMap.get(RegistrationConstants.RESPONSE)
+                && null == onBoardResponseMap.get(RegistrationConstants.ERRORS)) {
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) onBoardResponseMap
+                    .get(RegistrationConstants.RESPONSE);
+            LOGGER.info(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID, "authStatus true");
+            userOnbaordFlag = (Boolean) responseMap.get(RegistrationConstants.ON_BOARD_AUTH_STATUS);
+        } else if (null != onBoardResponseMap && null != onBoardResponseMap.get(RegistrationConstants.ERRORS)) {
+            List<LinkedHashMap<String, Object>> listOfFailureResponse = (List<LinkedHashMap<String, Object>>) onBoardResponseMap
+                    .get(RegistrationConstants.ERRORS);
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) onBoardResponseMap
+                    .get(RegistrationConstants.RESPONSE);
+            userOnbaordFlag = (Boolean) responseMap.get(RegistrationConstants.ON_BOARD_AUTH_STATUS);
+            LOGGER.error(LOG_REG_USER_ONBOARD, APPLICATION_NAME, APPLICATION_ID, listOfFailureResponse.toString());
+            setErrorResponse(responseDTO,
+                    listOfFailureResponse.size() > 0 ? (String) listOfFailureResponse.get(0).get("errorMessage")
+                            : RegistrationConstants.USER_ON_BOARDING_THRESHOLD_NOT_MET_MSG,
+                    null);
+        }
+
+        return userOnbaordFlag;
+
+    }
+
 }
