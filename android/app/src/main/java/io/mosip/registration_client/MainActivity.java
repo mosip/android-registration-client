@@ -97,6 +97,9 @@ import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 
+import android.net.Uri;
+
+
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
 
@@ -224,6 +227,11 @@ public class MainActivity extends FlutterActivity {
         }
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                Intent permissionIntent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                permissionIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                startActivity(permissionIntent);
+            }
             long alarmTime = getIntervalMillis(api);
             long currentTime = System.currentTimeMillis();
             long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
