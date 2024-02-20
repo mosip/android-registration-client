@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -67,7 +68,7 @@ class OnboardingPage extends StatelessWidget {
                         Text(
                           "${AppLocalizations.of(context)!.hello}, ",
                           style: TextStyle(
-                            fontSize: isMobileSize ? 28 : 36,
+                            fontSize: isMobileSize ? 28.h : 36.h,
                             color: appWhite,
                           ),
                         ),
@@ -97,7 +98,13 @@ class OnboardingPage extends StatelessWidget {
                     ),
                     _getButton(
                       title: AppLocalizations.of(context)!.get_onboard,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OperatorOnboardingBiometricsCaptureControl()));
+                      },
                       color: appWhite,
                       fontColor: appSolidPrimary,
                     ),
