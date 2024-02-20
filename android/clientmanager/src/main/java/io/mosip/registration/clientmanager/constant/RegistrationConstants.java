@@ -56,6 +56,17 @@ public class RegistrationConstants {
     public static final String ALLOWED_BIO_ATTRIBUTES = "mosip.registration.allowed-bioattributes";
     public static final String DEFAULT_APP_TYPE_CODE = "mosip.registration.default-app-type-code";
 
+    public static final String RESPONSE = "response";
+    public static final String ERRORS = "errors";
+    public static final String ON_BOARD_AUTH_STATUS = "authStatus";
+    public static final String USER_ON_BOARDING_THRESHOLD_NOT_MET_MSG = "USER_ON_BOARDING_THRESHOLD_NOT_MET_MSG";
+    public static final String SUCCESS = "Success";
+    public static final String FINGERPRINT_UPPERCASE = "FINGERPRINT";
+    public static final String FACE = "FACE";
+    public static final String IRIS = "IRIS";
+    public static final String USER_ON_BOARDING_SUCCESS_MSG = "USER_ONBOARD_SUCCESS";
+    public static final String USER_ON_BOARDING_ERROR_RESPONSE = "USER_ONBOARD_ERROR";
+
     //Audits
     public static final String REGISTRATION_SCREEN = "Registration: %s";
 }
