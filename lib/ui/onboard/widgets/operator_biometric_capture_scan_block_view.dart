@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -12,6 +13,8 @@ class OperatorBiometricCaptureScanBlockView extends StatefulWidget {
 }
 
 class _OperatorBiometricCaptureScanBlockViewState extends State<OperatorBiometricCaptureScanBlockView> {
+
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,30 +38,30 @@ class _OperatorBiometricCaptureScanBlockViewState extends State<OperatorBiometri
                       MaterialStateProperty.all<Size>(const Size(215, 68)),
                 ),
                 onPressed: () {
-                  List<String> bioAttributes = (widget
-                              .field.conditionalBioAttributes!.first!.ageGroup!
-                              .compareTo(
-                                  context.read<GlobalProvider>().ageGroup) ==
-                          0)
-                      ? _returnBiometricList(
-                          widget.field.conditionalBioAttributes!.first!
-                              .bioAttributes!,
-                          widget.field.id!)
-                      : _returnBiometricList(
-                          widget.field.bioAttributes!, widget.field.id!);
+                  // List<String> bioAttributes = (widget
+                  //             .field.conditionalBioAttributes!.first!.ageGroup!
+                  //             .compareTo(
+                  //                 context.read<GlobalProvider>().ageGroup) ==
+                  //         0)
+                  //     ? _returnBiometricList(
+                  //         widget.field.conditionalBioAttributes!.first!
+                  //             .bioAttributes!,
+                  //         widget.field.id!)
+                  //     : _returnBiometricList(
+                  //         widget.field.bioAttributes!, widget.field.id!);
 
-                  var nextElement = _getNextElement(
-                      bioAttributes,
-                      context
-                          .read<BiometricCaptureControlProvider>()
-                          .biometricAttribute);
-                  if (nextElement != null) {
-                    context
-                        .read<BiometricCaptureControlProvider>()
-                        .biometricAttribute = nextElement;
-                  } else {
-                    Navigator.pop(context);
-                  }
+                  // var nextElement = _getNextElement(
+                  //     bioAttributes,
+                  //     context
+                  //         .read<BiometricCaptureControlProvider>()
+                  //         .biometricAttribute);
+                  // if (nextElement != null) {
+                  //   context
+                  //       .read<BiometricCaptureControlProvider>()
+                  //       .biometricAttribute = nextElement;
+                  // } else {
+                  //   Navigator.pop(context);
+                  // }
                 },
                 child: Text(AppLocalizations.of(context)!.next_button,
                     style: TextStyle(fontSize: 24, fontWeight: bold)),
@@ -81,32 +84,8 @@ class _OperatorBiometricCaptureScanBlockViewState extends State<OperatorBiometri
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      (widget.field.inputRequired!)
-                          ? RichText(
-                              text: TextSpan(
-                              text: context
-                                  .read<GlobalProvider>()
-                                  .chooseLanguage(widget.field.label!),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      fontSize: (isMobileSize) ? 14.h : 24.h,
-                                      color: blackShade1,
-                                      fontWeight: semiBold,
-                                      overflow: TextOverflow.ellipsis),
-                              children: const [
-                                TextSpan(
-                                  text: " *",
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 15),
-                                )
-                              ],
-                            ))
-                          : Text(
-                              context
-                                  .read<GlobalProvider>()
-                                  .chooseLanguage(widget.field.label!),
+                       Text(
+                              "Supervisor's Biometric Verification",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
@@ -174,7 +153,7 @@ class _OperatorBiometricCaptureScanBlockViewState extends State<OperatorBiometri
                           height: 84,
                           child: Center(
                             child: Text(
-                              "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
+                              " ${AppLocalizations.of(context)!.scan}",
                               style: TextStyle(
                                   fontSize: (isMobileSize) ? 18 : 24,
                                   fontWeight: semiBold,
@@ -239,12 +218,12 @@ class _OperatorBiometricCaptureScanBlockViewState extends State<OperatorBiometri
                 const SizedBox(
                   height: 40,
                 ),
-                (context
-                            .read<BiometricCaptureControlProvider>()
-                            .biometricCaptureScanBlockTabIndex ==
-                        1)
-                    ? _scanBlock()
-                    : _exceptionBlock()
+                // (context
+                //             .read<BiometricCaptureControlProvider>()
+                //             .biometricCaptureScanBlockTabIndex ==
+                //         1)
+                //     ? _scanBlock()
+                //     : _exceptionBlock()
               ],
             ),
           ),
