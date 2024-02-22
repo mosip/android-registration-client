@@ -5,11 +5,12 @@ on:
   push:
     branches:
       - '!release-branch'
-      - release-1*
+      - release-*
       - master
       - 1.*
       - develop
       - sprint-*
+      - main
 
 jobs:
   build-android:
