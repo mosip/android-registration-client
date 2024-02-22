@@ -3,7 +3,8 @@ name: Build Android Registration-Client
 on:
   push:
     branches:
-      - developer-release/flutter/0.9.x
+      - release-0.9.x
+      - develop
 
 jobs:
   build:
