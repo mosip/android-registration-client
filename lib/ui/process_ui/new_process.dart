@@ -402,6 +402,14 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 int count = returnBiometricListLength(
                     screen.fields!.elementAt(i)!.bioAttributes,
                     screen.fields!.elementAt(i)!.id!);
+                if (globalProvider
+                        .completeException[screen.fields!.elementAt(i)!.id!] !=
+                    null) {
+                  int length = globalProvider
+                      .completeException[screen.fields!.elementAt(i)!.id!]
+                      .length;
+                  count = count - length;
+                }
 
                 if (globalProvider
                         .fieldInputValue[screen.fields!.elementAt(i)!.id!]

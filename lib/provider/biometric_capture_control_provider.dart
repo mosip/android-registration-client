@@ -15,6 +15,12 @@ class BiometricCaptureControlProvider with ChangeNotifier {
   late String biometricAttribute;
 
   int biometricCaptureScanBlockTabIndex = 1;
+  List<String> _completeExceptionList=[];
+  List<String> get completeExceptionList=> _completeExceptionList;
+  set completeExceptionList(List<String> value){
+    _completeExceptionList=value;
+    notifyListeners();
+  }
   BiometricAttributeData iris = BiometricAttributeData(
       viewTitle: "",
       title: "Iris",
