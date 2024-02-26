@@ -343,6 +343,8 @@ public class TemplateService {
             if (result.isPresent()) {
                 data.put(finger, result.get().getBioValue() == null ? "&#10008;" :
                         rankings.get(finger));
+                        } else {
+                data.put(finger, "&#10008;");
             }
         }
     }
