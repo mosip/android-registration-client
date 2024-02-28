@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/onboard/widgets/operator_biometric_capture_scan_block_view.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -27,17 +30,18 @@ class _OperatorBiometricsCaptureState
                 biometricAttributeData.title;
           });
 
-          // final providerCopy = Provider.of<BiometricCaptureControlProvider>(
-          //     context,
-          //     listen: false);
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => ChangeNotifierProvider.value(
-          //               value: providerCopy,
-          //               child: BiometricCaptureScanBlockPortrait(
-          //                   field: widget.field),
-          //             )));
+          final providerCopy = Provider.of<BiometricCaptureControlProvider>(
+              context,
+              listen: false);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider.value(
+                        value: providerCopy,
+                        child: OperatorBiometricCaptureScanBlockView(),
+                      ))).then((value) {
+            setState(() {});
+          });
         },
         child: Center(
           child: Stack(
@@ -135,7 +139,7 @@ class _OperatorBiometricsCaptureState
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {},
                 child: Text(
                   "VERIFY & SAVE",
                   style: Theme.of(context)
@@ -209,21 +213,73 @@ class _OperatorBiometricsCaptureState
                         minItemsPerRow: (isMobileSize) ? 1 : 2,
                         maxItemsPerRow: (isMobileSize) ? 1 : 2,
                         children: [
-                          _getBiometricCaptureSelectionBlockMobile(context
-                              .read<BiometricCaptureControlProvider>()
-                              .iris),
-                          _getBiometricCaptureSelectionBlockMobile(context
-                              .read<BiometricCaptureControlProvider>()
-                              .rightHand),
-                          _getBiometricCaptureSelectionBlockMobile(context
-                              .read<BiometricCaptureControlProvider>()
-                              .leftHand),
-                          _getBiometricCaptureSelectionBlockMobile(context
-                              .read<BiometricCaptureControlProvider>()
-                              .thumbs),
-                          _getBiometricCaptureSelectionBlockMobile(context
-                              .read<BiometricCaptureControlProvider>()
-                              .face),
+                          if (context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("leftEye") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("rightEye"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .iris),
+                          if (context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("rightLittle") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("rightRing") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("rightMiddle") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("rightIndex"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .rightHand),
+                          if (context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("leftLittle") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("leftRing") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("leftMiddle") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("leftIndex"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .leftHand),
+                          if (context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("rightThumb") &&
+                              context
+                                  .read<GlobalProvider>()
+                                  .operatorOnboardingAttributes
+                                  .contains("leftThumb"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .thumbs),
+                          if (context
+                              .read<GlobalProvider>()
+                              .operatorOnboardingAttributes
+                              .contains("face"))
+                            _getBiometricCaptureSelectionBlockMobile(context
+                                .read<BiometricCaptureControlProvider>()
+                                .face),
                         ]),
                   )
                 ],

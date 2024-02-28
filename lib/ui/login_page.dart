@@ -15,6 +15,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
+
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -383,7 +384,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     await context.read<ConnectivityProvider>().checkNetworkConnection();
     bool isConnected = _getIsConnected();
     log("isCon: $isConnected");
-    
+
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
     String version = _fetchVersionNoApp();
