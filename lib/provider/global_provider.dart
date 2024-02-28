@@ -48,6 +48,7 @@ class GlobalProvider with ChangeNotifier {
   int _htmlBoxTabIndex = 0;
 
   List<String> _chosenLang = [];
+  String _operatorOnboardingAttributes="";
   Map<String, bool> _languageMap = {
     'English': true,
     'Arabic': false,
@@ -121,6 +122,12 @@ class GlobalProvider with ChangeNotifier {
   String get machineName => _machineName;
   Map<String?, String?> get machineDetails => _machineDetails;
   String get regId => _regId;
+
+  String get operatorOnboardingAttributes => _operatorOnboardingAttributes;
+  set operatorOnboardingAttributes(String value) {
+    _operatorOnboardingAttributes = value;
+    notifyListeners();
+  }
 
   Map<String, bool> get mvelValues => _mvelValues;
 

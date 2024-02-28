@@ -31,7 +31,15 @@ class OperatorOnboardingBiometricsCaptureControlInitialization
 
   @override
   Widget build(BuildContext context) {
+    _getOperatorOnboardingAttributes() async {
+      await BiometricsApi()
+          .getMapValue("mosip.registration.operator.onboarding.bioattributes")
+          .then((value) {
+        context.read<GlobalProvider>().operatorOnboardingAttributes = value;
+      });
+    }
     setInitialBioAttribute() async {
+      await _getOperatorOnboardingAttributes();
       context.read<BiometricCaptureControlProvider>().iris.viewTitle =
           AppLocalizations.of(context)!.iris;
       context.read<BiometricCaptureControlProvider>().leftHand.viewTitle =
@@ -66,6 +74,8 @@ class OperatorOnboardingBiometricsCaptureControlInitialization
           "noOfCapturesAllowed");
     }
 
+    
+
     context.read<BiometricCaptureControlProvider>().customSetterIris(
         context
             .read<GlobalProvider>()
@@ -95,7 +105,7 @@ class OperatorOnboardingBiometricsCaptureControlInitialization
           setInitialBioAttribute()
               .then((value) => debugPrint("State Initialized"));
         },
-        child: (isPortrait)  //Condition to rerender on changing of orientation
+        child: (isPortrait) //Condition to rerender on changing of orientation
             ? OperatorBiometricsCaptureView()
             : OperatorBiometricsCaptureView());
   }
