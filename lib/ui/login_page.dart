@@ -6,7 +6,6 @@
 */
 
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -108,33 +107,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     await globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
   }
 
-  _setVersionNoApp() async {
-    await globalProvider.getVersionNoApp();
-  }
-
-  _fetchVersionNoApp() {
-    String version = globalProvider.versionNoApp;
-    return version;
-  }
-
-  _setGitAttributes() async {
-    await globalProvider.setGitHeadAttributes();
-  }
-
-  _saveVersionToGlobalParam() async {
-    String version = globalProvider.versionNoApp;
-    await globalProvider.saveVersionToGlobalParam(
-        "mosip.registration.server_version", version);
-  }
-
   _saveAllHeaders() async {
-    // appLocalizations = AppLocalizations.of(context)!;
-    // await _saveNewRegistrationScreenHeaders();
-    // await _saveConsentScreenHeaders();
-    // await _saveDemographicScreenHeaders();
-    // await _saveDocumentScreenHeaders();
-    // await _saveBiometricScreenHeaders();
-
     for (var header in lang) {
       await globalProvider.saveScreenHeaderToGlobalParam(
           "newRegistrationProcess_$header",
@@ -152,70 +125,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           "biometricsScreenName_$header",
           appLocalizations.biometricsScreenName(header));
     }
-  }
-
-  _saveNewRegistrationScreenHeaders() async {
-    for (var header in lang) {
-      await globalProvider.saveScreenHeaderToGlobalParam(
-          "newRegistrationProcess_$header",
-          appLocalizations.newRegistrationProcess(header));
-    }
-  }
-
-  _saveConsentScreenHeaders() async {
-    for (var header in lang) {
-      await globalProvider.saveScreenHeaderToGlobalParam(
-          "consentScreenName_$header",
-          appLocalizations.consentScreenName(header));
-    }
-  }
-
-  _saveDemographicScreenHeaders() async {
-    for (var header in lang) {
-      await globalProvider.saveScreenHeaderToGlobalParam(
-          "demographicsScreenName_$header",
-          appLocalizations.demographicsScreenName(header));
-    }
-  }
-
-  _saveDocumentScreenHeaders() async {
-    for (var header in lang) {
-      await globalProvider.saveScreenHeaderToGlobalParam(
-          "documentsScreenName_$header",
-          appLocalizations.documentsScreenName(header));
-    }
-  }
-
-  _saveBiometricScreenHeaders() async {
-    for (var header in lang) {
-      await globalProvider.saveScreenHeaderToGlobalParam(
-          "biometricsScreenName_$header",
-          appLocalizations.biometricsScreenName(header));
-    }
-  }
-
-  _saveHeader(String id, String value) async {
-    await globalProvider.saveScreenHeaderToGlobalParam(id, value);
-  }
-
-  _initializeMachineData() async {
-    await globalProvider.setMachineDetails();
-  }
-
-  _initializeAppLanguageData() async {
-    await globalProvider.initializeLanguageDataList();
-  }
-
-  _initializeLocationHierarchy() async {
-    await globalProvider.initializeLocationHierarchyMap();
-  }
-
-  _loginPageLoadedAudit() async {
-    await globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
-  }
-
-  _longPressLogoAudit() async {
-    await globalProvider.getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -319,32 +228,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     );
   }
 
-  _getIsValidUser() {
-    return authProvider.isValidUser;
-  }
-
-  User _getCurrentUser() {
-    return authProvider.currentUser;
-  }
-
-  _getIsLoggedIn() {
-    return authProvider.isLoggedIn;
-  }
-
-  _setCenterAndName(User user) {
-    globalProvider.setCenterId(user.centerId!);
-    globalProvider.setName(user.name!);
-    globalProvider.setCenterName(user.centerName!);
-  }
-
-  _getUsernameIncorrectErrorText() {
-    return appLocalizations.username_incorrect;
-  }
-
-  _getUserValidationSuccessText() {
-    return appLocalizations.user_validated;
-  }
-
   _getUserValidation() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.isEmpty) {
@@ -364,15 +247,11 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       return;
     }
 
-    final User user = _getCurrentUser();
+    final User user = authProvider.currentUser;
     globalProvider.setCenterId(user.centerId!);
     globalProvider.setName(user.name!);
     globalProvider.setCenterName(user.centerName!);
     _showInSnackBar(appLocalizations.user_validated);
-  }
-
-  void _onNextButtonPressed() async {
-    await _getUserValidation();
   }
 
   void _showInSnackBar(String value) {
@@ -381,18 +260,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         content: Text(value),
       ),
     );
-  }
-
-  _onLoginButtonPressed() async {
-    await _getLoginAction();
-  }
-
-  _authenticateUser(bool isConnected) async {
-    await authProvider.authenticateUser(username, password, isConnected);
-  }
-
-  _getIsConnected() {
-    return connectivityProvider.isConnected;
   }
 
   _getLoginAction() async {
@@ -410,21 +277,18 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       authProvider.setIsSyncing(true);
     });
     await connectivityProvider.checkNetworkConnection();
-    bool isConnected = connectivityProvider.isConnected;
-    log("isCon: $isConnected");
 
     await globalProvider.getVersionNoApp();
     String version = globalProvider.versionNoApp;
     await globalProvider.saveVersionToGlobalParam(
         "mosip.registration.server_version", version);
-    // String version = _fetchVersionNoApp();
-    // if (version.startsWith("1.1.5")) {
-    await _saveAllHeaders();
-    // }
-    await authProvider.authenticateUser(username, password, isConnected);
+    if (version.startsWith("1.1.5")) {
+      await _saveAllHeaders();
+    }
+    await authProvider.authenticateUser(username, password, connectivityProvider.isConnected);
 
-    bool isTrue = authProvider.isLoggedIn;
-    if (!isTrue) {
+    // bool isTrue = authProvider.isLoggedIn;
+    if (!authProvider.isLoggedIn) {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
       return;
@@ -432,7 +296,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
     await syncProvider.getLastSyncTime();
     debugPrint(syncProvider.lastSuccessfulSyncTime);
-    if (isTrue && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
+    if (authProvider.isLoggedIn && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
       syncProvider.setIsGlobalSyncInProgress(true);
       await _autoSyncHandler();
     } else {
@@ -713,9 +577,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     );
   }
 
-  _initializeLanguageData() async {
-    await globalProvider.initializeLanguageDataList();
-  }
+  // _initializeLanguageData() async {
+  //   await globalProvider.initializeLanguageDataList();
+  // }
 
   _autoSyncHandler() async {
     if (syncProvider.isGlobalSyncInProgress) {
@@ -727,7 +591,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       showSyncResultDialog();
     }
 
-    await _initializeLanguageData();
+    await globalProvider.initializeLanguageDataList();
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {
         RestartWidget.restartApp(context);
@@ -776,8 +640,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                           fontWeight: FontWeight.bold),
                       child: Text(
                         syncProvider.isAllSyncSuccessful()
-                            ? appLocalizations
-                                .sync_completed_succesfully
+                            ? appLocalizations.sync_completed_succesfully
                             : appLocalizations.sync_failed,
                         textAlign: TextAlign.center,
                       ),
@@ -790,8 +653,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                           fontWeight: FontWeight.w900),
                       child: Text(
                         syncProvider.isAllSyncSuccessful()
-                            ? appLocalizations
-                                .sync_completed_message
+                            ? appLocalizations.sync_completed_message
                             : appLocalizations.sync_failed_message,
                         softWrap: true,
                         textAlign: TextAlign.center,
