@@ -10,10 +10,12 @@ import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 
-import 'package:registration_client/platform_android/sync_response_service_impl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/platform_spi/sync_response_service.dart';
 
 class SyncProvider with ChangeNotifier {
+  final SyncResponseService syncResponseService = SyncResponseService();
+
   String _lastSuccessfulSyncTime = "";
   int _currentSyncProgress = 0;
   String _currentProgressType = "";
@@ -45,7 +47,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   getLastSyncTime() async {
-    SyncTime lastSyncTime = await SyncResponseServiceImpl().getLastSyncTime();
+    SyncTime lastSyncTime = await syncResponseService.getLastSyncTime();
     setLastSuccessfulSyncTime(lastSyncTime.syncTime!);
     log("Last Sync Time from GlobalParamRepository:${lastSyncTime.syncTime!}");
   }
@@ -70,7 +72,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   autoSync(BuildContext context) async {
-    await SyncResponseServiceImpl().getLastSyncTime();
+    await syncResponseService.getLastSyncTime();
     // await SyncResponseServiceImpl()
     //     .getGlobalParamsSync()
     //     .then((Sync getAutoSync) async {
@@ -150,7 +152,7 @@ class SyncProvider with ChangeNotifier {
     //   });
     // });
 
-    await SyncResponseServiceImpl()
+    await syncResponseService
         .getGlobalParamsSync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
@@ -164,7 +166,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await SyncResponseServiceImpl()
+    await syncResponseService
         .getMasterDataSync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
@@ -178,7 +180,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await SyncResponseServiceImpl()
+    await syncResponseService
         .getUserDetailsSync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
@@ -192,7 +194,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await SyncResponseServiceImpl()
+    await syncResponseService
         .getIDSchemaSync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
@@ -206,7 +208,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await SyncResponseServiceImpl()
+    await syncResponseService
         .getPolicyKeySync()
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
@@ -220,7 +222,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await SyncResponseServiceImpl().getCaCertsSync().then((Sync getAutoSync) {
+    await syncResponseService.getCaCertsSync().then((Sync getAutoSync) {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
         _cacertsSyncSuccess = true;
@@ -244,5 +246,13 @@ class SyncProvider with ChangeNotifier {
     } else {
       return false;
     }
+  }
+
+  manualSync() async {
+    await syncResponseService.manualSync();
+  }
+
+  batchJob() async {
+    await syncResponseService.batchJob();
   }
 }

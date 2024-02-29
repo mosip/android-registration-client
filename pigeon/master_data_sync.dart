@@ -28,4 +28,8 @@ abstract class SyncApi{
   Sync getMasterDataSync();
   @async
   Sync getCaCertsSync();
+  @async
+  String manualSync();
+  @async
+  String batchJob();
 }

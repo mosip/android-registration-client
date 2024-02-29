@@ -101,4 +101,32 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncResponse;
   }
+  
+  @override
+  Future<String> batchJob() async {
+    String batchJobResponse = "";
+    try {
+      batchJobResponse = await SyncApi().batchJob();
+    } on PlatformException {
+      debugPrint('Batch Job Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('Batch Job has failed! ${e.toString()}');
+    }
+    return batchJobResponse;
+  }
+  
+  @override
+  Future<String> manualSync() async {
+    String manualSyncResponse = "";
+    try {
+      manualSyncResponse = await SyncApi().manualSync();
+    } on PlatformException {
+      debugPrint('Manual Sync Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('Manual Sync failed! Please try again. ${e.toString()}');
+    }
+    return manualSyncResponse;
+  }
 }
+
+SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
-*/
+ */
 
 package io.mosip.registration_client;
 
@@ -18,6 +18,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -107,30 +108,30 @@ public class HostApiModule {
                                            LoginService loginService,
                                            AuditManagerService auditManagerService) {
         return new AuthenticationApi(appContext, syncRestService, syncRestFactory,
-                        loginService, auditManagerService);
+                loginService, auditManagerService);
     }
 
     @Provides
     @Singleton
-    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService, AuditManagerService auditManagerService){
+    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService, AuditManagerService auditManagerService) {
         return new CommonDetailsApi(masterDataService, auditManagerService);
     }
-    
+
 
     @Provides
     @Singleton
     ProcessSpecDetailsApi getProcessSpecDetailsApi(IdentitySchemaRepository identitySchemaRepository,
-                                                   GlobalParamRepository globalParamRepository,RegistrationService registrationService,
+                                                   GlobalParamRepository globalParamRepository, RegistrationService registrationService,
                                                    AuditManagerService auditManagerService) {
         return new ProcessSpecDetailsApi(appContext, identitySchemaRepository,
-                        globalParamRepository,registrationService, auditManagerService);
+                globalParamRepository, registrationService, auditManagerService);
 
     }
 
     @Provides
     @Singleton
-    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService,GlobalParamRepository globalParamRepository) {
-        return new BiometricsDetailsApi(auditManagerService, objectMapper,biometrics095Service,registrationService,globalParamRepository);
+    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService, GlobalParamRepository globalParamRepository) {
+        return new BiometricsDetailsApi(auditManagerService, objectMapper, biometrics095Service, registrationService, globalParamRepository);
 
     }
 
@@ -167,6 +168,7 @@ public class HostApiModule {
     DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
         return new DocumentDetailsApi(registrationService, auditManagerService);
     }
+
     @Provides
     @Singleton
     MasterDataSyncApi getSyncResponseApi(
@@ -181,8 +183,11 @@ public class HostApiModule {
             SyncJobDefRepository syncJobDefRepository,
             LanguageRepository languageRepository,
             JobManagerService jobManagerService,
-            AuditManagerService auditManagerService) {
-        return new MasterDataSyncApi( clientCryptoManagerService,
+            AuditManagerService auditManagerService,
+            MasterDataService masterDataService,
+            PacketService packetService,
+            GlobalParamDao globalParamDao) {
+        return new MasterDataSyncApi(clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
                 globalParamRepository, objectMapper, userDetailRepository,
@@ -190,9 +195,9 @@ public class HostApiModule {
                 documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
-                syncJobDefRepository, languageRepository,jobManagerService,
-                auditManagerService
-                );
+                syncJobDefRepository, languageRepository, jobManagerService,
+                auditManagerService, masterDataService, packetService, globalParamDao
+        );
     }
 
     @Provides

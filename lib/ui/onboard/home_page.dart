@@ -7,12 +7,11 @@
 
 // ignore_for_file: deprecated_member_use
 
-// import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -21,18 +20,12 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
-// import 'package:registration_client/ui/common/tablet_footer.dart';
-// import 'package:registration_client/ui/common/tablet_header.dart';
-// import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
-// import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
 
-// import 'package:registration_client/utils/app_config.dart';
-// import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,8 +41,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isMobile = true;
+  late SyncProvider syncProvider;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+  late ConnectivityProvider connectivityProvider;
+
   @override
   void initState() {
+    syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider = Provider.of<RegistrationTaskProvider>(context, listen: false);
+    connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
     super.initState();
   }
@@ -63,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getIsConnected() {
-    return context.read<ConnectivityProvider>().isConnected;
+    return connectivityProvider.isConnected;
   }
 
   _showNetworkErrorMessage() {
@@ -71,17 +73,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void syncData(BuildContext context) async {
-    await context.read<ConnectivityProvider>().checkNetworkConnection();
+    await connectivityProvider.checkNetworkConnection();
     bool isConnected = _getIsConnected();
     if (!isConnected) {
       _showNetworkErrorMessage();
       return;
     }
-    // ignore: use_build_context_synchronously
-    await context.read<SyncProvider>().getLastSyncTime();
+    await syncProvider.getLastSyncTime();
     await _masterDataSync();
-    // ignore: use_build_context_synchronously
-    await context.read<SyncProvider>().getLastSyncTime();
+    await syncProvider.getLastSyncTime();
     await _getNewProcessSpecAction();
     await _getCenterNameAction();
     await _initializeLanguageDataList();
@@ -96,55 +96,54 @@ class _HomePageState extends State<HomePage> {
   }
 
   _initializeLanguageDataList() async {
-    await context.read<GlobalProvider>().initializeLanguageDataList();
+    await globalProvider.initializeLanguageDataList();
   }
 
   _initializeLocationHierarchy() async {
-    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
+    await globalProvider.initializeLocationHierarchyMap();
   }
 
   _getFieldValues(String fieldId, String langCode) async {
-    List<String?> fieldValues = await context
-        .read<RegistrationTaskProvider>()
+    List<String?> fieldValues = await registrationTaskProvider
         .getFieldValues(fieldId, langCode);
     _setNotificationLanguages(fieldValues);
   }
 
   _setNotificationLanguages(List<String?> fieldValues) {
-    context.read<GlobalProvider>().setNotificationLanguages(fieldValues);
+    globalProvider.setNotificationLanguages(fieldValues);
   }
 
   _homePageLoadedAudit() async {
-    await context
-        .read<GlobalProvider>()
+    await globalProvider
         .getAudit("REG-LOAD-003", "REG-MOD-102");
   }
 
   Future<void> _masterDataSync() async {
-    String result;
-    try {
-      result = await HomePage.platform.invokeMethod("masterDataSync");
-      await HomePage.platform.invokeMethod("batchJob");
-    } on PlatformException catch (e) {
-      result = "Some Error Occurred: $e";
-    }
-    debugPrint(result);
+    // try {
+    //   result = await HomePage.platform.invokeMethod("masterDataSync");
+    //   await HomePage.platform.invokeMethod("batchJob");
+    // } on PlatformException catch (e) {
+    //   result = "Some Error Occurred: $e";
+    // }
+    await syncProvider.manualSync();
+    log("sync complete!");
+    await syncProvider.batchJob();
+    log("batch job completed!");
   }
 
   _newRegistrationClickedAudit() async {
-    await context
-        .read<GlobalProvider>()
+    await globalProvider
         .getAudit("REG-HOME-002", "REG-MOD-102");
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
       _newRegistrationClickedAudit();
-      context.read<GlobalProvider>().clearMap();
-      context.read<GlobalProvider>().clearScannedPages();
-      context.read<GlobalProvider>().newProcessTabIndex = 0;
-      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-      context.read<GlobalProvider>().setRegId("");
+      globalProvider.clearMap();
+      globalProvider.clearScannedPages();
+      globalProvider.newProcessTabIndex = 0;
+      globalProvider.htmlBoxTabIndex = 0;
+      globalProvider.setRegId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
@@ -155,7 +154,7 @@ class _HomePageState extends State<HomePage> {
           }
         }
       }
-      context.read<GlobalProvider>().createRegistrationLanguageMap();
+      globalProvider.createRegistrationLanguageMap();
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -167,15 +166,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getNewProcessSpecAction() async {
-    await context.read<RegistrationTaskProvider>().getListOfProcesses();
+    await registrationTaskProvider.getListOfProcesses();
   }
 
   _getCenterNameAction() async {
-    String regCenterId = context.read<GlobalProvider>().centerId;
+    String regCenterId = globalProvider.centerId;
 
-    String langCode = context.read<GlobalProvider>().selectedLanguage;
-    await context
-        .read<GlobalProvider>()
+    String langCode = globalProvider.selectedLanguage;
+    await globalProvider
         .getRegCenterName(regCenterId, langCode);
   }
 
@@ -183,6 +181,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // double w = ScreenUtil().screenWidth;
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
+    syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider = Provider.of<RegistrationTaskProvider>(context, listen: false);
+    connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
+
     List<Map<String, dynamic>> operationalTasks = [
       {
         "icon": SvgPicture.asset(

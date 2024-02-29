@@ -6,6 +6,7 @@
 */
 
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
+import 'package:registration_client/platform_android/sync_response_service_impl.dart';
 
 abstract class SyncResponseService {
   Future<SyncTime> getLastSyncTime();
@@ -15,4 +16,8 @@ abstract class SyncResponseService {
   Future<Sync> getIDSchemaSync();
   Future<Sync> getMasterDataSync();
   Future<Sync> getCaCertsSync();
+  Future<String> manualSync();
+  Future<String> batchJob();
+
+  factory SyncResponseService() => getSyncResponseServiceImpl();
 }

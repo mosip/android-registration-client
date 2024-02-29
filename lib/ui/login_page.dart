@@ -54,14 +54,28 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     });
   }
 
+  // late AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+  // late SyncProvider syncProvider = Provider.of<SyncProvider>(context, listen: false);
+  // late GlobalProvider globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+  // late ConnectivityProvider connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
+  
   late AuthProvider authProvider;
   late SyncProvider syncProvider;
+  late GlobalProvider globalProvider;
+  late ConnectivityProvider connectivityProvider;
+  late AppLocalizations appLocalizations;
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    connectivityProvider =
+        Provider.of<ConnectivityProvider>(context, listen: false);
+      appLocalizations = AppLocalizations.of(context)!;
     _initializeAppData();
     super.initState();
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
@@ -93,31 +107,30 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _initializeAppData() async {
-    await _initializeMachineData();
-    await _initializeAppLanguageData();
-    await _initializeLocationHierarchy();
-    await _setGitAttributes();
-    await _loginPageLoadedAudit();
+    await globalProvider.setMachineDetails();
+    await globalProvider.initializeLanguageDataList();
+    await globalProvider.initializeLocationHierarchyMap();
+    await globalProvider.setGitHeadAttributes();
+    await  globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
   }
 
   _setVersionNoApp() async {
-    await context.read<GlobalProvider>().getVersionNoApp();
+    await globalProvider.getVersionNoApp();
   }
 
   _fetchVersionNoApp() {
-    String version = context.read<GlobalProvider>().versionNoApp;
+    String version = globalProvider.versionNoApp;
     return version;
   }
 
   _setGitAttributes() async {
-    await context.read<GlobalProvider>().setGitHeadAttributes();
+    await globalProvider.setGitHeadAttributes();
   }
 
   _saveVersionToGlobalParam() async {
-    String version = context.read<GlobalProvider>().versionNoApp;
-    await context
-        .read<GlobalProvider>()
-        .saveVersionToGlobalParam("mosip.registration.server_version", version);
+    String version = globalProvider.versionNoApp;
+    await globalProvider.saveVersionToGlobalParam(
+        "mosip.registration.server_version", version);
   }
 
   _saveAllHeaders() async {
@@ -130,67 +143,61 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _saveNewRegistrationScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("newRegistrationProcess_$header",
+      await globalProvider.saveScreenHeaderToGlobalParam("newRegistrationProcess_$header",
           AppLocalizations.of(context)!.newRegistrationProcess(header));
     }
   }
 
   _saveConsentScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("consentScreenName_$header",
+      await globalProvider.saveScreenHeaderToGlobalParam("consentScreenName_$header",
           AppLocalizations.of(context)!.consentScreenName(header));
     }
   }
 
   _saveDemographicScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("demographicsScreenName_$header",
+      await globalProvider.saveScreenHeaderToGlobalParam("demographicsScreenName_$header",
           AppLocalizations.of(context)!.demographicsScreenName(header));
     }
   }
 
   _saveDocumentScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("documentsScreenName_$header",
+      await globalProvider.saveScreenHeaderToGlobalParam("documentsScreenName_$header",
           AppLocalizations.of(context)!.documentsScreenName(header));
     }
   }
 
   _saveBiometricScreenHeaders() async {
     for (var header in lang) {
-      await _saveHeader("biometricsScreenName_$header",
+      await globalProvider.saveScreenHeaderToGlobalParam("biometricsScreenName_$header",
           AppLocalizations.of(context)!.biometricsScreenName(header));
     }
   }
 
   _saveHeader(String id, String value) async {
-    await context
-        .read<GlobalProvider>()
-        .saveScreenHeaderToGlobalParam(id, value);
+    await globalProvider.saveScreenHeaderToGlobalParam(id, value);
   }
 
   _initializeMachineData() async {
-    await context.read<GlobalProvider>().setMachineDetails();
+    await globalProvider.setMachineDetails();
   }
 
   _initializeAppLanguageData() async {
-    await context.read<GlobalProvider>().initializeLanguageDataList();
+    await globalProvider.initializeLanguageDataList();
   }
 
   _initializeLocationHierarchy() async {
-    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
+    await globalProvider.initializeLocationHierarchyMap();
   }
 
   _loginPageLoadedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-LOAD-001", "REG-MOD-101");
+    await globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
   }
 
   _longPressLogoAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-AUTH-002", "REG-MOD-101");
+    await globalProvider.getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -200,6 +207,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     double w = ScreenUtil().screenWidth;
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    connectivityProvider =
+        Provider.of<ConnectivityProvider>(context, listen: false);
 
     return SafeArea(
       child: Scaffold(
@@ -291,21 +301,21 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _getIsValidUser() {
-    return context.read<AuthProvider>().isValidUser;
+    return authProvider.isValidUser;
   }
 
   User _getCurrentUser() {
-    return context.read<AuthProvider>().currentUser;
+    return authProvider.currentUser;
   }
 
   _getIsLoggedIn() {
-    return context.read<AuthProvider>().isLoggedIn;
+    return authProvider.isLoggedIn;
   }
 
   _setCenterAndName(User user) {
-    context.read<GlobalProvider>().setCenterId(user.centerId!);
-    context.read<GlobalProvider>().setName(user.name!);
-    context.read<GlobalProvider>().setCenterName(user.centerName!);
+    globalProvider.setCenterId(user.centerId!);
+    globalProvider.setName(user.name!);
+    globalProvider.setCenterName(user.centerName!);
   }
 
   _getUsernameIncorrectErrorText() {
@@ -326,8 +336,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       return;
     }
 
-    String langCode = context.read<GlobalProvider>().selectedLanguage;
-    await context.read<AuthProvider>().validateUser(username, langCode);
+    String langCode = globalProvider.selectedLanguage;
+    await authProvider.validateUser(username, langCode);
 
     bool isValid = _getIsValidUser();
     if (!isValid) {
@@ -357,13 +367,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _authenticateUser(bool isConnected) async {
-    await context
-        .read<AuthProvider>()
+    await authProvider
         .authenticateUser(username, password, isConnected);
   }
 
   _getIsConnected() {
-    return context.read<ConnectivityProvider>().isConnected;
+    return connectivityProvider.isConnected;
   }
 
   _getLoginAction() async {
@@ -380,13 +389,15 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     setState(() {
       authProvider.setIsSyncing(true);
     });
-    await context.read<ConnectivityProvider>().checkNetworkConnection();
-    bool isConnected = _getIsConnected();
+    await connectivityProvider.checkNetworkConnection();
+    bool isConnected = connectivityProvider.isConnected;
     log("isCon: $isConnected");
-    
-    await _setVersionNoApp();
-    await _saveVersionToGlobalParam();
-    String version = _fetchVersionNoApp();
+
+    await globalProvider.getVersionNoApp();
+    String version = globalProvider.versionNoApp;
+    await globalProvider.saveVersionToGlobalParam(
+        "mosip.registration.server_version", version);
+    // String version = _fetchVersionNoApp();
     if (version.startsWith("1.1.5")) {
       await _saveAllHeaders();
     }
@@ -414,7 +425,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _showErrorInSnackbar() {
-    String errorMsg = context.read<AuthProvider>().loginError;
+    String errorMsg = authProvider.loginError;
     String snackbarText = "";
 
     switch (errorMsg) {
@@ -458,14 +469,13 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _navigateToHomePage() {
-    if (context.read<AuthProvider>().isLoggedIn == true) {
+    if (authProvider.isLoggedIn == true) {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
 
-      if (context.read<AuthProvider>().isOnboarded ||
-          context.read<AuthProvider>().isDefault) {
-        context.read<GlobalProvider>().setCurrentIndex(1);
+      if (authProvider.isOnboarded || authProvider.isDefault) {
+        globalProvider.setCurrentIndex(1);
       } else {
-        context.read<GlobalProvider>().setCurrentIndex(0);
+        globalProvider.setCurrentIndex(0);
       }
 
       Navigator.of(context).push(
@@ -610,7 +620,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   onTapBack: () {
                     password = "";
                     FocusManager.instance.primaryFocus?.unfocus();
-                    context.read<AuthProvider>().setIsValidUser(false);
+                    authProvider.setIsValidUser(false);
                     setState(() {
                       username = '';
                       authProvider.setIsSyncing(false);
@@ -680,7 +690,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _initializeLanguageData() async {
-    await context.read<GlobalProvider>().initializeLanguageDataList();
+    await globalProvider.initializeLanguageDataList();
   }
 
   _autoSyncHandler() async {
