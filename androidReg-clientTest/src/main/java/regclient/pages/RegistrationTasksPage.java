@@ -10,31 +10,24 @@ import regclient.utils.AndroidUtil;
 public class RegistrationTasksPage  extends BasePage{
 
 	@AndroidFindBy(accessibility = "Registration Tasks")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement RegistrationTasks;
 	
 	@AndroidFindBy(accessibility = "Operational Tasks")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement operationalTask;
 
 	@AndroidFindBy(accessibility = "New Registration")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement newRegistration;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.ImageView\").instance(0)")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement synchronizeData ;
 	
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Policy key Sync Completed\"]")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement policykeySyncCompleted ;
 	
 	@AndroidFindBy(xpath = "//*[contains(@text,'Sync Completed')]")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement masterDataSyncCompleted ;
 	
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement ScriptSyncCompleted ;
 
 	public RegistrationTasksPage(AppiumDriver driver) {

@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Suite">
-  <test thread-count="5" name="Test">
+  <test name="Test" thread-count="5">
     <classes>
-      <class name="androidTestCases.NewRegistration"/>
+      <class name="androidTestCases.logintest">
+        <methods>
+          <include name="login"/>
+          <include name="loginWithInvalidPasscode"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistration">
+        <methods>
+          <include name="NewRegistration"/>
+        </methods>
+      </class>
     </classes>
-  </test> <!-- Test -->
-</suite> <!-- Suite -->
+  </test>
+</suite>

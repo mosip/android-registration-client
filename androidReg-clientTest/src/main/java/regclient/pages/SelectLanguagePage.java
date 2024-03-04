@@ -9,27 +9,21 @@ import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 public class SelectLanguagePage extends BasePage{
 
 	@AndroidFindBy(accessibility = "Select Language")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement selectLanguageTitle;
 	
 	@AndroidFindBy(accessibility = "SUBMIT")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement submitButton;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(11)")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement secondlanguage;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(18)")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement notificationlanguage;
 	
 	@AndroidFindBy(accessibility = "Arabic")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement arabiclanguage;
 	
 	@AndroidFindBy(accessibility = "Notification Languages / لغات الإخطار")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement NotificationLanguageEnglishArabic;
 	
 	public SelectLanguagePage(AppiumDriver driver) {

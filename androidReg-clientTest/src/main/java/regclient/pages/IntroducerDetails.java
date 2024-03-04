@@ -9,7 +9,6 @@ import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 public class IntroducerDetails extends BasePage {
 
 	@AndroidFindBy(accessibility = "CONTINUE")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement continuebutton;
 	
 	public IntroducerDetails(AppiumDriver driver) {

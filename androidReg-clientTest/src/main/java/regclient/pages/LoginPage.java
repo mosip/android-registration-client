@@ -11,87 +11,66 @@ import org.openqa.selenium.WebElement;
 public class LoginPage extends BasePage {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement mosipLogo;
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement usernametextbox;
 
 	@AndroidFindBy(accessibility = "NEXT")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement nextbutton;
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement passwordtextbox;
 
 	@AndroidFindBy(accessibility = "LOGIN")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement LoginButton;
 
 	@AndroidFindBy(accessibility = "Please login to access the features.")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement Loginmsg;
 
 	@AndroidFindBy(accessibility = "Password")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement passwordheader;
 
 	@AndroidFindBy(accessibility = "Username")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement usernameHeader;
 
 	@AndroidFindBy(accessibility = "Welcome to")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement welcome;
 
 	@AndroidFindBy(accessibility = "HELP")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement HELP;
 
 	@AndroidFindBy(accessibility = "BACK")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement Back;
 
 	@AndroidFindBy(accessibility = "Forgot Password?")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement forgetPassword;
 
 	@AndroidFindBy(accessibility = "User not found!")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement userNotFoundErrorMsg;
 
 	@AndroidFindBy(accessibility = "Password incorrect!")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement passwordIncorrectErrorMsg;
-	
+
 	@AndroidFindBy(accessibility = "English")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement English;
-	
+
 	@AndroidFindBy(accessibility = "French")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement French;
-	
+
 	@AndroidFindBy(accessibility = "Arabic")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement Arabic;
-	
+
 	@AndroidFindBy(accessibility = "ಕನ್ನಡ")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement Kannada;
-	
+
 	@AndroidFindBy(accessibility = "हिन्दी")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement Hindi;
-	
+
 	@AndroidFindBy(accessibility = "தமிழ்")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement Tamil;
-	
+
 	@AndroidFindBy(accessibility = "spanish")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement spanish;
 
 	public LoginPage(AppiumDriver driver) {
@@ -170,12 +149,12 @@ public class LoginPage extends BasePage {
 		return isElementDisplayed(passwordIncorrectErrorMsg);
 
 	}
-	
+
 	public boolean isMosipLogoDisplay() {
 		return isElementDisplayed(mosipLogo);
 
 	}
-	
+
 	public void selectLanguage(String language) {
 		if(language.equalsIgnoreCase("eng"))
 			clickOnElement(English);

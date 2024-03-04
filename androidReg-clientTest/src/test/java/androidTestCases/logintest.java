@@ -43,7 +43,7 @@ public class logintest  extends AndroidBaseTest {
 		
 		
 	}
-	//@Test
+	@Test
 	public void loginWithInvalidPasscode() {
 		LoginPage loginPage=new LoginPage(driver);
 		

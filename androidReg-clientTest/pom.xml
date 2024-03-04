@@ -5,9 +5,9 @@
     <artifactId>injitest</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>inji-mob-automation</name>
-    <description>inji-mob-automation</description>
-    <url>https://github.com/mosip/inji/injitest</url>
+    <name>regclient-mob-automation</name>
+    <description>regclient-mob-automation</description>
+    <url>https://github.com/mosip/android-registration-client</url>
 
     <licenses>
         <license>
@@ -18,7 +18,7 @@
     <scm>
         <connection>scm:git:git://github.com/mosip/admin-ui.git</connection>
         <developerConnection>scm:git:ssh://github.com:mosip/admin-ui.git</developerConnection>
-        <url>https://github.com/mosip/inji/injitest</url>
+        <url>https://github.com/mosip/android-registration-client</url>
         <tag>HEAD</tag>
     </scm>
     <developers>
@@ -26,7 +26,7 @@
             <name>Mosip</name>
             <email>mosip.emailnotifier@gmail.com</email>
             <organization>io.mosip</organization>
-            <organizationUrl>https://github.com/mosip/inji/injitest</organizationUrl>
+            <organizationUrl>https://github.com/mosip/android-registration-client</organizationUrl>
         </developer>
     </developers>
     <properties>
@@ -254,19 +254,10 @@
             <version>2.13.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
-        <dependency>
-            <groupId>com.aventstack</groupId>
-            <artifactId>extentreports</artifactId>
-            <version>5.1.0</version>
-        </dependency>
+       
 
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
+        
 
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -314,12 +305,7 @@
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.597</version>
-        </dependency>
+        
 
     </dependencies>
 

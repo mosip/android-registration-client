@@ -11,15 +11,12 @@ import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 public class ConsentPage extends BasePage{
 
 	@AndroidFindBy(accessibility = "Consent")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement Consentpage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().className(\"android.widget.CheckBox\"))")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement checkBox;
 	
 	@AndroidFindBy(accessibility = "INFORMED")
-	@iOSXCUITFindBy(accessibility = "")
 	private WebElement informed;
 
 	public ConsentPage(AppiumDriver driver) {
