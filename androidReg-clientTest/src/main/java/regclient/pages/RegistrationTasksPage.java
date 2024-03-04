@@ -4,13 +4,12 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.iOSXCUITFindBy;
-import regclient.utils.AndroidUtil;
+
 
 public class RegistrationTasksPage  extends BasePage{
 
 	@AndroidFindBy(accessibility = "Registration Tasks")
-	private WebElement RegistrationTasks;
+	private WebElement registrationTasks;
 	
 	@AndroidFindBy(accessibility = "Operational Tasks")
 	private WebElement operationalTask;
@@ -28,7 +27,7 @@ public class RegistrationTasksPage  extends BasePage{
 	private WebElement masterDataSyncCompleted ;
 	
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
-	private WebElement ScriptSyncCompleted ;
+	private WebElement scriptSyncCompleted ;
 
 	public RegistrationTasksPage(AppiumDriver driver) {
 		super(driver);
@@ -46,7 +45,7 @@ public class RegistrationTasksPage  extends BasePage{
 	
 	public boolean isRegistrationTasksPageLoaded() {
 
-		return isElementDisplayed(RegistrationTasks);
+		return isElementDisplayed(registrationTasks);
 	}
 	
 	public boolean isOperationalTaskDisplay() {
@@ -66,7 +65,7 @@ public class RegistrationTasksPage  extends BasePage{
 	
 	public boolean isScriptSyncCompletedDisplay() {
 
-		return isElementDisplayed(ScriptSyncCompleted);
+		return isElementDisplayed(scriptSyncCompleted);
 	}
 
 	

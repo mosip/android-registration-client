@@ -6,12 +6,12 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.iOSXCUITFindBy;
+;
 
 public class ConsentPage extends BasePage{
 
 	@AndroidFindBy(accessibility = "Consent")
-	private WebElement Consentpage;
+	private WebElement consentpage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().className(\"android.widget.CheckBox\"))")
 	private WebElement checkBox;
@@ -21,12 +21,11 @@ public class ConsentPage extends BasePage{
 
 	public ConsentPage(AppiumDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean isConsentpageDisplay() {
 
-		return isElementDisplayed(Consentpage);
+		return isElementDisplayed(consentpage);
 	}
 
 	public  void clickOnCheckBoxButton() {

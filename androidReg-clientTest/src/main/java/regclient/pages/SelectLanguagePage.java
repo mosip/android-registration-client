@@ -24,7 +24,7 @@ public class SelectLanguagePage extends BasePage{
 	private WebElement arabiclanguage;
 	
 	@AndroidFindBy(accessibility = "Notification Languages / لغات الإخطار")
-	private WebElement NotificationLanguageEnglishArabic;
+	private WebElement notificationLanguageEnglishArabic;
 	
 	public SelectLanguagePage(AppiumDriver driver) {
 		super(driver);
@@ -67,6 +67,6 @@ public class SelectLanguagePage extends BasePage{
 	
 	public boolean isNotificationLanguageEnglishArabicDisplay() {
 
-		return isElementDisplayed(NotificationLanguageEnglishArabic);
+		return isElementDisplayed(notificationLanguageEnglishArabic);
 	}
 }

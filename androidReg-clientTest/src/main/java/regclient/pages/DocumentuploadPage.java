@@ -4,7 +4,7 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.iOSXCUITFindBy;
+
 
 public class DocumentuploadPage extends BasePage {
 
@@ -15,10 +15,10 @@ public class DocumentuploadPage extends BasePage {
 	private WebElement identityProofScanButton;
 
 	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]/android.view.View")
-	private WebElement IdentityProofSelectValue;
+	private WebElement identityProofSelectValue;
 
 	@AndroidFindBy(accessibility = "Scrim")
-	private WebElement IdentityProofPopUpClose;
+	private WebElement identityProofPopUpClose;
 
 	@AndroidFindBy(accessibility = "Scan")
 	private WebElement scanButton;
@@ -26,23 +26,20 @@ public class DocumentuploadPage extends BasePage {
 
 	public DocumentuploadPage(AppiumDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean isDoccumentUploadPageDisplay() {
 		return isElementDisplayed(doccumentUploadPage);
-
 	}
 
 	public void selectIdentityProof() {
-		clickOnElement(IdentityProofSelectValue);
-		clickOnElement(IdentityProofPopUpClose);
+		clickOnElement(identityProofSelectValue);
+		clickOnElement(identityProofPopUpClose);
 	}
 
 	public CameraPage clickOnScanButton() {
 		clickOnElement(scanButton);
 		return new CameraPage(driver);
-
 	}
 
 	public  boolean isScanButtonEnable() {

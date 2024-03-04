@@ -10,6 +10,7 @@ import regclient.pages.CameraPage;
 import regclient.pages.ConsentPage;
 import regclient.pages.DemographicPage;
 import regclient.pages.DocumentuploadPage;
+import regclient.pages.IdentityProofPage;
 import regclient.pages.IntroducerDetails;
 import regclient.pages.LoginPage;
 import regclient.pages.RegistrationTasksPage;
@@ -60,7 +61,7 @@ public class NewRegistration extends AndroidBaseTest {
 		
 		assertTrue(demographicPage.getenterLastNameTextBoxSecondlang(),"Verify if last name is enter in second language text box");
 		demographicPage.enterAge(TestDataReader.readData("adultage"));
-		demographicPage.SelectGender(TestDataReader.readData("gender"));
+		demographicPage.selectGender(TestDataReader.readData("gender"));
 		//demographicPage.SelectMaritalStatus();
 		AddressAndContactPage addressAndContactPage=demographicPage.clickOnContinueButton();
 		
@@ -75,6 +76,14 @@ public class NewRegistration extends AndroidBaseTest {
 		
 		assertTrue(documentuploadPage.isScanButtonEnable(),"Verify if scan  button enable");
 		CameraPage cameraPage=documentuploadPage.clickOnScanButton();
+		
+		IdentityProofPage identityProofPage=cameraPage.clickimage();
+		identityProofPage.clickOnSaveButton();
+		
+		assertTrue(identityProofPage.isRetakeButtonDisplay(),"Verify if retake  button display");
+		
+		
+		
 		
 		
 		

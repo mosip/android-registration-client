@@ -4,7 +4,6 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 
 public class DemographicPage extends BasePage{
 
@@ -77,14 +76,14 @@ public class DemographicPage extends BasePage{
 			return	true;
 	}
 	
-	public  void SelectGender(String gender) {
+	public  void selectGender(String gender) {
 		if(gender.equalsIgnoreCase("male"))
 		clickOnElement(male);
 		if(gender.equalsIgnoreCase("female"))
 			clickOnElement(female);
 	}
 	
-	public  void SelectMaritalStatus() {
+	public  void selectMaritalStatus() {
 		clickOnElement(selectMaritalStatus);
 		clickOnElement(single);
 	}

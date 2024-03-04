@@ -13,7 +13,6 @@ public class IntroducerDetails extends BasePage {
 	
 	public IntroducerDetails(AppiumDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 
 	public  DocumentuploadPage clickOnContinueButton() {

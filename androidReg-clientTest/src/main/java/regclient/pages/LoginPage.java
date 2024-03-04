@@ -2,9 +2,7 @@ package regclient.pages;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.iOSXCUITFindBy;
-import regclient.utils.AndroidUtil;
-import regclient.utils.TestDataReader;
+
 
 import org.openqa.selenium.WebElement;
 
@@ -23,10 +21,10 @@ public class LoginPage extends BasePage {
 	private WebElement passwordtextbox;
 
 	@AndroidFindBy(accessibility = "LOGIN")
-	private WebElement LoginButton;
+	private WebElement loginButton;
 
 	@AndroidFindBy(accessibility = "Please login to access the features.")
-	private WebElement Loginmsg;
+	private WebElement loginMessage;
 
 	@AndroidFindBy(accessibility = "Password")
 	private WebElement passwordheader;
@@ -38,10 +36,10 @@ public class LoginPage extends BasePage {
 	private WebElement welcome;
 
 	@AndroidFindBy(accessibility = "HELP")
-	private WebElement HELP;
+	private WebElement help;
 
 	@AndroidFindBy(accessibility = "BACK")
-	private WebElement Back;
+	private WebElement back;
 
 	@AndroidFindBy(accessibility = "Forgot Password?")
 	private WebElement forgetPassword;
@@ -51,25 +49,25 @@ public class LoginPage extends BasePage {
 
 	@AndroidFindBy(accessibility = "Password incorrect!")
 	private WebElement passwordIncorrectErrorMsg;
-
+	
 	@AndroidFindBy(accessibility = "English")
-	private WebElement English;
-
+	private WebElement english;
+	
 	@AndroidFindBy(accessibility = "French")
-	private WebElement French;
-
+	private WebElement french;
+	
 	@AndroidFindBy(accessibility = "Arabic")
-	private WebElement Arabic;
-
+	private WebElement arabic;
+	
 	@AndroidFindBy(accessibility = "ಕನ್ನಡ")
-	private WebElement Kannada;
-
+	private WebElement kannada;
+	
 	@AndroidFindBy(accessibility = "हिन्दी")
-	private WebElement Hindi;
-
+	private WebElement hindi;
+	
 	@AndroidFindBy(accessibility = "தமிழ்")
-	private WebElement Tamil;
-
+	private WebElement tamil;
+	
 	@AndroidFindBy(accessibility = "spanish")
 	private WebElement spanish;
 
@@ -87,7 +85,7 @@ public class LoginPage extends BasePage {
 	}
 
 	public  void clickOnBackButton() {
-		clickOnElement(Back);
+		clickOnElement(back);
 	}
 
 	public  void enterpassword(String password) {
@@ -95,7 +93,7 @@ public class LoginPage extends BasePage {
 	}
 
 	public  RegistrationTasksPage clickOnloginButton() {
-		clickOnElement(LoginButton);
+		clickOnElement(loginButton);
 		return new RegistrationTasksPage(driver);
 	}
 
@@ -104,12 +102,12 @@ public class LoginPage extends BasePage {
 	}
 
 	public  boolean isLoginButtonEnable() {
-		return isElementEnabled(LoginButton);
+		return isElementEnabled(loginButton);
 	}
 
 	public boolean isLoginPageLoaded() {
 
-		return isElementDisplayed(Loginmsg);
+		return isElementDisplayed(loginMessage);
 	}
 
 	public boolean isPasswordHeaderDisplay() {
@@ -127,12 +125,12 @@ public class LoginPage extends BasePage {
 
 	public boolean isHelpButtonDisplay() {
 
-		return isElementDisplayed(HELP);
+		return isElementDisplayed(help);
 	}
 
 	public boolean isBackButtonDisplay() {
 
-		return isElementDisplayed(Back);
+		return isElementDisplayed(back);
 	}
 
 	public boolean isForgetOptionDisplay() {
@@ -149,25 +147,25 @@ public class LoginPage extends BasePage {
 		return isElementDisplayed(passwordIncorrectErrorMsg);
 
 	}
-
+	
 	public boolean isMosipLogoDisplay() {
 		return isElementDisplayed(mosipLogo);
 
 	}
-
+	
 	public void selectLanguage(String language) {
 		if(language.equalsIgnoreCase("eng"))
-			clickOnElement(English);
+			clickOnElement(english);
 		if(language.equalsIgnoreCase("fra"))
-			clickOnElement(French);
+			clickOnElement(french);
 		if(language.equalsIgnoreCase("ara"))
-			clickOnElement(Arabic);
+			clickOnElement(arabic);
 		if(language.equalsIgnoreCase("kan"))
-			clickOnElement(Kannada);
+			clickOnElement(kannada);
 		if(language.equalsIgnoreCase("hin"))
-			clickOnElement(Hindi);
+			clickOnElement(hindi);
 		if(language.equalsIgnoreCase("tam"))
-			clickOnElement(Tamil);
+			clickOnElement(tamil);
 		if(language.equalsIgnoreCase("spa"))
 			clickOnElement(spanish);
 	}
