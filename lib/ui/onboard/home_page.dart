@@ -6,7 +6,6 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -27,9 +26,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
   const HomePage({super.key});
-
-  static const platform =
-      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
 
   @override
   State<HomePage> createState() => _HomePageState();
