@@ -40,4 +40,6 @@ public interface RegistrationDao {
     @Insert
     void insert(Registration registration);
 
+    @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes desc")
+    List<Registration> findAllRegistrationByStatus(String status);
 }

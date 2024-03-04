@@ -51,3 +51,6 @@ dart run pigeon --input pigeon/audit_response.dart --dart_out lib/pigeon/audit_r
 
 # Generate transliteration files
 dart run pigeon --input pigeon/transliteration.dart --dart_out lib/pigeon/transliteration_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/TransliterationPigeon.java --java_package "io.mosip.registration_client.model"
+
+# Generate dash board files
+dart run pigeon --input pigeon/dash_board.dart --dart_out lib/pigeon/dash_board_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/DashBoardPigeon.java --java_package "io.mosip.registration_client.model"

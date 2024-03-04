@@ -18,9 +18,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.TemplateService;
@@ -48,6 +50,7 @@ import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.DashBoardDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 
@@ -199,6 +202,12 @@ public class HostApiModule {
     @Singleton
     AuditDetailsApi getAuditDetailsApi(AuditManagerService auditManagerService) {
         return new AuditDetailsApi(auditManagerService);
+    }
+
+    @Provides
+    @Singleton
+    DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
+        return new DashBoardDetailsApi(userDetailDao, registrationRepository);
     }
 }
 

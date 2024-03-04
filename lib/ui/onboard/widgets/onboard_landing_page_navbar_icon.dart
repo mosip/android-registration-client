@@ -9,28 +9,44 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../utils/app_config.dart';
+
 class OnboardLandingPageNavbarIcon extends StatelessWidget {
   const OnboardLandingPageNavbarIcon({
     super.key,
-    required this.icon,
     required this.title,
-    required this.ontap,
     required this.imagePath,
+    required this.selectedImagePath,
+    required this.index,
+    required this.selectedIndex,
   });
-  final Widget icon;
-  final Widget title;
-  final void Function() ontap;
+  final String title;
   final String imagePath;
+  final String selectedImagePath;
+  final int index;
+  final int selectedIndex;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: ontap,
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: selectedIndex == index ? bottomBarSelectedColor : Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SvgPicture.asset(imagePath),
-          title,
+          selectedIndex == index ? SvgPicture.asset(selectedImagePath) : SvgPicture.asset(imagePath),
+          const SizedBox(height: 5),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: isMobileSize ? 10 : 18,
+              fontWeight: semiBold,
+              color: selectedIndex == index ? solidPrimary : secondaryColors.elementAt(5),
+            ),
+          ),
         ],
       ),
     );
