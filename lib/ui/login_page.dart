@@ -132,11 +132,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     double h = ScreenUtil().screenHeight;
     double w = ScreenUtil().screenWidth;
-    authProvider = Provider.of<AuthProvider>(context, listen: false);
-    syncProvider = Provider.of<SyncProvider>(context, listen: false);
-    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    connectivityProvider =
-        Provider.of<ConnectivityProvider>(context, listen: false);
     appLocalizations = AppLocalizations.of(context)!;
 
     return SafeArea(
@@ -287,7 +282,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     }
     await authProvider.authenticateUser(username, password, connectivityProvider.isConnected);
 
-    // bool isTrue = authProvider.isLoggedIn;
     if (!authProvider.isLoggedIn) {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
