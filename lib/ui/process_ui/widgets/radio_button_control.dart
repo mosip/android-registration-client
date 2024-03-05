@@ -51,8 +51,8 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     String response = "";
     String updatedValue = "";
     response =
-        context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang];
-    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, "eng");
+        context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
     for (var element in data) {
       if(element!.code == response){
         setState(() {
