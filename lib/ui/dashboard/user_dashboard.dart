@@ -107,7 +107,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                           fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 8),
                                   if (snapshot.hasData &&
-                                      snapshot.data != null) ...[
+                                      snapshot.data!.isNotEmpty) ...[
                                     Text(
                                         "${dateFormat(snapshot.data!.last.toString())} To ${dateFormat(DateTime.now().millisecondsSinceEpoch.toString())}",
                                         style: const TextStyle(
