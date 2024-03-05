@@ -99,6 +99,9 @@ import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 
+import android.net.Uri;
+
+
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
 
@@ -151,7 +154,7 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     BiometricsDetailsApi biometricsDetailsApi;
-    
+
     @Inject
     PacketAuthenticationApi packetAuthenticationApi;
 
@@ -229,6 +232,11 @@ public class MainActivity extends FlutterActivity {
         }
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                Intent permissionIntent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                permissionIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                startActivity(permissionIntent);
+            }
             long alarmTime = getIntervalMillis(api);
             long currentTime = System.currentTimeMillis();
             long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
@@ -250,6 +258,11 @@ public class MainActivity extends FlutterActivity {
             Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
             Integer batchSize = getBatchSize();
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
+
+//          Variable is accessed within inner class. Needs to be declared final also it is modified too in the inner class
+//          Solution: using final array variable with one element that can be altered
+            final Integer[] remainingPack = {registrationList.size()};
+
             if(registrationList.isEmpty()){
                 uploadRegistrationPackets(context);
                 return;
@@ -266,8 +279,9 @@ public class MainActivity extends FlutterActivity {
 
                         @Override
                         public void onComplete(String RID, PacketTaskStatus status) {
-                            Log.d(getClass().getSimpleName(), status+RID);
-                            if(RID == registrationList.get(registrationList.size() - 1).getPacketId()){
+                            remainingPack[0] -= 1;
+                            Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
+                            if(remainingPack[0] == 0){
                                 Log.d(getClass().getSimpleName(), "Last Packet"+RID);
                                 uploadRegistrationPackets(context);
                             }
