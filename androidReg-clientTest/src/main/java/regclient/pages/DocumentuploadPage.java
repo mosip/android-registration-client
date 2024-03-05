@@ -28,12 +28,15 @@ public class DocumentuploadPage extends BasePage {
 		super(driver);
 	}
 
-	public boolean isDoccumentUploadPageDisplay() {
+	public boolean isDoccumentUploadPageDisplayed() {
 		return isElementDisplayed(doccumentUploadPage);
 	}
 
 	public void selectIdentityProof() {
 		clickOnElement(identityProofSelectValue);
+	}
+	
+	public void closeIdentityProofPopUpClose() {
 		clickOnElement(identityProofPopUpClose);
 	}
 
@@ -42,7 +45,7 @@ public class DocumentuploadPage extends BasePage {
 		return new CameraPage(driver);
 	}
 
-	public  boolean isScanButtonEnable() {
+	public  boolean isScanButtonEnabled() {
 		return isElementEnabled(scanButton);
 	}
 

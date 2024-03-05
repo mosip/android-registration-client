@@ -18,13 +18,13 @@ public class AddressAndContactPage extends BasePage{
 	private WebElement emailTextBox;
 
 	@AndroidFindBy(accessibility = "CONTINUE")
-	private WebElement continuebutton;
+	private WebElement continueButton;
 
 	public AddressAndContactPage(AppiumDriver driver) {
 		super(driver);
 	}
 
-	public boolean isAddressAndContactPageTitleDisplay() {
+	public boolean  isAddressAndContactPageTitleDisplayed() {
 		return isElementDisplayed(addressAndContactPageTitle);
 	}
 
@@ -37,7 +37,7 @@ public class AddressAndContactPage extends BasePage{
 	}
 
 	public  IntroducerDetails clickOnContinueButton() {
-		clickOnElement(continuebutton);
+		clickOnElement(continueButton);
 		return new IntroducerDetails(driver);
 	}
 }

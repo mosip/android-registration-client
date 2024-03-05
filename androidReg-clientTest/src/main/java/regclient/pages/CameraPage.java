@@ -18,10 +18,13 @@ public class CameraPage  extends BasePage{
 		super(driver);
 	}
 	
-	public  IdentityProofPage clickimage() {
-		clickOnElement(clickImageButton);
+	public  IdentityProofPage clickOkButton() {
 		clickOnElement(okButton);
 		return new IdentityProofPage(driver);
+	}
+	
+	public  void clickimage() {
+		clickOnElement(clickImageButton);
 	}
 
 }

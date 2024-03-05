@@ -1,6 +1,5 @@
 package regclient.pages;
 
-import java.io.IOException;
 
 import org.openqa.selenium.WebElement;
 
@@ -11,33 +10,32 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 public class ConsentPage extends BasePage{
 
 	@AndroidFindBy(accessibility = "Consent")
-	private WebElement consentpage;
+	private WebElement consentPage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().className(\"android.widget.CheckBox\"))")
-	private WebElement checkBox;
-	
+	private WebElement termAndConditionCheckBox;
+
 	@AndroidFindBy(accessibility = "INFORMED")
-	private WebElement informed;
+	private WebElement informedButton;
 
 	public ConsentPage(AppiumDriver driver) {
 		super(driver);
 	}
 
-	public boolean isConsentpageDisplay() {
-
-		return isElementDisplayed(consentpage);
+	public boolean isConsentPageDisplayed() {
+		return isElementDisplayed(consentPage);
 	}
 
 	public  void clickOnCheckBoxButton() {
-		clickOnElement(checkBox);
+		clickOnElement(termAndConditionCheckBox);
 	}
 
-	public  boolean isInformedButtonEnable() {
-		return isElementEnabled(informed);
+	public  boolean isInformedButtonEnabled() {
+		return isElementEnabled(informedButton);
 	}
-	
+
 	public  DemographicPage clickOnInformedButton() {
-		clickOnElement(informed);
+		clickOnElement(informedButton);
 		return new DemographicPage(driver);
 	}
 }

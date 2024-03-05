@@ -12,13 +12,13 @@ public class LoginPage extends BasePage {
 	private WebElement mosipLogo;
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
-	private WebElement usernametextbox;
+	private WebElement userNameTextBox;
 
 	@AndroidFindBy(accessibility = "NEXT")
-	private WebElement nextbutton;
+	private WebElement nextButton;
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
-	private WebElement passwordtextbox;
+	private WebElement passwordTextBox;
 
 	@AndroidFindBy(accessibility = "LOGIN")
 	private WebElement loginButton;
@@ -27,69 +27,69 @@ public class LoginPage extends BasePage {
 	private WebElement loginMessage;
 
 	@AndroidFindBy(accessibility = "Password")
-	private WebElement passwordheader;
+	private WebElement passwordHeader;
 
 	@AndroidFindBy(accessibility = "Username")
-	private WebElement usernameHeader;
+	private WebElement userNameHeader;
 
 	@AndroidFindBy(accessibility = "Welcome to")
-	private WebElement welcome;
+	private WebElement welcomeMessage;
 
 	@AndroidFindBy(accessibility = "HELP")
-	private WebElement help;
+	private WebElement helpButton;
 
 	@AndroidFindBy(accessibility = "BACK")
-	private WebElement back;
+	private WebElement backButton;
 
 	@AndroidFindBy(accessibility = "Forgot Password?")
-	private WebElement forgetPassword;
+	private WebElement forgetPasswordButton;
 
 	@AndroidFindBy(accessibility = "User not found!")
-	private WebElement userNotFoundErrorMsg;
+	private WebElement userNotFoundErrorMessage;
 
 	@AndroidFindBy(accessibility = "Password incorrect!")
-	private WebElement passwordIncorrectErrorMsg;
-	
+	private WebElement passwordIncorrectErrorMessage;
+
 	@AndroidFindBy(accessibility = "English")
-	private WebElement english;
-	
+	private WebElement englishButton;
+
 	@AndroidFindBy(accessibility = "French")
-	private WebElement french;
-	
+	private WebElement frenchButton;
+
 	@AndroidFindBy(accessibility = "Arabic")
-	private WebElement arabic;
-	
+	private WebElement arabicButton;
+
 	@AndroidFindBy(accessibility = "ಕನ್ನಡ")
-	private WebElement kannada;
-	
+	private WebElement kannadaButton;
+
 	@AndroidFindBy(accessibility = "हिन्दी")
-	private WebElement hindi;
-	
+	private WebElement hindiButton;
+
 	@AndroidFindBy(accessibility = "தமிழ்")
-	private WebElement tamil;
-	
+	private WebElement tamilButton;
+
 	@AndroidFindBy(accessibility = "spanish")
-	private WebElement spanish;
+	private WebElement spanishButton;
 
 	public LoginPage(AppiumDriver driver) {
 		super(driver);
 	}
 
 
-	public  void enterusername(String username) {
-		clickAndsendKeysToTextBox(usernametextbox,username);
+	public  void enterUserName(String username) {
+		clickAndsendKeysToTextBox(userNameTextBox,username);
 	}
 
 	public  void clickOnNextButton() {
-		clickOnElement(nextbutton);
+		clickOnElement(nextButton);
 	}
 
 	public  void clickOnBackButton() {
-		clickOnElement(back);
+		clickOnElement(backButton);
 	}
 
-	public  void enterpassword(String password) {
-		clickAndsendKeysToTextBox(passwordtextbox,password);
+	public  void enterPassword(String password) {
+		clickAndsendKeysToTextBox(passwordTextBox,password);
 	}
 
 	public  RegistrationTasksPage clickOnloginButton() {
@@ -97,76 +97,73 @@ public class LoginPage extends BasePage {
 		return new RegistrationTasksPage(driver);
 	}
 
-	public  boolean isNextButtonEnable() {
-		return isElementEnabled(nextbutton);
+	public  boolean isNextButtonEnabled() {
+		return isElementEnabled(nextButton);
 	}
 
-	public  boolean isLoginButtonEnable() {
+	public  boolean isLoginButtonEnabled() {
 		return isElementEnabled(loginButton);
 	}
 
 	public boolean isLoginPageLoaded() {
-
 		return isElementDisplayed(loginMessage);
 	}
 
-	public boolean isPasswordHeaderDisplay() {
-		return isElementDisplayed(passwordheader);
+	public boolean isPasswordHeaderDisplayed() {
+		return isElementDisplayed(passwordHeader);
 	}
 
-	public boolean isUsernameHeaderDisplay() {
-		return isElementDisplayed(usernameHeader);
+	public boolean isUserNameHeaderDisplayed() {
+		return isElementDisplayed(userNameHeader);
 	}
 
-	public boolean isWelcomeMsgDisplay() {
-
-		return isElementDisplayed(welcome);
+	public boolean isWelcomeMessageDisplayed() {
+		return isElementDisplayed(welcomeMessage);
 	}
 
-	public boolean isHelpButtonDisplay() {
-
-		return isElementDisplayed(help);
+	public boolean isHelpButtonDisplayed() {
+		return isElementDisplayed(helpButton);
 	}
 
-	public boolean isBackButtonDisplay() {
-
-		return isElementDisplayed(back);
+	public boolean isBackButtonDisplayed() {
+		return isElementDisplayed(backButton);
 	}
 
-	public boolean isForgetOptionDisplay() {
-		return isElementDisplayed(forgetPassword);
-
+	public boolean isForgetOptionDisplayed() {
+		return isElementDisplayed(forgetPasswordButton);
 	}
 
-	public boolean isUserNotFoundErrorMsgDisplay() {
-		return isElementDisplayed(userNotFoundErrorMsg);
-
+	public boolean isUserNotFoundErrorMessageDisplayed() {
+		return isElementDisplayed(userNotFoundErrorMessage);
 	}
 
-	public boolean isPasswordIncorrectErrorMsgDisplay() {
-		return isElementDisplayed(passwordIncorrectErrorMsg);
-
+	public boolean isPasswordIncorrectErrorMessageDisplayed() {
+		return isElementDisplayed(passwordIncorrectErrorMessage);
 	}
-	
-	public boolean isMosipLogoDisplay() {
+
+	public boolean isMosipLogoDisplayed() {
 		return isElementDisplayed(mosipLogo);
+	}
 
-	}
-	
 	public void selectLanguage(String language) {
-		if(language.equalsIgnoreCase("eng"))
-			clickOnElement(english);
-		if(language.equalsIgnoreCase("fra"))
-			clickOnElement(french);
-		if(language.equalsIgnoreCase("ara"))
-			clickOnElement(arabic);
-		if(language.equalsIgnoreCase("kan"))
-			clickOnElement(kannada);
-		if(language.equalsIgnoreCase("hin"))
-			clickOnElement(hindi);
-		if(language.equalsIgnoreCase("tam"))
-			clickOnElement(tamil);
-		if(language.equalsIgnoreCase("spa"))
-			clickOnElement(spanish);
+		switch (language) {
+		case "eng":
+			clickOnElement(englishButton);
+		case "fra":
+			clickOnElement(frenchButton);
+		case "ara":
+			clickOnElement(arabicButton);
+		case "kan":
+			clickOnElement(kannadaButton);
+		case "hin":
+			clickOnElement(hindiButton);
+		case "tam":
+			clickOnElement(tamilButton);
+		case "spa":
+			clickOnElement(spanishButton);
+		default:
+			clickOnElement(englishButton);
+		}
 	}
+
 }

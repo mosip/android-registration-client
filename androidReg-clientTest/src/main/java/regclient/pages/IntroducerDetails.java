@@ -4,19 +4,18 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 
 public class IntroducerDetails extends BasePage {
 
 	@AndroidFindBy(accessibility = "CONTINUE")
-	private WebElement continuebutton;
+	private WebElement continueButton;
 	
 	public IntroducerDetails(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public  DocumentuploadPage clickOnContinueButton() {
-		clickOnElement(continuebutton);
+		clickOnElement(continueButton);
 		return new DocumentuploadPage(driver);
 		
 	}

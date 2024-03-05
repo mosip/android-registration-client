@@ -9,64 +9,58 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 public class RegistrationTasksPage  extends BasePage{
 
 	@AndroidFindBy(accessibility = "Registration Tasks")
-	private WebElement registrationTasks;
-	
+	private WebElement registrationTasksTitle;
+
 	@AndroidFindBy(accessibility = "Operational Tasks")
-	private WebElement operationalTask;
+	private WebElement operationalTaskPageTitle;
 
 	@AndroidFindBy(accessibility = "New Registration")
-	private WebElement newRegistration;
+	private WebElement newRegistrationButton;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.ImageView\").instance(0)")
-	private WebElement synchronizeData ;
-	
+	private WebElement synchronizeDataButton ;
+
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Policy key Sync Completed\"]")
-	private WebElement policykeySyncCompleted ;
-	
+	private WebElement policykeySyncCompletedMessage ;
+
 	@AndroidFindBy(xpath = "//*[contains(@text,'Sync Completed')]")
-	private WebElement masterDataSyncCompleted ;
-	
+	private WebElement masterDataSyncCompletedMessage ;
+
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
-	private WebElement scriptSyncCompleted ;
+	private WebElement scriptSyncCompletedMessage ;
 
 	public RegistrationTasksPage(AppiumDriver driver) {
 		super(driver);
-
 	}
 
-	public  SelectLanguagePage clickOnNewRegistration() {
-		clickOnElement(newRegistration);
+	public  SelectLanguagePage clickOnNewRegistrationButton() {
+		clickOnElement(newRegistrationButton);
 		return new SelectLanguagePage(driver);
 	}
-	
+
 	public  void clickOnSynchronizeDataButton() {
-		clickOnElement(synchronizeData);
+		clickOnElement(synchronizeDataButton);
 	}
-	
+
 	public boolean isRegistrationTasksPageLoaded() {
-
-		return isElementDisplayed(registrationTasks);
-	}
-	
-	public boolean isOperationalTaskDisplay() {
-
-		return isElementDisplayed(operationalTask);
-	}
-	
-	public boolean isPolicykeySyncCompletedDisplay() {
-
-		return isElementDisplayed(policykeySyncCompleted);
-	}
-	
-	public boolean isMasterDataSyncCompletedDisplay() {
-
-		return isElementDisplayed(masterDataSyncCompleted);
-	}
-	
-	public boolean isScriptSyncCompletedDisplay() {
-
-		return isElementDisplayed(scriptSyncCompleted);
+		return isElementDisplayed(registrationTasksTitle);
 	}
 
-	
+	public boolean isOperationalTaskDisplayed() {
+		return isElementDisplayed(operationalTaskPageTitle);
+	}
+
+	public boolean isPolicykeySyncCompletedDisplayed() {
+		return isElementDisplayed(policykeySyncCompletedMessage);
+	}
+
+	public boolean isMasterDataSyncCompletedDisplayed() {
+		return isElementDisplayed(masterDataSyncCompletedMessage);
+	}
+
+	public boolean isScriptSyncCompletedDisplayed() {
+		return isElementDisplayed(scriptSyncCompletedMessage);
+	}
+
+
 }

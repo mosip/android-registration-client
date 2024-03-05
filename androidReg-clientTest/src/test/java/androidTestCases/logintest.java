@@ -15,60 +15,60 @@ public class logintest  extends AndroidBaseTest {
 	public void login() {
 		LoginPage loginPage=new LoginPage(driver);
 		
-		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayed");
-		assertTrue(loginPage.isMosipLogoDisplay(),"verify if mosip logo is displayed");
-		assertTrue(loginPage.isWelcomeMsgDisplay(),"Verify if welcome note \"welcome to community registration client!\" message should be displayed.");
-		assertTrue(loginPage.isHelpButtonDisplay(),"Verify if check help button on the top right of the page");
+		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded");
+		assertTrue(loginPage.isMosipLogoDisplayed(),"verify if mosip logo is displayeded");
+		assertTrue(loginPage.isWelcomeMessageDisplayed(),"Verify if welcome note \"welcome to community registration client!\" message should be displayeded.");
+		assertTrue(loginPage.isHelpButtonDisplayed(),"Verify if check help button on the top right of the page");
 		
-		loginPage.enterusername(TestDataReader.readData("username"));
+		loginPage.enterUserName(TestDataReader.readData("username"));
 		
-		assertTrue(loginPage.isNextButtonEnable(),"verify if the next button enable");
+		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
 		
-		assertTrue(loginPage.isBackButtonDisplay(),"Verify if back button is displayed");
-		assertTrue(loginPage.isForgetOptionDisplay(),"Verify if forget password option is displayed");
-		assertTrue(loginPage.isPasswordHeaderDisplay(),"Verify if the password  input box header  display");
-		loginPage.enterpassword(TestDataReader.readData("password"));
+		assertTrue(loginPage.isBackButtonDisplayed(),"Verify if back button is displayeded");
+		assertTrue(loginPage.isForgetOptionDisplayed(),"Verify if forget password option is displayeded");
+		assertTrue(loginPage.isPasswordHeaderDisplayed(),"Verify if the password  input box header  displayed");
+		loginPage.enterPassword(TestDataReader.readData("password"));
 		
-		assertTrue(loginPage.isLoginButtonEnable(),"Verify if the login button enable");
+		assertTrue(loginPage.isLoginButtonEnabled(),"Verify if the login button enabled");
 		RegistrationTasksPage RegistrationTasksPage=loginPage.clickOnloginButton();
 		
 		assertTrue(RegistrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
 		
 		RegistrationTasksPage.clickOnSynchronizeDataButton();
 		
-		assertTrue(RegistrationTasksPage.isMasterDataSyncCompletedDisplay(),"Verify if MasterData Sync should be completed successfully");
-		assertTrue(RegistrationTasksPage.isScriptSyncCompletedDisplay(),"Verify if Script Sync should be completed successfully");
-		assertTrue(RegistrationTasksPage.isPolicykeySyncCompletedDisplay(),"Verify if Policykey sync should be completed successfully");
+		assertTrue(RegistrationTasksPage.isMasterDataSyncCompletedDisplayed(),"Verify if masterData sync should be completed successfully");
+		assertTrue(RegistrationTasksPage.isScriptSyncCompletedDisplayed(),"Verify if script sync should be completed successfully");
+		assertTrue(RegistrationTasksPage.isPolicykeySyncCompletedDisplayed(),"Verify if policykey sync should be completed successfully");
 		
 		
 	}
-	//@Test
+	@Test
 	public void loginWithInvalidPasscode() {
 		LoginPage loginPage=new LoginPage(driver);
 		
 		loginPage.selectLanguage(TestDataReader.readData("language"));
-		loginPage.enterusername(TestDataReader.readData("nonRegisteredUsername"));
+		loginPage.enterUserName(TestDataReader.readData("nonRegisteredUsername"));
 		
-		assertTrue(loginPage.isNextButtonEnable(),"verify if the next button enable");
+		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
 		
-		assertTrue(loginPage.isUserNotFoundErrorMsgDisplay(),"verify if error message should be displayed as “user not found”");
-		loginPage.enterusername(TestDataReader.readData("username"));
+		assertTrue(loginPage.isUserNotFoundErrorMessageDisplayed(),"verify if error message should be displayeded as “user not found”");
+		loginPage.enterUserName(TestDataReader.readData("username"));
 		
-		assertTrue(loginPage.isNextButtonEnable(),"verify if the next button enable");
+		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
 		
-		//assertFalse(loginPage.isLoginButtonEnable(),"verify if the login button is disable without entering password");
+		//assertFalse(loginPage.isLoginButtonEnabled(),"verify if the login button is disable without entering password");
 		
-		loginPage.enterpassword(TestDataReader.readData("InvalidPassword"));
-		assertTrue(loginPage.isLoginButtonEnable(),"Verify if the login button enable");
+		loginPage.enterPassword(TestDataReader.readData("InvalidPassword"));
+		assertTrue(loginPage.isLoginButtonEnabled(),"Verify if the login button enabled");
 		
 		loginPage.clickOnloginButton();
-		assertTrue(loginPage.isPasswordIncorrectErrorMsgDisplay(),"verify if error message should be displayed as password incorrect!");
+		assertTrue(loginPage.isPasswordIncorrectErrorMessageDisplayed(),"verify if error message should be displayeded as password incorrect!");
 		
 		loginPage.clickOnBackButton();
-		assertTrue(loginPage.isUsernameHeaderDisplay(),"Verify if the username  input box header  display");
+		assertTrue(loginPage.isUserNameHeaderDisplayed(),"Verify if the username  input box header  displayed");
 		
 		
 		

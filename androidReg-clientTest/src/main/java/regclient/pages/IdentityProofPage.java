@@ -4,7 +4,6 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 
 public class IdentityProofPage extends BasePage{
 
@@ -23,7 +22,7 @@ public class IdentityProofPage extends BasePage{
 		return new DocumentuploadPage(driver);
 	}
 
-	public boolean isRetakeButtonDisplay() {
+	public boolean isRetakeButtonDisplayed() {
 		return isElementDisplayed(retakeButton);
 	}
 

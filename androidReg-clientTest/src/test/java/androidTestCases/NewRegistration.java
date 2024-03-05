@@ -23,16 +23,14 @@ public class NewRegistration extends AndroidBaseTest {
 	public void NewRegistration() {
 		LoginPage loginPage=new LoginPage(driver);
 
-		loginPage.enterusername(TestDataReader.readData("username"));
+		loginPage.enterUserName(TestDataReader.readData("username"));
 		loginPage.clickOnNextButton();
 
-		
-		loginPage.enterpassword(TestDataReader.readData("password"));
+		loginPage.enterPassword(TestDataReader.readData("password"));
 		RegistrationTasksPage RegistrationTasksPage=loginPage.clickOnloginButton();
 
 		assertTrue(RegistrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
-		SelectLanguagePage selectLanguagePage=RegistrationTasksPage.clickOnNewRegistration();
-		
+		SelectLanguagePage selectLanguagePage=RegistrationTasksPage.clickOnNewRegistrationButton();
 		
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
 		selectLanguagePage.clickOnSubmitButtonWithoutSelectingLanguage();
@@ -41,59 +39,48 @@ public class NewRegistration extends AndroidBaseTest {
 		selectLanguagePage.selectArabiclanguage();
 		
 		assertTrue(selectLanguagePage.isNotificationLanguageEnglishArabicDisplay(),"verify if the notification language display in arabic and english");
-		assertTrue(selectLanguagePage.isArabicLanguageButtonEnable(),"verify if the Arabic  button enable");
+		assertTrue(selectLanguagePage.isArabicLanguageButtonEnabled(),"verify if the Arabic  button enable");
 		selectLanguagePage.selectNotificationlanguage();
 		
-		assertTrue(selectLanguagePage.isSubmitButtonEnable(),"verify if the submit  button enable");
-		ConsentPage consentPage=selectLanguagePage.clickOnSubmit();
+		assertTrue(selectLanguagePage.isSubmitButtonEnabled(),"verify if the submit  button enable");
+		ConsentPage consentPage=selectLanguagePage.clickOnSubmitButton();
 		
-		assertTrue(consentPage.isConsentpageDisplay(),"Verify if Consent page is loaded");
+		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
 		//consentPage.clickOnCheckBoxButton();
 		
-		assertTrue(consentPage.isInformedButtonEnable(),"Verify if informed  button enable");
+		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enable");
 		DemographicPage demographicPage=consentPage.clickOnInformedButton();
 		
-		assertTrue(demographicPage.isDemographicDetailsPageDisplay(),"Verify if demographic details page is display");
+		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is display");
 		demographicPage.enterFirstName(TestDataReader.readData("firstname"));
 		
-		assertTrue(demographicPage.getenterfirstNameTextBoxSecondlang(),"Verify if first name is enter in second language text box");
+		assertTrue(demographicPage.checkFirstNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
 		demographicPage.enterLastName(TestDataReader.readData("lastname"));
 		
-		assertTrue(demographicPage.getenterLastNameTextBoxSecondlang(),"Verify if last name is enter in second language text box");
+		assertTrue(demographicPage.checkLastNameSecondLanguageTextBoxNotNull(),"Verify if last name is enter in second language text box");
 		demographicPage.enterAge(TestDataReader.readData("adultage"));
 		demographicPage.selectGender(TestDataReader.readData("gender"));
 		//demographicPage.SelectMaritalStatus();
 		AddressAndContactPage addressAndContactPage=demographicPage.clickOnContinueButton();
 		
-		assertTrue(addressAndContactPage.isAddressAndContactPageTitleDisplay(),"Verify if Address and Contact page is display");
+		assertTrue(addressAndContactPage.isAddressAndContactPageTitleDisplayed(),"Verify if Address and Contact page is display");
 		addressAndContactPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
 		addressAndContactPage.enterEmailID(TestDataReader.readData("emailId"));
 		IntroducerDetails introducerDetails=addressAndContactPage.clickOnContinueButton();
 		DocumentuploadPage documentuploadPage=introducerDetails.clickOnContinueButton();
 		
-		assertTrue(documentuploadPage.isDoccumentUploadPageDisplay(),"Verify if doccumentupload page is display");
+		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is display");
 		documentuploadPage.selectIdentityProof();
+		documentuploadPage.closeIdentityProofPopUpClose();
 		
-		assertTrue(documentuploadPage.isScanButtonEnable(),"Verify if scan  button enable");
+		assertTrue(documentuploadPage.isScanButtonEnabled(),"Verify if scan  button enable");
 		CameraPage cameraPage=documentuploadPage.clickOnScanButton();
 		
-		IdentityProofPage identityProofPage=cameraPage.clickimage();
+		cameraPage.clickimage();
+		IdentityProofPage identityProofPage=cameraPage.clickOkButton();
 		identityProofPage.clickOnSaveButton();
 		
-		assertTrue(identityProofPage.isRetakeButtonDisplay(),"Verify if retake  button display");
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button display");
+				
 	}
 }

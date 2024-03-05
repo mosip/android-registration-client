@@ -8,46 +8,44 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 public class DemographicPage extends BasePage{
 
 	@AndroidFindBy(accessibility = "Demographic Details")
-	private WebElement demographicdetails;
+	private WebElement demographicDetails;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(0)")
 	private WebElement firstNameTextBox;
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(1)")
-	private WebElement firstNameTextBoxSecondlang;
+	private WebElement firstNameTextBoxSecondLanguage;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(2)")
-	private WebElement lasttNameTextBox;
-	
+	private WebElement lastNameTextBox;
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(3)")
-	private WebElement lastNameTextBoxSecondLang;
-	
+	private WebElement lastNameTextBoxSecondLanguage;
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(4)")
 	private WebElement ageTextBox;
-	
+
 	@AndroidFindBy(accessibility = "Male")
-	private WebElement male;
-	
+	private WebElement maleButton;
+
 	@AndroidFindBy(accessibility = "Female")
-	private WebElement female;
-	
+	private WebElement femaleButton;
+
 	@AndroidFindBy(accessibility = "Select Option")
 	private WebElement selectMaritalStatus;
-	
+
 	@AndroidFindBy(accessibility = "Single")
-	private WebElement single;
-	
+	private WebElement singleValueFromDropdown;
+
 	@AndroidFindBy(accessibility = "CONTINUE")
-	private WebElement continuebutton;
+	private WebElement continueButton;
 
 	public DemographicPage(AppiumDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 
-	public boolean isDemographicDetailsPageDisplay() {
-
-		return isElementDisplayed(demographicdetails);
+	public boolean isDemographicDetailsPageDisplayed() {
+		return isElementDisplayed(demographicDetails);
 	}
 
 	public  void enterFirstName(String firstName) {
@@ -55,43 +53,43 @@ public class DemographicPage extends BasePage{
 	}
 
 	public  void enterLastName(String lastName) {
-		clickAndsendKeysToTextBox(lasttNameTextBox,lastName);
+		clickAndsendKeysToTextBox(lastNameTextBox,lastName);
 	}
-	
+
 	public  void enterAge(String age) {
 		clickAndsendKeysToTextBox(ageTextBox,age);
 	}
 
-	public boolean getenterfirstNameTextBoxSecondlang() {
-		if(getTextFromLocator(firstNameTextBoxSecondlang)==null)
+	public boolean checkFirstNameSecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(firstNameTextBoxSecondLanguage)==null || getTextFromLocator(firstNameTextBoxSecondLanguage)=="" )
 			return	false;
 		else
 			return	true;
 	}
-	
-	public boolean getenterLastNameTextBoxSecondlang() {
-		if(getTextFromLocator(lastNameTextBoxSecondLang)==null)
+
+	public boolean  checkLastNameSecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(lastNameTextBoxSecondLanguage)==null || getTextFromLocator(lastNameTextBoxSecondLanguage)=="")
 			return	false;
 		else
 			return	true;
 	}
-	
+
 	public  void selectGender(String gender) {
 		if(gender.equalsIgnoreCase("male"))
-		clickOnElement(male);
+			clickOnElement(maleButton);
 		if(gender.equalsIgnoreCase("female"))
-			clickOnElement(female);
+			clickOnElement(femaleButton);
 	}
-	
+
 	public  void selectMaritalStatus() {
 		clickOnElement(selectMaritalStatus);
-		clickOnElement(single);
+		clickOnElement(singleValueFromDropdown);
 	}
-	
+
 	public  AddressAndContactPage clickOnContinueButton() {
-		clickOnElement(continuebutton);
+		clickOnElement(continueButton);
 		return new AddressAndContactPage(driver);
-		
+
 	}
 
 }
