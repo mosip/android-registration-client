@@ -34,7 +34,6 @@ public class logintest  extends AndroidBaseTest {
 		RegistrationTasksPage RegistrationTasksPage=loginPage.clickOnloginButton();
 		
 		assertTrue(RegistrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
-		
 		RegistrationTasksPage.clickOnSynchronizeDataButton();
 		
 		assertTrue(RegistrationTasksPage.isMasterDataSyncCompletedDisplayed(),"Verify if masterData sync should be completed successfully");

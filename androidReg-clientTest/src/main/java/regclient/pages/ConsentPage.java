@@ -26,7 +26,7 @@ public class ConsentPage extends BasePage{
 		return isElementDisplayed(consentPage);
 	}
 
-	public  void clickOnCheckBoxButton() {
+	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
 	}
 

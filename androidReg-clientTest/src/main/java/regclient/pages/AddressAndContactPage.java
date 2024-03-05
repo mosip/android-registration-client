@@ -15,7 +15,7 @@ public class AddressAndContactPage extends BasePage{
 	private WebElement mobileNumberTextBox;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(1)")
-	private WebElement emailTextBox;
+	private WebElement emailIdTextBox;
 
 	@AndroidFindBy(accessibility = "CONTINUE")
 	private WebElement continueButton;
@@ -33,7 +33,7 @@ public class AddressAndContactPage extends BasePage{
 	}
 
 	public  void enterEmailID(String EmailID) {
-		clickAndsendKeysToTextBox(emailTextBox,EmailID);
+		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 	}
 
 	public  IntroducerDetails clickOnContinueButton() {
