@@ -5,6 +5,8 @@
  *
 */
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -67,6 +69,7 @@ class _HomePageState extends State<HomePage> {
     }
     await syncProvider.getLastSyncTime();
     await syncProvider.manualSync();
+    log("Manual Sync Completed!");
     await syncProvider.batchJob();
     await syncProvider.getLastSyncTime();
     await registrationTaskProvider.getListOfProcesses();

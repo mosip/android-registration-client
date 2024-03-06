@@ -49,7 +49,6 @@ class SyncProvider with ChangeNotifier {
   getLastSyncTime() async {
     SyncTime lastSyncTime = await syncResponseService.getLastSyncTime();
     setLastSuccessfulSyncTime(lastSyncTime.syncTime!);
-    log("Last Sync Time from GlobalParamRepository:${lastSyncTime.syncTime!}");
   }
 
   setLastSuccessfulSyncTime(String syncTime) {
@@ -73,87 +72,9 @@ class SyncProvider with ChangeNotifier {
 
   autoSync(BuildContext context) async {
     await syncResponseService.getLastSyncTime();
-    // await SyncResponseServiceImpl()
-    //     .getGlobalParamsSync()
-    //     .then((Sync getAutoSync) async {
-    //   setCurrentProgressType(getAutoSync.syncType!);
-    //   if (getAutoSync.errorCode == "") {
-    //     _policyKeySyncSuccess = true;
-    //     _currentSyncProgress = getAutoSync.syncProgress!;
-    //     notifyListeners();
-    //   } else {
-    //     log(AppLocalizations.of(context)!.global_params_sync_failed);
-    //   }
-    //   notifyListeners();
-    //   await SyncResponseServiceImpl()
-    //       .getMasterDataSync()
-    //       .then((Sync getAutoSync) async {
-    //     setCurrentProgressType(getAutoSync.syncType!);
-    //     if (getAutoSync.errorCode == "") {
-    //       _globalParamsSyncSuccess = true;
-    //       _currentSyncProgress = getAutoSync.syncProgress!;
-    //       notifyListeners();
-    //     } else {
-    //       log(AppLocalizations.of(context)!.master_data_sync_failed);
-    //     }
-    //     notifyListeners();
-    //     await SyncResponseServiceImpl()
-    //         .getUserDetailsSync()
-    //         .then((Sync getAutoSync) async {
-    //       setCurrentProgressType(getAutoSync.syncType!);
-    //       if (getAutoSync.errorCode == "") {
-    //         _userDetailsSyncSuccess = true;
-    //         _currentSyncProgress = getAutoSync.syncProgress!;
-    //         notifyListeners();
-    //       } else {
-    //         log(AppLocalizations.of(context)!.user_details_sync_failed);
-    //       }
-    //       notifyListeners();
-    //       await SyncResponseServiceImpl()
-    //           .getIDSchemaSync()
-    //           .then((Sync getAutoSync) async {
-    //         setCurrentProgressType(getAutoSync.syncType!);
-    //         if (getAutoSync.errorCode == "") {
-    //           _idSchemaSyncSuccess = true;
-    //           _currentSyncProgress = getAutoSync.syncProgress!;
-    //           notifyListeners();
-    //         } else {
-    //           log(AppLocalizations.of(context)!.id_schema_sync_failed);
-    //         }
-    //         notifyListeners();
-    //         await SyncResponseServiceImpl()
-    //             .getPolicyKeySync()
-    //             .then((Sync getAutoSync) async {
-    //           setCurrentProgressType(getAutoSync.syncType!);
-    //           if (getAutoSync.errorCode == "") {
-    //             _masterDataSyncSuccess = true;
-    //             _currentSyncProgress = getAutoSync.syncProgress!;
-    //             notifyListeners();
-    //           } else {
-    //             log(AppLocalizations.of(context)!.policy_key_sync_failed);
-    //           }
-    //           notifyListeners();
-    //           await SyncResponseServiceImpl()
-    //               .getCaCertsSync()
-    //               .then((Sync getAutoSync) {
-    //             setCurrentProgressType(getAutoSync.syncType!);
-    //             if (getAutoSync.errorCode == "") {
-    //               _cacertsSyncSuccess = true;
-    //               _currentSyncProgress = getAutoSync.syncProgress!;
-    //               notifyListeners();
-    //             } else {
-    //               log(AppLocalizations.of(context)!.ca_certs_sync_failed);
-    //             }
-    //             notifyListeners();
-    //           });
-    //         });
-    //       });
-    //     });
-    //   });
-    // });
 
     await syncResponseService
-        .getGlobalParamsSync()
+        .getGlobalParamsSync(false)
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -167,7 +88,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getMasterDataSync()
+        .getMasterDataSync(false)
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -181,7 +102,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getUserDetailsSync()
+        .getUserDetailsSync(false)
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -195,7 +116,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getIDSchemaSync()
+        .getIDSchemaSync(false)
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -209,7 +130,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getPolicyKeySync()
+        .getPolicyKeySync(false)
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -222,7 +143,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await syncResponseService.getCaCertsSync().then((Sync getAutoSync) {
+    await syncResponseService.getCaCertsSync(false).then((Sync getAutoSync) {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
         _cacertsSyncSuccess = true;
@@ -249,7 +170,12 @@ class SyncProvider with ChangeNotifier {
   }
 
   manualSync() async {
-    await syncResponseService.manualSync();
+    await syncResponseService.getMasterDataSync(true);
+    await syncResponseService.getIDSchemaSync(true);
+    await syncResponseService.getUserDetailsSync(true);
+    await syncResponseService.getGlobalParamsSync(true);
+    await syncResponseService.getPolicyKeySync(true);
+    await syncResponseService.getCaCertsSync(true);
   }
 
   batchJob() async {

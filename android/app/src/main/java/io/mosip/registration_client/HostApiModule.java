@@ -18,6 +18,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
@@ -186,7 +187,7 @@ public class HostApiModule {
             AuditManagerService auditManagerService,
             MasterDataService masterDataService,
             PacketService packetService,
-            GlobalParamDao globalParamDao) {
+            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao) {
         return new MasterDataSyncApi(clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
@@ -196,7 +197,7 @@ public class HostApiModule {
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
                 syncJobDefRepository, languageRepository, jobManagerService,
-                auditManagerService, masterDataService, packetService, globalParamDao
+                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao
         );
     }
 

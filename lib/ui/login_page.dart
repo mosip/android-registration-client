@@ -6,6 +6,7 @@
 */
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -291,6 +292,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     await syncProvider.getLastSyncTime();
     debugPrint(syncProvider.lastSuccessfulSyncTime);
     if (authProvider.isLoggedIn && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
+      log("sync time: ${syncProvider.lastSuccessfulSyncTime}");
       syncProvider.setIsGlobalSyncInProgress(true);
       await _autoSyncHandler();
     } else {

@@ -19,11 +19,15 @@ import androidx.annotation.NonNull;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -32,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -44,6 +50,7 @@ import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.CACertificateDto;
@@ -55,6 +62,7 @@ import io.mosip.registration.clientmanager.dto.http.MasterData;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.dto.http.UserDetailResponse;
+import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.Registration;
@@ -123,6 +131,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     MasterDataService masterDataService;
     PacketService packetService;
     GlobalParamDao globalParamDao;
+    FileSignatureDao fileSignatureDao;
     Context context;
     private String regCenterId;
 
@@ -139,7 +148,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              AuditManagerService auditManagerService,
                              MasterDataService masterDataService,
                              PacketService packetService,
-                             GlobalParamDao globalParamDao) {
+                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -163,10 +172,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.masterDataService = masterDataService;
         this.packetService = packetService;
         this.globalParamDao = globalParamDao;
+        this.fileSignatureDao = fileSignatureDao;
     }
 
 
-    private void syncPolicyKey(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    private void syncPolicyKey(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
@@ -187,25 +197,38 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         Log.i(TAG, "Policy Sync");
+                        if (isManualSync) {
+                            Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("PolicyKeySync", 5, ""));
-                        return;
+                        onFinish.run();
+                    } else {
+                        Log.e(TAG, "Policy Sync Failed");
+                        if (isManualSync) {
+                            Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
                     }
-                    Log.e(TAG, "Policy Sync Failed");
+                } else {
+                    if (isManualSync) {
+                        Toast.makeText(context, "Policy key Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
                     result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
-                    return;
                 }
-                result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CertificateResponse>> call, Throwable t) {
                 Log.e(TAG, "Policy Sync Failed:", t);
+                if (isManualSync) {
+                    Toast.makeText(context, "Policy key Sync failed", Toast.LENGTH_LONG).show();
+                }
                 result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
             }
         });
     }
 
-    private void syncGlobalParamsData(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) throws Exception {
+    private void syncGlobalParamsData(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish) throws Exception {
         Log.i(TAG, "config data sync is started");
         String serverVersion = getServerVersionFromConfigs();
 
@@ -220,11 +243,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveGlobalParams(response.body().getResponse());
+                        if (isManualSync) {
+                            Toast.makeText(context, context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_completed), Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("GlobalParamsSync", 1, ""));
+                        onFinish.run();
                     } else {
+                        if (isManualSync) {
+                            Toast.makeText(context, String.format("%s %s", context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_failed), error.getMessage()), Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
                     }
                 } else {
+                    if (isManualSync) {
+                        Toast.makeText(context, String.format("%s. %s:%s", context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_failed), context.getString(io.mosip.registration.clientmanager.R.string.status_code), String.valueOf(response.code())), Toast.LENGTH_LONG).show();
+                    }
                     result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
                 }
             }
@@ -232,6 +265,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             @Override
             public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
                 Log.e(TAG, "Global Params Sync Failed.", t);
+                if (isManualSync) {
+                    Toast.makeText(context, context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_failed), Toast.LENGTH_LONG).show();
+                }
                 result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
             }
         });
@@ -289,9 +325,12 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         return Collections.EMPTY_MAP;
     }
 
-    private void syncUserDetails(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) throws Exception {
+    private void syncUserDetails(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish) throws Exception {
         String serverVersion = getServerVersionFromConfigs();
         if (serverVersion.startsWith("1.1.5")) {
+            if (isManualSync) {
+                Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+            }
             Log.i(TAG, "Found 115 version, skipping userdetails sync");
             result.success(syncResult("UserDetailsSync", 3, ""));
             return;
@@ -305,12 +344,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveUserDetails(response.body().getResponse().getUserDetails());
-                        MasterDataSyncPigeon.Sync sync = syncResult("UserDetailsSync", 3, "");
+                        if (isManualSync) {
+                            Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("UserDetailsSync", 3, ""));
+                        onFinish.run();
                     } else {
+                        if (isManualSync) {
+                            Toast.makeText(context, "User Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
                     }
                 } else {
+                    if (isManualSync) {
+                        Toast.makeText(context, "User Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
                     result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
                 }
             }
@@ -318,6 +366,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             @Override
             public void onFailure(Call<ResponseWrapper<UserDetailResponse>> call, Throwable t) {
                 Log.e(TAG, "User Details Sync Failed.", t);
+                if (isManualSync) {
+                    Toast.makeText(context, "User Sync failed", Toast.LENGTH_LONG).show();
+                }
                 result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
             }
         });
@@ -332,7 +383,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
 
-    private void syncLatestIdSchema(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Context context) {
+    private void syncLatestIdSchema(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Context context, Runnable onFinish) {
         Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION, "registration-client");
         call.enqueue(new Callback<ResponseBody>() {
 
@@ -345,11 +396,23 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 new TypeReference<ResponseWrapper<IdSchemaResponse>>() {
                                 });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
+                        if (isManualSync) {
+                            Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("LatestIDSchemaSync", 4, ""));
+                        onFinish.run();
                     } catch (Exception e) {
+                        if (isManualSync) {
+                            Toast.makeText(context, "Identity schema and UI Spec Sync failed." +
+                                    response.code(), Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
                     }
                 } else {
+                    if (isManualSync) {
+                        Toast.makeText(context, "Identity schema and UI Spec Sync failed with status code : " +
+                                response.code(), Toast.LENGTH_LONG).show();
+                    }
                     result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
                 }
             }
@@ -357,12 +420,15 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e(TAG, "Failed to sync schema", t);
+                if (isManualSync) {
+                    Toast.makeText(context, "Identity schema and UI Spec Sync failed", Toast.LENGTH_LONG).show();
+                }
                 result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
             }
         });
     }
 
-    private void syncMasterData(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
+    private void syncMasterData(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish, int retryNo) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
 
         Map<String, String> queryParams = new HashMap<>();
@@ -371,7 +437,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
             Log.e(TAG, "MasterData : not able to get client key index", e);
+            if (isManualSync) {
+                Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+            }
             result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
+            onFinish.run();
             return;
         }
 
@@ -393,7 +463,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
-                        saveMasterData(response.body().getResponse());
+                        saveMasterData(response.body().getResponse(), isManualSync);
                         if (regCenterId != null) {
                             machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
                         }
@@ -401,17 +471,30 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             if (retryNo < master_data_recursive_sync_max_retry) {
                                 Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
                                 //rerunning master data to sync completed master data
-                                syncMasterData(result, retryNo + 1);
+                                syncMasterData(isManualSync, result, onFinish, retryNo + 1);
                             } else {
+                                if (isManualSync) {
+                                    Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
+                                }
                                 result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
                             }
                         } else {
+                            if (isManualSync) {
+                                Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
+                            }
                             result.success(syncResult("MasterDataSync", 2, ""));
+                            onFinish.run();
                         }
                     } else {
+                        if (isManualSync) {
+                            Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                         result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
                     }
                 } else {
+                    if (isManualSync) {
+                        Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
                     result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
                 }
             }
@@ -419,12 +502,15 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
                 Log.e(TAG, "Master Data Sync Failed.", t);
+                if (isManualSync) {
+                    Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+                }
                 result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
             }
         });
     }
 
-    private void saveMasterData(ClientSettingDto clientSettingDto) {
+    private void saveMasterData(ClientSettingDto clientSettingDto, boolean isManualSync) {
         boolean foundErrors = false;
         boolean applicantValidDocPresent = clientSettingDto.getDataToSync().stream().filter(masterData -> masterData.getEntityName().equalsIgnoreCase("ApplicantValidDocument")).findAny().isPresent();
         for (MasterData masterData : clientSettingDto.getDataToSync()) {
@@ -435,6 +521,15 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         break;
                     case "dynamic":
                         saveDynamicData(masterData.getData());
+                    case "script":
+                        if (isManualSync) {
+                            CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
+                            cryptoRequestDto.setValue(masterData.getData());
+                            CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
+                            byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
+                            downloadUrlData(Paths.get(context.getFilesDir().getAbsolutePath(), masterData.getEntityName()), new JSONObject(new String(data)));
+                        }
+                        break;
                 }
             } catch (Throwable e) {
                 foundErrors = true;
@@ -446,6 +541,91 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
         }
+    }
+
+    private void downloadUrlData(Path path, JSONObject jsonObject) {
+        Log.i(TAG, "Started downloading mvel script: " + path.toString());
+        try {
+            String headers = jsonObject.getString("headers");
+            Map<String, String> map = new HashMap<>();
+            if (headers != null && !headers.trim().isEmpty()) {
+                String[] header = headers.split(",");
+                for (String subHeader : header) {
+                    if (subHeader.trim().isEmpty())
+                        continue;
+                    String[] headerValues = subHeader.split(":");
+                    map.put(headerValues[0], headerValues[1]);
+                }
+            }
+            long[] range = getFileRange(path);
+            map.put("Range", String.format("bytes=%s-%s", (range == null) ? 0 :
+                    range[0], (range == null) ? "" : range[1]));
+
+            syncScript(() -> {
+                    }, path, jsonObject.getBoolean("encrypted"), jsonObject.getString("url"),
+                    map, this.clientCryptoManagerService.getClientKeyIndex());
+        } catch (Exception e) {
+            Log.e("Failed to download entity file", path.toString(), e);
+        }
+    }
+
+    private long[] getFileRange(Path path) {
+        long[] range = new long[2];
+        Optional<FileSignature> signature = fileSignatureDao.findByFileName(path.toFile().getName());
+        if (signature.isPresent() && path.toFile().length() < signature.get().getContentLength()) {
+            range[0] = path.toFile().length();
+            range[1] = signature.get().getContentLength();
+            return range;
+        }
+        return null;
+    }
+
+    private void syncScript(Runnable onFinish, Path path, boolean isFileEncrypted, String url, Map<String, String> map, String keyIndex) throws Exception {
+        AtomicReference<Integer> contentLength = new AtomicReference<>();
+        AtomicReference<String> fileSignature = new AtomicReference<String>();
+
+        Call<ResponseBody> call = syncRestService.downloadScript(url, map, keyIndex);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        long[] range = getFileRange(path);
+                        try (FileOutputStream fileOutputStream = new FileOutputStream(path.toFile(),
+                                (range == null) ? false : true)) {
+                            fileSignature.set(response.headers().get("file-signature"));
+                            contentLength.set(Integer.valueOf(response.headers().get("content-length")));
+                            IOUtils.copy(response.body().byteStream(), fileOutputStream);
+                            saveFileSignature(path, isFileEncrypted, fileSignature.get(), contentLength.get());
+                            Toast.makeText(context, "Script Sync Completed", Toast.LENGTH_LONG).show();
+                            onFinish.run();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error in downloading script", e);
+                        }
+                    } else {
+                        Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(context, "Script Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, "Script Sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void saveFileSignature(Path path, boolean isFileEncrypted, String signature, Integer contentLength) {
+        if (signature == null)
+            return;
+        FileSignature fileSignature = new FileSignature();
+        fileSignature.setSignature(signature);
+        fileSignature.setFileName(path.toFile().getName());
+        fileSignature.setEncrypted(isFileEncrypted);
+        fileSignature.setContentLength(contentLength);
+        fileSignatureDao.insert(fileSignature);
     }
 
     private JSONArray getDecryptedDataList(String data) throws JSONException {
@@ -610,40 +790,46 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void getPolicyKeySync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncPolicyKey(result);
-        return;
+    public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        syncPolicyKey(isManualSync, result, () -> {
+            Log.i(TAG, "Policy Key Sync Completed");
+        });
     }
 
     @Override
-    public void getGlobalParamsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getGlobalParamsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
-            syncGlobalParamsData(result);
+            syncGlobalParamsData(isManualSync, result, () -> {
+                Log.i(TAG, "Sync Global Params Completed.");
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return;
     }
 
     @Override
-    public void getUserDetailsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getUserDetailsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
-            syncUserDetails(result);
+            syncUserDetails(isManualSync, result, () -> {
+                Log.i(TAG, "User details sync Completed.");
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return;
     }
 
     @Override
-    public void getIDSchemaSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncLatestIdSchema(result, context);
-        return;
+    public void getIDSchemaSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        syncLatestIdSchema(isManualSync, result, context, () -> {
+            Log.i(TAG, "ID Schema Sync Completed");
+        });
     }
 
     @Override
-    public void getMasterDataSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncMasterData(result, 0);
+    public void getMasterDataSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        syncMasterData(isManualSync, result, () -> {
+            Log.i(TAG, "Master Data Sync Completed.");
+        }, 0);
     }
 
     private MasterDataSyncPigeon.Sync syncResult(String syncType, int progress, String errorCode) {
@@ -655,19 +841,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void getCaCertsSync(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncCACertificates(result, 0);
-    }
-
-    @Override
-    public void manualSync(@NonNull MasterDataSyncPigeon.Result<String> result) {
-        try {
-            masterDataService.manualSync();
-            result.success("Master Data Sync Completed");
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Master Data Sync Failed", e);
-        }
-        auditManagerService.audit(AuditEvent.MASTER_DATA_SYNC, Components.HOME);
+    public void getCaCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        syncCACertificates(isManualSync, result, 0);
     }
 
     @Override
@@ -745,7 +920,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         return ClientManagerConstant.DEFAULT_BATCH_SIZE;
     }
 
-    private void syncCACertificates(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
+    private void syncCACertificates(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
         Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
                 BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
@@ -757,19 +932,32 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     if (errorMessage == null) {
                         try {
                             saveCACertificate(response.body().getResponse().getCertificateDTOList());
+                            if (isManualSync) {
+                                Toast.makeText(context, "CA Certificate Sync Completed", Toast.LENGTH_LONG).show();
+                            }
                             result.success(syncResult("CACertificatesSync", 6, ""));
-                            return;
                         } catch (Throwable t) {
                             Log.e(TAG, "Failed to sync CA certificates", t);
                         }
+                    } else {
+                        if (isManualSync) {
+                            Toast.makeText(context, "CA Certificate Sync failed " + errorMessage, Toast.LENGTH_LONG).show();
+                        }
+                        result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
+                    }
+                } else {
+                    if (isManualSync) {
+                        Toast.makeText(context, "CA Certificate Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
                     }
                     result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
-                } else
-                    result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CACertificateResponseDto>> call, Throwable t) {
+                if (isManualSync) {
+                    Toast.makeText(context, "CA Certificate Sync failed", Toast.LENGTH_LONG).show();
+                }
                 result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
             }
         });
