@@ -589,6 +589,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               ),
                               onPressed: (documentController.text == "")
                                   ? null :() async {
+                                _documentScanClickedAudit();
                                 var doc = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
