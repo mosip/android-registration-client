@@ -533,6 +533,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   children: [
                     Expanded(
                       child: OutlinedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: appWhite,
+                            side: BorderSide(color: solidPrimary),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0)))),
                         child: SizedBox(
                           height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
@@ -554,6 +558,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                     ),
                     Expanded(
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: solidPrimary,shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0)))),
                         child: SizedBox(
                           height: isPortrait && !isMobileSize ? 68.h : 52.h,
                           child: Center(
@@ -561,6 +566,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               AppLocalizations.of(context)!.informed,
                               style: TextStyle(
                                 fontSize: isPortrait && !isMobileSize ? 22 : 14,
+                                  color: appWhite
                               ),
                             ),
                           ),
@@ -577,6 +583,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   children: [
                     !isPortrait && globalProvider.newProcessTabIndex == size + 2
                         ? ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                          backgroundColor: solidPrimary
+                      ),
                             onPressed: () async {
                               await context
                                   .read<ConnectivityProvider>()
@@ -589,7 +599,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               globalProvider.syncPacket(globalProvider.regId);
                             },
                             child:
-                                Text(AppLocalizations.of(context)!.sync_packet),
+                                Text(AppLocalizations.of(context)!.sync_packet,style: const TextStyle(color: appWhite)),
                           )
                         : const SizedBox.shrink(),
                     SizedBox(
@@ -597,6 +607,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                     ),
                     !isPortrait && globalProvider.newProcessTabIndex == size + 2
                         ? ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                          backgroundColor: solidPrimary
+                      ),
                             onPressed: () async {
                               await context
                                   .read<ConnectivityProvider>()
@@ -609,7 +623,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               globalProvider.uploadPacket(globalProvider.regId);
                             },
                             child: Text(
-                                AppLocalizations.of(context)!.upload_packet),
+                                AppLocalizations.of(context)!.upload_packet,style: const TextStyle(color: appWhite)),
                           )
                         : const SizedBox.shrink(),
                     const Expanded(
@@ -623,6 +637,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                             const Size(209, 52)),
                         backgroundColor: MaterialStateProperty.all<Color>(
                             continueButton ? solidPrimary : Colors.grey),
+                          shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)))
                       ),
                       onPressed: () {
                         continueButtonTap(context, size, newProcess);
@@ -634,7 +649,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           ? AppLocalizations.of(context)!.continue_text
                           : globalProvider.newProcessTabIndex == size + 1
                               ? AppLocalizations.of(context)!.authenticate
-                              : AppLocalizations.of(context)!.new_registration),
+                              : AppLocalizations.of(context)!.new_registration,style: isMobile
+                          ? AppTextStyle.tabletPortraitButtonText
+                          : AppTextStyle.mobileButtonText),
                     ),
                   ],
                 ),
