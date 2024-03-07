@@ -33,9 +33,14 @@ class _DateControlState extends State<DateControl> {
   bool isMvelValid = true;
   TextEditingController dateController = TextEditingController();
   DateTime? pickedDate;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     _getDataFromMap();
     super.initState();
   }
@@ -136,27 +141,25 @@ class _DateControlState extends State<DateControl> {
   }
 
   _saveData(value) {
-    context
-        .read<RegistrationTaskProvider>()
+    registrationTaskProvider
         .addDemographicField(widget.field.id!, value!);
   }
 
   _saveDataToMap(value) {
-    context.read<GlobalProvider>().setInputMapValue(
-          widget.field.id!,
-          value!,
-          context.read<GlobalProvider>().fieldInputValue,
-        );
+    globalProvider.setInputMapValue(
+      widget.field.id!,
+      value!,
+      globalProvider.fieldInputValue,
+    );
   }
 
   _getDataFromMap() {
     String response = "";
-    if (context
-        .read<GlobalProvider>()
+    if (globalProvider
         .fieldInputValue
         .containsKey(widget.field.id)) {
       response =
-          context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+          globalProvider.fieldInputValue[widget.field.id];
     }
     setState(() {
       dateController.text = response;
@@ -168,7 +171,7 @@ class _DateControlState extends State<DateControl> {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     String mandatoryLanguageCode =
-        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
+        globalProvider.mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
