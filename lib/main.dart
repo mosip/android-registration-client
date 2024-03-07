@@ -96,7 +96,6 @@ class BuildApp extends StatelessWidget {
           minTextAdapt: true,
           splitScreenMode: true,
         );
-
         return child!;
       },
       home: const LoginPage(),
