@@ -38,7 +38,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 246,
+              height: isMobileSize ? 200 : 246,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -51,12 +51,14 @@ class _UserDashBoardState extends State<UserDashBoard> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
+                  Padding(
+                    padding: isMobileSize
+                        ? const EdgeInsets.symmetric(horizontal: 10)
+                        : const EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
                       "DashBoard",
                       style: TextStyle(
-                          fontSize: 24,
+                          fontSize: isMobileSize ? 18 : 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
@@ -69,7 +71,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                           builder: (BuildContext context,
                               AsyncSnapshot<List<String?>> snapshot) {
                             return Container(
-                              height: 160,
+                              height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width * 0.45,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
@@ -82,9 +84,9 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         CupertinoIcons.cube,
-                                        size: 35,
+                                        size: isMobileSize ? 25 : 35,
                                         color: dashBoardPacketUploadColor,
                                       ),
                                       const SizedBox(width: 5),
@@ -94,27 +96,33 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                                 .toString()
                                                 .padLeft(2, '0')
                                             : "00",
-                                        style: const TextStyle(
-                                            fontSize: 35,
+                                        style: TextStyle(
+                                            fontSize: isMobileSize ? 25 : 35,
                                             fontWeight: FontWeight.bold),
                                       )
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  const Text('Packets Uploaded',
+                                  Text('Packets Uploaded',
                                       style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: isMobileSize ? 15 : 20,
                                           fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 8),
                                   if (snapshot.hasData &&
                                       snapshot.data!.isNotEmpty) ...[
                                     Text(
                                         "${dateFormat(snapshot.data!.last.toString())} To ${dateFormat(DateTime.now().millisecondsSinceEpoch.toString())}",
-                                        style: const TextStyle(
-                                            fontSize: 16,
+                                        style: TextStyle(
+                                            fontSize: isMobileSize ? 12 : 16,
                                             fontWeight: FontWeight.w500,
                                             color: appBlackShade3)),
-                                  ]
+                                  ] else ...[
+                                    Text("No data found",
+                                        style: TextStyle(
+                                            fontSize: isMobileSize ? 12 : 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: appBlackShade3)),
+                                  ],
                                 ],
                               ),
                             );
@@ -124,7 +132,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                           builder: (BuildContext context,
                               AsyncSnapshot<List<String?>> snapshot) {
                             return Container(
-                              height: 160,
+                              height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width * 0.45,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
@@ -137,9 +145,9 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         CupertinoIcons.cube,
-                                        size: 35,
+                                        size: isMobileSize ? 25 : 35,
                                         color:
                                             dashBoardPacketUploadPendingColor,
                                       ),
@@ -150,21 +158,21 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                                 .toString()
                                                 .padLeft(2, '0')
                                             : "00",
-                                        style: const TextStyle(
-                                            fontSize: 35,
+                                        style: TextStyle(
+                                            fontSize: isMobileSize ? 25 : 35,
                                             fontWeight: FontWeight.bold),
                                       )
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  const Text('Packets Upload Pending',
+                                  Text('Packets Upload Pending',
                                       style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: isMobileSize ? 15 : 20,
                                           fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 8),
-                                  const Text("Last one month data",
+                                  Text("Last one month data",
                                       style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: isMobileSize ? 12 : 16,
                                           fontWeight: FontWeight.w500,
                                           color: appBlackShade3)),
                                 ],
@@ -176,11 +184,15 @@ class _UserDashBoardState extends State<UserDashBoard> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            Padding(
+              padding: isMobileSize
+                  ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10)
+                  : const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Text(
                 "Users",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: isMobileSize ? 18 : 24,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             FutureBuilder(
@@ -193,44 +205,48 @@ class _UserDashBoardState extends State<UserDashBoard> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    margin: const EdgeInsets.only(
-                        left: 40, right: 40, bottom: 20),
+                    margin: isMobileSize
+                        ? const EdgeInsets.only(left: 10, right: 10, bottom: 10)
+                        : const EdgeInsets.only(
+                            left: 40, right: 40, bottom: 20),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: snapshot.hasData
                           ? DataTable(
                               dividerThickness: 2,
                               headingRowHeight: 60,
-                              columns: const [
+                              columns: [
                                 DataColumn(
                                     label: Text('User ID',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: isMobileSize ? 12 : 20,
                                             color: appBlackShade2))),
                                 DataColumn(
                                     label: Text('User Name',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: isMobileSize ? 12 : 20,
                                             color: appBlackShade2))),
                                 DataColumn(
                                     label: Text('Status',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: isMobileSize ? 12 : 20,
                                             color: appBlackShade2))),
                               ],
                               rows: snapshot.data!
                                   .map<DataRow>((data) => DataRow(cells: [
                                         DataCell(Text(data!.userId.toString(),
-                                            style: const TextStyle(
-                                                fontSize: 17,
+                                            style: TextStyle(
+                                                fontSize:
+                                                    isMobileSize ? 10 : 17,
                                                 color: appBlackShade1,
                                                 fontWeight: FontWeight.w500))),
                                         DataCell(Text(data.userName.toString(),
-                                            style: const TextStyle(
-                                                fontSize: 17,
+                                            style: TextStyle(
+                                                fontSize:
+                                                    isMobileSize ? 10 : 17,
                                                 color: appBlackShade2,
                                                 fontWeight: FontWeight.w500))),
                                         DataCell(statusWidget(data.userStatus,
@@ -255,17 +271,17 @@ class _UserDashBoardState extends State<UserDashBoard> {
 
   Widget statusWidget(bool isActive, bool isOnboarded) {
     if (isActive && isOnboarded) {
-      return const Row(
+      return Row(
         children: [
           Icon(
             CupertinoIcons.checkmark_alt_circle_fill,
-            size: 27,
+            size: isMobileSize ? 15 : 27,
             color: dashBoardPacketUploadColor,
           ),
           Text(
             " Onboarded",
             style: TextStyle(
-                fontSize: 17,
+                fontSize: isMobileSize ? 10 : 17,
                 color: appBlackShade2,
                 fontWeight: FontWeight.w500),
           )
@@ -273,17 +289,17 @@ class _UserDashBoardState extends State<UserDashBoard> {
       );
     }
     if (!isActive && isOnboarded) {
-      return const Row(
+      return Row(
         children: [
           Icon(
             CupertinoIcons.checkmark_alt_circle_fill,
-            size: 27,
+            size: isMobileSize ? 15 : 27,
             color: dashBoardPacketUploadColor,
           ),
           Text(
             " Onboarded",
             style: TextStyle(
-                fontSize: 17,
+                fontSize: isMobileSize ? 10 : 17,
                 color: appBlackShade2,
                 fontWeight: FontWeight.w500),
           )
@@ -291,17 +307,17 @@ class _UserDashBoardState extends State<UserDashBoard> {
       );
     }
     if (isActive && !isOnboarded) {
-      return const Row(
+      return Row(
         children: [
           Icon(
             Icons.info,
-            size: 27,
+            size: isMobileSize ? 15 : 27,
             color: dashBoardPacketUploadPendingColor,
           ),
           Text(
             " Active - Not Onboarded",
             style: TextStyle(
-                fontSize: 17,
+                fontSize: isMobileSize ? 10 : 17,
                 color: appBlackShade2,
                 fontWeight: FontWeight.w500),
           )
@@ -309,17 +325,17 @@ class _UserDashBoardState extends State<UserDashBoard> {
       );
     }
     if (!isActive && !isOnboarded) {
-      return const Row(
+      return Row(
         children: [
           Icon(
             Icons.info,
-            size: 27,
+            size: isMobileSize ? 15 : 27,
             color: appBlackShade3,
           ),
           Text(
             " User Inactive",
             style: TextStyle(
-                fontSize: 17,
+                fontSize: isMobileSize ? 10 : 17,
                 color: appBlackShade2,
                 fontWeight: FontWeight.w500),
           )
