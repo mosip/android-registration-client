@@ -10,13 +10,12 @@ import 'package:registration_client/platform_android/sync_response_service_impl.
 
 abstract class SyncResponseService {
   Future<SyncTime> getLastSyncTime();
-  Future<Sync> getPolicyKeySync();
-  Future<Sync> getGlobalParamsSync();
-  Future<Sync> getUserDetailsSync();
-  Future<Sync> getIDSchemaSync();
-  Future<Sync> getMasterDataSync();
-  Future<Sync> getCaCertsSync();
-  Future<String> manualSync();
+  Future<Sync> getPolicyKeySync(bool isManualSync);
+  Future<Sync> getGlobalParamsSync(bool isManualSync);
+  Future<Sync> getUserDetailsSync(bool isManualSync);
+  Future<Sync> getIDSchemaSync(bool isManualSync);
+  Future<Sync> getMasterDataSync(bool isManualSync);
+  Future<Sync> getCaCertsSync(bool isManualSync);
   Future<String> batchJob();
 
   factory SyncResponseService() => getSyncResponseServiceImpl();
