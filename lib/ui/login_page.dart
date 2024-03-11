@@ -571,10 +571,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     );
   }
 
-  // _initializeLanguageData() async {
-  //   await globalProvider.initializeLanguageDataList();
-  // }
-
   _autoSyncHandler() async {
     if (syncProvider.isGlobalSyncInProgress) {
       authProvider.setIsSyncing(false);
