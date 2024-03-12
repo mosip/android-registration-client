@@ -24,6 +24,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.TemplateService;
+import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
@@ -129,8 +130,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService,GlobalParamRepository globalParamRepository) {
-        return new BiometricsDetailsApi(auditManagerService, objectMapper,biometrics095Service,registrationService,globalParamRepository);
+    BiometricsDetailsApi getBiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper, Biometrics095Service biometrics095Service, RegistrationService registrationService, GlobalParamRepository globalParamRepository, UserOnboardService userOnboardService) {
+        return new BiometricsDetailsApi(auditManagerService, objectMapper,biometrics095Service,registrationService,globalParamRepository,userOnboardService);
 
     }
 

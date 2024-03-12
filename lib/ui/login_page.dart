@@ -464,7 +464,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
       if (context.read<AuthProvider>().isOnboarded ||
           context.read<AuthProvider>().isDefault) {
-        context.read<GlobalProvider>().setCurrentIndex(1);
+        context.read<GlobalProvider>().setCurrentIndex(0);
       } else {
         context.read<GlobalProvider>().setCurrentIndex(0);
       }

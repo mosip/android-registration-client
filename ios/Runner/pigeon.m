@@ -26,104 +26,263 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface TransliterationOptions ()
-+ (TransliterationOptions *)fromList:(NSArray *)list;
-+ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@implementation TransliterationOptions
-+ (instancetype)makeWithInput:(NSString *)input
-    sourceLanguage:(NSString *)sourceLanguage
-    targetLanguage:(NSString *)targetLanguage {
-  TransliterationOptions* pigeonResult = [[TransliterationOptions alloc] init];
-  pigeonResult.input = input;
-  pigeonResult.sourceLanguage = sourceLanguage;
-  pigeonResult.targetLanguage = targetLanguage;
-  return pigeonResult;
-}
-+ (TransliterationOptions *)fromList:(NSArray *)list {
-  TransliterationOptions *pigeonResult = [[TransliterationOptions alloc] init];
-  pigeonResult.input = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.input != nil, @"");
-  pigeonResult.sourceLanguage = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.sourceLanguage != nil, @"");
-  pigeonResult.targetLanguage = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.targetLanguage != nil, @"");
-  return pigeonResult;
-}
-+ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list {
-  return (list) ? [TransliterationOptions fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    (self.input ?: [NSNull null]),
-    (self.sourceLanguage ?: [NSNull null]),
-    (self.targetLanguage ?: [NSNull null]),
-  ];
-}
-@end
-
-@interface TransliterationApiCodecReader : FlutterStandardReader
-@end
-@implementation TransliterationApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128: 
-      return [TransliterationOptions fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface TransliterationApiCodecWriter : FlutterStandardWriter
-@end
-@implementation TransliterationApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[TransliterationOptions class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface TransliterationApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation TransliterationApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[TransliterationApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[TransliterationApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *BiometricsApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    TransliterationApiCodecReaderWriter *readerWriter = [[TransliterationApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
   return sSharedObject;
 }
 
-void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *api) {
+void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<BiometricsApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.TransliterationApi.transliterate"
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.invokeDiscoverSbi"
         binaryMessenger:binaryMessenger
-        codec:TransliterationApiGetCodec()];
+        codec:BiometricsApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(transliterateOptions:completion:)], @"TransliterationApi api (%@) doesn't respond to @selector(transliterateOptions:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(invokeDiscoverSbiFieldId:modality:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(invokeDiscoverSbiFieldId:modality:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        TransliterationOptions *arg_options = GetNullableObjectAtIndex(args, 0);
-        [api transliterateOptions:arg_options completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        [api invokeDiscoverSbiFieldId:arg_fieldId modality:arg_modality completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.getBestBiometrics"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getBestBiometricsFieldId:modality:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(getBestBiometricsFieldId:modality:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        [api getBestBiometricsFieldId:arg_fieldId modality:arg_modality completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.getBiometrics"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getBiometricsFieldId:modality:attempt:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(getBiometricsFieldId:modality:attempt:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        NSNumber *arg_attempt = GetNullableObjectAtIndex(args, 2);
+        [api getBiometricsFieldId:arg_fieldId modality:arg_modality attempt:arg_attempt completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.extractImageValues"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(extractImageValuesFieldId:modality:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(extractImageValuesFieldId:modality:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        [api extractImageValuesFieldId:arg_fieldId modality:arg_modality completion:^(NSArray<FlutterStandardTypedData *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.extractImageValuesByAttempt"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(extractImageValuesByAttemptFieldId:modality:attempt:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(extractImageValuesByAttemptFieldId:modality:attempt:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        NSNumber *arg_attempt = GetNullableObjectAtIndex(args, 2);
+        [api extractImageValuesByAttemptFieldId:arg_fieldId modality:arg_modality attempt:arg_attempt completion:^(NSArray<FlutterStandardTypedData *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.incrementBioAttempt"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(incrementBioAttemptFieldId:modality:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(incrementBioAttemptFieldId:modality:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        [api incrementBioAttemptFieldId:arg_fieldId modality:arg_modality completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.getBioAttempt"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getBioAttemptFieldId:modality:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(getBioAttemptFieldId:modality:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        [api getBioAttemptFieldId:arg_fieldId modality:arg_modality completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.startOperatorOnboarding"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(startOperatorOnboardingWithCompletion:)], @"BiometricsApi api (%@) doesn't respond to @selector(startOperatorOnboardingWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api startOperatorOnboardingWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.addBioException"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(addBioExceptionFieldId:modality:attribute:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(addBioExceptionFieldId:modality:attribute:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_attribute = GetNullableObjectAtIndex(args, 2);
+        [api addBioExceptionFieldId:arg_fieldId modality:arg_modality attribute:arg_attribute completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.removeBioException"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(removeBioExceptionFieldId:modality:attribute:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(removeBioExceptionFieldId:modality:attribute:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_modality = GetNullableObjectAtIndex(args, 1);
+        NSString *arg_attribute = GetNullableObjectAtIndex(args, 2);
+        [api removeBioExceptionFieldId:arg_fieldId modality:arg_modality attribute:arg_attribute completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.getMapValue"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getMapValueKey:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(getMapValueKey:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_key = GetNullableObjectAtIndex(args, 0);
+        [api getMapValueKey:arg_key completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.getAgeGroup"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getAgeGroupWithCompletion:)], @"BiometricsApi api (%@) doesn't respond to @selector(getAgeGroupWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getAgeGroupWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.BiometricsApi.conditionalBioAttributeValidation"
+        binaryMessenger:binaryMessenger
+        codec:BiometricsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(conditionalBioAttributeValidationFieldId:expression:completion:)], @"BiometricsApi api (%@) doesn't respond to @selector(conditionalBioAttributeValidationFieldId:expression:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_fieldId = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_expression = GetNullableObjectAtIndex(args, 1);
+        [api conditionalBioAttributeValidationFieldId:arg_fieldId expression:arg_expression completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

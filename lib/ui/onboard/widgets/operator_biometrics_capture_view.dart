@@ -139,7 +139,57 @@ class _OperatorBiometricsCaptureState
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ElevatedButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  Navigator.pop(context);
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      content: Container(
+                        height: 474.h,
+                        width: 574.w,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 70.h,
+                              width: double.infinity,
+                            ),
+                            SvgPicture.asset(
+                                "assets/svg/success_message_icon.svg"),
+                            Text(
+                              "You have onboarded successfully.",
+                              style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: semiBold,
+                                  color: Color(0xFF000000)),
+                            ),
+                            SizedBox(
+                              height: 62.h,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "HOME",
+                                style: TextStyle(
+                                    fontSize: 19,
+                                    fontWeight: bold,
+                                    color: pureWhite),
+                              ),
+                              style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all<Size>(
+                                      Size(564, 70))),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+
+                  setState(() {
+                    context.read<GlobalProvider>().setCurrentIndex(1);
+                  });
+                },
                 child: Text(
                   "VERIFY & SAVE",
                   style: Theme.of(context)
