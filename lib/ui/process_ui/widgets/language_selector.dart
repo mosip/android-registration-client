@@ -34,10 +34,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
 
-  // _getRegistrationError() {
-  //   return registrationTaskProvider.registrationStartError;
-  // }
-
   _triggerNavigation() {
     Navigator.pushNamed(context, NewProcess.routeName,
         arguments: {"process": widget.newProcess});
@@ -61,10 +57,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     }).toList();
   }
 
-  // _startRegistration(List<String> langList) async {
-  //   await registrationTaskProvider.startRegistration(langList);
-  // }
-
   _navigateToConsentPage() async {
     globalProvider.getThresholdValues();
     globalProvider.fieldDisplayValues = {};
@@ -83,11 +75,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     }
   }
 
-  // _addNotificationLanguage() {
-  //   registrationTaskProvider.addDemographicField(
-  //       "preferredLang", globalProvider.fieldInputValue["preferredLang"] ?? "");
-  // }
-
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
@@ -98,10 +85,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     globalProvider.getAudit("REG-LOAD-006", "REG-MOD-103");
     super.initState();
   }
-
-  // _languageSelectorPageLoadedAudit() async {
-  //   await globalProvider.getAudit("REG-LOAD-006", "REG-MOD-103");
-  // }
 
   _getNotificationLabel() {
     String notificationLanguage = "";

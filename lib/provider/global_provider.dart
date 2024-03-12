@@ -447,9 +447,6 @@ class GlobalProvider with ChangeNotifier {
 
   clearMap() {
     _fieldInputValue = {};
-    _fieldInputValue = {};
-    _fieldInputValue = {};
-    _fieldDisplayValues = {};
     log("input value $_fieldInputValue");
     notifyListeners();
   }

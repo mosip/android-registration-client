@@ -190,12 +190,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   _resetValuesOnRegistrationComplete() {
     Navigator.of(context).pop();
-    globalProvider.newProcessTabIndex = 0;
-    globalProvider.htmlBoxTabIndex = 0;
-    globalProvider.setRegId("");
-    for (int i = 0;
-        i < registrationTaskProvider.listOfProcesses.length;
-        i++) {
+    for (int i = 0; i < registrationTaskProvider.listOfProcesses.length; i++) {
       Process process = Process.fromJson(
         jsonDecode(
           context
@@ -213,7 +208,6 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
-      _newRegistrationClickedAudit();
       globalProvider.clearMap();
       globalProvider.clearScannedPages();
       globalProvider.newProcessTabIndex = 0;
@@ -223,12 +217,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
               field.fieldType == 'default') {
-            globalProvider
-                .initializeGroupedHierarchyMap(field.group!);
+            globalProvider.initializeGroupedHierarchyMap(field.group!);
           }
         }
       }
       globalProvider.createRegistrationLanguageMap();
+      globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -237,11 +231,6 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       );
     }
     return Container();
-  }
-
-  _newRegistrationClickedAudit() async {
-    await globalProvider
-        .getAudit("REG-HOME-002", "REG-MOD-102");
   }
 
   void _registrationScreenLoadedAudit() async {
@@ -281,8 +270,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     isExceptionPresent(String id) {
       bool isExceptionPresent = false;
-      for (BiometricAttributeData x
-          in globalProvider.fieldInputValue[id]) {
+      for (BiometricAttributeData x in globalProvider.fieldInputValue[id]) {
         if (x.exceptions.contains(true) || x.title == "Exception") {
           isExceptionPresent = true;
           break;
@@ -322,56 +310,78 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     customValidation(int currentIndex) async {
       bool isValid = true;
-      Screen screen = newProcess.screens!.elementAt(currentIndex)!;
-      for (int i = 0; i < screen.fields!.length; i++) {
-        if (screen.fields!.elementAt(i)!.inputRequired! &&
-            screen.fields!.elementAt(i)!.required!) {
-          if (!(globalProvider
-                  .fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.id)) &&
-              !(globalProvider
-                  .fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-              !(globalProvider.fieldInputValue.containsKey(
-                  "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-            // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
+      if (globalProvider.newProcessTabIndex < size) {
+        Screen screen = newProcess.screens!.elementAt(currentIndex)!;
+        for (int i = 0; i < screen.fields!.length; i++) {
+          if (screen.fields!.elementAt(i)!.inputRequired! &&
+              screen.fields!.elementAt(i)!.required!) {
+            if (!(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                !(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                !(globalProvider.fieldInputValue.containsKey(
+                    "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+              // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
 
-            // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
-            //   _showInSnackBar(appLocalizations.upload_document);
-            // }
-            isValid = false;
+              // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
+              //   _showInSnackBar(appLocalizations.upload_document);
+              // }
+              isValid = false;
 
-            break;
-          }
-          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-              screen.fields!
-                  .elementAt(i)!
-                  .conditionalBioAttributes!
-                  .isNotEmpty) {
-            String response = await BiometricsApi().getAgeGroup();
-            if (!(response.compareTo(screen.fields!
+              break;
+            }
+            if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+                screen.fields!
                     .elementAt(i)!
                     .conditionalBioAttributes!
-                    .first!
-                    .ageGroup!) ==
-                0)) {
-              if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
-                int count = returnBiometricListLength(
-                    screen.fields!.elementAt(i)!.bioAttributes,
-                    screen.fields!.elementAt(i)!.id!);
-                if (globalProvider
-                        .completeException[screen.fields!.elementAt(i)!.id!] !=
-                    null) {
-                  int length = globalProvider
-                      .completeException[screen.fields!.elementAt(i)!.id!]
-                      .length;
-                  count = count - length;
-                }
+                    .isNotEmpty) {
+              String response = await BiometricsApi().getAgeGroup();
+              if (!(response.compareTo(screen.fields!
+                      .elementAt(i)!
+                      .conditionalBioAttributes!
+                      .first!
+                      .ageGroup!) ==
+                  0)) {
+                if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                  int count = returnBiometricListLength(
+                      screen.fields!.elementAt(i)!.bioAttributes,
+                      screen.fields!.elementAt(i)!.id!);
+                  if (globalProvider.completeException[
+                          screen.fields!.elementAt(i)!.id!] !=
+                      null) {
+                    int length = globalProvider
+                        .completeException[screen.fields!.elementAt(i)!.id!]
+                        .length;
+                    count = count - length;
+                  }
 
-                if (globalProvider
-                        .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                        .length <
-                    count) {
+                  if (globalProvider
+                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                          .length <
+                      count) {
+                    isValid = false;
+
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          if (screen.fields!.elementAt(i)!.requiredOn != null &&
+              screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
+            bool required = await evaluateMVEL(
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
+                screen.fields!.elementAt(i)!);
+            if (required) {
+              if (screen.fields!.elementAt(i)!.inputRequired!) {
+                if (!(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                    !(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                    !(globalProvider.fieldInputValue.containsKey(
+                        "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
                   isValid = false;
 
                   break;
@@ -379,49 +389,30 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               }
             }
           }
-        }
-        if (screen.fields!.elementAt(i)!.requiredOn != null &&
-            screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
-          bool required = await evaluateMVEL(
-              jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-              screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-              screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-              screen.fields!.elementAt(i)!);
-          if (required) {
-            if (screen.fields!.elementAt(i)!.inputRequired!) {
-              if (!(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                  !(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                  !(globalProvider.fieldInputValue.containsKey(
-                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-                isValid = false;
-
-                break;
-              }
-            }
-          }
-        }
-        if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-            screen.fields!.elementAt(i)!.conditionalBioAttributes!.isNotEmpty) {
-          String response = await BiometricsApi().getAgeGroup();
-          if (response.compareTo(screen.fields!
+          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+              screen.fields!
                   .elementAt(i)!
                   .conditionalBioAttributes!
-                  .first!
-                  .ageGroup!) ==
-              0) {
-            bool valid = await BiometricsApi()
-                .conditionalBioAttributeValidation(
-                    screen.fields!.elementAt(i)!.id!,
-                    screen.fields!
-                        .elementAt(i)!
-                        .conditionalBioAttributes!
-                        .first!
-                        .validationExpr!);
-            if (!valid) {
-              isValid = false;
-              break;
+                  .isNotEmpty) {
+            String response = await BiometricsApi().getAgeGroup();
+            if (response.compareTo(screen.fields!
+                    .elementAt(i)!
+                    .conditionalBioAttributes!
+                    .first!
+                    .ageGroup!) ==
+                0) {
+              bool valid = await BiometricsApi()
+                  .conditionalBioAttributeValidation(
+                      screen.fields!.elementAt(i)!.id!,
+                      screen.fields!
+                          .elementAt(i)!
+                          .conditionalBioAttributes!
+                          .first!
+                          .validationExpr!);
+              if (!valid) {
+                isValid = false;
+                break;
+              }
             }
           }
         }
@@ -595,13 +586,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                       onPressed: () {
                         continueButtonTap(context, size, newProcess);
                       },
-                      child: Text(
-                          globalProvider.newProcessTabIndex <=
-                                  size
-                              ? appLocalizations.continue_text
-                              : globalProvider.newProcessTabIndex == size + 1
-                                  ? appLocalizations.authenticate
-                                  : appLocalizations.new_registration),
+                      child: Text(globalProvider.newProcessTabIndex <= size
+                          ? appLocalizations.continue_text
+                          : globalProvider.newProcessTabIndex == size + 1
+                              ? appLocalizations.authenticate
+                              : appLocalizations.new_registration),
                     ),
                   ],
                 ),
@@ -644,8 +633,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                             ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
                             : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
                         child: Text(
-                          newProcess.label![
-                              globalProvider.selectedLanguage]!,
+                          newProcess.label![globalProvider.selectedLanguage]!,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -693,8 +681,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                                           if (index <
                                               globalProvider
                                                   .newProcessTabIndex) {
-                                            globalProvider
-                                                .newProcessTabIndex = index;
+                                            globalProvider.newProcessTabIndex =
+                                                index;
                                           }
                                         },
                                         child: Row(
