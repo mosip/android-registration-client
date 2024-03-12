@@ -47,6 +47,8 @@ public class UserOnboardService {
 
     private static final String TAG = UserOnboardService.class.getSimpleName();
     public static final String ON_BOARD_TIME_STAMP = "timestamp";
+
+    public static final String OPERATOR_BIO_KEY = "%s_%s";
     public static final String ON_BOARD_BIOMETRICS = "biometrics";
     public static final String AUTH_HASH = "hash";
     public static String ONBOARD_CERT_THUMBPRINT = "thumbprint";
@@ -98,6 +100,11 @@ public class UserOnboardService {
     private Map<String, BiometricsDto> operatorBiometrics;
 
     private static final String BIOMETRIC_KEY_PATTERN = "%s_%s_%s";
+
+    private List<BiometricsDto> operatorBiometrics=new ArrayList<>();
+    public List<BiometricsDto> getOperatorBiometrics(){
+        return operatorBiometrics;
+    }
 
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
