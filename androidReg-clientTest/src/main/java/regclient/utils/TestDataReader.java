@@ -21,14 +21,28 @@ public class TestDataReader {
 			return "1234";
 		case "language":
 			return "eng";
-		case "firstname":
-			return "abcd";
-		case "lastname":
+		case "secondLanguage":
+			return "ara";
+		case "notificationLanguage":
+			return "eng";
+		case "fullname":
 			return "abcd";
 		case "adultage":
 			return "20";
+		case "infantAge":
+			return "4";
 		case "gender":
 			return "female";
+		case "address":
+			return "abcd";
+		case "residenceStatus":
+			return "Non-Foreigner";
+		case "region":
+			return "Rabat Sale Kenitra";
+		case "province":
+			return "Kenitra";
+		case "city":
+			return "Kenitra";
 		case "mobileNumber":
 			return "9876543210";
 		case "emailId":

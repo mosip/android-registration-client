@@ -28,14 +28,15 @@ public class ConsentPage extends BasePage{
 
 	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
+		clickOnCheckBox();
 	}
 
 	public  boolean isInformedButtonEnabled() {
 		return isElementEnabled(informedButton);
 	}
 
-	public  DemographicPage clickOnInformedButton() {
+	public  DemographicDetailsPage clickOnInformedButton() {
 		clickOnElement(informedButton);
-		return new DemographicPage(driver);
+		return new DemographicDetailsPage(driver);
 	}
 }

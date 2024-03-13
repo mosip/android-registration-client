@@ -9,9 +9,9 @@
           <include name="loginWithInvalidPasscode"/>
         </methods>
       </class>
-      <class name="androidTestCases.NewRegistration">
+      <class name="androidTestCases.NewRegistrationAdult">
         <methods>
-          <include name="NewRegistration"/>
+          <include name="NewRegistrationAdult"/>
         </methods>
       </class>
     </classes>

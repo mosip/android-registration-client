@@ -12,17 +12,47 @@ public class SelectLanguagePage extends BasePage{
 	@AndroidFindBy(accessibility = "SUBMIT")
 	private WebElement submitButton;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(11)")
-	private WebElement selectSecondLanguage;
-
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(18)")
-	private WebElement selectNotificationLanguage;
+	@AndroidFindBy(accessibility = "French")
+	private WebElement frenchLanguageButton;
 
 	@AndroidFindBy(accessibility = "Arabic")
 	private WebElement arabicLanguageButton;
 
-	@AndroidFindBy(accessibility = "Notification Languages / لغات الإخطار")
+	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"ಕನ್ನಡ\"])[1]")
+	private WebElement kannadaLanguageButton;
+
+	@AndroidFindBy(accessibility = "हिन्दी")
+	private WebElement hindiLanguageButton;
+
+	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"தமிழ்\"])[1]")
+	private WebElement tamilLanguageButton;
+
+	@AndroidFindBy(accessibility = "spanish")
+	private WebElement spanishLanguageButton;
+
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Notification Languages')]")
 	private WebElement notificationLanguageHeaderInEnglishArabic;
+
+	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"English\"])[2]")
+	private WebElement englishLanguageNotificationButton;
+
+	@AndroidFindBy(accessibility = "français")
+	private WebElement frenchLanguageNotificationButton;
+
+	@AndroidFindBy(accessibility = "عربي")
+	private WebElement arabicLanguageNotificationButton;
+
+	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"ಕನ್ನಡ\"])[2]")
+	private WebElement kannadaLanguageNotificationButton;
+
+	@AndroidFindBy(accessibility = "हिंदी")
+	private WebElement hindiLanguageNotificationButton;
+
+	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"தமிழ்\"])[2]")
+	private WebElement tamilLanguageNotificationButton;
+
+	@AndroidFindBy(accessibility = "Española")
+	private WebElement spanishLanguageNotificationButton;
 
 	public SelectLanguagePage(AppiumDriver driver) {
 		super(driver);
@@ -36,16 +66,58 @@ public class SelectLanguagePage extends BasePage{
 		clickOnElement(submitButton);
 	}
 
-	public  void selectSecondlanguage() {
-		clickOnElement(selectSecondLanguage);
+	public  void selectSecondLanguage(String language) {
+		switch (language) {
+		//		case "eng":
+		//			clickOnElement(englishLanguageButton);
+		case "fra":
+			clickOnElement(frenchLanguageButton);
+			break;
+		case "ara":
+			clickOnElement(arabicLanguageButton);
+			break;
+		case "kan":
+			clickOnElement(kannadaLanguageButton);
+			break;
+		case "hin":
+			clickOnElement(hindiLanguageButton);
+			break;
+		case "tam":
+			clickOnElement(tamilLanguageButton);
+			break;
+		case "spa":
+			clickOnElement(spanishLanguageButton);
+			break;
+		}
 	}
 
-	public  void selectNotificationlanguage() {
-		clickOnElement(selectNotificationLanguage);
-	}
-
-	public  void selectArabiclanguage() {
-		clickOnElement(arabicLanguageButton);
+	public void selectNotificationlanguage(String notificationLanguage) {
+		switch (notificationLanguage) {
+		case "eng":
+			clickOnElement(englishLanguageNotificationButton);
+			break;
+		case "fra":
+			clickOnElement(frenchLanguageNotificationButton);
+			break;
+		case "ara":
+			clickOnElement(arabicLanguageNotificationButton);
+			break;
+		case "kan":
+			clickOnElement(kannadaLanguageNotificationButton);
+			break;
+		case "hin":
+			clickOnElement(hindiLanguageNotificationButton);
+			break;
+		case "tam":
+			clickOnElement(tamilLanguageNotificationButton);
+			break;
+		case "spa":
+			clickOnElement(spanishLanguageNotificationButton);
+			break;
+		default:
+			// Handle the default case if needed
+			break;
+		}
 	}
 
 	public  boolean isArabicLanguageButtonEnabled() {
@@ -61,7 +133,7 @@ public class SelectLanguagePage extends BasePage{
 		return new ConsentPage(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishArabicDisplay() {
+	public boolean isNotificationLanguageEnglishDisplayed() {
 		return isElementDisplayed(notificationLanguageHeaderInEnglishArabic);
 	}
 }
