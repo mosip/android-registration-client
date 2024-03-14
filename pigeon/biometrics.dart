@@ -28,6 +28,9 @@ abstract class BiometricsApi {
   String startOperatorOnboarding();
 
   @async
+  String saveOperatorBiometrics();
+
+  @async
   String addBioException(String fieldId, String modality, String attribute);
 
   @async

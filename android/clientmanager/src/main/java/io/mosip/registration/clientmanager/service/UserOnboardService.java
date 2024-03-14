@@ -2,11 +2,14 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.ClientManagerError;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.dto.http.CertificateResponse;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
@@ -27,6 +30,7 @@ import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
 import lombok.NonNull;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 import javax.crypto.KeyGenerator;
@@ -261,21 +265,28 @@ public class UserOnboardService {
         String certData = this.certificateManagerService.getCertificate(APPLICATION_ID, REFERENCE_ID);
         if(certData == null) {
             Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getIDACertificate();
-            try {
-                Response<ResponseWrapper<Map<String, Object>>> response = call.execute();
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if (error == null) {
-                        CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId(APPLICATION_ID);
-                        certificateRequestDto.setReferenceId(REFERENCE_ID);
-                        certificateRequestDto.setCertificateData((String) response.body().getResponse().get(CERTIFICATE));
-                        this.certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
-                    }
+            call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
+                @Override
+                public void onResponse(Call<ResponseWrapper<Map<String, Object>>> call, Response<ResponseWrapper<Map<String, Object>>> response) {
+                    if (response.isSuccessful()) {
+                        ServiceError error = SyncRestUtil.getServiceError(response.body());
+                        if (error == null) {
+                            CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
+                            certificateRequestDto.setApplicationId(APPLICATION_ID);
+                            certificateRequestDto.setReferenceId(REFERENCE_ID);
+                            certificateRequestDto.setCertificateData((String) response.body().getResponse().get(CERTIFICATE));
+                            certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
+                        }
+                    } else
+                        Toast.makeText(context, "Failed to fetch IDA Internal certificate :" + response.code(), Toast.LENGTH_LONG).show();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to fetch IDA Internal certificate", e);
-            }
+
+                @Override
+                public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
+                    Toast.makeText(context, "IDA Internal Certificate fetch failed", Toast.LENGTH_LONG).show();
+                }
+            });
+
         }
         return this.certificateManagerService.getCertificate(APPLICATION_ID, REFERENCE_ID);
     }
