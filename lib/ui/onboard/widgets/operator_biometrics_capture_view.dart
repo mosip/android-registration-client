@@ -140,6 +140,7 @@ class _OperatorBiometricsCaptureState
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ElevatedButton(
                 onPressed: () async {
+                  await BiometricsApi().saveOperatorBiometrics();
                   Navigator.pop(context);
                   showDialog<String>(
                     context: context,
