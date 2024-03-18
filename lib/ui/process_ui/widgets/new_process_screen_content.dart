@@ -51,7 +51,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   Widget widgetType(Field e) {
     RegExp regexPattern = RegExp(r'^.*$');
 
-    if (e.validators!.isNotEmpty) {
+    if (e.validators != null && e.validators!.isNotEmpty) {
       final validation = e.validators?.first?.validator;
       if (validation != null) {
         regexPattern = RegExp(validation);
@@ -129,7 +129,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   _checkMvel(Field e) {
     if (e.required == false) {
-      if (e.requiredOn!.isNotEmpty) {
+      if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
         evaluateMVEL(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
             e.requiredOn?[0]?.expr, e);
       }

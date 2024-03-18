@@ -411,7 +411,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
             }
           }
         }
-        if (screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
+        if (screen.fields!.elementAt(i)!.requiredOn != null && screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
           bool required = await evaluateMVEL(
               jsonEncode(screen.fields!.elementAt(i)!.toJson()),
               screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
