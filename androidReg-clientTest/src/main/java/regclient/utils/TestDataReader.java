@@ -18,9 +18,9 @@ public class TestDataReader {
 		case "password":
 			return "admin123";
 		case "username":
-			return "1234";
+			return "9343";
 		case "language":
-			return "eng";
+			return "hin";
 		case "secondLanguage":
 			return "ara";
 		case "notificationLanguage":
@@ -31,6 +31,8 @@ public class TestDataReader {
 			return "20";
 		case "infantAge":
 			return "4";
+		case "minorAge":
+			return "12";
 		case "gender":
 			return "female";
 		case "address":

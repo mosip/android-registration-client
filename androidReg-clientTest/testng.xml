@@ -11,7 +11,12 @@
       </class>
       <class name="androidTestCases.NewRegistrationAdult">
         <methods>
-          <include name="NewRegistrationAdult"/>
+          <include name="newRegistrationAdult"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistrationAdultException">
+        <methods>
+          <include name="newRegistrationAdultException"/>
         </methods>
       </class>
     </classes>
