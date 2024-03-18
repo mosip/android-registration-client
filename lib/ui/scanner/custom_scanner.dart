@@ -37,6 +37,14 @@ class _CustomScannerState extends State<CustomScanner> {
   double? _aspectRatio;
   ImageFormat format = ImageFormat.jpg;
 
+  _documentScanFailedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-005", "REG-MOD-103");
+  }
+
+  _documentPreviewAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-006", "REG-MOD-103");
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,21 +60,6 @@ class _CustomScannerState extends State<CustomScanner> {
 
   @override
   Widget build(BuildContext context) {
-    final cropPreview = _pickedFile!=null ? CropPreview(
-      controller: _controller,
-      bytes: _pickedFile!,
-      mode: mode,
-      hitSize: 30,
-      loadingWidget: const CircularProgressIndicator(),
-      maskOptions: MaskOptions(
-        aspectRatio: _aspectRatio,
-        backgroundColor: Colors.transparent.withOpacity(0.5),
-        borderColor: solidPrimary,
-        minSize: 100,
-        //strokeWidth: 3,
-      ),
-      dragPointBuilder: _buildCropDragPoints,
-    ) : const SizedBox.shrink();
 
     return _pickedFile!=null? Scaffold(
       backgroundColor: Colors.white,
@@ -88,11 +81,34 @@ class _CustomScannerState extends State<CustomScanner> {
               )),
         ],
       ),
-      body: _pickedFile!= null ? Column(
+      body: _imageCard(),
+    ): const SizedBox.shrink();
+  }
+
+  Widget _imageCard() {
+    final cropPreview = _pickedFile!=null ? CropPreview(
+      controller: _controller,
+      bytes: _pickedFile!,
+      mode: mode,
+      hitSize: 30,
+      loadingWidget: const CircularProgressIndicator(),
+      maskOptions: MaskOptions(
+        aspectRatio: _aspectRatio,
+        backgroundColor: Colors.transparent.withOpacity(0.5),
+        borderColor: solidPrimary,
+        minSize: 100,
+        //strokeWidth: 3,
+      ),
+      dragPointBuilder: _buildCropDragPoints,
+    ) : const SizedBox.shrink();
+
+    if (_pickedFile!=null) {
+      _documentPreviewAudit();
+      return Column(
         children: [
-         Expanded(
-              child: cropPreview,
-         ),
+          Expanded(
+            child: cropPreview,
+          ),
           ///customized options for cropper
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -164,8 +180,11 @@ class _CustomScannerState extends State<CustomScanner> {
           ),
           const SizedBox(height: 20),
         ],
-      ) : const SizedBox.shrink(),
-    ): const SizedBox.shrink();
+      );
+    } else {
+      _documentScanFailedAudit();
+      return const SizedBox.shrink();
+    }
   }
 
   Future<void> _uploadImage() async {
