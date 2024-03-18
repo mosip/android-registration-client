@@ -267,6 +267,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     validator: (value) {
                                       if (!widget
                                           .field.required! &&
+                                          widget.field.requiredOn != null &&
                                           widget.field.requiredOn!
                                               .isEmpty) {
                                         return null;
@@ -487,6 +488,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                             validator: (value) {
                                               if (!widget
                                                   .field.required! &&
+                                                  widget.field.requiredOn != null &&
                                                   widget.field.requiredOn!
                                                       .isEmpty) {
                                                 return null;

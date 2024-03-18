@@ -33,7 +33,7 @@ class CustomLabel extends StatelessWidget {
           const SizedBox(
             width: 5,
           ),
-          if (field.required! || field.requiredOn!.isNotEmpty)
+          if (field.required! || (field.requiredOn != null && field.requiredOn!.isNotEmpty))
             Text(
               "*",
               style: TextStyle(color: Colors.red, fontSize: isPortrait && !isMobileSize ? 18 : 14),
