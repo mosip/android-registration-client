@@ -76,6 +76,7 @@ class BuildApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Provider.of<GlobalProvider>(context).appLocal,
       theme: ThemeData(
+          useMaterial3: true,
           colorScheme: ColorScheme.light(primary: solidPrimary),
           primaryColor: solidPrimary,
           textTheme: const TextTheme(
@@ -95,13 +96,14 @@ class BuildApp extends StatelessWidget {
           minTextAdapt: true,
           splitScreenMode: true,
         );
-
         return child!;
       },
       home: const LoginPage(),
     );
   }
 }
+
+
 
 class RestartWidget extends StatefulWidget {
   const RestartWidget({super.key, required this.child});

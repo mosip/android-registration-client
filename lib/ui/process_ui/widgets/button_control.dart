@@ -25,6 +25,7 @@ class ButtonControl extends StatelessWidget {
     return Card(
       elevation: 5,
       color: pureWhite,
+      surfaceTintColor: transparentColor,
       margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),

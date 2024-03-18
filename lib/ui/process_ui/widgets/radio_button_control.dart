@@ -83,6 +83,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
           width: MediaQuery.of(context).size.width,
           child: Card(
             elevation: 5,
+            surfaceTintColor: transparentColor,
             color: pureWhite,
             margin: EdgeInsets.symmetric(
                 vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
@@ -171,6 +172,7 @@ class SelectableCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       color: groupValue == value ? solidPrimary : Colors.white,
+      surfaceTintColor: transparentColor,
       elevation: 0,
       child: InkWell(
         onTap: () {

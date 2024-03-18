@@ -27,6 +27,8 @@ class OnboardLandingPageCard extends StatelessWidget {
       child: InkWell(
         onTap: ontap,
         child: Card(
+          surfaceTintColor: transparentColor,
+          color: appWhite,
           child: Padding(
             padding: EdgeInsets.fromLTRB(18.w, 18.h, 0, 18.h),
             child: Row(
