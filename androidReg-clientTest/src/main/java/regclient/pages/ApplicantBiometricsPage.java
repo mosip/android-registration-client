@@ -17,7 +17,7 @@ public class ApplicantBiometricsPage extends BasePage {
 	private WebElement markExceptionButton;
 	
 	@AndroidFindBy(accessibility = "Mark Exception")
-	private WebElement ExceptionTypeTitle;
+	private WebElement exceptionTypeTitle;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement oneEyeException;
