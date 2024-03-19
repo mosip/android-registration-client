@@ -170,12 +170,22 @@ class SyncProvider with ChangeNotifier {
   }
 
   manualSync() async {
-    await syncResponseService.getMasterDataSync(true);
-    await syncResponseService.getIDSchemaSync(true);
-    await syncResponseService.getUserDetailsSync(true);
-    await syncResponseService.getGlobalParamsSync(true);
-    await syncResponseService.getPolicyKeySync(true);
-    await syncResponseService.getCaCertsSync(true);
+    Sync syncResult = await syncResponseService.getMasterDataSync(true);
+    if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
+      syncResult = await syncResponseService.getIDSchemaSync(true);
+      if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
+        syncResult = await syncResponseService.getUserDetailsSync(true);
+        if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
+          syncResult = await syncResponseService.getGlobalParamsSync(true);
+          if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
+            syncResult = await syncResponseService.getPolicyKeySync(true);
+            if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
+              syncResult = await syncResponseService.getCaCertsSync(true);
+            }
+          }
+        }
+      }
+    }
   }
 
   batchJob() async {

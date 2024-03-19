@@ -175,605 +175,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.fileSignatureDao = fileSignatureDao;
     }
 
-
-    private void syncPolicyKey(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish) {
-        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null) {
-            result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
-            return;
-        }
-
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
-                centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
-        call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
-            @Override
-            public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if (error == null) {
-                        CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId("REGISTRATION");
-                        certificateRequestDto.setReferenceId(centerMachineDto.getMachineRefId());
-                        certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
-                        certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
-                        Log.i(TAG, "Policy Sync");
-                        if (isManualSync) {
-                            Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("PolicyKeySync", 5, ""));
-                        onFinish.run();
-                    } else {
-                        Log.e(TAG, "Policy Sync Failed");
-                        if (isManualSync) {
-                            Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
-                    }
-                } else {
-                    if (isManualSync) {
-                        Toast.makeText(context, "Policy key Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
-                    }
-                    result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseWrapper<CertificateResponse>> call, Throwable t) {
-                Log.e(TAG, "Policy Sync Failed:", t);
-                if (isManualSync) {
-                    Toast.makeText(context, "Policy key Sync failed", Toast.LENGTH_LONG).show();
-                }
-                result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
-            }
-        });
-    }
-
-    private void syncGlobalParamsData(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish) throws Exception {
-        Log.i(TAG, "config data sync is started");
-        String serverVersion = getServerVersionFromConfigs();
-
-        Call<ResponseWrapper<Map<String, Object>>> call = serverVersion.startsWith("1.1.5") ? syncRestService.getV1GlobalConfigs(
-                this.clientCryptoManagerService.getMachineName(), BuildConfig.CLIENT_VERSION) : syncRestService.getGlobalConfigs(
-                clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
-
-        call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
-            @Override
-            public void onResponse(Call<ResponseWrapper<Map<String, Object>>> call, Response<ResponseWrapper<Map<String, Object>>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if (error == null) {
-                        saveGlobalParams(response.body().getResponse());
-                        if (isManualSync) {
-                            Toast.makeText(context, context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_completed), Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("GlobalParamsSync", 1, ""));
-                        onFinish.run();
-                    } else {
-                        if (isManualSync) {
-                            Toast.makeText(context, String.format("%s %s", context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_failed), error.getMessage()), Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-                    }
-                } else {
-                    if (isManualSync) {
-                        Toast.makeText(context, String.format("%s. %s:%s", context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_failed), context.getString(io.mosip.registration.clientmanager.R.string.status_code), String.valueOf(response.code())), Toast.LENGTH_LONG).show();
-                    }
-                    result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
-                Log.e(TAG, "Global Params Sync Failed.", t);
-                if (isManualSync) {
-                    Toast.makeText(context, context.getString(io.mosip.registration.clientmanager.R.string.global_config_sync_failed), Toast.LENGTH_LONG).show();
-                }
-                result.success(syncResult("GlobalParamsSync", 1, "global_params_sync_failed"));
-            }
-        });
-    }
-
-    private void saveGlobalParams(Map<String, Object> responseMap) {
-        try {
-            Map<String, String> globalParamMap = new HashMap<>();
-
-            if (responseMap.get("configDetail") != null) {
-                Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
-
-                if (configDetailJsonMap != null && configDetailJsonMap.get("registrationConfiguration") != null) {
-                    String encryptedConfigs = configDetailJsonMap.get("registrationConfiguration").toString();
-                    parseToMap(getParams(encryptedConfigs), globalParamMap);
-                }
-            }
-
-            List<GlobalParam> globalParamList = new ArrayList<>();
-            for (Map.Entry<String, String> entry : globalParamMap.entrySet()) {
-                GlobalParam globalParam = new GlobalParam(entry.getKey(), entry.getKey(), entry.getValue(), true);
-                globalParamList.add(globalParam);
-            }
-
-            globalParamRepository.saveGlobalParams(globalParamList);
-        } catch (Exception exception) {
-            Log.e(TAG, exception.getMessage(), exception);
-        }
-    }
-
-    private void parseToMap(Map<String, Object> map, Map<String, String> globalParamMap) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String key = entry.getKey();
-
-            if (entry.getValue() instanceof HashMap) {
-                parseToMap((HashMap<String, Object>) entry.getValue(), globalParamMap);
-            } else {
-                globalParamMap.put(key, String.valueOf(entry.getValue()));
-            }
-        }
-    }
-
-    private Map<String, Object> getParams(String encodedCipher) {
-        try {
-            CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
-            cryptoRequestDto.setValue(encodedCipher);
-            CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
-
-            byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
-            Map<String, Object> paramMap = objectMapper.readValue(data, HashMap.class);
-            return paramMap;
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to decrypt and parse config response >> ", e);
-        }
-        return Collections.EMPTY_MAP;
-    }
-
-    private void syncUserDetails(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish) throws Exception {
-        String serverVersion = getServerVersionFromConfigs();
-        if (serverVersion.startsWith("1.1.5")) {
-            if (isManualSync) {
-                Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
-            }
-            Log.i(TAG, "Found 115 version, skipping userdetails sync");
-            result.success(syncResult("UserDetailsSync", 3, ""));
-            return;
-        }
-        Call<ResponseWrapper<UserDetailResponse>> call = syncRestService.fetchCenterUserDetails(
-                this.clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
-        call.enqueue(new Callback<ResponseWrapper<UserDetailResponse>>() {
-            @Override
-            public void onResponse(Call<ResponseWrapper<UserDetailResponse>> call, Response<ResponseWrapper<UserDetailResponse>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if (error == null) {
-                        saveUserDetails(response.body().getResponse().getUserDetails());
-                        if (isManualSync) {
-                            Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("UserDetailsSync", 3, ""));
-                        onFinish.run();
-                    } else {
-                        if (isManualSync) {
-                            Toast.makeText(context, "User Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-                    }
-                } else {
-                    if (isManualSync) {
-                        Toast.makeText(context, "User Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
-                    }
-                    result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseWrapper<UserDetailResponse>> call, Throwable t) {
-                Log.e(TAG, "User Details Sync Failed.", t);
-                if (isManualSync) {
-                    Toast.makeText(context, "User Sync failed", Toast.LENGTH_LONG).show();
-                }
-                result.success(syncResult("UserDetailsSync", 3, "user_details_sync_failed"));
-            }
-        });
-    }
-
-    private void saveUserDetails(String encData) {
-        try {
-            userDetailRepository.saveUserDetail(getDecryptedDataList(encData));
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to save synced user details", t);
-        }
-    }
-
-
-    private void syncLatestIdSchema(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Context context, Runnable onFinish) {
-        Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION, "registration-client");
-        call.enqueue(new Callback<ResponseBody>() {
-
-            @Override
-            public void onResponse(Call<ResponseBody> call,
-                                   Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        ResponseWrapper<IdSchemaResponse> wrapper = JsonUtils.jsonStringToJavaObject(response.body().string(),
-                                new TypeReference<ResponseWrapper<IdSchemaResponse>>() {
-                                });
-                        identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
-                        if (isManualSync) {
-                            Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("LatestIDSchemaSync", 4, ""));
-                        onFinish.run();
-                    } catch (Exception e) {
-                        if (isManualSync) {
-                            Toast.makeText(context, "Identity schema and UI Spec Sync failed." +
-                                    response.code(), Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
-                    }
-                } else {
-                    if (isManualSync) {
-                        Toast.makeText(context, "Identity schema and UI Spec Sync failed with status code : " +
-                                response.code(), Toast.LENGTH_LONG).show();
-                    }
-                    result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "Failed to sync schema", t);
-                if (isManualSync) {
-                    Toast.makeText(context, "Identity schema and UI Spec Sync failed", Toast.LENGTH_LONG).show();
-                }
-                result.success(syncResult("LatestIDSchemaSync", 4, "id_schema_sync_failed"));
-            }
-        });
-    }
-
-    private void syncMasterData(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, Runnable onFinish, int retryNo) {
-        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-
-        Map<String, String> queryParams = new HashMap<>();
-
-        try {
-            queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
-        } catch (Exception e) {
-            Log.e(TAG, "MasterData : not able to get client key index", e);
-            if (isManualSync) {
-                Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
-            }
-            result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-            onFinish.run();
-            return;
-        }
-
-        queryParams.put("version", BuildConfig.CLIENT_VERSION);
-
-        if (centerMachineDto != null)
-            queryParams.put("regcenterId", centerMachineDto.getCenterId());
-
-        String delta = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
-        if (delta != null)
-            queryParams.put("lastUpdated", delta);
-
-        String serverVersion = getServerVersionFromConfigs();
-        Call<ResponseWrapper<ClientSettingDto>> call = serverVersion.startsWith("1.1.5") ? syncRestService.fetchV1MasterData(queryParams) : syncRestService.fetchMasterData(queryParams);
-
-        call.enqueue(new Callback<ResponseWrapper<ClientSettingDto>>() {
-            @Override
-            public void onResponse(Call<ResponseWrapper<ClientSettingDto>> call, Response<ResponseWrapper<ClientSettingDto>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if (error == null) {
-                        saveMasterData(response.body().getResponse(), isManualSync);
-                        if (regCenterId != null) {
-                            machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
-                        }
-                        if (centerMachineDto == null) {
-                            if (retryNo < master_data_recursive_sync_max_retry) {
-                                Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
-                                //rerunning master data to sync completed master data
-                                syncMasterData(isManualSync, result, onFinish, retryNo + 1);
-                            } else {
-                                if (isManualSync) {
-                                    Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
-                                }
-                                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                            }
-                        } else {
-                            if (isManualSync) {
-                                Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
-                            }
-                            result.success(syncResult("MasterDataSync", 2, ""));
-                            onFinish.run();
-                        }
-                    } else {
-                        if (isManualSync) {
-                            Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                    }
-                } else {
-                    if (isManualSync) {
-                        Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
-                    }
-                    result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
-                Log.e(TAG, "Master Data Sync Failed.", t);
-                if (isManualSync) {
-                    Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
-                }
-                result.success(syncResult("MasterDataSync", 2, "master_data_sync_failed"));
-            }
-        });
-    }
-
-    private void saveMasterData(ClientSettingDto clientSettingDto, boolean isManualSync) {
-        boolean foundErrors = false;
-        boolean applicantValidDocPresent = clientSettingDto.getDataToSync().stream().filter(masterData -> masterData.getEntityName().equalsIgnoreCase("ApplicantValidDocument")).findAny().isPresent();
-        for (MasterData masterData : clientSettingDto.getDataToSync()) {
-            try {
-                switch (masterData.getEntityType()) {
-                    case "structured":
-                        saveStructuredData(masterData.getEntityName(), masterData.getData(), applicantValidDocPresent);
-                        break;
-                    case "dynamic":
-                        saveDynamicData(masterData.getData());
-                    case "script":
-                        if (isManualSync) {
-                            CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
-                            cryptoRequestDto.setValue(masterData.getData());
-                            CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
-                            byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
-                            downloadUrlData(Paths.get(context.getFilesDir().getAbsolutePath(), masterData.getEntityName()), new JSONObject(new String(data)));
-                        }
-                        break;
-                }
-            } catch (Throwable e) {
-                foundErrors = true;
-                Log.e(TAG, "Failed to parse the data", e);
-            }
-        }
-
-        if (!foundErrors) {
-            Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
-            this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
-        }
-    }
-
-    private void downloadUrlData(Path path, JSONObject jsonObject) {
-        Log.i(TAG, "Started downloading mvel script: " + path.toString());
-        try {
-            String headers = jsonObject.getString("headers");
-            Map<String, String> map = new HashMap<>();
-            if (headers != null && !headers.trim().isEmpty()) {
-                String[] header = headers.split(",");
-                for (String subHeader : header) {
-                    if (subHeader.trim().isEmpty())
-                        continue;
-                    String[] headerValues = subHeader.split(":");
-                    map.put(headerValues[0], headerValues[1]);
-                }
-            }
-            long[] range = getFileRange(path);
-            map.put("Range", String.format("bytes=%s-%s", (range == null) ? 0 :
-                    range[0], (range == null) ? "" : range[1]));
-
-            syncScript(() -> {
-                    }, path, jsonObject.getBoolean("encrypted"), jsonObject.getString("url"),
-                    map, this.clientCryptoManagerService.getClientKeyIndex());
-        } catch (Exception e) {
-            Log.e("Failed to download entity file", path.toString(), e);
-        }
-    }
-
-    private long[] getFileRange(Path path) {
-        long[] range = new long[2];
-        Optional<FileSignature> signature = fileSignatureDao.findByFileName(path.toFile().getName());
-        if (signature.isPresent() && path.toFile().length() < signature.get().getContentLength()) {
-            range[0] = path.toFile().length();
-            range[1] = signature.get().getContentLength();
-            return range;
-        }
-        return null;
-    }
-
-    private void syncScript(Runnable onFinish, Path path, boolean isFileEncrypted, String url, Map<String, String> map, String keyIndex) throws Exception {
-        AtomicReference<Integer> contentLength = new AtomicReference<>();
-        AtomicReference<String> fileSignature = new AtomicReference<String>();
-
-        Call<ResponseBody> call = syncRestService.downloadScript(url, map, keyIndex);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        long[] range = getFileRange(path);
-                        try (FileOutputStream fileOutputStream = new FileOutputStream(path.toFile(),
-                                (range == null) ? false : true)) {
-                            fileSignature.set(response.headers().get("file-signature"));
-                            contentLength.set(Integer.valueOf(response.headers().get("content-length")));
-                            IOUtils.copy(response.body().byteStream(), fileOutputStream);
-                            saveFileSignature(path, isFileEncrypted, fileSignature.get(), contentLength.get());
-                            Toast.makeText(context, "Script Sync Completed", Toast.LENGTH_LONG).show();
-                            onFinish.run();
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error in downloading script", e);
-                        }
-                    } else {
-                        Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(context, "Script Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(context, "Script Sync failed", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void saveFileSignature(Path path, boolean isFileEncrypted, String signature, Integer contentLength) {
-        if (signature == null)
-            return;
-        FileSignature fileSignature = new FileSignature();
-        fileSignature.setSignature(signature);
-        fileSignature.setFileName(path.toFile().getName());
-        fileSignature.setEncrypted(isFileEncrypted);
-        fileSignature.setContentLength(contentLength);
-        fileSignatureDao.insert(fileSignature);
-    }
-
-    private JSONArray getDecryptedDataList(String data) throws JSONException {
-        CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
-        cryptoRequestDto.setValue(data);
-        CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
-        return new JSONArray(new String(CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue())));
-    }
-
-    private void saveStructuredData(String entityName, String data, boolean applicantValidDocPresent) throws Exception {
-        String serverVersion = getServerVersionFromConfigs();
-        String defaultAppTypeCode = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE);
-        Boolean fullSync = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED) == null ? true : false;
-        switch (entityName) {
-            case "Machine":
-                JSONArray machines = getDecryptedDataList(data);
-                machineRepository.saveMachineMaster(new JSONObject(machines.getString(0)));
-                break;
-            case "RegistrationCenter":
-                JSONArray centers = getDecryptedDataList(data);
-                for (int i = 0; i < centers.length(); i++) {
-                    registrationCenterRepository.saveRegistrationCenter(new JSONObject(centers.getString(i)));
-                }
-                break;
-            case "DocumentType":
-                JSONArray doctypes = getDecryptedDataList(data);
-                for (int i = 0; i < doctypes.length(); i++) {
-                    documentTypeRepository.saveDocumentType(new JSONObject(doctypes.getString(i)));
-                }
-                break;
-            case "ApplicantValidDocument":
-                JSONArray appValidDocs = getDecryptedDataList(data);
-                for (int i = 0; i < appValidDocs.length(); i++) {
-                    applicantValidDocRepository.saveApplicantValidDocument(new JSONObject(appValidDocs.getString(i)), defaultAppTypeCode);
-                }
-                break;
-            case "Template":
-                JSONArray templates = getDecryptedDataList(data);
-                for (int i = 0; i < templates.length(); i++) {
-                    templateRepository.saveTemplate(new JSONObject(templates.getString(i)));
-                }
-                break;
-            case "Location":
-                JSONArray locations = getDecryptedDataList(data);
-                for (int i = 0; i < locations.length(); i++) {
-                    JSONObject jsonObject = new JSONObject(locations.getString(i));
-                    if (fullSync) {
-                        if (jsonObject.getBoolean("isActive")) {
-                            locationRepository.saveLocationData(jsonObject);
-                        }
-                    } else {
-                        locationRepository.saveLocationData(jsonObject);
-                    }
-                }
-                break;
-            case "LocationHierarchy":
-                JSONArray locationHierarchies = getDecryptedDataList(data);
-                for (int i = 0; i < locationHierarchies.length(); i++) {
-                    locationRepository.saveLocationHierarchyData(new JSONObject(locationHierarchies.getString(i)));
-                }
-                break;
-            case "BlocklistedWords":
-            case "BlacklistedWords":
-                JSONArray words = getDecryptedDataList(data);
-                for (int i = 0; i < words.length(); i++) {
-                    blocklistedWordRepository.saveBlocklistedWord(new JSONObject(words.getString(i)));
-                }
-                break;
-            case "SyncJobDef":
-                JSONArray syncJobDefsJsonArray = getDecryptedDataList(data);
-                for (int i = 0; i < syncJobDefsJsonArray.length(); i++) {
-                    JSONObject jsonObject = new JSONObject(syncJobDefsJsonArray.getString(i));
-
-                    SyncJobDef syncJobDef = new SyncJobDef(jsonObject.getString("id"));
-                    syncJobDef.setName(jsonObject.getString("name"));
-                    syncJobDef.setApiName(jsonObject.getString("apiName"));
-                    syncJobDef.setParentSyncJobId(jsonObject.getString("parentSyncJobId"));
-                    syncJobDef.setSyncFreq(jsonObject.getString("syncFreq"));
-                    syncJobDef.setLockDuration(jsonObject.getString("lockDuration"));
-                    syncJobDef.setLangCode(jsonObject.getString("langCode"));
-                    syncJobDef.setIsDeleted(jsonObject.getBoolean("isDeleted"));
-                    syncJobDef.setIsActive(jsonObject.getBoolean("isActive"));
-
-                    syncJobDefRepository.saveSyncJobDef(syncJobDef);
-//                    jobManagerService.refreshJobStatus(syncJobDef);
-                }
-                break;
-            case "Language":
-                JSONArray languageJsonArray = getDecryptedDataList(data);
-                for (int i = 0; i < languageJsonArray.length(); i++) {
-                    languageRepository.saveLanguage(new JSONObject(languageJsonArray.getString(i)));
-                }
-                break;
-            case "RegistrationCenterUser":
-                JSONArray regCenterUserJsonArray = getDecryptedDataList(data);
-                if (serverVersion.startsWith("1.1.5")) {
-                    userDetailRepository.saveUserDetail(regCenterUserJsonArray);
-                }
-                break;
-            case "RegistrationCenterMachine":
-                JSONArray regCenterMachineJsonArray = getDecryptedDataList(data);
-                JSONObject jsonObject = new JSONObject(regCenterMachineJsonArray.getString(0));
-                regCenterId = jsonObject.getString("regCenterId");
-                break;
-            case "ValidDocument":
-                JSONArray validDocumentsJsonArray = getDecryptedDataList(data);
-                if (!applicantValidDocPresent) {
-                    for (int i = 0; i < validDocumentsJsonArray.length(); i++) {
-                        applicantValidDocRepository.saveApplicantValidDocument(new JSONObject(validDocumentsJsonArray.getString(i)), defaultAppTypeCode);
-                    }
-                }
-                break;
-        }
-    }
-
-    private String getServerVersionFromConfigs() {
-        return this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
-    }
-
-    private void saveDynamicData(String data) throws JSONException {
-        JSONArray list = getDecryptedDataList(data);
-        for (int i = 0; i < list.length(); i++) {
-            dynamicFieldRepository.saveDynamicField(new JSONObject(list.getString(i)));
-        }
-    }
-
-
-    public CenterMachineDto getRegistrationCenterMachineDetails() {
-        CenterMachineDto centerMachineDto = null;
-        MachineMaster machineMaster = this.machineRepository.getMachine(this.clientCryptoManagerService.getMachineName());
-        if (machineMaster == null)
-            return centerMachineDto;
-
-        List<RegistrationCenter> centers = this.registrationCenterRepository.getRegistrationCenter(machineMaster.getRegCenterId());
-        if (centers == null || centers.isEmpty())
-            return centerMachineDto;
-
-        centerMachineDto = new CenterMachineDto();
-        centerMachineDto.setMachineId(machineMaster.getId());
-        centerMachineDto.setMachineName(machineMaster.getName());
-        centerMachineDto.setMachineStatus(machineMaster.getIsActive());
-        centerMachineDto.setCenterId(centers.get(0).getId());
-        centerMachineDto.setCenterStatus(centers.get(0).getIsActive());
-        centerMachineDto.setMachineRefId(centerMachineDto.getCenterId() + "_" + centerMachineDto.getMachineId());
-        centerMachineDto.setCenterNames(centers.stream().collect(Collectors.toMap(RegistrationCenter::getLangCode, RegistrationCenter::getName)));
-        return centerMachineDto;
-    }
-
     @Override
     public void getLastSyncTime(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.SyncTime> result) {
         MasterDataSyncPigeon.SyncTime syncTime;
@@ -786,22 +187,23 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 .setSyncTime(globalParamSyncTime)
                 .build();
         result.success(syncTime);
-        return;
     }
 
     @Override
     public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncPolicyKey(isManualSync, result, () -> {
+        masterDataService.syncCertificate(() -> {
             Log.i(TAG, "Policy Key Sync Completed");
-        });
+            result.success(syncResult("PolicyKeySync", 5, masterDataService.onResponseComplete()));
+        }, isManualSync);
     }
 
     @Override
     public void getGlobalParamsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
-            syncGlobalParamsData(isManualSync, result, () -> {
+            masterDataService.syncGlobalParamsData(() -> {
                 Log.i(TAG, "Sync Global Params Completed.");
-            });
+                result.success(syncResult("GlobalParamsSync", 1, masterDataService.onResponseComplete()));
+            }, isManualSync);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -810,9 +212,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     @Override
     public void getUserDetailsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
-            syncUserDetails(isManualSync, result, () -> {
+            masterDataService.syncUserDetails(() -> {
                 Log.i(TAG, "User details sync Completed.");
-            });
+                result.success(syncResult("UserDetailsSync", 3, masterDataService.onResponseComplete()));
+            }, isManualSync);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -820,16 +223,29 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getIDSchemaSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncLatestIdSchema(isManualSync, result, context, () -> {
-            Log.i(TAG, "ID Schema Sync Completed");
-        });
+        try {
+            masterDataService.syncLatestIdSchema(() -> {
+                Log.i(TAG, "ID Schema Sync Completed");
+                result.success(syncResult("LatestIDSchemaSync", 4, masterDataService.onResponseComplete()));
+            }, isManualSync);
+        } catch (Exception e) {
+            Log.e(TAG, "ID Schema Sync Failed.", e);
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void getMasterDataSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncMasterData(isManualSync, result, () -> {
-            Log.i(TAG, "Master Data Sync Completed.");
-        }, 0);
+        try {
+            masterDataService.syncMasterData(() -> {
+                Log.i(TAG, "Master Data Sync Completed.");
+                result.success(syncResult("MasterDataSync", 1, masterDataService.onResponseComplete()));
+            }, 0, isManualSync);
+        } catch (Exception e) {
+            Log.e(TAG, "Master Data Sync Failed.", e);
+            e.printStackTrace();
+        }
+
     }
 
     private MasterDataSyncPigeon.Sync syncResult(String syncType, int progress, String errorCode) {
@@ -842,7 +258,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getCaCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        syncCACertificates(isManualSync, result, 0);
+        masterDataService.syncCACertificates(() -> {
+            Log.i(TAG, "CA Certificate Sync Completed");
+            result.success(syncResult("CACertificatesSync", 6, masterDataService.onResponseComplete()));
+        }, isManualSync);
     }
 
     @Override
@@ -918,74 +337,5 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }
         }
         return ClientManagerConstant.DEFAULT_BATCH_SIZE;
-    }
-
-    private void syncCACertificates(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result, int retryNo) {
-        Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
-                BuildConfig.CLIENT_VERSION);
-        call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
-            @Override
-            public void onResponse(Call<ResponseWrapper<CACertificateResponseDto>> call, Response<ResponseWrapper<CACertificateResponseDto>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    String errorMessage = error != null ? error.getMessage() : null;
-                    if (errorMessage == null) {
-                        try {
-                            saveCACertificate(response.body().getResponse().getCertificateDTOList());
-                            if (isManualSync) {
-                                Toast.makeText(context, "CA Certificate Sync Completed", Toast.LENGTH_LONG).show();
-                            }
-                            result.success(syncResult("CACertificatesSync", 6, ""));
-                        } catch (Throwable t) {
-                            Log.e(TAG, "Failed to sync CA certificates", t);
-                        }
-                    } else {
-                        if (isManualSync) {
-                            Toast.makeText(context, "CA Certificate Sync failed " + errorMessage, Toast.LENGTH_LONG).show();
-                        }
-                        result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
-                    }
-                } else {
-                    if (isManualSync) {
-                        Toast.makeText(context, "CA Certificate Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
-                    }
-                    result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseWrapper<CACertificateResponseDto>> call, Throwable t) {
-                if (isManualSync) {
-                    Toast.makeText(context, "CA Certificate Sync failed", Toast.LENGTH_LONG).show();
-                }
-                result.success(syncResult("CACertificatesSync", 6, "ca_certs_sync_failed"));
-            }
-        });
-    }
-
-    private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
-        if (caCertificateDtos != null && !caCertificateDtos.isEmpty()) {
-            Log.i(TAG, "Started saving cacertificates with size: " + caCertificateDtos.size());
-            //Data Fix : As createdDateTime is null sometimes
-            caCertificateDtos.forEach(c -> {
-                if (c.getCreatedtimes() == null)
-                    c.setCreatedtimes(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
-            });
-            caCertificateDtos.sort((CACertificateDto d1, CACertificateDto d2) -> d1.getCreatedtimes().compareTo(d2.getCreatedtimes()));
-
-            for (CACertificateDto cert : caCertificateDtos) {
-                try {
-                    if (cert.getPartnerDomain() != null && cert.getPartnerDomain().equals("DEVICE")) {
-                        CACertificateRequestDto caCertificateRequestDto = new CACertificateRequestDto();
-                        caCertificateRequestDto.setCertificateData(cert.getCertData());
-                        caCertificateRequestDto.setPartnerDomain(cert.getPartnerDomain());
-                        io.mosip.registration.keymanager.dto.CACertificateResponseDto caCertificateResponseDto = certificateManagerService.uploadCACertificate(caCertificateRequestDto);
-                        Log.i(TAG, caCertificateResponseDto.getStatus());
-                    }
-                } catch (KeymanagerServiceException ex) {
-                    Log.e(TAG, "Failed to save CA cert : " + cert.getCertId());
-                }
-            }
-        }
     }
 }
