@@ -42,4 +42,8 @@ public interface RegistrationDao {
 
     @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes desc")
     List<Registration> findAllRegistrationByStatus(String status);
+
+    @Query("SELECT * FROM registration where client_status in (:syncedStatus, :approvedStatus) order by cr_dtimes desc")
+    List<Registration> findAllRegistrationByPendingStatus(String syncedStatus, String approvedStatus);
+
 }

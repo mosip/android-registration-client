@@ -72,7 +72,7 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     @Override
     public void getPacketUploadedPendingDetails(@NonNull DashBoardPigeon.Result<List<String>> result) {
         try{
-            List<Registration> pendingValues = this.registrationRepository.getAllRegistrationByStatus(PacketClientStatus.SYNCED.name());
+            List<Registration> pendingValues = this.registrationRepository.getAllRegistrationByPendingStatus(PacketClientStatus.SYNCED.name(),PacketClientStatus.APPROVED.name());
             List<String> response = new ArrayList<>();
             pendingValues.forEach((v) -> {
                 response.add(v.getCrDtime().toString());

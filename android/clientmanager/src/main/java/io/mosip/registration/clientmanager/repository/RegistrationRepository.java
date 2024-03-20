@@ -34,6 +34,10 @@ public class RegistrationRepository {
         return this.registrationDao.findAllRegistrationByStatus(status);
     }
 
+    public  List<Registration> getAllRegistrationByPendingStatus(String syncedStatus, String approvedStatus) {
+        return  this.registrationDao.findAllRegistrationByPendingStatus(syncedStatus, approvedStatus);
+    }
+
     public Registration getRegistration(String packetId) {
         return this.registrationDao.findOneByPacketId(packetId);
     }
