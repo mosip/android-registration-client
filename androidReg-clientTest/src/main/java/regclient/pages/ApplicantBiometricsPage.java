@@ -202,11 +202,11 @@ public class ApplicantBiometricsPage extends BasePage {
 	}
 	
 	public  boolean isFaceScanTitleDisplyed() {
-		return isElementEnabled(faceScanTitle);
+		return isElementDisplayed(faceScanTitle);
 	}
 	
 	public  boolean isExceptionScanTitleDisplyed() {
-		return isElementEnabled(exceptionScanTitle);
+		return isElementDisplayed(exceptionScanTitle);
 	}
 	
 	public  boolean isIrisScan() {
@@ -234,7 +234,7 @@ public class ApplicantBiometricsPage extends BasePage {
 	}
 	
 	public  boolean isCommentHeaderDisplyed() {
-		return isElementEnabled(commentsHeader);
+		return isElementDisplayed(commentsHeader);
 	}
 
 }

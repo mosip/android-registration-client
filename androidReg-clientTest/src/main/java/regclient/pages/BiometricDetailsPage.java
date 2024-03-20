@@ -39,7 +39,7 @@ public class BiometricDetailsPage extends BasePage {
 	}
 
 	public  boolean isBiometricDetailsPageDisplayed() {
-		return isElementEnabled(applicantBiometricTitle);
+		return isElementDisplayed(applicantBiometricTitle);
 	}
 
 	
