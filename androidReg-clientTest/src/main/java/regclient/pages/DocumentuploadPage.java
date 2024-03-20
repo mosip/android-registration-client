@@ -14,23 +14,32 @@ public class DocumentuploadPage extends BasePage {
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Button\")")
 	private WebElement identityProofScanButton;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]/android.view.View")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View")
 	private WebElement addressProofSelectValue;
-	
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[4]/android.view.View")
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Identity Proof\")]/parent::android.view.View/parent::android.view.View")
 	private WebElement identityProofSelectValue;
-	
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[2]/android.view.View")
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Relationship Proof\")]/parent::android.view.View/parent::android.view.View")
+	private WebElement relationshipProofSelectValue;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB Proof\")]/parent::android.view.View/parent::android.view.View")
 	private WebElement dobProofSelectValue;
 
 	@AndroidFindBy(accessibility = "Scrim")
 	private WebElement identityProofPopUpClose;
 
-	@AndroidFindBy(accessibility = "Scan")
-	private WebElement scanButton;
-	
-	@AndroidFindBy(xpath = "(//android.widget.Button[@content-desc=\"Scan\"])[2]")
-	private WebElement dobscanButton;
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	private WebElement scanButtonAddressProof;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Identity Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	private WebElement scanButtonIdentityProof;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	private WebElement scanButtonDobProof;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Relationship Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	private WebElement scanButtonRelationshipProof;
 
 	@AndroidFindBy(accessibility = "Back")
 	private WebElement backButton;
@@ -43,7 +52,7 @@ public class DocumentuploadPage extends BasePage {
 
 	@AndroidFindBy(accessibility = "DELETE")
 	private WebElement deleteButton;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"DOB Proof\"))")
 	private WebElement dobsHeader;
 
@@ -54,17 +63,33 @@ public class DocumentuploadPage extends BasePage {
 
 
 	public void selectAddressProof() {
+		while(!isElementDisplayedOnScreen(addressProofSelectValue) || !isElementDisplayedOnScreen(scanButtonAddressProof)) {
+			swipeOrScroll();
+		}
 		clickOnElement(addressProofSelectValue);
 	}
-	
-	public void selectIndentityProof() {
+
+	public void selectIdentityProof() {
+		while(!isElementDisplayedOnScreen(identityProofSelectValue)|| !isElementDisplayedOnScreen(scanButtonIdentityProof) ) {
+			swipeOrScroll();
+		}
 		clickOnElement(identityProofSelectValue);
 	}
 
 	public void selectDobProof() {
+		while(!isElementDisplayedOnScreen(dobProofSelectValue) || !isElementDisplayedOnScreen(scanButtonDobProof)) {
+			swipeOrScroll();
+		}
 		clickOnElement(dobProofSelectValue);
 	}
 	
+	public void selectRelationshipProof() {
+		while(!isElementDisplayedOnScreen(relationshipProofSelectValue) || !isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
+			swipeOrScroll();
+		}
+		clickOnElement(relationshipProofSelectValue);
+	}
+
 	public void selectOnCaptureImage() {
 		clickOnElement(previewCaptureImage);
 	}
@@ -73,13 +98,35 @@ public class DocumentuploadPage extends BasePage {
 		clickOnElement(identityProofPopUpClose);
 	}
 
-	public CameraPage clickOnScanButton() {
-		clickOnElement(scanButton);
+	public CameraPage clickOnAddressProofScanButton() {
+		if(!isElementDisplayedOnScreen(scanButtonAddressProof)) {
+			swipeOrScroll();
+		}
+			clickOnElement(scanButtonAddressProof);
 		return new CameraPage(driver);
 	}
-	
-	public CameraPage clickOnDobScanButton() {
-		clickOnElement(dobscanButton);
+
+	public CameraPage clickOnScanButtonDobProof() {
+		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
+			swipeOrScroll();
+		}
+			clickOnElement(scanButtonDobProof);
+		return new CameraPage(driver);
+	}
+
+	public CameraPage clickOnScanButtonIdentityProof() {
+		if(!isElementDisplayedOnScreen(scanButtonIdentityProof)) {
+			swipeOrScroll();
+		}
+			clickOnElement(scanButtonIdentityProof);
+		return new CameraPage(driver);
+	}
+
+	public CameraPage clickOnScanButtonRelationshipProof() {
+		if(!isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
+			swipeOrScroll();
+		}
+			clickOnElement(scanButtonRelationshipProof);
 		return new CameraPage(driver);
 	}
 
@@ -93,24 +140,48 @@ public class DocumentuploadPage extends BasePage {
 		return new BiometricDetailsPage(driver);
 	}
 
-	public  boolean isScanButtonEnabled() {
-		return isElementEnabled(scanButton);
+	public  boolean isImageDisplyed() {
+		return isElementDisplayed(previewCaptureImage);
 	}
 
-	public  boolean isImageDisplyed() {
-		return isElementEnabled(backButton);
-	}
-	
 	public  boolean isDeleteButtonDisplyed() {
-		return isElementEnabled(deleteButton);
+		return isElementDisplayed(deleteButton);
 	}
 
 	public boolean isDoccumentUploadPageDisplayed() {
 		return isElementDisplayed(doccumentUploadPage);
 	}
-	
+
 	public boolean isDobHeaderDisplayed() {
 		return isElementDisplayed(dobsHeader);
+	}
+	
+	public  boolean isScanButtonAddressProofEnabled() {
+		if(!isElementDisplayedOnScreen(scanButtonAddressProof)) {
+			swipeOrScroll();
+		}
+		return isElementEnabled(scanButtonAddressProof);
+	}
+	
+	public  boolean isScanButtonIdentityProofEnabled() {
+		if(!isElementDisplayedOnScreen(scanButtonIdentityProof)) {
+			swipeOrScroll();
+		}
+		return isElementEnabled(scanButtonIdentityProof);
+	}
+	
+	public  boolean isscanButtonDobProofEnabled() {
+		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
+			swipeOrScroll();
+		}
+		return isElementEnabled(scanButtonDobProof);
+	}
+	
+	public  boolean isScanButtonRelationshipProoffEnabled() {
+		if(!isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
+			swipeOrScroll();
+		}
+		return isElementEnabled(scanButtonRelationshipProof);
 	}
 
 }

@@ -5,22 +5,13 @@ import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 
-public class ApplicantBiometricsPage extends BasePage {
-
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Applicant Biometrics')]")
-	private WebElement applicantBiometricsPageTitle;
+public class IntroducerBiometricPage extends BasePage {
+	
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Introducer Biometrics')]")
+	private WebElement introducerBiometricPageTitle;
 	
 	@AndroidFindBy(accessibility = "Iris Scan")
 	private WebElement irisScanButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Iris Scan\"))")
-	private WebElement irisScanButtonTitle;
-	
-	@AndroidFindBy(accessibility = "Permanent")
-	private WebElement permanentButton;
-	
-	@AndroidFindBy(accessibility = "Temporary")
-	private WebElement temporaryButton;
 	
 	@AndroidFindBy(accessibility = "Mark Exception")
 	private WebElement markExceptionButton;
@@ -32,16 +23,7 @@ public class ApplicantBiometricsPage extends BasePage {
 	private WebElement oneEyeException;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
-	private WebElement firstFingureExceptionImage;
-	
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
-	private WebElement secondFingureExceptionImage;
-	
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(3)")
-	private WebElement thirdFingureExceptionImage;
-	
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(4)")
-	private WebElement forthFingureExceptionImage;
+	private WebElement firstFingureException;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Right Hand\"))")
 	private WebElement rightHandScanTitle;
@@ -82,57 +64,26 @@ public class ApplicantBiometricsPage extends BasePage {
 	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
 	private WebElement zoomButton;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Comments\")]/following-sibling::android.widget.EditText")
-	private WebElement commentsTextBox;
-	
 	@AndroidFindBy(className = "android.widget.Button")
 	private WebElement popUpCloseButton;
 	
 	@AndroidFindBy(accessibility = "NEXT")
 	private WebElement nextButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Comments\"))")
-	private WebElement commentsHeader;
-	
-	
-	
-	public ApplicantBiometricsPage(AppiumDriver driver) {
+
+	public IntroducerBiometricPage(AppiumDriver driver) {
 		super(driver);
-	}
-	
-	public  void enterCommentsInTextBox(String comments) {
-		if(!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(commentsTextBox,comments);
 	}
 
 	public void clickOnScanButton() {
 		clickOnElement(scanButton);
 	}	
 	
-	public void clickOnExceptionTypePermanentButton() {
-		clickOnElement(permanentButton);
-	}
-	
-	public void clickOnExceptionTypeTemporaryButton() {
-		clickOnElement(temporaryButton);	
-	}
-	
 	public void markOneEyeException() {
 		clickOnElement(oneEyeException);
 	}
 	
 	public void markOneFingureException() {
-		clickOnElement(firstFingureExceptionImage);
-	}
-	
-	public void markFourFingureExceptionThenRemoveOne() {
-		clickOnElement(firstFingureExceptionImage);
-		clickOnElement(secondFingureExceptionImage);
-		clickOnElement(thirdFingureExceptionImage);
-		clickOnElement(forthFingureExceptionImage);
-		clickOnElement(firstFingureExceptionImage);
+		clickOnElement(firstFingureException);
 	}
 	
 	public void clickOnClosePopUp() {
@@ -156,10 +107,6 @@ public class ApplicantBiometricsPage extends BasePage {
 		clickOnElement(zoomButton);
 	}
 	
-	public void clickOnIrisScanTitle() {
-		clickOnElement(irisScanButtonTitle);
-	}
-	
 	public void clickOnRightHandScanTitle() {
 		clickOnElement(rightHandScanTitle);
 	}
@@ -181,8 +128,8 @@ public class ApplicantBiometricsPage extends BasePage {
 		return new BiometricDetailsPage(driver);
 	}
 	
-	public  boolean isApplicantBiometricsPageDisplyed() {
-		return isElementDisplayed(applicantBiometricsPageTitle);
+	public  boolean isIntroducerBiometricsPageDisplyed() {
+		return isElementDisplayed(introducerBiometricPageTitle);
 	}
 	
 	public  boolean isExceptionTypeTitleDisplyed() {
@@ -202,11 +149,11 @@ public class ApplicantBiometricsPage extends BasePage {
 	}
 	
 	public  boolean isFaceScanTitleDisplyed() {
-		return isElementEnabled(faceScanTitle);
+		return isElementDisplayed(faceScanTitle);
 	}
 	
 	public  boolean isExceptionScanTitleDisplyed() {
-		return isElementEnabled(exceptionScanTitle);
+		return isElementDisplayed(exceptionScanTitle);
 	}
 	
 	public  boolean isIrisScan() {
@@ -232,9 +179,4 @@ public class ApplicantBiometricsPage extends BasePage {
 	public  boolean isExceptionScan() {
 		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
-	
-	public  boolean isCommentHeaderDisplyed() {
-		return isElementEnabled(commentsHeader);
-	}
-
 }

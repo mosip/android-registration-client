@@ -53,7 +53,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
 		DemographicDetailsPage demographicPage=consentPage.clickOnInformedButton();
 
-
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
 		demographicPage.enterFullName(TestDataReader.readData("fullname"));
 
@@ -74,7 +73,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(demographicPage.isProvinceHeaderDisplayed(),"Verify if province status header is displayed");
 		demographicPage.selectProvinceStatus(TestDataReader.readData("province"));
 
-		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
 		assertTrue(demographicPage.isCityHeaderDisplayed(),"Verify if city header is displayed");
 		demographicPage.selectCityStatus(TestDataReader.readData("city"));
 		
@@ -87,7 +85,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
 		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
 		
-		
+		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
 		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
 		DocumentuploadPage documentuploadPage=demographicPage.clickOnContinueButton();
 
@@ -96,8 +94,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		documentuploadPage.selectAddressProof();
 		documentuploadPage.closePopUpClose();
 
-		assertTrue(documentuploadPage.isScanButtonEnabled(),"Verify if scan  button enabled");
-		CameraPage cameraPage=documentuploadPage.clickOnScanButton();
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		CameraPage cameraPage=documentuploadPage.clickOnAddressProofScanButton();
 
 		cameraPage.clickimage();
 		IdentityProofPage identityProofPage=cameraPage.clickOkButton();
@@ -114,12 +112,11 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		documentuploadPage.clickOnBackButton();
 
 		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
-		documentuploadPage.selectIndentityProof();
+		documentuploadPage.selectIdentityProof();
 		documentuploadPage.closePopUpClose();
 
-		assertTrue(documentuploadPage.isDobHeaderDisplayed(),"Verify if DOB header is displayed");
-		assertTrue(documentuploadPage.isScanButtonEnabled(),"Verify if scan  button enabled");
-		cameraPage=documentuploadPage.clickOnScanButton();
+		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
 
 		cameraPage.clickimage();
 		identityProofPage=cameraPage.clickOkButton();
@@ -133,7 +130,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		documentuploadPage.closePopUpClose();
 
 		assertTrue(documentuploadPage.isDobHeaderDisplayed(),"Verify if DOB header is displayed");
-		cameraPage=documentuploadPage.clickOnDobScanButton();
+		cameraPage=documentuploadPage.clickOnScanButtonDobProof();
 
 		cameraPage.clickimage();
 		identityProofPage=cameraPage.clickOkButton();
@@ -150,7 +147,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnScanButton();
 
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 1st attempt");
-		applicantBiometricsPage.CloseScanCapturePopUp();
+		applicantBiometricsPage.closeScanCapturePopUp();
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 		//righthand
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -160,7 +157,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnScanButton();
 
 		assertTrue(applicantBiometricsPage.isRightHandScan(),"Verify if right hand scan 1st attempt");
-		applicantBiometricsPage.CloseScanCapturePopUp();
+		applicantBiometricsPage.closeScanCapturePopUp();
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 		//lefthand
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -170,7 +167,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnScanButton();
 
 		assertTrue(applicantBiometricsPage.isLeftHandScan(),"Verify if Left hand scan 1st attempt");
-		applicantBiometricsPage.CloseScanCapturePopUp();
+		applicantBiometricsPage.closeScanCapturePopUp();
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 		//thumb
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -180,7 +177,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnScanButton();
 
 		assertTrue(applicantBiometricsPage.isThumbsScan(),"Verify if thumbs scan 1st attempt");
-		applicantBiometricsPage.CloseScanCapturePopUp();
+		applicantBiometricsPage.closeScanCapturePopUp();
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 		//face
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -190,7 +187,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnScanButton();
 
 		assertTrue(applicantBiometricsPage.isFaceScan(),"Verify if face scan 1st attempt");
-		applicantBiometricsPage.CloseScanCapturePopUp();
+		applicantBiometricsPage.closeScanCapturePopUp();
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");

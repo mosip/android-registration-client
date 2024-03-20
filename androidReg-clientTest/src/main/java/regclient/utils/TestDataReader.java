@@ -49,6 +49,8 @@ public class TestDataReader {
 			return "9876543210";
 		case "emailId":
 			return "abc@gmail.com";
+		case "RID":
+			return "10001105671003120240215071549";
 		case "nonRegisteredUsername":
 			return "123456789";
 		case "InvalidPassword":

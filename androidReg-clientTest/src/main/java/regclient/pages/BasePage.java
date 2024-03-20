@@ -137,7 +137,7 @@ public class BasePage {
 	    int startX = size.getWidth() / 2;
 	    int startY = size.getHeight() / 2;
 	    int endX = startX;
-	    int endY = (int) (size.getHeight() * 0.25);
+	    int endY = (int) (size.getHeight() * 0.28);
 	    PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
 	    Sequence sequence = new Sequence(finger1, 1)
 	        .addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))

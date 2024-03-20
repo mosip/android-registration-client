@@ -7,7 +7,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 
 public class PreviewPage extends BasePage {
 
-	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"New Registration\"))")
+	private WebElement newRegistrationTitle;
 	
 	@AndroidFindBy(xpath = "//*[@text=\"Demographic Information\"]")
 	private WebElement demographicInformationInPreviewPage;
@@ -40,6 +41,10 @@ public class PreviewPage extends BasePage {
 	
 	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
 		return isElementDisplayed(biometricsInformationInPreviewPage);
+	}
+	
+	public boolean isNewRegistrationTitleDisplayed() {
+		return isElementDisplayed(newRegistrationTitle);
 	}
 
 }

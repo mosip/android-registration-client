@@ -6,6 +6,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 
 public class BiometricDetailsPage extends BasePage {
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Applicant Biometrics\"))")
+	private WebElement applicantBiometricTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
@@ -22,6 +25,12 @@ public class BiometricDetailsPage extends BasePage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Face\"))")
 	private WebElement faceScanIcon;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
+	private WebElement exceptionScanIcon;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,\"Introducer Biometrics\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris Scan\"]")
+	private WebElement introducerIrisScanIcon;
+	
 	@AndroidFindBy(accessibility = "CONTINUE")
 	private WebElement continueButton;
 
@@ -30,7 +39,7 @@ public class BiometricDetailsPage extends BasePage {
 	}
 
 	public  boolean isBiometricDetailsPageDisplayed() {
-		return isElementEnabled(irisScanIcon);
+		return isElementEnabled(applicantBiometricTitle);
 	}
 
 	
@@ -38,6 +47,14 @@ public class BiometricDetailsPage extends BasePage {
 	public ApplicantBiometricsPage clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
 		return new ApplicantBiometricsPage(driver);
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerIrisScan() {
+		while(!isElementDisplayedOnScreen(introducerIrisScanIcon)) {
+			swipeOrScroll();
+		}
+		clickOnElement(introducerIrisScanIcon);
+		return new IntroducerBiometricPage(driver);
 	}
 	
 	public ApplicantBiometricsPage clickOnRightHandScanIcon() {
@@ -57,6 +74,11 @@ public class BiometricDetailsPage extends BasePage {
 	
 	public ApplicantBiometricsPage clickOnFaceScanIcon() {
 		clickOnElement(faceScanIcon);
+		return new ApplicantBiometricsPage(driver);
+	}
+	
+	public ApplicantBiometricsPage clickOnExceptionScanIcon() {
+		clickOnElement(exceptionScanIcon);
 		return new ApplicantBiometricsPage(driver);
 	}
 	

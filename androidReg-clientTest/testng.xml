@@ -19,6 +19,21 @@
           <include name="newRegistrationAdultException"/>
         </methods>
       </class>
+      <class name="androidTestCases.NewRegistrationInfant">
+        <methods>
+          <include name="newRegistrationInfant"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistrationMinor">
+        <methods>
+          <include name="newRegistrationMinor"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistrationMinorException">
+        <methods>
+          <include name="newRegistrationMinorException"/>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>

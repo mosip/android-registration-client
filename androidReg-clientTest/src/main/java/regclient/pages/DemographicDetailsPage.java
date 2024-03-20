@@ -105,12 +105,24 @@ public class DemographicDetailsPage extends BasePage{
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Email\"))")
 	private WebElement emailHeader;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducer Name\"))")
+	private WebElement introducerNameHeader;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducer RID\"))")
+	private WebElement introducerRidHeader;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Phone\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
 	private WebElement mobileNumberTextBox;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Email\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement emailIdTextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducer Name\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	private WebElement introducerNameTextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducer RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	private WebElement introducerRidTextBox;
 
 	@AndroidFindBy(accessibility = "CONTINUE")
 	private WebElement continueButton;
@@ -133,14 +145,23 @@ public class DemographicDetailsPage extends BasePage{
 	}
 
 	public  void enterAddressLine1(String addressLine1) {
+		if(!isElementDisplayedOnScreen(addressLine1TextBox)) {
+			swipeOrScroll();
+		}
 		clickAndsendKeysToTextBoxByCmd(addressLine1TextBox,addressLine1);
 	}
 
 	public  void enterAddressLine2(String addressLine2) {
+		if(!isElementDisplayedOnScreen(addressLine2TextBox)) {
+			swipeOrScroll();
+		}
 		clickAndsendKeysToTextBoxByCmd(addressLine2TextBox,addressLine2);
 	}
 
 	public  void enterAddressLine3(String addressLine3) {
+		if(!isElementDisplayedOnScreen(addressLine3TextBox)) {
+			swipeOrScroll();
+		}
 		clickAndsendKeysToTextBoxByCmd(addressLine3TextBox,addressLine3);
 	}
 
@@ -185,6 +206,14 @@ public class DemographicDetailsPage extends BasePage{
 
 	public boolean isEmailHeaderDisplayed() {
 		return isElementDisplayed(emailHeader);
+	}
+	
+	public boolean isIntroducerNameHeaderDisplayed() {
+		return isElementDisplayed(introducerNameHeader);
+	}
+	
+	public boolean isIntroducerRidHeaderDisplayed() {
+		return isElementDisplayed(introducerRidHeader);
 	}
 
 	public  void selectGender(String gender) {
@@ -314,6 +343,22 @@ public class DemographicDetailsPage extends BasePage{
 			clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 		}else
 		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
+	}
+	
+	public  void enterIntroducerName(String EmailID) {
+		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
+			swipeOrScroll();
+			clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+		}else
+		clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+	}
+	
+	public  void enterIntroducerRid(String EmailID) {
+		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
+			swipeOrScroll();
+			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+		}else
+		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 	}
 
 
