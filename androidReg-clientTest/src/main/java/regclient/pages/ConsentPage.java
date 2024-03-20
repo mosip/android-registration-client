@@ -28,7 +28,7 @@ public class ConsentPage extends BasePage{
 
 	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
-		clickOnCheckBox();
+		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis
 	}
 
 	public  boolean isInformedButtonEnabled() {

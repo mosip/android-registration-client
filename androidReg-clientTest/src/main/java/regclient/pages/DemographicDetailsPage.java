@@ -148,21 +148,21 @@ public class DemographicDetailsPage extends BasePage{
 		if(!isElementDisplayedOnScreen(addressLine1TextBox)) {
 			swipeOrScroll();
 		}
-		clickAndsendKeysToTextBoxByCmd(addressLine1TextBox,addressLine1);
+		clickAndsendKeysToTextBox(addressLine1TextBox,addressLine1);
 	}
 
 	public  void enterAddressLine2(String addressLine2) {
 		if(!isElementDisplayedOnScreen(addressLine2TextBox)) {
 			swipeOrScroll();
 		}
-		clickAndsendKeysToTextBoxByCmd(addressLine2TextBox,addressLine2);
+		clickAndsendKeysToTextBox(addressLine2TextBox,addressLine2);
 	}
 
 	public  void enterAddressLine3(String addressLine3) {
 		if(!isElementDisplayedOnScreen(addressLine3TextBox)) {
 			swipeOrScroll();
 		}
-		clickAndsendKeysToTextBoxByCmd(addressLine3TextBox,addressLine3);
+		clickAndsendKeysToTextBox(addressLine3TextBox,addressLine3);
 	}
 
 	public  void enterAge(String age) {
