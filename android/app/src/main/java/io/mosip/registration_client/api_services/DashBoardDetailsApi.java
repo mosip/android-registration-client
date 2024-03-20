@@ -55,12 +55,13 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
             List<Registration> uploadedValues = this.registrationRepository.getAllRegistrationByStatus(PacketClientStatus.UPLOADED.name());
             List<String> response = new ArrayList<>();
             uploadedValues.forEach((v) -> {
+                response.add(v.getCrDtime().toString());
                     // current date
-                     long currentTime = System.currentTimeMillis();
-                     long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
-                     if(v.getCrDtime() >= thirtyDaysAgo) {
-                        response.add(v.getCrDtime().toString());
-                     }
+//                     long currentTime = System.currentTimeMillis();
+//                     long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
+//                     if(v.getCrDtime() >= thirtyDaysAgo) {
+//                        response.add(v.getCrDtime().toString());
+//                     }
             });
             result.success(response);
         } catch (Exception e) {
@@ -74,11 +75,12 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
             List<Registration> pendingValues = this.registrationRepository.getAllRegistrationByStatus(PacketClientStatus.SYNCED.name());
             List<String> response = new ArrayList<>();
             pendingValues.forEach((v) -> {
-                long currentTime = System.currentTimeMillis();
-                long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
-                if(v.getCrDtime() >= thirtyDaysAgo) {
-                    response.add(v.getCrDtime().toString());
-                }
+                response.add(v.getCrDtime().toString());
+//                long currentTime = System.currentTimeMillis();
+//                long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
+//                if(v.getCrDtime() >= thirtyDaysAgo) {
+//                    response.add(v.getCrDtime().toString());
+//                }
             });
             result.success(response);
         } catch (Exception e) {
