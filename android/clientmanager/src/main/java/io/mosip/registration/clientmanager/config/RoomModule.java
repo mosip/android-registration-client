@@ -1,11 +1,24 @@
 package io.mosip.registration.clientmanager.config;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Room;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SupportFactory;
+
+import org.apache.commons.lang3.RandomStringUtils;
+
+import java.io.File;
+import java.security.SecureRandom;
 
 import javax.inject.Singleton;
 
@@ -56,14 +69,74 @@ import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 @Module
 public class RoomModule {
 
+    private static final String TAG = RoomModule.class.getSimpleName();
     private static final String DATABASE_NAME = "reg-client";
+    private static final String DB_PWD_KEY = "db_password";
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     private ClientDatabase clientDatabase;
 
     public RoomModule(Application application) {
-        clientDatabase = Room.databaseBuilder(application, ClientDatabase.class, DATABASE_NAME)
-                .allowMainThreadQueries()
-                .build();
+        Context context = application.getApplicationContext();
+        try {
+            String dbPwd = getEncryptedSharedPreferences(context).getString(DB_PWD_KEY, null);
+            Log.i(TAG, "Db password found in sharedPreferences.");
+            boolean dbExists = context.getDatabasePath(DATABASE_NAME).exists();
+            if (dbPwd == null) {
+                Log.i(TAG, "Db password found null. Creating new pwd and storing in SharedPreferences.");
+                dbPwd = RandomStringUtils.random(20, 0, 0, true, true, null, secureRandom);
+                getEncryptedSharedPreferences(context).edit()
+                        .putString(DB_PWD_KEY, dbPwd)
+                        .apply();
+                if (dbExists) {
+                    Log.i(TAG, "Db already exists, encrypting existing DB");
+                    encryptExistingDb(context, dbPwd);
+                }
+            }
+            clientDatabase = Room.databaseBuilder(application, ClientDatabase.class, DATABASE_NAME)
+                    .openHelperFactory(new SupportFactory(dbPwd.getBytes()))
+                    .allowMainThreadQueries()
+                    .build();
+        } catch (Exception e) {
+            Log.e(TAG, "Failed initializing the database", e);
+        }
+    }
+
+    private SharedPreferences getEncryptedSharedPreferences(Context context) {
+        try {
+            MasterKey masterKey = new MasterKey.Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+            SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                    context,
+                    "Android Registration Client",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+            return sharedPreferences;
+        } catch (Exception e) {
+            Log.e(TAG, "Error on getting encrypted shared preferences", e);
+        }
+        return null;
+    }
+
+    private void encryptExistingDb(Context context, String passphrase) {
+        try {
+            SQLiteDatabase.loadLibs(context);
+            File originalFile = context.getDatabasePath(DATABASE_NAME);
+            File newFile = File.createTempFile("sqlcipherutils", "tmp", context.getCacheDir());
+            SQLiteDatabase existing_db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), "", null, SQLiteDatabase.OPEN_READWRITE);
+            existing_db.rawExecSQL("ATTACH DATABASE '" + newFile.getPath() + "' AS encrypted KEY '" + passphrase + "';");
+            existing_db.rawExecSQL("SELECT sqlcipher_export('encrypted');");
+            existing_db.rawExecSQL("DETACH DATABASE encrypted;");
+            existing_db.close();
+            originalFile.delete();
+            newFile.renameTo(originalFile);
+            Log.i(TAG, "Successfully encrypted the existing DB");
+        } catch (Exception e) {
+            Log.e(TAG, "Failed encrypting the existing database", e);
+        }
     }
 
     @Provides
