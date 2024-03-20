@@ -671,16 +671,27 @@ public class MasterDataServiceImpl implements MasterDataService {
                             onFinish.run();
                         } catch (Exception e) {
                             Log.e(TAG,"Error in downloading script", e);
+                            if(isManualSync) {
+                                Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
+                            }
                         }
-                    } else
-                        Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(context, "Script Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    } else {
+                        if(isManualSync) {
+                            Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } else {
+                    if(isManualSync) {
+                        Toast.makeText(context, "Script Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(context, "Script Sync failed", Toast.LENGTH_LONG).show();
+                if(isManualSync) {
+                    Toast.makeText(context, "Script Sync failed", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
