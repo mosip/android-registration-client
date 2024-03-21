@@ -48,8 +48,13 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   void _getSelectedValueFromMap(String lang) {
     String response = "";
+<<<<<<< HEAD
 
     response = context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+=======
+    response =
+        context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+>>>>>>> develop
     setState(() {
       selectedOption = response.toLowerCase();
     });
