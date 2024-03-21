@@ -110,6 +110,18 @@ public class UserOnboardService {
         return operatorBiometrics;
     }
 
+    private boolean idaResponse;
+
+    public boolean isIdaResponse() {
+        return idaResponse;
+    }
+
+    public void setIdaResponse(boolean idaResponse) {
+        this.idaResponse = idaResponse;
+    }
+
+
+
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
                               CertificateManagerService certificateManagerService,
@@ -222,6 +234,7 @@ public class UserOnboardService {
     private boolean getIdaAuthResponse(Map<String, Object> idaRequestMap, Map<String, Object> requestMap,
                                                    Certificate certificate) throws ClientCheckedException {
         try {
+
             PublicKey publicKey = certificate.getPublicKey();
             idaRequestMap.put(ONBOARD_CERT_THUMBPRINT, CryptoUtil.encodeToURLSafeBase64(cryptoManagerService.getCertificateThumbprint(certificate)));
 
@@ -244,24 +257,46 @@ public class UserOnboardService {
             idaRequestMap.put(ON_BOARD_REQUEST_SESSION_KEY,
                     CryptoUtil.encodeToURLSafeBase64(cryptoManagerService.asymmetricEncrypt(publicKey, symmentricKey.getEncoded())));
 
-            Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.doOperatorAuth("test-signature",
+            Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.doOperatorAuth("sign",
                     idaRequestMap);
-            Response<ResponseWrapper<Map<String, Object>>> response = call.execute();
-            if (response.isSuccessful()) {
-                ServiceError error = SyncRestUtil.getServiceError(response.body());
-                if (error == null) {
-                    return (Boolean) response.body().getResponse().get(ON_BOARD_AUTH_STATUS);
+
+
+            call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
+
+                @Override
+                public void onResponse(Call<ResponseWrapper<Map<String, Object>>> call, Response<ResponseWrapper<Map<String, Object>>> response) {
+                    if (response.isSuccessful()) {
+                        ServiceError error = SyncRestUtil.getServiceError(response.body());
+                        if (error.getErrorCode() == null) {
+                            setIdaResponse((Boolean) response.body().getResponse().get(ON_BOARD_AUTH_STATUS));
+                        }
+                    } else{
+                        setIdaResponse(false);
+                        Log.i("Response UserOnboard Service",response.toString());
+                        Toast.makeText(context, "Failed to fetch IDA Response :" + response.code(), Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
+
+
+                @Override
+                public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
+                    t.printStackTrace();
+                    setIdaResponse(false);
+                    Toast.makeText(context, "IDA Response fetch failed", Toast.LENGTH_LONG).show();
+                }
+
+            });
+            return isIdaResponse();
+
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
             throw new ClientCheckedException("", e.getMessage(), e);
         }
-        return false;
+//        return false;
 
     }
 
-    private String getCertificate() {
+    private String getCertificate() throws IOException {
         String certData = this.certificateManagerService.getCertificate(APPLICATION_ID, REFERENCE_ID);
         if(certData == null) {
             Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getIDACertificate();
@@ -276,13 +311,17 @@ public class UserOnboardService {
                             certificateRequestDto.setReferenceId(REFERENCE_ID);
                             certificateRequestDto.setCertificateData((String) response.body().getResponse().get(CERTIFICATE));
                             certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
+
                         }
-                    } else
+                    } else{
+                        Log.i("Response UserOnboard Service",response.toString());
                         Toast.makeText(context, "Failed to fetch IDA Internal certificate :" + response.code(), Toast.LENGTH_LONG).show();
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
+                    t.printStackTrace();
                     Toast.makeText(context, "IDA Internal Certificate fetch failed", Toast.LENGTH_LONG).show();
                 }
             });

@@ -139,7 +139,27 @@ class _OperatorBiometricsCaptureState
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ElevatedButton(
-                onPressed: () async {
+              onPressed: () async {
+                if (context
+                        .read<BiometricCaptureControlProvider>()
+                        .iris
+                        .isScanned &&
+                    context
+                        .read<BiometricCaptureControlProvider>()
+                        .rightHand
+                        .isScanned &&
+                    context
+                        .read<BiometricCaptureControlProvider>()
+                        .leftHand
+                        .isScanned &&
+                    context
+                        .read<BiometricCaptureControlProvider>()
+                        .thumbs
+                        .isScanned &&
+                    context
+                        .read<BiometricCaptureControlProvider>()
+                        .face
+                        .isScanned) {
                   await BiometricsApi().saveOperatorBiometrics();
                   Navigator.pop(context);
                   showDialog<String>(
@@ -190,14 +210,39 @@ class _OperatorBiometricsCaptureState
                   setState(() {
                     context.read<GlobalProvider>().setCurrentIndex(1);
                   });
-                },
-                child: Text(
-                  "VERIFY & SAVE",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontSize: 26.h, color: pureWhite),
-                )),
+                }
+              },
+              child: Text(
+                "VERIFY & SAVE",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(fontSize: 26.h, color: pureWhite),
+              ),
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: (context
+                              .read<BiometricCaptureControlProvider>()
+                              .iris
+                              .isScanned &&
+                          context
+                              .read<BiometricCaptureControlProvider>()
+                              .rightHand
+                              .isScanned &&
+                          context
+                              .read<BiometricCaptureControlProvider>()
+                              .leftHand
+                              .isScanned &&
+                          context
+                              .read<BiometricCaptureControlProvider>()
+                              .thumbs
+                              .isScanned &&
+                          context
+                              .read<BiometricCaptureControlProvider>()
+                              .face
+                              .isScanned)
+                      ? solidPrimary
+                      : secondaryColors.elementAt(22)),
+            ),
           ),
         ),
         appBar: PreferredSize(
