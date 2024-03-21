@@ -480,12 +480,14 @@ class GlobalProvider with ChangeNotifier {
   List<String?> get notificationLanguages => _notificationLanguages;
   Map<String, bool> get disabledLanguageMap => _disabledLanguageMap;
 
-  initializeLanguageDataList() async {
+  initializeLanguageDataList(bool isManualSync) async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
     await createLanguageCodeMapper();
     String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
-    await toggleLocale(mandatoryLang);
+    if(!isManualSync) {
+      await toggleLocale(mandatoryLang);
+    }
     notifyListeners();
   }
 

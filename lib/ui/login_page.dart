@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _initializeAppData() async {
     await globalProvider.setMachineDetails();
-    await globalProvider.initializeLanguageDataList();
+    await globalProvider.initializeLanguageDataList(false);
     await globalProvider.initializeLocationHierarchyMap();
     await globalProvider.setGitHeadAttributes();
     await globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
@@ -583,7 +583,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       showSyncResultDialog();
     }
 
-    await globalProvider.initializeLanguageDataList();
+    await globalProvider.initializeLanguageDataList(false);
     Timer(const Duration(seconds: 5), () {
       if (syncProvider.isAllSyncSuccessful()) {
         RestartWidget.restartApp(context);
