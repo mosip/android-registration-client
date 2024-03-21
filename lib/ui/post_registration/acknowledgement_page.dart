@@ -52,7 +52,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   _printAcknowledgementAudit() async {
     await context
         .read<GlobalProvider>()
-        .getAudit("REG-EVT-0012", "REG-MOD-103");
+        .getAudit("REG-EVT-012", "REG-MOD-103");
   }
 
   @override
