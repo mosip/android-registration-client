@@ -9,7 +9,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Label"
+            android:text="@string/label"
             android:layout_margin="8dp"/>
 
     <RelativeLayout

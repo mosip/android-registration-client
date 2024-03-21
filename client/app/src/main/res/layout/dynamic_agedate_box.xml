@@ -15,125 +15,128 @@
                 android:id="@+id/dob_label"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="DOB"
+                android:text="@string/dob"
                 android:layout_margin="8dp"/>
+        <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:gravity="center"
+                          android:orientation="horizontal">
 
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:gravity="center"
-                      android:orientation="horizontal">
-
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/text_input_layout_dd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dp"
-                    android:orientation="horizontal">
-                <EditText
-                        android:id="@+id/dob_date"
-                        app:autoSizeTextType="uniform"
-                        android:hint="@string/dd_label"
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/text_input_layout_dd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:focusableInTouchMode="true"
-                        android:focusable="true"
-                        android:inputType="number"
-                        android:textColor="@color/black"
-                        android:ems="3"
-                        android:maxLength="2"
-                        android:gravity="center_horizontal"
-                        android:layout_margin="3dp"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                    android:id="@+id/dob_date_slash"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:text="/"
-                    android:layout_margin="3dp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/text_input_layout_mm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dp"
-                    android:orientation="horizontal">
-                <EditText
-                        android:id="@+id/dob_month"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:focusableInTouchMode="true"
-                        android:textColor="@color/black"
-                        android:focusable="true"
-                        android:maxLength="2"
                         android:layout_margin="3dp"
-                    android:ems="3"
+                        android:orientation="horizontal">
+                    <EditText
+                            android:id="@+id/dob_date"
+                            app:autoSizeTextType="uniform"
+                            android:hint="@string/dd_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:focusableInTouchMode="true"
+                            android:focusable="true"
+                            android:inputType="number"
+                            android:textColor="@color/black"
+                            android:ems="3"
+                            android:maxLength="2"
+                            android:gravity="center_horizontal"
+                            android:layout_margin="3dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                        android:id="@+id/dob_date_slash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:text="/"
+                        android:layout_margin="3dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/text_input_layout_mm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:orientation="horizontal">
+                    <EditText
+                            android:id="@+id/dob_month"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:focusableInTouchMode="true"
+                            android:textColor="@color/black"
+                            android:focusable="true"
+                            android:maxLength="2"
+                            android:layout_margin="3dp"
+                        android:ems="3"
+                            android:gravity="center_horizontal"
+                            app:autoSizeTextType="uniform"
+                            android:hint="@string/mm_label"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                        android:id="@+id/dob_date_slash_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:text="/"
+                        android:layout_margin="3dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_layout_yy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/dob_year"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:focusableInTouchMode="true"
+                        android:textColor="@color/black"
+                        android:focusable="true"
+                        android:maxLength="4"
+                        android:layout_margin="3dp"
+                        android:ems="3"
                         android:gravity="center_horizontal"
                         app:autoSizeTextType="uniform"
-                        android:hint="@string/mm_label"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                        android:hint="@string/yyyy_label"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                    android:id="@+id/dob_date_slash_2"
+                <TextView
+                        android:id="@+id/dob_date_or"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:text="@string/or"
+                        android:layout_margin="5dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_layout_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:text="/"
-                    android:layout_margin="3dp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_layout_yy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/dob_year"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:focusableInTouchMode="true"
-                    android:textColor="@color/black"
-                    android:focusable="true"
-                    android:maxLength="4"
                     android:layout_margin="3dp"
-                    android:ems="3"
-                    android:gravity="center_horizontal"
-                    app:autoSizeTextType="uniform"
-                    android:hint="@string/yyyy_label"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                    android:id="@+id/dob_date_or"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:text="OR"
-                    android:layout_margin="5dp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_layout_age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/dob_age"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:focusableInTouchMode="true"
-                    android:textColor="@color/black"
-                    android:focusable="true"
-                    android:maxLength="3"
-                    android:layout_margin="3dp"
-                    android:ems="3"
-                    android:gravity="center_horizontal"
-                    app:autoSizeTextType="uniform"
-                    android:hint="@string/age_label"/>
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/dob_age"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:focusableInTouchMode="true"
+                        android:textColor="@color/black"
+                        android:focusable="true"
+                        android:maxLength="3"
+                        android:layout_margin="3dp"
+                        android:ems="3"
+                        android:gravity="center_horizontal"
+                        app:autoSizeTextType="uniform"
+                        android:hint="@string/age_label"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
 </LinearLayout>

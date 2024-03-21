@@ -51,6 +51,8 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
     private ViewGroup fieldPanel = null;
     private int BIO_SCAN_REQUEST_CODE = 1;
     private int SCAN_REQUEST_CODE = 99;
+    private int DELETE_REQUEST_CODE = 999;
+    private int PREVIEW_REQUEST_CODE = 9999;
     private Map<Integer, String> requestCodeMap = new HashMap<>();
     public static Map<String, DynamicView> currentDynamicViews = new HashMap<>();
 
@@ -147,7 +149,7 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
     @Override
     public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {super.onSaveInstanceState(savedInstanceState);}
 
-    @Override
+    @Override   
     public void onRestoreInstanceState(Bundle savedInstanceState) {super.onRestoreInstanceState(savedInstanceState);}
 
     private boolean loadScreenFields(ScreenSpecDto screenSpecDto) throws Exception {
@@ -244,6 +246,16 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
     private void setScanButtonListener(int requestCode, View view, FieldSpecDto fieldSpecDto, List<String> selectedLanguages) {
         Button button = view.findViewById(R.id.scan_doc);
         button.setOnClickListener(v -> {
+            findViewById(R.id.preview_doc).setVisibility(View.VISIBLE);
+            PREVIEW_REQUEST_CODE = PREVIEW_REQUEST_CODE + 1;
+            requestCodeMap.put(PREVIEW_REQUEST_CODE, fieldSpecDto.getId());
+            setPreviewButtonListener(PREVIEW_REQUEST_CODE ,view, fieldSpecDto, selectedLanguages);
+
+            findViewById(R.id.delete_doc).setVisibility(View.VISIBLE);
+            DELETE_REQUEST_CODE = DELETE_REQUEST_CODE + 1;
+            requestCodeMap.put(DELETE_REQUEST_CODE, fieldSpecDto.getId());
+            setDeleteButtonListener(DELETE_REQUEST_CODE, view);
+
             auditManagerService.audit(AuditEvent.DOCUMENT_SCAN, Components.REGISTRATION);
 
             int preference = ScanConstants.OPEN_CAMERA;
@@ -251,19 +263,45 @@ public class ScreenActivity extends DaggerAppCompatActivity  {
             intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
             startActivityForResult(intent, requestCode);
         });
+    }
 
-        TextView textView = view.findViewById(R.id.doc_preview);
-        textView.setOnClickListener(v -> {
-            auditManagerService.audit(AuditEvent.DOCUMENT_PREVIEW, Components.REGISTRATION);
-
-            Intent intent = new Intent(this, PreviewDocumentActivity.class);
-            List<String> labels = new ArrayList<>();
-            for (String language : selectedLanguages) {
-                labels.add(fieldSpecDto.getLabel().get(language));
+    private void setDeleteButtonListener(int requestCode, View view) {
+        Button button = view.findViewById(R.id.delete_doc);
+        button.setOnClickListener(v -> {
+            auditManagerService.audit(AuditEvent.DOCUMENT_DELETE, Components.REGISTRATION);
+            String fieldId = requestCodeMap.get(requestCode);
+            try {
+                this.registrationService.getRegistrationDto().removeDocumentField(fieldId);
+                TextView textView = ((View) currentDynamicViews.get(fieldId)).findViewById(R.id.doc_preview);
+                textView.setText("0");
+            } catch (Exception e) {
+                auditManagerService.audit(AuditEvent.DOCUMENT_DELETE_FAILED, Components.REGISTRATION, e.getMessage());
+                Log.e(TAG, "Failed to delete document to registration dto", e);
             }
-            intent.putExtra("fieldId", fieldSpecDto.getId());
-            intent.putExtra("fieldLabel", String.join(ClientConstants.LABEL_SEPARATOR, labels));
-            startActivity(intent);
+        });
+    }
+
+    private void setPreviewButtonListener(int requestCode, View view, FieldSpecDto fieldSpecDto, List<String> selectedLanguages) {
+        Button button = view.findViewById(R.id.preview_doc);
+        String fieldId = requestCodeMap.get(requestCode);
+        button.setOnClickListener(v -> {
+            try {
+                if(this.registrationService.getRegistrationDto().getScannedPages(fieldId).size() > 0){
+                    auditManagerService.audit(AuditEvent.DOCUMENT_PREVIEW, Components.REGISTRATION);
+
+                    Intent intent = new Intent(this, PreviewDocumentActivity.class);
+                    List<String> labels = new ArrayList<>();
+                    for (String language : selectedLanguages) {
+                        labels.add(fieldSpecDto.getLabel().get(language));
+                    }
+                    intent.putExtra("fieldId", fieldSpecDto.getId());
+                    intent.putExtra("fieldLabel", String.join(ClientConstants.LABEL_SEPARATOR, labels));
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
+                auditManagerService.audit(AuditEvent.DOCUMENT_PREVIEW_FAILED, Components.REGISTRATION, e.getMessage());
+                Log.e(TAG, "Failed to preview document in registration dto", e);
+            }
         });
     }
 }
