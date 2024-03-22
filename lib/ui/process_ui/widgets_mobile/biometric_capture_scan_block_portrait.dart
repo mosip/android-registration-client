@@ -612,6 +612,117 @@ class _BiometricCaptureScanBlockPortraitState
         context.read<BiometricCaptureControlProvider>().completeExceptionList;
   }
 
+  proofOfExceptionList(String attribute) {
+    if (attribute == "Iris") {
+      if (context
+          .read<BiometricCaptureControlProvider>()
+          .iris
+          .exceptions
+          .contains(true)) {
+        if(!context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Iris")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .add("Iris");
+        }
+      } else {
+        if (context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Iris")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .remove("Iris");
+        }
+      }
+    }
+    if (attribute == "Right Hand") {
+      if (context
+          .read<BiometricCaptureControlProvider>()
+          .rightHand
+          .exceptions
+          .contains(true)) {
+        if (!context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Right Hand")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .add("Right Hand");
+        }
+      } else {
+        if (context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Right Hand")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .remove("Right Hand");
+        }
+      }
+    }
+    if (attribute == "Left Hand") {
+      if (context
+          .read<BiometricCaptureControlProvider>()
+          .leftHand
+          .exceptions
+          .contains(true)) {
+        if (!context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Left Hand")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .add("Left Hand");
+        }
+      } else {
+        if (context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Left Hand")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .remove("Left Hand");
+        }
+      }
+    }
+    if (attribute == "Thumbs") {
+      if (context
+          .read<BiometricCaptureControlProvider>()
+          .thumbs
+          .exceptions
+          .contains(true)) {
+        if (!context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Thumbs")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .add("Thumbs");
+        }
+      } else {
+        if (context
+            .read<GlobalProvider>()
+            .exceptionAttributes
+            .contains("Thumbs")) {
+          context
+              .read<GlobalProvider>()
+              .exceptionAttributes
+              .remove("Thumbs");
+        }
+      }
+    }
+  }
+
   Widget _exceptionBlock() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -862,6 +973,7 @@ class _BiometricCaptureScanBlockPortraitState
                             biometricAttributeData.exceptionType = "";
                           }
                           updateExceptionList("Iris");
+                          proofOfExceptionList("Iris");
                         },
                         child: SvgPicture.asset(
                           "assets/svg/left_iris.svg",
@@ -937,6 +1049,7 @@ class _BiometricCaptureScanBlockPortraitState
                             biometricAttributeData.exceptionType = "";
                           }
                           updateExceptionList("Iris");
+                          proofOfExceptionList("Iris");
                         },
                         child: SvgPicture.asset(
                           "assets/svg/right_iris.svg",
@@ -1156,6 +1269,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
+                                              proofOfExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_1.svg",
@@ -1246,6 +1360,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
+                                              proofOfExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_2.svg",
@@ -1336,6 +1451,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
+                                              proofOfExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_3.svg",
@@ -1426,6 +1542,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
+                                              proofOfExceptionList("Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_4.svg",
@@ -1662,6 +1779,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                   .exceptionType = "";
                                             }
                                             updateExceptionList("Left Hand");
+                                            proofOfExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_1.svg",
@@ -1751,6 +1869,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                   .exceptionType = "";
                                             }
                                             updateExceptionList("Left Hand");
+                                            proofOfExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_2.svg",
@@ -1839,6 +1958,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                   .exceptionType = "";
                                             }
                                             updateExceptionList("Left Hand");
+                                            proofOfExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_3.svg",
@@ -1927,6 +2047,7 @@ class _BiometricCaptureScanBlockPortraitState
                                                   .exceptionType = "";
                                             }
                                             updateExceptionList("Left Hand");
+                                            proofOfExceptionList("Left Hand");
                                           },
                                           child: SvgPicture.asset(
                                             "assets/svg/LH_4.svg",
@@ -2022,6 +2143,7 @@ class _BiometricCaptureScanBlockPortraitState
                         biometricAttributeData.exceptionType = "";
                       }
                       updateExceptionList("Thumbs");
+                      proofOfExceptionList("Thumbs");
                     },
                     child: SvgPicture.asset(
                       "assets/svg/L_Thumb.svg",
@@ -2076,6 +2198,7 @@ class _BiometricCaptureScanBlockPortraitState
                           biometricAttributeData.exceptionType = "";
                         }
                         updateExceptionList("Thumbs");
+                        proofOfExceptionList("Thumbs");
                       },
                       child: SvgPicture.asset(
                         "assets/svg/R_Thumb.svg",
