@@ -3,7 +3,7 @@ name: Build Android Registration-Client
 on:
   push:
     branches:
-      - feature-flutter
+      - develop
 
 jobs:
   build:

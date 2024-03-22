@@ -74,6 +74,7 @@ import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.DashBoardDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
+import io.mosip.registration_client.api_services.DocumentCategoryApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
@@ -90,6 +91,7 @@ import io.mosip.registration_client.model.CommonDetailsPigeon;
 import io.mosip.registration_client.model.DashBoardDataPigeon;
 import io.mosip.registration_client.model.DashBoardPigeon;
 import io.mosip.registration_client.model.DemographicsDataPigeon;
+import io.mosip.registration_client.model.DocumentCategoryPigeon;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.PacketAuthPigeon;
@@ -182,6 +184,9 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     GlobalParamDao globalParamDao;
+
+    @Inject
+    DocumentCategoryApi documentCategoryApi;
 
     @Inject
     DashBoardDetailsApi dashBoardDetailsApi;
@@ -367,6 +372,7 @@ public class MainActivity extends FlutterActivity {
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
+        DocumentCategoryPigeon.DocumentCategoryApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentCategoryApi);
         DashBoardPigeon.DashBoardApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dashBoardDetailsApi);
 
         TransliterationPigeon.TransliterationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),new TransliterationApi(new TransliterationServiceImpl()));
