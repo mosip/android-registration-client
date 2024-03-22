@@ -479,7 +479,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      continueButton = value;
+      continueButton = value && globalProvider.formKey.currentState!.validate();
     });
 
     return WillPopScope(
