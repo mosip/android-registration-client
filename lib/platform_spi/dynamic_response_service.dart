@@ -9,7 +9,7 @@ import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/platform_android/dynamic_response_service_impl.dart';
 
 abstract class DynamicResponseService {
-  Future<List<String?>> fetchFieldValues(String fieldName, String langCode);
+  Future<List<DynamicFieldData?>> fetchFieldValues(String fieldName, String langCode);
 
   Future<List<GenericData?>> fetchLocationValues(
       String hierarchyLevelName, String langCode);

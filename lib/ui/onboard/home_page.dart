@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
@@ -106,13 +107,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getFieldValues(String fieldId, String langCode) async {
-    List<String?> fieldValues = await context
+    List<DynamicFieldData?> fieldValues = await context
         .read<RegistrationTaskProvider>()
         .getFieldValues(fieldId, langCode);
     _setNotificationLanguages(fieldValues);
   }
 
-  _setNotificationLanguages(List<String?> fieldValues) {
+  _setNotificationLanguages(List<DynamicFieldData?> fieldValues) {
     context.read<GlobalProvider>().setNotificationLanguages(fieldValues);
   }
 
