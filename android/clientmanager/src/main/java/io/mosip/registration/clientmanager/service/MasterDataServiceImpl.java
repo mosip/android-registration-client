@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -160,7 +161,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncCertificate(Runnable onFinish, boolean isManualSync) {
+    public void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result = "policy_key_sync_failed";
@@ -168,8 +169,8 @@ public class MasterDataServiceImpl implements MasterDataService {
             return;
         }
 
-        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(REG_APP_ID,
-                centerMachineDto.getMachineRefId(), BuildConfig.CLIENT_VERSION);
+        Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(applicationId,
+                referenceId, BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CertificateResponse>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<CertificateResponse>> call, Response<ResponseWrapper<CertificateResponse>> response) {
@@ -177,8 +178,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId("REGISTRATION");
-                        certificateRequestDto.setReferenceId(centerMachineDto.getMachineRefId());
+                        certificateRequestDto.setApplicationId(setApplicationId);
+                        certificateRequestDto.setReferenceId(setReferenceId);
                         certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                         certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                         if(isManualSync) {

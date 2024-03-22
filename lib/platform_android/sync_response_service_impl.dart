@@ -114,6 +114,19 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return batchJobResponse;
   }
+
+  @override
+  Future<Sync> getKernelCertsSync(bool isManualSync) async {
+    late Sync syncResponse;
+    try {
+      syncResponse = await SyncApi().getKernelCertsSync(isManualSync);
+    } on PlatformException {
+      debugPrint('KernelCerts Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('KernelCertsSync has failed! ${e.toString()}');
+    }
+    return syncResponse;
+  }
 }
 
 SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

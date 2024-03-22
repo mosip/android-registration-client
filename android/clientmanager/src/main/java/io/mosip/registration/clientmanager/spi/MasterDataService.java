@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.spi;
 
+import org.json.JSONObject;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
@@ -7,6 +8,7 @@ import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 
 import java.util.List;
+import java.nio.file.Path;
 
 public interface MasterDataService {
 
@@ -23,7 +25,7 @@ public interface MasterDataService {
     /**
      * Fetches policy key
      */
-    void syncCertificate(Runnable onFinish, boolean isManualSync);
+    void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync);
 
     /**
      * Fetches all the master data
@@ -135,4 +137,6 @@ public interface MasterDataService {
     void saveGlobalParam(String id, String value);
 
     String getGlobalParamValue(String id);
+
+//    void downloadUrlData(Path path, JSONObject jsonObject);
 }

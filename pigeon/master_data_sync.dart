@@ -30,4 +30,6 @@ abstract class SyncApi{
   Sync getCaCertsSync(bool isManualSync);
   @async
   String batchJob();
+  @async
+  Sync getKernelCertsSync(bool isManualSync);
 }

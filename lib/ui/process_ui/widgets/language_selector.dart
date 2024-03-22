@@ -65,7 +65,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     List<String> langList = _getRegistrationLanguageList();
     await registrationTaskProvider.startRegistration(langList);
     registrationTaskProvider.addDemographicField(
-        "preferredLang", globalProvider.fieldInputValue["preferredLang"] ?? "");
+        "preferredLang", globalProvider.fieldInputValue["preferredLang"].toString());
     String registrationStartError = registrationTaskProvider.registrationStartError;
     _navigateBack();
     if (registrationStartError.isEmpty) {
@@ -210,7 +210,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                       .notificationLanguages
                       .map((e) {
                     return LanguageComponent(
-                      title: e!,
+                      title: e!.name,
                       isDisabled: false,
                       isSelected: context
                               .watch<GlobalProvider>()

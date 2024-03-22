@@ -8,66 +8,32 @@
 package io.mosip.registration_client.api_services;
 
 import static android.content.ContentValues.TAG;
+import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.KERNEL_APP_ID;
 import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.REG_APP_ID;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.ClientManagerConstant;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
-import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
-import io.mosip.registration.clientmanager.dto.http.CACertificateDto;
-import io.mosip.registration.clientmanager.dto.http.CACertificateResponseDto;
-import io.mosip.registration.clientmanager.dto.http.CertificateResponse;
-import io.mosip.registration.clientmanager.dto.http.ClientSettingDto;
-import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
-import io.mosip.registration.clientmanager.dto.http.MasterData;
-import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
-import io.mosip.registration.clientmanager.dto.http.ServiceError;
-import io.mosip.registration.clientmanager.dto.http.UserDetailResponse;
-import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
-import io.mosip.registration.clientmanager.entity.MachineMaster;
 import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.entity.RegistrationCenter;
-import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
 import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
@@ -87,23 +53,10 @@ import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
-import io.mosip.registration.clientmanager.util.SyncRestUtil;
-import io.mosip.registration.keymanager.dto.CACertificateRequestDto;
-import io.mosip.registration.keymanager.dto.CertificateRequestDto;
-import io.mosip.registration.keymanager.dto.CryptoRequestDto;
-import io.mosip.registration.keymanager.dto.CryptoResponseDto;
-import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
-import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
-import io.mosip.registration.packetmanager.util.JsonUtils;
 import io.mosip.registration_client.NetworkUtils;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 @Singleton
 public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
@@ -191,10 +144,16 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        masterDataService.syncCertificate(() -> {
-            Log.i(TAG, "Policy Key Sync Completed");
-            result.success(syncResult("PolicyKeySync", 5, masterDataService.onResponseComplete()));
-        }, isManualSync);
+        CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
+
+        try {
+            masterDataService.syncCertificate(() -> {
+                Log.i(TAG, "Policy Key Sync Completed");
+                result.success(syncResult("PolicyKeySync", 5, masterDataService.onResponseComplete()));
+            }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), isManualSync);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -268,6 +227,18 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     public void batchJob(@NonNull MasterDataSyncPigeon.Result<String> result) {
         syncRegistrationPackets(this.context);
         result.success("Registration Packet Sync Completed.");
+    }
+
+    @Override
+    public void getKernelCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        try {
+            masterDataService.syncCertificate(() -> {
+                Log.i(TAG, "Policy Key Sync Completed");
+                result.success(syncResult("KernelCertsSync", 7, masterDataService.onResponseComplete()));
+            },KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void syncRegistrationPackets(Context context) {

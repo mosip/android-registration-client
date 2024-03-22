@@ -711,7 +711,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       child: Consumer<SyncProvider>(
                         builder: (context, syncP, child) {
                           return Text(
-                              "Sync ${syncP.currentSyncProgress.toString()} of 6 ");
+                              "Sync ${syncP.currentSyncProgress.toString()} of 7 ");
                         },
                       )),
                 ],

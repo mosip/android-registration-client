@@ -13,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getFieldValues(String fieldId, String langCode) async {
-    List<String?> fieldValues =
+    List<DynamicFieldData?> fieldValues =
         await registrationTaskProvider.getFieldValues(fieldId, langCode);
     globalProvider.setNotificationLanguages(fieldValues);
   }

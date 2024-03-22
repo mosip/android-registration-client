@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -85,7 +86,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     }
   }
 
-  void _getSelectedValueFromMap(String lang) {
+  void _getSelectedValueFromMap(String lang) async {
     String response = "";
     if (widget.field.type == 'simpleType') {
       if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
@@ -97,12 +98,17 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     } else {
       response = globalProvider.fieldInputValue[widget.field.id ?? ""];
     }
-    setState(() {
-      selected = response;
-    });
+    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
+    for (var element in data) {
+      if(element!.name == response){
+        setState(() {
+          selected = response;
+        });
+      }
+    }
   }
 
-  Future<List<String?>> _getFieldValues(String fieldId, String langCode) async {
+  Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
     return await registrationTaskProvider
         .getFieldValues(fieldId, langCode);
   }
@@ -116,7 +122,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     return FutureBuilder(
         future: _getFieldValues(
             widget.field.subType!, globalProvider.selectedLanguage),
-        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
             elevation: 5,
             margin: EdgeInsets.symmetric(
@@ -150,8 +156,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
-                                    value: option,
-                                    child: Text(option!),
+                                    value: option!.name,
+                                    child: Text(option.name),
                                   ))
                               .toList(),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -174,10 +180,14 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             return null;
                           },
                           onChanged: (value) {
-                            saveData(value);
+                            for (var e in snapshot.data!) {
+                              if(e!.name == value){
+                                saveData(e.code);
+                              }
+                            }
                             _saveDataToMap(value);
                             setState(() {
-                              selected = value!;
+                              selected = value;
                             });
                           },
                         )
