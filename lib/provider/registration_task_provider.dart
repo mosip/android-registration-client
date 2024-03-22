@@ -208,11 +208,11 @@ class RegistrationTaskProvider with ChangeNotifier {
     await document.removeDocumentField(fieldId);
   }
 
-  Future<List<String?>> getPacketUploadedDetails() async {
+  Future<int> getPacketUploadedDetails() async {
     return await dashBoard.getPacketUploadedDetails();
   }
 
-  Future<List<String?>> getPacketUploadedPendingDetails() async {
+  Future<int> getPacketUploadedPendingDetails() async {
     return await dashBoard.getPacketUploadedPendingDetails();
   }
 

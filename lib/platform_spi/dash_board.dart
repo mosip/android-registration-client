@@ -4,9 +4,9 @@ import 'package:registration_client/platform_android/dash_board_impl.dart';
 abstract class DashBoard {
   Future<List<DashBoardData?>> getDashBoardDetails();
 
-  Future<List<String?>> getPacketUploadedDetails();
+  Future<int> getPacketUploadedDetails();
 
-  Future<List<String?>> getPacketUploadedPendingDetails();
+  Future<int> getPacketUploadedPendingDetails();
 
   factory DashBoard() => DashBoardImpl();
 }

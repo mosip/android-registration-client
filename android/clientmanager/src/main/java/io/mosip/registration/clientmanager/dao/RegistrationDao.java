@@ -40,10 +40,10 @@ public interface RegistrationDao {
     @Insert
     void insert(Registration registration);
 
-    @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes desc")
-    List<Registration> findAllRegistrationByStatus(String status);
+    @Query("SELECT COUNT (*) FROM registration where client_status = :status")
+    int findAllRegistrationByStatus(String status);
 
-    @Query("SELECT * FROM registration where client_status in (:syncedStatus, :approvedStatus) order by cr_dtimes desc")
-    List<Registration> findAllRegistrationByPendingStatus(String syncedStatus, String approvedStatus);
+    @Query("SELECT COUNT(*) FROM registration where client_status in (:syncedStatus, :approvedStatus)")
+    int findRegistrationCountBySyncedStatusAndApprovedStatus(String syncedStatus, String approvedStatus);
 
 }

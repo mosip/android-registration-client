@@ -19,7 +19,7 @@ abstract class DashBoardApi {
   @async
   List<DashBoardData> getDashBoardDetails();
   @async
-  List<String> getPacketUploadedDetails();
+  int getPacketUploadedDetails();
   @async
-  List<String> getPacketUploadedPendingDetails();
+  int getPacketUploadedPendingDetails();
 }

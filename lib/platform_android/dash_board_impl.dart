@@ -18,8 +18,8 @@ class DashBoardImpl implements DashBoard {
   }
 
   @override
-  Future<List<String?>> getPacketUploadedDetails() async {
-    List<String?> packetUploadedData = [];
+  Future<int> getPacketUploadedDetails() async {
+    int packetUploadedData = 0;
     try{
       packetUploadedData = await DashBoardApi().getPacketUploadedDetails();
     } on PlatformException {
@@ -31,8 +31,8 @@ class DashBoardImpl implements DashBoard {
   }
 
   @override
-  Future<List<String?>> getPacketUploadedPendingDetails() async {
-    List<String?> packetUploadedPendingData = [];
+  Future<int> getPacketUploadedPendingDetails() async {
+    int packetUploadedPendingData = 0;
     try{
       packetUploadedPendingData = await DashBoardApi().getPacketUploadedPendingDetails();
     } on PlatformException {

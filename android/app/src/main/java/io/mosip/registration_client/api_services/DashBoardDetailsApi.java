@@ -50,41 +50,43 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     }
 
     @Override
-    public void getPacketUploadedDetails(@NonNull DashBoardPigeon.Result<List<String>> result) {
+    public void getPacketUploadedDetails(@NonNull DashBoardPigeon.Result<Long> result) {
+        int uploadedValues = 0;
         try{
-            List<Registration> uploadedValues = this.registrationRepository.getAllRegistrationByStatus(PacketClientStatus.UPLOADED.name());
-            List<String> response = new ArrayList<>();
-            uploadedValues.forEach((v) -> {
-                response.add(v.getCrDtime().toString());
-                    // current date
-//                     long currentTime = System.currentTimeMillis();
-//                     long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
-//                     if(v.getCrDtime() >= thirtyDaysAgo) {
-//                        response.add(v.getCrDtime().toString());
-//                     }
-            });
-            result.success(response);
+            uploadedValues = this.registrationRepository.getAllRegistrationByStatus(PacketClientStatus.UPLOADED.name());
+//            List<String> response = new ArrayList<>();
+//            uploadedValues.forEach((v) -> {
+//                response.add(v.getCrDtime().toString());
+//                    // current date
+////                     long currentTime = System.currentTimeMillis();
+////                     long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
+////                     if(v.getCrDtime() >= thirtyDaysAgo) {
+////                        response.add(v.getCrDtime().toString());
+////                     }
+//            });
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Getting UploadedData failed!" + Arrays.toString(e.getStackTrace()));
         }
+        result.success((long)uploadedValues);
     }
 
     @Override
-    public void getPacketUploadedPendingDetails(@NonNull DashBoardPigeon.Result<List<String>> result) {
+    public void getPacketUploadedPendingDetails(@NonNull DashBoardPigeon.Result<Long> result) {
+        int pendingValues = 0;
         try{
-            List<Registration> pendingValues = this.registrationRepository.getAllRegistrationByPendingStatus(PacketClientStatus.SYNCED.name(),PacketClientStatus.APPROVED.name());
-            List<String> response = new ArrayList<>();
-            pendingValues.forEach((v) -> {
-                response.add(v.getCrDtime().toString());
-//                long currentTime = System.currentTimeMillis();
-//                long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
-//                if(v.getCrDtime() >= thirtyDaysAgo) {
-//                    response.add(v.getCrDtime().toString());
-//                }
-            });
-            result.success(response);
+            pendingValues = this.registrationRepository.getAllRegistrationByPendingStatus(PacketClientStatus.SYNCED.name(),PacketClientStatus.APPROVED.name());
+//            List<String> response = new ArrayList<>();
+//            pendingValues.forEach((v) -> {
+//                response.add(v.getCrDtime().toString());
+////                long currentTime = System.currentTimeMillis();
+////                long thirtyDaysAgo = currentTime - (30 * 24 * 60 * 60 * 1000L);
+////                if(v.getCrDtime() >= thirtyDaysAgo) {
+////                    response.add(v.getCrDtime().toString());
+////                }
+//            });
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Getting UploadPendingData failed!" + Arrays.toString(e.getStackTrace()));
         }
+        result.success((long)pendingValues);
     }
 }

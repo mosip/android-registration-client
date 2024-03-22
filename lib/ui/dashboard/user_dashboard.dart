@@ -18,13 +18,13 @@ class _UserDashBoardState extends State<UserDashBoard> {
     return await context.read<RegistrationTaskProvider>().getDashBoardDetails();
   }
 
-  Future<List<String?>> _getPacketUploadPendingList() async {
+  Future<int> _getPacketUploadPendingList() async {
     return await context
         .read<RegistrationTaskProvider>()
         .getPacketUploadedPendingDetails();
   }
 
-  Future<List<String?>> _getPacketUploadedList() async {
+  Future<int> _getPacketUploadedList() async {
     return await context
         .read<RegistrationTaskProvider>()
         .getPacketUploadedDetails();
@@ -69,7 +69,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                       FutureBuilder(
                           future: _getPacketUploadedList(),
                           builder: (BuildContext context,
-                              AsyncSnapshot<List<String?>> snapshot) {
+                              AsyncSnapshot<int> snapshot) {
                             return Container(
                               height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width * 0.45,
@@ -92,7 +92,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       const SizedBox(width: 5),
                                       Text(
                                         snapshot.hasData
-                                            ? snapshot.data!.length
+                                            ? snapshot.data
                                                 .toString()
                                                 .padLeft(2, '0')
                                             : "00",
@@ -107,22 +107,22 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       style: TextStyle(
                                           fontSize: isMobileSize ? 15 : 20,
                                           fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 8),
-                                  if (snapshot.hasData &&
-                                      snapshot.data!.isNotEmpty) ...[
-                                    Text(
-                                        "${dateFormat(snapshot.data!.last.toString())} To ${dateFormat(DateTime.now().millisecondsSinceEpoch.toString())}",
-                                        style: TextStyle(
-                                            fontSize: isMobileSize ? 12 : 16,
-                                            fontWeight: FontWeight.w500,
-                                            color: appBlackShade3)),
-                                  ] else ...[
-                                    Text("No data found",
-                                        style: TextStyle(
-                                            fontSize: isMobileSize ? 12 : 16,
-                                            fontWeight: FontWeight.w500,
-                                            color: appBlackShade3)),
-                                  ],
+                                  // const SizedBox(height: 8),
+                                  // if (snapshot.hasData &&
+                                  //     snapshot.data!.isNotEmpty) ...[
+                                  //   Text(
+                                  //       "${dateFormat(snapshot.data!.last.toString())} To ${dateFormat(DateTime.now().millisecondsSinceEpoch.toString())}",
+                                  //       style: TextStyle(
+                                  //           fontSize: isMobileSize ? 12 : 16,
+                                  //           fontWeight: FontWeight.w500,
+                                  //           color: appBlackShade3)),
+                                  // ] else ...[
+                                  //   Text("No data found",
+                                  //       style: TextStyle(
+                                  //           fontSize: isMobileSize ? 12 : 16,
+                                  //           fontWeight: FontWeight.w500,
+                                  //           color: appBlackShade3)),
+                                  // ],
                                 ],
                               ),
                             );
@@ -130,7 +130,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                       FutureBuilder(
                           future: _getPacketUploadPendingList(),
                           builder: (BuildContext context,
-                              AsyncSnapshot<List<String?>> snapshot) {
+                              AsyncSnapshot<int> snapshot) {
                             return Container(
                               height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width * 0.45,
@@ -154,7 +154,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       const SizedBox(width: 5),
                                       Text(
                                         snapshot.hasData
-                                            ? snapshot.data!.length
+                                            ? snapshot.data
                                                 .toString()
                                                 .padLeft(2, '0')
                                             : "00",
@@ -169,12 +169,12 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       style: TextStyle(
                                           fontSize: isMobileSize ? 15 : 20,
                                           fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 8),
-                                  Text("Last one month data",
-                                      style: TextStyle(
-                                          fontSize: isMobileSize ? 12 : 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: appBlackShade3)),
+                                  // const SizedBox(height: 8),
+                                  // Text("Last one month data",
+                                  //     style: TextStyle(
+                                  //         fontSize: isMobileSize ? 12 : 16,
+                                  //         fontWeight: FontWeight.w500,
+                                  //         color: appBlackShade3)),
                                 ],
                               ),
                             );
