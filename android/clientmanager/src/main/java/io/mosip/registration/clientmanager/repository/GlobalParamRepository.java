@@ -97,4 +97,12 @@ public class GlobalParamRepository {
     public String getCachedStringGlobalParam(String key) {
         return globalParamMap.get(key);
     }
+
+    public String getCachedStringAgeGroup(){
+        return globalParamMap.get(RegistrationConstants.AGE_GROUP_CONFIG);
+    }
+
+    public String getCachedStringMAVELScript(){
+        return globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
+    }
 }
