@@ -13,8 +13,14 @@ public class PreviewPage extends BasePage {
 	@AndroidFindBy(xpath = "//*[@text=\"Demographic Information\"]")
 	private WebElement demographicInformationInPreviewPage;
 	
+	@AndroidFindBy(xpath = "//*[contains(@text, \"Application ID\")]")
+	private WebElement applicationIDPreviewPage;
+	
 	@AndroidFindBy(xpath = "//*[@text=\"Documents\"]")
 	private WebElement documentsInformationInPreviewPage;
+
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Demographic Details\"))")
+	private WebElement demographicDetailsTitle;
 	
 	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Biometrics\"]")
 	private WebElement biometricsInformationInPreviewPage;
@@ -45,6 +51,15 @@ public class PreviewPage extends BasePage {
 	
 	public boolean isNewRegistrationTitleDisplayed() {
 		return isElementDisplayed(newRegistrationTitle);
+	}
+	
+	public boolean isApplicationIDPreviewPagePageDisplayed() {
+		return isElementDisplayed(applicationIDPreviewPage);
+	}
+	
+	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
+		clickOnElement(demographicDetailsTitle);
+		return new DemographicDetailsPage(driver);
 	}
 
 }

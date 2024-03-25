@@ -27,7 +27,7 @@ public class DocumentuploadPage extends BasePage {
 	private WebElement dobProofSelectValue;
 
 	@AndroidFindBy(accessibility = "Scrim")
-	private WebElement identityProofPopUpClose;
+	private WebElement PopUpCloseButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
 	private WebElement scanButtonAddressProof;
@@ -44,8 +44,14 @@ public class DocumentuploadPage extends BasePage {
 	@AndroidFindBy(accessibility = "Back")
 	private WebElement backButton;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\")")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView")
 	private WebElement previewCaptureImage;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[2]")
+	private WebElement previewSecondCaptureImage;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[3]")
+	private WebElement previewThirdCaptureImage;
 
 	@AndroidFindBy(accessibility = "CONTINUE")
 	private WebElement continueButton;
@@ -55,6 +61,9 @@ public class DocumentuploadPage extends BasePage {
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"DOB Proof\"))")
 	private WebElement dobsHeader;
+
+	@AndroidFindBy(xpath = "//android.widget.ImageView")
+	private WebElement captureImage;
 
 	public DocumentuploadPage(AppiumDriver driver) {
 		super(driver);
@@ -67,6 +76,10 @@ public class DocumentuploadPage extends BasePage {
 			swipeOrScroll();
 		}
 		clickOnElement(addressProofSelectValue);
+		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+			swipeOrScroll();
+			clickOnElement(addressProofSelectValue);	
+		}
 	}
 
 	public void selectIdentityProof() {
@@ -74,6 +87,10 @@ public class DocumentuploadPage extends BasePage {
 			swipeOrScroll();
 		}
 		clickOnElement(identityProofSelectValue);
+		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+			swipeOrScroll();
+			clickOnElement(identityProofSelectValue);	
+		}
 	}
 
 	public void selectDobProof() {
@@ -81,13 +98,21 @@ public class DocumentuploadPage extends BasePage {
 			swipeOrScroll();
 		}
 		clickOnElement(dobProofSelectValue);
+		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+			swipeOrScroll();
+			clickOnElement(dobProofSelectValue);	
+		}
 	}
-	
+
 	public void selectRelationshipProof() {
 		while(!isElementDisplayedOnScreen(relationshipProofSelectValue) || !isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
 			swipeOrScroll();
 		}
 		clickOnElement(relationshipProofSelectValue);
+		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+			swipeOrScroll();
+			clickOnElement(relationshipProofSelectValue);	
+		}
 	}
 
 	public void selectOnCaptureImage() {
@@ -95,14 +120,14 @@ public class DocumentuploadPage extends BasePage {
 	}
 
 	public void closePopUpClose() {
-		clickOnElement(identityProofPopUpClose);
+		clickOnElement(PopUpCloseButton);
 	}
 
 	public CameraPage clickOnAddressProofScanButton() {
 		if(!isElementDisplayedOnScreen(scanButtonAddressProof)) {
 			swipeOrScroll();
 		}
-			clickOnElement(scanButtonAddressProof);
+		clickOnElement(scanButtonAddressProof);
 		return new CameraPage(driver);
 	}
 
@@ -110,7 +135,7 @@ public class DocumentuploadPage extends BasePage {
 		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
 			swipeOrScroll();
 		}
-			clickOnElement(scanButtonDobProof);
+		clickOnElement(scanButtonDobProof);
 		return new CameraPage(driver);
 	}
 
@@ -118,7 +143,7 @@ public class DocumentuploadPage extends BasePage {
 		if(!isElementDisplayedOnScreen(scanButtonIdentityProof)) {
 			swipeOrScroll();
 		}
-			clickOnElement(scanButtonIdentityProof);
+		clickOnElement(scanButtonIdentityProof);
 		return new CameraPage(driver);
 	}
 
@@ -126,12 +151,17 @@ public class DocumentuploadPage extends BasePage {
 		if(!isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
 			swipeOrScroll();
 		}
-			clickOnElement(scanButtonRelationshipProof);
+		clickOnElement(scanButtonRelationshipProof);
 		return new CameraPage(driver);
 	}
 
 	public void clickOnBackButton() {
 		clickOnElement(backButton);
+
+	}
+
+	public void clickOnDeleteButton() {
+		clickOnElement(deleteButton);
 
 	}
 
@@ -141,10 +171,21 @@ public class DocumentuploadPage extends BasePage {
 	}
 
 	public  boolean isImageDisplyed() {
-		return isElementDisplayed(previewCaptureImage);
+		return isElementDisplayed(captureImage);
+	}
+
+	public  boolean isSecondImageDisplyed() {
+		return isElementDisplayed(previewSecondCaptureImage);
+	}
+
+	public  boolean isThirdImageDisplyed() {
+		return isElementDisplayed(previewThirdCaptureImage);
 	}
 
 	public  boolean isDeleteButtonDisplyed() {
+		if(!isElementDisplayedOnScreen(deleteButton)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(deleteButton);
 	}
 
@@ -155,28 +196,28 @@ public class DocumentuploadPage extends BasePage {
 	public boolean isDobHeaderDisplayed() {
 		return isElementDisplayed(dobsHeader);
 	}
-	
+
 	public  boolean isScanButtonAddressProofEnabled() {
 		if(!isElementDisplayedOnScreen(scanButtonAddressProof)) {
 			swipeOrScroll();
 		}
 		return isElementEnabled(scanButtonAddressProof);
 	}
-	
+
 	public  boolean isScanButtonIdentityProofEnabled() {
 		if(!isElementDisplayedOnScreen(scanButtonIdentityProof)) {
 			swipeOrScroll();
 		}
 		return isElementEnabled(scanButtonIdentityProof);
 	}
-	
+
 	public  boolean isscanButtonDobProofEnabled() {
 		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
 			swipeOrScroll();
 		}
 		return isElementEnabled(scanButtonDobProof);
 	}
-	
+
 	public  boolean isScanButtonRelationshipProoffEnabled() {
 		if(!isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
 			swipeOrScroll();

@@ -112,10 +112,16 @@ public class ApplicantBiometricsPage extends BasePage {
 	}	
 	
 	public void clickOnExceptionTypePermanentButton() {
+		if(!isElementDisplayedOnScreen(permanentButton)) {
+			swipeOrScroll();
+		}
 		clickOnElement(permanentButton);
 	}
 	
 	public void clickOnExceptionTypeTemporaryButton() {
+		if(!isElementDisplayedOnScreen(temporaryButton)) {
+			swipeOrScroll();
+		}
 		clickOnElement(temporaryButton);	
 	}
 	

@@ -20,7 +20,7 @@ public class TestDataReader {
 		case "username":
 			return "9343";
 		case "language":
-			return "hin";
+			return "eng";
 		case "secondLanguage":
 			return "ara";
 		case "notificationLanguage":
@@ -33,6 +33,8 @@ public class TestDataReader {
 			return "4";
 		case "minorAge":
 			return "12";
+		case "editData":
+			return "fghjk";
 		case "gender":
 			return "female";
 		case "address":

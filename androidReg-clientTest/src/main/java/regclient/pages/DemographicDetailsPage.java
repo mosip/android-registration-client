@@ -7,8 +7,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 
 public class DemographicDetailsPage extends BasePage{
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Demographic Details\"))")
-	private WebElement demographicDetailsTitle;
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Full Name\"))")
+	private WebElement demographicDetailspage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Consent\"))")
 	private WebElement ConsentTitle;
@@ -126,15 +126,22 @@ public class DemographicDetailsPage extends BasePage{
 
 	@AndroidFindBy(accessibility = "CONTINUE")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(accessibility = "Invalid input")
+	private WebElement errorMessageInvalidInputText;
 
 	public DemographicDetailsPage(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public boolean isDemographicDetailsPageDisplayed() {
-		return isElementDisplayed(demographicDetailsTitle);
+		return isElementDisplayed(demographicDetailspage);
 	}
-
+	
+	public boolean isErrorMessageInvalidInputTextDisplayed() {
+		return isElementDisplayed(errorMessageInvalidInputText);
+	}
+	
 	public  ConsentPage clickOnConsentPageTitle() {
 		clickOnElement(ConsentTitle);
 		return new ConsentPage(driver);
