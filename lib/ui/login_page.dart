@@ -170,6 +170,10 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         .saveScreenHeaderToGlobalParam(id, value);
   }
 
+  _initializeBiometricThresholdData() async {
+    await context.read<GlobalProvider>().getThresholdValues();
+  }
+
   _initializeMachineData() async {
     await context.read<GlobalProvider>().setMachineDetails();
   }
@@ -355,6 +359,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _onLoginButtonPressed() async {
     await _getLoginAction();
+    await _initializeBiometricThresholdData();
   }
 
   _authenticateUser(bool isConnected) async {

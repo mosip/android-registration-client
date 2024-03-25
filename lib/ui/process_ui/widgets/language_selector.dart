@@ -63,7 +63,6 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   }
 
   _navigateToConsentPage() async {
-    context.read<GlobalProvider>().getThresholdValues();
     context.read<GlobalProvider>().fieldDisplayValues = {};
     await context.read<GlobalProvider>().fieldValues(widget.newProcess);
 
