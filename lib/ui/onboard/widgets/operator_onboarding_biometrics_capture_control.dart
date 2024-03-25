@@ -79,28 +79,28 @@ class OperatorOnboardingBiometricsCaptureControlInitialization
       await _getOperatorOnboardingAttributes();
     }
 
-    // context.read<BiometricCaptureControlProvider>().customSetterIris(
-    //     context
-    //         .read<GlobalProvider>()
-    //         .thresholdValuesMap["mosip.registration.iris_threshold"]!,
-    //     "thresholdPercentage");
-    // context.read<BiometricCaptureControlProvider>().customSetterLeftHand(
-    //     context.read<GlobalProvider>().thresholdValuesMap[
-    //         "mosip.registration.leftslap_fingerprint_threshold"]!,
-    //     "thresholdPercentage");
-    // context.read<BiometricCaptureControlProvider>().customSetterRightHand(
-    //     context.read<GlobalProvider>().thresholdValuesMap[
-    //         "mosip.registration.rightslap_fingerprint_threshold"]!,
-    //     "thresholdPercentage");
-    // context.read<BiometricCaptureControlProvider>().customSetterThumbs(
-    //     context.read<GlobalProvider>().thresholdValuesMap[
-    //         "mosip.registration.thumbs_fingerprint_threshold"]!,
-    //     "thresholdPercentage");
-    // context.read<BiometricCaptureControlProvider>().customSetterFace(
-    //     context
-    //         .read<GlobalProvider>()
-    //         .thresholdValuesMap["mosip.registration.face_threshold"]!,
-    //     "thresholdPercentage");
+    context.read<BiometricCaptureControlProvider>().customSetterIris(
+        context
+            .read<GlobalProvider>()
+            .thresholdValuesMap["mosip.registration.iris_threshold"]!,
+        "thresholdPercentage");
+    context.read<BiometricCaptureControlProvider>().customSetterLeftHand(
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.leftslap_fingerprint_threshold"]!,
+        "thresholdPercentage");
+    context.read<BiometricCaptureControlProvider>().customSetterRightHand(
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.rightslap_fingerprint_threshold"]!,
+        "thresholdPercentage");
+    context.read<BiometricCaptureControlProvider>().customSetterThumbs(
+        context.read<GlobalProvider>().thresholdValuesMap[
+            "mosip.registration.thumbs_fingerprint_threshold"]!,
+        "thresholdPercentage");
+    context.read<BiometricCaptureControlProvider>().customSetterFace(
+        context
+            .read<GlobalProvider>()
+            .thresholdValuesMap["mosip.registration.face_threshold"]!,
+        "thresholdPercentage");
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return StatefulWrapper(
