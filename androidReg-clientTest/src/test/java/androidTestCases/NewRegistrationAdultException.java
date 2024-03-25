@@ -255,6 +255,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		PreviewPage previewPage=biometricDetailsPage.clickOnContinueButton();
 
+		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");

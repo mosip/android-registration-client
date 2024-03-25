@@ -1,5 +1,6 @@
 package androidTestCases;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
@@ -75,16 +76,16 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(demographicPage.isCityHeaderDisplayed(),"Verify if city header is displayed");
 		demographicPage.selectCityStatus(TestDataReader.readData("city"));
-		
+
 		assertTrue(demographicPage.isZoneHeaderDisplayed(),"Verify if zone header is displayed");
 		demographicPage.selectZoneStatus();
-		
+
 		assertTrue(demographicPage.isPostalCodeHeaderDisplayed(),"Verify if postal code header is displayed");
 		demographicPage.selectPostalStatus();
-		
+
 		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
 		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
-		
+
 		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
 		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
 		DocumentuploadPage documentuploadPage=demographicPage.clickOnContinueButton();
@@ -99,7 +100,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		cameraPage.clickimage();
 		IdentityProofPage identityProofPage=cameraPage.clickOkButton();
-		identityProofPage.clickOnSaveButton();
 
 		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
 		identityProofPage.cropCaptureImage();
@@ -209,6 +209,262 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
 
+	}
+
+
+	@Test
+	public void newRegistrationAdultUploadMultipleDoccuments(){
+		LoginPage loginPage=new LoginPage(driver);
+
+		loginPage.enterUserName(TestDataReader.readData("username"));
+		loginPage.clickOnNextButton();
+
+		loginPage.enterPassword(TestDataReader.readData("password"));
+		RegistrationTasksPage RegistrationTasksPage=loginPage.clickOnloginButton();
+
+		assertTrue(RegistrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
+		SelectLanguagePage selectLanguagePage=RegistrationTasksPage.clickOnNewRegistrationButton();
+
+		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
+		selectLanguagePage.clickOnSubmitButtonWithoutSelectingLanguage();
+
+		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if user should not be allow to navigate to next screen.");
+		selectLanguagePage.selectSecondLanguage(TestDataReader.readData("secondLanguage"));
+
+		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),"verify if the notification language display in english");
+		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
+
+		assertTrue(selectLanguagePage.isSubmitButtonEnabled(),"verify if the submit  button enabled");
+		ConsentPage consentPage=selectLanguagePage.clickOnSubmitButton();
+
+		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
+		consentPage.selectTermAndConditionCheckbox();
+
+		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
+		DemographicDetailsPage demographicPage=consentPage.clickOnInformedButton();
+
+		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
+		demographicPage.enterFullName(TestDataReader.readData("fullname"));
+
+		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
+		demographicPage.enterAge(TestDataReader.readData("adultage"));
+		demographicPage.selectGender(TestDataReader.readData("gender"));
+		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
+		demographicPage.enterAddressLine2(TestDataReader.readData("address"));
+		demographicPage.enterAddressLine3(TestDataReader.readData("address"));
+		demographicPage.selectMaritalStatus();
+
+		assertTrue(demographicPage.isResidenceStatusHeaderDisplayed(),"Verify if residence status header is displayed");
+		demographicPage.selectResidenceStatus(TestDataReader.readData("residenceStatus"));
+
+		assertTrue(demographicPage.isRegionHeaderDisplayed(),"Verify if region status header is displayed");
+		demographicPage.selectRegionStatus(TestDataReader.readData("region"));
+
+		assertTrue(demographicPage.isProvinceHeaderDisplayed(),"Verify if province status header is displayed");
+		demographicPage.selectProvinceStatus(TestDataReader.readData("province"));
+
+		assertTrue(demographicPage.isCityHeaderDisplayed(),"Verify if city header is displayed");
+		demographicPage.selectCityStatus(TestDataReader.readData("city"));
+
+		assertTrue(demographicPage.isZoneHeaderDisplayed(),"Verify if zone header is displayed");
+		demographicPage.selectZoneStatus();
+
+		assertTrue(demographicPage.isPostalCodeHeaderDisplayed(),"Verify if postal code header is displayed");
+		demographicPage.selectPostalStatus();
+
+		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
+		demographicPage.enterMobileNumber(TestDataReader.readData("fullname"));
+		
+		assertTrue(demographicPage.isErrorMessageInvalidInputTextDisplayed(),"Verify if invalid text error message text  is displayed");
+		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
+		
+		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
+		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
+		DocumentuploadPage documentuploadPage=demographicPage.clickOnContinueButton();
+
+		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.selectAddressProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		CameraPage cameraPage=documentuploadPage.clickOnAddressProofScanButton();
+
+		cameraPage.clickimage();
+		IdentityProofPage identityProofPage=cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+
+		assertTrue(documentuploadPage.isImageDisplyed(),"Verify if 1st capture image is displayed");
+
+		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.selectAddressProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnAddressProofScanButton();
+
+		cameraPage.clickimage();
+		identityProofPage=cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+
+		assertTrue(documentuploadPage.isSecondImageDisplyed(),"Verify if 2nd capture image is displayed");
+
+		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.selectAddressProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnAddressProofScanButton();
+
+		cameraPage.clickimage();
+		identityProofPage=cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+
+		assertTrue(documentuploadPage.isThirdImageDisplyed(),"Verify if 3nd capture image is displayed");
+
+		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.selectOnCaptureImage();
+
+		assertTrue(documentuploadPage.isImageDisplyed(),"Verify if capture image is displayed");
+		documentuploadPage.clickOnBackButton();
+
+		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
+		documentuploadPage.clickOnDeleteButton();
+
+		assertFalse(documentuploadPage.isThirdImageDisplyed(),"Verify if 3nd capture image is deleted");
+		documentuploadPage.selectIdentityProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+
+		cameraPage.clickimage();
+		identityProofPage=cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+
+		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
+		documentuploadPage.selectDobProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isDobHeaderDisplayed(),"Verify if DOB header is displayed");
+		cameraPage=documentuploadPage.clickOnScanButtonDobProof();
+
+		cameraPage.clickimage();
+		identityProofPage=cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+		BiometricDetailsPage biometricDetailsPage=documentuploadPage.clickOnContinueButton();
+
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		ApplicantBiometricsPage applicantBiometricsPage=biometricDetailsPage.clickOnIrisScan();
+
+		assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),"Verify if applicant biometric page is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
+		//righthand
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		applicantBiometricsPage=biometricDetailsPage.clickOnRightHandScanIcon();
+
+		assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),"Verify if applicant biometric page is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isRightHandScan(),"Verify if right hand scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
+		//lefthand
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		applicantBiometricsPage=biometricDetailsPage.clickOnLeftHandScanIcon();
+
+		assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),"Verify if applicant biometric page is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isLeftHandScan(),"Verify if Left hand scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
+		//thumb
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		applicantBiometricsPage=biometricDetailsPage.clickOnThumbsScanIcon();
+
+		assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),"Verify if applicant biometric page is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isThumbsScan(),"Verify if thumbs scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
+		//face
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		applicantBiometricsPage=biometricDetailsPage.clickOnFaceScanIcon();
+
+		assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),"Verify if applicant biometric page is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isFaceScan(),"Verify if face scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
+
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		PreviewPage previewPage=biometricDetailsPage.clickOnContinueButton();
+
+		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
+		previewPage.clickOnDemographicDetailsTitle();
+
+		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
+		demographicPage.enterFullName(TestDataReader.readData("editData"));
+		demographicPage.enterAddressLine1(TestDataReader.readData("editData"));
+		demographicPage.enterAddressLine2(TestDataReader.readData("editData"));
+		demographicPage.enterAddressLine3(TestDataReader.readData("editData"));
+
+		demographicPage.clickOnContinueButton();
+
+		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.clickOnContinueButton();
+
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		biometricDetailsPage.clickOnContinueButton();
+
+		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
+		AuthenticationPage authenticationPage=previewPage.clickOnContinueButton();
+
+		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Verify if authentication details page is displayed");
+		authenticationPage.enterUserName(TestDataReader.readData("username"));
+		authenticationPage.enterPassword(TestDataReader.readData("password"));
+		AcknowledgementPage acknowledgementPage=authenticationPage.clickOnAuthenticatenButton();
+
+		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
+		assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+		previewPage.clickOnDemographicDetailsTitle();
+
+		assertFalse(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is not displayed");
+		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
+
+		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
+		selectLanguagePage.selectAllSecondLanguage();
+		
+		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),"verify if the notification language display in english");
+		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
+		consentPage=selectLanguagePage.clickOnSubmitButton();
+		
+		assertFalse(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
+		
+		
 	}
 
 

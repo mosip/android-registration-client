@@ -23,8 +23,8 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
 
-		assertTrue(loginPage.isBackButtonDisplayed(),"Verify if back button is displayeded");
-		assertTrue(loginPage.isForgetOptionDisplayed(),"Verify if forget password option is displayeded");
+		assertTrue(loginPage.isBackButtonDisplayed(),"Verify if back button is displayded");
+		assertTrue(loginPage.isForgetOptionDisplayed(),"Verify if forget password option is displayded");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(),"Verify if the password  input box header  displayed");
 		loginPage.enterPassword(TestDataReader.readData("password"));
 

@@ -216,6 +216,10 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		AcknowledgementPage acknowledgementPage=authenticationPage.clickOnAuthenticatenButton();
 
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
+		assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+		assertTrue(acknowledgementPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In authenticationPage is displayed");
+		assertTrue(acknowledgementPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In authenticationPage is displayed");
+		assertTrue(acknowledgementPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In authenticationPage is displayed");
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
