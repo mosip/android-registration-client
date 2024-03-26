@@ -2,7 +2,7 @@ package regclient.pages;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-
+import regclient.utils.TestDataReader;
 
 import org.openqa.selenium.WebElement;
 
@@ -33,7 +33,22 @@ public class LoginPage extends BasePage {
 	private WebElement userNameHeader;
 
 	@AndroidFindBy(accessibility = "Welcome to")
-	private WebElement welcomeMessage;
+	private WebElement welcomeMessageEnglish;
+	
+	@AndroidFindBy(accessibility = "Bienvenue à")
+	private WebElement welcomeMessageFrench;
+	
+	@AndroidFindBy(accessibility = "مرحبا بكم في")
+	private WebElement welcomeMessageArabic;
+	
+	@AndroidFindBy(accessibility = "ಇದಕ್ಕೆ ಸ್ವಾಗತ")
+	private WebElement welcomeMessageKannada;
+	
+	@AndroidFindBy(accessibility = "आपका स्वागत है")
+	private WebElement welcomeMessageHindi;
+	
+	@AndroidFindBy(accessibility = "உங்களை வரவேற்கிறோம்")
+	private WebElement welcomeMessageTamil;
 
 	@AndroidFindBy(accessibility = "HELP")
 	private WebElement helpButton;
@@ -118,7 +133,29 @@ public class LoginPage extends BasePage {
 	}
 
 	public boolean isWelcomeMessageDisplayed() {
-		return isElementDisplayed(welcomeMessage);
+		return isElementDisplayed(welcomeMessageEnglish);
+	}
+	
+	public boolean isWelcomeMessageInSelectedLanguageDisplayed() {
+	    String language = TestDataReader.readData("language");
+	    switch (language) {
+	        case "eng":
+	            return isElementDisplayed(welcomeMessageEnglish);
+	        case "fra":
+	            return isElementDisplayed(welcomeMessageFrench);
+	        case "ara":
+	            return isElementDisplayed(welcomeMessageArabic);
+	        case "kan":
+	            return isElementDisplayed(welcomeMessageKannada);
+	        case "hin":
+	            return isElementDisplayed(welcomeMessageHindi);
+	        case "tam":
+	            return isElementDisplayed(welcomeMessageTamil);
+//	        case "spa":
+//	            return isElementDisplayed(welcomeMessageSpanish);
+	        default:
+	            return false; // Handle unsupported languages
+	    }
 	}
 
 	public boolean isHelpButtonDisplayed() {
@@ -146,24 +183,33 @@ public class LoginPage extends BasePage {
 	}
 
 	public void selectLanguage(String language) {
-		switch (language) {
-		case "eng":
-			clickOnElement(englishButton);
-		case "fra":
-			clickOnElement(frenchButton);
-		case "ara":
-			clickOnElement(arabicButton);
-		case "kan":
-			clickOnElement(kannadaButton);
-		case "hin":
-			clickOnElement(hindiButton);
-		case "tam":
-			clickOnElement(tamilButton);
-		case "spa":
-			clickOnElement(spanishButton);
-		default:
-			clickOnElement(englishButton);
-		}
+	    switch (language) {
+	        case "eng":
+	            clickOnElement(englishButton);
+	            break;
+	        case "fra":
+	            clickOnElement(frenchButton);
+	            break;
+	        case "ara":
+	            clickOnElement(arabicButton);
+	            break;
+	        case "kan":
+	            clickOnElement(kannadaButton);
+	            break;
+	        case "hin":
+	            clickOnElement(hindiButton);
+	            break;
+	        case "tam":
+	            clickOnElement(tamilButton);
+	            break;
+	        case "spa":
+	            clickOnElement(spanishButton);
+	            break;
+	        default:
+	            clickOnElement(englishButton);
+	            break;
+	    }
 	}
+
 
 }

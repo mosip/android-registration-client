@@ -31,7 +31,7 @@ public class SelectLanguagePage extends BasePage{
 	private WebElement spanishLanguageButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Notification Languages')]")
-	private WebElement notificationLanguageHeaderInEnglishArabic;
+	private WebElement notificationLanguageHeaderInEnglish;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"English\"])[2]")
 	private WebElement englishLanguageNotificationButton;
@@ -68,8 +68,8 @@ public class SelectLanguagePage extends BasePage{
 
 	public  void selectSecondLanguage(String language) {
 		switch (language) {
-		//		case "eng":
-		//			clickOnElement(englishLanguageButton);
+//				case "eng":
+//					clickOnElement(englishLanguageButton);
 		case "fra":
 			clickOnElement(frenchLanguageButton);
 			break;
@@ -120,6 +120,23 @@ public class SelectLanguagePage extends BasePage{
 		}
 	}
 
+	public  void selectAllSecondLanguage() {
+		
+		//		case "eng":
+		//			clickOnElement(englishLanguageButton);
+		
+			clickOnElement(frenchLanguageButton);
+		
+			clickOnElement(arabicLanguageButton);
+		
+			clickOnElement(kannadaLanguageButton);
+		
+			clickOnElement(hindiLanguageButton);
+		
+			clickOnElement(tamilLanguageButton);	
+	}
+	
+	
 	public  boolean isArabicLanguageButtonEnabled() {
 		return isElementEnabled(arabicLanguageButton);
 	}
@@ -134,6 +151,6 @@ public class SelectLanguagePage extends BasePage{
 	}
 
 	public boolean isNotificationLanguageEnglishDisplayed() {
-		return isElementDisplayed(notificationLanguageHeaderInEnglishArabic);
+		return isElementDisplayed(notificationLanguageHeaderInEnglish);
 	}
 }

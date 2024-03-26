@@ -18,7 +18,7 @@ public class TestDataReader {
 		case "password":
 			return "admin123";
 		case "username":
-			return "1234";
+			return "9343";
 		case "language":
 			return "eng";
 		case "secondLanguage":
@@ -31,6 +31,10 @@ public class TestDataReader {
 			return "20";
 		case "infantAge":
 			return "4";
+		case "minorAge":
+			return "12";
+		case "editData":
+			return "fghjk";
 		case "gender":
 			return "female";
 		case "address":
@@ -47,6 +51,8 @@ public class TestDataReader {
 			return "9876543210";
 		case "emailId":
 			return "abc@gmail.com";
+		case "RID":
+			return "10001105671003120240215071549";
 		case "nonRegisteredUsername":
 			return "123456789";
 		case "InvalidPassword":
