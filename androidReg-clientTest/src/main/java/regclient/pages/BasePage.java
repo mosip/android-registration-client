@@ -5,7 +5,6 @@ import io.appium.java_client.HidesKeyboard;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
@@ -19,9 +18,6 @@ import static java.time.Duration.ofSeconds;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
-
-
-
 
 public class BasePage {
 	protected AppiumDriver driver;
@@ -135,4 +131,20 @@ public class BasePage {
 		}
 	}
 
+	public static void disableAutoRotation() {
+	    try {
+	        ProcessBuilder processBuilder;
+	        String osName = System.getProperty("os.name");
+	        if (osName.contains("Windows")) {
+	            processBuilder = new ProcessBuilder("cmd.exe", "/c", "adb shell settings put system accelerometer_rotation 0");
+	           
+	        } else {
+	            processBuilder = new ProcessBuilder("/bin/bash", "-c", "adb shell settings put system accelerometer_rotation 0");
+	        }
+	        processBuilder.redirectErrorStream(true);
+	        processBuilder.start();
+	    } catch (IOException e) {
+	        throw new RuntimeException(e);
+	    }
+	}
 }

@@ -8,6 +8,7 @@ import BaseTest.AndroidBaseTest;
 import regclient.pages.AcknowledgementPage;
 import regclient.pages.ApplicantBiometricsPage;
 import regclient.pages.AuthenticationPage;
+import regclient.pages.BasePage;
 import regclient.pages.BiometricDetailsPage;
 import regclient.pages.CameraPage;
 import regclient.pages.ConsentPage;
@@ -25,6 +26,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 
 	@Test
 	public void newRegistrationMinor(){
+		BasePage.disableAutoRotation();
 		LoginPage loginPage=new LoginPage(driver);
 
 		loginPage.enterUserName(TestDataReader.readData("username"));
@@ -235,9 +237,10 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		PreviewPage previewPage=biometricDetailsPage.clickOnContinueButton();
 		
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
+		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		AuthenticationPage authenticationPage=previewPage.clickOnContinueButton();
 
 		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Verify if authentication details page is displayed");
@@ -246,10 +249,10 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		AcknowledgementPage acknowledgementPage=authenticationPage.clickOnAuthenticatenButton();
 
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-		assertTrue(acknowledgementPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In authenticationPage is displayed");
-		assertTrue(acknowledgementPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In authenticationPage is displayed");
-		assertTrue(acknowledgementPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In authenticationPage is displayed");
 		assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+		assertTrue(acknowledgementPage.isDemographicInformationInAcknowledgementPageDisplayed(),"Verify if Demographic Information In authenticationPage is displayed");
+		assertTrue(acknowledgementPage.isDocumentsInformationInAcknowledgementPageDisplayed(),"Verify if Documents Information In authenticationPage is displayed");
+		assertTrue(acknowledgementPage.isBiometricsInformationInAcknowledgementPageDisplayed(),"Verify if Biometrics Information In authenticationPage is displayed");
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");

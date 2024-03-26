@@ -5,6 +5,7 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import BaseTest.AndroidBaseTest;
+import regclient.pages.BasePage;
 import regclient.pages.LoginPage;
 import regclient.pages.RegistrationTasksPage;
 import regclient.utils.TestDataReader;
@@ -13,6 +14,7 @@ public class logintest  extends AndroidBaseTest {
 
 	@Test
 	public void login() {
+		BasePage.disableAutoRotation();
 		LoginPage loginPage=new LoginPage(driver);
 
 		loginPage.selectLanguage(TestDataReader.readData("language"));
@@ -42,6 +44,7 @@ public class logintest  extends AndroidBaseTest {
 	}
 	@Test
 	public void loginWithInvalidPasscode() {
+		BasePage.disableAutoRotation();
 		LoginPage loginPage=new LoginPage(driver);
 
 		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded");

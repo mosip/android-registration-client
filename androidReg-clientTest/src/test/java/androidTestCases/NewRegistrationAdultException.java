@@ -8,6 +8,7 @@ import BaseTest.AndroidBaseTest;
 import regclient.pages.AcknowledgementPage;
 import regclient.pages.ApplicantBiometricsPage;
 import regclient.pages.AuthenticationPage;
+import regclient.pages.BasePage;
 import regclient.pages.BiometricDetailsPage;
 import regclient.pages.CameraPage;
 import regclient.pages.ConsentPage;
@@ -24,6 +25,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 	@Test
 	public void newRegistrationAdultException(){
+		BasePage.disableAutoRotation();
 		LoginPage loginPage=new LoginPage(driver);
 
 		loginPage.enterUserName(TestDataReader.readData("username"));
@@ -257,8 +259,8 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		AuthenticationPage authenticationPage=previewPage.clickOnContinueButton();
 
 		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Verify if authentication details page is displayed");

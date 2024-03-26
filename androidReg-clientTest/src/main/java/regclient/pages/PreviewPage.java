@@ -10,19 +10,19 @@ public class PreviewPage extends BasePage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"New Registration\"))")
 	private WebElement newRegistrationTitle;
 	
-	@AndroidFindBy(xpath = "//*[@text=\"Demographic Information\"]")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
 	private WebElement demographicInformationInPreviewPage;
 	
-	@AndroidFindBy(xpath = "//*[contains(@text, \"Application ID\")]")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Application ID\"))")
 	private WebElement applicationIDPreviewPage;
 	
-	@AndroidFindBy(xpath = "//*[@text=\"Documents\"]")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Documents\"))")
 	private WebElement documentsInformationInPreviewPage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Demographic Details\"))")
 	private WebElement demographicDetailsTitle;
 	
-	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"Biometrics\"]")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
 	private WebElement biometricsInformationInPreviewPage;
 	
 	@AndroidFindBy(accessibility = "CONTINUE")
