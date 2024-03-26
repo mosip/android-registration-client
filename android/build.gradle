@@ -39,6 +39,7 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
+
     // Server url (Pointing environment)
     serverBaseURL = "\"https://qa3.mosip.net/\""
     serverHealthCheckPath = "\"v1/syncdata/actuator/health\""
