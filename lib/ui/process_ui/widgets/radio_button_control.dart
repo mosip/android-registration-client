@@ -26,14 +26,10 @@ class RadioButtonControl extends StatefulWidget {
 }
 
 class _RadioFormFieldState extends State<RadioButtonControl> {
-// <<<<<<< HEAD
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
 
-  // Future<List<String?>> _getFieldValues(
-// =======
   Future<List<DynamicFieldData?>> _getFieldValues(
-// >>>>>>> develop
       String fieldName, String langCode) async {
     return await registrationTaskProvider
         .getFieldValues(fieldName, langCode);
@@ -94,13 +90,8 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
       future: _getFieldValues(widget.field.subType!,
-// <<<<<<< HEAD
           globalProvider.selectedLanguage),
-      // builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
-// =======
-          // context.read<GlobalProvider>().selectedLanguage),
       builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
-// >>>>>>> develop
         return SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Card(
