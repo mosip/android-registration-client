@@ -10,14 +10,30 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DashBoardData;
 
-/// The codec used by DocumentCategoryApi.
-NSObject<FlutterMessageCodec> *DocumentCategoryApiGetCodec(void);
-
-@protocol DocumentCategoryApi
-- (void)getDocumentCategoriesCategoryCode:(NSString *)categoryCode langCode:(NSString *)langCode completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+@interface DashBoardData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithUserId:(NSString *)userId
+    userName:(NSString *)userName
+    userStatus:(NSNumber *)userStatus
+    userIsOnboarded:(NSNumber *)userIsOnboarded;
+@property(nonatomic, copy) NSString * userId;
+@property(nonatomic, copy) NSString * userName;
+@property(nonatomic, strong) NSNumber * userStatus;
+@property(nonatomic, strong) NSNumber * userIsOnboarded;
 @end
 
-extern void DocumentCategoryApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DocumentCategoryApi> *_Nullable api);
+/// The codec used by DashBoardApi.
+NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
+
+@protocol DashBoardApi
+- (void)getDashBoardDetailsWithCompletion:(void (^)(NSArray<DashBoardData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
