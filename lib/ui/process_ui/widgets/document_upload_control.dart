@@ -569,7 +569,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 13.h,
+                                    height: 14.h,
                                   ),
                                   TextFormField(
                                     autovalidateMode: AutovalidateMode.onUserInteraction,

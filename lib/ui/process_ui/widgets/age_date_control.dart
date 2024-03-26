@@ -261,14 +261,14 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
+                              vertical: 14, horizontal: 16),
                           hintStyle: const TextStyle(
                             color: appBlackShade3,
                             fontSize: 14,
                           ),
                           hintText: widget.field.format ?? "yyyy/MM/dd",
                           prefixIcon: Icon(
-                            Icons.calendar_month,
+                            Icons.calendar_month_outlined,
                             color: solidPrimary,
                           ),
                           border: OutlineInputBorder(
@@ -305,7 +305,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
+                              vertical: 14, horizontal: 16),
                           hintStyle: const TextStyle(
                               color: appBlackShade3, fontSize: 14),
                           hintText: 'Age',
