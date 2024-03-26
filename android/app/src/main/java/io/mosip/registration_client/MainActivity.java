@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Inject;
 
@@ -88,7 +87,6 @@ import io.mosip.registration_client.model.AuditResponsePigeon;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.BiometricsPigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
-import io.mosip.registration_client.model.DashBoardDataPigeon;
 import io.mosip.registration_client.model.DashBoardPigeon;
 import io.mosip.registration_client.model.DemographicsDataPigeon;
 import io.mosip.registration_client.model.DocumentCategoryPigeon;
