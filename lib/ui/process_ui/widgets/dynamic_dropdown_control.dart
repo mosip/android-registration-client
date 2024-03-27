@@ -40,7 +40,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
-    String lang = globalProvider.mandatoryLanguages[0]!;
+    String lang = globalProvider.selectedLanguage;
     if (context
         .read<GlobalProvider>()
         .fieldInputValue
@@ -67,7 +67,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   void _saveDataToMap(value) {
-    String lang = globalProvider.mandatoryLanguages[0]!;
+    String lang = globalProvider.selectedLanguage;
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         globalProvider.setLanguageSpecificValue(
@@ -117,8 +117,6 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    String mandatoryLanguageCode =
-        globalProvider.mandatoryLanguages[0] ?? "eng";
     return FutureBuilder(
         future: _getFieldValues(
             widget.field.subType!, globalProvider.selectedLanguage),
@@ -169,13 +167,11 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             }
                             if (value == null || value.isEmpty) {
                               return AppLocalizations.of(context)!
-                                  .demographicsScreenEmptyMessage(
-                                      mandatoryLanguageCode);
+                                  .select_value_message;
                             }
                             if (!widget.validation.hasMatch(value)) {
                               return AppLocalizations.of(context)!
-                                  .demographicsScreenInvalidMessage(
-                                      mandatoryLanguageCode);
+                                  .select_value_message;
                             }
                             return null;
                           },

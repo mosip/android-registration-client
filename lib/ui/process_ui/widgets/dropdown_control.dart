@@ -186,8 +186,6 @@ class _CustomDropDownState extends State<DropDownControl> {
     _getOptionsList();
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    String mandatoryLanguageCode =
-        globalProvider.mandatoryLanguages[0] ?? "eng";
     return Column(
       children: [
         Card(
@@ -235,13 +233,11 @@ class _CustomDropDownState extends State<DropDownControl> {
                     }
                     if (value == null) {
                       return AppLocalizations.of(context)!
-                          .demographicsScreenEmptyMessage(
-                              mandatoryLanguageCode);
+                          .select_value_message;
                     }
                     if (!widget.validation.hasMatch(value.name)) {
                       return AppLocalizations.of(context)!
-                          .demographicsScreenInvalidMessage(
-                              mandatoryLanguageCode);
+                          .select_value_message;
                     }
                     return null;
                   },
