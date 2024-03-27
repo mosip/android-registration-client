@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -28,6 +29,7 @@ class GenderControl extends StatefulWidget {
 
 class _CustomDynamicDropDownState extends State<GenderControl> {
   late String selected;
+  late List<DynamicFieldData?> fieldValueData;
 
   @override
   void initState() {
@@ -39,13 +41,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
           .containsKey(widget.field.id ?? "")) {
         await _getSelectedValueFromMap(lang);
       } else {
-        List<String?> data = await context
+        fieldValueData = await context
             .read<RegistrationTaskProvider>()
             .getFieldValues(widget.field.subType!, lang);
         setState(() {
-          selected = data[0]!;
+          selected = fieldValueData[0]!.name;
         });
-        saveData(selected);
+        saveData(fieldValueData[0]!.code);
         _saveDataToMap(selected);
       }
     });
@@ -88,10 +90,10 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
   }
 
   Future<void> _getSelectedValueFromMap(String lang) async {
-    List<String?> data = await context
+    List<DynamicFieldData?> data = await context
         .read<RegistrationTaskProvider>()
         .getFieldValues(widget.field.subType!, "eng");
-    String response = data[0]!;
+    String response = data[0]!.name;
     if (widget.field.type == 'simpleType') {
       // ignore: use_build_context_synchronously
       if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
@@ -114,11 +116,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   Future<List<Map<String, String?>>> _getFieldValues(
       String fieldId, String langCode) async {
-    List<List<String?>> labelsData = [];
+    List<List<DynamicFieldData?>> labelsData = [];
     // ignore: use_build_context_synchronously
     for (var lang in context.read<GlobalProvider>().chosenLang) {
       String langC = context.read<GlobalProvider>().langToCode(lang);
-      List<String?> data = await context
+      List<DynamicFieldData?> data = await context
           .read<RegistrationTaskProvider>()
           .getFieldValues(fieldId, langC);
 
@@ -139,7 +141,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
       List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
       for (var j = 0; j < choosenLang.length; j++) {
         labels[labels.length - 1]
-            .putIfAbsent(choosenLang[j], () => labelsData[j][i]);
+            .putIfAbsent(choosenLang[j], () => labelsData[j][i]!.name);
       }
     }
     return labels;
@@ -215,7 +217,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           setState(() {
                                             selected = e[mandatoryLang] ?? "";
                                           });
-                                          saveData(e[mandatoryLang]);
+                                          for (var e in fieldValueData) {
+                                            if(e!.name == selected){
+                                              saveData(e.code);
+                                            }
+                                          }
                                           _saveDataToMap(e[mandatoryLang]);
                                         },
                                         child: ChoiceChip(

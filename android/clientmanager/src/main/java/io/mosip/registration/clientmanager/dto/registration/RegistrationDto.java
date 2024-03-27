@@ -266,7 +266,11 @@ public class RegistrationDto extends Observable {
     public void removeBioException(String fieldId, Modality modality, String attribute) {
         String key = String.format(BIO_KEY, fieldId, modality.name());
         EXCEPTIONS.putIfAbsent(key, new HashSet<>());
-        EXCEPTIONS.get(key).remove(attribute);
+        if(!EXCEPTIONS.get(key).isEmpty() && EXCEPTIONS.get(key).size()>1) {
+            EXCEPTIONS.get(key).remove(attribute);
+        } else {
+            EXCEPTIONS.remove(key);
+        }
         resetBioCapture(fieldId, modality);
     }
 
@@ -344,6 +348,7 @@ public class RegistrationDto extends Observable {
         this.documents.clear();
         this.biometrics.clear();
         this.AGE_GROUPS.clear();
+        this.EXCEPTIONS.clear();
         this.selectedLanguages.removeIf(o->true);
         deleteObservers();
     }
@@ -381,6 +386,7 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);
         allIdentityDetails.putAll(this.AGE_GROUPS);
+        allIdentityDetails.put("isBioException", this.EXCEPTIONS.size() > 0);
         if(!allIdentityDetails.containsKey(RegistrationConstants.AGE))
             allIdentityDetails.put(RegistrationConstants.AGE, 0);
 
