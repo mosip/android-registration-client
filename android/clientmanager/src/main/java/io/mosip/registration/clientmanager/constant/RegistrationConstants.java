@@ -61,7 +61,7 @@ public class RegistrationConstants {
     public static final String ON_BOARD_AUTH_STATUS = "authStatus";
     public static final String USER_ON_BOARDING_THRESHOLD_NOT_MET_MSG = "USER_ON_BOARDING_THRESHOLD_NOT_MET_MSG";
     public static final String SUCCESS = "Success";
-    public static final String FINGERPRINT_UPPERCASE = "FINGERPRINT";
+    public static final String FINGER = "FINGER";
     public static final String FACE = "FACE";
     public static final String IRIS = "IRIS";
     public static final String USER_ON_BOARDING_SUCCESS_MSG = "USER_ONBOARD_SUCCESS";
