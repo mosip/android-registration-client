@@ -20,12 +20,14 @@ public class SessionManager {
     public static final String IS_OPERATOR = "is_operator";
     public static final String IS_DEFAULT = "is_default";
     public static final String USER_NAME = "user_name";
+    public static final String USER_ID = "user_id";
     public static final String USER_TOKEN = "user_token";
     public static final String RID = "current_rid";
 
     private static SessionManager manager = null;
     private static final String REALM_ACCESS = "realm_access";
     private static final String USERNAME = "name";
+    private static final String USERID = "preferred_username";
 
     private Context context;
 
@@ -57,6 +59,7 @@ public class SessionManager {
                 Context.MODE_PRIVATE).edit();
         editor.putString(USER_TOKEN, token);
         editor.putString(USER_NAME, jwt.getClaim(USERNAME).asString());
+        editor.putString(USER_ID, jwt.getClaim(USERID).asString());
         editor.putBoolean(IS_SUPERVISOR, roles.contains("REGISTRATION_SUPERVISOR"));
         editor.putBoolean(IS_DEFAULT, roles.contains("Default"));
         editor.putBoolean(IS_OFFICER, roles.contains("REGISTRATION_OFFICER"));

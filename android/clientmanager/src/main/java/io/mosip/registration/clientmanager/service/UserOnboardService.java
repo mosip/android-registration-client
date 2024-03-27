@@ -1,15 +1,16 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.ClientManagerError;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
-import io.mosip.registration.clientmanager.dto.http.CertificateResponse;
+import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.dto.http.OnboardError;
+import io.mosip.registration.clientmanager.dto.http.OnboardResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
@@ -22,13 +23,16 @@ import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.dto.CertificateRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoManagerRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoManagerResponseDto;
+import io.mosip.registration.keymanager.dto.SignRequestDto;
+import io.mosip.registration.keymanager.dto.SignResponseDto;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR;
 import io.mosip.registration.packetmanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
-import lombok.NonNull;
+import io.mosip.registration.packetmanager.util.JsonUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,7 +40,7 @@ import retrofit2.Response;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.time.ZoneOffset;
@@ -51,7 +55,6 @@ public class UserOnboardService {
 
     private static final String TAG = UserOnboardService.class.getSimpleName();
     public static final String ON_BOARD_TIME_STAMP = "timestamp";
-
     public static final String OPERATOR_BIO_KEY = "%s_%s";
     public static final String ON_BOARD_BIOMETRICS = "biometrics";
     public static final String AUTH_HASH = "hash";
@@ -78,8 +81,6 @@ public class UserOnboardService {
     public static final String SERVER_ACTIVE_PROFILE = "Staging";
     public static final String TRANSACTION_ID_VALUE = "1234567890";
     public static final String USER_ID_CODE = "USERID";
-
-    public static final String DEVICE_PROVIDER_ID = "deviceProviderID";
     public static final String ON_BOARD_BIO_TYPE = "bioType";
     public static final String ON_BOARD_BIO_SUB_TYPE = "bioSubType";
     public static final String ON_BOARD_BIO_VALUE = "bioValue";
@@ -98,6 +99,10 @@ public class UserOnboardService {
     private SyncRestService syncRestService;
     private AuditManagerService auditManagerService;
     private ObjectMapper objectMapper;
+    private ClientCryptoManagerService clientCryptoManagerService;
+    SharedPreferences sharedPreferences;
+    public static final String USER_ID = "user_id";
+    public static final String USER_TOKEN = "user_token";
     private RegistrationService registrationService;
     private UserBiometricRepository userBiometricRepository;
 
@@ -109,23 +114,18 @@ public class UserOnboardService {
     public List<BiometricsDto> getOperatorBiometrics(){
         return operatorBiometrics;
     }
-
-    private boolean idaResponse;
-
+    private boolean idaResponse = false;
     public boolean isIdaResponse() {
         return idaResponse;
     }
-
     public void setIdaResponse(boolean idaResponse) {
         this.idaResponse = idaResponse;
     }
 
-
-
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
                               CertificateManagerService certificateManagerService,
-                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository) {
+                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService) {
         this.context = context;
         this.certificateManagerService = certificateManagerService;
         this.syncRestService = syncRestService;
@@ -134,6 +134,10 @@ public class UserOnboardService {
         this.auditManagerService = auditManagerService;
         this.registrationService = registrationService;
         this.userBiometricRepository = userBiometricRepository;
+        this.clientCryptoManagerService = clientCryptoManagerService;
+        sharedPreferences = this.context.getSharedPreferences(
+                        this.context.getString(R.string.app_name),
+                        Context.MODE_PRIVATE);
     }
 
     public boolean validateWithIDAuthAndSave(List<BiometricsDto> biometrics) throws ClientCheckedException {
@@ -143,9 +147,7 @@ public class UserOnboardService {
             throw new ClientCheckedException(ClientManagerError.REG_BIOMETRIC_DTO_NULL.getErrorCode(),
                     ClientManagerError.REG_BIOMETRIC_DTO_NULL.getErrorMessage());
 
-        ResponseWrapper response = new ResponseWrapper();
-        //TODO - get logged-in userID and pass it here
-        String userId = "";//SessionContext.userContext().getUserId();
+        String userId = sharedPreferences.getString(USER_ID, "");
         if (validateWithIDA(userId, biometrics)) {
             Log.i(TAG, "User onboarding success");
             return save(biometrics, userId);
@@ -154,19 +156,19 @@ public class UserOnboardService {
     }
 
     public boolean validateWithIDA(String userId, List<BiometricsDto> biometrics) {
+        if (isIdaResponse()) { return true; }
         Map<String, Object> idaRequestMap = new LinkedHashMap<>();
         idaRequestMap.put(ID, IDENTITY);
         idaRequestMap.put(VERSION, PACKET_SYNC_VERSION);
         idaRequestMap.put(REQUEST_TIME,
                 DateUtils.formatToISOString(ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime()));
         idaRequestMap.put(ENV, SERVER_ACTIVE_PROFILE);
-        idaRequestMap.put(DOMAIN_URI, BuildConfig.BASE_URL);
+        idaRequestMap.put(DOMAIN_URI, "https://api-internal.qa-platform1.mosip.net");
         idaRequestMap.put(TRANSACTION_ID, TRANSACTION_ID_VALUE);
         idaRequestMap.put(CONSENT_OBTAINED, true);
         idaRequestMap.put(INDIVIDUAL_ID, userId);
         idaRequestMap.put(INDIVIDUAL_ID_TYPE, USER_ID_CODE);
         idaRequestMap.put(KEY_INDEX, "");
-
         Map<String, Boolean> tempMap = new HashMap<>();
         tempMap.put(BIO, true);
         idaRequestMap.put(REQUEST_AUTH, tempMap);
@@ -193,7 +195,6 @@ public class UserOnboardService {
                 requestMap.put(ON_BOARD_BIOMETRICS, listOfBiometric);
                 requestMap.put(ON_BOARD_TIME_STAMP, DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()));
                 return getIdaAuthResponse(idaRequestMap, requestMap, certificate);
-                //TODO to save the user as successfully onboarded
             }
 
         } catch (Exception e) {
@@ -216,7 +217,7 @@ public class UserOnboardService {
         data.put(TRANSACTION_Id, TRANSACTION_ID_VALUE);
         data.put(PURPOSE, PURPOSE_AUTH);
         data.put(ENV, SERVER_ACTIVE_PROFILE);
-        data.put(DOMAIN_URI,  BuildConfig.BASE_URL);
+        data.put(DOMAIN_URI,  "https://api-internal.qa-platform1.mosip.net");
         String dataBlockJsonString = this.objectMapper.writeValueAsString(data);
         dataBlock.put(ON_BOARD_BIO_DATA, CryptoUtil.encodeToURLSafeBase64(dataBlockJsonString.getBytes()));
 
@@ -234,7 +235,6 @@ public class UserOnboardService {
     private boolean getIdaAuthResponse(Map<String, Object> idaRequestMap, Map<String, Object> requestMap,
                                                    Certificate certificate) throws ClientCheckedException {
         try {
-
             PublicKey publicKey = certificate.getPublicKey();
             idaRequestMap.put(ONBOARD_CERT_THUMBPRINT, CryptoUtil.encodeToURLSafeBase64(cryptoManagerService.getCertificateThumbprint(certificate)));
 
@@ -257,17 +257,23 @@ public class UserOnboardService {
             idaRequestMap.put(ON_BOARD_REQUEST_SESSION_KEY,
                     CryptoUtil.encodeToURLSafeBase64(cryptoManagerService.asymmetricEncrypt(publicKey, symmentricKey.getEncoded())));
 
-            Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.doOperatorAuth("sign",
+            String encodedData = io.mosip.registration.keymanager.util.CryptoUtil.base64encoder.encodeToString((JsonUtils.javaObjectToJsonString(idaRequestMap)).getBytes(StandardCharsets.UTF_8));
+            SignRequestDto signRequestDto = new SignRequestDto(encodedData);
+            SignResponseDto signResponseDto = clientCryptoManagerService.sign(signRequestDto);
+
+            String authToken = sharedPreferences.getString(USER_TOKEN, "");
+            String signature = signResponseDto.getData();
+            String cookie = String.format("Authorization=%s", authToken);
+
+            Call<OnboardResponseWrapper<Map<String, Object>>> call = syncRestService.doOperatorAuth(authToken, signature, cookie,
                     idaRequestMap);
 
-
-            call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {
-
+            call.enqueue(new Callback<OnboardResponseWrapper<Map<String, Object>>>() {
                 @Override
-                public void onResponse(Call<ResponseWrapper<Map<String, Object>>> call, Response<ResponseWrapper<Map<String, Object>>> response) {
+                public void onResponse(Call<OnboardResponseWrapper<Map<String, Object>>> call, Response<OnboardResponseWrapper<Map<String, Object>>> response) {
                     if (response.isSuccessful()) {
-                        ServiceError error = SyncRestUtil.getServiceError(response.body());
-                        if (error.getErrorCode() == null) {
+                        OnboardError error = SyncRestUtil.getServiceError(response.body());
+                        if (error == null || (error != null && error.getErrorCode() == null)) {
                             setIdaResponse((Boolean) response.body().getResponse().get(ON_BOARD_AUTH_STATUS));
                         }
                     } else{
@@ -277,9 +283,8 @@ public class UserOnboardService {
                     }
                 }
 
-
                 @Override
-                public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
+                public void onFailure(Call<OnboardResponseWrapper<Map<String, Object>>> call, Throwable t) {
                     t.printStackTrace();
                     setIdaResponse(false);
                     Toast.makeText(context, "IDA Response fetch failed", Toast.LENGTH_LONG).show();
@@ -292,11 +297,9 @@ public class UserOnboardService {
             Log.e(TAG, e.getMessage(), e);
             throw new ClientCheckedException("", e.getMessage(), e);
         }
-//        return false;
-
     }
 
-    private String getCertificate() throws IOException {
+    private String getCertificate() {
         String certData = this.certificateManagerService.getCertificate(APPLICATION_ID, REFERENCE_ID);
         if(certData == null) {
             Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getIDACertificate();
@@ -494,96 +497,11 @@ public class UserOnboardService {
 
     }
 
-
-    public void initializeOperatorBiometric() {
-        operatorBiometrics = new HashMap<String, BiometricsDto>();
-    }
-
-
-    public BiometricsDto addOperatorBiometrics(String operatorType, String uiSchemaAttribute, BiometricsDto value) {
-        Log.i(TAG,"addOperatorBiometrics >>> operatorType :: " + operatorType + " bioAttribute :: " + uiSchemaAttribute);
-        operatorBiometrics.put(String.format(BIOMETRIC_KEY_PATTERN, operatorType, uiSchemaAttribute, ""), value);
-        return value;
-    }
-
-
-    public void addOperatorBiometricException(String operatorType, String bioAttribute) {
-        Log.i(TAG, "addOperatorBiometricException >>> operatorType :: " + operatorType + " bioAttribute :: "
-                        + bioAttribute);
-        operatorBiometrics.remove(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, ""));
-        operatorBiometrics.put(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, "exp"), null);
-    }
-
-
-    public void removeOperatorBiometrics(String operatorType, String bioAttribute) {
-        Log.i(TAG, "removeOperatorBiometrics >>>> operatorType :: " + operatorType + " bioAttribute :: " + bioAttribute);
-        operatorBiometrics.remove(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, ""));
-    }
-
-
-    public void removeOperatorBiometricException(String operatorType, String bioAttribute) {
-        Log.i(TAG, "removeOperatorBiometricException >>>>> operatorType :: " + operatorType + " bioAttribute :: "
-                        + bioAttribute);
-        operatorBiometrics.remove(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, "exp"));
-    }
-
-
-    public List<BiometricsDto> getAllBiometrics() {
-        if (Objects.isNull(operatorBiometrics))
-            return null;
-
-        return operatorBiometrics.entrySet().stream().filter(m -> m.getKey().endsWith("_")).map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-    }
-
-
-    public List<BiometricsDto> getAllBiometricExceptions() {
-        if (Objects.isNull(operatorBiometrics))
-            return null;
-
-        return operatorBiometrics.entrySet().stream().filter(m -> m.getKey().endsWith("_exp")).map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-    }
-
-
-    public boolean isBiometricException(String operatorType, String bioAttribute) {
-        if (Objects.isNull(operatorBiometrics))
-            return false;
-
-        Optional<String> result = operatorBiometrics.entrySet().stream()
-                .filter(m -> m.getKey()
-                        .equalsIgnoreCase(String.format(BIOMETRIC_KEY_PATTERN, operatorType, bioAttribute, "exp")))
-                .map(Map.Entry::getKey).findFirst();
-
-        return result.isPresent() ? true : false;
-    }
-
-
-    public List<BiometricsDto> getBiometrics(String operatorType, List<String> attributeNames) {
-        if (Objects.isNull(operatorBiometrics))
-            return null;
-
-        List<BiometricsDto> list = new ArrayList<>();
-        attributeNames.forEach(name -> {
-            Optional<BiometricsDto> result = operatorBiometrics.entrySet().stream()
-                    .filter(m -> m.getKey().equals(String.format(BIOMETRIC_KEY_PATTERN, operatorType, name, "")))
-                    .map(Map.Entry::getValue).findFirst();
-
-            if (result.isPresent())
-                list.add(result.get());
-        });
-        return list;
-    }
-
-//    public Timestamp getLastUpdatedTime(String usrId) {
-//        return userOnBoardDao.getLastUpdatedTime(usrId);
-//    }
-
     private boolean save(List<BiometricsDto> biometrics, String userId) {
         Log.i(TAG, "Entering save method");
         String onBoardingResponse = "";
         try {
-            List<BiometricsDto> fingerprintsList = getBiometricsByModality(RegistrationConstants.FINGERPRINT_UPPERCASE,
+            List<BiometricsDto> fingerprintsList = getBiometricsByModality(RegistrationConstants.FINGER,
                     biometrics);
             List<BiometricsDto> irisList = getBiometricsByModality(RegistrationConstants.IRIS, biometrics);
             List<BiometricsDto> face = getBiometricsByModality(RegistrationConstants.FACE, biometrics);
@@ -615,10 +533,15 @@ public class UserOnboardService {
         if (biometrics != null && !biometrics.isEmpty()) {
             List<BIR> birList = new ArrayList<>();
             for (BiometricsDto biometricsDto : biometrics) {
-                BIR bir = registrationService.buildBIR(biometricsDto);
-                Log.i(TAG, "Adding bir");
-                birList.add(bir);
+                try {
+                    BIR bir = registrationService.buildBIR(biometricsDto);
+                    Log.i(TAG, "Adding bir");
+                    birList.add(bir);
+                } catch (Exception e){
+                    Log.e(TAG, "Error in adding BIR: " + e.getMessage());
+                }
             }
+            return birList;
         //TODO - Template extration logic to be done when SDK for android is implemented
 //            templates = bioAPIFactory
 //                    .getBioProvider(BiometricType.fromValue(birList.get(0).getBdbInfo().getType().get(0).value()),
