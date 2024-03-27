@@ -509,11 +509,11 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     @Override
     public void saveOperatorBiometrics(@NonNull BiometricsPigeon.Result<String> result) {
         try{
-            boolean response=userOnboardService.onboardOperator(userOnboardService.getOperatorBiometrics());
-            if(response==true){
-                result.success("Ok");
-            }
-
+            userOnboardService.onboardOperator(userOnboardService.getOperatorBiometrics(), () -> {
+                if(userOnboardService.getIsOnboardSuccess()) {
+                    result.success("OK");
+                }
+            });
         }catch (Exception e){
             Log.e(TAG, e.getMessage());
         }

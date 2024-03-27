@@ -21,6 +21,7 @@ class OperatorBiometricsCaptureView extends StatefulWidget {
 
 class _OperatorBiometricsCaptureState
     extends State<OperatorBiometricsCaptureView> {
+      bool isSavingBiometrics = false;
   Widget _getBiometricCaptureSelectionBlockMobile(
       BiometricAttributeData biometricAttributeData) {
     return InkWell(
@@ -160,7 +161,13 @@ class _OperatorBiometricsCaptureState
                         .read<BiometricCaptureControlProvider>()
                         .face
                         .isScanned) {
+                    setState(() {
+                      isSavingBiometrics = true;
+                    });
                   await BiometricsApi().saveOperatorBiometrics();
+                  setState(() {
+                    isSavingBiometrics = false;
+                  });
                   Navigator.pop(context);
                   showDialog<String>(
                     context: context,
@@ -212,7 +219,7 @@ class _OperatorBiometricsCaptureState
                   });
                 }
               },
-              child: Text(
+              child: isSavingBiometrics ? CircularProgressIndicator( color: appWhite,) : Text(
                 "VERIFY & SAVE",
                 style: Theme.of(context)
                     .textTheme
