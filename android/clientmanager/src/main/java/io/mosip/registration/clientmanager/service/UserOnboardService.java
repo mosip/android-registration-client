@@ -113,6 +113,14 @@ public class UserOnboardService {
         return operatorBiometrics;
     }
     private boolean idaResponse = false;
+    private String certificateDataResponse = "";
+    private boolean isOnboardSuccess = false;
+    public boolean getIsOnboardSuccess() {
+        return isOnboardSuccess;
+    }
+    public String getCertificateDataResponse() {
+        return certificateDataResponse;
+    }
     public boolean isIdaResponse() {
         return idaResponse;
     }
@@ -138,7 +146,7 @@ public class UserOnboardService {
                         Context.MODE_PRIVATE);
     }
 
-    public boolean validateWithIDAuthAndSave(List<BiometricsDto> biometrics) throws ClientCheckedException {
+    public void onboardOperator(List<BiometricsDto> biometrics, Runnable onFinish) throws ClientCheckedException {
         Log.i(TAG, "validateWithIDAuthAndSave invoked ");
 
         if (Objects.isNull(biometrics))
@@ -146,15 +154,20 @@ public class UserOnboardService {
                     ClientManagerError.REG_BIOMETRIC_DTO_NULL.getErrorMessage());
 
         String userId = sharedPreferences.getString(USER_ID, "");
-        if (validateWithIDA(userId, biometrics)) {
-            Log.i(TAG, "User onboarding success");
-            return save(biometrics, userId);
-        }
-        return false;
+        validateWithIDA(userId, biometrics, () -> {
+            if(isIdaResponse()) {
+                Log.i(TAG, "User onboarding success");
+                isOnboardSuccess = save(biometrics, userId);
+                onFinish.run();
+            }
+        });
     }
 
-    public boolean validateWithIDA(String userId, List<BiometricsDto> biometrics) {
-        if (isIdaResponse()) { return true; }
+    public void validateWithIDA(String userId, List<BiometricsDto> biometrics, Runnable onFinish) {
+        if (isIdaResponse()) {
+            idaResponse = true;
+            onFinish.run();
+        }
         Map<String, Object> idaRequestMap = new LinkedHashMap<>();
         idaRequestMap.put(ID, IDENTITY);
         idaRequestMap.put(VERSION, PACKET_SYNC_VERSION);
@@ -172,33 +185,37 @@ public class UserOnboardService {
         idaRequestMap.put(REQUEST_AUTH, tempMap);
 
         List<Map<String, Object>> listOfBiometric = new ArrayList<>();
-        try {
-            String certificateData = getCertificate();
-            Certificate certificate = this.cryptoManagerService.convertToCertificate(certificateData);
+        getCertificate(() -> {
+            String certificateData = getCertificateDataResponse();
+            try {
+                Certificate certificate = this.cryptoManagerService.convertToCertificate(certificateData);
+                if (Objects.nonNull(biometrics) && !biometrics.isEmpty()) {
+                    String previousHash = HMACUtils2.digestAsPlainText("".getBytes());
 
-            if (Objects.nonNull(biometrics) && !biometrics.isEmpty()) {
-                String previousHash = HMACUtils2.digestAsPlainText("".getBytes());
-
-                for (BiometricsDto dto : biometrics) {
-                    LinkedHashMap<String, Object> dataBlock = buildDataBlock(dto.getModality(), dto.getBioSubType(),
-                            io.mosip.registration.keymanager.util.CryptoUtil.base64decoder.decode(dto.getBioValue()), previousHash);
-                    dataBlock.put(ONBOARD_CERT_THUMBPRINT, CryptoUtil.encodeToURLSafeBase64(cryptoManagerService.getCertificateThumbprint(certificate)));
-                    previousHash = (String) dataBlock.get(AUTH_HASH);
-                    listOfBiometric.add(dataBlock);
+                    for (BiometricsDto dto : biometrics) {
+                        LinkedHashMap<String, Object> dataBlock = buildDataBlock(dto.getModality(), dto.getBioSubType(),
+                                io.mosip.registration.keymanager.util.CryptoUtil.base64decoder.decode(dto.getBioValue()), previousHash);
+                        dataBlock.put(ONBOARD_CERT_THUMBPRINT, CryptoUtil.encodeToURLSafeBase64(cryptoManagerService.getCertificateThumbprint(certificate)));
+                        previousHash = (String) dataBlock.get(AUTH_HASH);
+                        listOfBiometric.add(dataBlock);
+                    }
                 }
-            }
 
-            if (!listOfBiometric.isEmpty()) {
-                Map<String, Object> requestMap = new LinkedHashMap<>();
-                requestMap.put(ON_BOARD_BIOMETRICS, listOfBiometric);
-                requestMap.put(ON_BOARD_TIME_STAMP, DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()));
-                return getIdaAuthResponse(idaRequestMap, requestMap, certificate);
+                if (!listOfBiometric.isEmpty()) {
+                    Map<String, Object> requestMap = new LinkedHashMap<>();
+                    requestMap.put(ON_BOARD_BIOMETRICS, listOfBiometric);
+                    requestMap.put(ON_BOARD_TIME_STAMP, DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()));
+                    getIdaAuthResponse(idaRequestMap, requestMap, certificate, () -> {
+                        onFinish.run();
+                    });
+                } else {
+                    onFinish.run();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
+                onFinish.run();
             }
-
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        return false;
+        });
     }
 
     private LinkedHashMap<String, Object> buildDataBlock(String bioType, String bioSubType, byte[] attributeISO,
@@ -230,8 +247,8 @@ public class UserOnboardService {
         return dataBlock;
     }
 
-    private boolean getIdaAuthResponse(Map<String, Object> idaRequestMap, Map<String, Object> requestMap,
-                                                   Certificate certificate) throws ClientCheckedException {
+    private void getIdaAuthResponse(Map<String, Object> idaRequestMap, Map<String, Object> requestMap,
+                                                   Certificate certificate, Runnable onFinish) throws ClientCheckedException {
         try {
             PublicKey publicKey = certificate.getPublicKey();
             idaRequestMap.put(ONBOARD_CERT_THUMBPRINT, CryptoUtil.encodeToURLSafeBase64(cryptoManagerService.getCertificateThumbprint(certificate)));
@@ -274,10 +291,12 @@ public class UserOnboardService {
                         if (error == null || (error != null && error.getErrorCode() == null)) {
                             setIdaResponse((Boolean) response.body().getResponse().get(ON_BOARD_AUTH_STATUS));
                         }
-                    } else{
+                        onFinish.run();
+                    } else {
                         setIdaResponse(false);
                         Log.i("Response UserOnboard Service",response.toString());
                         Toast.makeText(context, "Failed to fetch IDA Response :" + response.code(), Toast.LENGTH_LONG).show();
+                        onFinish.run();
                     }
                 }
 
@@ -286,18 +305,19 @@ public class UserOnboardService {
                     t.printStackTrace();
                     setIdaResponse(false);
                     Toast.makeText(context, "IDA Response fetch failed", Toast.LENGTH_LONG).show();
+                    onFinish.run();
                 }
 
             });
-            return isIdaResponse();
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
+            onFinish.run();
             throw new ClientCheckedException("", e.getMessage(), e);
         }
     }
 
-    private String getCertificate() {
+    private void getCertificate(Runnable onFinish) {
         String certData = this.certificateManagerService.getCertificate(APPLICATION_ID, REFERENCE_ID);
         if(certData == null) {
             Call<ResponseWrapper<Map<String, Object>>> call = syncRestService.getIDACertificate();
@@ -312,11 +332,13 @@ public class UserOnboardService {
                             certificateRequestDto.setReferenceId(REFERENCE_ID);
                             certificateRequestDto.setCertificateData((String) response.body().getResponse().get(CERTIFICATE));
                             certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
-
                         }
+                        certificateDataResponse = certificateManagerService.getCertificate(APPLICATION_ID, REFERENCE_ID);
+                        onFinish.run();
                     } else{
                         Log.i("Response UserOnboard Service",response.toString());
                         Toast.makeText(context, "Failed to fetch IDA Internal certificate :" + response.code(), Toast.LENGTH_LONG).show();
+                        onFinish.run();
                     }
                 }
 
@@ -324,11 +346,14 @@ public class UserOnboardService {
                 public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
                     t.printStackTrace();
                     Toast.makeText(context, "IDA Internal Certificate fetch failed", Toast.LENGTH_LONG).show();
+                    onFinish.run();
                 }
             });
 
+        } else {
+            certificateDataResponse = certData;
+            onFinish.run();
         }
-        return this.certificateManagerService.getCertificate(APPLICATION_ID, REFERENCE_ID);
     }
 
     private synchronized SplitEncryptedData getSessionKey(Map<String, Object> requestMap, byte[] data) throws Exception {
