@@ -60,7 +60,8 @@ public class UserBiometricRepository {
 
     private String getBioAttribute(String subType) {
         String subTypeName = (subType == null || subType.isEmpty()) ? "Face" : String.join("", subType);
-        return Modality.getBioAttribute(subTypeName);
+        String bioAttribute = Modality.getBioAttribute(subTypeName);
+        return (bioAttribute == null || bioAttribute.isEmpty()) ? "face" : bioAttribute;
     }
 
     private String getBioAttributeCode(String bioAttribute) {
