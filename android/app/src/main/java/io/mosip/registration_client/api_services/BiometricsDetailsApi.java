@@ -781,10 +781,9 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             intent.setAction(RegistrationConstants.DISCOVERY_INTENT_ACTION);
             queryPackage(intent);
             DiscoverRequest discoverRequest = new DiscoverRequest();
-            discoverRequest.setType(currentModality == Modality.EXCEPTION_PHOTO ? SingleType.FACE.value()
-                    : currentModality.getSingleType().value());
-            intent.putExtra(RegistrationConstants.SBI_INTENT_REQUEST_KEY,
-                    objectMapper.writeValueAsBytes(discoverRequest));
+            discoverRequest.setType(currentModality == Modality.EXCEPTION_PHOTO ? SingleType.FACE.value() :
+                    currentModality.getSingleType().value());
+            intent.putExtra(RegistrationConstants.SBI_INTENT_REQUEST_KEY, objectMapper.writeValueAsBytes(discoverRequest));
             activity.startActivityForResult(intent, 1);
         } catch (Exception ex) {
             auditManagerService.audit(AuditEvent.DISCOVER_SBI_FAILED, Components.REGISTRATION, ex.getMessage());
