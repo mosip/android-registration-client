@@ -389,7 +389,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     await context.read<ConnectivityProvider>().checkNetworkConnection();
     bool isConnected = _getIsConnected();
     log("isCon: $isConnected");
-
     await _setVersionNoApp();
     await _saveVersionToGlobalParam();
     String version = _fetchVersionNoApp();

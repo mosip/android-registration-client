@@ -867,8 +867,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                     getExceptionAttributes());
             // if attempts is zero, there is no need to maintain the counter
             if (fieldId.equals("operatorBiometrics")) {
-
-
                 biometricsDtoList.forEach(biometricsDto -> {
                     userOnboardService.getOperatorBiometrics().add(biometricsDto);
                 });
