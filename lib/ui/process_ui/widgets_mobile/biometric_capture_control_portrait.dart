@@ -56,8 +56,6 @@ class _BiometricCaptureControlPortraitState
         onTap: () {
           context.read<BiometricCaptureControlProvider>().biometricAttribute =
               biometricAttributeData.title;
-          context.read<BiometricCaptureControlProvider>().biometricAttribute =
-              biometricAttributeData.title;
           final providerCopy = Provider.of<BiometricCaptureControlProvider>(
               context,
               listen: false);

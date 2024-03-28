@@ -2,6 +2,9 @@ package io.mosip.registration.clientmanager.util;
 
 import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import io.mosip.registration.clientmanager.dto.http.OnboardError;
+import io.mosip.registration.clientmanager.dto.http.OnboardResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.RegProcResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.RequestWrapper;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
@@ -45,6 +48,18 @@ public class SyncRestUtil {
             Log.e(TAG, "error parsing service error", e);
         }
         return (ServiceError) wrapper.getErrors().get(0);
+    }
+
+    public static OnboardError getServiceError(OnboardResponseWrapper wrapper) {
+        if((wrapper.getErrors() == null || wrapper.getErrors().isEmpty()) && wrapper.getResponse() != null)
+            return null;
+
+        try {
+            Log.i(TAG, JsonUtils.javaObjectToJsonString(wrapper.getErrors()));
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "error parsing service error", e);
+        }
+        return (OnboardError) wrapper.getErrors().get(0);
     }
 
     public static ServiceError getServiceError(RegProcResponseWrapper wrapper) {

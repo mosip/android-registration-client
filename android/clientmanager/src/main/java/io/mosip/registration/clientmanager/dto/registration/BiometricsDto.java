@@ -33,6 +33,9 @@ public class BiometricsDto {
     public String getBioSubType() {
         return  bioSubType;
     }
+    public String getBioValue(){
+        return bioValue;
+    }
 
     public String getModality(){return  modality;}
 }

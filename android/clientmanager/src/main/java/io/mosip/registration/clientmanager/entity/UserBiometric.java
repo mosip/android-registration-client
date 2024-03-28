@@ -44,4 +44,8 @@ public class UserBiometric {
 
 	@ColumnInfo(name = "del_dtimes")
 	private Timestamp delDtimes;
+
+    public UserBiometric() {
+
+    }
 }

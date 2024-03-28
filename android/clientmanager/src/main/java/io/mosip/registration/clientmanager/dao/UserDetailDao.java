@@ -23,6 +23,9 @@ public abstract class UserDetailDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertAllUsers(List<UserDetail> users);
 
+    @Query("update user_detail set is_onboarded = :isOnboarded where id = :userId")
+    public abstract void updateUserDetail(boolean isOnboarded, String userId);
+
     @Transaction
     public void truncateAndInsertAll(List<UserDetail> users) {
         deleteAllUsers();

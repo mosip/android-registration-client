@@ -286,7 +286,6 @@ public class TemplateService {
         }
     }
 
-
     private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap, boolean isPreview) {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
