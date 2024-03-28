@@ -214,13 +214,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  Future<List<String?>> _getDocumentValues(
-      String fieldName, String langCode, String? applicantType) async {
-    return await context
-        .read<RegistrationTaskProvider>()
-        .getDocumentValues(fieldName, langCode, applicantType);
-  }
-
   Future<List<String?>> _getDocumentType(String categoryCode, String langCode) async {
     return await context.read<RegistrationTaskProvider>().getDocumentType(categoryCode, langCode);
   }

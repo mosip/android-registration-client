@@ -22,10 +22,13 @@ class ButtonControl extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    GlobalProvider globalProvider =
+        Provider.of<GlobalProvider>(context, listen: false);
     return Card(
       elevation: 5,
       color: pureWhite,
-      margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
+      margin: EdgeInsets.symmetric(
+          vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
         child: Column(
@@ -34,13 +37,9 @@ class ButtonControl extends StatelessWidget {
             (field.inputRequired!)
                 ? RichText(
                     text: TextSpan(
-                    text: context
-                        .read<GlobalProvider>()
-                        .chooseLanguage(field.label!),
+                    text: globalProvider.chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14,
-                        color: blackShade1,
-                        fontWeight: semiBold),
+                        fontSize: 14, color: blackShade1, fontWeight: semiBold),
                     children: const [
                       TextSpan(
                         text: " *",
@@ -49,11 +48,9 @@ class ButtonControl extends StatelessWidget {
                     ],
                   ))
                 : Text(
-                    context.read<GlobalProvider>().chooseLanguage(field.label!),
+                    globalProvider.chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14,
-                        color: blackShade1,
-                        fontWeight: semiBold),
+                        fontSize: 14, color: blackShade1, fontWeight: semiBold),
                   ),
             const SizedBox(
               height: 15,
@@ -61,11 +58,7 @@ class ButtonControl extends StatelessWidget {
             Row(
               children: [
                 for (int i = 0;
-                    i <
-                        context
-                            .watch<GlobalProvider>()
-                            .fieldDisplayValues[field.id]
-                            .length;
+                    i < globalProvider.fieldDisplayValues[field.id].length;
                     i++)
                   Row(
                     children: [
@@ -81,34 +74,27 @@ class ButtonControl extends StatelessWidget {
                               ? (context
                                           .watch<GlobalProvider>()
                                           .fieldInputValue[field.id] ==
-                                      context
-                                          .read<GlobalProvider>()
+                                      globalProvider
                                           .fieldDisplayValues[field.id][i])
                                   ? true
                                   : false
                               : false,
                           onChanged: (value) async {
-                            context.read<GlobalProvider>().setInputMapValue(
+                            globalProvider.setInputMapValue(
                                 field.id!,
-                                context
-                                    .read<GlobalProvider>()
-                                    .fieldDisplayValues[field.id][i],
-                                context.read<GlobalProvider>().fieldInputValue);
+                                globalProvider.fieldDisplayValues[field.id][i],
+                                globalProvider.fieldInputValue);
 
                             await DemographicsApi().addDemographicField(
                                 field.id!,
-                                context
-                                    .read<GlobalProvider>()
-                                    .fieldDisplayValues[field.id][i]);
+                                globalProvider.fieldDisplayValues[field.id][i]);
                           },
                         ),
                       ),
                       const SizedBox(
                         width: 5,
                       ),
-                      Text(context
-                          .read<GlobalProvider>()
-                          .fieldDisplayValues[field.id][i]),
+                      Text(globalProvider.fieldDisplayValues[field.id][i]),
                       const SizedBox(
                         width: 37,
                       ),

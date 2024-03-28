@@ -6,14 +6,18 @@
 */
 
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
+import 'package:registration_client/platform_android/sync_response_service_impl.dart';
 
 abstract class SyncResponseService {
   Future<SyncTime> getLastSyncTime();
-  Future<Sync> getPolicyKeySync();
-  Future<Sync> getGlobalParamsSync();
-  Future<Sync> getUserDetailsSync();
-  Future<Sync> getIDSchemaSync();
-  Future<Sync> getMasterDataSync();
-  Future<Sync> getCaCertsSync();
-  Future<Sync> getKernelCertsSync();
+  Future<Sync> getPolicyKeySync(bool isManualSync);
+  Future<Sync> getGlobalParamsSync(bool isManualSync);
+  Future<Sync> getUserDetailsSync(bool isManualSync);
+  Future<Sync> getIDSchemaSync(bool isManualSync);
+  Future<Sync> getMasterDataSync(bool isManualSync);
+  Future<Sync> getCaCertsSync(bool isManualSync);
+  Future<String> batchJob();
+  Future<Sync> getKernelCertsSync(bool isManualSync);
+
+  factory SyncResponseService() => getSyncResponseServiceImpl();
 }

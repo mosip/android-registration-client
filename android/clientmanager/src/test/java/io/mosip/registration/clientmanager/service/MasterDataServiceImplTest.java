@@ -144,7 +144,7 @@ public class MasterDataServiceImplTest {
                 .setResponseCode(200)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_GLOBAL_CONFIGS_STATUS_200)));
 
-        masterDataService.syncGlobalParamsData();
+        masterDataService.syncGlobalParamsData(() -> {}, true);
 
         //waiting for sync to completed
         Thread.sleep(1000);
@@ -182,7 +182,7 @@ public class MasterDataServiceImplTest {
                 .setResponseCode(404)
                 .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
 
-        masterDataService.syncGlobalParamsData();
+        masterDataService.syncGlobalParamsData(() -> {}, true);
 
         //waiting for sync to completed
         Thread.sleep(1000);
@@ -216,7 +216,7 @@ public class MasterDataServiceImplTest {
                 .setResponseCode(404)
                 .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
 
-        masterDataService.syncGlobalParamsData();
+        masterDataService.syncGlobalParamsData(() -> {}, true);
 
         //waiting for sync to completed
         Thread.sleep(1000);
@@ -247,7 +247,7 @@ public class MasterDataServiceImplTest {
                 .setResponseCode(404)
                 .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
 
-        masterDataService.syncGlobalParamsData();
+        masterDataService.syncGlobalParamsData(() -> {}, true);
 
         //waiting for sync to completed
         Thread.sleep(1000);

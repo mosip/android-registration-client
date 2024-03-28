@@ -43,8 +43,14 @@ class NewProcessScreenContent extends StatefulWidget {
 }
 
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     super.initState();
   }
 
@@ -119,11 +125,11 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     final RegistrationService registrationService = RegistrationService();
     registrationService.evaluateMVEL(fieldData, expression!).then((value) {
       if (!value) {
-        context.read<GlobalProvider>().removeFieldFromMap(
-            e.id!, context.read<GlobalProvider>().fieldInputValue);
-        context.read<RegistrationTaskProvider>().removeDemographicField(e.id!);
+        globalProvider.removeFieldFromMap(
+            e.id!, globalProvider.fieldInputValue);
+        registrationTaskProvider.removeDemographicField(e.id!);
       }
-      context.read<GlobalProvider>().setMvelValues(e.id!, value);
+      globalProvider.setMvelValues(e.id!, value);
     });
   }
 
@@ -145,7 +151,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           ...widget.screen.fields!.map((e) {
             _checkMvel(e!);
             if (e.inputRequired == true) {
-              if (context.read<GlobalProvider>().mvelValues[e.id] ?? true) {
+              if (globalProvider.mvelValues[e.id] ?? true) {
                 return widgetType(e);
               }
             }

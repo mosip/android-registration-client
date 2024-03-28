@@ -32,10 +32,15 @@ class DynamicDropDownControl extends StatefulWidget {
 
 class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   String? selected;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   @override
   void initState() {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    String lang = globalProvider.mandatoryLanguages[0]!;
     if (context
         .read<GlobalProvider>()
         .fieldInputValue
@@ -48,38 +53,35 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   void saveData(value) {
     if (value != null) {
       if (widget.field.type == 'simpleType') {
-        context.read<GlobalProvider>().chosenLang.forEach((element) {
-          String code =
-              context.read<GlobalProvider>().languageToCodeMapper[element]!;
-          context
-              .read<RegistrationTaskProvider>()
+        for (var element in globalProvider.chosenLang) {
+          String code = globalProvider.languageToCodeMapper[element]!;
+          registrationTaskProvider
               .addSimpleTypeDemographicField(
                   widget.field.id ?? "", value, code);
-        });
+        }
       } else {
-        context
-            .read<RegistrationTaskProvider>()
+        registrationTaskProvider
             .addDemographicField(widget.field.id ?? "", value);
       }
     }
   }
 
   void _saveDataToMap(value) {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    String lang = globalProvider.mandatoryLanguages[0]!;
     if (value != null) {
       if (widget.field.type == 'simpleType') {
-        context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.field.id ?? "",
-              value!,
-              lang,
-              context.read<GlobalProvider>().fieldInputValue,
-            );
+        globalProvider.setLanguageSpecificValue(
+          widget.field.id ?? "",
+          value!,
+          lang,
+          globalProvider.fieldInputValue,
+        );
       } else {
-        context.read<GlobalProvider>().setInputMapValue(
-              widget.field.id ?? "",
-              value!,
-              context.read<GlobalProvider>().fieldInputValue,
-            );
+        globalProvider.setInputMapValue(
+          widget.field.id ?? "",
+          value!,
+          globalProvider.fieldInputValue,
+        );
       }
     }
   }
@@ -87,16 +89,14 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   void _getSelectedValueFromMap(String lang) async {
     String response = "";
     if (widget.field.type == 'simpleType') {
-      if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
+      if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
-        response = context
-            .read<GlobalProvider>()
+        response = globalProvider
             .fieldInputValue[widget.field.id ?? ""][lang];
       }
     } else {
-      response =
-          context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
+      response = globalProvider.fieldInputValue[widget.field.id ?? ""];
     }
     List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
     for (var element in data) {
@@ -109,8 +109,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
-    return await context
-        .read<RegistrationTaskProvider>()
+    return await registrationTaskProvider
         .getFieldValues(fieldId, langCode);
   }
 
@@ -119,10 +118,10 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     String mandatoryLanguageCode =
-        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
+        globalProvider.mandatoryLanguages[0] ?? "eng";
     return FutureBuilder(
-        future: _getFieldValues(widget.field.subType!,
-            context.read<GlobalProvider>().selectedLanguage),
+        future: _getFieldValues(
+            widget.field.subType!, globalProvider.selectedLanguage),
         builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
             elevation: 5,
