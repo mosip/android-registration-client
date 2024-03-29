@@ -26,62 +26,67 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface TransliterationOptions ()
-+ (TransliterationOptions *)fromList:(NSArray *)list;
-+ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list;
+@interface DashBoardData ()
++ (DashBoardData *)fromList:(NSArray *)list;
++ (nullable DashBoardData *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation TransliterationOptions
-+ (instancetype)makeWithInput:(NSString *)input
-    sourceLanguage:(NSString *)sourceLanguage
-    targetLanguage:(NSString *)targetLanguage {
-  TransliterationOptions* pigeonResult = [[TransliterationOptions alloc] init];
-  pigeonResult.input = input;
-  pigeonResult.sourceLanguage = sourceLanguage;
-  pigeonResult.targetLanguage = targetLanguage;
+@implementation DashBoardData
++ (instancetype)makeWithUserId:(NSString *)userId
+    userName:(NSString *)userName
+    userStatus:(NSNumber *)userStatus
+    userIsOnboarded:(NSNumber *)userIsOnboarded {
+  DashBoardData* pigeonResult = [[DashBoardData alloc] init];
+  pigeonResult.userId = userId;
+  pigeonResult.userName = userName;
+  pigeonResult.userStatus = userStatus;
+  pigeonResult.userIsOnboarded = userIsOnboarded;
   return pigeonResult;
 }
-+ (TransliterationOptions *)fromList:(NSArray *)list {
-  TransliterationOptions *pigeonResult = [[TransliterationOptions alloc] init];
-  pigeonResult.input = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.input != nil, @"");
-  pigeonResult.sourceLanguage = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.sourceLanguage != nil, @"");
-  pigeonResult.targetLanguage = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.targetLanguage != nil, @"");
++ (DashBoardData *)fromList:(NSArray *)list {
+  DashBoardData *pigeonResult = [[DashBoardData alloc] init];
+  pigeonResult.userId = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.userId != nil, @"");
+  pigeonResult.userName = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.userName != nil, @"");
+  pigeonResult.userStatus = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.userStatus != nil, @"");
+  pigeonResult.userIsOnboarded = GetNullableObjectAtIndex(list, 3);
+  NSAssert(pigeonResult.userIsOnboarded != nil, @"");
   return pigeonResult;
 }
-+ (nullable TransliterationOptions *)nullableFromList:(NSArray *)list {
-  return (list) ? [TransliterationOptions fromList:list] : nil;
++ (nullable DashBoardData *)nullableFromList:(NSArray *)list {
+  return (list) ? [DashBoardData fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.input ?: [NSNull null]),
-    (self.sourceLanguage ?: [NSNull null]),
-    (self.targetLanguage ?: [NSNull null]),
+    (self.userId ?: [NSNull null]),
+    (self.userName ?: [NSNull null]),
+    (self.userStatus ?: [NSNull null]),
+    (self.userIsOnboarded ?: [NSNull null]),
   ];
 }
 @end
 
-@interface TransliterationApiCodecReader : FlutterStandardReader
+@interface DashBoardApiCodecReader : FlutterStandardReader
 @end
-@implementation TransliterationApiCodecReader
+@implementation DashBoardApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [TransliterationOptions fromList:[self readValue]];
+      return [DashBoardData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface TransliterationApiCodecWriter : FlutterStandardWriter
+@interface DashBoardApiCodecWriter : FlutterStandardWriter
 @end
-@implementation TransliterationApiCodecWriter
+@implementation DashBoardApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[TransliterationOptions class]]) {
+  if ([value isKindOfClass:[DashBoardData class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else {
@@ -90,40 +95,72 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface TransliterationApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface DashBoardApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation TransliterationApiCodecReaderWriter
+@implementation DashBoardApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[TransliterationApiCodecWriter alloc] initWithData:data];
+  return [[DashBoardApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[TransliterationApiCodecReader alloc] initWithData:data];
+  return [[DashBoardApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    TransliterationApiCodecReaderWriter *readerWriter = [[TransliterationApiCodecReaderWriter alloc] init];
+    DashBoardApiCodecReaderWriter *readerWriter = [[DashBoardApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *api) {
+void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.TransliterationApi.transliterate"
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getDashBoardDetails"
         binaryMessenger:binaryMessenger
-        codec:TransliterationApiGetCodec()];
+        codec:DashBoardApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(transliterateOptions:completion:)], @"TransliterationApi api (%@) doesn't respond to @selector(transliterateOptions:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getDashBoardDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getDashBoardDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        TransliterationOptions *arg_options = GetNullableObjectAtIndex(args, 0);
-        [api transliterateOptions:arg_options completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getDashBoardDetailsWithCompletion:^(NSArray<DashBoardData *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getPacketUploadedDetails"
+        binaryMessenger:binaryMessenger
+        codec:DashBoardApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPacketUploadedDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getPacketUploadedDetailsWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getPacketUploadedDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getPacketUploadedPendingDetails"
+        binaryMessenger:binaryMessenger
+        codec:DashBoardApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getPacketUploadedPendingDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getPacketUploadedPendingDetailsWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getPacketUploadedPendingDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
