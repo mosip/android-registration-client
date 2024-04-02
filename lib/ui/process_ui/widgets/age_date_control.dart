@@ -134,8 +134,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
         elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         builder: (context) {
-          return SingleChildScrollView(
-            child: Column(
+          return ListView(
+            primary: false,
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -211,7 +212,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
                   },
                 ),
               ],
-            ),
           );
         });
   }

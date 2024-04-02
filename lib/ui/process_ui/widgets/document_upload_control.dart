@@ -281,7 +281,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     autovalidateMode: AutovalidateMode.onUserInteraction,
                                     controller: documentController,
                                     onTap: (){
-                                      _showDropdownBottomSheet(snapshot,widget.field,context);
+                                      if(snapshot.data!.isNotEmpty) {
+                                        _showDropdownBottomSheet(
+                                            snapshot, widget.field, context);
+                                      }
                                     },
                                     validator: (value) {
                                       if (!widget
@@ -501,7 +504,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                             autovalidateMode: AutovalidateMode.onUserInteraction,
                                             controller: documentController,
                                             onTap: (){
-                                              _showDropdownBottomSheet(snapshot,widget.field,context);
+                                              if(snapshot.data!.isNotEmpty) {
+                                                _showDropdownBottomSheet(
+                                                    snapshot, widget.field,
+                                                    context);
+                                              }
                                             },
                                             validator: (value) {
                                               if (!widget
