@@ -82,7 +82,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   _addNotificationLanguage() {
     context.read<RegistrationTaskProvider>().addDemographicField(
         "preferredLang",
-        context.read<GlobalProvider>().fieldInputValue["preferredLang"].toString() ?? "");
+        context.read<GlobalProvider>().fieldInputValue["preferredLang"].toString());
   }
 
   @override
