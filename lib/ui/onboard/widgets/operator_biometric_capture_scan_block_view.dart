@@ -81,7 +81,7 @@ class _OperatorBiometricCaptureScanBlockViewState
     }
   }
 
-  _showCustomAlert( List<Uint8List?> temp) {
+  _showCustomAlert(List<Uint8List?> temp) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => SingleChildScrollView(
@@ -165,7 +165,7 @@ class _OperatorBiometricCaptureScanBlockViewState
   _showScanDialogBox(List<Uint8List?> temp) async {
     // int currentAttemptNo = await BiometricsApi().getBioAttempt(
     //     "operatorBiometrics", biometricAttributeData.title.replaceAll(" ", ""));
-    _showCustomAlert( temp);
+    _showCustomAlert(temp);
   }
 
   Widget _scanBlock() {
@@ -285,9 +285,7 @@ class _OperatorBiometricCaptureScanBlockViewState
         ),
         ElevatedButton.icon(
           onPressed: () async {
-            if (biometricAttributeData.exceptions.contains(false) && !biometricAttributeData.isScanned) {
-              // if (biometricAttributeData.attemptNo <
-              //     biometricAttributeData.noOfCapturesAllowed) {
+            if (biometricAttributeData.exceptions.contains(false)) {
               List<Uint8List?> tempImageList = [];
               await BiometricsApi().invokeDiscoverSbi("operatorBiometrics",
                   biometricAttributeData.title.replaceAll(" ", ""));
@@ -352,9 +350,10 @@ class _OperatorBiometricCaptureScanBlockViewState
             padding: (isMobileSize)
                 ? const EdgeInsets.symmetric(horizontal: 35, vertical: 25)
                 : const EdgeInsets.symmetric(horizontal: 46, vertical: 34),
-            backgroundColor: ((biometricAttributeData.exceptions.contains(false) && !biometricAttributeData.isScanned)
-                ? solidPrimary
-                : secondaryColors.elementAt(22)),
+            backgroundColor:
+                ((biometricAttributeData.exceptions.contains(false))
+                    ? solidPrimary
+                    : secondaryColors.elementAt(22)),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
@@ -394,11 +393,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                       child: InkWell(
                         onTap: () async {
                           if (!(biometricAttributeData.exceptions[0]) == true) {
-                            await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "Iris",
-                                                          "leftEye");
+                            await BiometricsApi().addBioException(
+                                "operatorBiometrics", "Iris", "leftEye");
                             biometricAttributeData.isScanned = false;
                             biometricAttributeData.attemptNo = 0;
                             biometricAttributeData.listofImages = [
@@ -409,11 +405,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                             biometricAttributeData.qualityPercentage = 0.0;
                             biometricAttributeData.thresholdPercentage = "0";
                           } else {
-                            await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "Iris",
-                                                          "leftEye");
+                            await BiometricsApi().removeBioException(
+                                "operatorBiometrics", "Iris", "leftEye");
                             biometricAttributeData.isScanned = false;
                             biometricAttributeData.attemptNo = 0;
                             biometricAttributeData.listofImages = [
@@ -470,11 +463,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                       child: InkWell(
                         onTap: () async {
                           if (!(biometricAttributeData.exceptions[1]) == true) {
-                            await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "Iris",
-                                                          "rightEye");
+                            await BiometricsApi().addBioException(
+                                "operatorBiometrics", "Iris", "rightEye");
                             biometricAttributeData.isScanned = false;
                             biometricAttributeData.attemptNo = 0;
                             biometricAttributeData.listofImages = [
@@ -485,11 +475,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                             biometricAttributeData.qualityPercentage = 0.0;
                             biometricAttributeData.thresholdPercentage = "0";
                           } else {
-                            await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "Iris",
-                                                          "rightEye");
+                            await BiometricsApi().removeBioException(
+                                "operatorBiometrics", "Iris", "rightEye");
                             biometricAttributeData.isScanned = false;
                             biometricAttributeData.attemptNo = 0;
                             biometricAttributeData.listofImages = [
@@ -755,7 +742,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                         .exceptions
                                                         .elementAt(1)) ==
                                                     true) {
-                                                      await BiometricsApi()
+                                                  await BiometricsApi()
                                                       .addBioException(
                                                           "operatorBiometrics",
                                                           "RightHand",
@@ -842,7 +829,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                         .exceptions
                                                         .elementAt(2)) ==
                                                     true) {
-                                                      await BiometricsApi()
+                                                  await BiometricsApi()
                                                       .addBioException(
                                                           "operatorBiometrics",
                                                           "RightHand",
@@ -929,7 +916,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                         .exceptions
                                                         .elementAt(3)) ==
                                                     true) {
-                                                      await BiometricsApi()
+                                                  await BiometricsApi()
                                                       .addBioException(
                                                           "operatorBiometrics",
                                                           "RightHand",
@@ -1165,11 +1152,11 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                       .exceptions
                                                       .elementAt(3)) ==
                                                   true) {
-                                                    await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftLittle");
+                                                await BiometricsApi()
+                                                    .addBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftLittle");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1186,10 +1173,10 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                     .thresholdPercentage = "0";
                                               } else {
                                                 await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftLittle");
+                                                    .removeBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftLittle");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1251,11 +1238,11 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                       .exceptions
                                                       .elementAt(2)) ==
                                                   true) {
-                                                    await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftRing");
+                                                await BiometricsApi()
+                                                    .addBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftRing");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1272,10 +1259,10 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                     .thresholdPercentage = "0";
                                               } else {
                                                 await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftRing");
+                                                    .removeBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftRing");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1336,11 +1323,11 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                       .exceptions
                                                       .elementAt(1)) ==
                                                   true) {
-                                                    await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftMiddle");
+                                                await BiometricsApi()
+                                                    .addBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftMiddle");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1357,10 +1344,10 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                     .thresholdPercentage = "0";
                                               } else {
                                                 await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftMiddle");
+                                                    .removeBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftMiddle");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1421,11 +1408,11 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                       .exceptions
                                                       .elementAt(0)) ==
                                                   true) {
-                                                    await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftIndex");
+                                                await BiometricsApi()
+                                                    .addBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftIndex");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1442,10 +1429,10 @@ class _OperatorBiometricCaptureScanBlockViewState
                                                     .thresholdPercentage = "0";
                                               } else {
                                                 await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "LeftHand",
-                                                          "leftIndex");
+                                                    .removeBioException(
+                                                        "operatorBiometrics",
+                                                        "LeftHand",
+                                                        "leftIndex");
                                                 biometricAttributeData
                                                     .isScanned = false;
                                                 biometricAttributeData
@@ -1544,11 +1531,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                     onTap: () async {
                       if (!(biometricAttributeData.exceptions.elementAt(0)) ==
                           true) {
-                            await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "Thumbs",
-                                                          "leftThumb");
+                        await BiometricsApi().addBioException(
+                            "operatorBiometrics", "Thumbs", "leftThumb");
                         biometricAttributeData.isScanned = false;
                         biometricAttributeData.attemptNo = 0;
                         biometricAttributeData.listofImages = [
@@ -1558,11 +1542,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                         biometricAttributeData.qualityPercentage = 0;
                         biometricAttributeData.thresholdPercentage = "0";
                       } else {
-                        await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "Thumbs",
-                                                          "leftThumb");
+                        await BiometricsApi().removeBioException(
+                            "operatorBiometrics", "Thumbs", "leftThumb");
                         biometricAttributeData.isScanned = false;
                         biometricAttributeData.attemptNo = 0;
                         biometricAttributeData.listofImages = [
@@ -1600,11 +1581,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                       onTap: () async {
                         if (!(biometricAttributeData.exceptions.elementAt(1)) ==
                             true) {
-                              await BiometricsApi()
-                                                      .addBioException(
-                                                          "operatorBiometrics",
-                                                          "Thumbs",
-                                                          "rightThumb");
+                          await BiometricsApi().addBioException(
+                              "operatorBiometrics", "Thumbs", "rightThumb");
                           biometricAttributeData.isScanned = false;
                           biometricAttributeData.attemptNo = 0;
                           biometricAttributeData.listofImages = [
@@ -1614,11 +1592,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                           biometricAttributeData.qualityPercentage = 0;
                           biometricAttributeData.thresholdPercentage = "0";
                         } else {
-                          await BiometricsApi()
-                                                      .removeBioException(
-                                                          "operatorBiometrics",
-                                                          "Thumbs",
-                                                          "rightThumb");
+                          await BiometricsApi().removeBioException(
+                              "operatorBiometrics", "Thumbs", "rightThumb");
                           biometricAttributeData.isScanned = false;
                           biometricAttributeData.attemptNo = 0;
                           biometricAttributeData.listofImages = [
