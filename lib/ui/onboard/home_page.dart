@@ -139,6 +139,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
+    Clipboard.setData(ClipboardData(text: context.read<RegistrationTaskProvider>().listOfProcesses.toString()));
     if (process.id == "NEW") {
       _newRegistrationClickedAudit();
       context.read<GlobalProvider>().clearMap();

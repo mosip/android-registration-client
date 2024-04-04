@@ -98,9 +98,10 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
       response =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
     }
-    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
+    List<DynamicFieldData?> data =
+        await _getFieldValues(widget.field.subType!, lang);
     for (var element in data) {
-      if(element!.name == response){
+      if (element!.name == response) {
         setState(() {
           selected = response;
         });
@@ -108,7 +109,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     }
   }
 
-  Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
+  Future<List<DynamicFieldData?>> _getFieldValues(
+      String fieldId, String langCode) async {
     return await context
         .read<RegistrationTaskProvider>()
         .getFieldValues(fieldId, langCode);
@@ -123,7 +125,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!,
             context.read<GlobalProvider>().selectedLanguage),
-        builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
             elevation: 5,
             margin: EdgeInsets.symmetric(
@@ -165,7 +168,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           value: selected,
                           validator: (value) {
                             if (!widget.field.required! &&
-                                widget.field.requiredOn!.isEmpty) {
+                                (widget.field.requiredOn == null ||
+                                    widget.field.requiredOn!.isEmpty)) {
                               return null;
                             }
                             if (value == null || value.isEmpty) {
@@ -182,7 +186,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           },
                           onChanged: (value) {
                             for (var e in snapshot.data!) {
-                              if(e!.name == value){
+                              if (e!.name == value) {
                                 saveData(e.code);
                               }
                             }
