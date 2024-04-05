@@ -988,7 +988,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       child: TextField(
         decoration: InputDecoration(
           hintText: appLocalizations.enter_username,
-          hintStyle: isPortrait
+          hintStyle: isPortrait && !isMobileSize
               ? AppTextStyle.tabletPortraitTextfieldHintText
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
@@ -1026,7 +1026,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         obscureText: true,
         decoration: InputDecoration(
           hintText: appLocalizations.enter_password,
-          hintStyle: isPortrait
+          hintStyle: isPortrait && !isMobileSize
               ? AppTextStyle.tabletPortraitTextfieldHintText
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
