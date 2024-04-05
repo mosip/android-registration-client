@@ -35,7 +35,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
 
   @override
   void initState() {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    String lang = context.read<GlobalProvider>().selectedLanguage;
     if (context
         .read<GlobalProvider>()
         .fieldInputValue
@@ -65,7 +65,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   void _saveDataToMap(value) {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    String lang = context.read<GlobalProvider>().selectedLanguage;
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         context.read<GlobalProvider>().setLanguageSpecificValue(
