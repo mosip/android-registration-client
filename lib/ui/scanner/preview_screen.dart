@@ -9,6 +9,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import '../../utils/app_config.dart';
+
 class PreviewScreen extends StatefulWidget {
   final Uint8List bytes;
   const PreviewScreen({
@@ -26,6 +28,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 1,
+        surfaceTintColor: transparentColor,
+        backgroundColor: appWhite,
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),

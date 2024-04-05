@@ -128,6 +128,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
         builder: (BuildContext context,
             AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
+            surfaceTintColor: transparentColor,
+            color: appWhite,
             elevation: 5,
             margin: EdgeInsets.symmetric(
                 vertical: 1.h, horizontal: isPortrait ? 16.w : 0),

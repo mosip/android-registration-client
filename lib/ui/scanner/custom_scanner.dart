@@ -151,9 +151,9 @@ class _CustomScannerState extends State<CustomScanner> {
                       style: OutlinedButton.styleFrom(
                         elevation: 0,
                         backgroundColor: Colors.white,
-                        side: BorderSide(width: 2.0, color: solidPrimary),
+                        side: const BorderSide(width: 2.0, color: buttonGreyBorderColor),
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                       ),
                       onPressed: () async {
@@ -173,12 +173,18 @@ class _CustomScannerState extends State<CustomScanner> {
                   child: SizedBox(
                     height: 50,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: solidPrimary,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                      ),
                       onPressed: () async {
                         _cropImage(context);
                       },
                       child: Text(
                         AppLocalizations.of(context)!.save,
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16,color: appWhite),
                       ),
                     ),
                   ),
