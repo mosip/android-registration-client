@@ -157,6 +157,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             hintStyle: const TextStyle(
                               color: appBlackShade3,
                             ),
+                            suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
