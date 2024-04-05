@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.config;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.AuditDao;
 import io.mosip.registration.clientmanager.dao.BlocklistedWordDao;
@@ -76,15 +78,16 @@ public class RoomModule {
 
     private ClientDatabase clientDatabase;
 
-    public RoomModule(Application application) {
+    public RoomModule(Application application, ApplicationInfo applicationInfo) {
         Context context = application.getApplicationContext();
         try {
+            boolean isDebug = (applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
             String dbPwd = getEncryptedSharedPreferences(context).getString(DB_PWD_KEY, null);
             Log.i(TAG, "Db password found in sharedPreferences.");
             boolean dbExists = context.getDatabasePath(DATABASE_NAME).exists();
             if (dbPwd == null) {
                 Log.i(TAG, "Db password found null. Creating new pwd and storing in SharedPreferences.");
-                dbPwd = RandomStringUtils.random(20, 0, 0, true, true, null, secureRandom);
+                dbPwd = isDebug ? BuildConfig.DEBUG_PASSWORD : RandomStringUtils.random(20, 0, 0, true, true, null, secureRandom);
                 getEncryptedSharedPreferences(context).edit()
                         .putString(DB_PWD_KEY, dbPwd)
                         .apply();
