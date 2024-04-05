@@ -163,9 +163,6 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void manualSync() {
-        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null)
-            return;
         try {
             syncMasterData(() -> {
                 Log.i(TAG, "manualSync: MasterData sync completed");
@@ -178,8 +175,10 @@ public class MasterDataServiceImpl implements MasterDataService {
                                 syncGlobalParamsData(() -> {
                                     Log.i(TAG, "manualSync: GlobalParamsData sync completed");
                                     try {
+                                        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
                                         syncCertificate(() -> {
                                             Log.i(TAG, "manualSync: Certificate sync completed");
+
                                             syncCertificate(() -> {
                                                 Log.i(TAG, "manualSync: Certificate kernel sync completed");
                                             }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY");

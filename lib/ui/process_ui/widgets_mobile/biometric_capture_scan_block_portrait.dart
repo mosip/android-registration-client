@@ -2363,8 +2363,8 @@ class _BiometricCaptureScanBlockPortraitState
         bottomNavigationBar: Container(
           color: pureWhite,
           padding: EdgeInsets.symmetric(
-            horizontal: (isMobileSize) ? 30.w : 80.w,
-            vertical: 16.h,
+            horizontal: (isMobileSize) ? 20.w : 80.w,
+            vertical: (isMobileSize) ? 10.h : 16.h,
           ),
           height: (isMobileSize) ? 60.w : 100.h,
           child: Row(
@@ -2374,9 +2374,9 @@ class _BiometricCaptureScanBlockPortraitState
               ElevatedButton(
                 style: ButtonStyle(
                   maximumSize:
-                      MaterialStateProperty.all<Size>(const Size(215, 68)),
+                      MaterialStateProperty.all<Size>(const Size(200, 68)),
                   minimumSize:
-                      MaterialStateProperty.all<Size>(const Size(215, 68)),
+                      MaterialStateProperty.all<Size>(const Size(200, 68)),
                 ),
                 onPressed: () {
                   List<String> bioAttributes = (widget
@@ -2405,7 +2405,7 @@ class _BiometricCaptureScanBlockPortraitState
                   }
                 },
                 child: Text(AppLocalizations.of(context)!.next_button,
-                    style: TextStyle(fontSize: 24, fontWeight: bold)),
+                    style: TextStyle(fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold)),
               ),
             ],
           ),
