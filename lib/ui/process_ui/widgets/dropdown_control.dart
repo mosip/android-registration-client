@@ -235,7 +235,8 @@ class _CustomDropDownState extends State<DropDownControl> {
                   value: selected,
                   validator: (value) {
                     if (!widget.field.required! &&
-                        widget.field.requiredOn!.isEmpty) {
+                        (widget.field.requiredOn == null ||
+                            widget.field.requiredOn!.isEmpty)) {
                       return null;
                     }
                     if (value == null) {

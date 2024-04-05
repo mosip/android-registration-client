@@ -206,7 +206,9 @@ class _TextBoxControlState extends State<TextBoxControl>
                       saveData(value, lang);
                     },
                     validator: (value) {
-                      if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
+                      if (!widget.e.required! &&
+                          (widget.e.requiredOn == null ||
+                              widget.e.requiredOn!.isEmpty)) {
                         if (value == null || value.isEmpty) {
                           return null;
                         } else if (!widget.validation.hasMatch(value)) {
@@ -227,8 +229,9 @@ class _TextBoxControlState extends State<TextBoxControl>
                       }
                       return null;
                     },
-                    textAlign:
-                        Bidi.isRtlLanguage(lang.substring(0,2)) ? TextAlign.right : TextAlign.left,
+                    textAlign: Bidi.isRtlLanguage(lang.substring(0, 2))
+                        ? TextAlign.right
+                        : TextAlign.left,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
