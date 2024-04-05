@@ -19,8 +19,10 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_driver/driver_extension.dart';
 
 void main() async {
+  enableFlutterDriverExtension(enableTextEntryEmulation: false);
   WidgetsFlutterBinding.ensureInitialized();
   final GlobalProvider appLanguage = GlobalProvider();
   await FlutterConfig.loadEnvVariables();
