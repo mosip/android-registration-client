@@ -42,6 +42,7 @@ ext {
     serverBaseURL = "\"https://api-internal.qa-platform1.mosip.net/\""
     serverHealthCheckPath = "\"v1/syncdata/actuator/health\""
     serverActuatorInfoPath = "\"v1/syncdata/actuator/info\""
+    debugPassword = "\"APTyKejHxACQyKBSRciR\""
 }
 
 
