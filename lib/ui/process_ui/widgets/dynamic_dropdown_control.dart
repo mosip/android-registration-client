@@ -98,9 +98,10 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     } else {
       response = globalProvider.fieldInputValue[widget.field.id ?? ""];
     }
-    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
+    List<DynamicFieldData?> data =
+        await _getFieldValues(widget.field.subType!, lang);
     for (var element in data) {
-      if(element!.name == response){
+      if (element!.name == response) {
         setState(() {
           selected = response;
         });
@@ -151,6 +152,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             hintStyle: const TextStyle(
                               color: appBlackShade3,
                             ),
+                            suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
@@ -162,7 +164,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           value: selected,
                           validator: (value) {
                             if (!widget.field.required! &&
-                                widget.field.requiredOn!.isEmpty) {
+                                (widget.field.requiredOn == null ||
+                                    widget.field.requiredOn!.isEmpty)) {
                               return null;
                             }
                             if (value == null || value.isEmpty) {
@@ -177,7 +180,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           },
                           onChanged: (value) {
                             for (var e in snapshot.data!) {
-                              if(e!.name == value){
+                              if (e!.name == value) {
                                 saveData(e.code);
                               }
                             }

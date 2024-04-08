@@ -218,7 +218,7 @@ class _DateControlState extends State<DateControl> {
                     vertical: 14,
                     horizontal: 16,
                   ),
-                  hintText: "dd/mm/yyyy",
+                  hintText: "yyyy/MM/dd",
                   hintStyle: const TextStyle(
                     color: appBlackShade3,
                     fontSize: 14,
