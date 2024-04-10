@@ -219,8 +219,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    String mandatoryLanguageCode =
-        globalProvider.mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -250,7 +248,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           if (value == null || value.isEmpty) {
                             return AppLocalizations.of(context)!
                                 .demographicsScreenEmptyMessage(
-                                    mandatoryLanguageCode);
+                                    globalProvider.selectedLanguage);
                           }
                           return null;
                         },
@@ -290,7 +288,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           if (value == null || value.isEmpty) {
                             return AppLocalizations.of(context)!
                                 .demographicsScreenEmptyMessage(
-                                    mandatoryLanguageCode);
+                                    globalProvider.selectedLanguage);
                           }
                           return null;
                         },

@@ -216,18 +216,18 @@ class _TextBoxControlState extends State<TextBoxControl>
                         } else if (!widget.validation.hasMatch(value)) {
                           return AppLocalizations.of(context)!
                               .demographicsScreenInvalidMessage(
-                                  mandatoryLanguageCode);
+                                  globalProvider.selectedLanguage);
                         }
                       }
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!
                             .demographicsScreenEmptyMessage(
-                                mandatoryLanguageCode);
+                                globalProvider.selectedLanguage);
                       }
                       if (!widget.validation.hasMatch(value)) {
                         return AppLocalizations.of(context)!
                             .demographicsScreenInvalidMessage(
-                                mandatoryLanguageCode);
+                                globalProvider.selectedLanguage);
                       }
                       return null;
                     },

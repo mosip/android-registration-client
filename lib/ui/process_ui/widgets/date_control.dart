@@ -170,8 +170,6 @@ class _DateControlState extends State<DateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    String mandatoryLanguageCode =
-        globalProvider.mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -202,12 +200,12 @@ class _DateControlState extends State<DateControl> {
                   }
                   if (value == null || value.isEmpty) {
                     return AppLocalizations.of(context)!
-                        .demographicsScreenEmptyMessage(mandatoryLanguageCode);
+                        .demographicsScreenEmptyMessage(globalProvider.selectedLanguage);
                   }
                   if (!widget.validation.hasMatch(value)) {
                     return AppLocalizations.of(context)!
                         .demographicsScreenInvalidMessage(
-                            mandatoryLanguageCode);
+                            globalProvider.selectedLanguage);
                   }
                   return null;
                 },
