@@ -28,8 +28,8 @@
   "password_exceed": "Password should not exceed 50 characters!",
   "username_incorrect": "User not found!",
   "device_credentials": "Device Credentials",
-  "copy_text": "Copy Text",
-  "download_json": "Download JSON",
+  "copy_text": "COPY TEXT",
+  "download_json": "DOWNLOAD JSON",
   "copy_message": "Machine Details copied to clipboard!",
   "download_message": "File Saved to Downloads!",
   "logout": "LOGOUT",
@@ -216,5 +216,6 @@
   "face":"Face",
   "preview_page": "Preview",
   "packet_auth_page": "Authentication",
-  "acknowledgement_page": "Acknowledgement"
+  "acknowledgement_page": "Acknowledgement",
+  "share": "SHARE"
 }

@@ -46,6 +46,9 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     public static final String IS_DEFAULT = "is_default";
     public static final String USER_NAME = "user_name";
     public static final String IS_OPERATOR = "is_operator";
+    public static final String PREFERRED_USERNAME = "preferred_username";
+    public static final String USER_EMAIL = "user_email";
+
 
     @Inject
     public AuthenticationApi(Context context, SyncRestService syncRestService, SyncRestUtil syncRestFactory,
@@ -64,7 +67,9 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     private AuthResponsePigeon.AuthResponse getAuthErrorResponse(String errorCode) {
         AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                 .setResponse("")
+                .setUserId("")
                 .setUsername("")
+                .setUserEmail("")
                 .setIsDefault(false)
                 .setIsOfficer(false)
                 .setIsSupervisor(false)
@@ -87,9 +92,13 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse(), username);
                             loginService.setPasswordHash(username, password);
+                            String preferredUsername = sharedPreferences.getString(PREFERRED_USERNAME, username);
+                            String fullName = sharedPreferences.getString(USER_NAME, preferredUsername);
                             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                                     .setResponse(wrapper.getResponse())
-                                    .setUsername(sharedPreferences.getString(USER_NAME, username))
+                                    .setUserId(username)
+                                    .setUsername(fullName)
+                                    .setUserEmail(sharedPreferences.getString(USER_EMAIL, ""))
                                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
                                     .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
                                     .setIsOperator(sharedPreferences.getBoolean(IS_OPERATOR, false))
@@ -148,9 +157,13 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
         try {
             String token = loginService.saveUserAuthTokenOffline(username);
+            String preferredUsername = sharedPreferences.getString(PREFERRED_USERNAME, username);
+            String fullName = sharedPreferences.getString(USER_NAME, preferredUsername);
             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse(token)
-                    .setUsername(sharedPreferences.getString(USER_NAME, username))
+                    .setUserId(username)
+                    .setUsername(fullName)
+                    .setUserEmail(sharedPreferences.getString(USER_EMAIL, ""))
                     .setIsDefault(sharedPreferences.getBoolean(IS_DEFAULT, false))
                     .setIsOfficer(sharedPreferences.getBoolean(IS_OFFICER, false))
                     .setIsOperator(sharedPreferences.getBoolean(IS_OPERATOR, false))

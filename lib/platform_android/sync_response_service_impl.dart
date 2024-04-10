@@ -12,10 +12,10 @@ import 'package:registration_client/platform_spi/sync_response_service.dart';
 
 class SyncResponseServiceImpl implements SyncResponseService {
   @override
-  Future<Sync> getPolicyKeySync() async {
+  Future<Sync> getPolicyKeySync(bool isManualSync) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getPolicyKeySync();
+      syncResponse = await SyncApi().getPolicyKeySync(isManualSync);
     } on PlatformException {
       debugPrint('PolicyKeySync Api call failed, PlatformException');
     } catch (e) {
@@ -25,10 +25,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getGlobalParamsSync() async {
+  Future<Sync> getGlobalParamsSync(bool isManualSync) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getGlobalParamsSync();
+      syncResponse = await SyncApi().getGlobalParamsSync(isManualSync);
     } on PlatformException {
       debugPrint('GlobalParamsSync Api call failed, PlatformException');
     } catch (e) {
@@ -38,10 +38,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getUserDetailsSync() async {
+  Future<Sync> getUserDetailsSync(bool isManualSync) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getUserDetailsSync();
+      syncResponse = await SyncApi().getUserDetailsSync(isManualSync);
     } on PlatformException {
       debugPrint('UserDetailsSync Api call failed, PlatformException');
     } catch (e) {
@@ -51,10 +51,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getIDSchemaSync() async {
+  Future<Sync> getIDSchemaSync(bool isManualSync) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getIDSchemaSync();
+      syncResponse = await SyncApi().getIDSchemaSync(isManualSync);
     } on PlatformException {
       debugPrint('IDSchemaSync Api call failed, PlatformException');
     } catch (e) {
@@ -64,10 +64,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getMasterDataSync() async {
+  Future<Sync> getMasterDataSync(bool isManualSync) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getMasterDataSync();
+      syncResponse = await SyncApi().getMasterDataSync(isManualSync);
     } on PlatformException {
       debugPrint('MasterDataSync Api call failed, PlatformException');
     } catch (e) {
@@ -90,10 +90,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getCaCertsSync() async {
+  Future<Sync> getCaCertsSync(bool isManualSync) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getCaCertsSync();
+      syncResponse = await SyncApi().getCaCertsSync(isManualSync);
     } on PlatformException {
       debugPrint('CaCerts Api call failed, PlatformException');
     } catch (e) {
@@ -101,12 +101,25 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncResponse;
   }
+  
+  @override
+  Future<String> batchJob() async {
+    String batchJobResponse = "";
+    try {
+      batchJobResponse = await SyncApi().batchJob();
+    } on PlatformException {
+      debugPrint('Batch Job Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('Batch Job has failed! ${e.toString()}');
+    }
+    return batchJobResponse;
+  }
 
   @override
-  Future<Sync> getKernelCertsSync() async {
+  Future<Sync> getKernelCertsSync(bool isManualSync) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getKernelCertsSync();
+      syncResponse = await SyncApi().getKernelCertsSync(isManualSync);
     } on PlatformException {
       debugPrint('KernelCerts Api call failed, PlatformException');
     } catch (e) {
@@ -115,3 +128,5 @@ class SyncResponseServiceImpl implements SyncResponseService {
     return syncResponse;
   }
 }
+
+SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

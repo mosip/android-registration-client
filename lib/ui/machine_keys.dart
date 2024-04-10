@@ -19,36 +19,39 @@ import 'package:registration_client/utils/file_storage.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-// ignore: must_be_immutable
-class MachineKeys extends StatelessWidget {
+class MachineKeys extends StatefulWidget {
   final VoidCallback onCloseComponent;
 
-  MachineKeys({
+  const MachineKeys({
     super.key,
     required this.onCloseComponent,
   });
 
+  @override
+  State<MachineKeys> createState() => _MachineKeysState();
+}
+
+class _MachineKeysState extends State<MachineKeys> {
   String machineDetails = '';
   bool isMobile = true;
-  late BuildContext _context;
+  late GlobalProvider globalProvider;
+  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
-  _machineKeysLoadedAudit() async {
-    await _context
-        .read<GlobalProvider>()
-        .getAudit("REG-LOAD-002", "REG-MOD-101");
+  @override
+  void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    Map<String?, String?> map = globalProvider.machineDetails;
+    if (map.isEmpty) {
+      machineDetails = appLocalizations.not_initialized;
+    } else {
+      machineDetails = jsonEncode(map).toString();
+    }
+    globalProvider.getAudit("REG-LOAD-002", "REG-MOD-101");
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _context = context;
-    Map<String?, String?> map = context.read<GlobalProvider>().machineDetails;
-
-    if (map.isEmpty) {
-      machineDetails = AppLocalizations.of(context)!.not_initialized;
-    } else {
-      machineDetails = jsonEncode(map).toString();
-    }
-    _machineKeysLoadedAudit();
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Container(
@@ -76,7 +79,7 @@ class MachineKeys extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      AppLocalizations.of(context)!.device_credentials,
+                      appLocalizations.device_credentials,
                       style: TextStyle(
                         color: appBlack,
                         fontSize: isMobileSize ? 18 : 26,
@@ -85,7 +88,7 @@ class MachineKeys extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: onCloseComponent,
+                    onPressed: widget.onCloseComponent,
                     icon: const Icon(
                       Icons.close,
                       color: appBlack,
@@ -106,12 +109,11 @@ class MachineKeys extends StatelessWidget {
               height: 20.h,
             ),
             _downloadButton(
-              title: AppLocalizations.of(_context)!.download_json,
+              title: appLocalizations.download_json,
               onTap: () {
                 FileStorage.writeCounter(machineDetails, "machine_details.txt")
                     .then((value) {
-                  showInSnackBar(
-                      AppLocalizations.of(_context)!.download_message);
+                  showInSnackBar(appLocalizations.download_message);
                 });
               },
             ),
@@ -119,7 +121,7 @@ class MachineKeys extends StatelessWidget {
               height: 20.h,
             ),
             _downloadButton(
-              title: "SHARE",
+              title: appLocalizations.share,
               onTap: () {},
             ),
             SizedBox(
@@ -132,7 +134,7 @@ class MachineKeys extends StatelessWidget {
   }
 
   void showInSnackBar(String value) {
-    ScaffoldMessenger.of(_context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(value),
       ),
@@ -143,7 +145,7 @@ class MachineKeys extends StatelessWidget {
     return InkWell(
       onTap: () {
         Clipboard.setData(ClipboardData(text: machineDetails)).then((value) {
-          showInSnackBar(AppLocalizations.of(_context)!.copy_message);
+          showInSnackBar(appLocalizations.copy_message);
         });
       },
       child: Container(
@@ -160,7 +162,7 @@ class MachineKeys extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            AppLocalizations.of(_context)!.copy_text,
+            appLocalizations.copy_text,
             style: isMobileSize
                 ? AppTextStyle.primaryButtonTextSmall
                 : AppTextStyle.primaryButtonText,

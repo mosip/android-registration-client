@@ -5,14 +5,10 @@
  *
 */
 
-// ignore_for_file: deprecated_member_use
-
-// import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -22,26 +18,17 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
-// import 'package:registration_client/ui/common/tablet_footer.dart';
-// import 'package:registration_client/ui/common/tablet_header.dart';
-// import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
-// import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
 
-// import 'package:registration_client/utils/app_config.dart';
-// import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
   const HomePage({super.key});
-
-  static const platform =
-      MethodChannel('com.flutter.dev/io.mosip.get-package-instance');
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -49,8 +36,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isMobile = true;
+  late SyncProvider syncProvider;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+  late ConnectivityProvider connectivityProvider;
+  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
   @override
   void initState() {
+    syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    connectivityProvider =
+        Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
     super.initState();
   }
@@ -63,101 +62,55 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _getIsConnected() {
-    return context.read<ConnectivityProvider>().isConnected;
-  }
-
-  _showNetworkErrorMessage() {
-    _showInSnackBar(AppLocalizations.of(context)!.network_error);
-  }
-
   void syncData(BuildContext context) async {
-    await context.read<ConnectivityProvider>().checkNetworkConnection();
-    bool isConnected = _getIsConnected();
-    if (!isConnected) {
-      _showNetworkErrorMessage();
+    await connectivityProvider.checkNetworkConnection();
+    if (!connectivityProvider.isConnected) {
+      _showInSnackBar(appLocalizations.network_error);
       return;
     }
-    // ignore: use_build_context_synchronously
-    await context.read<SyncProvider>().getLastSyncTime();
-    await _masterDataSync();
-    // ignore: use_build_context_synchronously
-    await context.read<SyncProvider>().getLastSyncTime();
-    await _getNewProcessSpecAction();
-    await _getCenterNameAction();
-    await _initializeLanguageDataList();
-    await _initializeLocationHierarchy();
+    await syncProvider.getLastSyncTime();
+    await syncProvider.manualSync();
+    log("Manual Sync Completed!");
+    await syncProvider.batchJob();
+    await syncProvider.getLastSyncTime();
+    await registrationTaskProvider.getListOfProcesses();
+    await globalProvider.getRegCenterName(
+        globalProvider.centerId, globalProvider.selectedLanguage);
+    await globalProvider.initializeLanguageDataList(true);
+    await globalProvider.initializeLocationHierarchyMap();
   }
 
   void _fetchProcessSpec() async {
-    await _getNewProcessSpecAction();
-    await _getFieldValues("preferredLang", "eng");
-    await _getCenterNameAction();
-    await _homePageLoadedAudit();
-  }
-
-  _initializeLanguageDataList() async {
-    await context.read<GlobalProvider>().initializeLanguageDataList();
-  }
-
-  _initializeLocationHierarchy() async {
-    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
+    await registrationTaskProvider.getListOfProcesses();
+    await _getFieldValues("preferredLang", globalProvider.selectedLanguage);
+    await globalProvider.getRegCenterName(
+        globalProvider.centerId, globalProvider.selectedLanguage);
+    await globalProvider.getAudit("REG-LOAD-003", "REG-MOD-102");
   }
 
   _getFieldValues(String fieldId, String langCode) async {
-    List<DynamicFieldData?> fieldValues = await context
-        .read<RegistrationTaskProvider>()
-        .getFieldValues(fieldId, langCode);
-    _setNotificationLanguages(fieldValues);
-  }
-
-  _setNotificationLanguages(List<DynamicFieldData?> fieldValues) {
-    context.read<GlobalProvider>().setNotificationLanguages(fieldValues);
-  }
-
-  _homePageLoadedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-LOAD-003", "REG-MOD-102");
-  }
-
-  Future<void> _masterDataSync() async {
-    String result;
-    try {
-      result = await HomePage.platform.invokeMethod("masterDataSync");
-      await HomePage.platform.invokeMethod("batchJob");
-    } on PlatformException catch (e) {
-      result = "Some Error Occurred: $e";
-    }
-    debugPrint(result);
-  }
-
-  _newRegistrationClickedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-HOME-002", "REG-MOD-102");
+    List<DynamicFieldData?> fieldValues =
+        await registrationTaskProvider.getFieldValues(fieldId, langCode);
+    globalProvider.setNotificationLanguages(fieldValues);
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    Clipboard.setData(ClipboardData(text: context.read<RegistrationTaskProvider>().listOfProcesses.toString()));
     if (process.id == "NEW") {
-      _newRegistrationClickedAudit();
-      context.read<GlobalProvider>().clearMap();
-      context.read<GlobalProvider>().clearScannedPages();
-      context.read<GlobalProvider>().newProcessTabIndex = 0;
-      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-      context.read<GlobalProvider>().setRegId("");
+      globalProvider.clearMap();
+      globalProvider.clearScannedPages();
+      globalProvider.newProcessTabIndex = 0;
+      globalProvider.htmlBoxTabIndex = 0;
+      globalProvider.setRegId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
               field.fieldType == 'default') {
-            context
-                .read<GlobalProvider>()
-                .initializeGroupedHierarchyMap(field.group!);
+            globalProvider.initializeGroupedHierarchyMap(field.group!);
           }
         }
       }
-      context.read<GlobalProvider>().createRegistrationLanguageMap();
+      globalProvider.createRegistrationLanguageMap();
+      globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -168,23 +121,11 @@ class _HomePageState extends State<HomePage> {
     return Container();
   }
 
-  _getNewProcessSpecAction() async {
-    await context.read<RegistrationTaskProvider>().getListOfProcesses();
-  }
-
-  _getCenterNameAction() async {
-    String regCenterId = context.read<GlobalProvider>().centerId;
-
-    String langCode = context.read<GlobalProvider>().selectedLanguage;
-    await context
-        .read<GlobalProvider>()
-        .getRegCenterName(regCenterId, langCode);
-  }
-
   @override
   Widget build(BuildContext context) {
-    // double w = ScreenUtil().screenWidth;
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
+    appLocalizations = AppLocalizations.of(context)!;
+
     List<Map<String, dynamic>> operationalTasks = [
       {
         "icon": SvgPicture.asset(
@@ -192,7 +133,7 @@ class _HomePageState extends State<HomePage> {
           width: 20,
           height: 20,
         ),
-        "title": AppLocalizations.of(context)!.synchronize_data,
+        "title": appLocalizations.synchronize_data,
         "onTap": syncData,
         "subtitle": DateFormat("EEEE d MMMM, hh:mma")
             .format(DateTime.parse(
@@ -204,7 +145,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": AppLocalizations.of(context)!.download_pre_registration_data,
+        "title": appLocalizations.download_pre_registration_data,
         "onTap": () {},
         "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
       },
@@ -212,7 +153,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",
         ),
-        "title": AppLocalizations.of(context)!.update_operator_biomterics,
+        "title": appLocalizations.update_operator_biomterics,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -220,7 +161,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": AppLocalizations.of(context)!.appliction_upload,
+        "title": appLocalizations.appliction_upload,
         "onTap": () {},
         "subtitle": "3 application(s)"
       },
@@ -228,7 +169,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Onboarding Yourself.svg",
         ),
-        "title": AppLocalizations.of(context)!.check_updates,
+        "title": appLocalizations.check_updates,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -236,7 +177,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": AppLocalizations.of(context)!.center_remap_sync,
+        "title": appLocalizations.center_remap_sync,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
@@ -244,21 +185,22 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
-        "title": AppLocalizations.of(context)!.sync_activities,
+        "title": appLocalizations.sync_activities,
         "onTap": () {},
         "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       },
     ];
 
     return MobileHomePage(
-            operationalTasks: operationalTasks,
-            getProcessUI: (BuildContext context, Process process) {
-              getProcessUI(context, process);
-            },
-            syncData: (BuildContext context) {
-              syncData(context);
-            },
-          );}
+      operationalTasks: operationalTasks,
+      getProcessUI: (BuildContext context, Process process) {
+        getProcessUI(context, process);
+      },
+      syncData: (BuildContext context) {
+        syncData(context);
+      },
+    );
+  }
 }
 
 /*This piece of code is for the deprecated version of the home page*/
