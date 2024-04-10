@@ -43,9 +43,11 @@ import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
 import io.mosip.registration.clientmanager.dao.TemplateDao;
+import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
+import io.mosip.registration.clientmanager.entity.UserBiometric;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
@@ -61,6 +63,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
+import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
@@ -252,6 +255,12 @@ public class RoomModule {
 
     @Singleton
     @Provides
+    UserBiometricDao providesUserBiometricDao(ClientDatabase clientDatabase) {
+        return clientDatabase.userBiometricDao();
+    }
+
+    @Singleton
+    @Provides
     UserPasswordDao providesUserPasswordDao(ClientDatabase clientDatabase) {
         return clientDatabase.userPasswordDao();
     }
@@ -370,6 +379,12 @@ public class RoomModule {
     UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao,
                                                      UserPasswordDao userPasswordDao) {
         return new UserDetailRepository(userDetailDao, userTokenDao, userPasswordDao);
+    }
+
+    @Provides
+    @Singleton
+    UserBiometricRepository provideUserBiometricRepository(UserBiometricDao userBiometricDao, UserDetailDao userDetailDao) {
+        return new UserBiometricRepository(userBiometricDao, userDetailDao);
     }
 
     @Provides

@@ -8,8 +8,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -71,7 +73,7 @@ class OnboardingPage extends StatelessWidget {
                         Text(
                           "${appLocalizations.hello}, ",
                           style: TextStyle(
-                            fontSize: isMobileSize ? 28 : 36,
+                            fontSize: isMobileSize ? 28.h : 36.h,
                             color: appWhite,
                           ),
                         ),
@@ -100,8 +102,15 @@ class OnboardingPage extends StatelessWidget {
                       height: 65.h,
                     ),
                     _getButton(
-                      title: appLocalizations.get_onboard,
-                      onTap: () {},
+                      title: AppLocalizations.of(context)!.get_onboard,
+                      onTap: () async{
+                        await BiometricsApi().startOperatorOnboarding();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OperatorOnboardingBiometricsCaptureControl()));
+                      },
                       color: appWhite,
                       fontColor: appSolidPrimary,
                     ),

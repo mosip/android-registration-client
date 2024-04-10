@@ -171,6 +171,16 @@ class _BiometricCaptureScanBlockPortraitState
     _showCustomAlert(currentAttemptNo, temp);
   }
 
+  noOfTrue(List<bool> list) {
+    int i = 0;
+    for (var e in list) {
+      if (e == true) {
+        i++;
+      }
+    }
+    return i;
+  }
+
   generateList(String key, BiometricAttributeData data) {
     List<BiometricAttributeData> list = [];
 
@@ -318,97 +328,148 @@ class _BiometricCaptureScanBlockPortraitState
               SizedBox(
                 height: 6.h,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.attempts,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 24, color: blackShade1, fontWeight: semiBold),
-                  ),
-                  const SizedBox(
-                    height: 29.4,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      for (int i = 1;
-                          i <= biometricAttributeData.noOfCapturesAllowed;
-                          i++)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16.3),
-                          child: InkWell(
-                            onTap: () async {
-                              if (biometricAttributeData.attemptNo >= i) {
-                                await BiometricsApi()
-                                    .getBiometrics(
-                                        widget.field.id!,
-                                        biometricAttributeData.title
-                                            .replaceAll(" ", ""),
-                                        i)
-                                    .then((value) {
-                                  biometricAttributeData.listOfBiometricsDto
-                                      .clear();
-                                  for (var e in value) {
-                                    biometricAttributeData.listOfBiometricsDto
-                                        .add(BiometricsDto.fromJson(
-                                            json.decode(e!)));
-                                  }
-                                });
+                      Text(
+                        AppLocalizations.of(context)!.attempts,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 24,
+                            color: blackShade1,
+                            fontWeight: semiBold),
+                      ),
+                      const SizedBox(
+                        height: 29.4,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          for (int i = 1;
+                              i <= biometricAttributeData.noOfCapturesAllowed;
+                              i++)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 16.3),
+                              child: InkWell(
+                                onTap: () async {
+                                  if (biometricAttributeData.attemptNo >= i) {
+                                    await BiometricsApi()
+                                        .getBiometrics(
+                                            widget.field.id!,
+                                            biometricAttributeData.title
+                                                .replaceAll(" ", ""),
+                                            i)
+                                        .then((value) {
+                                      biometricAttributeData.listOfBiometricsDto
+                                          .clear();
+                                      for (var e in value) {
+                                        biometricAttributeData
+                                            .listOfBiometricsDto
+                                            .add(BiometricsDto.fromJson(
+                                                json.decode(e!)));
+                                      }
+                                    });
 
-                                setState(() {
-                                  biometricAttributeData.qualityPercentage =
-                                      context
-                                          .read<
-                                              BiometricCaptureControlProvider>()
-                                          .avgScore(biometricAttributeData
-                                              .listOfBiometricsDto);
-                                });
-                                await BiometricsApi()
-                                    .extractImageValuesByAttempt(
-                                        widget.field.id!,
-                                        biometricAttributeData.title
-                                            .replaceAll(" ", ""),
-                                        i)
-                                    .then((value) {
-                                  biometricAttributeData.listofImages = value;
-                                });
-                                setState(() {});
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 7.3,
-                                horizontal: 30,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: secondaryColors.elementAt(17),
-                                ),
-                                color: (biometricAttributeData.attemptNo < i)
-                                    ? secondaryColors.elementAt(18)
-                                    : secondaryColors.elementAt(11),
-                              ),
-                              child: Text(
-                                i.toString(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                        fontSize: 21,
-                                        color:
-                                            (biometricAttributeData.attemptNo <
+                                    setState(() {
+                                      biometricAttributeData.qualityPercentage =
+                                          context
+                                              .read<
+                                                  BiometricCaptureControlProvider>()
+                                              .avgScore(biometricAttributeData
+                                                  .listOfBiometricsDto);
+                                    });
+                                    await BiometricsApi()
+                                        .extractImageValuesByAttempt(
+                                            widget.field.id!,
+                                            biometricAttributeData.title
+                                                .replaceAll(" ", ""),
+                                            i)
+                                        .then((value) {
+                                      biometricAttributeData.listofImages =
+                                          value;
+                                    });
+                                    setState(() {});
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 7.3,
+                                    horizontal: 30,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: secondaryColors.elementAt(17),
+                                    ),
+                                    color:
+                                        (biometricAttributeData.attemptNo < i)
+                                            ? secondaryColors.elementAt(18)
+                                            : secondaryColors.elementAt(11),
+                                  ),
+                                  child: Text(
+                                    i.toString(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                            fontSize: 21,
+                                            color: (biometricAttributeData
+                                                        .attemptNo <
                                                     i)
                                                 ? secondaryColors.elementAt(19)
                                                 : pureWhite,
-                                        fontWeight: semiBold),
+                                            fontWeight: semiBold),
+                                  ),
+                                ),
                               ),
                             ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.exceptions,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 24,
+                            color: blackShade1,
+                            fontWeight: semiBold),
+                      ),
+                      const SizedBox(
+                        height: 29.4,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.3),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 7.3,
+                            horizontal: 30,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: secondaryColors.elementAt(17),
+                            ),
+                            color: secondaryColors.elementAt(18),
+                          ),
+                          child: Text(
+                            noOfTrue(biometricAttributeData.exceptions).toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                    fontSize: 21,
+                                    color: secondaryColors.elementAt(19),
+                                    fontWeight: semiBold),
                           ),
                         ),
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
               SizedBox(
@@ -619,24 +680,18 @@ class _BiometricCaptureScanBlockPortraitState
           .iris
           .exceptions
           .contains(true)) {
-        if(!context
+        if (!context
             .read<GlobalProvider>()
             .exceptionAttributes
             .contains("Iris")) {
-          context
-              .read<GlobalProvider>()
-              .exceptionAttributes
-              .add("Iris");
+          context.read<GlobalProvider>().exceptionAttributes.add("Iris");
         }
       } else {
         if (context
             .read<GlobalProvider>()
             .exceptionAttributes
             .contains("Iris")) {
-          context
-              .read<GlobalProvider>()
-              .exceptionAttributes
-              .remove("Iris");
+          context.read<GlobalProvider>().exceptionAttributes.remove("Iris");
         }
       }
     }
@@ -650,10 +705,7 @@ class _BiometricCaptureScanBlockPortraitState
             .read<GlobalProvider>()
             .exceptionAttributes
             .contains("Right Hand")) {
-          context
-              .read<GlobalProvider>()
-              .exceptionAttributes
-              .add("Right Hand");
+          context.read<GlobalProvider>().exceptionAttributes.add("Right Hand");
         }
       } else {
         if (context
@@ -677,10 +729,7 @@ class _BiometricCaptureScanBlockPortraitState
             .read<GlobalProvider>()
             .exceptionAttributes
             .contains("Left Hand")) {
-          context
-              .read<GlobalProvider>()
-              .exceptionAttributes
-              .add("Left Hand");
+          context.read<GlobalProvider>().exceptionAttributes.add("Left Hand");
         }
       } else {
         if (context
@@ -704,20 +753,14 @@ class _BiometricCaptureScanBlockPortraitState
             .read<GlobalProvider>()
             .exceptionAttributes
             .contains("Thumbs")) {
-          context
-              .read<GlobalProvider>()
-              .exceptionAttributes
-              .add("Thumbs");
+          context.read<GlobalProvider>().exceptionAttributes.add("Thumbs");
         }
       } else {
         if (context
             .read<GlobalProvider>()
             .exceptionAttributes
             .contains("Thumbs")) {
-          context
-              .read<GlobalProvider>()
-              .exceptionAttributes
-              .remove("Thumbs");
+          context.read<GlobalProvider>().exceptionAttributes.remove("Thumbs");
         }
       }
     }
@@ -1269,7 +1312,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
-                                              proofOfExceptionList("Right Hand");
+                                              proofOfExceptionList(
+                                                  "Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_1.svg",
@@ -1360,7 +1404,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
-                                              proofOfExceptionList("Right Hand");
+                                              proofOfExceptionList(
+                                                  "Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_2.svg",
@@ -1451,7 +1496,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
-                                              proofOfExceptionList("Right Hand");
+                                              proofOfExceptionList(
+                                                  "Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_3.svg",
@@ -1542,7 +1588,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                     .exceptionType = "";
                                               }
                                               updateExceptionList("Right Hand");
-                                              proofOfExceptionList("Right Hand");
+                                              proofOfExceptionList(
+                                                  "Right Hand");
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_4.svg",

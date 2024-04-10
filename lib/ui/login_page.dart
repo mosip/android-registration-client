@@ -15,6 +15,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
+
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -126,6 +127,68 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           "biometricsScreenName_$header",
           appLocalizations.biometricsScreenName(header));
     }
+  }
+
+  _saveConsentScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("consentScreenName_$header",
+          AppLocalizations.of(context)!.consentScreenName(header));
+    }
+  }
+
+  _saveDemographicScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("demographicsScreenName_$header",
+          AppLocalizations.of(context)!.demographicsScreenName(header));
+    }
+  }
+
+  _saveDocumentScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("documentsScreenName_$header",
+          AppLocalizations.of(context)!.documentsScreenName(header));
+    }
+  }
+
+  _saveBiometricScreenHeaders() async {
+    for (var header in lang) {
+      await _saveHeader("biometricsScreenName_$header",
+          AppLocalizations.of(context)!.biometricsScreenName(header));
+    }
+  }
+
+  _saveHeader(String id, String value) async {
+    await context
+        .read<GlobalProvider>()
+        .saveScreenHeaderToGlobalParam(id, value);
+  }
+
+  _initializeBiometricThresholdData() async {
+    await context.read<GlobalProvider>().getThresholdValues();
+  }
+
+  _initializeMachineData() async {
+    await context.read<GlobalProvider>().setMachineDetails();
+  }
+
+  // _initializeAppLanguageData() async {
+  //   await context.read<GlobalProvider>().initializeLanguageDataList();
+  // }
+
+  _initializeLocationHierarchy() async {
+    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
+  }
+
+  _loginPageLoadedAudit() async {
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-LOAD-001", "REG-MOD-101");
+  }
+
+  _longPressLogoAudit() async {
+    await context
+        .read<GlobalProvider>()
+        .getAudit("REG-AUTH-002", "REG-MOD-101");
   }
 
   @override
@@ -256,6 +319,21 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         content: Text(value),
       ),
     );
+  }
+
+  _onLoginButtonPressed() async {
+    await _getLoginAction();
+    await _initializeBiometricThresholdData();
+  }
+
+  _authenticateUser(bool isConnected) async {
+    await context
+        .read<AuthProvider>()
+        .authenticateUser(username, password, isConnected);
+  }
+
+  _getIsConnected() {
+    return context.read<ConnectivityProvider>().isConnected;
   }
 
   _getLoginAction() async {

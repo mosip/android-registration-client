@@ -23,6 +23,7 @@ import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
 import io.mosip.registration.clientmanager.dao.TemplateDao;
+import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
@@ -43,6 +44,7 @@ import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.entity.Template;
+import io.mosip.registration.clientmanager.entity.UserBiometric;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.entity.UserPassword;
 import io.mosip.registration.clientmanager.entity.UserToken;
@@ -55,7 +57,7 @@ import io.mosip.registration.keymanager.entity.KeyStore;
         MachineMaster.class, DocumentType.class, DynamicField.class,
         ApplicantValidDocument.class, Template.class, KeyStore.class,
         Location.class, GlobalParam.class, IdentitySchema.class, LocationHierarchy.class,
-        BlocklistedWord.class, SyncJobDef.class, UserDetail.class, UserPassword.class, JobTransaction.class,
+        BlocklistedWord.class, SyncJobDef.class, UserDetail.class, UserBiometric.class, UserPassword.class, JobTransaction.class,
         CACertificateStore.class, Language.class, Audit.class, FileSignature.class},
         version = 1, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
@@ -107,6 +109,8 @@ public abstract class ClientDatabase extends RoomDatabase {
     public abstract SyncJobDefDao syncJobDefDao();
 
     public abstract UserDetailDao userDetailDao();
+
+    public abstract UserBiometricDao userBiometricDao();
 
     public abstract UserPasswordDao userPasswordDao();
 
