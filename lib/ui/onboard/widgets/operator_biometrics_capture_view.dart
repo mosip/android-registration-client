@@ -21,7 +21,7 @@ class OperatorBiometricsCaptureView extends StatefulWidget {
 
 class _OperatorBiometricsCaptureState
     extends State<OperatorBiometricsCaptureView> {
-      bool isSavingBiometrics = false;
+  bool isSavingBiometrics = false;
   Widget _getBiometricCaptureSelectionBlockMobile(
       BiometricAttributeData biometricAttributeData) {
     return InkWell(
@@ -161,71 +161,90 @@ class _OperatorBiometricsCaptureState
                         .read<BiometricCaptureControlProvider>()
                         .face
                         .isScanned) {
-                    setState(() {
-                      isSavingBiometrics = true;
-                    });
-                  await BiometricsApi().saveOperatorBiometrics();
+                  setState(() {
+                    isSavingBiometrics = true;
+                  });
+
+                  String isOperatorBiometricSaved = "";
+                  await BiometricsApi().saveOperatorBiometrics().timeout(
+                    Duration(seconds: 5),
+                    onTimeout: () {
+                      setState(() {
+                        isSavingBiometrics = false;
+                      });
+                      return "";
+                    },
+                  ).then((value) {
+                    isOperatorBiometricSaved = value;
+                  });
+
                   setState(() {
                     isSavingBiometrics = false;
                   });
-                  Navigator.pop(context);
-                  showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      content: Container(
-                        height: 474.h,
-                        width: 574.w,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 70.h,
-                              width: double.infinity,
-                            ),
-                            SvgPicture.asset(
-                                "assets/svg/success_message_icon.svg"),
-                            Text(
-                              "You have onboarded successfully.",
-                              style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: semiBold,
-                                  color: Color(0xFF000000)),
-                            ),
-                            SizedBox(
-                              height: 62.h,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "HOME",
-                                style: TextStyle(
-                                    fontSize: 19,
-                                    fontWeight: bold,
-                                    color: pureWhite),
+                  if (isOperatorBiometricSaved != "") {
+                    Navigator.pop(context);
+                    showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        content: Container(
+                          height: 474.h,
+                          width: 574.w,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 70.h,
+                                width: double.infinity,
                               ),
-                              style: ButtonStyle(
-                                  fixedSize: MaterialStateProperty.all<Size>(
-                                      Size(564, 70))),
-                            )
-                          ],
+                              SvgPicture.asset(
+                                  "assets/svg/success_message_icon.svg"),
+                              Text(
+                                "You have onboarded successfully.",
+                                style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: semiBold,
+                                    color: Color(0xFF000000)),
+                              ),
+                              SizedBox(
+                                height: 62.h,
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "HOME",
+                                  style: TextStyle(
+                                      fontSize: 19,
+                                      fontWeight: bold,
+                                      color: pureWhite),
+                                ),
+                                style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all<Size>(
+                                        Size(564, 70))),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
+                    );
 
-                  setState(() {
-                    context.read<GlobalProvider>().setCurrentIndex(1);
-                  });
+                    setState(() {
+                      context.read<GlobalProvider>().setCurrentIndex(1);
+                    });
+                  }
                 }
               },
-              child: isSavingBiometrics ? CircularProgressIndicator( color: appWhite,) : Text(
-                "VERIFY & SAVE",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontSize: 26.h, color: pureWhite),
-              ),
+              child: isSavingBiometrics
+                  ? CircularProgressIndicator(
+                      color: appWhite,
+                    )
+                  : Text(
+                      "VERIFY & SAVE",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontSize: 26.h, color: pureWhite),
+                    ),
               style: OutlinedButton.styleFrom(
                   backgroundColor: (context
                               .read<BiometricCaptureControlProvider>()

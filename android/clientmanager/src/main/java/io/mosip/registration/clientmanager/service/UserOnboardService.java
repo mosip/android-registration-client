@@ -289,7 +289,14 @@ public class UserOnboardService {
                     if (response.isSuccessful()) {
                         OnboardError error = SyncRestUtil.getServiceError(response.body());
                         if (error == null || (error != null && error.getErrorCode() == null)) {
-                            setIdaResponse((Boolean) response.body().getResponse().get(ON_BOARD_AUTH_STATUS));
+                            if(response.body().getResponse()!=null){
+                                setIdaResponse((Boolean) response.body().getResponse().get(ON_BOARD_AUTH_STATUS));
+                            }
+
+                        }
+                        else{
+                            setIdaResponse(false);
+                            Toast.makeText(context, error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         }
                         onFinish.run();
                     } else {
