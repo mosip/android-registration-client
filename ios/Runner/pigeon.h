@@ -10,38 +10,30 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class AuthResponse;
+@class DashBoardData;
 
-@interface AuthResponse : NSObject
+@interface DashBoardData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithResponse:(NSString *)response
-    userId:(NSString *)userId
-    username:(NSString *)username
-    userEmail:(NSString *)userEmail
-    isOfficer:(NSNumber *)isOfficer
-    isDefault:(NSNumber *)isDefault
-    isSupervisor:(NSNumber *)isSupervisor
-    isOperator:(NSNumber *)isOperator
-    errorCode:(nullable NSString *)errorCode;
-@property(nonatomic, copy) NSString * response;
++ (instancetype)makeWithUserId:(NSString *)userId
+    userName:(NSString *)userName
+    userStatus:(NSNumber *)userStatus
+    userIsOnboarded:(NSNumber *)userIsOnboarded;
 @property(nonatomic, copy) NSString * userId;
-@property(nonatomic, copy) NSString * username;
-@property(nonatomic, copy) NSString * userEmail;
-@property(nonatomic, strong) NSNumber * isOfficer;
-@property(nonatomic, strong) NSNumber * isDefault;
-@property(nonatomic, strong) NSNumber * isSupervisor;
-@property(nonatomic, strong) NSNumber * isOperator;
-@property(nonatomic, copy, nullable) NSString * errorCode;
+@property(nonatomic, copy) NSString * userName;
+@property(nonatomic, strong) NSNumber * userStatus;
+@property(nonatomic, strong) NSNumber * userIsOnboarded;
 @end
 
-/// The codec used by AuthResponseApi.
-NSObject<FlutterMessageCodec> *AuthResponseApiGetCodec(void);
+/// The codec used by DashBoardApi.
+NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
 
-@protocol AuthResponseApi
-- (void)loginUsername:(NSString *)username password:(NSString *)password isConnected:(NSNumber *)isConnected completion:(void (^)(AuthResponse *_Nullable, FlutterError *_Nullable))completion;
+@protocol DashBoardApi
+- (void)getDashBoardDetailsWithCompletion:(void (^)(NSArray<DashBoardData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void AuthResponseApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<AuthResponseApi> *_Nullable api);
+extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
