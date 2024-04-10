@@ -146,6 +146,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
 
+        if(centerMachineDto == null) {
+            result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
+            return;
+        }
+
         try {
             masterDataService.syncCertificate(() -> {
                 Log.i(TAG, "Policy Key Sync Completed");
@@ -198,7 +203,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         try {
             masterDataService.syncMasterData(() -> {
                 Log.i(TAG, "Master Data Sync Completed.");
-                result.success(syncResult("MasterDataSync", 1, masterDataService.onResponseComplete()));
+                result.success(syncResult("MasterDataSync", 2, masterDataService.onResponseComplete()));
             }, 0, isManualSync);
         } catch (Exception e) {
             Log.e(TAG, "Master Data Sync Failed.", e);

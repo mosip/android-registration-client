@@ -177,16 +177,25 @@ public class MasterDataServiceImpl implements MasterDataService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
-                        CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId(setApplicationId);
-                        certificateRequestDto.setReferenceId(setReferenceId);
-                        certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
-                        certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
-                        if(isManualSync) {
-                            Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
+                        try {
+                            CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
+                            certificateRequestDto.setApplicationId(setApplicationId);
+                            certificateRequestDto.setReferenceId(setReferenceId);
+                            certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
+                            certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
+                            if(isManualSync) {
+                                Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
+                            }
+                            result = "";
+                            onFinish.run();
+                        } catch (Exception e) {
+                            result = "policy_key_sync_failed";
+                            Log.e(TAG, "Policy key Sync failed.", e);
+                            if(isManualSync) {
+                                Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                            onFinish.run();
                         }
-                        result = "";
-                        onFinish.run();
                     } else {
                         result = "policy_key_sync_failed";
                         if(isManualSync) {
