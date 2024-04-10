@@ -216,5 +216,6 @@
   "face": "الوجه",
   "preview_page": "معاينة",
   "packet_auth_page": "المصادقة",
-  "acknowledgement_page": "الاعتراف" 
+  "acknowledgement_page": "الاعتراف",
+  "share": "يشارك" 
 }

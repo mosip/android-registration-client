@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -19,6 +20,9 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    GlobalProvider globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _getBottomBar(),
@@ -45,7 +49,7 @@ class OnboardingPage extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      AppLocalizations.of(context)!.help,
+                      appLocalizations.help,
                       style: TextStyle(
                         fontSize: isMobileSize ? 16 : 22,
                         fontWeight: FontWeight.bold,
@@ -67,14 +71,14 @@ class OnboardingPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "${AppLocalizations.of(context)!.hello}, ",
+                          "${appLocalizations.hello}, ",
                           style: TextStyle(
                             fontSize: isMobileSize ? 28.h : 36.h,
                             color: appWhite,
                           ),
                         ),
                         Text(
-                          context.read<GlobalProvider>().name,
+                          authProvider.username,
                           style: TextStyle(
                             fontSize: isMobileSize ? 28 : 36,
                             fontWeight: FontWeight.bold,
@@ -87,7 +91,7 @@ class OnboardingPage extends StatelessWidget {
                       height: 7.h,
                     ),
                     Text(
-                      AppLocalizations.of(context)!.onboard_process_help,
+                      appLocalizations.onboard_process_help,
                       style: TextStyle(
                         fontSize: isMobileSize ? 16 : 22,
                         color: appWhite.withOpacity(0.6),
@@ -114,9 +118,9 @@ class OnboardingPage extends StatelessWidget {
                       height: 40.h,
                     ),
                     _getButton(
-                      title: AppLocalizations.of(context)!.skip_to_home,
+                      title: appLocalizations.skip_to_home,
                       onTap: () {
-                        context.read<GlobalProvider>().setCurrentIndex(1);
+                        globalProvider.setCurrentIndex(1);
                       },
                       color: Colors.transparent,
                       fontColor: appWhite,

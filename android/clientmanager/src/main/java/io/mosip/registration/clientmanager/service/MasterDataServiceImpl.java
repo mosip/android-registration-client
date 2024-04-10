@@ -1,7 +1,5 @@
 package io.mosip.registration.clientmanager.service;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -97,6 +95,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
     private String regCenterId;
+    private String result = "";
 
     @Inject
     public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
@@ -162,58 +161,13 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void manualSync() {
+    public void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null)
+        if (centerMachineDto == null) {
+            result = "policy_key_sync_failed";
+            onFinish.run();
             return;
-        try {
-            syncMasterData(() -> {
-                Log.i(TAG, "manualSync: MasterData sync completed");
-                syncLatestIdSchema(() -> {
-                    Log.i(TAG, "manualSync: LatestIdSchema sync completed");
-                    try {
-                        syncUserDetails(() -> {
-                            Log.i(TAG, "manualSync: UserDetails sync completed");
-                            try {
-                                syncGlobalParamsData(() -> {
-                                    Log.i(TAG, "manualSync: GlobalParamsData sync completed");
-                                    try {
-                                        syncCertificate(() -> {
-                                            Log.i(TAG, "manualSync: Certificate sync completed");
-                                            syncCertificate(() -> {
-                                                Log.i(TAG, "manualSync: Certificate kernel sync completed");
-                                            }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY");
-                                        }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId());
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "manualSync: Certificate sync data sync failed", e);
-                                    }
-                                });
-                            } catch (Exception e) {
-                                Log.e(TAG, "manualSync: Global params data sync failed", e);
-                            }
-                        });
-                    } catch (Exception e) {
-                        Log.e(TAG, "manualSync: User Details sync failed", e);
-                    }
-                });
-            }, 0);
-            syncCACertificates();
-        } catch (Exception ex) {
-            Log.e(TAG, "Data Sync failed", ex);
-            Toast.makeText(context, "Data Sync failed", Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public void syncCertificate() {
-        syncCertificate(() -> {
-        },"","","","");
-    }
-
-    private void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId) {
-        CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        if (centerMachineDto == null)
-            return;
 
         Call<ResponseWrapper<CertificateResponse>> call = syncRestService.getPolicyKey(applicationId,
                 referenceId, BuildConfig.CLIENT_VERSION);
@@ -223,33 +177,54 @@ public class MasterDataServiceImpl implements MasterDataService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
-                        CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
-                        certificateRequestDto.setApplicationId(setApplicationId);
-                        certificateRequestDto.setReferenceId(setReferenceId);
-                        certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
-                        certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
-                        Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
+                        try {
+                            CertificateRequestDto certificateRequestDto = new CertificateRequestDto();
+                            certificateRequestDto.setApplicationId(setApplicationId);
+                            certificateRequestDto.setReferenceId(setReferenceId);
+                            certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
+                            certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
+                            if(isManualSync) {
+                                Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
+                            }
+                            result = "";
+                            onFinish.run();
+                        } catch (Exception e) {
+                            result = "policy_key_sync_failed";
+                            Log.e(TAG, "Policy key Sync failed.", e);
+                            if(isManualSync) {
+                                Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                            onFinish.run();
+                        }
+                    } else {
+                        result = "policy_key_sync_failed";
+                        if(isManualSync) {
+                            Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                         onFinish.run();
-                    } else
-                        Toast.makeText(context, "Policy key Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(context, "Policy key Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    result = "policy_key_sync_failed";
+                    if(isManualSync) {
+                        Toast.makeText(context, "Policy key Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                    onFinish.run();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CertificateResponse>> call, Throwable t) {
-                Toast.makeText(context, "Policy key Sync failed", Toast.LENGTH_LONG).show();
+                result = "policy_key_sync_failed";
+                if(isManualSync) {
+                    Toast.makeText(context, "Policy key Sync failed", Toast.LENGTH_LONG).show();
+                }
+                onFinish.run();
             }
         });
     }
 
     @Override
-    public void syncMasterData() {
-        syncMasterData(() -> {
-        }, 0);
-    }
-
-    private void syncMasterData(Runnable onFinish, int retryNo) {
+    public void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
 
         Map<String, String> queryParams = new HashMap<>();
@@ -257,8 +232,11 @@ public class MasterDataServiceImpl implements MasterDataService {
         try {
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
+            result = "master_data_sync_failed";
             Log.e(TAG, "MasterData : not able to get client key index", e);
-            Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+            if(isManualSync) {
+                Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+            }
             onFinish.run();
             return;
         }
@@ -281,7 +259,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
-                        saveMasterData(response.body().getResponse());
+                        saveMasterData(response.body().getResponse(), isManualSync);
                         if (regCenterId != null) {
                             machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
                         }
@@ -289,34 +267,50 @@ public class MasterDataServiceImpl implements MasterDataService {
                             if (retryNo < master_data_recursive_sync_max_retry) {
                                 Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
                                 //rerunning master data to sync completed master data
-                                syncMasterData(onFinish, retryNo + 1);
+                                syncMasterData(onFinish, retryNo + 1, isManualSync);
                             } else {
-                                Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
+                                result = "master_data_sync_failed";
+                                if(isManualSync) {
+                                    Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
+                                }
+                                onFinish.run();
                             }
                         } else {
-                            Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
+                            result = "";
+                            if(isManualSync) {
+                                Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
+                            }
                             onFinish.run();
                         }
-                    } else
-                        Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    } else {
+                        result = "master_data_sync_failed";
+                        if(isManualSync) {
+                            Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        onFinish.run();
+                    }
+                } else {
+                    result = "master_data_sync_failed";
+                    if(isManualSync) {
+                        Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                    onFinish.run();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
-                Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+                result = "master_data_sync_failed";
+                if(isManualSync) {
+                    Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
+                }
+                onFinish.run();
             }
         });
     }
 
     @Override
-    public void syncGlobalParamsData() throws Exception {
-        syncGlobalParamsData(() -> {
-        });
-    }
-
-    private void syncGlobalParamsData(Runnable onFinish) throws Exception {
+    public void syncGlobalParamsData(Runnable onFinish, boolean isManualSync) throws Exception {
         Log.i(TAG, "config data sync is started");
         String serverVersion = getServerVersionFromConfigs();
 
@@ -330,17 +324,34 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveGlobalParams(response.body().getResponse());
-                        Toast.makeText(context, context.getString(R.string.global_config_sync_completed), Toast.LENGTH_LONG).show();
+                        result = "";
+                        if(isManualSync) {
+                            Toast.makeText(context, context.getString(R.string.global_config_sync_completed), Toast.LENGTH_LONG).show();
+                        }
                         onFinish.run();
-                    } else
-                        Toast.makeText(context, String.format("%s %s", context.getString(R.string.global_config_sync_failed), error.getMessage()), Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(context, String.format("%s. %s:%s", context.getString(R.string.global_config_sync_failed), context.getString(R.string.status_code), String.valueOf(response.code())), Toast.LENGTH_LONG).show();
+                    } else {
+                        result = "global_params_sync_failed";
+                        if(isManualSync) {
+                            Toast.makeText(context, String.format("%s %s", context.getString(R.string.global_config_sync_failed), error.getMessage()), Toast.LENGTH_LONG).show();
+                        }
+                        onFinish.run();
+                    }
+                } else {
+                    result = "global_params_sync_failed";
+                    if(isManualSync) {
+                        Toast.makeText(context, String.format("%s. %s:%s", context.getString(R.string.global_config_sync_failed), context.getString(R.string.status_code), String.valueOf(response.code())), Toast.LENGTH_LONG).show();
+                    }
+                    onFinish.run();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
-                Toast.makeText(context, context.getString(R.string.global_config_sync_failed), Toast.LENGTH_LONG).show();
+                result = "global_params_sync_failed";
+                if(isManualSync) {
+                    Toast.makeText(context, context.getString(R.string.global_config_sync_failed), Toast.LENGTH_LONG).show();
+                }
+                onFinish.run();
             }
         });
     }
@@ -400,12 +411,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncLatestIdSchema() {
-        syncLatestIdSchema(() -> {
-        });
-    }
-
-    private void syncLatestIdSchema(Runnable onFinish) {
+    public void syncLatestIdSchema(Runnable onFinish, boolean isManualSync) {
         Call<ResponseBody> call = syncRestService.getLatestIdSchema(BuildConfig.CLIENT_VERSION, "registration-client");
         call.enqueue(new Callback<ResponseBody>() {
 
@@ -418,34 +424,46 @@ public class MasterDataServiceImpl implements MasterDataService {
                                 new TypeReference<ResponseWrapper<IdSchemaResponse>>() {
                                 });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
-                        Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
+                        result = "";
+                        if(isManualSync) {
+                            Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
+                        }
                         onFinish.run();
                     } catch (Exception e) {
+                        result = "id_schema_sync_failed";
                         Log.e(TAG, "Failed to save IDSchema", e);
+                        onFinish.run();
                     }
-                } else
-                    Toast.makeText(context, "Identity schema and UI Spec Sync failed with status code : " +
-                            response.code(), Toast.LENGTH_LONG).show();
+                } else {
+                    result = "id_schema_sync_failed";
+                    if(isManualSync) {
+                        Toast.makeText(context, "Identity schema and UI Spec Sync failed with status code : " +
+                                response.code(), Toast.LENGTH_LONG).show();
+                    }
+                    onFinish.run();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                result = "id_schema_sync_failed";
                 Log.e(TAG, "Failed to sync schema", t);
-                Toast.makeText(context, "Identity schema and UI Spec Sync failed", Toast.LENGTH_LONG).show();
+                if(isManualSync) {
+                    Toast.makeText(context, "Identity schema and UI Spec Sync failed", Toast.LENGTH_LONG).show();
+                }
+                onFinish.run();
             }
         });
     }
 
     @Override
-    public void syncUserDetails() {
-        syncLatestIdSchema(() -> {
-        });
-    }
-
-    private void syncUserDetails(Runnable onFinish) throws Exception {
+    public void syncUserDetails(Runnable onFinish, boolean isManualSync) throws Exception {
         String serverVersion = getServerVersionFromConfigs();
         if (serverVersion.startsWith("1.1.5")) {
-            Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+            result = "";
+            if(isManualSync) {
+                Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+            }
             Log.i(TAG, "Found 115 version, skipping userdetails sync");
             onFinish.run();
             return;
@@ -460,17 +478,34 @@ public class MasterDataServiceImpl implements MasterDataService {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null) {
                         saveUserDetails(response.body().getResponse().getUserDetails());
-                        Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+                        result = "";
+                        if(isManualSync) {
+                            Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
+                        }
                         onFinish.run();
-                    } else
-                        Toast.makeText(context, "User Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(context, "User Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    } else {
+                        result = "user_details_sync_failed";
+                        if(isManualSync) {
+                            Toast.makeText(context, "User Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        onFinish.run();
+                    }
+                } else {
+                    result = "user_details_sync_failed";
+                    if(isManualSync) {
+                        Toast.makeText(context, "User Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                    onFinish.run();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<UserDetailResponse>> call, Throwable t) {
-                Toast.makeText(context, "User Sync failed", Toast.LENGTH_LONG).show();
+                result = "user_details_sync_failed";
+                if(isManualSync) {
+                    Toast.makeText(context, "User Sync failed", Toast.LENGTH_LONG).show();
+                }
+                onFinish.run();
             }
         });
     }
@@ -484,7 +519,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncCACertificates() {
+    public void syncCACertificates(Runnable onFinish, boolean isManualSync) {
         Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
                 BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
@@ -496,23 +531,45 @@ public class MasterDataServiceImpl implements MasterDataService {
                     if (errorMessage == null) {
                         try {
                             saveCACertificate(response.body().getResponse().getCertificateDTOList());
-                            Toast.makeText(context, "CA Certificate Sync Completed", Toast.LENGTH_LONG).show();
+                            result = "";
+                            if(isManualSync) {
+                                Toast.makeText(context, "CA Certificate Sync Completed", Toast.LENGTH_LONG).show();
+                            }
+                            onFinish.run();
                             return;
                         } catch (Throwable t) {
                             Log.e(TAG, "Failed to sync CA certificates", t);
                             errorMessage = t.getMessage();
                         }
                     }
-                    Toast.makeText(context, "CA Certificate Sync failed " + errorMessage, Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(context, "CA Certificate Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    result = "ca_certs_sync_failed";
+                    if(isManualSync) {
+                        Toast.makeText(context, "CA Certificate Sync failed " + errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                    onFinish.run();
+                } else {
+                    result = "ca_certs_sync_failed";
+                    if(isManualSync) {
+                        Toast.makeText(context, "CA Certificate Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                    onFinish.run();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<CACertificateResponseDto>> call, Throwable t) {
-                Toast.makeText(context, "CA Certificate Sync failed", Toast.LENGTH_LONG).show();
+                result = "ca_certs_sync_failed";
+                if(isManualSync) {
+                    Toast.makeText(context, "CA Certificate Sync failed", Toast.LENGTH_LONG).show();
+                }
+                onFinish.run();
             }
         });
+    }
+
+    @Override
+    public String onResponseComplete() {
+        return result;
     }
 
     private void saveCACertificate(List<CACertificateDto> caCertificateDtos) {
@@ -546,8 +603,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         return locationRepository.getHierarchyLevel(hierarchyLevelName);
     }
 
-    private void saveMasterData(ClientSettingDto clientSettingDto) {
-        boolean foundErrors = false;
+    private void saveMasterData(ClientSettingDto clientSettingDto, boolean isManualSync) {
+//        boolean foundErrors = false;
         boolean applicantValidDocPresent = clientSettingDto.getDataToSync().stream().filter(masterData -> masterData.getEntityName().equalsIgnoreCase("ApplicantValidDocument")).findAny().isPresent();
         for (MasterData masterData : clientSettingDto.getDataToSync()) {
             try {
@@ -563,11 +620,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                         cryptoRequestDto.setValue(masterData.getData());
                         CryptoResponseDto cryptoResponseDto = clientCryptoManagerService.decrypt(cryptoRequestDto);
                         byte[] data = CryptoUtil.base64decoder.decode(cryptoResponseDto.getValue());
-                        downloadUrlData(Paths.get(context.getFilesDir().getAbsolutePath(), masterData.getEntityName()), new JSONObject(new String(data)));
+                        downloadUrlData(Paths.get(context.getFilesDir().getAbsolutePath(), masterData.getEntityName()), new JSONObject(new String(data)), isManualSync);
                         break;
                 }
             } catch (Throwable e) {
-                foundErrors = true;
+//                foundErrors = true;
                 Log.e(TAG, "Failed to parse the data", e);
             }
         }
@@ -575,7 +632,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
     }
 
-    public void downloadUrlData(Path path, JSONObject jsonObject) {
+    private void downloadUrlData(Path path, JSONObject jsonObject, boolean isManualSync) {
         Log.i(TAG, "Started downloading mvel script: " + path.toString());
         try {
             String headers = jsonObject.getString("headers");
@@ -595,13 +652,13 @@ public class MasterDataServiceImpl implements MasterDataService {
 
             syncScript(() -> {
             }, path, jsonObject.getBoolean("encrypted"), jsonObject.getString("url"),
-                    map, this.clientCryptoManagerService.getClientKeyIndex());
+                    map, this.clientCryptoManagerService.getClientKeyIndex(), isManualSync);
         } catch (Exception e) {
             Log.e("Failed to download entity file", path.toString(), e);
         }
     }
 
-    private void syncScript(Runnable onFinish, Path path, boolean isFileEncrypted, String url, Map<String, String> map, String keyIndex) throws Exception {
+    private void syncScript(Runnable onFinish, Path path, boolean isFileEncrypted, String url, Map<String, String> map, String keyIndex, boolean isManualSync) throws Exception {
         AtomicReference<Integer> contentLength = new AtomicReference<>();
         AtomicReference<String> fileSignature = new AtomicReference<String>();
 
@@ -618,20 +675,33 @@ public class MasterDataServiceImpl implements MasterDataService {
                             contentLength.set(Integer.valueOf(response.headers().get("content-length")));
                             IOUtils.copy(response.body().byteStream(), fileOutputStream);
                             saveFileSignature(path, isFileEncrypted, fileSignature.get(), contentLength.get());
-                            Toast.makeText(context, "Script Sync Completed", Toast.LENGTH_LONG).show();
+                            if(isManualSync) {
+                                Toast.makeText(context, "Script Sync Completed", Toast.LENGTH_LONG).show();
+                            }
                             onFinish.run();
                         } catch (Exception e) {
                             Log.e(TAG,"Error in downloading script", e);
+                            if(isManualSync) {
+                                Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
+                            }
                         }
-                    } else
-                        Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(context, "Script Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    } else {
+                        if(isManualSync) {
+                            Toast.makeText(context, "Script Sync failed " + response.errorBody(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } else {
+                    if(isManualSync) {
+                        Toast.makeText(context, "Script Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(context, "Script Sync failed", Toast.LENGTH_LONG).show();
+                if(isManualSync) {
+                    Toast.makeText(context, "Script Sync failed", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

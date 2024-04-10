@@ -52,6 +52,9 @@ class NewProcess extends StatefulWidget {
 class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
+  late AuthProvider authProvider;
+  late ConnectivityProvider connectivityProvider;
+  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
 
   List<String> postRegistrationTabs = [
@@ -65,7 +68,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    _registrationScreenLoadedAudit();
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    connectivityProvider =
+        Provider.of<ConnectivityProvider>(context, listen: false);
     super.initState();
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
@@ -83,6 +91,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         }
       },
     ));
+    _registrationScreenLoadedAudit();
   }
 
   @override
@@ -103,21 +112,6 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     );
   }
 
-  _showNetworkError() {
-    _showInSnackBar(AppLocalizations.of(context)!.network_error);
-  }
-
-  _submitRegistration() async {
-    RegistrationSubmitResponse registrationSubmitResponse =
-        await registrationTaskProvider.submitRegistrationDto(username);
-
-    return registrationSubmitResponse;
-  }
-
-  _getIsPacketAuthenticated() {
-    return context.read<AuthProvider>().isPacketAuthenticated;
-  }
-
   _authenticatePacket(BuildContext context) async {
     if (!_validateUsername(context)) {
       return false;
@@ -127,14 +121,14 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       return false;
     }
 
-    if (!_isUserLoggedInUser(context)) {
+    if (authProvider.currentUser.userId != username) {
+      _showInSnackBar(appLocalizations.invalid_user);
       return false;
     }
 
-    await context.read<AuthProvider>().authenticatePacket(username, password);
-    bool isPacketAuthenticated = _getIsPacketAuthenticated();
+    await authProvider.authenticatePacket(username, password);
 
-    if (!isPacketAuthenticated) {
+    if (!authProvider.isPacketAuthenticated) {
       _showErrorInSnackbar();
       return false;
     }
@@ -142,20 +136,20 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   }
 
   _showErrorInSnackbar() {
-    String errorMsg = context.read<AuthProvider>().packetError;
+    String errorMsg = authProvider.packetError;
     String snackbarText = "";
 
     switch (errorMsg) {
       case "REG_TRY_AGAIN":
-        snackbarText = AppLocalizations.of(context)!.login_failed;
+        snackbarText = appLocalizations.login_failed;
         break;
 
       case "REG_INVALID_REQUEST":
-        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        snackbarText = appLocalizations.password_incorrect;
         break;
 
       case "REG_NETWORK_ERROR":
-        snackbarText = AppLocalizations.of(context)!.network_error;
+        snackbarText = appLocalizations.network_error;
         break;
 
       case "":
@@ -171,12 +165,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   bool _validateUsername(BuildContext context) {
     if (username.trim().isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_required);
+      _showInSnackBar(appLocalizations.username_required);
       return false;
     }
 
     if (username.trim().length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
+      _showInSnackBar(appLocalizations.username_exceed);
       return false;
     }
 
@@ -185,41 +179,21 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   bool _validatePassword(BuildContext context) {
     if (password.trim().isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_required);
+      _showInSnackBar(appLocalizations.password_required);
       return false;
     }
 
     if (password.trim().length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
+      _showInSnackBar(appLocalizations.password_exceed);
       return false;
     }
 
     return true;
   }
-
-  bool _isUserLoggedInUser(BuildContext context) {
-    final user = context.read<AuthProvider>().currentUser;
-    if (user.userId != username) {
-      _showInSnackBar(AppLocalizations.of(context)!.invalid_user);
-      return false;
-    }
-    return true;
-  }
-
-  // _onTabBackNavigate(int index, BuildContext context) {
-  //   if (index < globalProvider.newProcessTabIndex) {
-  //     globalProvider.newProcessTabIndex = index;
-  //   }
-  // }
 
   _resetValuesOnRegistrationComplete() {
     Navigator.of(context).pop();
-    globalProvider.newProcessTabIndex = 0;
-    globalProvider.htmlBoxTabIndex = 0;
-    globalProvider.setRegId("");
-    for (int i = 0;
-        i < context.read<RegistrationTaskProvider>().listOfProcesses.length;
-        i++) {
+    for (int i = 0; i < registrationTaskProvider.listOfProcesses.length; i++) {
       Process process = Process.fromJson(
         jsonDecode(
           context
@@ -237,23 +211,21 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
-      _newRegistrationClickedAudit();
-      context.read<GlobalProvider>().clearMap();
-      context.read<GlobalProvider>().clearScannedPages();
-      context.read<GlobalProvider>().newProcessTabIndex = 0;
-      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-      context.read<GlobalProvider>().setRegId("");
+      globalProvider.clearMap();
+      globalProvider.clearScannedPages();
+      globalProvider.newProcessTabIndex = 0;
+      globalProvider.htmlBoxTabIndex = 0;
+      globalProvider.setRegId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
               field.fieldType == 'default') {
-            context
-                .read<GlobalProvider>()
-                .initializeGroupedHierarchyMap(field.group!);
+            globalProvider.initializeGroupedHierarchyMap(field.group!);
           }
         }
       }
-      context.read<GlobalProvider>().createRegistrationLanguageMap();
+      globalProvider.createRegistrationLanguageMap();
+      globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -264,36 +236,23 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     return Container();
   }
 
-  _newRegistrationClickedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-HOME-002", "REG-MOD-102");
-  }
-
   void _registrationScreenLoadedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-002", "REG-MOD-103");
+    await globalProvider.getAudit("REG-EVT-002", "REG-MOD-103");
   }
 
   _nextButtonClickedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-003", "REG-MOD-103");
-  }
-
-  _getIsConnected() {
-    return context.read<ConnectivityProvider>().isConnected;
+    await globalProvider.getAudit("REG-EVT-003", "REG-MOD-103");
   }
 
   bool continueButton = false;
   @override
   Widget build(BuildContext context) {
     postRegistrationTabs = [
-      AppLocalizations.of(context)!.preview_page,
-      AppLocalizations.of(context)!.packet_auth_page,
-      AppLocalizations.of(context)!.acknowledgement_page,
+      appLocalizations.preview_page,
+      appLocalizations.packet_auth_page,
+      appLocalizations.acknowledgement_page,
     ];
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    registrationTaskProvider =
-        Provider.of<RegistrationTaskProvider>(context, listen: false);
     bool isMobile = MediaQuery.of(context).size.width < 750;
     double w = ScreenUtil().screenWidth;
     Map<String, dynamic> arguments =
@@ -322,8 +281,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     isExceptionPresent(String id) {
       bool isExceptionPresent = false;
-      for (BiometricAttributeData x
-          in context.read<GlobalProvider>().fieldInputValue[id]) {
+      for (BiometricAttributeData x in globalProvider.fieldInputValue[id]) {
         if (x.exceptions.contains(true) || x.title == "Exception") {
           isExceptionPresent = true;
           break;
@@ -363,58 +321,78 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     customValidation(int currentIndex) async {
       bool isValid = true;
-      Screen screen = newProcess.screens!.elementAt(currentIndex)!;
-      for (int i = 0; i < screen.fields!.length; i++) {
-        if (screen.fields!.elementAt(i)!.inputRequired! &&
-            screen.fields!.elementAt(i)!.required!) {
-          if (!(context
-                  .read<GlobalProvider>()
-                  .fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.id)) &&
-              !(context
-                  .read<GlobalProvider>()
-                  .fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-              !(context.read<GlobalProvider>().fieldInputValue.containsKey(
-                  "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-            // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
+      if (globalProvider.newProcessTabIndex < size) {
+        Screen screen = newProcess.screens!.elementAt(currentIndex)!;
+        for (int i = 0; i < screen.fields!.length; i++) {
+          if (screen.fields!.elementAt(i)!.inputRequired! &&
+              screen.fields!.elementAt(i)!.required!) {
+            if (!(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                !(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                !(globalProvider.fieldInputValue.containsKey(
+                    "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+              // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
 
-            // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
-            //   _showInSnackBar(AppLocalizations.of(context)!.upload_document);
-            // }
-            isValid = false;
+              // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
+              //   _showInSnackBar(appLocalizations.upload_document);
+              // }
+              isValid = false;
 
-            break;
-          }
-          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-              screen.fields!
-                  .elementAt(i)!
-                  .conditionalBioAttributes!
-                  .isNotEmpty) {
-            String response = await BiometricsApi().getAgeGroup();
-            if (!(response.compareTo(screen.fields!
+              break;
+            }
+            if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+                screen.fields!
                     .elementAt(i)!
                     .conditionalBioAttributes!
-                    .first!
-                    .ageGroup!) ==
-                0)) {
-              if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
-                int count = returnBiometricListLength(
-                    screen.fields!.elementAt(i)!.bioAttributes,
-                    screen.fields!.elementAt(i)!.id!);
-                if (globalProvider
-                        .completeException[screen.fields!.elementAt(i)!.id!] !=
-                    null) {
-                  int length = globalProvider
-                      .completeException[screen.fields!.elementAt(i)!.id!]
-                      .length;
-                  count = count - length;
-                }
+                    .isNotEmpty) {
+              String response = await BiometricsApi().getAgeGroup();
+              if (!(response.compareTo(screen.fields!
+                      .elementAt(i)!
+                      .conditionalBioAttributes!
+                      .first!
+                      .ageGroup!) ==
+                  0)) {
+                if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                  int count = returnBiometricListLength(
+                      screen.fields!.elementAt(i)!.bioAttributes,
+                      screen.fields!.elementAt(i)!.id!);
+                  if (globalProvider.completeException[
+                          screen.fields!.elementAt(i)!.id!] !=
+                      null) {
+                    int length = globalProvider
+                        .completeException[screen.fields!.elementAt(i)!.id!]
+                        .length;
+                    count = count - length;
+                  }
 
-                if (globalProvider
-                        .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                        .length <
-                    count) {
+                  if (globalProvider
+                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                          .length <
+                      count) {
+                    isValid = false;
+
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          if (screen.fields!.elementAt(i)!.requiredOn != null &&
+              screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
+            bool required = await evaluateMVEL(
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
+                screen.fields!.elementAt(i)!);
+            if (required) {
+              if (screen.fields!.elementAt(i)!.inputRequired!) {
+                if (!(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                    !(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                    !(globalProvider.fieldInputValue.containsKey(
+                        "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
                   isValid = false;
 
                   break;
@@ -422,48 +400,30 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               }
             }
           }
-        }
-        if (screen.fields!.elementAt(i)!.requiredOn != null && screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
-          bool required = await evaluateMVEL(
-              jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-              screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-              screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-              screen.fields!.elementAt(i)!);
-          if (required) {
-            if (screen.fields!.elementAt(i)!.inputRequired!) {
-              if (!(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                  !(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                  !(globalProvider.fieldInputValue.containsKey(
-                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-                isValid = false;
-
-                break;
-              }
-            }
-          }
-        }
-        if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-            screen.fields!.elementAt(i)!.conditionalBioAttributes!.isNotEmpty) {
-          String response = await BiometricsApi().getAgeGroup();
-          if (response.compareTo(screen.fields!
+          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+              screen.fields!
                   .elementAt(i)!
                   .conditionalBioAttributes!
-                  .first!
-                  .ageGroup!) ==
-              0) {
-            bool valid = await BiometricsApi()
-                .conditionalBioAttributeValidation(
-                    screen.fields!.elementAt(i)!.id!,
-                    screen.fields!
-                        .elementAt(i)!
-                        .conditionalBioAttributes!
-                        .first!
-                        .validationExpr!);
-            if (!valid) {
-              isValid = false;
-              break;
+                  .isNotEmpty) {
+            String response = await BiometricsApi().getAgeGroup();
+            if (response.compareTo(screen.fields!
+                    .elementAt(i)!
+                    .conditionalBioAttributes!
+                    .first!
+                    .ageGroup!) ==
+                0) {
+              bool valid = await BiometricsApi()
+                  .conditionalBioAttributeValidation(
+                      screen.fields!.elementAt(i)!.id!,
+                      screen.fields!
+                          .elementAt(i)!
+                          .conditionalBioAttributes!
+                          .first!
+                          .validationExpr!);
+              if (!valid) {
+                isValid = false;
+                break;
+              }
             }
           }
         }
@@ -498,7 +458,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
             return;
           }
           RegistrationSubmitResponse registrationSubmitResponse =
-              await _submitRegistration();
+              await registrationTaskProvider.submitRegistrationDto(username);
           if (registrationSubmitResponse.errorCode!.isNotEmpty) {
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
@@ -519,7 +479,13 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      continueButton = value;
+      continueButton = value &&
+          globalProvider.formKey.currentState != null &&
+          globalProvider.formKey.currentState!.validate();
+
+      if(globalProvider.newProcessTabIndex >= size) {
+          continueButton = true;
+      }
     });
 
     return WillPopScope(
@@ -551,7 +517,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                             height: isPortrait && !isMobileSize ? 68.h : 52.h,
                             child: Center(
                               child: Text(
-                                AppLocalizations.of(context)!.go_back,
+                                appLocalizations.go_back,
                                 style: TextStyle(
                                   fontSize:
                                       isPortrait && !isMobileSize ? 22 : 14,
@@ -573,7 +539,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                             height: isPortrait && !isMobileSize ? 68.h : 52.h,
                             child: Center(
                               child: Text(
-                                AppLocalizations.of(context)!.informed,
+                                appLocalizations.informed,
                                 style: TextStyle(
                                   fontSize:
                                       isPortrait && !isMobileSize ? 22 : 14,
@@ -595,18 +561,18 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               globalProvider.newProcessTabIndex == size + 2
                           ? ElevatedButton(
                               onPressed: () async {
-                                await context
-                                    .read<ConnectivityProvider>()
+                                await connectivityProvider
                                     .checkNetworkConnection();
-                                bool isConnected = _getIsConnected();
+                                bool isConnected =
+                                    connectivityProvider.isConnected;
                                 if (!isConnected) {
-                                  _showNetworkError();
+                                  _showInSnackBar(
+                                      appLocalizations.network_error);
                                   return;
                                 }
                                 globalProvider.syncPacket(globalProvider.regId);
                               },
-                              child: Text(
-                                  AppLocalizations.of(context)!.sync_packet),
+                              child: Text(appLocalizations.sync_packet),
                             )
                           : const SizedBox.shrink(),
                       SizedBox(
@@ -616,19 +582,19 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               globalProvider.newProcessTabIndex == size + 2
                           ? ElevatedButton(
                               onPressed: () async {
-                                await context
-                                    .read<ConnectivityProvider>()
+                                await connectivityProvider
                                     .checkNetworkConnection();
-                                bool isConnected = _getIsConnected();
+                                bool isConnected =
+                                    connectivityProvider.isConnected;
                                 if (!isConnected) {
-                                  _showNetworkError();
+                                  _showInSnackBar(
+                                      appLocalizations.network_error);
                                   return;
                                 }
                                 globalProvider
                                     .uploadPacket(globalProvider.regId);
                               },
-                              child: Text(
-                                  AppLocalizations.of(context)!.upload_packet),
+                              child: Text(appLocalizations.upload_packet),
                             )
                           : const SizedBox.shrink(),
                       const Expanded(
@@ -649,11 +615,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                         child: Text(
                             context.read<GlobalProvider>().newProcessTabIndex <=
                                     size
-                                ? AppLocalizations.of(context)!.continue_text
+                                ? appLocalizations.continue_text
                                 : globalProvider.newProcessTabIndex == size + 1
-                                    ? AppLocalizations.of(context)!.authenticate
-                                    : AppLocalizations.of(context)!
-                                        .new_registration),
+                                    ? appLocalizations.authenticate
+                                    : appLocalizations.new_registration),
                       ),
                     ],
                   ),
@@ -929,7 +894,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 height: 26.h,
               ),
               Text(
-                AppLocalizations.of(context)!.authenticate_using_password,
+                appLocalizations.authenticate_using_password,
                 style: TextStyle(
                     fontSize: isPortrait && !isMobileSize ? 24 : 18,
                     fontWeight: semiBold,
@@ -941,7 +906,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               Row(
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.username,
+                    appLocalizations.username,
                     style: isPortrait
                         ? AppTextStyle.tabletPortraitTextfieldHeader
                         : AppTextStyle.mobileTextfieldHeader,
@@ -964,7 +929,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               Row(
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.password,
+                    appLocalizations.password,
                     style: isPortrait
                         ? AppTextStyle.tabletPortraitTextfieldHeader
                         : AppTextStyle.mobileTextfieldHeader,
@@ -1022,8 +987,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       ),
       child: TextField(
         decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.enter_username,
-          hintStyle: isPortrait
+          hintText: appLocalizations.enter_username,
+          hintStyle: isPortrait && !isMobileSize
               ? AppTextStyle.tabletPortraitTextfieldHintText
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
@@ -1060,8 +1025,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       child: TextField(
         obscureText: true,
         decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.enter_password,
-          hintStyle: isPortrait
+          hintText: appLocalizations.enter_password,
+          hintStyle: isPortrait && !isMobileSize
               ? AppTextStyle.tabletPortraitTextfieldHintText
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
