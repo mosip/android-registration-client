@@ -21,6 +21,7 @@ public class SessionManager {
     public static final String IS_OPERATOR = "is_operator";
     public static final String IS_DEFAULT = "is_default";
     public static final String USER_NAME = "user_name";
+    public static final String USER_ID = "user_id";
     public static final String USER_TOKEN = "user_token";
     public static final String RID = "current_rid";
     public static final String USER_EMAIL = "user_email";

@@ -175,15 +175,18 @@ class _OperationalTasksState extends State<OperationalTasks> {
                     index: index,
                     icon: widget.operationalTasks[index]["icon"],
                     title: widget.operationalTasks[index]["title"] as String,
-                    ontap: () =>
-                        widget.operationalTasks[index]["onTap"](context),
+                    ontap: () async {
+                      return widget.operationalTasks[index]["onTap"](context);
+                    },
                   ),
                 )
               : TaskCard(
                   index: index,
                   icon: widget.operationalTasks[index]["icon"],
                   title: widget.operationalTasks[index]["title"] as String,
-                  ontap: () => widget.operationalTasks[index]["onTap"](context),
+                  ontap: () {
+                    return widget.operationalTasks[index]["onTap"](context);
+                  },
                   subtitle: widget.operationalTasks[index]["subtitle"],
                 );
         },

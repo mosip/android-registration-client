@@ -74,7 +74,9 @@ public interface SyncRestService {
     Call<ResponseWrapper<Map<String, Object>>> getIDACertificate();
 
     @POST("/registrationprocessor/v1/registrationstatus/auth")
-    Call<ResponseWrapper<Map<String, Object>>> doOperatorAuth(@Header("signature") String signature,
+    Call<OnboardResponseWrapper<Map<String, Object>>> doOperatorAuth(@Header("Authorization") String authToken,
+                                                              @Header("Signature") String signature,
+                                                              @Header("Cookie") String cookie,
                                                               @Body Map<String, Object> requestMap);
     @GET
     Call<ResponseBody> downloadScript(@Url String url,
