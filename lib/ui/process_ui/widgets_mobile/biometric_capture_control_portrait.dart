@@ -167,6 +167,8 @@ class _BiometricCaptureControlPortraitState
         SizedBox(
           width: double.infinity,
           child: Card(
+            surfaceTintColor: transparentColor,
+            color: appWhite,
             margin: const EdgeInsets.all(0),
             child: Padding(
               padding:(isMobileSize)?const EdgeInsets.fromLTRB(20, 9, 0, 9):const EdgeInsets.fromLTRB(20, 18, 0, 18),

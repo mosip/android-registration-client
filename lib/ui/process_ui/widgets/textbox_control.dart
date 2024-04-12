@@ -145,6 +145,7 @@ class _TextBoxControlState extends State<TextBoxControl>
         globalProvider.mandatoryLanguages[0] ?? "eng";
 
     return Card(
+      surfaceTintColor: transparentColor,
       elevation: 5,
       color: pureWhite,
       margin: EdgeInsets.symmetric(

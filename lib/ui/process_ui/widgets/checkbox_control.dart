@@ -35,6 +35,7 @@ class _CheckboxControlState extends State<CheckboxControl> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
       color: pureWhite,
+      surfaceTintColor: transparentColor,
       elevation: 5,
       margin: isPortrait
           ? EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h)

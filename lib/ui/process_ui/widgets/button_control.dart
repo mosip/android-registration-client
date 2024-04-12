@@ -26,6 +26,7 @@ class ButtonControl extends StatelessWidget {
         Provider.of<GlobalProvider>(context, listen: false);
     return Card(
       elevation: 5,
+      surfaceTintColor: transparentColor,
       color: pureWhite,
       margin: EdgeInsets.symmetric(
           vertical: 1.h, horizontal: isPortrait ? 16.w : 0),

@@ -189,6 +189,8 @@ class _CustomDropDownState extends State<DropDownControl> {
     return Column(
       children: [
         Card(
+          surfaceTintColor: transparentColor,
+          color: appWhite,
           elevation: 5,
           margin: EdgeInsets.symmetric(
               vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
