@@ -239,7 +239,7 @@ public class UserOnboardService {
         data.put(TRANSACTION_Id, TRANSACTION_ID_VALUE);
         data.put(PURPOSE, PURPOSE_AUTH);
         data.put(ENV, SERVER_ACTIVE_PROFILE);
-        data.put(DOMAIN_URI,  "https://api-internal.qa-platform1.mosip.net");
+        data.put(DOMAIN_URI,  BuildConfig.BASE_URL);
         String dataBlockJsonString = this.objectMapper.writeValueAsString(data);
         dataBlock.put(ON_BOARD_BIO_DATA, CryptoUtil.encodeToURLSafeBase64(dataBlockJsonString.getBytes()));
 
