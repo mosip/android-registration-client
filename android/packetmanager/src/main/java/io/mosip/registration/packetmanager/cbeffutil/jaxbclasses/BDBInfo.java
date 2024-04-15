@@ -1,12 +1,14 @@
 package io.mosip.registration.packetmanager.cbeffutil.jaxbclasses;
 
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
+import lombok.Data;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Data
 public class BDBInfo {
 
 	@Element(name = "ChallengeResponse", required = false)

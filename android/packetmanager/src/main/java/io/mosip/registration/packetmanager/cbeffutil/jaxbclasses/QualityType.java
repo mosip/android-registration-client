@@ -4,7 +4,10 @@ package io.mosip.registration.packetmanager.cbeffutil.jaxbclasses;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
+import lombok.Data;
+
 @Root
+@Data
 public class QualityType {
 
 	@Element(name = "Algorithm")

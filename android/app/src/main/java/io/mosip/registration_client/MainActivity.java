@@ -16,6 +16,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -346,7 +347,7 @@ public class MainActivity extends FlutterActivity {
         AppComponent appComponent = DaggerAppComponent.builder()
                 .application(getApplication())
                 .networkModule(new NetworkModule(getApplication()))
-                .roomModule(new RoomModule(getApplication()))
+                .roomModule(new RoomModule(getApplication(), getApplicationInfo()))
                 .appModule(new AppModule(getApplication()))
                 .hostApiModule(new HostApiModule(getApplication()))
                 .build();
@@ -377,24 +378,6 @@ public class MainActivity extends FlutterActivity {
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
-
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
-                .setMethodCallHandler(
-                        (call, result) -> {
-                            switch(call.method) {
-                                case "masterDataSync":
-                                    new SyncActivityService().clickSyncMasterData(result,
-                                            auditManagerService, masterDataService);
-                                    break;
-                                case "batchJob":
-                                    syncRegistrationPackets(this);
-                                    break;
-                                default:
-                                    result.notImplemented();
-                                    break;
-                            }
-                        }
-                );
     }
 
     @Override

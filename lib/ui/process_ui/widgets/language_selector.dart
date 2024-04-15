@@ -31,9 +31,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   bool isMobile = true;
   String? notificationLanguage;
   String? mandatoryLanguage;
-  _getRegistrationError() {
-    return context.read<RegistrationTaskProvider>().registrationStartError;
-  }
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   _triggerNavigation() {
     Navigator.pushNamed(context, NewProcess.routeName,
@@ -53,24 +52,23 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   }
 
   _getRegistrationLanguageList() {
-    return context.read<GlobalProvider>().chosenLang.map((e) {
-      return context.read<GlobalProvider>().langToCode(e) as String;
+    return globalProvider.chosenLang.map((e) {
+      return globalProvider.langToCode(e) as String;
     }).toList();
   }
 
-  _startRegistration(List<String> langList) async {
-    await context.read<RegistrationTaskProvider>().startRegistration(langList);
-  }
-
   _navigateToConsentPage() async {
-    context.read<GlobalProvider>().getThresholdValues();
     context.read<GlobalProvider>().fieldDisplayValues = {};
     await context.read<GlobalProvider>().fieldValues(widget.newProcess);
+    globalProvider.getThresholdValues();
+    globalProvider.fieldDisplayValues = {};
+    await globalProvider.fieldValues(widget.newProcess);
 
     List<String> langList = _getRegistrationLanguageList();
-    await _startRegistration(langList);
-    _addNotificationLanguage();
-    String registrationStartError = _getRegistrationError();
+    await registrationTaskProvider.startRegistration(langList);
+    registrationTaskProvider.addDemographicField(
+        "preferredLang", globalProvider.fieldInputValue["preferredLang"].toString());
+    String registrationStartError = registrationTaskProvider.registrationStartError;
     _navigateBack();
     if (registrationStartError.isEmpty) {
       _triggerNavigation();
@@ -79,32 +77,21 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     }
   }
 
-  _addNotificationLanguage() {
-    context.read<RegistrationTaskProvider>().addDemographicField(
-        "preferredLang",
-        context.read<GlobalProvider>().fieldInputValue["preferredLang"].toString());
-  }
-
   @override
   void initState() {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages.first!;
-    mandatoryLanguage =
-        context.read<GlobalProvider>().codeToLanguageMapper[lang];
-    _languageSelectorPageLoadedAudit();
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    String lang = globalProvider.mandatoryLanguages.first!;
+    mandatoryLanguage = globalProvider.codeToLanguageMapper[lang];
+    globalProvider.getAudit("REG-LOAD-006", "REG-MOD-103");
     super.initState();
-  }
-
-  _languageSelectorPageLoadedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-LOAD-006", "REG-MOD-103");
   }
 
   _getNotificationLabel() {
     String notificationLanguage = "";
     context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code =
-          context.read<GlobalProvider>().languageToCodeMapper[element]!;
+      String code = globalProvider.languageToCodeMapper[element]!;
       notificationLanguage +=
           " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
     });
@@ -113,8 +100,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
 
   @override
   Widget build(BuildContext context) {
-    int minLanguage = context.read<GlobalProvider>().minLanguageCount;
-    int maxLanguage = context.read<GlobalProvider>().maxLanguageCount;
+    int minLanguage = globalProvider.minLanguageCount;
+    int maxLanguage = globalProvider.maxLanguageCount;
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     return AlertDialog(
       title: Text(
@@ -176,35 +163,22 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                         title: context
                             .watch<GlobalProvider>()
                             .codeToLanguageMapper[e]!,
-                        isDisabled: context
-                                .read<GlobalProvider>()
-                                .disabledLanguageMap[e] ??
-                            false,
-                        isSelected: context
-                            .read<GlobalProvider>()
-                            .chosenLang
-                            .contains(context
-                                .watch<GlobalProvider>()
-                                .codeToLanguageMapper[e]!),
+                        isDisabled:
+                            globalProvider.disabledLanguageMap[e] ?? false,
+                        isSelected: globalProvider.chosenLang.contains(context
+                            .watch<GlobalProvider>()
+                            .codeToLanguageMapper[e]!),
                         onTap: () {
-                          context.read<GlobalProvider>().addRemoveLang(
-                              context
-                                  .read<GlobalProvider>()
-                                  .codeToLanguageMapper[e]!,
-                              !context
-                                  .read<GlobalProvider>()
-                                  .chosenLang
-                                  .contains(context
-                                      .read<GlobalProvider>()
-                                      .codeToLanguageMapper[e]!));
+                          globalProvider.addRemoveLang(
+                              globalProvider.codeToLanguageMapper[e]!,
+                              !globalProvider.chosenLang.contains(
+                                  globalProvider.codeToLanguageMapper[e]!));
                         },
                         isMobile: true,
-                        isFreezed:
-                            context.read<GlobalProvider>().mandatoryLanguageMap[
-                                    context
-                                        .watch<GlobalProvider>()
-                                        .codeToLanguageMapper[e]!] ??
-                                false,
+                        isFreezed: globalProvider.mandatoryLanguageMap[context
+                                .watch<GlobalProvider>()
+                                .codeToLanguageMapper[e]!] ??
+                            false,
                       );
                     }).toList()),
               ),
@@ -245,11 +219,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                               .fieldInputValue["preferredLang"] ==
                           e,
                       onTap: () {
-                        context.read<GlobalProvider>().setInputMapValue(
-                              "preferredLang",
-                              e,
-                              context.read<GlobalProvider>().fieldInputValue,
-                            );
+                        globalProvider.setInputMapValue(
+                          "preferredLang",
+                          e,
+                          globalProvider.fieldInputValue,
+                        );
                       },
                       isMobile: isMobile,
                       isFreezed: false,
@@ -320,34 +294,20 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  if (context
-                              .read<GlobalProvider>()
-                              .chosenLang
-                              .length >=
-                          minLanguage &&
-                      context.read<GlobalProvider>().chosenLang.length <=
-                          maxLanguage &&
-                      context
-                              .read<GlobalProvider>()
-                              .fieldInputValue["preferredLang"] !=
-                          null) {
+                  if (globalProvider.chosenLang.length >= minLanguage &&
+                      globalProvider.chosenLang.length <= maxLanguage &&
+                      globalProvider.fieldInputValue["preferredLang"] != null) {
                     _navigateToConsentPage();
                   }
                 },
                 style: ButtonStyle(
-                  backgroundColor: (context
-                                  .read<GlobalProvider>()
-                                  .chosenLang
-                                  .length >=
-                              minLanguage &&
-                          context.read<GlobalProvider>().chosenLang.length <=
-                              maxLanguage &&
-                          context
-                                  .read<GlobalProvider>()
-                                  .fieldInputValue["preferredLang"] !=
-                              null)
-                      ? MaterialStateProperty.all<Color>(solidPrimary)
-                      : MaterialStateProperty.all<Color>(Colors.grey),
+                  backgroundColor:
+                      (globalProvider.chosenLang.length >= minLanguage &&
+                              globalProvider.chosenLang.length <= maxLanguage &&
+                              globalProvider.fieldInputValue["preferredLang"] !=
+                                  null)
+                          ? MaterialStateProperty.all<Color>(solidPrimary)
+                          : MaterialStateProperty.all<Color>(Colors.grey),
                 ),
                 child: SizedBox(
                   height: isMobile && !isMobileSize ? 62.h : 37.h,

@@ -22,7 +22,7 @@ class TaskCard extends StatefulWidget {
   final Widget icon;
   final String title;
   final int index;
-  final VoidCallback ontap;
+  final Function ontap;
   final String subtitle;
 
   @override
@@ -42,7 +42,7 @@ class _TaskCardState extends State<TaskCard> {
       child: SizedBox(
         height: 110.h,
         child: ListTile(
-          onTap: widget.ontap,
+          onTap: (){widget.ontap();},
           contentPadding: EdgeInsets.only(
             top: 15.h,
             bottom: 17.h,

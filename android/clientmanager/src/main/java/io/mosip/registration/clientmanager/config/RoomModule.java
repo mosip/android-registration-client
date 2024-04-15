@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.config;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.AuditDao;
 import io.mosip.registration.clientmanager.dao.BlocklistedWordDao;
@@ -41,9 +43,11 @@ import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
 import io.mosip.registration.clientmanager.dao.TemplateDao;
+import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
+import io.mosip.registration.clientmanager.entity.UserBiometric;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
@@ -59,6 +63,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
+import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
@@ -76,15 +81,16 @@ public class RoomModule {
 
     private ClientDatabase clientDatabase;
 
-    public RoomModule(Application application) {
+    public RoomModule(Application application, ApplicationInfo applicationInfo) {
         Context context = application.getApplicationContext();
         try {
+            boolean isDebug = (applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
             String dbPwd = getEncryptedSharedPreferences(context).getString(DB_PWD_KEY, null);
             Log.i(TAG, "Db password found in sharedPreferences.");
             boolean dbExists = context.getDatabasePath(DATABASE_NAME).exists();
             if (dbPwd == null) {
                 Log.i(TAG, "Db password found null. Creating new pwd and storing in SharedPreferences.");
-                dbPwd = RandomStringUtils.random(20, 0, 0, true, true, null, secureRandom);
+                dbPwd = isDebug ? BuildConfig.DEBUG_PASSWORD : RandomStringUtils.random(20, 0, 0, true, true, null, secureRandom);
                 getEncryptedSharedPreferences(context).edit()
                         .putString(DB_PWD_KEY, dbPwd)
                         .apply();
@@ -249,6 +255,12 @@ public class RoomModule {
 
     @Singleton
     @Provides
+    UserBiometricDao providesUserBiometricDao(ClientDatabase clientDatabase) {
+        return clientDatabase.userBiometricDao();
+    }
+
+    @Singleton
+    @Provides
     UserPasswordDao providesUserPasswordDao(ClientDatabase clientDatabase) {
         return clientDatabase.userPasswordDao();
     }
@@ -367,6 +379,12 @@ public class RoomModule {
     UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao,
                                                      UserPasswordDao userPasswordDao) {
         return new UserDetailRepository(userDetailDao, userTokenDao, userPasswordDao);
+    }
+
+    @Provides
+    @Singleton
+    UserBiometricRepository provideUserBiometricRepository(UserBiometricDao userBiometricDao, UserDetailDao userDetailDao) {
+        return new UserBiometricRepository(userBiometricDao, userDetailDao);
     }
 
     @Provides

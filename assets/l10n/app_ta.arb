@@ -225,5 +225,6 @@
   "default_not_found": "தேவையான பங்கு கிடைக்கவில்லை!",
   "preview_page": "முன்னோக்கி",
   "packet_auth_page": "அங்கீகாரம்",
-  "acknowledgement_page": "அறிவுசெய்தல்"
+  "acknowledgement_page": "அறிவுசெய்தல்",
+  "share": "பகிர்"
 }
