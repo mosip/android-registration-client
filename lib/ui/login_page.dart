@@ -575,8 +575,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           context.watch<AuthProvider>().isValidUser
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
-                  onTapLogin: () {
-                    _getLoginAction();
+                  onTapLogin: () async{
+                    await _getLoginAction();
+                    await _initializeBiometricThresholdData();
                   },
                   isMobile: isMobile,
                   onTapBack: () {
