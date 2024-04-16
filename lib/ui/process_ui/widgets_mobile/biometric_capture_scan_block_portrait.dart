@@ -328,146 +328,95 @@ class _BiometricCaptureScanBlockPortraitState
               SizedBox(
                 height: 6.h,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Text(
+                    AppLocalizations.of(context)!.attempts,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 24, color: blackShade1, fontWeight: semiBold),
+                  ),
+                  const SizedBox(
+                    height: 29.4,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.attempts,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 24,
-                            color: blackShade1,
-                            fontWeight: semiBold),
-                      ),
-                      const SizedBox(
-                        height: 29.4,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (int i = 1;
-                              i <= biometricAttributeData.noOfCapturesAllowed;
-                              i++)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.3),
-                              child: InkWell(
-                                onTap: () async {
-                                  if (biometricAttributeData.attemptNo >= i) {
-                                    await BiometricsApi()
-                                        .getBiometrics(
-                                            widget.field.id!,
-                                            biometricAttributeData.title
-                                                .replaceAll(" ", ""),
-                                            i)
-                                        .then((value) {
-                                      biometricAttributeData.listOfBiometricsDto
-                                          .clear();
-                                      for (var e in value) {
-                                        biometricAttributeData
-                                            .listOfBiometricsDto
-                                            .add(BiometricsDto.fromJson(
-                                                json.decode(e!)));
-                                      }
-                                    });
-
-                                    setState(() {
-                                      biometricAttributeData.qualityPercentage =
-                                          context
-                                              .read<
-                                                  BiometricCaptureControlProvider>()
-                                              .avgScore(biometricAttributeData
-                                                  .listOfBiometricsDto);
-                                    });
-                                    await BiometricsApi()
-                                        .extractImageValuesByAttempt(
-                                            widget.field.id!,
-                                            biometricAttributeData.title
-                                                .replaceAll(" ", ""),
-                                            i)
-                                        .then((value) {
-                                      biometricAttributeData.listofImages =
-                                          value;
-                                    });
-                                    setState(() {});
+                      for (int i = 1;
+                          i <= biometricAttributeData.noOfCapturesAllowed;
+                          i++)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16.3),
+                          child: InkWell(
+                            onTap: () async {
+                              if (biometricAttributeData.attemptNo >= i) {
+                                await BiometricsApi()
+                                    .getBiometrics(
+                                        widget.field.id!,
+                                        biometricAttributeData.title
+                                            .replaceAll(" ", ""),
+                                        i)
+                                    .then((value) {
+                                  biometricAttributeData.listOfBiometricsDto
+                                      .clear();
+                                  for (var e in value) {
+                                    biometricAttributeData.listOfBiometricsDto
+                                        .add(BiometricsDto.fromJson(
+                                            json.decode(e!)));
                                   }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 7.3,
-                                    horizontal: 30,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: secondaryColors.elementAt(17),
-                                    ),
-                                    color:
-                                        (biometricAttributeData.attemptNo < i)
-                                            ? secondaryColors.elementAt(18)
-                                            : secondaryColors.elementAt(11),
-                                  ),
-                                  child: Text(
-                                    i.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
-                                            fontSize: 21,
-                                            color: (biometricAttributeData
-                                                        .attemptNo <
+                                });
+
+                                setState(() {
+                                  biometricAttributeData.qualityPercentage =
+                                      context
+                                          .read<
+                                              BiometricCaptureControlProvider>()
+                                          .avgScore(biometricAttributeData
+                                              .listOfBiometricsDto);
+                                });
+                                await BiometricsApi()
+                                    .extractImageValuesByAttempt(
+                                        widget.field.id!,
+                                        biometricAttributeData.title
+                                            .replaceAll(" ", ""),
+                                        i)
+                                    .then((value) {
+                                  biometricAttributeData.listofImages = value;
+                                });
+                                setState(() {});
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 7.3,
+                                horizontal: 30,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(17),
+                                ),
+                                color: (biometricAttributeData.attemptNo < i)
+                                    ? secondaryColors.elementAt(18)
+                                    : secondaryColors.elementAt(11),
+                              ),
+                              child: Text(
+                                i.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                        fontSize: 21,
+                                        color:
+                                            (biometricAttributeData.attemptNo <
                                                     i)
                                                 ? secondaryColors.elementAt(19)
                                                 : pureWhite,
-                                            fontWeight: semiBold),
-                                  ),
-                                ),
+                                        fontWeight: semiBold),
                               ),
                             ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.exceptions,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 24,
-                            color: blackShade1,
-                            fontWeight: semiBold),
-                      ),
-                      const SizedBox(
-                        height: 29.4,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.3),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 7.3,
-                            horizontal: 30,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: secondaryColors.elementAt(17),
-                            ),
-                            color: secondaryColors.elementAt(18),
-                          ),
-                          child: Text(
-                            noOfTrue(biometricAttributeData.exceptions).toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    fontSize: 21,
-                                    color: secondaryColors.elementAt(19),
-                                    fontWeight: semiBold),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ],
@@ -790,6 +739,62 @@ class _BiometricCaptureScanBlockPortraitState
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: pureWhite,
+                        border: Border.all(
+                            color: secondaryColors.elementAt(14), width: 1),
+                      ),
+                      height: 134,
+                      width: (isPortrait) ? double.infinity : 714.w,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.exceptions,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                    fontSize: 24,
+                                    color: blackShade1,
+                                    fontWeight: semiBold),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16.3),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 7.3,
+                                horizontal: 30,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(17),
+                                ),
+                                color: secondaryColors.elementAt(18),
+                              ),
+                              child: Text(
+                                noOfTrue(biometricAttributeData.exceptions)
+                                    .toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                        fontSize: 21,
+                                        color: secondaryColors.elementAt(19),
+                                        fontWeight: semiBold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 40,
                   ),
@@ -2452,7 +2457,8 @@ class _BiometricCaptureScanBlockPortraitState
                   }
                 },
                 child: Text(AppLocalizations.of(context)!.next_button,
-                    style: TextStyle(fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold)),
+                    style: TextStyle(
+                        fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold)),
               ),
             ],
           ),
