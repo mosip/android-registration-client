@@ -909,6 +909,7 @@ class _BiometricCaptureScanBlockPortraitState
                     height: 20,
                   ),
                   TextField(
+                    enabled: false,
                     maxLines: 10,
                     decoration: InputDecoration(
                       fillColor: pureWhite,
