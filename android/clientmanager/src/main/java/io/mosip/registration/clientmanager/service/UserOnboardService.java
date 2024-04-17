@@ -6,6 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.ClientManagerError;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.R;
@@ -16,6 +18,7 @@ import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -105,8 +108,11 @@ public class UserOnboardService {
     public static final String USER_TOKEN = "user_token";
     private RegistrationService registrationService;
     private UserBiometricRepository userBiometricRepository;
+    private UserDetailRepository userDetailRepository;
 
     private static final String BIOMETRIC_KEY_PATTERN = "%s_%s_%s";
+
+    public static final String PREFERRED_USERNAME = "preferred_username";
 
     private List<BiometricsDto> operatorBiometrics=new ArrayList<>();
     public List<BiometricsDto> getOperatorBiometrics(){
@@ -131,8 +137,9 @@ public class UserOnboardService {
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
                               CertificateManagerService certificateManagerService,
-                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService) {
+                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
         this.context = context;
+        this.userDetailRepository=userDetailRepository;
         this.certificateManagerService = certificateManagerService;
         this.syncRestService = syncRestService;
         this.cryptoManagerService = cryptoManagerService;
@@ -174,10 +181,10 @@ public class UserOnboardService {
         idaRequestMap.put(REQUEST_TIME,
                 DateUtils.formatToISOString(ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime()));
         idaRequestMap.put(ENV, SERVER_ACTIVE_PROFILE);
-        idaRequestMap.put(DOMAIN_URI, "https://api-internal.qa-platform1.mosip.net");
+        idaRequestMap.put(DOMAIN_URI, BuildConfig.BASE_URL);
         idaRequestMap.put(TRANSACTION_ID, TRANSACTION_ID_VALUE);
         idaRequestMap.put(CONSENT_OBTAINED, true);
-        idaRequestMap.put(INDIVIDUAL_ID, userId);
+        idaRequestMap.put(INDIVIDUAL_ID, sharedPreferences.getString(PREFERRED_USERNAME,""));
         idaRequestMap.put(INDIVIDUAL_ID_TYPE, USER_ID_CODE);
         idaRequestMap.put(KEY_INDEX, "");
         Map<String, Boolean> tempMap = new HashMap<>();
@@ -232,7 +239,7 @@ public class UserOnboardService {
         data.put(TRANSACTION_Id, TRANSACTION_ID_VALUE);
         data.put(PURPOSE, PURPOSE_AUTH);
         data.put(ENV, SERVER_ACTIVE_PROFILE);
-        data.put(DOMAIN_URI,  "https://api-internal.qa-platform1.mosip.net");
+        data.put(DOMAIN_URI,  BuildConfig.BASE_URL);
         String dataBlockJsonString = this.objectMapper.writeValueAsString(data);
         dataBlock.put(ON_BOARD_BIO_DATA, CryptoUtil.encodeToURLSafeBase64(dataBlockJsonString.getBytes()));
 
