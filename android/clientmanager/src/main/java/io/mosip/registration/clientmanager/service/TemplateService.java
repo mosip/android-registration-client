@@ -132,6 +132,7 @@ public class TemplateService {
         capturedFingers.addAll(registrationDto.getBestBiometrics(field.getId(), Modality.FINGERPRINT_SLAB_THUMBS));
         List<BiometricsDto> capturedIris = registrationDto.getBestBiometrics(field.getId(), Modality.IRIS_DOUBLE);
         List<BiometricsDto> capturedFace = registrationDto.getBestBiometrics(field.getId(), Modality.FACE);
+        List<BiometricsDto> capturedException = registrationDto.getBestBiometrics(field.getId(), Modality.EXCEPTION_PHOTO);
 
         bioData.put("FingerCount", capturedFingers.stream().filter(b -> b.getBioValue() != null).count());
         bioData.put("IrisCount", capturedIris.stream().filter(b -> b.getBioValue() != null).count());
@@ -271,6 +272,13 @@ public class TemplateService {
                 setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap, isPreview);
             }
         }
+
+        if (!capturedException.isEmpty()) {
+        Bitmap faceBitmap = UserInterfaceHelperService.getFaceBitMap(capturedException.get(0));
+            setBiometricImage(velocityContext, "ExceptionImageSource", isPreview ? faceBitmap : BitmapFactory.decodeResource(appContext.getResources(),
+                            R.drawable.exception_photo), isPreview);
+        }
+
         return bioData;
     }
 
