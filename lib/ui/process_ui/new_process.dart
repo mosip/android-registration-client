@@ -420,6 +420,27 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           .conditionalBioAttributes!
                           .first!
                           .validationExpr!);
+                          if(screen.fields!
+                          .elementAt(i)!
+                          .exceptionPhotoRequired==true){
+                            
+                            List<BiometricAttributeData> biometricAttributeDataList = globalProvider.fieldInputValue[screen.fields!.elementAt(i)!.id!];
+                            bool isExceptionPresent = false;
+                            bool isExceptionAttributePresent = false;
+                            for (var biometricAttributeData in biometricAttributeDataList) {
+                              if(globalProvider.exceptionAttributes.contains(biometricAttributeData.title)){
+                                isExceptionPresent = true;
+                              }
+                              if(biometricAttributeData.title == "Exception"){
+                                isExceptionAttributePresent = true;
+                              }
+                            }
+                            if(isExceptionPresent == true && isExceptionAttributePresent == false){
+                              isValid = false;
+                              break;
+                            }
+                            
+                          }
               if (!valid) {
                 isValid = false;
                 break;
