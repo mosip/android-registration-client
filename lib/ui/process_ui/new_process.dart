@@ -319,6 +319,55 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       return i;
     }
 
+    ageDateChangeValidation(int currentIndex) async {
+      if (globalProvider.newProcessTabIndex < size) {
+        Screen screen = newProcess.screens!.elementAt(currentIndex)!;
+        for (int i = 0; i < screen.fields!.length; i++) {
+          if (screen.fields!.elementAt(i)!.id == "dateOfBirth") {
+            if (globalProvider.checkAgeGroupChange == "") {
+              globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
+            } else {
+              if (globalProvider.checkAgeGroupChange
+                      .compareTo(globalProvider.ageGroup) ==
+                  0) {
+              } else {
+                List<Screen?> screens = [];
+                for (int i = 0;
+                    i < registrationTaskProvider.listOfProcesses.length;
+                    i++) {
+                  Process process = Process.fromJson(
+                    jsonDecode(
+                      context
+                          .read<RegistrationTaskProvider>()
+                          .listOfProcesses
+                          .elementAt(i)
+                          .toString(),
+                    ),
+                  );
+                  if (process.id == "NEW") {
+                    screens = process.screens!;
+                  }
+                }
+                for (Screen? screen in screens) {
+                  if (screen!.name! == "Documents" ||
+                      screen!.name! == "BiometricDetails") {
+                    for (Field? field in screen!.fields!) {
+                      if (globalProvider.fieldInputValue
+                          .containsKey(field!.id!)) {
+                        globalProvider.fieldInputValue.remove(field.id);
+                      }
+                    }
+                  }
+                }
+                await BiometricsApi().clearBiometricAndDocumentHashmap();
+                globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
+              }
+            }
+          }
+        }
+      }
+    }
+
     customValidation(int currentIndex) async {
       bool isValid = true;
       if (globalProvider.newProcessTabIndex < size) {
@@ -420,27 +469,27 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           .conditionalBioAttributes!
                           .first!
                           .validationExpr!);
-                          if(screen.fields!
-                          .elementAt(i)!
-                          .exceptionPhotoRequired==true){
-                            
-                            List<BiometricAttributeData> biometricAttributeDataList = globalProvider.fieldInputValue[screen.fields!.elementAt(i)!.id!];
-                            bool isExceptionPresent = false;
-                            bool isExceptionAttributePresent = false;
-                            for (var biometricAttributeData in biometricAttributeDataList) {
-                              if(globalProvider.exceptionAttributes.contains(biometricAttributeData.title)){
-                                isExceptionPresent = true;
-                              }
-                              if(biometricAttributeData.title == "Exception"){
-                                isExceptionAttributePresent = true;
-                              }
-                            }
-                            if(isExceptionPresent == true && isExceptionAttributePresent == false){
-                              isValid = false;
-                              break;
-                            }
-                            
-                          }
+              if (screen.fields!.elementAt(i)!.exceptionPhotoRequired == true) {
+                List<BiometricAttributeData> biometricAttributeDataList =
+                    globalProvider
+                        .fieldInputValue[screen.fields!.elementAt(i)!.id!];
+                bool isExceptionPresent = false;
+                bool isExceptionAttributePresent = false;
+                for (var biometricAttributeData in biometricAttributeDataList) {
+                  if (globalProvider.exceptionAttributes
+                      .contains(biometricAttributeData.title)) {
+                    isExceptionPresent = true;
+                  }
+                  if (biometricAttributeData.title == "Exception") {
+                    isExceptionAttributePresent = true;
+                  }
+                }
+                if (isExceptionPresent == true &&
+                    isExceptionAttributePresent == false) {
+                  isValid = false;
+                  break;
+                }
+              }
               if (!valid) {
                 isValid = false;
                 break;
@@ -454,6 +503,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
+        ageDateChangeValidation(globalProvider.newProcessTabIndex);
         bool customValidator =
             await customValidation(globalProvider.newProcessTabIndex);
         if (customValidator) {
@@ -504,8 +554,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           globalProvider.formKey.currentState != null &&
           globalProvider.formKey.currentState!.validate();
 
-      if(globalProvider.newProcessTabIndex >= size) {
-          continueButton = true;
+      if (globalProvider.newProcessTabIndex >= size) {
+        continueButton = true;
       }
     });
 

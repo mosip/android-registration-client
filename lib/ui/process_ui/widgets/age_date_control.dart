@@ -5,16 +5,21 @@
  *
 */
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
+import '../../../model/screen.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_cupertino_picker.dart';
 import 'custom_label.dart';
@@ -135,82 +140,82 @@ class _AgeDateControlState extends State<AgeDateControl> {
         builder: (context) {
           return ListView(
             primary: false,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      width: 50,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    width: 50,
+                  ),
+                  Text(
+                    widget.field.label!['eng'] ?? "",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.close,
                     ),
-                    Text(
-                      widget.field.label!['eng'] ?? "",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    )
-                  ],
-                ),
-                Container(
-                  height: 2.5,
-                  width: MediaQuery.of(context).size.width,
-                  color: solidPrimary.withOpacity(0.075),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                CustomCupertinoDatePicker(
-                  maxDate: DateTime.now(),
-                  minDate: DateTime(DateTime.now().year - 125),
-                  selectedDate: dateString != ""
-                      ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
-                          .parse(dateString)
-                      : null,
-                  squeeze: 1,
-                  itemExtent: 50,
-                  diameterRatio: 10,
-                  selectionOverlay: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: solidPrimary.withOpacity(0.075),
-                    ),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                ],
+              ),
+              Container(
+                height: 2.5,
+                width: MediaQuery.of(context).size.width,
+                color: solidPrimary.withOpacity(0.075),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              CustomCupertinoDatePicker(
+                maxDate: DateTime.now(),
+                minDate: DateTime(DateTime.now().year - 125),
+                selectedDate: dateString != ""
+                    ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                        .parse(dateString)
+                    : null,
+                squeeze: 1,
+                itemExtent: 50,
+                diameterRatio: 10,
+                selectionOverlay: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: solidPrimary.withOpacity(0.075),
                   ),
-                  selectedStyle: TextStyle(
-                    color: solidPrimary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                  unselectedStyle: TextStyle(
-                    color: Colors.grey[800],
-                    fontSize: 15,
-                  ),
-                  disabledStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 15,
-                  ),
-                  onSelectedItemChanged: (selectedDate) {
-                    String targetDateString = widget.field.format ??
-                        "yyyy/MM/dd"
-                            .replaceAll('dd',
-                                selectedDate.day.toString().padLeft(2, "0"))
-                            .replaceAll('MM',
-                                selectedDate.month.toString().padLeft(2, "0"))
-                            .replaceAll('yyyy', selectedDate.year.toString());
-                    setState(() {
-                      dateController.text = targetDateString;
-                    });
-                    _calculateAgeFromDOB();
-                    saveData();
-                  },
                 ),
-              ],
+                selectedStyle: TextStyle(
+                  color: solidPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+                unselectedStyle: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 15,
+                ),
+                disabledStyle: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 15,
+                ),
+                onSelectedItemChanged: (selectedDate) {
+                  String targetDateString = widget.field.format ??
+                      "yyyy/MM/dd"
+                          .replaceAll(
+                              'dd', selectedDate.day.toString().padLeft(2, "0"))
+                          .replaceAll('MM',
+                              selectedDate.month.toString().padLeft(2, "0"))
+                          .replaceAll('yyyy', selectedDate.year.toString());
+                  setState(() {
+                    dateController.text = targetDateString;
+                  });
+                  _calculateAgeFromDOB();
+                  saveData();
+                },
+              ),
+            ],
           );
         });
   }
@@ -292,7 +297,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           }
                           return null;
                         },
-                        onChanged: (value) {
+                        onChanged: (value) async {
                           if (value != "") {
                             _getDateFromAge(value);
                           } else {

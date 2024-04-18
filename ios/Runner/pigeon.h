@@ -10,30 +10,28 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DashBoardData;
 
-@interface DashBoardData : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithUserId:(NSString *)userId
-    userName:(NSString *)userName
-    userStatus:(NSNumber *)userStatus
-    userIsOnboarded:(NSNumber *)userIsOnboarded;
-@property(nonatomic, copy) NSString * userId;
-@property(nonatomic, copy) NSString * userName;
-@property(nonatomic, strong) NSNumber * userStatus;
-@property(nonatomic, strong) NSNumber * userIsOnboarded;
+/// The codec used by BiometricsApi.
+NSObject<FlutterMessageCodec> *BiometricsApiGetCodec(void);
+
+@protocol BiometricsApi
+- (void)invokeDiscoverSbiFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getBestBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getBiometricsFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<NSString *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)extractImageValuesFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)extractImageValuesByAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality attempt:(NSNumber *)attempt completion:(void (^)(NSArray<FlutterStandardTypedData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)incrementBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getBioAttemptFieldId:(NSString *)fieldId modality:(NSString *)modality completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)startOperatorOnboardingWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)clearBiometricAndDocumentHashmapWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)saveOperatorBiometricsWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)addBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)removeBioExceptionFieldId:(NSString *)fieldId modality:(NSString *)modality attribute:(NSString *)attribute completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getMapValueKey:(NSString *)key completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getAgeGroupWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)conditionalBioAttributeValidationFieldId:(NSString *)fieldId expression:(NSString *)expression completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by DashBoardApi.
-NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
-
-@protocol DashBoardApi
-- (void)getDashBoardDetailsWithCompletion:(void (^)(NSArray<DashBoardData *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPacketUploadedDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
+extern void BiometricsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<BiometricsApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

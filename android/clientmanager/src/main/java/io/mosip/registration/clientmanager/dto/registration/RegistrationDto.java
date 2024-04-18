@@ -149,7 +149,20 @@ public class RegistrationDto extends Observable {
         this.demographics.put(fieldId, value);
         clearAndNotifyAllObservers();
     }
-
+    public void clearBiometricsHashmap(){
+        this.biometrics.clear();
+        clearAttemptsHashmap();
+        clearExceptionsHashmap();
+    }
+    public void clearDocumentsHashmap(){
+        this.documents.clear();
+    }
+    public void clearAttemptsHashmap(){
+        this.ATTEMPTS.clear();
+    }
+    public void clearExceptionsHashmap(){
+        this.EXCEPTIONS.clear();
+    }
     public void addDemographicField(String fieldId, String value, String language) {
         this.demographics.compute(fieldId, (k, v) -> {
             v = v != null ? v : new ArrayList<SimpleType>();
