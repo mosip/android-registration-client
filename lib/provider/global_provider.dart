@@ -48,6 +48,7 @@ class GlobalProvider with ChangeNotifier {
   int _htmlBoxTabIndex = 0;
 
   List<String> _chosenLang = [];
+  String _operatorOnboardingAttributes="";
   Map<String, bool> _languageMap = {
     'English': true,
     'Arabic': false,
@@ -121,6 +122,12 @@ class GlobalProvider with ChangeNotifier {
   String get machineName => _machineName;
   Map<String?, String?> get machineDetails => _machineDetails;
   String get regId => _regId;
+
+  String get operatorOnboardingAttributes => _operatorOnboardingAttributes;
+  set operatorOnboardingAttributes(String value) {
+    _operatorOnboardingAttributes = value;
+    notifyListeners();
+  }
 
   Map<String, bool> get mvelValues => _mvelValues;
 
@@ -342,7 +349,7 @@ class GlobalProvider with ChangeNotifier {
       } else {
         commitId = head;
       }
-    } catch (e) {
+    } catch(e) {
       debugPrint("Failed fetching git info: $e");
     }
 
@@ -447,9 +454,6 @@ class GlobalProvider with ChangeNotifier {
 
   clearMap() {
     _fieldInputValue = {};
-    _fieldInputValue = {};
-    _fieldInputValue = {};
-    _fieldDisplayValues = {};
     log("input value $_fieldInputValue");
     notifyListeners();
   }
@@ -486,12 +490,14 @@ class GlobalProvider with ChangeNotifier {
 
   List<String> get exceptionAttributes => _exceptionAttributes;
 
-  initializeLanguageDataList() async {
+  initializeLanguageDataList(bool isManualSync) async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
     await createLanguageCodeMapper();
     String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
-    await toggleLocale(mandatoryLang);
+    if(!isManualSync) {
+      await toggleLocale(mandatoryLang);
+    }
     notifyListeners();
   }
 

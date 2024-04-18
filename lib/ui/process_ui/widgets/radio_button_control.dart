@@ -26,10 +26,12 @@ class RadioButtonControl extends StatefulWidget {
 }
 
 class _RadioFormFieldState extends State<RadioButtonControl> {
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+
   Future<List<DynamicFieldData?>> _getFieldValues(
       String fieldName, String langCode) async {
-    return await context
-        .read<RegistrationTaskProvider>()
+    return await registrationTaskProvider
         .getFieldValues(fieldName, langCode);
   }
 
@@ -37,9 +39,11 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   @override
   void initState() {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
-    if (context
-        .read<GlobalProvider>()
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    String lang = globalProvider.mandatoryLanguages[0]!;
+    if (globalProvider
         .fieldInputValue
         .containsKey(widget.field.id)) {
       _getSelectedValueFromMap(lang);
@@ -51,7 +55,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     String response = "";
     String updatedValue = "";
     response =
-        context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+        globalProvider.fieldInputValue[widget.field.id];
     List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
     for (var element in data) {
       if(element!.code == response){
@@ -68,14 +72,13 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   String? selectedOption;
 
   void handleOptionChange(String? value) {
-    context.read<GlobalProvider>().chosenLang.forEach((element) {
+    for (var element in globalProvider.chosenLang) {
       String code =
-          context.read<GlobalProvider>().languageToCodeMapper[element]!;
-      context
-          .read<RegistrationTaskProvider>()
+          globalProvider.languageToCodeMapper[element]!;
+      registrationTaskProvider
           .addSimpleTypeDemographicField(widget.field.id ?? "", value!, code);
-      context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = value;
-    });
+      globalProvider.fieldInputValue[widget.field.id!] = value;
+    }
     setState(() {
       selectedOption = value;
     });
@@ -87,7 +90,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
       future: _getFieldValues(widget.field.subType!,
-          context.read<GlobalProvider>().selectedLanguage),
+          globalProvider.selectedLanguage),
       builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,

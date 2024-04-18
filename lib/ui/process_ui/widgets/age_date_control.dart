@@ -33,11 +33,16 @@ class AgeDateControl extends StatefulWidget {
 }
 
 class _AgeDateControlState extends State<AgeDateControl> {
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
   TextEditingController dateController = TextEditingController();
   TextEditingController ageController = TextEditingController();
 
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     _getSavedDate();
     super.initState();
   }
@@ -70,40 +75,34 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   void saveData() {
     if (dateController.text == "") {
-      context
-          .read<RegistrationTaskProvider>()
-          .removeDemographicField(widget.field.id!);
-      context.read<GlobalProvider>().removeInputMapValue(
-          widget.field.id!, context.read<GlobalProvider>().fieldInputValue);
+      registrationTaskProvider.removeDemographicField(widget.field.id!);
+      globalProvider.removeInputMapValue(
+          widget.field.id!, globalProvider.fieldInputValue);
       return;
     }
     String dateString = dateController.text;
     DateTime date =
         DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
-    context.read<RegistrationTaskProvider>().setDateField(
-          widget.field.id ?? "",
-          widget.field.subType ?? "",
-          date.day.toString().padLeft(2, '0'),
-          date.month.toString().padLeft(2, '0'),
-          date.year.toString(),
-        );
-    context.read<GlobalProvider>().setInputMapValue(
-          widget.field.id!,
-          dateController.text,
-          context.read<GlobalProvider>().fieldInputValue,
-        );
+    registrationTaskProvider.setDateField(
+      widget.field.id ?? "",
+      widget.field.subType ?? "",
+      date.day.toString().padLeft(2, '0'),
+      date.month.toString().padLeft(2, '0'),
+      date.year.toString(),
+    );
+    globalProvider.setInputMapValue(
+      widget.field.id!,
+      dateController.text,
+      globalProvider.fieldInputValue,
+    );
     BiometricsApi().getAgeGroup().then((value) {
-      context.read<GlobalProvider>().ageGroup = value;
+      globalProvider.ageGroup = value;
     });
   }
 
   void _getSavedDate() {
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey(widget.field.id)) {
-      String savedDate =
-          context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+    if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
+      String savedDate = globalProvider.fieldInputValue[widget.field.id];
       DateTime parsedDate =
           DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(savedDate);
       setState(() {
@@ -220,8 +219,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    String mandatoryLanguageCode =
-        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -251,7 +248,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           if (value == null || value.isEmpty) {
                             return AppLocalizations.of(context)!
                                 .demographicsScreenEmptyMessage(
-                                    mandatoryLanguageCode);
+                                    globalProvider.selectedLanguage);
                           }
                           return null;
                         },
@@ -291,7 +288,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           if (value == null || value.isEmpty) {
                             return AppLocalizations.of(context)!
                                 .demographicsScreenEmptyMessage(
-                                    mandatoryLanguageCode);
+                                    globalProvider.selectedLanguage);
                           }
                           return null;
                         },

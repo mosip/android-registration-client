@@ -27,6 +27,9 @@ class AuthProvider with ChangeNotifier {
   String _packetError = "";
   bool _isMachineActive = false;
   bool _isCenterActive = false;
+  String _userId = "";
+  String _username = "";
+  String _userEmail = "";
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isSyncing => _isSyncing;
@@ -43,6 +46,9 @@ class AuthProvider with ChangeNotifier {
   bool get isMachineActive => _isMachineActive;
   bool get isCenterActive => _isCenterActive;
   String get packetError => _packetError;
+  String get userId => _userId;
+  String get username => _username;
+  String get userEmail => _userEmail;
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -119,6 +125,21 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  setUserId(String value) {
+    _userId = value;
+    notifyListeners();
+  }
+
+  setUsername(String value) {
+    _username = value;
+    notifyListeners();
+  }
+
+  setUserEmail(String value) {
+    _userEmail = value;
+    notifyListeners();
+  }
+
   validateUser(String username, String langCode) async {
     final user = await auth.validateUser(username, langCode);
 
@@ -148,6 +169,9 @@ class AuthProvider with ChangeNotifier {
       _loginError = "REG_CENTER_INACTIVE";
       _isLoggedIn = false;
     } else {
+      _userId = authResponse.userId;
+      _username = authResponse.username;
+      _userEmail = authResponse.userEmail;
       _isDefault = authResponse.isDefault;
       _isOfficer = authResponse.isOfficer;
       _isSupervisor = authResponse.isSupervisor;

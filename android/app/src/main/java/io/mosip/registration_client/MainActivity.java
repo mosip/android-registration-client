@@ -378,24 +378,6 @@ public class MainActivity extends FlutterActivity {
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
-
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
-                .setMethodCallHandler(
-                        (call, result) -> {
-                            switch(call.method) {
-                                case "masterDataSync":
-                                    new SyncActivityService().clickSyncMasterData(result,
-                                            auditManagerService, masterDataService);
-                                    break;
-                                case "batchJob":
-                                    syncRegistrationPackets(this);
-                                    break;
-                                default:
-                                    result.notImplemented();
-                                    break;
-                            }
-                        }
-                );
     }
 
     @Override
