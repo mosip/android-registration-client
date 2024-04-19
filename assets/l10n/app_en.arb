@@ -217,5 +217,8 @@
   "preview_page": "Preview",
   "packet_auth_page": "Authentication",
   "acknowledgement_page": "Acknowledgement",
-  "share": "SHARE"
+  "share": "SHARE",
+  "sync_alert_title": "Sync to continue!",
+  "sync_alert_content": "Machine or Center is not active. Activate and Sync to continue.",
+  "sync_alert_text": "Sync"
 }

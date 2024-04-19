@@ -217,5 +217,8 @@
   "preview_page": "Aperçu",
   "packet_auth_page": "Authentification",
   "acknowledgement_page": "Accusé de réception",
-  "share": "PARTAGER"
+  "share": "PARTAGER",
+  "sync_alert_title": "Synchronisation pour continuer!",
+  "sync_alert_content": "La machine ou le centre n'est pas actif. Activez et synchronisez pour continuer.",
+  "sync_alert_text": "Synchroniser"
 }
