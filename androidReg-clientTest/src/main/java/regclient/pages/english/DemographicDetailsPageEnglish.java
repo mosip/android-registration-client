@@ -15,7 +15,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	private WebElement demographicDetailspage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Consent\"))")
-	private WebElement ConsentTitle;
+	private WebElement consentTitle;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(0)")
 	private WebElement fullNameTextBox;
@@ -147,7 +147,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	}
 	
 	public  ConsentPage clickOnConsentPageTitle() {
-		clickOnElement(ConsentTitle);
+		clickOnElement(consentTitle);
 		return new ConsentPageEnglish(driver);
 	}
 

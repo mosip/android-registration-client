@@ -12,7 +12,7 @@ import regclient.page.DocumentUploadPage;
 public class DocumentuploadPageArabic extends DocumentUploadPage {
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"تحميل الوثيقة\"))")
-	private WebElement doccumentUploadPage;
+	private WebElement documentUploadPage;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Button\")")
 	private WebElement identityProofScanButton;
@@ -193,7 +193,7 @@ public class DocumentuploadPageArabic extends DocumentUploadPage {
 	}
 
 	public boolean isDoccumentUploadPageDisplayed() {
-		return isElementDisplayed(doccumentUploadPage);
+		return isElementDisplayed(documentUploadPage);
 	}
 
 	public boolean isDobHeaderDisplayed() {
@@ -214,7 +214,7 @@ public class DocumentuploadPageArabic extends DocumentUploadPage {
 		return isElementEnabled(scanButtonIdentityProof);
 	}
 
-	public  boolean isscanButtonDobProofEnabled() {
+	public  boolean isScanButtonDobProofEnabled() {
 		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
 			swipeOrScroll();
 		}

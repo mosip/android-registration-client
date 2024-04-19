@@ -51,7 +51,7 @@ public abstract class DocumentUploadPage extends BasePage {
 
 	public abstract  boolean isScanButtonIdentityProofEnabled() ;
 
-	public abstract  boolean isscanButtonDobProofEnabled();
+	public abstract  boolean isScanButtonDobProofEnabled();
 
 	public abstract  boolean isScanButtonRelationshipProoffEnabled();
 }

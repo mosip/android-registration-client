@@ -214,7 +214,7 @@ public class DocumentuploadPageEnglish extends DocumentUploadPage {
 		return isElementEnabled(scanButtonIdentityProof);
 	}
 
-	public  boolean isscanButtonDobProofEnabled() {
+	public  boolean isScanButtonDobProofEnabled() {
 		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
 			swipeOrScroll();
 		}

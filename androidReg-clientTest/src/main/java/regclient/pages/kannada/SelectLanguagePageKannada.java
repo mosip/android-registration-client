@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.SelectLanguagePage;
+import regclient.utils.TestDataReader;
 
 public class SelectLanguagePageKannada extends SelectLanguagePage{
 
@@ -59,11 +60,11 @@ public class SelectLanguagePageKannada extends SelectLanguagePage{
 
 	@AndroidFindBy(accessibility = "Española")
 	private WebElement spanishLanguageNotificationButton;
-	
+
 	public SelectLanguagePageKannada(AppiumDriver driver) {
 		super(driver);
 	}
-	
+
 	public boolean isSelectLanguagePageLoaded() {
 		return isElementDisplayed(selectLanguageTitle);
 	}
@@ -73,7 +74,10 @@ public class SelectLanguagePageKannada extends SelectLanguagePage{
 	}
 
 	public  void selectSecondLanguage() {	
-		clickOnElement(kannadaLanguageButton);
+		if(TestDataReader.readData("defaultlanguage").equalsIgnoreCase("kan"))
+			clickOnElement(englishLanguageButton);
+		else
+			clickOnElement(kannadaLanguageButton);
 	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {

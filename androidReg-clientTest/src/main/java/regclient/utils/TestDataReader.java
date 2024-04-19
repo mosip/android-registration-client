@@ -15,7 +15,9 @@ public class TestDataReader {
 		case "username":
 			return "9343";
 		case "language":
-			return "fra";
+			return "eng";
+		case "defaultlanguage":
+			return "eng";
 		case "notificationLanguage":
 			return "eng";
 		case "fullname":

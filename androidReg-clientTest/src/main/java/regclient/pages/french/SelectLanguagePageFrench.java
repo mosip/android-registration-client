@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.SelectLanguagePage;
+import regclient.utils.TestDataReader;
 
 public class SelectLanguagePageFrench extends SelectLanguagePage{
 
@@ -72,7 +73,10 @@ public class SelectLanguagePageFrench extends SelectLanguagePage{
 		clickOnElement(submitButton);
 	}
 
-	public  void selectSecondLanguage() {	
+	public  void selectSecondLanguage() {
+		if(TestDataReader.readData("defaultlanguage").equalsIgnoreCase("fra"))
+			clickOnElement(englishLanguageButton);
+		else
 			clickOnElement(frenchLanguageButton);
 	}
 

@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.SelectLanguagePage;
+import regclient.utils.TestDataReader;
 
 
 public class SelectLanguagePageTamil extends SelectLanguagePage{
@@ -74,8 +75,10 @@ public class SelectLanguagePageTamil extends SelectLanguagePage{
 	}
 
 	public  void selectSecondLanguage() {	
-		clickOnElement(tamilLanguageButton);
-	}
+		if(TestDataReader.readData("defaultlanguage").equalsIgnoreCase("tam"))
+			clickOnElement(englishLanguageButton);
+		else
+			clickOnElement(tamilLanguageButton);	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {
 		switch (notificationLanguage) {

@@ -212,7 +212,7 @@ public class DocumentuploadPageKannada extends DocumentUploadPage{
 		return isElementEnabled(scanButtonIdentityProof);
 	}
 
-	public  boolean isscanButtonDobProofEnabled() {
+	public  boolean isScanButtonDobProofEnabled() {
 		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
 			swipeOrScroll();
 		}

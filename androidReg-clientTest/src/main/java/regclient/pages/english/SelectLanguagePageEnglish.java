@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.SelectLanguagePage;
+import regclient.utils.TestDataReader;
 public class SelectLanguagePageEnglish extends SelectLanguagePage{
 
 	@AndroidFindBy(accessibility = "Select Language")
@@ -72,7 +73,10 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage{
 	}
 
 	public  void selectSecondLanguage() {	
-		clickOnElement(hindiLanguageButton);
+		if(TestDataReader.readData("defaultlanguage").equalsIgnoreCase("eng"))
+			clickOnElement(arabicLanguageButton);
+		else
+			clickOnElement(englishLanguageButton);
 	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {
