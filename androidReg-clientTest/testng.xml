@@ -12,6 +12,7 @@
       <class name="androidTestCases.NewRegistrationAdult">
         <methods>
           <include name="newRegistrationAdult"/>
+          <include name="newRegistrationAdultUploadMultipleDoccuments"/>
         </methods>
       </class>
       <class name="androidTestCases.NewRegistrationAdultException">

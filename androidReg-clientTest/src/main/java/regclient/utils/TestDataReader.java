@@ -1,11 +1,6 @@
 package regclient.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-import java.io.File;
-import java.io.IOException;
 
 public class TestDataReader {
 	public static String readData(String key) {
@@ -20,9 +15,7 @@ public class TestDataReader {
 		case "username":
 			return "9343";
 		case "language":
-			return "eng";
-		case "secondLanguage":
-			return "ara";
+			return "fra";
 		case "notificationLanguage":
 			return "eng";
 		case "fullname":
