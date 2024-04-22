@@ -59,13 +59,28 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void evaluateMVEL(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void evaluateMVELVisible(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
             FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {
             });
             this.registrationDto = this.registrationService.getRegistrationDto();
-            boolean isFieldVisible = UserInterfaceHelperService.isRequiredField(fieldSpecDto, this.registrationDto.getMVELDataContext());
+            boolean isFieldVisible = UserInterfaceHelperService.isFieldVisible(fieldSpecDto, this.registrationDto.getMVELDataContext());
             result.success(isFieldVisible);
+            return;
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Object Mapping error: " + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(false);
+    }
+
+    @Override
+    public void evaluateMVELRequired(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+        try {
+            FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {
+            });
+            this.registrationDto = this.registrationService.getRegistrationDto();
+            boolean isFieldRequired = UserInterfaceHelperService.isRequiredField(fieldSpecDto, this.registrationDto.getMVELDataContext());
+            result.success(isFieldRequired);
             return;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Object Mapping error: " + Arrays.toString(e.getStackTrace()));

@@ -5,7 +5,7 @@
  *
 */
 
-
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -38,18 +38,24 @@ class DocumentUploadControl extends StatefulWidget {
 }
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
-
   late Future<List<String?>> myGetDocumentCategoryFuture;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    log("id: ${widget.field.id} -> mvel required: ${globalProvider.mvelRequiredFields[widget.field.id]}");
     //load from the map
-    if(mounted) {
+    if (mounted) {
       _removeExceptionData(widget.field);
       getScannedDocuments(widget.field);
-      myGetDocumentCategoryFuture = _getDocumentType(widget.field.subType!, lang);
+      myGetDocumentCategoryFuture =
+          _getDocumentType(widget.field.subType!, lang);
     }
 
     if (context
@@ -60,15 +66,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           .read<GlobalProvider>()
           .fieldInputValue[widget.field.id]
           .title!;
-      doc.title = context
-          .read<GlobalProvider>()
-          .fieldInputValue[widget.field.id]
-          .title;
+      doc.title =
+          context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
-
     super.initState();
   }
-
 
   String _getDataFromMap(String lang) {
     String response = "";
@@ -78,22 +80,38 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .containsKey(widget.field.id)) {
       if (widget.field.type == 'simpleType') {
         if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id]
-        as Map<String, dynamic>)
+                as Map<String, dynamic>)
             .containsKey(lang)) {
-          response =
-              context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang].referenceNumber;
-          doc.referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang].referenceNumber;
-          referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id][lang].referenceNumber;
+          response = context
+              .read<GlobalProvider>()
+              .fieldInputValue[widget.field.id][lang]
+              .referenceNumber;
+          doc.referenceNumber = context
+              .read<GlobalProvider>()
+              .fieldInputValue[widget.field.id][lang]
+              .referenceNumber;
+          referenceNumber = context
+              .read<GlobalProvider>()
+              .fieldInputValue[widget.field.id][lang]
+              .referenceNumber;
         }
       } else {
-        response = context.read<GlobalProvider>().fieldInputValue[widget.field.id].referenceNumber;
-        doc.referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id].referenceNumber;
-        referenceNumber = context.read<GlobalProvider>().fieldInputValue[widget.field.id].referenceNumber;
+        response = context
+            .read<GlobalProvider>()
+            .fieldInputValue[widget.field.id]
+            .referenceNumber;
+        doc.referenceNumber = context
+            .read<GlobalProvider>()
+            .fieldInputValue[widget.field.id]
+            .referenceNumber;
+        referenceNumber = context
+            .read<GlobalProvider>()
+            .fieldInputValue[widget.field.id]
+            .referenceNumber;
       }
     }
     return response;
   }
-
 
   void focusNextField(FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
@@ -101,7 +119,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   List<String> poaList = [];
-  List<Uint8List?> imageBytesList = List.empty(growable: true); // list of image bytes
+  List<Uint8List?> imageBytesList =
+      List.empty(growable: true); // list of image bytes
 
   _getAddDocumentProvider(Field e, Uint8List myBytes, String referenceNumber) {
     context
@@ -109,18 +128,19 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         .addDocument(e.id!, documentController.text, referenceNumber, myBytes);
   }
 
-  Future<void> addDocument(var item, Field e,String referenceNumber) async {
-   // final bytes = await getImageBytes(item);
+  Future<void> addDocument(var item, Field e, String referenceNumber) async {
+    // final bytes = await getImageBytes(item);
 
-    debugPrint("The selected value for dropdown for ${e.id!} is ${documentController.text}");
-   // Uint8List myBytes = Uint8List.fromList(bytes);
+    debugPrint(
+        "The selected value for dropdown for ${e.id!} is ${documentController.text}");
+    // Uint8List myBytes = Uint8List.fromList(bytes);
     // context
     //     .read<RegistrationTaskProvider>()
     //     .addDocument(e.id!, selected!, "reference", myBytes);
     _getAddDocumentProvider(e, item, referenceNumber);
   }
 
-  _getRemoveDocumentProvider(Field e, int index){
+  _getRemoveDocumentProvider(Field e, int index) {
     context.read<RegistrationTaskProvider>().removeDocument(e.id!, index);
   }
 
@@ -128,13 +148,16 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     context.read<GlobalProvider>().setScannedPages(e.id!, listOfScannedDoc);
   }
 
-  _setRemoveScannedPages(Field e, Uint8List? item, List<Uint8List?> listOfScannedDoc){
-    context.read<GlobalProvider>().removeScannedPages(e.id!,item,listOfScannedDoc);
+  _setRemoveScannedPages(
+      Field e, Uint8List? item, List<Uint8List?> listOfScannedDoc) {
+    context
+        .read<GlobalProvider>()
+        .removeScannedPages(e.id!, item, listOfScannedDoc);
   }
 
-  _removeFieldValue(Field e, Uint8List? item) async{
+  _removeFieldValue(Field e, Uint8List? item) async {
     context.read<GlobalProvider>().removeValidFromMap(
-        e.id!,item,context.read<GlobalProvider>().fieldInputValue);
+        e.id!, item, context.read<GlobalProvider>().fieldInputValue);
   }
 
   _setValueInMap() {
@@ -142,8 +165,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   _removeExceptionData(Field e) async {
-    if (context.read<GlobalProvider>().exceptionAttributes.isEmpty){
-      if(e.subType!.contains("POE")) {
+    if (context.read<GlobalProvider>().exceptionAttributes.isEmpty) {
+      if (e.subType!.contains("POE")) {
         context.read<RegistrationTaskProvider>().removeDocumentField(e.id!);
         context.read<GlobalProvider>().removeProofOfExceptionFieldFromMap(
             e.id!, context.read<GlobalProvider>().fieldInputValue);
@@ -198,7 +221,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   );
   String? selected;
   String referenceNumber = "";
-  final TextEditingController documentController = TextEditingController(text:"");
+  final TextEditingController documentController =
+      TextEditingController(text: "");
 
   void saveData(value) {
     if (value != null) {
@@ -214,13 +238,16 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  Future<List<String?>> _getDocumentType(String categoryCode, String langCode) async {
-    return await context.read<RegistrationTaskProvider>().getDocumentType(categoryCode, langCode);
+  Future<List<String?>> _getDocumentType(
+      String categoryCode, String langCode) async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getDocumentType(categoryCode, langCode);
   }
 
   void _deleteImage(Field e, Uint8List? item) async {
-    for(int i =0;i<imageBytesList.length;i++){
-      if(imageBytesList[i] == item){
+    for (int i = 0; i < imageBytesList.length; i++) {
+      if (imageBytesList[i] == item) {
         setState(() {
           imageBytesList.removeAt(i);
         });
@@ -261,8 +288,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 16.h, horizontal: 16.w),
                               child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CustomLabel(field: widget.field),
                                   SizedBox(
@@ -270,50 +296,64 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   ),
                                   snapshot.hasData
                                       ? TextFormField(
-                                    readOnly: true,
-                                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                                    controller: documentController,
-                                    onTap: (){
-                                      if(snapshot.data!.isNotEmpty) {
-                                        _showDropdownBottomSheet(
-                                            snapshot, widget.field, context);
-                                      }
-                                    },
-                                    validator: (value) {
-                                      if (!widget
-                                          .field.required! &&
-                                          widget.field.requiredOn != null &&
-                                          widget.field.requiredOn!
-                                              .isEmpty) {
-                                        return null;
-                                      }
-                                      if ((value == null ||
-                                          value.isEmpty) &&
-                                          widget.field
-                                              .inputRequired!) {
-                                        return AppLocalizations.of(context)!.select_value_message;
-                                      }
-                                      if (!widget.validation
-                                          .hasMatch(value!)) {
-                                        return AppLocalizations.of(context)!.invalid_input;
-                                      }
-                                      return null;
-                                    },
-                                    textAlign: TextAlign.left,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        borderSide: const BorderSide(
-                                            color: Colors.grey, width: 1),
-                                      ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 14.h, horizontal: 16.w),
-                                      hintText: "Select Value",
-                                      hintStyle: const TextStyle(
-                                          color: Colors.grey, fontSize: 14),
-                                      suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
-                                    ),
-                                  )
+                                          readOnly: true,
+                                          autovalidateMode: AutovalidateMode
+                                              .onUserInteraction,
+                                          controller: documentController,
+                                          onTap: () {
+                                            if (snapshot.data!.isNotEmpty) {
+                                              _showDropdownBottomSheet(snapshot,
+                                                  widget.field, context);
+                                            }
+                                          },
+                                          validator: (value) {
+                                            if (!widget.field.required! &&
+                                                (widget.field.requiredOn ==
+                                                        null ||
+                                                    widget.field.requiredOn!
+                                                        .isEmpty ||
+                                                    !(globalProvider
+                                                                .mvelRequiredFields[
+                                                            widget.field.id] ??
+                                                        true))) {
+                                              return null;
+                                            }
+                                            if ((value == null ||
+                                                    value.isEmpty) &&
+                                                widget.field.inputRequired!) {
+                                              return AppLocalizations.of(
+                                                      context)!
+                                                  .select_value_message;
+                                            }
+                                            if (!widget.validation
+                                                .hasMatch(value!)) {
+                                              return AppLocalizations.of(
+                                                      context)!
+                                                  .invalid_input;
+                                            }
+                                            return null;
+                                          },
+                                          textAlign: TextAlign.left,
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              borderSide: const BorderSide(
+                                                  color: Colors.grey, width: 1),
+                                            ),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 14.h,
+                                                    horizontal: 16.w),
+                                            hintText: "Select Value",
+                                            hintStyle: const TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 14),
+                                            suffixIcon: const Icon(
+                                                Icons.keyboard_arrow_down,
+                                                color: Colors.grey),
+                                          ),
+                                        )
                                       : const SizedBox.shrink(),
                                 ],
                               ),
@@ -332,19 +372,22 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             Row(
                               children: [
                                 Text(
-                                  AppLocalizations.of(context)!.referenceNumber(lang),
-                                  style: TextStyle(fontSize: 14, fontWeight: semiBold),
+                                  AppLocalizations.of(context)!
+                                      .referenceNumber(lang),
+                                  style: TextStyle(
+                                      fontSize: 14, fontWeight: semiBold),
                                 ),
                                 const SizedBox(
                                   width: 5,
                                 ),
                               ],
                             ),
-                             SizedBox(
+                            SizedBox(
                               height: 10.h,
                             ),
                             TextFormField(
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               initialValue: _getDataFromMap("eng"),
                               textCapitalization: TextCapitalization.words,
                               onChanged: (value) {
@@ -358,9 +401,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   borderSide: const BorderSide(
                                       color: appGreyShade, width: 1),
                                 ),
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 16.w),
-                                hintText: AppLocalizations.of(context)!.reference_number,
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 16.w),
+                                hintText: AppLocalizations.of(context)!
+                                    .reference_number,
                                 hintStyle: const TextStyle(
                                     color: appBlackShade3, fontSize: 14),
                               ),
@@ -379,33 +423,40 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal:24.w),
+                              padding: EdgeInsets.symmetric(horizontal: 24.w),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(100.w, 50.h),
                                 ),
                                 onPressed: (documentController.text == "")
-                                  ? null :() async {
-                                  _documentScanClickedAudit();
-                                  var doc = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CustomScanner(
-                                                field: widget.field)),
-                                  );
+                                    ? null
+                                    : () async {
+                                        _documentScanClickedAudit();
+                                        var doc = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CustomScanner(
+                                                      field: widget.field)),
+                                        );
 
-                                  await addDocument(doc, widget.field, referenceNumber);
-                                  await getScannedDocuments(widget.field);
-                                },
+                                        await addDocument(
+                                            doc, widget.field, referenceNumber);
+                                        await getScannedDocuments(widget.field);
+                                      },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.crop_free_sharp,color: Colors.white,size: 14,),
+                                    const Icon(
+                                      Icons.crop_free_sharp,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
                                     SizedBox(width: 5.w),
                                     Text(
                                       AppLocalizations.of(context)!.scan,
-                                      style: const TextStyle(fontSize: 16,color: Colors.white),
+                                      style: const TextStyle(
+                                          fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -428,10 +479,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   child: Column(
                                     children: [
                                       InkWell(
-                                        onTap : () {
-                                          Navigator.push(context,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
                                             MaterialPageRoute(
-                                                builder: (context) => PreviewScreen(bytes: item)),
+                                                builder: (context) =>
+                                                    PreviewScreen(bytes: item)),
                                           );
                                         },
                                         child: SizedBox(
@@ -442,17 +495,28 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       ),
                                       SizedBox(height: 10.h),
                                       GestureDetector(
-                                        onTap: (){
-                                          _deleteImage(widget.field,item);
-                                          _removeFieldValue(widget.field,item);
-                                          _setRemoveScannedPages(widget.field, item,imageBytesList);
+                                        onTap: () {
+                                          _deleteImage(widget.field, item);
+                                          _removeFieldValue(widget.field, item);
+                                          _setRemoveScannedPages(widget.field,
+                                              item, imageBytesList);
                                         },
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
+                                            const Icon(
+                                              Icons.delete_forever_outlined,
+                                              color: Colors.red,
+                                              size: 14,
+                                            ),
                                             SizedBox(width: 5.w),
-                                            Text(AppLocalizations.of(context)!.delete,style: const TextStyle(fontSize: 13,color: Colors.red)),
+                                            Text(
+                                                AppLocalizations.of(context)!
+                                                    .delete,
+                                                style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.red)),
                                           ],
                                         ),
                                       )
@@ -471,7 +535,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          flex: 2,
+                            flex: 2,
                             child: FutureBuilder(
                                 future: myGetDocumentCategoryFuture,
                                 builder: (BuildContext context,
@@ -481,11 +545,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     margin: EdgeInsets.symmetric(
                                         vertical: 1.h, horizontal: 5.w),
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 24.h),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 24.h),
                                       child: Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           CustomLabel(field: widget.field),
                                           SizedBox(
@@ -493,52 +557,78 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           ),
                                           snapshot.hasData
                                               ? TextFormField(
-                                            readOnly: true,
-                                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                                            controller: documentController,
-                                            onTap: (){
-                                              if(snapshot.data!.isNotEmpty) {
-                                                _showDropdownBottomSheet(
-                                                    snapshot, widget.field,
-                                                    context);
-                                              }
-                                            },
-                                            validator: (value) {
-                                              if (!widget
-                                                  .field.required! &&
-                                                  (widget.field.requiredOn == null ||
-                                                  widget.field.requiredOn!
-                                                      .isEmpty)) {
-                                                return null;
-                                              }
-                                              if ((value == null ||
-                                                  value.isEmpty) &&
-                                                  widget.field
-                                                      .inputRequired!) {
-                                                return AppLocalizations.of(context)!.select_value_message;
-                                              }
-                                              if (!widget.validation
-                                                  .hasMatch(value!)) {
-                                                return AppLocalizations.of(context)!.invalid_input;
-                                              }
-                                              return null;
-                                            },
-                                            textAlign: TextAlign.left,
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                borderSide: BorderSide(
-                                                    color: Colors.grey, width: 1.w),
-                                              ),
-                                              contentPadding: EdgeInsets.symmetric(
-                                                  vertical: 14.h, horizontal: 16.w),
-                                              hintText: "Select Value",
-                                              hintStyle: const TextStyle(
-                                                  color: Colors.grey, fontSize: 14),
-                                              suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
-                                              helperText: "",
-                                            ),
-                                          )
+                                                  readOnly: true,
+                                                  autovalidateMode:
+                                                      AutovalidateMode
+                                                          .onUserInteraction,
+                                                  controller:
+                                                      documentController,
+                                                  onTap: () {
+                                                    if (snapshot
+                                                        .data!.isNotEmpty) {
+                                                      _showDropdownBottomSheet(
+                                                          snapshot,
+                                                          widget.field,
+                                                          context);
+                                                    }
+                                                  },
+                                                  validator: (value) {
+                                                    if (!widget
+                                                            .field.required! &&
+                                                        (widget.field.requiredOn ==
+                                                                null ||
+                                                            widget
+                                                                .field
+                                                                .requiredOn!
+                                                                .isEmpty ||
+                                                            !(globalProvider
+                                                                        .mvelRequiredFields[
+                                                                    widget.field
+                                                                        .id] ??
+                                                                true))) {
+                                                      return null;
+                                                    }
+                                                    if ((value == null ||
+                                                            value.isEmpty) &&
+                                                        widget.field
+                                                            .inputRequired!) {
+                                                      return AppLocalizations
+                                                              .of(context)!
+                                                          .select_value_message;
+                                                    }
+                                                    if (!widget.validation
+                                                        .hasMatch(value!)) {
+                                                      return AppLocalizations
+                                                              .of(context)!
+                                                          .invalid_input;
+                                                    }
+                                                    return null;
+                                                  },
+                                                  textAlign: TextAlign.left,
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      borderSide: BorderSide(
+                                                          color: Colors.grey,
+                                                          width: 1.w),
+                                                    ),
+                                                    contentPadding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 14.h,
+                                                            horizontal: 16.w),
+                                                    hintText: "Select Value",
+                                                    hintStyle: const TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 14),
+                                                    suffixIcon: const Icon(
+                                                        Icons
+                                                            .keyboard_arrow_down,
+                                                        color: Colors.grey),
+                                                    helperText: "",
+                                                  ),
+                                                )
                                               : const SizedBox.shrink(),
                                         ],
                                       ),
@@ -552,16 +642,21 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             margin: EdgeInsets.symmetric(
                                 vertical: 1.h, horizontal: 5.w),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 24.h),
+                              padding: EdgeInsets.symmetric(vertical: 24.h),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     children: [
                                       Text(
-                                        AppLocalizations.of(context)!.referenceNumber(lang),
-                                        style: TextStyle(fontSize: isPortrait && !isMobileSize ? 18 : 14, fontWeight: semiBold),
+                                        AppLocalizations.of(context)!
+                                            .referenceNumber(lang),
+                                        style: TextStyle(
+                                            fontSize:
+                                                isPortrait && !isMobileSize
+                                                    ? 18
+                                                    : 14,
+                                            fontWeight: semiBold),
                                       ),
                                       const SizedBox(
                                         width: 5,
@@ -572,9 +667,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     height: 14.h,
                                   ),
                                   TextFormField(
-                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
                                     initialValue: _getDataFromMap("eng"),
-                                    textCapitalization: TextCapitalization.words,
+                                    textCapitalization:
+                                        TextCapitalization.words,
                                     onChanged: (value) {
                                       doc.referenceNumber = value;
                                       referenceNumber = value;
@@ -582,13 +679,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     textAlign: TextAlign.left,
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
                                         borderSide: BorderSide(
                                             color: appGreyShade, width: 1.w),
                                       ),
                                       contentPadding: EdgeInsets.symmetric(
                                           vertical: 14.h, horizontal: 16.w),
-                                      hintText: AppLocalizations.of(context)!.reference_number,
+                                      hintText: AppLocalizations.of(context)!
+                                          .reference_number,
                                       hintStyle: const TextStyle(
                                           color: appBlackShade3, fontSize: 14),
                                       helperText: "",
@@ -602,32 +701,39 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         Expanded(
                           flex: 1,
                           child: Padding(
-                            padding: EdgeInsets.only(top:10.h,left: 10.w),
+                            padding: EdgeInsets.only(top: 10.h, left: 10.w),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 minimumSize: Size(100.w, 48.h),
                               ),
                               onPressed: (documentController.text == "")
-                                  ? null :() async {
-                                _documentScanClickedAudit();
-                                var doc = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>  CustomScanner(
-                                         field: widget.field)),
-                                );
-                                await addDocument(doc, widget.field, referenceNumber);
+                                  ? null
+                                  : () async {
+                                      _documentScanClickedAudit();
+                                      var doc = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CustomScanner(
+                                                field: widget.field)),
+                                      );
+                                      await addDocument(
+                                          doc, widget.field, referenceNumber);
 
-                                await getScannedDocuments(widget.field);
-                              },
+                                      await getScannedDocuments(widget.field);
+                                    },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.crop_free_sharp,color: Colors.white,size: 14,),
+                                  const Icon(
+                                    Icons.crop_free_sharp,
+                                    color: Colors.white,
+                                    size: 14,
+                                  ),
                                   SizedBox(width: 5.w),
                                   Text(
                                     AppLocalizations.of(context)!.scan,
-                                    style: const TextStyle(fontSize: 16,color: Colors.white),
+                                    style: const TextStyle(
+                                        fontSize: 16, color: Colors.white),
                                   ),
                                 ],
                               ),
@@ -649,10 +755,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   child: Column(
                                     children: [
                                       InkWell(
-                                        onTap : () {
-                                          Navigator.push(context,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
                                             MaterialPageRoute(
-                                                builder: (context) => PreviewScreen(bytes: item)),
+                                                builder: (context) =>
+                                                    PreviewScreen(bytes: item)),
                                           );
                                         },
                                         child: SizedBox(
@@ -663,17 +771,28 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       ),
                                       SizedBox(height: 10.h),
                                       GestureDetector(
-                                        onTap: (){
-                                          _deleteImage(widget.field,item);
-                                          _removeFieldValue(widget.field,item);
-                                          _setRemoveScannedPages(widget.field, item,imageBytesList);
+                                        onTap: () {
+                                          _deleteImage(widget.field, item);
+                                          _removeFieldValue(widget.field, item);
+                                          _setRemoveScannedPages(widget.field,
+                                              item, imageBytesList);
                                         },
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            const Icon(Icons.delete_forever_outlined,color: Colors.red,size: 14,),
+                                            const Icon(
+                                              Icons.delete_forever_outlined,
+                                              color: Colors.red,
+                                              size: 14,
+                                            ),
                                             SizedBox(width: 5.w),
-                                            Text(AppLocalizations.of(context)!.delete,style: const TextStyle(fontSize: 13,color: Colors.red)),
+                                            Text(
+                                                AppLocalizations.of(context)!
+                                                    .delete,
+                                                style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.red)),
                                           ],
                                         ),
                                       )
@@ -690,7 +809,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     );
   }
 
-  void _showDropdownBottomSheet(AsyncSnapshot? snapshot, Field field, BuildContext context) {
+  void _showDropdownBottomSheet(
+      AsyncSnapshot? snapshot, Field field, BuildContext context) {
     setState(() {
       documentController.text = snapshot!.data[0];
       doc.title = snapshot.data[0];
@@ -704,86 +824,110 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         ),
       ),
       builder: (BuildContext context) {
-        return  Container(
+        return Container(
           width: MediaQuery.of(context).size.width,
-          height: snapshot!.data.length<=1 ? 200.h:350.h,
+          height: snapshot!.data.length <= 1 ? 200.h : 350.h,
           decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15),
-              topLeft: Radius.circular(15),
-            )
-          ),
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15),
+                topLeft: Radius.circular(15),
+              )),
           padding: const EdgeInsets.all(16.0),
-          child:  Column(
+          child: Column(
             children: [
-               Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(onTap: (){
-                    setState(() {
-                      documentController.clear();
-                      doc.title = "";
-                    });
-                    Navigator.of(context).pop();
-                  }, child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child:  Text(AppLocalizations.of(context)!.clear,style: const TextStyle(color: appRed,fontSize: 22,fontWeight: FontWeight.w500)),
-                  )),
-                   Expanded(
-                     child: Padding(
-                       padding: const EdgeInsets.all(20.0),
-                       child: Text(
-                         context.read<GlobalProvider>().chooseLanguage(field.label!),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          documentController.clear();
+                          doc.title = "";
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(AppLocalizations.of(context)!.clear,
+                            style: const TextStyle(
+                                color: appRed,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500)),
+                      )),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        context
+                            .read<GlobalProvider>()
+                            .chooseLanguage(field.label!),
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.w500,
                         ),
-                  ),
-                     ),
-                   ),
-                  InkWell(onTap: (){
-                    Navigator.of(context).pop();
-                  }, child: const Padding(
-                    padding:  EdgeInsets.all(12.0),
-                    child:  Icon(Icons.clear,color: Colors.black,size: 35,),
-                  ))
-                ],
-              ),
-              const Divider(color: dropDownDividerColor,thickness: 1,),
-          Expanded(
-            flex:3,
-            child: CupertinoPicker(
-              itemExtent: 50,
-              scrollController: FixedExtentScrollController(
-                initialItem: 0,
-              ),
-              onSelectedItemChanged: (int index) {
-                saveData(snapshot.data[index]);
-                setState(() {
-                  documentController.text = snapshot.data[index];
-                  doc.title = snapshot.data[index];
-                });
-              },
-              looping: false,
-              backgroundColor: Colors.white,
-              children: <Widget>[
-                for (var i = 0; i < snapshot.data.length; i++)...[
-                  ListTile(
-                    title: Center(
-                      child: Text(
-                        snapshot.data[i],
-                        style: const TextStyle(fontSize: 22,color: dropDownSelector,fontWeight: FontWeight.w500),
                       ),
                     ),
-                    trailing: Icon(Icons.check,size: 30,color: (snapshot.data[i] == documentController.text)? dropDownSelector:Colors.white,)
                   ),
+                  InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Icon(
+                          Icons.clear,
+                          color: Colors.black,
+                          size: 35,
+                        ),
+                      ))
+                ],
+              ),
+              const Divider(
+                color: dropDownDividerColor,
+                thickness: 1,
+              ),
+              Expanded(
+                flex: 3,
+                child: CupertinoPicker(
+                  itemExtent: 50,
+                  scrollController: FixedExtentScrollController(
+                    initialItem: 0,
+                  ),
+                  onSelectedItemChanged: (int index) {
+                    saveData(snapshot.data[index]);
+                    setState(() {
+                      documentController.text = snapshot.data[index];
+                      doc.title = snapshot.data[index];
+                    });
+                  },
+                  looping: false,
+                  backgroundColor: Colors.white,
+                  children: <Widget>[
+                    for (var i = 0; i < snapshot.data.length; i++) ...[
+                      ListTile(
+                          title: Center(
+                            child: Text(
+                              snapshot.data[i],
+                              style: const TextStyle(
+                                  fontSize: 22,
+                                  color: dropDownSelector,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.check,
+                            size: 30,
+                            color: (snapshot.data[i] == documentController.text)
+                                ? dropDownSelector
+                                : Colors.white,
+                          )),
+                    ],
                   ],
-              ],
-            ),
-          ),
+                ),
+              ),
             ],
           ),
         );

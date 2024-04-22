@@ -18,7 +18,6 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
-import 'package:registration_client/platform_spi/registration_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -259,11 +258,18 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         ModalRoute.of(context)!.settings.arguments! as Map<String, dynamic>;
     final Process newProcess = arguments["process"];
     int size = newProcess.screens!.length;
-    evaluateMVEL(
+
+    evaluateMVELVisible(
         String fieldData, String? engine, String? expression, Field e) async {
-      final RegistrationService registrationService = RegistrationService();
-      bool required =
-          await registrationService.evaluateMVEL(fieldData, expression!);
+      bool visible = await registrationTaskProvider.evaluateMVELVisible(
+          fieldData, expression!);
+      return visible;
+    }
+
+    evaluateMVELRequired(
+        String fieldData, String? engine, String? expression, Field e) async {
+      bool required = await registrationTaskProvider.evaluateMVELRequired(
+          fieldData, expression!);
       return required;
     }
 
@@ -380,12 +386,17 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           }
           if (screen.fields!.elementAt(i)!.requiredOn != null &&
               screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
-            bool required = await evaluateMVEL(
+            bool visible = await evaluateMVELVisible(
                 jsonEncode(screen.fields!.elementAt(i)!.toJson()),
                 screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
                 screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
                 screen.fields!.elementAt(i)!);
-            if (required) {
+            bool required = await evaluateMVELRequired(
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
+                screen.fields!.elementAt(i)!);
+            if (visible && required) {
               if (screen.fields!.elementAt(i)!.inputRequired!) {
                 if (!(globalProvider.fieldInputValue
                         .containsKey(screen.fields!.elementAt(i)!.id)) &&
@@ -483,8 +494,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           globalProvider.formKey.currentState != null &&
           globalProvider.formKey.currentState!.validate();
 
-      if(globalProvider.newProcessTabIndex >= size) {
-          continueButton = true;
+      if (globalProvider.newProcessTabIndex >= size) {
+        continueButton = true;
       }
     });
 
