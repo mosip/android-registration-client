@@ -130,7 +130,7 @@ class _TextBoxControlState extends State<TextBoxControl>
         MediaQuery.of(context).orientation == Orientation.portrait;
     List<String> choosenLang = globalProvider.chosenLang;
     if (!(widget.e.type == "simpleType")) {
-      choosenLang = ["English"];
+      choosenLang = [choosenLang[0]];
     }
     Map<String, String> tranliterationLangMapper = {
       "eng": "Latin",
@@ -215,19 +215,16 @@ class _TextBoxControlState extends State<TextBoxControl>
                           return null;
                         } else if (!widget.validation.hasMatch(value)) {
                           return AppLocalizations.of(context)!
-                              .demographicsScreenInvalidMessage(
-                                  globalProvider.selectedLanguage);
+                              .demographicsScreenInvalidMessage(lang);
                         }
                       }
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenEmptyMessage(
-                                globalProvider.selectedLanguage);
+                            .demographicsScreenEmptyMessage(lang);
                       }
                       if (!widget.validation.hasMatch(value)) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenInvalidMessage(
-                                globalProvider.selectedLanguage);
+                            .demographicsScreenInvalidMessage(lang);
                       }
                       return null;
                     },

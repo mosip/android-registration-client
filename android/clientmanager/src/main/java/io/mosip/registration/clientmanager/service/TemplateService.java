@@ -1,6 +1,9 @@
 package io.mosip.registration.clientmanager.service;
 
+import static io.mosip.registration.clientmanager.config.SessionManager.USER_NAME;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -28,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,6 +39,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
@@ -53,6 +58,8 @@ public class TemplateService {
 
     private Context appContext;
 
+    SharedPreferences sharedPreferences;
+
     MasterDataService masterDataService;
 
     IdentitySchemaRepository identitySchemaRepository;
@@ -61,6 +68,9 @@ public class TemplateService {
         this.appContext = appContext;
         this.masterDataService = masterDataService;
         this.identitySchemaRepository = identitySchemaRepository;
+        sharedPreferences = this.appContext.getSharedPreferences(
+                this.appContext.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
     }
 
     public String getTemplate(RegistrationDto registrationDto, boolean isPreview) throws Exception {
@@ -366,6 +376,9 @@ public class TemplateService {
 
     private void setBasicDetails(boolean isPreview, RegistrationDto registrationDto, VelocityContext velocityContext) {
         generateQRCode(velocityContext,registrationDto);
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
+
         velocityContext.put("isPreview", isPreview);
         velocityContext.put("ApplicationIDLabel", appContext.getString(R.string.app_id));
         velocityContext.put("ApplicationID", registrationDto.getRId());
@@ -383,9 +396,9 @@ public class TemplateService {
         velocityContext.put("FaceLabel", appContext.getString(R.string.face_label));
         velocityContext.put("ExceptionPhotoLabel", appContext.getString(R.string.exception_photo_label));
         velocityContext.put("RONameLabel", appContext.getString(R.string.ro_label));
-        velocityContext.put("ROName", "110011");
+        velocityContext.put("ROName", sharedPreferences.getString(USER_NAME, ""));
         velocityContext.put("RegCenterLabel", appContext.getString(R.string.reg_center));
-        velocityContext.put("RegCenter", "10011");
+        velocityContext.put("RegCenter", centerMachineDto.getCenterId());
         velocityContext.put("ImportantGuidelines", appContext.getString(R.string.imp_guidelines));
 
         velocityContext.put("LeftEyeLabel", appContext.getString(R.string.left_iris));

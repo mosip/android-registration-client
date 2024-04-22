@@ -628,8 +628,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      !isPortrait &&
-                              globalProvider.newProcessTabIndex == size + 2
+                      globalProvider.newProcessTabIndex == size + 2
                           ? ElevatedButton(
                               onPressed: () async {
                                 await connectivityProvider
@@ -649,8 +648,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                       SizedBox(
                         width: 10.w,
                       ),
-                      !isPortrait &&
-                              globalProvider.newProcessTabIndex == size + 2
+                      globalProvider.newProcessTabIndex == size + 2
                           ? ElevatedButton(
                               onPressed: () async {
                                 await connectivityProvider
