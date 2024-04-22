@@ -431,7 +431,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
 
       if (authProvider.isOnboarded || authProvider.isDefault) {
-        globalProvider.setCurrentIndex(0);
+        globalProvider.setCurrentIndex(1);
       } else {
         globalProvider.setCurrentIndex(0);
       }
