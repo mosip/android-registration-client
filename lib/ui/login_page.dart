@@ -21,6 +21,7 @@ import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
+import 'package:registration_client/ui/widgets/sync_alert_dialog.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -836,78 +837,14 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   _showAlertDialog() {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text(
-          appLocalizations.sync_alert_title,
-          style: TextStyle(
-            fontSize: isMobile && !isMobileSize ? 26 : 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-            horizontal: isMobileSize ? 5.w : 20.w, vertical: 20.h),
-        content: Text(
-          appLocalizations.sync_alert_content,
-          style: TextStyle(
-            fontSize: isMobile && !isMobileSize ? 18 : 14,
-            fontWeight: regular,
-          ),
-        ),
-        actions: [
-          const Divider(),
-          SizedBox(
-            height: 10.h,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: SizedBox(
-                    height: isMobile && !isMobileSize ? 62.h : 37.h,
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.cancel,
-                        style: TextStyle(
-                          fontSize: isMobile && !isMobileSize ? 18 : 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    syncProvider.setIsGlobalSyncInProgress(true);
-                    await _autoSyncHandler();
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(solidPrimary),
-                  ),
-                  child: SizedBox(
-                    height: isMobile && !isMobileSize ? 62.h : 37.h,
-                    child: Center(
-                      child: Text(
-                        appLocalizations.sync_alert_text,
-                        style: TextStyle(
-                          fontSize: isMobile && !isMobileSize ? 18 : 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+      builder: (BuildContext context) => SyncAlertDialog(
+        title: appLocalizations.sync_alert_title,
+        content: appLocalizations.sync_alert_content,
+        onPressed: () async {
+          Navigator.of(context).pop();
+          syncProvider.setIsGlobalSyncInProgress(true);
+          await _autoSyncHandler();
+        },
       ),
     );
   }
