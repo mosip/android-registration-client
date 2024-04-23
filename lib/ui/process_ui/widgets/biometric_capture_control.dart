@@ -248,6 +248,13 @@ class BiometricCaptureControlInitialization extends StatelessWidget {
                       context.read<GlobalProvider>().fieldInputValue[field.id],
                       "Exception"));
         }
+      } else {
+        context.read<BiometricCaptureControlProvider>().iris.attemptNo = 0;
+        context.read<BiometricCaptureControlProvider>().rightHand.attemptNo = 0;
+        context.read<BiometricCaptureControlProvider>().leftHand.attemptNo = 0;
+        context.read<BiometricCaptureControlProvider>().thumbs.attemptNo = 0;
+        context.read<BiometricCaptureControlProvider>().face.attemptNo = 0;
+        context.read<BiometricCaptureControlProvider>().exception.attemptNo = 0;
       }
     }
     return StatefulWrapper(

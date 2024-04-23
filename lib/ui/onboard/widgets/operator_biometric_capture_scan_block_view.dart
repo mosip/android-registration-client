@@ -126,12 +126,33 @@ class _OperatorBiometricCaptureScanBlockViewState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    (biometricAttributeData.title == "Iris" &&
+                            biometricAttributeData.exceptions.contains(true))
+                        ? ((biometricAttributeData.exceptions.first == true)
+                            ? SvgPicture.asset(
+                                "assets/svg/Left Eye Exception.svg",
+                                height: (isMobileSize) ? 130.h : 260.h,
+                              )
+                            : const SizedBox())
+                        : const SizedBox(),
                     ...temp.map(
                       (e) => Image.memory(
                         e!,
                         height: (isMobileSize) ? 130.h : 260.h,
                       ),
                     ),
+                    (biometricAttributeData.title == "Iris" &&
+                            biometricAttributeData.exceptions.contains(true))
+                        ? ((biometricAttributeData.exceptions.first == true)
+                            ? const SizedBox()
+                            : Transform.flip(
+                                flipX: true,
+                                child: SvgPicture.asset(
+                                  "assets/svg/Left Eye Exception.svg",
+                                  height: (isMobileSize) ? 130.h : 260.h,
+                                ),
+                              ))
+                        : const SizedBox(),
                   ],
                 ),
                 // Divider(
@@ -201,11 +222,45 @@ class _OperatorBiometricCaptureScanBlockViewState
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      (biometricAttributeData.title == "Iris" &&
+                              biometricAttributeData.exceptions.contains(true))
+                          ? ((biometricAttributeData.exceptions.first == true)
+                              ? Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 115.h,
+                                    ),
+                                    SvgPicture.asset(
+                                      "assets/svg/Left Eye Exception.svg",
+                                      height: (isMobileSize) ? 70.h : 130.h,
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox())
+                          : const SizedBox(),
                       ...biometricAttributeData.listofImages
                           .map((e) => Image.memory(
                                 e,
                                 height: (isMobileSize) ? 70.h : 130.h,
-                              ))
+                              )),(biometricAttributeData.title == "Iris" &&
+                              biometricAttributeData.exceptions.contains(true))
+                          ? ((biometricAttributeData.exceptions.first == true)
+                              ? const SizedBox()
+                              : Row(
+                                  children: [
+                                    Transform.flip(
+                                      flipX: true,
+                                      child: SvgPicture.asset(
+                                        "assets/svg/Left Eye Exception.svg",
+                                        height: (isMobileSize) ? 70.h : 130.h,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 115.h,
+                                    )
+                                  ],
+                                ))
+                          : const SizedBox(),
                     ],
                   ),
                 ),
