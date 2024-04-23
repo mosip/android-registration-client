@@ -5,7 +5,6 @@
  *
 */
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -49,7 +48,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
     String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
-    log("id: ${widget.field.id} -> mvel required: ${globalProvider.mvelRequiredFields[widget.field.id]}");
     //load from the map
     if (mounted) {
       _removeExceptionData(widget.field);
