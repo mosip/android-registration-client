@@ -217,5 +217,8 @@
   "preview_page": "पूर्वावलोकन",
   "packet_auth_page": "प्रमाणीकरण",
   "acknowledgement_page": "पुनर्निर्देशन",
+  "demographic_information": "जनसांख्यिकीय जानकारी",
+  "documents": "दस्तावेज़",
+  "biometrics": "बॉयोमेट्रिक्स",
   "share": "शेयर"
 }

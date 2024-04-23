@@ -217,5 +217,8 @@
   "preview_page": "Preview",
   "packet_auth_page": "Authentication",
   "acknowledgement_page": "Acknowledgement",
+  "demographic_information": "Demographic Information",
+  "documents": "Documents",
+  "biometrics": "Biometrics",
   "share": "SHARE"
 }

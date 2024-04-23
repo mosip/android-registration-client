@@ -226,5 +226,8 @@
   "preview_page": "முன்னோக்கி",
   "packet_auth_page": "அங்கீகாரம்",
   "acknowledgement_page": "அறிவுசெய்தல்",
+  "demographic_information": "மக்கள்தொகை தகவல்",
+  "documents": "ஆவணங்கள்",
+  "biometrics": "பயோமெட்ரிக்ஸ்",
   "share": "பகிர்"
 }

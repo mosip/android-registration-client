@@ -217,5 +217,8 @@
   "preview_page": "معاينة",
   "packet_auth_page": "المصادقة",
   "acknowledgement_page": "الاعتراف",
+  "demographic_information": "المعلومات الديموغرافية",
+  "documents": "وثائق",
+  "biometrics": "القياسات الحيوية",
   "share": "يشارك" 
 }

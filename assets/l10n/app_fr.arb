@@ -217,5 +217,8 @@
   "preview_page": "Aperçu",
   "packet_auth_page": "Authentification",
   "acknowledgement_page": "Accusé de réception",
+  "demographic_information": "Informations démographiques",
+  "documents": "Documents",
+  "biometrics": "Biométrie",
   "share": "PARTAGER"
 }
