@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import io.mosip.registration.clientmanager.entity.Registration;
@@ -39,6 +40,9 @@ public interface RegistrationDao {
 
     @Insert
     void insert(Registration registration);
+
+    @Query("delete from registration where packet_id = :packetId")
+    void delete(String packetId);
 
     @Query("SELECT COUNT (*) FROM registration where client_status = :status")
     int findAllRegistrationByStatus(String status);
