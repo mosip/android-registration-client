@@ -71,11 +71,9 @@ class _HomePageState extends State<HomePage> {
       _showInSnackBar(appLocalizations.network_error);
       return;
     }
-    await syncProvider.getLastSyncTime();
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
     await syncProvider.batchJob();
-    await syncProvider.getLastSyncTime();
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);
