@@ -165,6 +165,7 @@ public class UserOnboardService {
             if(isIdaResponse()) {
                 Log.i(TAG, "User onboarding success");
                 isOnboardSuccess = save(biometrics, userId);
+                userDetailRepository.updateUserDetail(sharedPreferences.getString(PREFERRED_USERNAME,""));
                 onFinish.run();
             }
         });
