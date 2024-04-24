@@ -217,5 +217,15 @@
   "preview_page": "पूर्वावलोकन",
   "packet_auth_page": "प्रमाणीकरण",
   "acknowledgement_page": "पुनर्निर्देशन",
-  "share": "शेयर"
+  "share": "शेयर",
+  "packets_created": "पैकेट बनाए गए",
+  "packets_synced": "पैकेट सिंक किए गए",
+  "packets_uploaded": "पैकेट अपलोड किए गए",
+  "users": "उपयोगकर्ताओं",
+  "user_id": "उपयोगकर्ता पहचान",
+  "user_name": "उपयोगकर्ता नाम",
+  "status": "स्थिति",
+  "active_not_onboarded": "सक्रिय - ऑनबोर्ड नहीं किया गया",
+  "user_inactive": "उपयोगकर्ता निष्क्रिय",
+  "onboarded": "जहाज पर चढ़ाया गया"
 }

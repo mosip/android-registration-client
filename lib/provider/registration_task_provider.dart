@@ -216,6 +216,14 @@ class RegistrationTaskProvider with ChangeNotifier {
     return await dashBoard.getPacketUploadedPendingDetails();
   }
 
+  Future<int> getCreatedPacketDetails() async {
+    return await dashBoard.getCreatedPacketDetails();
+  }
+
+  Future<int> getSyncedPacketDetails() async {
+    return await dashBoard.getSyncedPacketDetails();
+  }
+
   Future<List<DashBoardData?>> getDashBoardDetails() async {
     return await dashBoard.getDashBoardDetails();
   }

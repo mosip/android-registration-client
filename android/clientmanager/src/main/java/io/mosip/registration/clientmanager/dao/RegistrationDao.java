@@ -46,4 +46,11 @@ public interface RegistrationDao {
     @Query("SELECT COUNT(*) FROM registration where client_status in (:syncedStatus, :approvedStatus)")
     int findRegistrationCountBySyncedStatusAndApprovedStatus(String syncedStatus, String approvedStatus);
 
+
+    @Query("SELECT COUNT(*) FROM registration where client_status in (:syncedStatus)")
+    int findRegistrationCountBySyncedStatus(String syncedStatus);
+
+    @Query("SELECT COUNT(*) FROM registration where cr_dtimes < CURRENT_DATE")
+    int getAllCreatedPacketStatus();
+
 }

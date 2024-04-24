@@ -217,5 +217,15 @@
   "preview_page": "معاينة",
   "packet_auth_page": "المصادقة",
   "acknowledgement_page": "الاعتراف",
-  "share": "يشارك" 
+  "share": "يشارك",
+  "packets_created": "تم إنشاء الحزم",
+  "packets_synced": "تمت مزامنة الحزم",
+  "packets_uploaded": "تم تحميل الحزم",
+  "users": "المستخدمين",
+  "user_id": "معرف المستخدم",
+  "user_name": "اسم المستخدم",
+  "status": "حالة",
+  "active_not_onboarded": "نشط - غير مسجل",
+  "user_inactive": "المستخدم غير نشط",
+  "onboarded": "على متن الطائرة"
 }

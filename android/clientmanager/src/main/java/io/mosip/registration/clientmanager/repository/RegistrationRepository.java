@@ -38,6 +38,15 @@ public class RegistrationRepository {
         return  this.registrationDao.findRegistrationCountBySyncedStatusAndApprovedStatus(syncedStatus, approvedStatus);
     }
 
+    public  int findRegistrationCountBySyncedStatus(String syncedStatus) {
+        return  this.registrationDao.findRegistrationCountBySyncedStatus(syncedStatus);
+    }
+
+    public  int getAllCreatedPacketStatus() {
+        return  this.registrationDao.getAllCreatedPacketStatus();
+    }
+
+
     public Registration getRegistration(String packetId) {
         return this.registrationDao.findOneByPacketId(packetId);
     }
