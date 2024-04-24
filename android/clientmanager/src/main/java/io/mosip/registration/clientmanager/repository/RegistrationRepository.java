@@ -1,7 +1,5 @@
 package io.mosip.registration.clientmanager.repository;
 
-import android.util.Log;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
@@ -69,7 +67,6 @@ public class RegistrationRepository {
     }
 
     public void deleteRegistration(String packetId) {
-        Log.i(getClass().getSimpleName(), "Deleting packet : "+ packetId);
         this.registrationDao.delete(packetId);
     }
 }

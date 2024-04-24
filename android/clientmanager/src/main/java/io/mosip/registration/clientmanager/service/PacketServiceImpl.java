@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -25,7 +24,6 @@ import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketServerStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
-import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.PacketIdDto;
 import io.mosip.registration.clientmanager.dto.PacketStatusDto;
@@ -144,20 +142,11 @@ public class PacketServiceImpl implements PacketService {
             syncRIDRequest.setLangCode(jsonObject.getString("langCode"));
         }
 
-//      Deleting packet entry from DB if file does not exist
-        FileInputStream fis;
-        try {
-            fis = new FileInputStream(registration.getFilePath());
+        try (FileInputStream fis = new FileInputStream(registration.getFilePath())) {
             byte[] byteArray = new byte[(int) fis.available()];
             fis.read(byteArray);
             syncRIDRequest.setPacketHashValue(HMACUtils2.digestAsPlainText(byteArray));
             syncRIDRequest.setPacketSize(BigInteger.valueOf(byteArray.length));
-        } catch (FileNotFoundException e){
-            registrationRepository.deleteRegistration(packetId);
-            Log.i(TAG, "Packet sync failed : " + e.getMessage());
-            Toast.makeText(context, "Packet sync failed : " + "File not found "+ packetId, Toast.LENGTH_LONG).show();
-            callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
-            return;
         }
         wrapper.getRequest().add(syncRIDRequest);
 
