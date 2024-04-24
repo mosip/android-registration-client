@@ -10,7 +10,7 @@ import regclient.page.DocumentUploadPage;
 
 public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Full Name\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"पूरा नाम\"))")
 	private WebElement demographicDetailspage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"सहमति\"))")
@@ -25,40 +25,40 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(2)")
 	private WebElement ageTextBox;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"स्थायी पता 1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine1TextBox;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"अस्थायी पता2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine2TextBox;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"अस्थायी पता3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine3TextBox;
 
-	@AndroidFindBy(accessibility = "Male")
+	@AndroidFindBy(accessibility = "नर")
 	private WebElement maleButton;
 
-	@AndroidFindBy(accessibility = "Female")
+	@AndroidFindBy(accessibility = "महिला")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"नागरिक स्थिति\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Residence Status\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"आवास की स्थिति\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectResidentStatus;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Region\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ऊपरी क्षेत्र\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectRegionStatus;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Province\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"प्रांत\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectProvinceStatus;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"City\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"शहर\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectCityStatus;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Zone\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"/क्षेत्र\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectZoneStatus;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Postal\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"डाक का\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectPostal;
 
 	@AndroidFindBy(accessibility = "14022")
@@ -85,52 +85,52 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "बेन मंसूर")
 	private WebElement benMansourFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Residence Status\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"आवास की स्थिति\"))")
 	private WebElement residenceStatusHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Region\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ऊपरी क्षेत्र\"))")
 	private WebElement regionHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Province\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"प्रांत\"))")
 	private WebElement provinceHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"City\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"शहर\"))")
 	private WebElement cityHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Zone\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"क्षेत्र\"))")
 	private WebElement zoneHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Postal\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"डाक का\"))")
 	private WebElement postalCodeHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Phone\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"फ़ोन\"))")
 	private WebElement mobileNumberHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Email\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ईमेल\"))")
 	private WebElement emailHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducer Name\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"परिचयकर्ता का नाम\"))")
 	private WebElement introducerNameHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducer RID\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"परिचयकर्ता RID\"))")
 	private WebElement introducerRidHeader;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Phone\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"फ़ोन\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
 	private WebElement mobileNumberTextBox;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Email\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ईमेल\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement emailIdTextBox;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducer Name\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"परिचयकर्ता का नाम\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerNameTextBox;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducer RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"परिचयकर्ता RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerRidTextBox;
 
 	@AndroidFindBy(accessibility = "जारी रखें")
 	private WebElement continueButton;
 	
-	@AndroidFindBy(accessibility = "Invalid input")
+	@AndroidFindBy(accessibility = "अमान्य निवेश")
 	private WebElement errorMessageInvalidInputText;
 	
 	public DemographicDetailsPageHindi(AppiumDriver driver) {

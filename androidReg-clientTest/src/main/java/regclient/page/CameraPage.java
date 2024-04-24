@@ -19,7 +19,8 @@ public class CameraPage  extends BasePage{
 	}
 	
 	public  void clickOkButton() {
-		clickOnElement(okButton);
+		if(isElementDisplayed(okButton))
+			clickOnElement(okButton);		
 	}
 	
 	public  void clickimage() {

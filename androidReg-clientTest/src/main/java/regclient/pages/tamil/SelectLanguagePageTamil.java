@@ -35,7 +35,7 @@ public class SelectLanguagePageTamil extends SelectLanguagePage{
 	@AndroidFindBy(accessibility = "spanish")
 	private WebElement spanishLanguageButton;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Notification Languages')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'அறிவிப்பு மொழிகள்')]")
 	private WebElement notificationLanguageHeaderInEnglish;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"English\"])[1]")

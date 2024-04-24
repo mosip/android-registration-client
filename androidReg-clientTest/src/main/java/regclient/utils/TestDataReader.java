@@ -1,10 +1,16 @@
 package regclient.utils;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class TestDataReader {
 	public static String readData(String key) {
-		return getValueForKey(key);
+		return getValueFromJson(key);
 	}
 
 	//ToDo - Need to remove this once path issue is fixed on device farm
@@ -15,9 +21,9 @@ public class TestDataReader {
 		case "username":
 			return "9343";
 		case "language":
-			return "eng";
+			return "fra";
 		case "defaultlanguage":
-			return "eng";
+			return "ara";
 		case "notificationLanguage":
 			return "eng";
 		case "fullname":
@@ -55,5 +61,25 @@ public class TestDataReader {
 		default:
 			return "Key not found";
 		}
+	}
+
+	public static String getValueFromJson(String value) {
+		JSONParser parser = new JSONParser();
+		Object obj = null;
+		try {
+			obj = parser.parse(new FileReader(System.getProperty("user.dir")+"\\src\\main\\resources\\testdata.json"));
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		} catch (ParseException e) {
+			
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = (JSONObject) obj;
+		return (String) jsonObject.get(value);
+
 	}
 }

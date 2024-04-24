@@ -85,10 +85,6 @@ public class logintest  extends AndroidBaseTest {
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(), "Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnSynchronizeDataButton();
-
-		// assertTrue(registrationTasksPage.isMasterDataSyncCompletedDisplayed(),"Verify if masterData sync should be completed successfully");
-		// assertTrue(registrationTasksPage.isScriptSyncCompletedDisplayed(),"Verify if script sync should be completed successfully");
-		// assertTrue(registrationTasksPage.isPolicykeySyncCompletedDisplayed(),"Verify if policykey sync should be completed successfully");
 	}
 
 	@Test

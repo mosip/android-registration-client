@@ -9,7 +9,7 @@ import regclient.page.IntroducerBiometricPage;
 
 public class IntroducerBiometricPageKannada extends IntroducerBiometricPage {
 	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Introducer Biometrics')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'ಪರಿಚಯಕಾರ ಬಯೋಮೆಟ್ರಿಕ್ಸ್')]")
 	private WebElement introducerBiometricPageTitle;
 	
 	@AndroidFindBy(accessibility = "ಐರಿಸ್ ಸ್ಕ್ಯಾನ್")

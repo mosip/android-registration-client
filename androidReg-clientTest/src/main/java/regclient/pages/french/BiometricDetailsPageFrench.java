@@ -33,7 +33,7 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Exception\"))")
 	private WebElement exceptionScanIcon;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,\"Introducer Biometrics\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris ANALYSE\"]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,\"Introducteur BiomÃ©trie\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris ANALYSE\"]")
 	private WebElement introducerIrisScanIcon;
 	
 	@AndroidFindBy(accessibility = "CONTINUER")

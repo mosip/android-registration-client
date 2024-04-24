@@ -9,7 +9,7 @@ import regclient.page.BiometricDetailsPage;
 
 public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Applicant Biometrics')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'المقاييس الحيوية لمقدم الطلب')]")
 	private WebElement applicantBiometricsPageTitle;
 	
 	@AndroidFindBy(accessibility = "القزحية مسح")

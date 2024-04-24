@@ -11,7 +11,7 @@ import regclient.page.PreviewPage;
 
 public class BiometricDetailsPageHindi extends BiometricDetailsPage{
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Applicant Biometrics\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"आवेदक बायोमेट्रिक्स\"))")
 	private WebElement applicantBiometricTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"आईरिस स्कैन\"))")
@@ -32,7 +32,7 @@ public class BiometricDetailsPageHindi extends BiometricDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"अपवाद स्कैन\"))")
 	private WebElement exceptionScanIcon;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,\"Introducer Biometrics\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"आईरिस स्कैन\"]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,\"परिचयकर्ता बायोमेट्रिक्स\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"आईरिस स्कैन\"]")
 	private WebElement introducerIrisScanIcon;
 	
 	@AndroidFindBy(accessibility = "जारी रखें")

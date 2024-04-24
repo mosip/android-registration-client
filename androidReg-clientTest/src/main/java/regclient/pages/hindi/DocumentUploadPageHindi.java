@@ -16,43 +16,43 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Button\")")
 	private WebElement identityProofScanButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View")
 	private WebElement addressProofSelectValue;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Identity Proof\")]/parent::android.view.View/parent::android.view.View")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पहचान प्रमाण\")]/parent::android.view.View/parent::android.view.View")
 	private WebElement identityProofSelectValue;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Relationship Proof\")]/parent::android.view.View/parent::android.view.View")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"संबंध प्रमाण\")]/parent::android.view.View/parent::android.view.View")
 	private WebElement relationshipProofSelectValue;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB Proof\")]/parent::android.view.View/parent::android.view.View")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"जन्मतिथि प्रमाण\")]/parent::android.view.View/parent::android.view.View")
 	private WebElement dobProofSelectValue;
 
 	@AndroidFindBy(accessibility = "स्क्रिम")
 	private WebElement PopUpCloseButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
 	private WebElement scanButtonAddressProof;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Identity Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पहचान प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
 	private WebElement scanButtonIdentityProof;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"जन्मतिथि प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
 	private WebElement scanButtonDobProof;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Relationship Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"संबंध प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
 	private WebElement scanButtonRelationshipProof;
 
 	@AndroidFindBy(accessibility = "वापस जाएं")
 	private WebElement backButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView")
 	private WebElement previewCaptureImage;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[2]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[2]")
 	private WebElement previewSecondCaptureImage;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Address Proof\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[3]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[3]")
 	private WebElement previewThirdCaptureImage;
 
 	@AndroidFindBy(accessibility = "जारी रखें")
@@ -61,7 +61,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 	@AndroidFindBy(accessibility = "मिटाना")
 	private WebElement deleteButton;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"DOB Proof\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"जन्मतिथि प्रमाण\"))")
 	private WebElement dobsHeader;
 
 	@AndroidFindBy(xpath = "//android.widget.ImageView")
