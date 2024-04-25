@@ -220,5 +220,9 @@
   "demographic_information": "المعلومات الديموغرافية",
   "documents": "وثائق",
   "biometrics": "القياسات الحيوية",
-  "share": "يشارك" 
+  "share": "يشارك",
+  "share": "يشارك",
+  "sync_alert_title": "المزامنة للمتابعة!",
+  "sync_alert_content": "الجهاز أو المركز غير نشط. قم بتنشيطه والمزامنة للمتابعة.",
+  "sync_alert_text": "مزامنة"
 }
