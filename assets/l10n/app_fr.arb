@@ -227,5 +227,8 @@
   "status": "Statut",
   "active_not_onboarded": "Actif – Non intégré",
   "user_inactive": "Utilisateur inactif",
-  "onboarded": "Intégré"
+  "onboarded": "Intégré",
+  "sync_alert_title": "Synchronisation pour continuer!",
+  "sync_alert_content": "La machine ou le centre n'est pas actif. Activez et synchronisez pour continuer.",
+  "sync_alert_text": "Synchroniser"
 }

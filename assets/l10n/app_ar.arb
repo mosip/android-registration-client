@@ -227,5 +227,8 @@
   "status": "حالة",
   "active_not_onboarded": "نشط - غير مسجل",
   "user_inactive": "المستخدم غير نشط",
-  "onboarded": "على متن الطائرة"
+  "onboarded": "على متن الطائرة",
+  "sync_alert_title": "المزامنة للمتابعة!",
+  "sync_alert_content": "الجهاز أو المركز غير نشط. قم بتنشيطه والمزامنة للمتابعة.",
+  "sync_alert_text": "مزامنة"
 }
