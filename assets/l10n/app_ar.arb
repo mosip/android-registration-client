@@ -217,5 +217,8 @@
   "preview_page": "معاينة",
   "packet_auth_page": "المصادقة",
   "acknowledgement_page": "الاعتراف",
-  "share": "يشارك" 
+  "share": "يشارك",
+  "sync_alert_title": "المزامنة للمتابعة!",
+  "sync_alert_content": "الجهاز أو المركز غير نشط. قم بتنشيطه والمزامنة للمتابعة.",
+  "sync_alert_text": "مزامنة"
 }

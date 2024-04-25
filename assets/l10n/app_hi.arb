@@ -217,5 +217,8 @@
   "preview_page": "पूर्वावलोकन",
   "packet_auth_page": "प्रमाणीकरण",
   "acknowledgement_page": "पुनर्निर्देशन",
-  "share": "शेयर"
+  "share": "शेयर",
+  "sync_alert_title": "जारी रखने के लिए सिंक करें!",
+  "sync_alert_content": "मशीन या केंद्र सक्रिय नहीं है। जारी रखने के लिए सक्रिय करें और सिंक करें।",
+  "sync_alert_text": "सिंक"
 }

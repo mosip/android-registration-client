@@ -226,5 +226,8 @@
   "preview_page": "முன்னோக்கி",
   "packet_auth_page": "அங்கீகாரம்",
   "acknowledgement_page": "அறிவுசெய்தல்",
-  "share": "பகிர்"
+  "share": "பகிர்",
+  "sync_alert_title": "தொடர ஒத்திசை செய்க!",
+  "sync_alert_content": "இயந்திரம் அல்லது மையம் செயலில் இல்லை. தொடர செயல்படுத்த மற்றும் ஒத்திசை செய்க.",
+  "sync_alert_text": "ஒத்திசை"
 }
