@@ -8,5 +8,9 @@ abstract class DashBoard {
 
   Future<int> getPacketUploadedPendingDetails();
 
+  Future<int> getCreatedPacketDetails();
+
+  Future<int> getSyncedPacketDetails();
+
   factory DashBoard() => DashBoardImpl();
 }
