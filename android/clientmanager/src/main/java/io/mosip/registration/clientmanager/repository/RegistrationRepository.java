@@ -74,4 +74,8 @@ public class RegistrationRepository {
         this.registrationDao.insert(registration);
         return registration;
     }
+
+    public void deleteRegistration(String packetId) {
+        this.registrationDao.delete(packetId);
+    }
 }
