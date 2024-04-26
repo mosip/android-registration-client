@@ -108,8 +108,8 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getPreviewTemplate(bool isPreview) async {
-    _previewTemplate = await registrationService.getPreviewTemplate(isPreview);
+  getPreviewTemplate(bool isPreview, Map<String, String> templateValues) async {
+    _previewTemplate = await registrationService.getPreviewTemplate(isPreview, templateValues);
     notifyListeners();
   }
 
@@ -118,8 +118,8 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAcknowledgementTemplate(bool isAcknowledgement) async {
-    _acknowledgementTemplate = await registrationService.getPreviewTemplate(isAcknowledgement);
+  getAcknowledgementTemplate(bool isAcknowledgement, Map<String, String> templateValues) async {
+    _acknowledgementTemplate = await registrationService.getPreviewTemplate(isAcknowledgement, templateValues);
     notifyListeners();
   }
 
