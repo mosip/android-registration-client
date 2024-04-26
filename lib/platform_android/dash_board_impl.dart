@@ -42,4 +42,30 @@ class DashBoardImpl implements DashBoard {
     }
     return packetUploadedPendingData;
   }
+
+  @override
+  Future<int> getCreatedPacketDetails() async {
+    int createdPacketsData = 0;
+    try{
+      createdPacketsData = await DashBoardApi().getPacketCreatedDetails();
+    } on PlatformException {
+      debugPrint('DashBoardApi call failed');
+    } catch (e) {
+      debugPrint('get created packet data failed ${e.toString()}');
+    }
+    return createdPacketsData;
+  }
+
+  @override
+  Future<int> getSyncedPacketDetails() async {
+    int createdPacketsData = 0;
+    try{
+      createdPacketsData = await DashBoardApi().getSyncedPacketDetails();
+    } on PlatformException {
+      debugPrint('DashBoardApi call failed');
+    } catch (e) {
+      debugPrint('get Synced packet data failed ${e.toString()}');
+    }
+    return createdPacketsData;
+  }
 }

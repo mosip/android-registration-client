@@ -11,7 +11,14 @@ import static android.content.ContentValues.TAG;
 import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.KERNEL_APP_ID;
 import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.REG_APP_ID;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -34,6 +41,7 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
 import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
@@ -55,7 +63,10 @@ import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration_client.CronParserUtil;
+import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.NetworkUtils;
+import io.mosip.registration_client.UploadBackgroundService;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 
 @Singleton
@@ -87,6 +98,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     FileSignatureDao fileSignatureDao;
     Context context;
     private String regCenterId;
+
+    private Activity activity;
 
     @Inject
     public MasterDataSyncApi(ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository, SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository, IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
@@ -126,6 +139,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.packetService = packetService;
         this.globalParamDao = globalParamDao;
         this.fileSignatureDao = fileSignatureDao;
+    }
+
+    public void setCallbackActivity(MainActivity mainActivity){
+        this.activity=mainActivity;
     }
 
     @Override
@@ -224,6 +241,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     public void getCaCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         masterDataService.syncCACertificates(() -> {
             Log.i(TAG, "CA Certificate Sync Completed");
+            resetAlarm("registrationPacketUploadJob");
             result.success(syncResult("CACertificatesSync", 6, masterDataService.onResponseComplete()));
         }, isManualSync);
     }
@@ -243,6 +261,47 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             },KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    void resetAlarm(String api){
+        Intent intent = new Intent(activity, UploadBackgroundService.class);
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getForegroundService(
+                    activity,
+                    0,  // Request code
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE
+            );
+        } else {
+            pendingIntent = PendingIntent.getService(
+                    activity,
+                    0,  // Request code
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+        }
+        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                Intent permissionIntent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                permissionIntent.setData(Uri.fromParts("package", activity.getPackageName(), null));
+                activity.startActivity(permissionIntent);
+            }
+            long alarmTime = getIntervalMillis(api);
+            long currentTime = System.currentTimeMillis();
+            long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
+            Log.d(getClass().getSimpleName(), String.valueOf(delay)+ " Next Execution");
+
+//            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), 30000, pendingIntent);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+            }
         }
     }
 
@@ -313,5 +372,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }
         }
         return ClientManagerConstant.DEFAULT_BATCH_SIZE;
+    }
+
+    private long getIntervalMillis(String api){
+        // Default everyday at Noon - 12pm
+        String cronExp = ClientManagerConstant.DEFAULT_UPLOAD_CRON;
+        List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
+        for (SyncJobDef value : syncJobs) {
+            if (Objects.equals(value.getApiName(), api)) {
+                Log.d(getClass().getSimpleName(), api + " Cron Expression : " + String.valueOf(value.getSyncFreq()));
+                cronExp = String.valueOf(value.getSyncFreq());
+                break;
+            }
+        }
+        long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(cronExp);
+        Log.d(getClass().getSimpleName(), " Next Execution : " + String.valueOf(nextExecution));
+        return nextExecution;
     }
 }
