@@ -168,4 +168,38 @@ void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Dash
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getCreatedPacketDetails"
+        binaryMessenger:binaryMessenger
+        codec:DashBoardApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getCreatedPacketDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getCreatedPacketDetailsWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getCreatedPacketDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getSyncedPacketDetails"
+        binaryMessenger:binaryMessenger
+        codec:DashBoardApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getSyncedPacketDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getSyncedPacketDetailsWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getSyncedPacketDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }

@@ -57,11 +57,11 @@ class RegistrationServiceImpl implements RegistrationService {
   }
 
   @override
-  Future<String> getPreviewTemplate(bool isPreview) async {
+  Future<String> getPreviewTemplate(bool isPreview, Map<String, String> templateValues) async {
     String previewTemplate = '';
     try {
       previewTemplate =
-          await RegistrationDataApi().getPreviewTemplate(isPreview);
+          await RegistrationDataApi().getPreviewTemplate(isPreview,templateValues);
     } on PlatformException {
       debugPrint('Registration API template call failed');
     } catch (e) {

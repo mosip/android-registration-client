@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -89,11 +90,11 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull RegistrationDataPigeon.Result<String> result) {
+    public void getPreviewTemplate(@NonNull Boolean isPreview, @NonNull Map<String, String> templateTitleValues, @NonNull RegistrationDataPigeon.Result<String> result) {
         String template = "";
         try {
             this.registrationDto = this.registrationService.getRegistrationDto();
-            template = this.templateService.getTemplate(this.registrationDto, isPreview);
+            template = this.templateService.getTemplate(this.registrationDto, isPreview, templateTitleValues);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch template failed: ", e);
         }

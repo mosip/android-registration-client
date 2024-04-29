@@ -89,4 +89,25 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
         }
         result.success((long)pendingValues);
     }
+
+    @Override
+    public void getCreatedPacketDetails(@NonNull DashBoardPigeon.Result<Long> result) {
+        int createdPacketsCount = 0;
+        try{
+            createdPacketsCount = this.registrationRepository.getAllCreatedPacketStatus();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Getting CreatedData failed!" + Arrays.toString(e.getStackTrace()));
+        }
+        result.success((long)createdPacketsCount);
+    }
+
+    public void getSyncedPacketDetails(@NonNull DashBoardPigeon.Result<Long> result) {
+        int syncedPacketsCount = 0;
+        try{
+            syncedPacketsCount = this.registrationRepository.findRegistrationCountBySyncedStatus(PacketClientStatus.SYNCED.name());
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Getting SyncedData failed!" + Arrays.toString(e.getStackTrace()));
+        }
+        result.success((long)syncedPacketsCount);
+    }
 }

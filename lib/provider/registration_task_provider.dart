@@ -112,8 +112,8 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getPreviewTemplate(bool isPreview) async {
-    _previewTemplate = await registrationService.getPreviewTemplate(isPreview);
+  getPreviewTemplate(bool isPreview, Map<String, String> templateValues) async {
+    _previewTemplate = await registrationService.getPreviewTemplate(isPreview, templateValues);
     notifyListeners();
   }
 
@@ -122,8 +122,8 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAcknowledgementTemplate(bool isAcknowledgement) async {
-    _acknowledgementTemplate = await registrationService.getPreviewTemplate(isAcknowledgement);
+  getAcknowledgementTemplate(bool isAcknowledgement, Map<String, String> templateValues) async {
+    _acknowledgementTemplate = await registrationService.getPreviewTemplate(isAcknowledgement, templateValues);
     notifyListeners();
   }
 
@@ -218,6 +218,14 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<int> getPacketUploadedPendingDetails() async {
     return await dashBoard.getPacketUploadedPendingDetails();
+  }
+
+  Future<int> getCreatedPacketDetails() async {
+    return await dashBoard.getCreatedPacketDetails();
+  }
+
+  Future<int> getSyncedPacketDetails() async {
+    return await dashBoard.getSyncedPacketDetails();
   }
 
   Future<List<DashBoardData?>> getDashBoardDetails() async {

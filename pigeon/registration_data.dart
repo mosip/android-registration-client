@@ -22,7 +22,7 @@ abstract class RegistrationDataApi {
   bool evaluateMVELRequired(String fieldData, String expression);
 
   @async
-  String getPreviewTemplate(bool isPreview);
+  String getPreviewTemplate(bool isPreview, Map<String, String> templateValues);
 
   @async
   RegistrationSubmitResponse submitRegistrationDto(String makerName);

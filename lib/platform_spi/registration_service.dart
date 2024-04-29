@@ -12,7 +12,7 @@ abstract class RegistrationService {
   Future<String> startRegistration(List<String> languages);
   Future<bool> evaluateMVELVisible(String fieldData, String expression);
   Future<bool> evaluateMVELRequired(String fieldData, String expression);
-  Future<String> getPreviewTemplate(bool isPreview);
+  Future<String> getPreviewTemplate(bool isPreview,Map<String,String> templateValues);
   Future<RegistrationSubmitResponse> submitRegistrationDto(String makerName);
 
   factory RegistrationService() => getRegistrationServiceImpl();

@@ -22,4 +22,8 @@ abstract class DashBoardApi {
   int getPacketUploadedDetails();
   @async
   int getPacketUploadedPendingDetails();
+  @async
+  int getCreatedPacketDetails();
+  @async
+  int getSyncedPacketDetails();
 }

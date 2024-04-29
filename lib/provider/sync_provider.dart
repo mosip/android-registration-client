@@ -73,8 +73,6 @@ class SyncProvider with ChangeNotifier {
   }
 
   autoSync(BuildContext context) async {
-    await syncResponseService.getLastSyncTime();
-
     await syncResponseService
         .getGlobalParamsSync(false)
         .then((Sync getAutoSync) async {
@@ -168,6 +166,7 @@ class SyncProvider with ChangeNotifier {
       }
       notifyListeners();
     });
+    await getLastSyncTime();
   }
 
   bool isAllSyncSuccessful() {
@@ -198,6 +197,7 @@ class SyncProvider with ChangeNotifier {
               syncResult = await syncResponseService.getPolicyKeySync(true);
               if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
                 syncResult = await syncResponseService.getCaCertsSync(true);
+                await getLastSyncTime();
               }
             }
           }

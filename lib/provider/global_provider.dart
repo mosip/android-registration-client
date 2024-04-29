@@ -48,7 +48,7 @@ class GlobalProvider with ChangeNotifier {
   int _htmlBoxTabIndex = 0;
 
   List<String> _chosenLang = [];
-  String _operatorOnboardingAttributes="";
+  String _operatorOnboardingAttributes = "";
   Map<String, bool> _languageMap = {
     'English': true,
     'Arabic': false,
@@ -64,7 +64,7 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _fieldDisplayValues = {};
 
   Map<String, dynamic> _fieldInputValue = {};
-  Map<String,dynamic> _completeException={};
+  Map<String, dynamic> _completeException = {};
 
   Map<String, bool> _mvelVisibleFields = {};
   Map<String, bool> _mvelRequiredFields = {};
@@ -73,6 +73,12 @@ class GlobalProvider with ChangeNotifier {
 
   String _regId = "";
   String _ageGroup = "";
+
+  String _checkAgeGroupChange = "";
+  String get checkAgeGroupChange => _checkAgeGroupChange;
+  set checkAgeGroupChange(String value) {
+    _checkAgeGroupChange = value;
+  }
 
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
@@ -227,9 +233,9 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String,dynamic> get completeException=>_completeException;
-  set completeException(Map<String,dynamic> value){
-    _completeException=value;
+  Map<String, dynamic> get completeException => _completeException;
+  set completeException(Map<String, dynamic> value) {
+    _completeException = value;
     notifyListeners();
   }
 
@@ -244,15 +250,15 @@ class GlobalProvider with ChangeNotifier {
   }
 
   //Functions
-  setCompleteExceptionByKey(String key,dynamic value){
-    completeException[key]=value;
+  setCompleteExceptionByKey(String key, dynamic value) {
+    completeException[key] = value;
     notifyListeners();
   }
-  getCompleteExceptionByKey(String key){
-    if(completeException.containsKey(key)){
+
+  getCompleteExceptionByKey(String key) {
+    if (completeException.containsKey(key)) {
       return completeException[key];
-    }
-    else{
+    } else {
       return [];
     }
   }
@@ -361,7 +367,7 @@ class GlobalProvider with ChangeNotifier {
       } else {
         commitId = head;
       }
-    } catch(e) {
+    } catch (e) {
       debugPrint("Failed fetching git info: $e");
     }
 
@@ -374,10 +380,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeValidFromMap(String key,Uint8List? item, Map<String, dynamic> commonMap) {
-    if(commonMap[key].listofImages!=null && commonMap[key].listofImages.length>=1) {
+  removeValidFromMap(
+      String key, Uint8List? item, Map<String, dynamic> commonMap) {
+    if (commonMap[key].listofImages != null &&
+        commonMap[key].listofImages.length >= 1) {
       commonMap[key].listofImages.remove(item);
-    }else{
+    } else {
       commonMap.remove(key);
     }
     notifyListeners();
@@ -507,13 +515,13 @@ class GlobalProvider with ChangeNotifier {
     await setLanguageConfigData();
     await createLanguageCodeMapper();
     String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
-    if(!isManualSync) {
+    if (!isManualSync) {
       await toggleLocale(mandatoryLang);
     }
     notifyListeners();
   }
 
-  set exceptionAttributes(List<String> value){
+  set exceptionAttributes(List<String> value) {
     _exceptionAttributes = value;
     notifyListeners();
   }
@@ -629,12 +637,12 @@ class GlobalProvider with ChangeNotifier {
     }
     List<String> languageList = [];
     _codeToLanguageMapper = {};
-    for(var element in _mandatoryLanguages) {
+    for (var element in _mandatoryLanguages) {
       languageList.add(element!);
       _codeToLanguageMapper[element] = element;
     }
     for (var element in _languageDataList) {
-      if(_codeToLanguageMapper[element!.code] == null) {
+      if (_codeToLanguageMapper[element!.code] == null) {
         languageList.add(element.code);
       }
       _codeToLanguageMapper[element.code] = element.name;
@@ -728,7 +736,8 @@ class GlobalProvider with ChangeNotifier {
     await networkService.saveScreenHeaderToGlobalParam(id, value);
   }
 
-  removeProofOfExceptionFieldFromMap(String key, Map<String, dynamic> commonMap) {
+  removeProofOfExceptionFieldFromMap(
+      String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
   }
 }

@@ -40,6 +40,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   late Future<List<String?>> myGetDocumentCategoryFuture;
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
+  Map<String, String> transliterationLangMapper = {};
 
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
@@ -68,6 +69,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getListOfReferenceNumber();
   }
 
   String _getDataFromMap(String lang) {
@@ -254,11 +261,19 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
+  _getListOfReferenceNumber(){
+    List<String?> langList = context.read<GlobalProvider>().languages;
+    for(var element in langList){
+      setState(() {
+        transliterationLangMapper[element.toString()] =
+            AppLocalizations.of(context)!.referenceNumber(element.toString());
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 750;
-    bool isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
     List<String> selectedLang = context.read<GlobalProvider>().chosenLang;
     if (!(widget.field.type == "simpleType")) {
       selectedLang = ["English"];
@@ -644,25 +659,9 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        AppLocalizations.of(context)!
-                                            .referenceNumber(lang),
-                                        style: TextStyle(
-                                            fontSize:
-                                                isPortrait && !isMobileSize
-                                                    ? 18
-                                                    : 14,
-                                            fontWeight: semiBold),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                    ],
-                                  ),
+                                  CustomLabel(field: Field(label: transliterationLangMapper,required: false)),
                                   SizedBox(
-                                    height: 14.h,
+                                    height: 10.h,
                                   ),
                                   TextFormField(
                                     autovalidateMode:

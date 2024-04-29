@@ -127,14 +127,37 @@ class _BiometricCaptureScanBlockPortraitState
                   color: secondaryColors.elementAt(22),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: (biometricAttributeData.title == "Iris")
+                      ? MainAxisAlignment.spaceEvenly
+                      : MainAxisAlignment.center,
                   children: [
+                    (biometricAttributeData.title == "Iris" &&
+                            biometricAttributeData.exceptions.contains(true))
+                        ? ((biometricAttributeData.exceptions.first == true)
+                            ? SvgPicture.asset(
+                                "assets/svg/Left Eye Exception.svg",
+                                height: (isMobileSize) ? 130.h : 260.h,
+                              )
+                            : const SizedBox())
+                        : const SizedBox(),
                     ...temp.map(
                       (e) => Image.memory(
                         e!,
                         height: (isMobileSize) ? 130.h : 260.h,
                       ),
                     ),
+                    (biometricAttributeData.title == "Iris" &&
+                            biometricAttributeData.exceptions.contains(true))
+                        ? ((biometricAttributeData.exceptions.first == true)
+                            ? const SizedBox()
+                            : Transform.flip(
+                                flipX: true,
+                                child: SvgPicture.asset(
+                                  "assets/svg/Left Eye Exception.svg",
+                                  height: (isMobileSize) ? 130.h : 260.h,
+                                ),
+                              ))
+                        : const SizedBox(),
                   ],
                 ),
                 Divider(
@@ -237,11 +260,46 @@ class _BiometricCaptureScanBlockPortraitState
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      (biometricAttributeData.title == "Iris" &&
+                              biometricAttributeData.exceptions.contains(true))
+                          ? ((biometricAttributeData.exceptions.first == true)
+                              ? Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 115.h,
+                                    ),
+                                    SvgPicture.asset(
+                                      "assets/svg/Left Eye Exception.svg",
+                                      height: (isMobileSize) ? 70.h : 130.h,
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox())
+                          : const SizedBox(),
                       ...biometricAttributeData.listofImages
                           .map((e) => Image.memory(
                                 e,
                                 height: (isMobileSize) ? 70.h : 130.h,
-                              ))
+                              )),
+                      (biometricAttributeData.title == "Iris" &&
+                              biometricAttributeData.exceptions.contains(true))
+                          ? ((biometricAttributeData.exceptions.first == true)
+                              ? const SizedBox()
+                              : Row(
+                                  children: [
+                                    Transform.flip(
+                                      flipX: true,
+                                      child: SvgPicture.asset(
+                                        "assets/svg/Left Eye Exception.svg",
+                                        height: (isMobileSize) ? 70.h : 130.h,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 115.h,
+                                    )
+                                  ],
+                                ))
+                          : const SizedBox(),
                     ],
                   ),
                 ),
@@ -328,146 +386,95 @@ class _BiometricCaptureScanBlockPortraitState
               SizedBox(
                 height: 6.h,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Text(
+                    AppLocalizations.of(context)!.attempts,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 24, color: blackShade1, fontWeight: semiBold),
+                  ),
+                  const SizedBox(
+                    height: 29.4,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.attempts,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 24,
-                            color: blackShade1,
-                            fontWeight: semiBold),
-                      ),
-                      const SizedBox(
-                        height: 29.4,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (int i = 1;
-                              i <= biometricAttributeData.noOfCapturesAllowed;
-                              i++)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.3),
-                              child: InkWell(
-                                onTap: () async {
-                                  if (biometricAttributeData.attemptNo >= i) {
-                                    await BiometricsApi()
-                                        .getBiometrics(
-                                            widget.field.id!,
-                                            biometricAttributeData.title
-                                                .replaceAll(" ", ""),
-                                            i)
-                                        .then((value) {
-                                      biometricAttributeData.listOfBiometricsDto
-                                          .clear();
-                                      for (var e in value) {
-                                        biometricAttributeData
-                                            .listOfBiometricsDto
-                                            .add(BiometricsDto.fromJson(
-                                                json.decode(e!)));
-                                      }
-                                    });
-
-                                    setState(() {
-                                      biometricAttributeData.qualityPercentage =
-                                          context
-                                              .read<
-                                                  BiometricCaptureControlProvider>()
-                                              .avgScore(biometricAttributeData
-                                                  .listOfBiometricsDto);
-                                    });
-                                    await BiometricsApi()
-                                        .extractImageValuesByAttempt(
-                                            widget.field.id!,
-                                            biometricAttributeData.title
-                                                .replaceAll(" ", ""),
-                                            i)
-                                        .then((value) {
-                                      biometricAttributeData.listofImages =
-                                          value;
-                                    });
-                                    setState(() {});
+                      for (int i = 1;
+                          i <= biometricAttributeData.noOfCapturesAllowed;
+                          i++)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16.3),
+                          child: InkWell(
+                            onTap: () async {
+                              if (biometricAttributeData.attemptNo >= i) {
+                                await BiometricsApi()
+                                    .getBiometrics(
+                                        widget.field.id!,
+                                        biometricAttributeData.title
+                                            .replaceAll(" ", ""),
+                                        i)
+                                    .then((value) {
+                                  biometricAttributeData.listOfBiometricsDto
+                                      .clear();
+                                  for (var e in value) {
+                                    biometricAttributeData.listOfBiometricsDto
+                                        .add(BiometricsDto.fromJson(
+                                            json.decode(e!)));
                                   }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 7.3,
-                                    horizontal: 30,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: secondaryColors.elementAt(17),
-                                    ),
-                                    color:
-                                        (biometricAttributeData.attemptNo < i)
-                                            ? secondaryColors.elementAt(18)
-                                            : secondaryColors.elementAt(11),
-                                  ),
-                                  child: Text(
-                                    i.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
-                                            fontSize: 21,
-                                            color: (biometricAttributeData
-                                                        .attemptNo <
+                                });
+
+                                setState(() {
+                                  biometricAttributeData.qualityPercentage =
+                                      context
+                                          .read<
+                                              BiometricCaptureControlProvider>()
+                                          .avgScore(biometricAttributeData
+                                              .listOfBiometricsDto);
+                                });
+                                await BiometricsApi()
+                                    .extractImageValuesByAttempt(
+                                        widget.field.id!,
+                                        biometricAttributeData.title
+                                            .replaceAll(" ", ""),
+                                        i)
+                                    .then((value) {
+                                  biometricAttributeData.listofImages = value;
+                                });
+                                setState(() {});
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 7.3,
+                                horizontal: 30,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(17),
+                                ),
+                                color: (biometricAttributeData.attemptNo < i)
+                                    ? secondaryColors.elementAt(18)
+                                    : secondaryColors.elementAt(11),
+                              ),
+                              child: Text(
+                                i.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                        fontSize: 21,
+                                        color:
+                                            (biometricAttributeData.attemptNo <
                                                     i)
                                                 ? secondaryColors.elementAt(19)
                                                 : pureWhite,
-                                            fontWeight: semiBold),
-                                  ),
-                                ),
+                                        fontWeight: semiBold),
                               ),
                             ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.exceptions,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 24,
-                            color: blackShade1,
-                            fontWeight: semiBold),
-                      ),
-                      const SizedBox(
-                        height: 29.4,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.3),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 7.3,
-                            horizontal: 30,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: secondaryColors.elementAt(17),
-                            ),
-                            color: secondaryColors.elementAt(18),
-                          ),
-                          child: Text(
-                            noOfTrue(biometricAttributeData.exceptions).toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    fontSize: 21,
-                                    color: secondaryColors.elementAt(19),
-                                    fontWeight: semiBold),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ],
@@ -790,6 +797,62 @@ class _BiometricCaptureScanBlockPortraitState
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: pureWhite,
+                        border: Border.all(
+                            color: secondaryColors.elementAt(14), width: 1),
+                      ),
+                      height: 134,
+                      width: (isPortrait) ? double.infinity : 714.w,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.exceptions,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                    fontSize: 24,
+                                    color: blackShade1,
+                                    fontWeight: semiBold),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16.3),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 7.3,
+                                horizontal: 30,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: secondaryColors.elementAt(17),
+                                ),
+                                color: secondaryColors.elementAt(18),
+                              ),
+                              child: Text(
+                                noOfTrue(biometricAttributeData.exceptions)
+                                    .toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                        fontSize: 21,
+                                        color: secondaryColors.elementAt(19),
+                                        fontWeight: semiBold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 40,
                   ),
@@ -904,6 +967,7 @@ class _BiometricCaptureScanBlockPortraitState
                     height: 20,
                   ),
                   TextField(
+                    enabled: false,
                     maxLines: 10,
                     decoration: InputDecoration(
                       fillColor: pureWhite,
@@ -1130,42 +1194,246 @@ class _BiometricCaptureScanBlockPortraitState
                     Positioned(
                         top: 95,
                         left: 67,
-                        child: SvgPicture.asset(
-                          "assets/svg/RH_1.svg",
-                          height: 165,
-                          color: (biometricAttributeData.exceptions[0] == true)
-                              ? secondaryColors.elementAt(25)
-                              : Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(0)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "RightHand", "rightIndex");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "RightHand", "rightIndex");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[0] =
+                                !(biometricAttributeData.exceptions[0]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Right Hand");
+                            proofOfExceptionList("Right Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/RH_1.svg",
+                            height: 165,
+                            color:
+                                (biometricAttributeData.exceptions[0] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : Colors.transparent,
+                          ),
                         )),
                     Positioned(
                         top: 55,
                         left: 117,
-                        child: SvgPicture.asset(
-                          "assets/svg/RH_2.svg",
-                          height: 205,
-                          color: (biometricAttributeData.exceptions[1] == true)
-                              ? secondaryColors.elementAt(25)
-                              : Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(1)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "RightHand", "rightMiddle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "RightHand", "rightMiddle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[1] =
+                                !(biometricAttributeData.exceptions[1]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Right Hand");
+                            proofOfExceptionList("Right Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/RH_2.svg",
+                            height: 205,
+                            color:
+                                (biometricAttributeData.exceptions[1] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : Colors.transparent,
+                          ),
                         )),
                     Positioned(
                         top: 97,
                         right: 97,
-                        child: SvgPicture.asset(
-                          "assets/svg/RH_3.svg",
-                          height: 165,
-                          color: (biometricAttributeData.exceptions[2] == true)
-                              ? secondaryColors.elementAt(25)
-                              : const Color.fromARGB(0, 221, 210, 210),
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(2)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "RightHand", "rightRing");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "RightHand", "rightRing");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[2] =
+                                !(biometricAttributeData.exceptions[2]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Right Hand");
+                            proofOfExceptionList("Right Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/RH_3.svg",
+                            height: 165,
+                            color:
+                                (biometricAttributeData.exceptions[2] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : const Color.fromARGB(0, 221, 210, 210),
+                          ),
                         )),
                     Positioned(
                         top: 167,
                         right: 54,
-                        child: SvgPicture.asset(
-                          "assets/svg/RH_4.svg",
-                          height: 100,
-                          color: (biometricAttributeData.exceptions[3] == true)
-                              ? secondaryColors.elementAt(25)
-                              : Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(3)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "RightHand", "rightLittle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "RightHand", "rightLittle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Right Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[3] =
+                                !(biometricAttributeData.exceptions[3]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Right Hand");
+                            proofOfExceptionList("Right Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/RH_4.svg",
+                            height: 100,
+                            color:
+                                (biometricAttributeData.exceptions[3] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : Colors.transparent,
+                          ),
                         )),
                   ],
                 ),
@@ -1648,42 +1916,246 @@ class _BiometricCaptureScanBlockPortraitState
                     Positioned(
                         top: 167,
                         left: 54,
-                        child: SvgPicture.asset(
-                          "assets/svg/LH_1.svg",
-                          height: 100,
-                          color: (biometricAttributeData.exceptions[3] == true)
-                              ? secondaryColors.elementAt(25)
-                              : Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(3)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "LeftHand", "leftLittle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "LeftHand", "leftLittle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[3] =
+                                !(biometricAttributeData.exceptions[3]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Left Hand");
+                            proofOfExceptionList("Left Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/LH_1.svg",
+                            height: 100,
+                            color:
+                                (biometricAttributeData.exceptions[3] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : Colors.transparent,
+                          ),
                         )),
                     Positioned(
                         top: 97,
                         left: 97,
-                        child: SvgPicture.asset(
-                          "assets/svg/LH_2.svg",
-                          height: 165,
-                          color: (biometricAttributeData.exceptions[2] == true)
-                              ? secondaryColors.elementAt(25)
-                              : Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(2)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "LeftHand", "leftRing");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "LeftHand", "leftRing");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[2] =
+                                !(biometricAttributeData.exceptions[2]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Left Hand");
+                            proofOfExceptionList("Left Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/LH_2.svg",
+                            height: 165,
+                            color:
+                                (biometricAttributeData.exceptions[2] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : Colors.transparent,
+                          ),
                         )),
                     Positioned(
                         top: 55,
                         right: 117,
-                        child: SvgPicture.asset(
-                          "assets/svg/LH_3.svg",
-                          height: 205,
-                          color: (biometricAttributeData.exceptions[1] == true)
-                              ? secondaryColors.elementAt(25)
-                              : Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(1)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "LeftHand", "leftMiddle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "LeftHand", "leftMiddle");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[1] =
+                                !(biometricAttributeData.exceptions[1]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Left Hand");
+                            proofOfExceptionList("Left Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/LH_3.svg",
+                            height: 205,
+                            color:
+                                (biometricAttributeData.exceptions[1] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : Colors.transparent,
+                          ),
                         )),
                     Positioned(
                         top: 95,
                         right: 67,
-                        child: SvgPicture.asset(
-                          "assets/svg/LH_4.svg",
-                          height: 165,
-                          color: (biometricAttributeData.exceptions[0] == true)
-                              ? secondaryColors.elementAt(25)
-                              : Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            if (!(biometricAttributeData.exceptions
+                                    .elementAt(0)) ==
+                                true) {
+                              await BiometricsApi().addBioException(
+                                  widget.field.id!, "LeftHand", "leftIndex");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            } else {
+                              await BiometricsApi().removeBioException(
+                                  widget.field.id!, "LeftHand", "leftIndex");
+                              resetAfterException(
+                                  widget.field.id!, biometricAttributeData);
+                              biometricAttributeData.isScanned = false;
+                              biometricAttributeData.attemptNo = 0;
+                              biometricAttributeData.listofImages = [
+                                "assets/svg/Left Hand.svg"
+                              ];
+                              biometricAttributeData.listOfBiometricsDto = [];
+                              biometricAttributeData.qualityPercentage = 0;
+                              biometricAttributeData.thresholdPercentage = "0";
+                            }
+                            biometricAttributeData.exceptions[0] =
+                                !(biometricAttributeData.exceptions[0]);
+
+                            if (biometricAttributeData.exceptions
+                                .contains(true)) {
+                              if (biometricAttributeData
+                                  .exceptionType.isEmpty) {
+                                biometricAttributeData.exceptionType =
+                                    "Permanent";
+                              }
+                            }
+                            if (!biometricAttributeData.exceptions
+                                .contains(true)) {
+                              biometricAttributeData.exceptionType = "";
+                            }
+                            updateExceptionList("Left Hand");
+                            proofOfExceptionList("Left Hand");
+                          },
+                          child: SvgPicture.asset(
+                            "assets/svg/LH_4.svg",
+                            height: 165,
+                            color:
+                                (biometricAttributeData.exceptions[0] == true)
+                                    ? secondaryColors.elementAt(25)
+                                    : Colors.transparent,
+                          ),
                         )),
                   ],
                 ),
@@ -2452,7 +2924,8 @@ class _BiometricCaptureScanBlockPortraitState
                   }
                 },
                 child: Text(AppLocalizations.of(context)!.next_button,
-                    style: TextStyle(fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold)),
+                    style: TextStyle(
+                        fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold)),
               ),
             ],
           ),

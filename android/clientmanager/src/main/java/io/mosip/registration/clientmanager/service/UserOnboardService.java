@@ -133,6 +133,7 @@ public class UserOnboardService {
     public void setIdaResponse(boolean idaResponse) {
         this.idaResponse = idaResponse;
     }
+    public void setIsOnboardSuccess(boolean isOnboardSuccess){this.isOnboardSuccess=isOnboardSuccess;}
 
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
@@ -165,6 +166,7 @@ public class UserOnboardService {
             if(isIdaResponse()) {
                 Log.i(TAG, "User onboarding success");
                 isOnboardSuccess = save(biometrics, userId);
+                userDetailRepository.updateUserDetail(sharedPreferences.getString(PREFERRED_USERNAME,""));
                 onFinish.run();
             }
         });
@@ -173,7 +175,9 @@ public class UserOnboardService {
     public void validateWithIDA(String userId, List<BiometricsDto> biometrics, Runnable onFinish) {
         if (isIdaResponse()) {
             idaResponse = true;
+
             onFinish.run();
+            return;
         }
         Map<String, Object> idaRequestMap = new LinkedHashMap<>();
         idaRequestMap.put(ID, IDENTITY);

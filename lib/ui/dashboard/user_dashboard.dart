@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserDashBoard extends StatefulWidget {
   const UserDashBoard({super.key});
@@ -14,6 +15,8 @@ class UserDashBoard extends StatefulWidget {
 }
 
 class _UserDashBoardState extends State<UserDashBoard> {
+  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
   Future<List<DashBoardData?>> _getDashBoardList() async {
     return await context.read<RegistrationTaskProvider>().getDashBoardDetails();
   }
@@ -22,6 +25,18 @@ class _UserDashBoardState extends State<UserDashBoard> {
     return await context
         .read<RegistrationTaskProvider>()
         .getPacketUploadedPendingDetails();
+  }
+
+  Future<int> _getCreatedPacketList() async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getCreatedPacketDetails();
+  }
+
+  Future<int> _getSyncedPacketList() async {
+    return await context
+        .read<RegistrationTaskProvider>()
+        .getSyncedPacketDetails();
   }
 
   Future<int> _getPacketUploadedList() async {
@@ -56,7 +71,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                         ? const EdgeInsets.symmetric(horizontal: 10)
                         : const EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
-                      "DashBoard",
+                      appLocalizations.dashboard,
                       style: TextStyle(
                           fontSize: isMobileSize ? 18 : 24,
                           fontWeight: FontWeight.bold,
@@ -67,12 +82,104 @@ class _UserDashBoardState extends State<UserDashBoard> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       FutureBuilder(
+                          future: _getCreatedPacketList(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<int> snapshot) {
+                            return Container(
+                              height: isMobileSize ? 100 : 160,
+                              width: MediaQuery.of(context).size.width / 3.4,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons.cube,
+                                        size: isMobileSize ? 25 : 35,
+                                        color:
+                                        dashBoardPacketUploadPendingColor,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        snapshot.hasData
+                                            ? snapshot.data
+                                            .toString()
+                                            .padLeft(2, '0')
+                                            : "00",
+                                        style: TextStyle(
+                                            fontSize: isMobileSize ? 25 : 35,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(appLocalizations.packets_created,
+                                      style: TextStyle(
+                                          fontSize: isMobileSize ? 15 : 20,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            );
+                          }),
+                      FutureBuilder(
+                          future: _getSyncedPacketList(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<int> snapshot) {
+                            return Container(
+                              height: isMobileSize ? 100 : 160,
+                              width: MediaQuery.of(context).size.width / 3.4,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons.cube,
+                                        size: isMobileSize ? 25 : 35,
+                                        color:
+                                        dashBoardPacketUploadPendingColor,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        snapshot.hasData
+                                            ? snapshot.data
+                                            .toString()
+                                            .padLeft(2, '0')
+                                            : "00",
+                                        style: TextStyle(
+                                            fontSize: isMobileSize ? 25 : 35,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(appLocalizations.packets_synced,
+                                      style: TextStyle(
+                                          fontSize: isMobileSize ? 15 : 20,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            );
+                          }),
+                      FutureBuilder(
                           future: _getPacketUploadedList(),
                           builder: (BuildContext context,
                               AsyncSnapshot<int> snapshot) {
                             return Container(
                               height: isMobileSize ? 100 : 160,
-                              width: MediaQuery.of(context).size.width * 0.45,
+                              width: MediaQuery.of(context).size.width / 3.4,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
                                 color: Colors.white,
@@ -103,37 +210,21 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Text('Packets Uploaded',
+                                  Text(appLocalizations.packets_uploaded,
                                       style: TextStyle(
                                           fontSize: isMobileSize ? 15 : 20,
                                           fontWeight: FontWeight.bold)),
-                                  // const SizedBox(height: 8),
-                                  // if (snapshot.hasData &&
-                                  //     snapshot.data!.isNotEmpty) ...[
-                                  //   Text(
-                                  //       "${dateFormat(snapshot.data!.last.toString())} To ${dateFormat(DateTime.now().millisecondsSinceEpoch.toString())}",
-                                  //       style: TextStyle(
-                                  //           fontSize: isMobileSize ? 12 : 16,
-                                  //           fontWeight: FontWeight.w500,
-                                  //           color: appBlackShade3)),
-                                  // ] else ...[
-                                  //   Text("No data found",
-                                  //       style: TextStyle(
-                                  //           fontSize: isMobileSize ? 12 : 16,
-                                  //           fontWeight: FontWeight.w500,
-                                  //           color: appBlackShade3)),
-                                  // ],
                                 ],
                               ),
                             );
                           }),
-                      FutureBuilder(
+                      /*FutureBuilder(
                           future: _getPacketUploadPendingList(),
                           builder: (BuildContext context,
                               AsyncSnapshot<int> snapshot) {
                             return Container(
                               height: isMobileSize ? 100 : 160,
-                              width: MediaQuery.of(context).size.width * 0.45,
+                              width: MediaQuery.of(context).size.width / 3.4,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
                                 color: Colors.white,
@@ -178,7 +269,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                 ],
                               ),
                             );
-                          }),
+                          }),*/
                     ],
                   )
                 ],
@@ -189,7 +280,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                   ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10)
                   : const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Text(
-                "Users",
+                appLocalizations.users,
                 style: TextStyle(
                     fontSize: isMobileSize ? 18 : 24,
                     fontWeight: FontWeight.bold),
@@ -217,19 +308,19 @@ class _UserDashBoardState extends State<UserDashBoard> {
                               headingRowHeight: 60,
                               columns: [
                                 DataColumn(
-                                    label: Text('User ID',
+                                    label: Text(appLocalizations.user_id,
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: isMobileSize ? 12 : 20,
                                             color: appBlackShade2))),
                                 DataColumn(
-                                    label: Text('User Name',
+                                    label: Text(appLocalizations.user_name,
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: isMobileSize ? 12 : 20,
                                             color: appBlackShade2))),
                                 DataColumn(
-                                    label: Text('Status',
+                                    label: Text(appLocalizations.status,
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: isMobileSize ? 12 : 20,
@@ -271,40 +362,10 @@ class _UserDashBoardState extends State<UserDashBoard> {
 
   Widget statusWidget(bool isActive, bool isOnboarded) {
     if (isActive && isOnboarded) {
-      return Row(
-        children: [
-          Icon(
-            CupertinoIcons.checkmark_alt_circle_fill,
-            size: isMobileSize ? 15 : 27,
-            color: dashBoardPacketUploadColor,
-          ),
-          Text(
-            " Onboarded",
-            style: TextStyle(
-                fontSize: isMobileSize ? 10 : 17,
-                color: appBlackShade2,
-                fontWeight: FontWeight.w500),
-          )
-        ],
-      );
+      getUserOnboardedWidget();
     }
     if (!isActive && isOnboarded) {
-      return Row(
-        children: [
-          Icon(
-            CupertinoIcons.checkmark_alt_circle_fill,
-            size: isMobileSize ? 15 : 27,
-            color: dashBoardPacketUploadColor,
-          ),
-          Text(
-            " Onboarded",
-            style: TextStyle(
-                fontSize: isMobileSize ? 10 : 17,
-                color: appBlackShade2,
-                fontWeight: FontWeight.w500),
-          )
-        ],
-      );
+      getUserOnboardedWidget();
     }
     if (isActive && !isOnboarded) {
       return Row(
@@ -315,7 +376,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
             color: dashBoardPacketUploadPendingColor,
           ),
           Text(
-            " Active - Not Onboarded",
+            " ${appLocalizations.active_not_onboarded}",
             style: TextStyle(
                 fontSize: isMobileSize ? 10 : 17,
                 color: appBlackShade2,
@@ -333,7 +394,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
             color: appBlackShade3,
           ),
           Text(
-            " User Inactive",
+            " ${appLocalizations.user_inactive}",
             style: TextStyle(
                 fontSize: isMobileSize ? 10 : 17,
                 color: appBlackShade2,
@@ -343,5 +404,24 @@ class _UserDashBoardState extends State<UserDashBoard> {
       );
     }
     return Container();
+  }
+
+  Widget getUserOnboardedWidget(){
+    return Row(
+      children: [
+        Icon(
+          CupertinoIcons.checkmark_alt_circle_fill,
+          size: isMobileSize ? 15 : 27,
+          color: dashBoardPacketUploadColor,
+        ),
+        Text(
+          " ${appLocalizations.onboarded}",
+          style: TextStyle(
+              fontSize: isMobileSize ? 10 : 17,
+              color: appBlackShade2,
+              fontWeight: FontWeight.w500),
+        )
+      ],
+    );
   }
 }
