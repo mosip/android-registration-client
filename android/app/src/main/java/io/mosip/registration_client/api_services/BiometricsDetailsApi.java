@@ -500,6 +500,20 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void startOperatorOnboarding(@NonNull BiometricsPigeon.Result<String> result) {
         try {
             userOnboardService.getOperatorBiometrics().clear();
+            userOnboardService.setIdaResponse(false);
+            userOnboardService.setIsOnboardSuccess(false);
+            result.success("Ok");
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void clearBiometricAndDocumentHashmap(@NonNull BiometricsPigeon.Result<String> result) {
+        try {
+            RegistrationDto registrationDto = registrationService.getRegistrationDto();
+            registrationDto.clearBiometricsHashmap();
+            registrationDto.clearDocumentsHashmap();
             result.success("Ok");
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

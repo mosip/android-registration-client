@@ -14,6 +14,7 @@ class Field with _$Field {
     bool? required,
     bool? transliterate,
     String? fieldCategory,
+    bool? exceptionPhotoRequired,
     String? subType,
     String? type,
     int? minimum,

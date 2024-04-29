@@ -21,6 +21,7 @@ import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
+import 'package:registration_client/ui/widgets/sync_alert_dialog.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -359,7 +360,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     if (version.startsWith("1.1.5")) {
       await _saveAllHeaders();
     }
-    await authProvider.authenticateUser(username, password, connectivityProvider.isConnected);
+    await authProvider.authenticateUser(
+        username, password, connectivityProvider.isConnected);
 
     if (!authProvider.isLoggedIn) {
       authProvider.setIsSyncing(false);
@@ -369,7 +371,37 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
     await syncProvider.getLastSyncTime();
     debugPrint(syncProvider.lastSuccessfulSyncTime);
-    if (authProvider.isLoggedIn && syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull") {
+
+    await connectivityProvider.checkNetworkConnection();
+
+    if (!connectivityProvider.isConnected) {
+      if (!authProvider.isCenterActive) {
+        authProvider.setLoginError("REG_CENTER_INACTIVE");
+        authProvider.setIsLoggedIn(false);
+        authProvider.setIsSyncing(false);
+        _showErrorInSnackbar();
+        return;
+      }
+
+      if (!authProvider.isMachineActive) {
+        authProvider.setLoginError("REG_MACHINE_INACTIVE");
+        authProvider.setIsLoggedIn(false);
+        authProvider.setIsSyncing(false);
+        _showErrorInSnackbar();
+        return;
+      }
+    }
+
+    if (!authProvider.isCenterActive || !authProvider.isMachineActive) {
+      _showAlertDialog();
+      authProvider.setIsSyncing(false);
+      return;
+    }
+
+    log("machine active: ${authProvider.isMachineActive}");
+
+    if (authProvider.isLoggedIn &&
+        (syncProvider.lastSuccessfulSyncTime == "LastSyncTimeIsNull")) {
       log("sync time: ${syncProvider.lastSuccessfulSyncTime}");
       syncProvider.setIsGlobalSyncInProgress(true);
       await _autoSyncHandler();
@@ -575,7 +607,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           context.watch<AuthProvider>().isValidUser
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
-                  onTapLogin: () async{
+                  onTapLogin: () async {
                     await _getLoginAction();
                     await _initializeBiometricThresholdData();
                   },
@@ -799,6 +831,21 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           ),
         );
       },
+    );
+  }
+
+  _showAlertDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) => SyncAlertDialog(
+        title: appLocalizations.sync_alert_title,
+        content: appLocalizations.sync_alert_content,
+        onPressed: () async {
+          Navigator.of(context).pop();
+          syncProvider.setIsGlobalSyncInProgress(true);
+          await _autoSyncHandler();
+        },
+      ),
     );
   }
 }
