@@ -76,7 +76,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        return BiometricCaptureControl(e: e);
+        if(context.watch<GlobalProvider>().mvelRequiredFields[e.id] ?? true) {
+          return BiometricCaptureControl(e: e);
+        }
+        return Container();
       case "button":
         if (e.subType == "preferredLang") {
           return ButtonControl(field: e);
