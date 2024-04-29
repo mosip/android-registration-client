@@ -25,6 +25,15 @@ abstract class BiometricsApi {
   int getBioAttempt(String fieldId, String modality);
 
   @async
+  String startOperatorOnboarding();
+
+  @async
+  String clearBiometricAndDocumentHashmap();
+
+  @async
+  String saveOperatorBiometrics();
+
+  @async
   String addBioException(String fieldId, String modality, String attribute);
 
   @async

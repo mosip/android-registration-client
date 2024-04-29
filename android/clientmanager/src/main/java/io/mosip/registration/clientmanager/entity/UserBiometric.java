@@ -43,5 +43,9 @@ public class UserBiometric {
 	private Boolean isDeleted;
 
 	@ColumnInfo(name = "del_dtimes")
-	private Timestamp delDtimes;
+	private Long delDtimes;
+
+    public UserBiometric() {
+
+    }
 }

@@ -39,10 +39,10 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-
     serverBaseURL = "\"https://qa3.mosip.net/\""
     serverHealthCheckPath = "\"v1/syncdata/actuator/health\""
     serverActuatorInfoPath = "\"v1/syncdata/actuator/info\""
+    debugPassword = "\"APTyKejHxACQyKBSRciR\""
 }
 
 

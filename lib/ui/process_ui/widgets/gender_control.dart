@@ -6,8 +6,10 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -28,10 +30,16 @@ class GenderControl extends StatefulWidget {
 
 class _CustomDynamicDropDownState extends State<GenderControl> {
   late String selected;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+  late List<DynamicFieldData?> fieldValueData;
 
   @override
   void initState() {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    String lang = globalProvider.mandatoryLanguages[0]!;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (context
           .read<GlobalProvider>()
@@ -39,13 +47,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
           .containsKey(widget.field.id ?? "")) {
         await _getSelectedValueFromMap(lang);
       } else {
-        List<String?> data = await context
+        fieldValueData = await context
             .read<RegistrationTaskProvider>()
             .getFieldValues(widget.field.subType!, lang);
         setState(() {
-          selected = data[0]!;
+          selected = fieldValueData[0]!.name;
         });
-        saveData(selected);
+        saveData(fieldValueData[0]!.code);
         _saveDataToMap(selected);
       }
     });
@@ -55,57 +63,50 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   void saveData(value) {
     if (widget.field.type == 'simpleType') {
-      context.read<GlobalProvider>().chosenLang.forEach((element) {
+      for (var element in globalProvider.chosenLang) {
         String code =
-            context.read<GlobalProvider>().languageToCodeMapper[element]!;
-        context
-            .read<RegistrationTaskProvider>()
+            globalProvider.languageToCodeMapper[element]!;
+        registrationTaskProvider
             .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
-      });
+      }
     } else {
-      context
-          .read<RegistrationTaskProvider>()
+      registrationTaskProvider
           .addDemographicField(widget.field.id ?? "", value);
     }
   }
 
   void _saveDataToMap(value) {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    String lang = globalProvider.mandatoryLanguages[0]!;
     if (widget.field.type == 'simpleType') {
-      context.read<GlobalProvider>().setLanguageSpecificValue(
+      globalProvider.setLanguageSpecificValue(
             widget.field.id ?? "",
             value,
             lang,
-            context.read<GlobalProvider>().fieldInputValue,
+            globalProvider.fieldInputValue,
           );
     } else {
-      context.read<GlobalProvider>().setInputMapValue(
+      globalProvider.setInputMapValue(
             widget.field.id ?? "",
             value,
-            context.read<GlobalProvider>().fieldInputValue,
+            globalProvider.fieldInputValue,
           );
     }
   }
 
   Future<void> _getSelectedValueFromMap(String lang) async {
-    List<String?> data = await context
-        .read<RegistrationTaskProvider>()
+    List<DynamicFieldData?> data = await registrationTaskProvider
         .getFieldValues(widget.field.subType!, "eng");
-    String response = data[0]!;
+    String response = data[0]!.name;
     if (widget.field.type == 'simpleType') {
-      // ignore: use_build_context_synchronously
-      if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
+      if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
-        // ignore: use_build_context_synchronously
-        response = context
-            .read<GlobalProvider>()
+        response = globalProvider
             .fieldInputValue[widget.field.id ?? ""][lang];
       }
     } else {
       response =
-          // ignore: use_build_context_synchronously
-          context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
+          globalProvider.fieldInputValue[widget.field.id ?? ""];
     }
     setState(() {
       selected = response;
@@ -114,18 +115,14 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   Future<List<Map<String, String?>>> _getFieldValues(
       String fieldId, String langCode) async {
-    List<List<String?>> labelsData = [];
-    // ignore: use_build_context_synchronously
-    for (var lang in context.read<GlobalProvider>().chosenLang) {
-      String langC = context.read<GlobalProvider>().langToCode(lang);
-      List<String?> data = await context
-          .read<RegistrationTaskProvider>()
+    List<List<DynamicFieldData?>> labelsData = [];
+    for (var lang in globalProvider.chosenLang) {
+      String langC = globalProvider.langToCode(lang);
+      List<DynamicFieldData?> data = await registrationTaskProvider
           .getFieldValues(fieldId, langC);
 
       if (data.isEmpty) {
-        // ignore: use_build_context_synchronously
-        data = await context
-            .read<RegistrationTaskProvider>()
+        data = await registrationTaskProvider
             .getFieldValues(fieldId, 'eng');
       }
       labelsData.add(data);
@@ -135,11 +132,10 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
     for (var i = 0; i < labelsData[0].length; i++) {
       labels.add({});
-      // ignore: use_build_context_synchronously
-      List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
+      List<String> choosenLang = globalProvider.chosenLang;
       for (var j = 0; j < choosenLang.length; j++) {
         labels[labels.length - 1]
-            .putIfAbsent(choosenLang[j], () => labelsData[j][i]);
+            .putIfAbsent(choosenLang[j], () => labelsData[j][i]!.name);
       }
     }
     return labels;
@@ -147,10 +143,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     String mandatoryLangCode =
-        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
-    String mandatoryLang = context
-            .read<GlobalProvider>()
+        globalProvider.mandatoryLanguages[0] ?? "eng";
+    String mandatoryLang = globalProvider
             .codeToLanguageMapper[mandatoryLangCode] ??
         "English";
 
@@ -159,10 +156,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
         builder: (BuildContext context,
             AsyncSnapshot<List<Map<String, String?>>> snapshot) {
           return Card(
-            elevation: 0,
-            margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+            elevation: 5,
+            color: pureWhite,
+            margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -180,8 +178,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 8),
                                   child: Column(
-                                    children: context
-                                        .read<GlobalProvider>()
+                                    children: globalProvider
                                         .chosenLang
                                         .map((e) => Chip(
                                               label: Text(e),
@@ -202,8 +199,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                               return Padding(
                                 padding: const EdgeInsets.only(right: 6),
                                 child: Column(
-                                  children: context
-                                      .read<GlobalProvider>()
+                                  children: globalProvider
                                       .chosenLang
                                       .map(
                                     (lang) {
@@ -215,7 +211,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           setState(() {
                                             selected = e[mandatoryLang] ?? "";
                                           });
-                                          saveData(e[mandatoryLang]);
+                                          for (var e in fieldValueData) {
+                                            if(e!.name == selected){
+                                              saveData(e.code);
+                                            }
+                                          }
                                           _saveDataToMap(e[mandatoryLang]);
                                         },
                                         child: ChoiceChip(

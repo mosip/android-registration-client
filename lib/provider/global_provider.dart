@@ -48,6 +48,7 @@ class GlobalProvider with ChangeNotifier {
   int _htmlBoxTabIndex = 0;
 
   List<String> _chosenLang = [];
+  String _operatorOnboardingAttributes = "";
   Map<String, bool> _languageMap = {
     'English': true,
     'Arabic': false,
@@ -63,7 +64,7 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _fieldDisplayValues = {};
 
   Map<String, dynamic> _fieldInputValue = {};
-  Map<String,dynamic> _completeException={};
+  Map<String, dynamic> _completeException = {};
 
   Map<String, bool> _mvelValues = {};
 
@@ -71,6 +72,12 @@ class GlobalProvider with ChangeNotifier {
 
   String _regId = "";
   String _ageGroup = "";
+
+  String _checkAgeGroupChange = "";
+  String get checkAgeGroupChange => _checkAgeGroupChange;
+  set checkAgeGroupChange(String value) {
+    _checkAgeGroupChange = value;
+  }
 
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
@@ -121,6 +128,12 @@ class GlobalProvider with ChangeNotifier {
   String get machineName => _machineName;
   Map<String?, String?> get machineDetails => _machineDetails;
   String get regId => _regId;
+
+  String get operatorOnboardingAttributes => _operatorOnboardingAttributes;
+  set operatorOnboardingAttributes(String value) {
+    _operatorOnboardingAttributes = value;
+    notifyListeners();
+  }
 
   Map<String, bool> get mvelValues => _mvelValues;
 
@@ -213,9 +226,9 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String,dynamic> get completeException=>_completeException;
-  set completeException(Map<String,dynamic> value){
-    _completeException=value;
+  Map<String, dynamic> get completeException => _completeException;
+  set completeException(Map<String, dynamic> value) {
+    _completeException = value;
     notifyListeners();
   }
 
@@ -225,15 +238,15 @@ class GlobalProvider with ChangeNotifier {
   }
 
   //Functions
-  setCompleteExceptionByKey(String key,dynamic value){
-    completeException[key]=value;
+  setCompleteExceptionByKey(String key, dynamic value) {
+    completeException[key] = value;
     notifyListeners();
   }
-  getCompleteExceptionByKey(String key){
-    if(completeException.containsKey(key)){
+
+  getCompleteExceptionByKey(String key) {
+    if (completeException.containsKey(key)) {
       return completeException[key];
-    }
-    else{
+    } else {
       return [];
     }
   }
@@ -355,10 +368,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeValidFromMap(String key,Uint8List? item, Map<String, dynamic> commonMap) {
-    if(commonMap[key].listofImages!=null && commonMap[key].listofImages.length>=1) {
+  removeValidFromMap(
+      String key, Uint8List? item, Map<String, dynamic> commonMap) {
+    if (commonMap[key].listofImages != null &&
+        commonMap[key].listofImages.length >= 1) {
       commonMap[key].listofImages.remove(item);
-    }else{
+    } else {
       commonMap.remove(key);
     }
     notifyListeners();
@@ -447,9 +462,6 @@ class GlobalProvider with ChangeNotifier {
 
   clearMap() {
     _fieldInputValue = {};
-    _fieldInputValue = {};
-    _fieldInputValue = {};
-    _fieldDisplayValues = {};
     log("input value $_fieldInputValue");
     notifyListeners();
   }
@@ -468,7 +480,7 @@ class GlobalProvider with ChangeNotifier {
   int _minLanguageCount = 0;
   int _maxLanguageCount = 0;
   Map<String, bool> _mandatoryLanguageMap = {};
-  List<String?> _notificationLanguages = [];
+  List<DynamicFieldData?> _notificationLanguages = [];
   Map<String, bool> _disabledLanguageMap = {};
 
   List<LanguageData?> get languageDataList => _languageDataList;
@@ -480,15 +492,25 @@ class GlobalProvider with ChangeNotifier {
   int get minLanguageCount => _minLanguageCount;
   int get maxLanguageCount => _maxLanguageCount;
   Map<String, bool> get mandatoryLanguageMap => _mandatoryLanguageMap;
-  List<String?> get notificationLanguages => _notificationLanguages;
+  List<DynamicFieldData?> get notificationLanguages => _notificationLanguages;
   Map<String, bool> get disabledLanguageMap => _disabledLanguageMap;
+  List<String> _exceptionAttributes = [];
 
-  initializeLanguageDataList() async {
+  List<String> get exceptionAttributes => _exceptionAttributes;
+
+  initializeLanguageDataList(bool isManualSync) async {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
     await createLanguageCodeMapper();
     String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
-    await toggleLocale(mandatoryLang);
+    if (!isManualSync) {
+      await toggleLocale(mandatoryLang);
+    }
+    notifyListeners();
+  }
+
+  set exceptionAttributes(List<String> value) {
+    _exceptionAttributes = value;
     notifyListeners();
   }
 
@@ -537,7 +559,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setNotificationLanguages(List<String?> value) {
+  setNotificationLanguages(List<DynamicFieldData?> value) {
     _notificationLanguages = value;
     notifyListeners();
   }
@@ -603,12 +625,12 @@ class GlobalProvider with ChangeNotifier {
     }
     List<String> languageList = [];
     _codeToLanguageMapper = {};
-    for(var element in _mandatoryLanguages) {
+    for (var element in _mandatoryLanguages) {
       languageList.add(element!);
       _codeToLanguageMapper[element] = element;
     }
     for (var element in _languageDataList) {
-      if(_codeToLanguageMapper[element!.code] == null) {
+      if (_codeToLanguageMapper[element!.code] == null) {
         languageList.add(element.code);
       }
       _codeToLanguageMapper[element.code] = element.name;
@@ -700,5 +722,10 @@ class GlobalProvider with ChangeNotifier {
 
   saveScreenHeaderToGlobalParam(String id, String value) async {
     await networkService.saveScreenHeaderToGlobalParam(id, value);
+  }
+
+  removeProofOfExceptionFieldFromMap(
+      String key, Map<String, dynamic> commonMap) {
+    commonMap.remove(key);
   }
 }
