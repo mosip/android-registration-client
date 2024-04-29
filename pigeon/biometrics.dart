@@ -28,6 +28,9 @@ abstract class BiometricsApi {
   String startOperatorOnboarding();
 
   @async
+  String clearBiometricAndDocumentHashmap();
+
+  @async
   String saveOperatorBiometrics();
 
   @async

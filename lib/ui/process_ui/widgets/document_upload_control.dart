@@ -40,6 +40,7 @@ class DocumentUploadControl extends StatefulWidget {
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   late Future<List<String?>> myGetDocumentCategoryFuture;
+  Map<String, String> transliterationLangMapper = {};
 
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
@@ -67,6 +68,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getListOfReferenceNumber();
   }
 
 
@@ -226,6 +233,16 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         });
         await _getRemoveDocumentProvider(e, i);
       }
+    }
+  }
+
+  _getListOfReferenceNumber(){
+    List<String?> langList = context.read<GlobalProvider>().languages;
+    for(var element in langList){
+      setState(() {
+        transliterationLangMapper[element.toString()] =
+            AppLocalizations.of(context)!.referenceNumber(element.toString());
+      });
     }
   }
 
@@ -571,19 +588,9 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        AppLocalizations.of(context)!.referenceNumber(lang),
-                                        style: TextStyle(fontSize: isPortrait && !isMobileSize ? 18 : 14, fontWeight: semiBold),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                    ],
-                                  ),
+                                  CustomLabel(field: Field(label: transliterationLangMapper,required: false)),
                                   SizedBox(
-                                    height: 14.h,
+                                    height: 10.h,
                                   ),
                                   TextFormField(
                                     autovalidateMode: AutovalidateMode.onUserInteraction,

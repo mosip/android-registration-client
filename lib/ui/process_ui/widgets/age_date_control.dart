@@ -5,16 +5,21 @@
  *
 */
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
+import '../../../model/screen.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_cupertino_picker.dart';
 import 'custom_label.dart';
@@ -303,7 +308,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           }
                           return null;
                         },
-                        onChanged: (value) {
+                        onChanged: (value) async {
                           if (value != "") {
                             _getDateFromAge(value);
                           } else {

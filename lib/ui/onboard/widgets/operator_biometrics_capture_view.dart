@@ -167,7 +167,7 @@ class _OperatorBiometricsCaptureState
 
                   String isOperatorBiometricSaved = "";
                   await BiometricsApi().saveOperatorBiometrics().timeout(
-                    Duration(seconds: 5),
+                    Duration(seconds: 10),
                     onTimeout: () {
                       setState(() {
                         isSavingBiometrics = false;

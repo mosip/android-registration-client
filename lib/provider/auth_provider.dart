@@ -162,12 +162,6 @@ class AuthProvider with ChangeNotifier {
     if (authResponse.errorCode != null) {
       _loginError = authResponse.errorCode!;
       _isLoggedIn = false;
-    } else if(!isMachineActive) {
-      _loginError = "REG_MACHINE_INACTIVE";
-      _isLoggedIn = false;
-    } else if(!isCenterActive) {
-      _loginError = "REG_CENTER_INACTIVE";
-      _isLoggedIn = false;
     } else {
       _userId = authResponse.userId;
       _username = authResponse.username;

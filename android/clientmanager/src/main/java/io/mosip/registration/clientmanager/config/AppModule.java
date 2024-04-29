@@ -230,9 +230,9 @@ public class AppModule {
     @Singleton
     UserOnboardService provideUserOnboardService(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                  CertificateManagerService certificateManagerService,
-                                                 SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService) {
+                                                 SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService,UserDetailRepository userDetailRepository) {
         return new UserOnboardService(appContext, objectMapper, auditManagerService, certificateManagerService, syncRestService,
-                cryptoManagerService, registrationService, userBiometricRepository, clientCryptoManagerService);
+                cryptoManagerService, registrationService, userBiometricRepository, clientCryptoManagerService,userDetailRepository);
     }
 
     @Provides
