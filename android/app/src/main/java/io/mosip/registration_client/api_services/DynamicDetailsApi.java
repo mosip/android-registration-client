@@ -48,54 +48,23 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
         List<DynamicResponsePigeon.DynamicFieldData> response = new ArrayList<>();
         int numberOfLanguages = languages.size();
         List<GenericValueDto>[] resultList = new ArrayList[numberOfLanguages];
-        List<String> fullNameSet = new ArrayList<>();
         try {
             for (int i = 0; i < languages.size(); i++) {
                 resultList[i] = this.masterDataService.getFieldValues(fieldName, languages.get(i));
             }
-            // Iterate over each index k
-            if (resultList.length > 0 && resultList[0] != null) {
-                for (int k = 0; k < resultList[0].size(); k++) {
-                    StringBuilder concatenated = new StringBuilder();
-                    // Iterate over each language
-                    for (int j = 0; j < resultList.length; j++) {
-                        List<GenericValueDto> languageList = resultList[j];
-                        if (k < languageList.size()) {
-                            GenericValueDto dto = languageList.get(k);
-                            String value = dto.toString();
-                            concatenated.append(value);
-                            if (j < resultList.length - 1 || k < languageList.size() - 1) {
-                                concatenated.append(" / ");
-                            }
-                        }
-                    }
-                    String fullNameEntry = concatenated.toString().replaceAll("\\s/\\s$", ""); // Remove last "/"
-                    fullNameSet.add(fullNameEntry);
-                }
-            }
+            List<String> fullNameSet = concatenateValues(resultList);
+
             List<GenericValueDto> genericValueDtoList = this.masterDataService.getFieldValues(fieldName, langCode);
-            if (!fullNameSet.isEmpty()) {
-                if (fullNameSet.size() == genericValueDtoList.size()) {
-                    for (int k = 0; k < genericValueDtoList.size(); k++) {
-                        String value = fullNameSet.get(k);
-                        GenericValueDto dto = genericValueDtoList.get(k);
-                        DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
-                                .setCode(dto.getCode())
-                                .setName(dto.getName())
-                                .setConcatenatedName(value)
-                                .build();
-                        response.add(data);
-                    }
-                }
-            } else {
-                for (GenericValueDto dto : genericValueDtoList) {
-                    DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
-                            .setCode(dto.getCode())
-                            .setName(dto.getName())
-                            .setConcatenatedName(dto.getName())
-                            .build();
-                    response.add(data);
-                }
+
+            for (int i = 0; i < genericValueDtoList.size(); i++) {
+                String value = fullNameSet.isEmpty() ? genericValueDtoList.get(i).getName() : fullNameSet.get(i);
+                GenericValueDto dto = genericValueDtoList.get(i);
+                DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
+                        .setCode(dto.getCode())
+                        .setName(dto.getName())
+                        .setConcatenatedName(value)
+                        .build();
+                response.add(data);
             }
 
         } catch (Exception e) {
@@ -104,6 +73,29 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
         result.success(response);
     }
 
+    private List<String> concatenateValues(List<GenericValueDto>[] resultList) {
+        List<String> fullNameSet = new ArrayList<>();
+
+        if (resultList.length > 0 && resultList[0] != null) {
+            for (int k = 0; k < resultList[0].size(); k++) {
+                StringBuilder concatenated = new StringBuilder();
+                for (int j = 0; j < resultList.length; j++) {
+                    List<GenericValueDto> languageList = resultList[j];
+                    if (k < languageList.size()) {
+                        GenericValueDto dto = languageList.get(k);
+                        String value = dto.toString();
+                        concatenated.append(value);
+                        if (j < resultList.length - 1 || k < languageList.size() - 1) {
+                            concatenated.append(" / ");
+                        }
+                    }
+                }
+                String fullNameEntry = concatenated.toString().replaceAll("\\s/\\s$", "");
+                fullNameSet.add(fullNameEntry);
+            }
+        }
+        return fullNameSet;
+    }
 
     @Override
     public void getLocationValues(@NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
@@ -139,19 +131,27 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     }
 
     @Override
-    public void getLocationValuesBasedOnParent(@Nullable String parentCode, @NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
+    public void getLocationValuesBasedOnParent(@Nullable String parentCode, @NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull List<String> languages, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
         List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
-        List<GenericValueDto> genericValueList = new ArrayList<>();
+        int numberOfLanguages = languages.size();
+        List<GenericValueDto>[] resultList = new ArrayList[numberOfLanguages];
         try {
-            genericValueList = this.masterDataService.findLocationByParentHierarchyCode(parentCode, langCode);
-            genericValueList.forEach((v) -> {
-                DynamicResponsePigeon.GenericData location = new DynamicResponsePigeon.GenericData.Builder()
-                        .setCode(v.getCode())
-                        .setName(v.getName())
-                        .setLangCode(v.getLangCode())
+            for (int i = 0; i < languages.size(); i++) {
+                resultList[i] = this.masterDataService.findLocationByParentHierarchyCode(parentCode, languages.get(i));
+            }
+            List<String> fullNameSet = concatenateValues(resultList);
+            List<GenericValueDto> genericValueList = this.masterDataService.findLocationByParentHierarchyCode(parentCode, langCode);
+            for (int i = 0; i < genericValueList.size(); i++) {
+                String value = fullNameSet.isEmpty() ? genericValueList.get(i).getName() : fullNameSet.get(i);
+                GenericValueDto dto = genericValueList.get(i);
+                DynamicResponsePigeon.GenericData data = new DynamicResponsePigeon.GenericData.Builder()
+                        .setCode(dto.getCode())
+                        .setName(dto.getName())
+                        .setLangCode(dto.getLangCode())
+                        .setConcatenatedName(value)
                         .build();
-                locationList.add(location);
-            });
+                locationList.add(data);
+            }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch location values based on parent: " + Arrays.toString(e.getStackTrace()));
         }

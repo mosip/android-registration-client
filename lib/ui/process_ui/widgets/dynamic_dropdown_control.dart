@@ -110,8 +110,13 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   }
 
   Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
+    List<String> selectedLang =[];
+    for (var lang in globalProvider.chosenLang) {
+      String langCode = globalProvider.langToCode(lang);
+      selectedLang.add(langCode);
+    }
     return await registrationTaskProvider
-        .getFieldValues(fieldId, langCode, globalProvider.chosenLang);
+        .getFieldValues(fieldId, langCode, selectedLang);
   }
 
   @override

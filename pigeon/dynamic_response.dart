@@ -6,12 +6,14 @@ class GenericData {
   final String code;
   final String langCode;
   final int? hierarchyLevel;
+  final String? concatenatedName;
 
   GenericData({
     required this.name,
     required this.code,
     required this.langCode,
     this.hierarchyLevel,
+    this.concatenatedName,
   });
 }
 
@@ -54,7 +56,7 @@ abstract class DynamicResponseApi {
 
   @async
   List<GenericData> getLocationValuesBasedOnParent(
-      String? parentCode, String hierarchyLevelName, String langCode);
+      String? parentCode, String hierarchyLevelName, String langCode, List<String> languages);
 
   @async
   List<LanguageData> getAllLanguages();

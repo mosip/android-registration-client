@@ -18,7 +18,7 @@ abstract class DynamicResponseService {
       String categoryCode, String? applicantType, String langCode);
 
   Future<List<GenericData?>> fetchLocationValuesBasedOnParent(
-      String? parentCode, String hierarchyLevelName, String langCode);
+      String? parentCode, String hierarchyLevelName, String langCode, List<String> languages);
 
   Future<List<LanguageData?>> fetchAllLanguages();
 

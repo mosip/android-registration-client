@@ -346,17 +346,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!.referenceNumber(lang),
-                                  style: TextStyle(fontSize: 14, fontWeight: semiBold),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                              ],
-                            ),
+                            CustomLabel(field: Field(label: transliterationLangMapper,required: false)),
                              SizedBox(
                               height: 10.h,
                             ),

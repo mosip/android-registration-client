@@ -144,9 +144,14 @@ class _CustomDropDownState extends State<DropDownControl> {
 
   Future<List<GenericData?>> _getLocationValuesBasedOnParent(
       String? parentCode, String hierarchyLevelName, String langCode) async {
+    List<String> selectedLang =[];
+    for (var lang in globalProvider.chosenLang) {
+      String langCode = globalProvider.langToCode(lang);
+      selectedLang.add(langCode);
+    }
     return await registrationTaskProvider
         .getLocationValuesBasedOnParent(
-            parentCode, hierarchyLevelName, langCode);
+            parentCode, hierarchyLevelName, langCode,selectedLang);
   }
 
   _isFieldIdPresent() {
@@ -222,7 +227,7 @@ class _CustomDropDownState extends State<DropDownControl> {
                   items: list
                       .map((option) => DropdownMenuItem(
                             value: option,
-                            child: Text(option!.name),
+                            child: Text(option!.concatenatedName??option.name),
                           ))
                       .toList(),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
