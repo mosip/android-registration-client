@@ -14,9 +14,12 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,22 +44,66 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
 
 
     @Override
-    public void getFieldValues(@NonNull String fieldName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.DynamicFieldData>> result) {
+    public void getFieldValues(@NonNull String fieldName, @NonNull String langCode, @NonNull List<String> languages, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.DynamicFieldData>> result) {
         List<DynamicResponsePigeon.DynamicFieldData> response = new ArrayList<>();
+        int numberOfLanguages = languages.size();
+        List<GenericValueDto>[] resultList = new ArrayList[numberOfLanguages];
+        List<String> fullNameSet = new ArrayList<>();
         try {
+            for (int i = 0; i < languages.size(); i++) {
+                resultList[i] = this.masterDataService.getFieldValues(fieldName, languages.get(i));
+            }
+            // Iterate over each index k
+            if (resultList.length > 0 && resultList[0] != null) {
+                for (int k = 0; k < resultList[0].size(); k++) {
+                    StringBuilder concatenated = new StringBuilder();
+                    // Iterate over each language
+                    for (int j = 0; j < resultList.length; j++) {
+                        List<GenericValueDto> languageList = resultList[j];
+                        if (k < languageList.size()) {
+                            GenericValueDto dto = languageList.get(k);
+                            String value = dto.toString();
+                            concatenated.append(value);
+                            if (j < resultList.length - 1 || k < languageList.size() - 1) {
+                                concatenated.append(" / ");
+                            }
+                        }
+                    }
+                    String fullNameEntry = concatenated.toString().replaceAll("\\s/\\s$", ""); // Remove last "/"
+                    fullNameSet.add(fullNameEntry);
+                }
+            }
             List<GenericValueDto> genericValueDtoList = this.masterDataService.getFieldValues(fieldName, langCode);
-            genericValueDtoList.forEach((dto) -> {
-                DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
-                        .setCode(dto.getCode())
-                        .setName(dto.getName())
-                        .build();
-                response.add(data);
-            });
+            if (!fullNameSet.isEmpty()) {
+                if (fullNameSet.size() == genericValueDtoList.size()) {
+                    for (int k = 0; k < genericValueDtoList.size(); k++) {
+                        String value = fullNameSet.get(k);
+                        GenericValueDto dto = genericValueDtoList.get(k);
+                        DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
+                                .setCode(dto.getCode())
+                                .setName(dto.getName())
+                                .setConcatenatedName(value)
+                                .build();
+                        response.add(data);
+                    }
+                }
+            } else {
+                for (GenericValueDto dto : genericValueDtoList) {
+                    DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
+                            .setCode(dto.getCode())
+                            .setName(dto.getName())
+                            .setConcatenatedName(dto.getName())
+                            .build();
+                    response.add(data);
+                }
+            }
+
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch field values: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(response);
     }
+
 
     @Override
     public void getLocationValues(@NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {

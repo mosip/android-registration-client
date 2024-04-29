@@ -13,11 +13,11 @@ import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 class DynamicResponseServiceImpl implements DynamicResponseService {
   @override
   Future<List<DynamicFieldData?>> fetchFieldValues(
-      String fieldName, String langCode) async {
+      String fieldName, String langCode, List<String> languages) async {
     List<DynamicFieldData?> fieldValuesList = [];
     try {
       fieldValuesList =
-          await DynamicResponseApi().getFieldValues(fieldName, langCode);
+          await DynamicResponseApi().getFieldValues(fieldName, langCode, languages);
     } on PlatformException {
       debugPrint('DynamicServiceResponseApi call failed!');
     } catch (e) {

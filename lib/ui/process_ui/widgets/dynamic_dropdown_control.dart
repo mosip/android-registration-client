@@ -111,7 +111,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
 
   Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
     return await registrationTaskProvider
-        .getFieldValues(fieldId, langCode);
+        .getFieldValues(fieldId, langCode, globalProvider.chosenLang);
   }
 
   @override
@@ -157,7 +157,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
                                     value: option!.name,
-                                    child: Text(option.name),
+                                    child: Text(option.concatenatedName),
                                   ))
                               .toList(),
                           autovalidateMode: AutovalidateMode.onUserInteraction,

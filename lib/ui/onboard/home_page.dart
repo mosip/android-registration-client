@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
 
   _getFieldValues(String fieldId, String langCode) async {
     List<DynamicFieldData?> fieldValues =
-        await registrationTaskProvider.getFieldValues(fieldId, langCode);
+        await registrationTaskProvider.getFieldValues(fieldId, langCode, globalProvider.chosenLang);
     globalProvider.setNotificationLanguages(fieldValues);
   }
 
