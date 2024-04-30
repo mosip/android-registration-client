@@ -584,7 +584,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     @Override
     public void getMapValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
         String response = globalParamRepository.getCachedStringGlobalParam(key);
-        result.success(response);
+        result.success(response == null ? "" : response);
     }
 
     @Override
