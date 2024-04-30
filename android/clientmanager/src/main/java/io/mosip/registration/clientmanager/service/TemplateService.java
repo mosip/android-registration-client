@@ -293,7 +293,7 @@ public class TemplateService {
     private void generateQRCode(VelocityContext velocityContext,RegistrationDto registrationDto){
         Bitmap qrBitmap = QRCode.from(registrationDto.getRId()).bitmap();
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            qrBitmap.compress(Bitmap.CompressFormat.JPEG, 75 , byteArrayOutputStream);
+            qrBitmap.compress(Bitmap.CompressFormat.JPEG, 50 , byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
             velocityContext.put("QRCodeSource", "\"data:image/jpeg;base64," + encodedBytes + "\"");
@@ -306,7 +306,9 @@ public class TemplateService {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 if (isPreview) {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 65, byteArrayOutputStream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+                }else if(!isPreview && key.equals("ApplicantImageSource")){
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
                 } else {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 }
@@ -325,7 +327,9 @@ public class TemplateService {
         if (bitmap != null) {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 if (isPreview) {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 65, byteArrayOutputStream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+                }else if(!isPreview && key.equals("ApplicantImageSource")){
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
                 } else {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 }
