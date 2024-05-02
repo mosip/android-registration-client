@@ -197,8 +197,8 @@ class _OperatorBiometricsCaptureState
                               ),
                               SvgPicture.asset(
                                   "assets/svg/success_message_icon.svg"),
-                              Text(
-                                "You have onboarded successfully.",
+                              Text((context.read<GlobalProvider>().onboardingProcessName=="Onboarding")?
+                                "You have onboarded successfully.":"Operator biometrics updated successfully.",
                                 style: TextStyle(
                                     fontSize: 28,
                                     fontWeight: semiBold,
