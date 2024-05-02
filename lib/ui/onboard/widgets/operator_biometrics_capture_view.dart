@@ -141,22 +141,34 @@ class _OperatorBiometricsCaptureState
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ElevatedButton(
               onPressed: () async {
-                if (context
+                if ((context
                         .read<BiometricCaptureControlProvider>()
                         .iris
-                        .isScanned &&
-                    context
+                        .isScanned || !context
+                        .read<BiometricCaptureControlProvider>()
+                        .iris
+                        .exceptions.contains(false)) &&
+                    (context
                         .read<BiometricCaptureControlProvider>()
                         .rightHand
-                        .isScanned &&
-                    context
+                        .isScanned || !context
+                        .read<BiometricCaptureControlProvider>()
+                        .rightHand
+                        .exceptions.contains(false)) &&
+                    (context
                         .read<BiometricCaptureControlProvider>()
                         .leftHand
-                        .isScanned &&
-                    context
+                        .isScanned|| !context
+                        .read<BiometricCaptureControlProvider>()
+                        .leftHand
+                        .exceptions.contains(false)) &&
+                    (context
                         .read<BiometricCaptureControlProvider>()
                         .thumbs
-                        .isScanned &&
+                        .isScanned|| !context
+                        .read<BiometricCaptureControlProvider>()
+                        .thumbs
+                        .exceptions.contains(false)) &&
                     context
                         .read<BiometricCaptureControlProvider>()
                         .face
@@ -246,26 +258,38 @@ class _OperatorBiometricsCaptureState
                           ?.copyWith(fontSize: 26.h, color: pureWhite),
                     ),
               style: OutlinedButton.styleFrom(
-                  backgroundColor: (context
-                              .read<BiometricCaptureControlProvider>()
-                              .iris
-                              .isScanned &&
-                          context
-                              .read<BiometricCaptureControlProvider>()
-                              .rightHand
-                              .isScanned &&
-                          context
-                              .read<BiometricCaptureControlProvider>()
-                              .leftHand
-                              .isScanned &&
-                          context
-                              .read<BiometricCaptureControlProvider>()
-                              .thumbs
-                              .isScanned &&
-                          context
-                              .read<BiometricCaptureControlProvider>()
-                              .face
-                              .isScanned)
+                  backgroundColor: ((context
+                        .read<BiometricCaptureControlProvider>()
+                        .iris
+                        .isScanned || !context
+                        .read<BiometricCaptureControlProvider>()
+                        .iris
+                        .exceptions.contains(false)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
+                        .rightHand
+                        .isScanned || !context
+                        .read<BiometricCaptureControlProvider>()
+                        .rightHand
+                        .exceptions.contains(false)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
+                        .leftHand
+                        .isScanned|| !context
+                        .read<BiometricCaptureControlProvider>()
+                        .leftHand
+                        .exceptions.contains(false)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
+                        .thumbs
+                        .isScanned|| !context
+                        .read<BiometricCaptureControlProvider>()
+                        .thumbs
+                        .exceptions.contains(false)) &&
+                    context
+                        .read<BiometricCaptureControlProvider>()
+                        .face
+                        .isScanned)
                       ? solidPrimary
                       : secondaryColors.elementAt(22)),
             ),
