@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.spi;
 
+import org.json.JSONObject;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
@@ -7,6 +8,7 @@ import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 
 import java.util.List;
+import java.nio.file.Path;
 
 public interface MasterDataService {
 
@@ -20,38 +22,38 @@ public interface MasterDataService {
      * Triggers syncCertificate and syncMasterData
      * @throws Exception
      */
-    void manualSync() throws Exception;
-
     /**
      * Fetches policy key
      */
-    void syncCertificate();
+    void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync);
 
     /**
      * Fetches all the master data
      * @throws Exception
      */
-    void syncMasterData() throws Exception;
+    void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync) throws Exception;
 
     /**
      * Fetches all the global params from the server and sync locally.
      * @throws Exception
      */
-    void syncGlobalParamsData() throws Exception;
+    void syncGlobalParamsData(Runnable onFinish, boolean isManualSync) throws Exception;
 
     /**
      * Fetches latest Id schema and UI specs
      * @throws Exception
      */
-    void syncLatestIdSchema() throws Exception;
+    void syncLatestIdSchema(Runnable onFinish, boolean isManualSync) throws Exception;
 
     /**
      * Fetches all the user mapped to the center mapped to this machine
      * @throws Exception
      */
-    void syncUserDetails() throws Exception;
+    void syncUserDetails(Runnable onFinish, boolean isManualSync) throws Exception;
 
-    void syncCACertificates();
+    void syncCACertificates(Runnable onFinish, boolean isManualSync);
+
+    String onResponseComplete();
 
 
     /**
@@ -135,4 +137,6 @@ public interface MasterDataService {
     void saveGlobalParam(String id, String value);
 
     String getGlobalParamValue(String id);
+
+//    void downloadUrlData(Path path, JSONObject jsonObject);
 }

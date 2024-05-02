@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -31,10 +32,15 @@ class DynamicDropDownControl extends StatefulWidget {
 
 class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   String? selected;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   @override
   void initState() {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    String lang = globalProvider.selectedLanguage;
     if (context
         .read<GlobalProvider>()
         .fieldInputValue
@@ -47,64 +53,64 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   void saveData(value) {
     if (value != null) {
       if (widget.field.type == 'simpleType') {
-        context.read<GlobalProvider>().chosenLang.forEach((element) {
-          String code =
-              context.read<GlobalProvider>().languageToCodeMapper[element]!;
-          context
-              .read<RegistrationTaskProvider>()
+        for (var element in globalProvider.chosenLang) {
+          String code = globalProvider.languageToCodeMapper[element]!;
+          registrationTaskProvider
               .addSimpleTypeDemographicField(
                   widget.field.id ?? "", value, code);
-        });
+        }
       } else {
-        context
-            .read<RegistrationTaskProvider>()
+        registrationTaskProvider
             .addDemographicField(widget.field.id ?? "", value);
       }
     }
   }
 
   void _saveDataToMap(value) {
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
+    String lang = globalProvider.selectedLanguage;
     if (value != null) {
       if (widget.field.type == 'simpleType') {
-        context.read<GlobalProvider>().setLanguageSpecificValue(
-              widget.field.id ?? "",
-              value!,
-              lang,
-              context.read<GlobalProvider>().fieldInputValue,
-            );
+        globalProvider.setLanguageSpecificValue(
+          widget.field.id ?? "",
+          value!,
+          lang,
+          globalProvider.fieldInputValue,
+        );
       } else {
-        context.read<GlobalProvider>().setInputMapValue(
-              widget.field.id ?? "",
-              value!,
-              context.read<GlobalProvider>().fieldInputValue,
-            );
+        globalProvider.setInputMapValue(
+          widget.field.id ?? "",
+          value!,
+          globalProvider.fieldInputValue,
+        );
       }
     }
   }
 
-  void _getSelectedValueFromMap(String lang) {
+  void _getSelectedValueFromMap(String lang) async {
     String response = "";
     if (widget.field.type == 'simpleType') {
-      if ((context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""]
+      if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
-        response = context
-            .read<GlobalProvider>()
+        response = globalProvider
             .fieldInputValue[widget.field.id ?? ""][lang];
       }
     } else {
-      response =
-          context.read<GlobalProvider>().fieldInputValue[widget.field.id ?? ""];
+      response = globalProvider.fieldInputValue[widget.field.id ?? ""];
     }
-    setState(() {
-      selected = response;
-    });
+    List<DynamicFieldData?> data =
+        await _getFieldValues(widget.field.subType!, lang);
+    for (var element in data) {
+      if (element!.name == response) {
+        setState(() {
+          selected = response;
+        });
+      }
+    }
   }
 
-  Future<List<String?>> _getFieldValues(String fieldId, String langCode) async {
-    return await context
-        .read<RegistrationTaskProvider>()
+  Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
+    return await registrationTaskProvider
         .getFieldValues(fieldId, langCode);
   }
 
@@ -112,12 +118,10 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    String mandatoryLanguageCode =
-        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return FutureBuilder(
-        future: _getFieldValues(widget.field.subType!,
-            context.read<GlobalProvider>().selectedLanguage),
-        builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+        future: _getFieldValues(
+            widget.field.subType!, globalProvider.selectedLanguage),
+        builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
             elevation: 5,
             margin: EdgeInsets.symmetric(
@@ -148,37 +152,41 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             hintStyle: const TextStyle(
                               color: appBlackShade3,
                             ),
+                            suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
-                                    value: option,
-                                    child: Text(option!),
+                                    value: option!.name,
+                                    child: Text(option.name),
                                   ))
                               .toList(),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           value: selected,
                           validator: (value) {
                             if (!widget.field.required! &&
-                                widget.field.requiredOn!.isEmpty) {
+                                (widget.field.requiredOn == null ||
+                                    widget.field.requiredOn!.isEmpty)) {
                               return null;
                             }
                             if (value == null || value.isEmpty) {
                               return AppLocalizations.of(context)!
-                                  .demographicsScreenEmptyMessage(
-                                      mandatoryLanguageCode);
+                                  .select_value_message;
                             }
                             if (!widget.validation.hasMatch(value)) {
                               return AppLocalizations.of(context)!
-                                  .demographicsScreenInvalidMessage(
-                                      mandatoryLanguageCode);
+                                  .select_value_message;
                             }
                             return null;
                           },
                           onChanged: (value) {
-                            saveData(value);
+                            for (var e in snapshot.data!) {
+                              if (e!.name == value) {
+                                saveData(e.code);
+                              }
+                            }
                             _saveDataToMap(value);
                             setState(() {
-                              selected = value!;
+                              selected = value;
                             });
                           },
                         )

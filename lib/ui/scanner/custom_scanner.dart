@@ -37,6 +37,14 @@ class _CustomScannerState extends State<CustomScanner> {
   double? _aspectRatio;
   ImageFormat format = ImageFormat.jpg;
 
+  _documentScanFailedAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-005", "REG-MOD-103");
+  }
+
+  _documentPreviewAudit() async {
+    await context.read<GlobalProvider>().getAudit("REG-EVT-006", "REG-MOD-103");
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,47 +60,63 @@ class _CustomScannerState extends State<CustomScanner> {
 
   @override
   Widget build(BuildContext context) {
-    final cropPreview = _pickedFile!=null ? CropPreview(
-      controller: _controller,
-      bytes: _pickedFile!,
-      mode: mode,
-      hitSize: 30,
-      loadingWidget: const CircularProgressIndicator(),
-      maskOptions: MaskOptions(
-        aspectRatio: _aspectRatio,
-        backgroundColor: Colors.transparent.withOpacity(0.5),
-        borderColor: solidPrimary,
-        minSize: 100,
-        //strokeWidth: 3,
-      ),
-      dragPointBuilder: _buildCropDragPoints,
-    ) : const SizedBox.shrink();
+    return _pickedFile != null
+        ? Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(
+                context
+                    .read<GlobalProvider>()
+                    .chooseLanguage(widget.field.label!),
+                style: const TextStyle(color: Colors.black),
+              ),
+              backgroundColor: Colors.white,
+              elevation: 1,
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.black,
+                      size: 30,
+                    )),
+              ],
+            ),
+            body: _imageCard(),
+          )
+        : const SizedBox.shrink();
+  }
 
-    return _pickedFile!=null? Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-            context.read<GlobalProvider>().chooseLanguage(widget.field.label!),
-          style: const TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.black,
-              )),
-        ],
-      ),
-      body: _pickedFile!= null ? Column(
+  Widget _imageCard() {
+    final cropPreview = _pickedFile != null
+        ? CropPreview(
+            controller: _controller,
+            bytes: _pickedFile!,
+            mode: mode,
+            hitSize: 30,
+            loadingWidget: const CircularProgressIndicator(),
+            maskOptions: MaskOptions(
+              aspectRatio: _aspectRatio,
+              backgroundColor: Colors.transparent.withOpacity(0.5),
+              borderColor: solidPrimary,
+              minSize: 100,
+              //strokeWidth: 3,
+            ),
+            dragPointBuilder: _buildCropDragPoints,
+          )
+        : const SizedBox.shrink();
+
+    if (_pickedFile != null) {
+      _documentPreviewAudit();
+      return Column(
         children: [
-         Expanded(
-              child: cropPreview,
-         ),
+          Expanded(
+            child: cropPreview,
+          ),
+
           ///customized options for cropper
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -137,7 +161,7 @@ class _CustomScannerState extends State<CustomScanner> {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.retake,
-                        style: TextStyle(fontSize: 16,color: solidPrimary),
+                        style: TextStyle(fontSize: 16, color: solidPrimary),
                       ),
                     ),
                   ),
@@ -164,31 +188,33 @@ class _CustomScannerState extends State<CustomScanner> {
           ),
           const SizedBox(height: 20),
         ],
-      ) : const SizedBox.shrink(),
-    ): const SizedBox.shrink();
+      );
+    } else {
+      _documentScanFailedAudit();
+      return const SizedBox.shrink();
+    }
   }
 
   Future<void> _uploadImage() async {
     final pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.camera);
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       _pickedFile = await pickedFile.readAsBytes();
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
   Future<void> _cropImage(BuildContext context) async {
     final croppedBytes = await _controller.crop(format: format);
     if (mounted) {
-      return  Navigator.pop(context, croppedBytes);
+      return Navigator.pop(context, croppedBytes);
     }
   }
 
   CustomPaint _buildCropDragPoints(
-      double size,
-      CropDragPointPosition position,
-      ) {
+    double size,
+    CropDragPointPosition position,
+  ) {
     List<Offset> points;
     switch (position) {
       case CropDragPointPosition.topLeft:

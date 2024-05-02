@@ -16,6 +16,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -31,7 +32,6 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Inject;
 
@@ -72,7 +72,9 @@ import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
+import io.mosip.registration_client.api_services.DashBoardDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
+import io.mosip.registration_client.api_services.DocumentCategoryApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
@@ -86,7 +88,9 @@ import io.mosip.registration_client.model.AuditResponsePigeon;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import io.mosip.registration_client.model.BiometricsPigeon;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
+import io.mosip.registration_client.model.DashBoardPigeon;
 import io.mosip.registration_client.model.DemographicsDataPigeon;
+import io.mosip.registration_client.model.DocumentCategoryPigeon;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.PacketAuthPigeon;
@@ -96,6 +100,9 @@ import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
+
+import android.net.Uri;
+
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
@@ -149,7 +156,7 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     BiometricsDetailsApi biometricsDetailsApi;
-    
+
     @Inject
     PacketAuthenticationApi packetAuthenticationApi;
 
@@ -176,6 +183,12 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     GlobalParamDao globalParamDao;
+
+    @Inject
+    DocumentCategoryApi documentCategoryApi;
+
+    @Inject
+    DashBoardDetailsApi dashBoardDetailsApi;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -224,6 +237,11 @@ public class MainActivity extends FlutterActivity {
         }
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                Intent permissionIntent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                permissionIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                startActivity(permissionIntent);
+            }
             long alarmTime = getIntervalMillis(api);
             long currentTime = System.currentTimeMillis();
             long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
@@ -329,7 +347,7 @@ public class MainActivity extends FlutterActivity {
         AppComponent appComponent = DaggerAppComponent.builder()
                 .application(getApplication())
                 .networkModule(new NetworkModule(getApplication()))
-                .roomModule(new RoomModule(getApplication()))
+                .roomModule(new RoomModule(getApplication(), getApplicationInfo()))
                 .appModule(new AppModule(getApplication()))
                 .hostApiModule(new HostApiModule(getApplication()))
                 .build();
@@ -353,29 +371,15 @@ public class MainActivity extends FlutterActivity {
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
+        DocumentCategoryPigeon.DocumentCategoryApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentCategoryApi);
+        DashBoardPigeon.DashBoardApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dashBoardDetailsApi);
 
         TransliterationPigeon.TransliterationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),new TransliterationApi(new TransliterationServiceImpl()));
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
-        AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
+        masterDataSyncApi.setCallbackActivity(this);
 
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), REG_CLIENT_CHANNEL)
-                .setMethodCallHandler(
-                        (call, result) -> {
-                            switch(call.method) {
-                                case "masterDataSync":
-                                    new SyncActivityService().clickSyncMasterData(result,
-                                            auditManagerService, masterDataService);
-                                    break;
-                                case "batchJob":
-                                    syncRegistrationPackets(this);
-                                    break;
-                                default:
-                                    result.notImplemented();
-                                    break;
-                            }
-                        }
-                );
+        AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
     }
 
     @Override

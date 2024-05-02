@@ -1,6 +1,9 @@
 package io.mosip.registration.clientmanager.service;
 
+import static io.mosip.registration.clientmanager.config.SessionManager.USER_NAME;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -23,7 +26,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +37,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
@@ -49,9 +52,11 @@ public class TemplateService {
     private static final String TAG = TemplateService.class.getSimpleName();
     private static final String SLASH = "/";
     private static final String TEMPLATE_TYPE_CODE = "reg-android-preview-template-part";
-    private static final String ACK_TEMPLATE_TYPE_CODE = "reg-ack-template-part";
+    private static final String ACK_TEMPLATE_TYPE_CODE = "reg-android-ack-template-part";
 
     private Context appContext;
+
+    SharedPreferences sharedPreferences;
 
     MasterDataService masterDataService;
 
@@ -61,9 +66,12 @@ public class TemplateService {
         this.appContext = appContext;
         this.masterDataService = masterDataService;
         this.identitySchemaRepository = identitySchemaRepository;
+        sharedPreferences = this.appContext.getSharedPreferences(
+                this.appContext.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
     }
 
-    public String getTemplate(RegistrationDto registrationDto, boolean isPreview) throws Exception {
+    public String getTemplate(RegistrationDto registrationDto, boolean isPreview, Map<String, String> templateTitleValues) throws Exception {
         StringWriter writer = new StringWriter();
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.init();
@@ -82,7 +90,7 @@ public class TemplateService {
             throw new Exception("No Schema found");
         List<FieldSpecDto> schemaFields = identitySchemaRepository.getAllFieldSpec(appContext, version);
 
-        setBasicDetails(isPreview, registrationDto, velocityContext);
+        setBasicDetails(isPreview, registrationDto, templateTitleValues, velocityContext);
 
         Map<String, Map<String, Object>> demographicsData = new HashMap<>();
         Map<String, Map<String, Object>> documentsData = new HashMap<>();
@@ -132,6 +140,7 @@ public class TemplateService {
         capturedFingers.addAll(registrationDto.getBestBiometrics(field.getId(), Modality.FINGERPRINT_SLAB_THUMBS));
         List<BiometricsDto> capturedIris = registrationDto.getBestBiometrics(field.getId(), Modality.IRIS_DOUBLE);
         List<BiometricsDto> capturedFace = registrationDto.getBestBiometrics(field.getId(), Modality.FACE);
+        List<BiometricsDto> capturedException = registrationDto.getBestBiometrics(field.getId(), Modality.EXCEPTION_PHOTO);
 
         bioData.put("FingerCount", capturedFingers.stream().filter(b -> b.getBioValue() != null).count());
         bioData.put("IrisCount", capturedIris.stream().filter(b -> b.getBioValue() != null).count());
@@ -271,6 +280,13 @@ public class TemplateService {
                 setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap, isPreview);
             }
         }
+
+        if (!capturedException.isEmpty()) {
+        Bitmap faceBitmap = UserInterfaceHelperService.getFaceBitMap(capturedException.get(0));
+            setBiometricImage(velocityContext, "ExceptionImageSource", isPreview ? faceBitmap : BitmapFactory.decodeResource(appContext.getResources(),
+                            R.drawable.exception_photo), isPreview);
+        }
+
         return bioData;
     }
 
@@ -285,7 +301,6 @@ public class TemplateService {
             Log.e(TAG, ex.getMessage(), ex);
         }
     }
-
 
     private void setBiometricImage(Map<String, Object> templateValues, String key, int imagePath, Bitmap bitmap, boolean isPreview) {
         if (bitmap != null) {
@@ -344,6 +359,8 @@ public class TemplateService {
             if (result.isPresent()) {
                 data.put(finger, result.get().getBioValue() == null ? "&#10008;" :
                         rankings.get(finger));
+                        } else {
+                data.put(finger, "&#10008;");
             }
         }
     }
@@ -363,8 +380,11 @@ public class TemplateService {
     }
 
 
-    private void setBasicDetails(boolean isPreview, RegistrationDto registrationDto, VelocityContext velocityContext) {
+    private void setBasicDetails(boolean isPreview, RegistrationDto registrationDto, Map<String, String> templateTitleValues, VelocityContext velocityContext) {
         generateQRCode(velocityContext,registrationDto);
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
+
         velocityContext.put("isPreview", isPreview);
         velocityContext.put("ApplicationIDLabel", appContext.getString(R.string.app_id));
         velocityContext.put("ApplicationID", registrationDto.getRId());
@@ -375,16 +395,16 @@ public class TemplateService {
         velocityContext.put("Date", currentTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a")));
         velocityContext.put("DateLabel", appContext.getString(R.string.date));
 
-        velocityContext.put("DemographicInfo", appContext.getString(R.string.demographic_info));
+        velocityContext.put("DemographicInfo", templateTitleValues.get("demographicInfo"));
         velocityContext.put("Photo", appContext.getString(R.string.photo));
-        velocityContext.put("DocumentsLabel", appContext.getString(R.string.documents));
-        velocityContext.put("BiometricsLabel", appContext.getString(R.string.biometrics));
+        velocityContext.put("DocumentsLabel", templateTitleValues.get("documents"));
+        velocityContext.put("BiometricsLabel", templateTitleValues.get("bioMetrics"));
         velocityContext.put("FaceLabel", appContext.getString(R.string.face_label));
         velocityContext.put("ExceptionPhotoLabel", appContext.getString(R.string.exception_photo_label));
         velocityContext.put("RONameLabel", appContext.getString(R.string.ro_label));
-        velocityContext.put("ROName", "110011");
+        velocityContext.put("ROName", sharedPreferences.getString(USER_NAME, ""));
         velocityContext.put("RegCenterLabel", appContext.getString(R.string.reg_center));
-        velocityContext.put("RegCenter", "10011");
+        velocityContext.put("RegCenter", centerMachineDto.getCenterId());
         velocityContext.put("ImportantGuidelines", appContext.getString(R.string.imp_guidelines));
 
         velocityContext.put("LeftEyeLabel", appContext.getString(R.string.left_iris));
