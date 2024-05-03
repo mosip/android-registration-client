@@ -212,7 +212,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       if (widget.field.type == 'simpleType') {
         context
             .read<RegistrationTaskProvider>()
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, "eng");
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, value, "eng");
       } else {
         context
             .read<RegistrationTaskProvider>()
