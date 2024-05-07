@@ -61,11 +61,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.appium</groupId>
-            <artifactId>java-client</artifactId>
-            <version>9.0.0</version>
+             <groupId>io.appium</groupId>
+             <artifactId>java-client</artifactId>
+             <version>8.6.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>

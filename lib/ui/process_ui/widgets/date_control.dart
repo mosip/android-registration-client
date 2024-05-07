@@ -200,12 +200,11 @@ class _DateControlState extends State<DateControl> {
                   }
                   if (value == null || value.isEmpty) {
                     return AppLocalizations.of(context)!
-                        .demographicsScreenEmptyMessage(globalProvider.selectedLanguage);
+                        .select_value_message;
                   }
                   if (!widget.validation.hasMatch(value)) {
                     return AppLocalizations.of(context)!
-                        .demographicsScreenInvalidMessage(
-                            globalProvider.selectedLanguage);
+                        .invalid_input;
                   }
                   return null;
                 },

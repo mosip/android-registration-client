@@ -122,7 +122,7 @@ class _CustomCupertinoDatePickerState extends State<CustomCupertinoDatePicker> {
         !currentDate.isAfter(_maxDate)) {
       _selectedDate = currentDate;
     } else {
-      _selectedDate = _minDate;
+      _selectedDate = _maxDate;
     }
     _selectedDayIndex = _selectedDate.day - 1;
     _selectedMonthIndex = _selectedDate.month - 1;
