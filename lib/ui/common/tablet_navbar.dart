@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
 
@@ -22,6 +23,7 @@ class TabletNavbar extends StatelessWidget {
     double w = ScreenUtil().screenWidth;
     bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
+        AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Column(
       children: [
         SizedBox(
@@ -78,12 +80,13 @@ class TabletNavbar extends StatelessWidget {
                 width: (isLandscape) ? 7.w : 1.75.w,
               ),
               Text(
-                context.watch<GlobalProvider>().name[0].toUpperCase() +
-                    context
-                        .watch<GlobalProvider>()
-                        .name
-                        .substring(1)
-                        .toLowerCase(),
+                // context.watch<GlobalProvider>().name[0].toUpperCase() +
+                //     context
+                //         .watch<GlobalProvider>()
+                //         .name
+                //         .substring(1)
+                //         .toLowerCase(),
+                authProvider.username,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.black, fontSize: 16, fontWeight: semiBold),
               ),

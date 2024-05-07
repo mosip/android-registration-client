@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -20,12 +21,16 @@ public class SessionManager {
     public static final String IS_OPERATOR = "is_operator";
     public static final String IS_DEFAULT = "is_default";
     public static final String USER_NAME = "user_name";
+    public static final String USER_ID = "user_id";
     public static final String USER_TOKEN = "user_token";
     public static final String RID = "current_rid";
+    public static final String USER_EMAIL = "user_email";
 
     private static SessionManager manager = null;
     private static final String REALM_ACCESS = "realm_access";
     private static final String USERNAME = "name";
+    public static final String PREFERRED_USERNAME = "preferred_username";
+    private static final String EMAIL = "email";
 
     private Context context;
 
@@ -57,6 +62,8 @@ public class SessionManager {
                 Context.MODE_PRIVATE).edit();
         editor.putString(USER_TOKEN, token);
         editor.putString(USER_NAME, jwt.getClaim(USERNAME).asString());
+        editor.putString(PREFERRED_USERNAME, jwt.getClaim(PREFERRED_USERNAME).asString());
+        editor.putString(USER_EMAIL, jwt.getClaim(EMAIL).asString());
         editor.putBoolean(IS_SUPERVISOR, roles.contains("REGISTRATION_SUPERVISOR"));
         editor.putBoolean(IS_DEFAULT, roles.contains("Default"));
         editor.putBoolean(IS_OFFICER, roles.contains("REGISTRATION_OFFICER"));

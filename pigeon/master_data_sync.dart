@@ -17,15 +17,19 @@ abstract class SyncApi{
   @async
   SyncTime getLastSyncTime();
   @async
-  Sync getPolicyKeySync();
+  Sync getPolicyKeySync(bool isManualSync);
   @async
-  Sync getGlobalParamsSync();
+  Sync getGlobalParamsSync(bool isManualSync);
   @async
-  Sync getUserDetailsSync();
+  Sync getUserDetailsSync(bool isManualSync);
   @async
-  Sync getIDSchemaSync();
+  Sync getIDSchemaSync(bool isManualSync);
   @async
-  Sync getMasterDataSync();
+  Sync getMasterDataSync(bool isManualSync);
   @async
-  Sync getCaCertsSync();
+  Sync getCaCertsSync(bool isManualSync);
+  @async
+  String batchJob();
+  @async
+  Sync getKernelCertsSync(bool isManualSync);
 }

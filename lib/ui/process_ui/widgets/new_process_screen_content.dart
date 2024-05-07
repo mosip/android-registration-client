@@ -43,15 +43,21 @@ class NewProcessScreenContent extends StatefulWidget {
 }
 
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     super.initState();
   }
 
   Widget widgetType(Field e) {
     RegExp regexPattern = RegExp(r'^.*$');
 
-    if (e.validators!.isNotEmpty) {
+    if (e.validators != null && e.validators!.isNotEmpty) {
       final validation = e.validators?.first?.validator;
       if (validation != null) {
         regexPattern = RegExp(validation);
@@ -119,17 +125,17 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     final RegistrationService registrationService = RegistrationService();
     registrationService.evaluateMVEL(fieldData, expression!).then((value) {
       if (!value) {
-        context.read<GlobalProvider>().removeFieldFromMap(
-            e.id!, context.read<GlobalProvider>().fieldInputValue);
-        context.read<RegistrationTaskProvider>().removeDemographicField(e.id!);
+        globalProvider.removeFieldFromMap(
+            e.id!, globalProvider.fieldInputValue);
+        registrationTaskProvider.removeDemographicField(e.id!);
       }
-      context.read<GlobalProvider>().setMvelValues(e.id!, value);
+      globalProvider.setMvelValues(e.id!, value);
     });
   }
 
   _checkMvel(Field e) {
     if (e.required == false) {
-      if (e.requiredOn!.isNotEmpty) {
+      if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
         evaluateMVEL(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
             e.requiredOn?[0]?.expr, e);
       }
@@ -145,7 +151,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           ...widget.screen.fields!.map((e) {
             _checkMvel(e!);
             if (e.inputRequired == true) {
-              if (context.read<GlobalProvider>().mvelValues[e.id] ?? true) {
+              if (globalProvider.mvelValues[e.id] ?? true) {
                 return widgetType(e);
               }
             }
