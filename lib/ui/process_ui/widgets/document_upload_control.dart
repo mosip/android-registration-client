@@ -259,6 +259,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Card(
+        color: appWhite,
+        surfaceTintColor: transparentColor,
         elevation: 3,
         margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
         child: Padding(
@@ -272,6 +274,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String?>> snapshot) {
                           return Card(
+                            surfaceTintColor: transparentColor,
+                            color: appWhite,
                             elevation: 0,
                             margin: EdgeInsets.symmetric(horizontal: 12.w),
                             child: Padding(
@@ -338,6 +342,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                           );
                         }),
                     Card(
+                      surfaceTintColor: transparentColor,
+                      color: appWhite,
                       elevation: 0,
                       margin: EdgeInsets.symmetric(horizontal: 12.w),
                       child: Padding(
@@ -400,6 +406,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(100.w, 50.h),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                    backgroundColor: Colors.blueAccent
                                 ),
                                 onPressed: (documentController.text == "")
                                   ? null :() async {
@@ -442,6 +450,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
+                                  surfaceTintColor: transparentColor,
+                                  color: appWhite,
                                   child: Column(
                                     children: [
                                       InkWell(
@@ -494,6 +504,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<String?>> snapshot) {
                                   return Card(
+                                    surfaceTintColor: transparentColor,
+                                    color: appWhite,
                                     elevation: 0,
                                     margin: EdgeInsets.symmetric(
                                         vertical: 1.h, horizontal: 5.w),
@@ -565,6 +577,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         Expanded(
                           flex: 2,
                           child: Card(
+                            surfaceTintColor: transparentColor,
+                            color: appWhite,
                             elevation: 0,
                             margin: EdgeInsets.symmetric(
                                 vertical: 1.h, horizontal: 5.w),
@@ -613,6 +627,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 minimumSize: Size(100.w, 48.h),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                  backgroundColor: solidPrimary
                               ),
                               onPressed: (documentController.text == "")
                                   ? null :() async {
@@ -653,6 +669,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
                                 return Card(
+                                  surfaceTintColor: transparentColor,
+                                  color: appWhite,
                                   child: Column(
                                     children: [
                                       InkWell(

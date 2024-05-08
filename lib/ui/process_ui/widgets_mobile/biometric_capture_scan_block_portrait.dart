@@ -89,6 +89,8 @@ class _BiometricCaptureScanBlockPortraitState
       context: context,
       builder: (BuildContext context) => SingleChildScrollView(
         child: AlertDialog(
+          backgroundColor: appWhite,
+          surfaceTintColor: transparentColor,
           content: SizedBox(
             height: (isMobileSize) ? 410.h : 610.h,
             width: 760.w,
@@ -1450,6 +1452,8 @@ class _BiometricCaptureScanBlockPortraitState
                       builder: (context) => SingleChildScrollView(
                         child: Center(
                           child: AlertDialog(
+                            backgroundColor: appWhite,
+                            surfaceTintColor: Colors.transparent,
                             insetPadding: EdgeInsets.symmetric(
                                 vertical: (isMobileSize) ? 10 : 24,
                                 horizontal: (isMobileSize) ? 10 : 40),
@@ -2171,6 +2175,8 @@ class _BiometricCaptureScanBlockPortraitState
                       context: context,
                       builder: (context) => SingleChildScrollView(
                         child: AlertDialog(
+                          backgroundColor: appWhite,
+                          surfaceTintColor: Colors.transparent,
                           content: Container(
                             height: (isMobileSize) ? 500 : 720,
                             width: (isMobileSize) ? 404 : 760,
@@ -2892,10 +2898,12 @@ class _BiometricCaptureScanBlockPortraitState
               const Spacer(),
               ElevatedButton(
                 style: ButtonStyle(
+                  backgroundColor: const MaterialStatePropertyAll(appSolidPrimary),
                   maximumSize:
                       MaterialStateProperty.all<Size>(const Size(200, 68)),
                   minimumSize:
                       MaterialStateProperty.all<Size>(const Size(200, 68)),
+                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)))
                 ),
                 onPressed: () {
                   List<String> bioAttributes = (widget
@@ -2924,8 +2932,7 @@ class _BiometricCaptureScanBlockPortraitState
                   }
                 },
                 child: Text(AppLocalizations.of(context)!.next_button,
-                    style: TextStyle(
-                        fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold)),
+                    style: TextStyle(fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold,color: appWhite)),
               ),
             ],
           ),
@@ -2937,6 +2944,8 @@ class _BiometricCaptureScanBlockPortraitState
             flexibleSpace: SizedBox(
               height: (isMobileSize) ? 60 : 70,
               child: Card(
+                color: appWhite,
+                surfaceTintColor: transparentColor,
                 margin: const EdgeInsets.all(0),
                 child: Padding(
                   padding: (isMobileSize)

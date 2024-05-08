@@ -33,7 +33,8 @@ class HtmlBoxControl extends StatelessWidget {
     GlobalProvider globalProvider = Provider.of<GlobalProvider>(context, listen: false);
 
     return Card(
-      color: pureWhite,
+      color: appWhite,
+      surfaceTintColor: transparentColor,
       elevation: 5,
       margin: isPortrait
           ? EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 8.h)

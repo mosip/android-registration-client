@@ -136,86 +136,96 @@ class _AgeDateControlState extends State<AgeDateControl> {
         context: context,
         enableDrag: true,
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         builder: (context) {
-          return ListView(
-            primary: false,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return Container(
+                decoration: const BoxDecoration(
+                    color: appWhite,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0),
+                    )
+                ),
+            child: ListView(
+              primary: false,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  const SizedBox(
-                    width: 50,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      Text(
+                        widget.field.label!['eng'] ?? "",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      )
+                    ],
                   ),
-                  Text(
-                    widget.field.label!['eng'] ?? "",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              ),
-              Container(
-                height: 2.5,
-                width: MediaQuery.of(context).size.width,
-                color: solidPrimary.withOpacity(0.075),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              CustomCupertinoDatePicker(
-                maxDate: DateTime.now(),
-                minDate: DateTime(DateTime.now().year - 125),
-                selectedDate: dateString != ""
-                    ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
-                        .parse(dateString)
-                    : null,
-                squeeze: 1,
-                itemExtent: 50,
-                diameterRatio: 10,
-                selectionOverlay: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
+                  Container(
+                    height: 2.5,
+                    width: MediaQuery.of(context).size.width,
                     color: solidPrimary.withOpacity(0.075),
                   ),
-                ),
-                selectedStyle: TextStyle(
-                  color: solidPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-                unselectedStyle: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 15,
-                ),
-                disabledStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 15,
-                ),
-                onSelectedItemChanged: (selectedDate) {
-                  String targetDateString = widget.field.format ??
-                      "yyyy/MM/dd"
-                          .replaceAll(
-                              'dd', selectedDate.day.toString().padLeft(2, "0"))
-                          .replaceAll('MM',
-                              selectedDate.month.toString().padLeft(2, "0"))
-                          .replaceAll('yyyy', selectedDate.year.toString());
-                  setState(() {
-                    dateController.text = targetDateString;
-                  });
-                  _calculateAgeFromDOB();
-                  saveData();
-                },
-              ),
-            ],
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  CustomCupertinoDatePicker(
+                    backgroundColor: appWhite,
+                    maxDate: DateTime.now(),
+                    minDate: DateTime(DateTime.now().year - 125),
+                    selectedDate: dateString != ""
+                        ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                            .parse(dateString)
+                        : null,
+                    squeeze: 1,
+                    itemExtent: 50,
+                    diameterRatio: 10,
+                    selectionOverlay: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: solidPrimary.withOpacity(0.075),
+                      ),
+                    ),
+                    selectedStyle: TextStyle(
+                      color: solidPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                    unselectedStyle: TextStyle(
+                      color: Colors.grey[800],
+                      fontSize: 15,
+                    ),
+                    disabledStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 15,
+                    ),
+                    onSelectedItemChanged: (selectedDate) {
+                      String targetDateString = widget.field.format ??
+                          "yyyy/MM/dd"
+                              .replaceAll('dd',
+                                  selectedDate.day.toString().padLeft(2, "0"))
+                              .replaceAll('MM',
+                                  selectedDate.month.toString().padLeft(2, "0"))
+                              .replaceAll('yyyy', selectedDate.year.toString());
+                      setState(() {
+                        dateController.text = targetDateString;
+                      });
+                      _calculateAgeFromDOB();
+                      saveData();
+                    },
+                  ),
+                ],
+            ),
           );
         });
   }
@@ -226,6 +236,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
       elevation: 5,
+      surfaceTintColor: transparentColor,
       color: pureWhite,
       margin: EdgeInsets.symmetric(
           vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
