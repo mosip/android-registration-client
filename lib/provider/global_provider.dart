@@ -40,6 +40,11 @@ class GlobalProvider with ChangeNotifier {
   String _centerName = "";
   String _machineName = "";
   final formKey = GlobalKey<FormState>();
+  String _onboardingProcessName="";
+  String get onboardingProcessName=>_onboardingProcessName;
+  set onboardingProcessName(String value) {
+    _onboardingProcessName = value;
+  }
 
   Process? _currentProcess;
   Map<String?, String?> _machineDetails = {};
