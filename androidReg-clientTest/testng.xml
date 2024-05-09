@@ -11,7 +11,28 @@
       </class>
       <class name="androidTestCases.NewRegistrationAdult">
         <methods>
-          <include name="NewRegistrationAdult"/>
+          <include name="newRegistrationAdult"/>
+          <include name="newRegistrationAdultUploadMultipleDoccuments"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistrationAdultException">
+        <methods>
+          <include name="newRegistrationAdultException"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistrationInfant">
+        <methods>
+          <include name="newRegistrationInfant"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistrationMinor">
+        <methods>
+          <include name="newRegistrationMinor"/>
+        </methods>
+      </class>
+      <class name="androidTestCases.NewRegistrationMinorException">
+        <methods>
+          <include name="newRegistrationMinorException"/>
         </methods>
       </class>
     </classes>

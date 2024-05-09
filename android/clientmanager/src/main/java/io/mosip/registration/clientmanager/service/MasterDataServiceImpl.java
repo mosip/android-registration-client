@@ -57,6 +57,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -68,6 +69,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private static final String TAG = MasterDataServiceImpl.class.getSimpleName();
     private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
+    private static final String SYNC_LAST_UPDATED = "sync.lastupdated";
     public static final String REG_APP_ID = "REGISTRATION";
     public static final String KERNEL_APP_ID = "KERNEL";
 
@@ -630,6 +632,12 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
             Log.i(TAG, "Masterdata lastSyncTime : " + clientSettingDto.getLastSyncTime());
             this.globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, clientSettingDto.getLastSyncTime());
+//          This is reflected in manual sync as MasterData Last SyncTime updates in 15min intervals only
+            this.globalParamRepository.saveGlobalParam(SYNC_LAST_UPDATED, getCurrentTime());
+    }
+
+    private String getCurrentTime(){
+        return Instant.now().toString();
     }
 
     private void downloadUrlData(Path path, JSONObject jsonObject, boolean isManualSync) {

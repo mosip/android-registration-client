@@ -105,6 +105,7 @@ class OnboardingPage extends StatelessWidget {
                       title: AppLocalizations.of(context)!.get_onboard,
                       onTap: () async{
                         await BiometricsApi().startOperatorOnboarding();
+                        globalProvider.onboardingProcessName="Onboarding";
                         Navigator.push(
                             context,
                             MaterialPageRoute(
