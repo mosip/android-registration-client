@@ -21,7 +21,6 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
-// import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -96,12 +95,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    if (process.id == "NEW") {
+    if (process.id == "NEW" || process.id == "UPDATE") {
       globalProvider.clearMap();
       globalProvider.clearScannedPages();
       globalProvider.newProcessTabIndex = 0;
       globalProvider.htmlBoxTabIndex = 0;
       globalProvider.setRegId("");
+      globalProvider.selectedUpdateFields = {};
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&

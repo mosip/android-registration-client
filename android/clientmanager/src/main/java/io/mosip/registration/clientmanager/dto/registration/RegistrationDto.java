@@ -64,6 +64,13 @@ public class RegistrationDto extends Observable {
     private Map<String, DocumentDto> documents;
     private Map<String, BiometricsDto> biometrics;
 
+    private boolean isBiometricMarkedForUpdate;
+    private List<String> updatableFields;
+    private List<String> updatableFieldGroups;
+    private boolean isUpdateUINNonBiometric;
+    private boolean isNameNotUpdated;
+    private List<String> defaultUpdatableFieldGroups;
+
     //Supporting fields
     public Map<String, Object> AGE_GROUPS = new HashMap<>();
     public Map<String, AtomicInteger> ATTEMPTS;
@@ -85,6 +92,9 @@ public class RegistrationDto extends Observable {
         this.demographics = new HashMap<>();
         this.documents = new HashMap<>();
         this.biometrics = new HashMap<>();
+        this.updatableFields = new ArrayList<>();
+        this.updatableFieldGroups = new ArrayList<>();
+        this.defaultUpdatableFieldGroups = new ArrayList<>();
         this.ATTEMPTS = new HashMap<>();
         this.EXCEPTIONS = new HashMap<>();
         this.BIO_THRESHOLDS = bioThresholds;
@@ -176,6 +186,26 @@ public class RegistrationDto extends Observable {
 
     public void removeDemographicField(String fieldId) {
         this.demographics.remove(fieldId);
+    }
+
+    public void addUpdatableFields(List<String> fieldIds) {
+        this.updatableFields.addAll(fieldIds);
+        clearAndNotifyAllObservers();
+    }
+
+    public void addUpdatableFieldGroup(String fieldGroup) {
+        this.updatableFieldGroups.add(fieldGroup);
+        clearAndNotifyAllObservers();
+    }
+
+    public void removeUpdatableFields(List<String> fieldIds) {
+        this.updatableFields.removeAll(fieldIds);
+        clearAndNotifyAllObservers();
+    }
+
+    public void removeUpdatableFieldGroup(String fieldGroup) {
+        this.updatableFieldGroups.remove(fieldGroup);
+        clearAndNotifyAllObservers();
     }
 
     public void setConsent(String consentText) {
@@ -394,7 +424,10 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.put("isNew", true);
         allIdentityDetails.put("isUpdate", false);
         allIdentityDetails.put("isLost", false);
-        allIdentityDetails.put("updatableFieldGroups", Collections.EMPTY_LIST);
+        allIdentityDetails.put("updatableFields",
+                this.updatableFields == null ? Collections.EMPTY_LIST : this.updatableFields);
+        allIdentityDetails.put("updatableFieldGroups",
+                this.updatableFieldGroups == null ? Collections.EMPTY_LIST : this.updatableFieldGroups);
         allIdentityDetails.putAll(this.demographics);
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);

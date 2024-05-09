@@ -15,6 +15,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
+import 'package:registration_client/ui/process_ui/update_process.dart';
 import 'package:registration_client/ui/widgets/language_component.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -35,8 +36,16 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   late RegistrationTaskProvider registrationTaskProvider;
 
   _triggerNavigation() {
-    Navigator.pushNamed(context, NewProcess.routeName,
+    if(widget.newProcess.id == "NEW") {
+      Navigator.pushNamed(context, NewProcess.routeName,
         arguments: {"process": widget.newProcess});
+    }
+    
+    if(widget.newProcess.id == "UPDATE") {
+      Navigator.pushNamed(context, UpdateProcess.routeName,
+        arguments: {"process": widget.newProcess});
+    }
+    
   }
 
   _showInSnackBar(String value) {
@@ -86,6 +95,16 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     mandatoryLanguage = globalProvider.codeToLanguageMapper[lang];
     globalProvider.getAudit("REG-LOAD-006", "REG-MOD-103");
     super.initState();
+  }
+
+  _getDataEntryLabel() {
+    String dataEntryLanguage = "";
+    context.watch<GlobalProvider>().chosenLang.forEach((element) {
+      String code = globalProvider.languageToCodeMapper[element]!;
+      dataEntryLanguage +=
+          " / ${AppLocalizations.of(context)!.dataEntryLanguage(code)}";
+    });
+    return dataEntryLanguage.substring(3);
   }
 
   _getNotificationLabel() {
@@ -149,6 +168,21 @@ class _LanguageSelectorState extends State<LanguageSelector> {
               ),
               SizedBox(
                 height: 45.h,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10.25.w,
+                ),
+                child: Text(
+                  _getDataEntryLabel(),
+                  style: TextStyle(
+                    fontSize: isMobileSize ? 10 : 16,
+                    fontWeight: semiBold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15.h,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(

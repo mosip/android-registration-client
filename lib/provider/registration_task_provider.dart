@@ -227,4 +227,20 @@ class RegistrationTaskProvider with ChangeNotifier {
   Future<List<DashBoardData?>> getDashBoardDetails() async {
     return await dashBoard.getDashBoardDetails();
   }
+
+  Future<void> addUpdatableFields(List<String> fieldIds) async {
+    await demographics.addUpdatableFields(fieldIds);
+  }
+
+  Future<void> addUpdatableFieldGroup(String fieldGroup) async {
+    await demographics.addUpdatableFieldGroup(fieldGroup);
+  }
+
+  Future<void> removeUpdatableFields(List<String> fieldIds) async {
+    await demographics.removeUpdatableFields(fieldIds);
+  }
+
+  Future<void> removeUpdatableFieldGroup(String fieldGroup) async {
+    await demographics.removeUpdatableFieldGroup(fieldGroup);
+  }
 }

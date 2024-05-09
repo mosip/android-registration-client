@@ -728,4 +728,34 @@ class GlobalProvider with ChangeNotifier {
       String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
   }
+
+  Map<String, bool> _selectedUpdateFields = {};
+  List<String> _selectedFieldList = [];
+  Map<String, bool> get selectedUpdateFields => _selectedUpdateFields;
+  List<String> get selectedFieldList => _selectedFieldList;
+
+  set selectedUpdateFields(Map<String, bool> value) {
+    _selectedUpdateFields = value;
+    notifyListeners();
+  }
+
+  addSelectedUpdateFieldKey(String key) {
+    _selectedUpdateFields[key] = true;
+    notifyListeners();
+  }
+
+  removeSelectedUpdateFieldKey(String key) {
+      _selectedUpdateFields.remove(key);
+    notifyListeners();
+  }
+
+  setSelectedFieldList(List<String> value) {
+    _selectedFieldList = value;
+    notifyListeners();
+  }
+
+  addToSelectedFieldList(String id) {
+    _selectedFieldList.add(id);
+    notifyListeners();
+  }
 }

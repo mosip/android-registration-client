@@ -24,6 +24,7 @@ public class FieldSpecDto {
     private Map<String, String> label;
     private String controlType;
     private String group;
+    private Map<String, String> groupLabel;
     private List<FieldValidatorDto> validators;
     private RequiredDto visible;
     private String templateName;
