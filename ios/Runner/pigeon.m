@@ -171,13 +171,13 @@ void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Dash
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getPacketCreatedDetails"
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getCreatedPacketDetails"
         binaryMessenger:binaryMessenger
         codec:DashBoardApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getPacketCreatedDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getPacketCreatedDetailsWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getCreatedPacketDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getCreatedPacketDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api getPacketCreatedDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+        [api getCreatedPacketDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
