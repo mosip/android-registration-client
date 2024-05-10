@@ -38,7 +38,7 @@ class CustomLabel extends StatelessWidget {
             width: 5,
           ),
           if (field.required! ||
-              (field.requiredOn != null && field.requiredOn!.isNotEmpty))
+              (field.requiredOn != null && field.requiredOn!.isNotEmpty && (globalProvider.mvelRequiredFields[field.id] ?? false)))
             Text(
               "*",
               style: TextStyle(

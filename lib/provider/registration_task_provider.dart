@@ -99,8 +99,12 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  evaluateMVEL(String fieldData, String expression) async {
-    return await registrationService.evaluateMVEL(fieldData, expression);
+  evaluateMVELVisible(String fieldData, String expression) async {
+    return await registrationService.evaluateMVELVisible(fieldData, expression);
+  }
+
+  evaluateMVELRequired(String fieldData, String expression) async {
+    return await registrationService.evaluateMVELRequired(fieldData, expression);
   }
 
   setPreviewTemplate(String value) {
