@@ -362,10 +362,10 @@ class _UserDashBoardState extends State<UserDashBoard> {
 
   Widget statusWidget(bool isActive, bool isOnboarded) {
     if (isActive && isOnboarded) {
-      getUserOnboardedWidget();
+      return getUserOnboardedWidget();
     }
     if (!isActive && isOnboarded) {
-      getUserOnboardedWidget();
+      return getUserOnboardedWidget();
     }
     if (isActive && !isOnboarded) {
       return Row(
