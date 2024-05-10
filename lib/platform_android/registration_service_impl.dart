@@ -29,11 +29,25 @@ class RegistrationServiceImpl implements RegistrationService {
   }
 
   @override
-  Future<bool> evaluateMVEL(String fieldData, String expression) async {
+  Future<bool> evaluateMVELVisible(String fieldData, String expression) async {
     bool isMvelValid = false;
     try {
       isMvelValid =
-          await RegistrationDataApi().evaluateMVEL(fieldData, expression);
+          await RegistrationDataApi().evaluateMVELVisible(fieldData, expression);
+    } on PlatformException {
+      debugPrint('RegApi mvel visible call failed');
+    } catch (e) {
+      debugPrint('Registration not completed! ${e.toString()}');
+    }
+    return isMvelValid;
+  }
+
+  @override
+  Future<bool> evaluateMVELRequired(String fieldData, String expression) async {
+    bool isMvelValid = false;
+    try {
+      isMvelValid =
+          await RegistrationDataApi().evaluateMVELRequired(fieldData, expression);
     } on PlatformException {
       debugPrint('RegApi mvel call failed');
     } catch (e) {

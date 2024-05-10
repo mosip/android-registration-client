@@ -91,7 +91,7 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     }
 
     @Override
-    public void getPacketCreatedDetails(@NonNull DashBoardPigeon.Result<Long> result) {
+    public void getCreatedPacketDetails(@NonNull DashBoardPigeon.Result<Long> result) {
         int createdPacketsCount = 0;
         try{
             createdPacketsCount = this.registrationRepository.getAllCreatedPacketStatus();

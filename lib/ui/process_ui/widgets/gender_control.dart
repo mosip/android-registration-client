@@ -53,7 +53,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
         setState(() {
           selected = fieldValueData[0]!.name;
         });
-        saveData(fieldValueData[0]!.code);
+        saveData(fieldValueData[0]!.code,fieldValueData[0]!.name);
         _saveDataToMap(selected);
       }
     });
@@ -61,13 +61,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     super.initState();
   }
 
-  void saveData(value) {
+  void saveData(value,name) {
     if (widget.field.type == 'simpleType') {
       for (var element in globalProvider.chosenLang) {
         String code =
             globalProvider.languageToCodeMapper[element]!;
         registrationTaskProvider
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, name, code);
       }
     } else {
       registrationTaskProvider
@@ -213,7 +213,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           });
                                           for (var e in fieldValueData) {
                                             if(e!.name == selected){
-                                              saveData(e.code);
+                                              saveData(e.code,e.name);
                                             }
                                           }
                                           _saveDataToMap(e[mandatoryLang]);
