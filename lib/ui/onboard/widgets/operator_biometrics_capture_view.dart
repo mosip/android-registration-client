@@ -150,6 +150,14 @@ class _OperatorBiometricsCaptureState
                         .exceptions.contains(false)) &&
                     (context
                         .read<BiometricCaptureControlProvider>()
+                        .iris
+                        .qualityPercentage >=
+                        int.parse(context
+                            .read<BiometricCaptureControlProvider>()
+                            .iris
+                            .thresholdPercentage)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
                         .rightHand
                         .isScanned || !context
                         .read<BiometricCaptureControlProvider>()
@@ -157,6 +165,14 @@ class _OperatorBiometricsCaptureState
                         .exceptions.contains(false)) &&
                     (context
                         .read<BiometricCaptureControlProvider>()
+                        .rightHand
+                        .qualityPercentage >=
+                        int.parse(context
+                            .read<BiometricCaptureControlProvider>()
+                            .rightHand
+                            .thresholdPercentage)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
                         .leftHand
                         .isScanned|| !context
                         .read<BiometricCaptureControlProvider>()
@@ -164,11 +180,35 @@ class _OperatorBiometricsCaptureState
                         .exceptions.contains(false)) &&
                     (context
                         .read<BiometricCaptureControlProvider>()
+                        .leftHand
+                        .qualityPercentage >=
+                        int.parse(context
+                            .read<BiometricCaptureControlProvider>()
+                            .leftHand
+                            .thresholdPercentage)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
                         .thumbs
                         .isScanned|| !context
                         .read<BiometricCaptureControlProvider>()
                         .thumbs
                         .exceptions.contains(false)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
+                        .thumbs
+                        .qualityPercentage >=
+                        int.parse(context
+                            .read<BiometricCaptureControlProvider>()
+                            .thumbs
+                            .thresholdPercentage)) &&
+                    (context
+                        .read<BiometricCaptureControlProvider>()
+                        .face
+                        .qualityPercentage >=
+                        int.parse(context
+                            .read<BiometricCaptureControlProvider>()
+                            .face
+                            .thresholdPercentage)) &&
                     context
                         .read<BiometricCaptureControlProvider>()
                         .face
@@ -265,6 +305,14 @@ class _OperatorBiometricsCaptureState
                         .read<BiometricCaptureControlProvider>()
                         .iris
                         .exceptions.contains(false)) &&
+                      (context
+                          .read<BiometricCaptureControlProvider>()
+                          .iris
+                          .qualityPercentage >=
+                          int.parse(context
+                              .read<BiometricCaptureControlProvider>()
+                              .iris
+                              .thresholdPercentage)) &&
                     (context
                         .read<BiometricCaptureControlProvider>()
                         .rightHand
@@ -272,6 +320,14 @@ class _OperatorBiometricsCaptureState
                         .read<BiometricCaptureControlProvider>()
                         .rightHand
                         .exceptions.contains(false)) &&
+                      (context
+                          .read<BiometricCaptureControlProvider>()
+                          .rightHand
+                          .qualityPercentage >=
+                          int.parse(context
+                              .read<BiometricCaptureControlProvider>()
+                              .rightHand
+                              .thresholdPercentage)) &&
                     (context
                         .read<BiometricCaptureControlProvider>()
                         .leftHand
@@ -279,6 +335,14 @@ class _OperatorBiometricsCaptureState
                         .read<BiometricCaptureControlProvider>()
                         .leftHand
                         .exceptions.contains(false)) &&
+                      (context
+                          .read<BiometricCaptureControlProvider>()
+                          .leftHand
+                          .qualityPercentage >=
+                          int.parse(context
+                              .read<BiometricCaptureControlProvider>()
+                              .leftHand
+                              .thresholdPercentage)) &&
                     (context
                         .read<BiometricCaptureControlProvider>()
                         .thumbs
@@ -286,6 +350,22 @@ class _OperatorBiometricsCaptureState
                         .read<BiometricCaptureControlProvider>()
                         .thumbs
                         .exceptions.contains(false)) &&
+                      (context
+                          .read<BiometricCaptureControlProvider>()
+                          .thumbs
+                          .qualityPercentage >=
+                          int.parse(context
+                              .read<BiometricCaptureControlProvider>()
+                              .thumbs
+                              .thresholdPercentage)) &&
+                      (context
+                          .read<BiometricCaptureControlProvider>()
+                          .face
+                          .qualityPercentage >=
+                          int.parse(context
+                              .read<BiometricCaptureControlProvider>()
+                              .face
+                              .thresholdPercentage)) &&
                     context
                         .read<BiometricCaptureControlProvider>()
                         .face
