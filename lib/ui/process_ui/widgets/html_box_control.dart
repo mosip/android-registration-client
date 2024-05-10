@@ -168,6 +168,7 @@ class _HtmlRendererState extends State<HtmlRenderer> {
         DemographicsApi().addSimpleTypeDemographicField(
             widget.field.id!,
             value,
+            value,
             globalProvider
                 .langToCode(globalProvider.chosenLang[i]));
       });
