@@ -25,7 +25,7 @@ class CheckboxControl extends StatefulWidget {
 }
 
 class _CheckboxControlState extends State<CheckboxControl> {
-  bool isChecked = false;
+  // bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +46,11 @@ class _CheckboxControlState extends State<CheckboxControl> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Semantics(
-              identifier: 'ConsentCheckBox',
-              checked: isChecked,
-              child: SizedBox(
+            // Semantics(
+              // identifier: 'ConsentCheckBox',
+              // checked: isChecked,
+              // child:
+              SizedBox(
                   height: 20,
                   width: 20,
                   child: Checkbox(
@@ -63,7 +64,7 @@ class _CheckboxControlState extends State<CheckboxControl> {
                               .fieldInputValue[widget.field.id]
                           : false,
                       onChanged: (value) async {
-                        isChecked = value!;
+                        // isChecked = value!;
                         if (value == true) {
                           globalProvider.setInputMapValue(widget.field.id!, value,
                               globalProvider.fieldInputValue);
@@ -75,8 +76,9 @@ class _CheckboxControlState extends State<CheckboxControl> {
                             .addConsentField(value != null && value ? 'Y' : 'N');
                         await DemographicsApi().addDemographicField(
                             widget.field.id!, value!.toString());
-                      })),
-            ),
+                      })
+              ),
+            // ),
             const SizedBox(
               width: 8,
             ),
