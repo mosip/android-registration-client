@@ -75,9 +75,9 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
 
 
     @Override
-    public void addSimpleTypeDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull String language, @NonNull DemographicsDataPigeon.Result<Void> result) {
+    public void addSimpleTypeDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull String name, @NonNull String language, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
-            this.registrationService.getRegistrationDto().addDemographicField(fieldId, value, language);
+            this.registrationService.getRegistrationDto().addDemographicField(fieldId, value, name, language);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add simple type field failed!" + Arrays.toString(e.getStackTrace()));
         }
