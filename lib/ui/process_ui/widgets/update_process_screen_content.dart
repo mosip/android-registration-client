@@ -28,7 +28,6 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
-import '../../../platform_spi/registration_service.dart';
 import 'radio_button_control.dart';
 
 class UpdateProcessScreenContent extends StatefulWidget {
@@ -120,23 +119,31 @@ class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent>
     }
   }
 
-  evaluateMVEL(
+  evaluateMVELVisible(
       String fieldData, String? engine, String? expression, Field e) async {
-    final RegistrationService registrationService = RegistrationService();
-    registrationService.evaluateMVEL(fieldData, expression!).then((value) {
+    registrationTaskProvider.evaluateMVELVisible(fieldData, expression!).then((value) {
       if (!value) {
         globalProvider.removeFieldFromMap(
             e.id!, globalProvider.fieldInputValue);
         registrationTaskProvider.removeDemographicField(e.id!);
       }
-      globalProvider.setMvelValues(e.id!, value);
+      globalProvider.setMvelVisibleFields(e.id!, value);
     });
   }
 
-  _checkMvel(Field e) {
+  evaluateMVELRequired(
+      String fieldData, String? engine, String? expression, Field e) async {
+    registrationTaskProvider.evaluateMVELRequired(fieldData, expression!).then((value) {
+      globalProvider.setMvelRequiredFields(e.id!, value);
+    });
+  }
+
+  checkMvelVisible(Field e) async {
     if (e.required == false) {
       if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
-        evaluateMVEL(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
+        await evaluateMVELVisible(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
+            e.requiredOn?[0]?.expr, e);
+        await evaluateMVELRequired(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
             e.requiredOn?[0]?.expr, e);
       }
     }

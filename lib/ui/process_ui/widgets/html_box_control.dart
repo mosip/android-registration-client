@@ -7,7 +7,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -168,6 +168,7 @@ class _HtmlRendererState extends State<HtmlRenderer> {
         DemographicsApi().addSimpleTypeDemographicField(
             widget.field.id!,
             value,
+            value,
             globalProvider
                 .langToCode(globalProvider.chosenLang[i]));
       });
@@ -176,14 +177,13 @@ class _HtmlRendererState extends State<HtmlRenderer> {
                 .langToCode(globalProvider.chosenLang[context.watch<GlobalProvider>().htmlBoxTabIndex]);
     log(lang);
     return SingleChildScrollView(
-      child: Html(
-        data:
+        child: Directionality(textDirection: intl.Bidi.isRtlLanguage(lang.substring(0,2)) ? TextDirection.rtl : TextDirection.ltr,
+          child: Html(
+            data:
             context.watch<GlobalProvider>().fieldDisplayValues[widget.field.id]
-                [context.watch<GlobalProvider>().htmlBoxTabIndex],
-        style: {
-     'html':  Style(textAlign: Bidi.isRtlLanguage(lang.substring(0,2)) ? TextAlign.right : TextAlign.left),
-    },
-      ),
+            [context.watch<GlobalProvider>().htmlBoxTabIndex],
+          ),
+        )
       // Text(context.watch<GlobalProvider>().fieldDisplayValues[field.id][context.watch<GlobalProvider>().htmlBoxTabIndex])
     );
   }

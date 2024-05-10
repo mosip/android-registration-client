@@ -499,6 +499,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     @Override
     public void startOperatorOnboarding(@NonNull BiometricsPigeon.Result<String> result) {
         try {
+            OPERATOR_EXCEPTIONS.clear();
             userOnboardService.getOperatorBiometrics().clear();
             userOnboardService.setIdaResponse(false);
             userOnboardService.setIsOnboardSuccess(false);
@@ -584,7 +585,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     @Override
     public void getMapValue(@NonNull String key, @NonNull BiometricsPigeon.Result<String> result) {
         String response = globalParamRepository.getCachedStringGlobalParam(key);
-        result.success(response);
+        result.success(response == null ? "" : response);
     }
 
     @Override

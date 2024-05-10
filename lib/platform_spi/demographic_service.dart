@@ -12,7 +12,7 @@ abstract class DemographicService {
   Future<String> getDemographicField(String fieldId);
 
   Future<void> addSimpleTypeDemographicField(
-      String fieldId, String value, String language);
+      String fieldId, String value, String name, String language);
 
   Future<String> getSimpleTypeDemographicField(String fieldId, String language);
 

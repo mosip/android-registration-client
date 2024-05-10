@@ -252,8 +252,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return AppLocalizations.of(context)!
-                                .demographicsScreenEmptyMessage(
-                                    globalProvider.selectedLanguage);
+                                .select_value_message;
                           }
                           return null;
                         },
@@ -292,8 +291,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return AppLocalizations.of(context)!
-                                .demographicsScreenEmptyMessage(
-                                    globalProvider.selectedLanguage);
+                                .select_value_message;
                           }
                           return null;
                         },

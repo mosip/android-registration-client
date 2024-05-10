@@ -99,24 +99,6 @@
       }
     }
   },
-  "demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
-  "@demographicsScreenEmptyMessage": {
-    "description": "Demographic Screen Empty Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
-  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
-  "@demographicsScreenInvalidMessage": {
-    "description": "Demographic Screen Invalid Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
   "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
   "@biometricsScreenName": {
     "description": "Biometric Screen Name",
@@ -220,6 +202,7 @@
   "retake": "ரீடேக்",
   "reference_number": "குறிப்பு எண்ணை உள்ளிடவும்",
   "select_value_message": "மதிப்பைத் தேர்ந்தெடுக்கவும்",
+  "enter_value_message": "தயவுசெய்து ஒரு மதிப்பை உள்ளிடவும்",
   "invalid_input": "தவறான உள்ளீடு",
   "reference_number_validation": "தயவுசெய்து ஆதார் எண்ணை உள்ளிடவும்",
   "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
@@ -238,7 +221,6 @@
   "demographic_information": "மக்கள்தொகை தகவல்",
   "documents": "ஆவணங்கள்",
   "biometrics": "பயோமெட்ரிக்ஸ்",
-  "share": "பகிர்",
   "share": "பகிர்",
   "packets_created": "தொகுப்புகள் உருவாக்கப்பட்டது",
   "packets_synced": "பாக்கெட்டுகள் ஒத்திசைக்கப்பட்டது",

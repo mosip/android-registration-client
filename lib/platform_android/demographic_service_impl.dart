@@ -24,10 +24,10 @@ class DemographicServiceImpl implements DemographicService {
 
   @override
   Future<void> addSimpleTypeDemographicField(
-      String fieldId, String value, String language) async {
+      String fieldId, String value, String name, String language) async {
     try {
       await DemographicsApi()
-          .addSimpleTypeDemographicField(fieldId, value, language);
+          .addSimpleTypeDemographicField(fieldId, value, name, language);
     } on PlatformException {
       debugPrint('DemographicsApi call failed');
     } catch (e) {

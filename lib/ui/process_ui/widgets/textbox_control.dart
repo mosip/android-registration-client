@@ -81,7 +81,7 @@ class _TextBoxControlState extends State<TextBoxControl>
   void saveData(value, lang) {
     if (widget.e.type == 'simpleType') {
       registrationTaskProvider
-          .addSimpleTypeDemographicField(widget.e.id!, value!, lang);
+          .addSimpleTypeDemographicField(widget.e.id!, value!, value!, lang);
     } else {
       registrationTaskProvider
           .addDemographicField(widget.e.id!, value!);
@@ -215,16 +215,16 @@ class _TextBoxControlState extends State<TextBoxControl>
                           return null;
                         } else if (!widget.validation.hasMatch(value)) {
                           return AppLocalizations.of(context)!
-                              .demographicsScreenInvalidMessage(lang);
+                              .invalid_input;
                         }
                       }
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenEmptyMessage(lang);
+                            .enter_value_message;
                       }
                       if (!widget.validation.hasMatch(value)) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenInvalidMessage(lang);
+                            .invalid_input;
                       }
                       return null;
                     },

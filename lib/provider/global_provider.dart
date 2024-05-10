@@ -40,6 +40,11 @@ class GlobalProvider with ChangeNotifier {
   String _centerName = "";
   String _machineName = "";
   final formKey = GlobalKey<FormState>();
+  String _onboardingProcessName="";
+  String get onboardingProcessName=>_onboardingProcessName;
+  set onboardingProcessName(String value) {
+    _onboardingProcessName = value;
+  }
 
   Process? _currentProcess;
   Map<String?, String?> _machineDetails = {};
@@ -66,7 +71,8 @@ class GlobalProvider with ChangeNotifier {
   Map<String, dynamic> _fieldInputValue = {};
   Map<String, dynamic> _completeException = {};
 
-  Map<String, bool> _mvelValues = {};
+  Map<String, bool> _mvelVisibleFields = {};
+  Map<String, bool> _mvelRequiredFields = {};
 
   Map<String, List<Uint8List?>> _scannedPages = {};
 
@@ -135,15 +141,21 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, bool> get mvelValues => _mvelValues;
+  Map<String, bool> get mvelVisibleFields => _mvelVisibleFields;
+  Map<String, bool> get mvelRequiredFields => _mvelRequiredFields;
 
   setRegId(String value) {
     _regId = value;
     notifyListeners();
   }
 
-  setMvelValues(String field, bool value) {
-    _mvelValues[field] = value;
+  setMvelVisibleFields(String field, bool value) {
+    _mvelVisibleFields[field] = value;
+    notifyListeners();
+  }
+
+  setMvelRequiredFields(String field, bool value) {
+    _mvelRequiredFields[field] = value;
     notifyListeners();
   }
 
@@ -232,8 +244,13 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  set mvelValues(Map<String, bool> value) {
-    _mvelValues = value;
+  set mvelVisibleFields(Map<String, bool> value) {
+    _mvelVisibleFields = value;
+    notifyListeners();
+  }
+
+  set mvelRequiredFields(Map<String, bool> value) {
+    _mvelRequiredFields = value;
     notifyListeners();
   }
 

@@ -54,84 +54,84 @@ class _DateControlState extends State<DateControl> {
         elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         builder: (context) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      width: 50,
+          return ListView(
+            primary: false,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    width: 50,
+                  ),
+                  Text(
+                    widget.field.label!['eng'] ?? "",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.close,
                     ),
-                    Text(
-                      widget.field.label!['eng'] ?? "",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    )
-                  ],
-                ),
-                Container(
-                  height: 2.5,
-                  width: MediaQuery.of(context).size.width,
-                  color: solidPrimary.withOpacity(0.075),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                CustomCupertinoDatePicker(
-                  maxDate: DateTime.now(),
-                  minDate: DateTime(DateTime.now().year - 125),
-                  selectedDate: dateString != ""
-                      ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
-                          .parse(dateString)
-                      : null,
-                  squeeze: 1,
-                  itemExtent: 50,
-                  diameterRatio: 10,
-                  selectionOverlay: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: solidPrimary.withOpacity(0.075),
-                    ),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                ],
+              ),
+              Container(
+                height: 2.5,
+                width: MediaQuery.of(context).size.width,
+                color: solidPrimary.withOpacity(0.075),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              CustomCupertinoDatePicker(
+                maxDate: DateTime.now(),
+                minDate: DateTime(DateTime.now().year - 125),
+                selectedDate: dateString != ""
+                    ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                    .parse(dateString)
+                    : null,
+                squeeze: 1,
+                itemExtent: 50,
+                diameterRatio: 10,
+                selectionOverlay: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: solidPrimary.withOpacity(0.075),
                   ),
-                  selectedStyle: TextStyle(
-                    color: solidPrimary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                  unselectedStyle: TextStyle(
-                    color: Colors.grey[800],
-                    fontSize: 15,
-                  ),
-                  disabledStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 15,
-                  ),
-                  onSelectedItemChanged: (selectedDate) {
-                    String targetDateString = widget.field.format ??
-                        "yyyy/MM/dd"
-                            .replaceAll('dd',
-                                selectedDate.day.toString().padLeft(2, "0"))
-                            .replaceAll('MM',
-                                selectedDate.month.toString().padLeft(2, "0"))
-                            .replaceAll('yyyy', selectedDate.year.toString());
-                    setState(() {
-                      dateController.text = targetDateString;
-                    });
-                    _saveData(dateController.text);
-                    _saveDataToMap(dateController.text);
-                  },
                 ),
-              ],
-            ),
+                selectedStyle: TextStyle(
+                  color: solidPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+                unselectedStyle: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 15,
+                ),
+                disabledStyle: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 15,
+                ),
+                onSelectedItemChanged: (selectedDate) {
+                  String targetDateString = widget.field.format ??
+                      "yyyy/MM/dd"
+                          .replaceAll('dd',
+                          selectedDate.day.toString().padLeft(2, "0"))
+                          .replaceAll('MM',
+                          selectedDate.month.toString().padLeft(2, "0"))
+                          .replaceAll('yyyy', selectedDate.year.toString());
+                  setState(() {
+                    dateController.text = targetDateString;
+                  });
+                  _saveData(dateController.text);
+                  _saveDataToMap(dateController.text);
+                },
+              ),
+            ],
           );
         });
   }
@@ -159,7 +159,7 @@ class _DateControlState extends State<DateControl> {
         .fieldInputValue
         .containsKey(widget.field.id)) {
       response =
-          globalProvider.fieldInputValue[widget.field.id];
+      globalProvider.fieldInputValue[widget.field.id];
     }
     setState(() {
       dateController.text = response;
@@ -200,12 +200,11 @@ class _DateControlState extends State<DateControl> {
                   }
                   if (value == null || value.isEmpty) {
                     return AppLocalizations.of(context)!
-                        .demographicsScreenEmptyMessage(globalProvider.selectedLanguage);
+                        .select_value_message;
                   }
                   if (!widget.validation.hasMatch(value)) {
                     return AppLocalizations.of(context)!
-                        .demographicsScreenInvalidMessage(
-                            globalProvider.selectedLanguage);
+                        .invalid_input;
                   }
                   return null;
                 },
