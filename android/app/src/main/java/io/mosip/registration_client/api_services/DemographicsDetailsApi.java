@@ -139,9 +139,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void addUpdatableFields(@NonNull List<String> fieldIds, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
-            Log.i(getClass().getSimpleName(), "add fields: " + fieldIds);
             this.registrationService.getRegistrationDto().addUpdatableFields(fieldIds);
-            Log.i(getClass().getSimpleName(), "reg dto: " + this.registrationService.getRegistrationDto().getUpdatableFields());
             result.success("Ok");
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add updatable fields failed!" + Arrays.toString(e.getStackTrace()));
@@ -151,9 +149,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void addUpdatableFieldGroup(@NonNull String fieldGroup, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
-            Log.i(getClass().getSimpleName(), "add field group: " + fieldGroup);
             this.registrationService.getRegistrationDto().addUpdatableFieldGroup(fieldGroup);
-            Log.i(getClass().getSimpleName(), "reg dto: " + this.registrationService.getRegistrationDto().getUpdatableFieldGroups());
             result.success("Ok");
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add updatable field group failed!" + Arrays.toString(e.getStackTrace()));
@@ -163,9 +159,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void removeUpdatableFields(@NonNull List<String> fieldIds, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
-            Log.i(getClass().getSimpleName(), "remove fields: " + fieldIds);
             this.registrationService.getRegistrationDto().removeUpdatableFields(fieldIds);
-            Log.i(getClass().getSimpleName(), "reg dto: " + this.registrationService.getRegistrationDto().getUpdatableFields());
             result.success("Ok");
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Remove updatable fields failed!" + Arrays.toString(e.getStackTrace()));
@@ -175,9 +169,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void removeUpdatableFieldGroup(@NonNull String fieldGroup, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
-            Log.i(getClass().getSimpleName(), "remove field group: " + fieldGroup);
             this.registrationService.getRegistrationDto().removeUpdatableFieldGroup(fieldGroup);
-            Log.i(getClass().getSimpleName(), "reg dto: " + this.registrationService.getRegistrationDto().getUpdatableFieldGroups());
             result.success("Ok");
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Remove updatable field group failed!" + Arrays.toString(e.getStackTrace()));
