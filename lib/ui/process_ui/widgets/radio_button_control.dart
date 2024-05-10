@@ -71,12 +71,12 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   String? selectedOption;
 
-  void handleOptionChange(String? value) {
+  void handleOptionChange(String? value, String? name) {
     for (var element in globalProvider.chosenLang) {
       String code =
           globalProvider.languageToCodeMapper[element]!;
       registrationTaskProvider
-          .addSimpleTypeDemographicField(widget.field.id ?? "", value!, code);
+          .addSimpleTypeDemographicField(widget.field.id ?? "", value!, name!, code);
       globalProvider.fieldInputValue[widget.field.id!] = value;
     }
     setState(() {
@@ -141,7 +141,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                                         setState(() {
                                           selectedOption = value;
                                         });
-                                        handleOptionChange(e.code);
+                                        handleOptionChange(e.code,e.name);
                                     }
                                     //handleOptionChange,
                                   ),
