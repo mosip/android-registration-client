@@ -55,7 +55,7 @@ public enum AuditEvent {
     CREATE_PACKET_AUTH("REG-EVT-009", USER_EVENT.getCode(), "CREATE_PACKET_AUTH", "Packet create authentication clicked"),
     CREATE_PACKET_AUTH_FAILED("REG-EVT-010", USER_EVENT.getCode(), "CREATE_PACKET_AUTH_FAILED", "Packet create authentication failed"),
     LOADED_ACKNOWLEDGEMENT_SCREEN("REG-EVT-011", USER_EVENT.getCode(), "LOADED_ACKNOWLEDGEMENT_SCREEN", "Acknowledgement Activity loaded"),
-    PRINT_ACKNOWLEDGEMENT("REG-EVT-0012", USER_EVENT.getCode(), "PRINT_ACKNOWLEDGEMENT", "Print acknowledgement"),
+    PRINT_ACKNOWLEDGEMENT("REG-EVT-012", USER_EVENT.getCode(), "PRINT_ACKNOWLEDGEMENT", "Print acknowledgement"),
 
     //REGISTRATION SYSTEM EVENT
     DISCOVER_SBI_FAILED("REG-EVT-013", SYSTEM_EVENT.getCode(), "DISCOVER_SBI_FAILED", "SBI discovery failed"),
