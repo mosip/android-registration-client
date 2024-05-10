@@ -157,6 +157,7 @@ class _HomePageState extends State<HomePage> {
         "title": AppLocalizations.of(context)!.update_operator_biomterics,
         "onTap": (context) async {
           await BiometricsApi().startOperatorOnboarding();
+          globalProvider.onboardingProcessName="Updation";
           Navigator.push(
               context,
               MaterialPageRoute(

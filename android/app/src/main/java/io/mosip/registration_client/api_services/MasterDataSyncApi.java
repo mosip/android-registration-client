@@ -72,6 +72,7 @@ import io.mosip.registration_client.model.MasterDataSyncPigeon;
 @Singleton
 public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
+    private static final String SYNC_LAST_UPDATED = "sync.lastupdated";
     private final int master_data_recursive_sync_max_retry = 3;
     SyncRestService syncRestService;
     CertificateManagerService certificateManagerService;
@@ -149,10 +150,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     public void getLastSyncTime(@NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.SyncTime> result) {
         MasterDataSyncPigeon.SyncTime syncTime;
         String globalParamSyncTime;
-        if (globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED) == null) {
+        if (globalParamRepository.getGlobalParamValue(SYNC_LAST_UPDATED) == null) {
             globalParamSyncTime = "LastSyncTimeIsNull";
         } else
-            globalParamSyncTime = globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED);
+            globalParamSyncTime = globalParamRepository.getGlobalParamValue(SYNC_LAST_UPDATED);
         syncTime = new MasterDataSyncPigeon.SyncTime.Builder()
                 .setSyncTime(globalParamSyncTime)
                 .build();
