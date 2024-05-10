@@ -32,7 +32,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   Future<List<DynamicFieldData?>> _getFieldValues(
       String fieldName, String langCode) async {
     return await registrationTaskProvider
-        .getFieldValues(fieldName, langCode);
+        .getFieldValues(fieldName, langCode, globalProvider.chosenLang);
   }
 
   bool showError = false;
