@@ -143,8 +143,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   addSimpleTypeDemographicField(
-      String fieldId, String value, String language) async {
-    await demographics.addSimpleTypeDemographicField(fieldId, value, language);
+      String fieldId, String value, String name, String language) async {
+    await demographics.addSimpleTypeDemographicField(fieldId, value, name, language);
   }
 
   getSimpleTypeDemographicField(String fieldId, String language) async {

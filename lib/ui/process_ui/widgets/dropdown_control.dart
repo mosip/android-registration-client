@@ -76,7 +76,7 @@ class _CustomDropDownState extends State<DropDownControl> {
               globalProvider.languageToCodeMapper[element]!;
           registrationTaskProvider
               .addSimpleTypeDemographicField(
-                  widget.field.id ?? "", value, code);
+                  widget.field.id ?? "", value, value, code);
         }
       } else {
         registrationTaskProvider
