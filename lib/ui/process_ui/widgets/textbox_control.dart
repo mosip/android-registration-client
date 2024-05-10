@@ -80,42 +80,38 @@ class _TextBoxControlState extends State<TextBoxControl>
 
   void saveData(value, lang) {
     if (widget.e.type == 'simpleType') {
-      registrationTaskProvider
-          .addSimpleTypeDemographicField(widget.e.id!, value!, value!, lang);
+      registrationTaskProvider.addSimpleTypeDemographicField(
+          widget.e.id!, value!, value!, lang);
     } else {
-      registrationTaskProvider
-          .addDemographicField(widget.e.id!, value!);
+      registrationTaskProvider.addDemographicField(widget.e.id!, value!);
     }
   }
 
   void _saveDataToMap(value, lang) {
     if (widget.e.type == 'simpleType') {
       globalProvider.setLanguageSpecificValue(
-            widget.e.id!,
-            value!,
-            lang,
-            globalProvider.fieldInputValue,
-          );
+        widget.e.id!,
+        value!,
+        lang,
+        globalProvider.fieldInputValue,
+      );
     } else {
       globalProvider.setInputMapValue(
-            widget.e.id!,
-            value!,
-            globalProvider.fieldInputValue,
-          );
+        widget.e.id!,
+        value!,
+        globalProvider.fieldInputValue,
+      );
     }
   }
 
   String _getDataFromMap(String lang) {
     String response = "";
-    if (globalProvider
-        .fieldInputValue
-        .containsKey(widget.e.id)) {
+    if (globalProvider.fieldInputValue.containsKey(widget.e.id)) {
       if (widget.e.type == 'simpleType') {
         if ((globalProvider.fieldInputValue[widget.e.id]
                 as Map<String, dynamic>)
             .containsKey(lang)) {
-          response =
-              globalProvider.fieldInputValue[widget.e.id][lang];
+          response = globalProvider.fieldInputValue[widget.e.id][lang];
         }
       } else {
         response = globalProvider.fieldInputValue[widget.e.id];
@@ -180,8 +176,7 @@ class _TextBoxControlState extends State<TextBoxControl>
                     onChanged: (value) async {
                       if (lang == mandatoryLanguageCode) {
                         for (var target in choosenLang) {
-                          String targetCode =
-                              globalProvider.langToCode(target);
+                          String targetCode = globalProvider.langToCode(target);
                           if (targetCode != mandatoryLanguageCode) {
                             log("$mandatoryLanguageCode ----> $targetCode");
                             try {
@@ -208,23 +203,33 @@ class _TextBoxControlState extends State<TextBoxControl>
                       saveData(value, lang);
                     },
                     validator: (value) {
-                      if (!widget.e.required! &&
-                          (widget.e.requiredOn == null ||
-                              widget.e.requiredOn!.isEmpty)) {
-                        if (value == null || value.isEmpty) {
-                          return null;
-                        } else if (!widget.validation.hasMatch(value)) {
-                          return AppLocalizations.of(context)!
-                              .invalid_input;
+                      if (!widget.e.required!) {
+                        if (widget.e.requiredOn == null ||
+                            widget.e.requiredOn!.isEmpty ||
+                            !(globalProvider.mvelRequiredFields[widget.e.id] ??
+                                true)) {
+                          if (value == null || value.isEmpty) {
+                            return null;
+                          } else if (!widget.validation.hasMatch(value)) {
+                            return AppLocalizations.of(context)!.invalid_input;
+                          }
                         }
                       }
+                      // if (!widget.e.required! &&
+                      //     (widget.e.requiredOn == null ||
+                      //         widget.e.requiredOn!.isEmpty)) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return null;
+                      //   } else if (!widget.validation.hasMatch(value)) {
+                      //     return AppLocalizations.of(context)!.invalid_input;
+                      //   }
+                      // }
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!
                             .enter_value_message;
                       }
                       if (!widget.validation.hasMatch(value)) {
-                        return AppLocalizations.of(context)!
-                            .invalid_input;
+                        return AppLocalizations.of(context)!.invalid_input;
                       }
                       return null;
                     },

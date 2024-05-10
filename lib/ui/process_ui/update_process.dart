@@ -6,13 +6,18 @@
 */
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/biometric_attribute_data.dart';
+import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -274,6 +279,114 @@ class _UpdateProcessState extends State<UpdateProcess>
       return false;
     }
 
+    evaluateMVELVisible(
+        String fieldData, String? engine, String? expression, Field e) async {
+      bool visible = await registrationTaskProvider.evaluateMVELVisible(
+          fieldData, expression!);
+      return visible;
+    }
+
+    evaluateMVELRequired(
+        String fieldData, String? engine, String? expression, Field e) async {
+      bool required = await registrationTaskProvider.evaluateMVELRequired(
+          fieldData, expression!);
+      return required;
+    }
+
+    isExceptionPresent(String id) {
+      bool isExceptionPresent = false;
+      for (BiometricAttributeData x in globalProvider.fieldInputValue[id]) {
+        if (x.exceptions.contains(true) || x.title == "Exception") {
+          isExceptionPresent = true;
+          break;
+        }
+      }
+      return isExceptionPresent;
+    }
+
+    returnBiometricListLength(List<String?>? list, String id) {
+      int i = 0;
+      if (list!.contains("leftEye") && list.contains("rightEye")) {
+        i++;
+      }
+      if (list.contains("rightIndex") &&
+          list.contains("rightLittle") &&
+          list.contains("rightRing") &&
+          list.contains("rightMiddle")) {
+        i++;
+      }
+      if (list.contains("leftIndex") &&
+          list.contains("leftLittle") &&
+          list.contains("leftRing") &&
+          list.contains("leftMiddle")) {
+        i++;
+      }
+      if (list.contains("rightThumb") && list.contains("rightThumb")) {
+        i++;
+      }
+      if (list.contains("face")) {
+        i++;
+      }
+      if (isExceptionPresent(id) == true) {
+        i++;
+      }
+      return i;
+    }
+
+    customValidation(int currentIndex) async {
+      bool isValid = true;
+      if (globalProvider.newProcessTabIndex < size) {
+        Screen screen = newProcess.screens!.elementAt(currentIndex)!;
+        for (int i = 0; i < screen.fields!.length; i++) {
+          String group = screen.fields!.elementAt(i)!.group!;
+          if(globalProvider.selectedUpdateFields[group] == null) {
+            return isValid;
+          }
+          if (screen.fields!.elementAt(i)!.required!) {
+            if (!(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                !(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                !(globalProvider.fieldInputValue.containsKey(
+                    "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+              isValid = false;
+
+              break;
+            }
+          }
+          if (screen.fields!.elementAt(i)!.requiredOn != null &&
+              screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
+            bool visible = await evaluateMVELVisible(
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
+                screen.fields!.elementAt(i)!);
+            bool required = await evaluateMVELRequired(
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
+                screen.fields!.elementAt(i)!);
+                log("field: ${screen.fields!.elementAt(i)!.id} \n visible: $visible \n required: $required");
+            if (visible && required) {
+              if (screen.fields!.elementAt(i)!.inputRequired!) {
+                if (!(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                    !(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                    !(globalProvider.fieldInputValue.containsKey(
+                        "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+                  isValid = false;
+
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      return isValid;
+    }
+
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.selectedUpdateFields.isEmpty) {
         return;
@@ -285,15 +398,17 @@ class _UpdateProcessState extends State<UpdateProcess>
         return;
       }
       if (globalProvider.newProcessTabIndex < size) {
-        if (true) {
+        bool customValidator =
+            await customValidation(globalProvider.newProcessTabIndex);
+        if (customValidator) {
           if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
               templateTitleMap = {
                 'demographicInfo':
-                    AppLocalizations.of(context)!.demographic_information,
-                'documents': AppLocalizations.of(context)!.documents,
-                'bioMetrics': AppLocalizations.of(context)!.biometrics,
+                    appLocalizations.demographic_information,
+                'documents': appLocalizations.documents,
+                'bioMetrics': appLocalizations.biometrics,
               };
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
@@ -335,6 +450,16 @@ class _UpdateProcessState extends State<UpdateProcess>
             globalProvider.newProcessTabIndex + 1;
       }
     }
+
+    customValidation(globalProvider.newProcessTabIndex).then((value) {
+      continueButton = value &&
+          globalProvider.formKey.currentState != null &&
+          globalProvider.formKey.currentState!.validate();
+
+      if (globalProvider.newProcessTabIndex >= size) {
+        continueButton = true;
+      }
+    });
 
     return WillPopScope(
       onWillPop: onWillPop,

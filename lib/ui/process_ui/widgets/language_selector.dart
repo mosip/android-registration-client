@@ -37,7 +37,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
 
   _triggerNavigation() {
     if(widget.newProcess.id == "NEW") {
-      Navigator.pushNamed(context, NewProcess.routeName,
+      Navigator.pushNamed(context, UpdateProcess.routeName,
         arguments: {"process": widget.newProcess});
     }
     

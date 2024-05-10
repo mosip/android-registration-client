@@ -55,13 +55,12 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
       if (widget.field.type == 'simpleType') {
         for (var element in globalProvider.chosenLang) {
           String code = globalProvider.languageToCodeMapper[element]!;
-          registrationTaskProvider
-              .addSimpleTypeDemographicField(
-                  widget.field.id ?? "", value, value, code);
+          registrationTaskProvider.addSimpleTypeDemographicField(
+              widget.field.id ?? "", value, value, code);
         }
       } else {
-        registrationTaskProvider
-            .addDemographicField(widget.field.id ?? "", value);
+        registrationTaskProvider.addDemographicField(
+            widget.field.id ?? "", value);
       }
     }
   }
@@ -92,8 +91,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
       if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
               as Map<String, dynamic>)
           .containsKey(lang)) {
-        response = globalProvider
-            .fieldInputValue[widget.field.id ?? ""][lang];
+        response = globalProvider.fieldInputValue[widget.field.id ?? ""][lang];
       }
     } else {
       response = globalProvider.fieldInputValue[widget.field.id ?? ""];
@@ -109,9 +107,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     }
   }
 
-  Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
-    return await registrationTaskProvider
-        .getFieldValues(fieldId, langCode);
+  Future<List<DynamicFieldData?>> _getFieldValues(
+      String fieldId, String langCode) async {
+    return await registrationTaskProvider.getFieldValues(fieldId, langCode);
   }
 
   @override
@@ -121,7 +119,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     return FutureBuilder(
         future: _getFieldValues(
             widget.field.subType!, globalProvider.selectedLanguage),
-        builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
           return Card(
             elevation: 5,
             margin: EdgeInsets.symmetric(
@@ -152,7 +151,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                             hintStyle: const TextStyle(
                               color: appBlackShade3,
                             ),
-                            suffixIcon: const Icon(Icons.keyboard_arrow_down,color: Colors.grey),
+                            suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                color: Colors.grey),
                           ),
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
@@ -163,10 +163,14 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           value: selected,
                           validator: (value) {
-                            if (!widget.field.required! &&
-                                (widget.field.requiredOn == null ||
-                                    widget.field.requiredOn!.isEmpty)) {
-                              return null;
+                            if (!widget.field.required!) {
+                              if (widget.field.requiredOn == null ||
+                                  widget.field.requiredOn!.isEmpty ||
+                                  !(globalProvider.mvelRequiredFields[
+                                          widget.field.id] ??
+                                      true)) {
+                                return null;
+                              }
                             }
                             if (value == null || value.isEmpty) {
                               return AppLocalizations.of(context)!

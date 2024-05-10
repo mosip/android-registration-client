@@ -156,8 +156,8 @@ class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent>
       child: Column(
         children: [
           ...widget.screen.fields!.map((e) {
-            // _checkMvel(e!);
-            if(e!.group == "consent" || e.group == "consentText") {
+            checkMvelVisible(e!);
+            if(e.group == "consent" || e.group == "consentText") {
               return widgetType(e);
             } else if (globalProvider.selectedUpdateFields[e.group] != null) {
               return widgetType(e);
