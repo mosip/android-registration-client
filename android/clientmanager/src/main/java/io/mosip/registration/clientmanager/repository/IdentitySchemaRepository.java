@@ -242,7 +242,7 @@ public class IdentitySchemaRepository {
                     FieldSpecDto field = objectMapper.treeToValue(element, FieldSpecDto.class);
                     consentFields.add(field);
                 }
-                ScreenSpecDto consentScreen = new ScreenSpecDto("Consent", consentScreenLabel, consentFields, 1);
+                ScreenSpecDto consentScreen = new ScreenSpecDto("Consent", consentScreenLabel, consentFields, 1, false);
                 screens.add(consentScreen);
             } catch (JsonProcessingException e) {
                 Log.e(TAG, "Failed to build consent screen", e);
@@ -254,7 +254,7 @@ public class IdentitySchemaRepository {
             demoScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("demographicsScreenName_"+primaryLanguage));
             if (secondaryLanguage != null)
                 demoScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("demographicsScreenName_"+secondaryLanguage));
-            ScreenSpecDto demographicScreen = new ScreenSpecDto("DemographicDetails", demoScreenLabel, demographics, 2);
+            ScreenSpecDto demographicScreen = new ScreenSpecDto("DemographicDetails", demoScreenLabel, demographics, 2, true);
             screens.add(demographicScreen);
             Log.i(TAG, "Building demographics screen completed");
 
@@ -263,7 +263,7 @@ public class IdentitySchemaRepository {
             docScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("documentsScreenName_"+primaryLanguage));
             if (secondaryLanguage != null)
                 docScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("documentsScreenName_"+secondaryLanguage));
-            ScreenSpecDto documentsScreen = new ScreenSpecDto("Documents", docScreenLabel, documents, 3);
+            ScreenSpecDto documentsScreen = new ScreenSpecDto("Documents", docScreenLabel, documents, 3, false);
             screens.add(documentsScreen);
             Log.i(TAG, "Building documents screen completed");
 
@@ -272,7 +272,7 @@ public class IdentitySchemaRepository {
             bioScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("biometricsScreenName_"+primaryLanguage));
             if (secondaryLanguage != null)
                 bioScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("biometricsScreenName_"+secondaryLanguage));
-            ScreenSpecDto biometricsScreen = new ScreenSpecDto("BiometricDetails", bioScreenLabel, biometrics, 4);
+            ScreenSpecDto biometricsScreen = new ScreenSpecDto("BiometricDetails", bioScreenLabel, biometrics, 4, false);
             screens.add(biometricsScreen);
             Log.i(TAG, "Building biometrics screen completed");
 

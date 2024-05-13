@@ -19,5 +19,6 @@ public class ScreenSpecDto {
     private Map<String, String> label;
     private List<FieldSpecDto> fields;
     private Integer order;
+    private Boolean preRegFetchRequired;
 
 }

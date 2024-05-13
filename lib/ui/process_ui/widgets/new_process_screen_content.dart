@@ -26,6 +26,7 @@ import 'package:registration_client/ui/process_ui/widgets/gender_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
 import 'radio_button_control.dart';
@@ -158,6 +159,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       key: context.watch<GlobalProvider>().formKey,
       child: Column(
         children: [
+          if(widget.screen.preRegFetchRequired==true)...[
+            const PreRegDataControl(),
+          ],
           ...widget.screen.fields!.map((e) {
             _checkMvelVisible(e!);
             if (e.inputRequired == true) {

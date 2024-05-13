@@ -82,4 +82,6 @@ public interface SyncRestService {
     Call<ResponseBody> downloadScript(@Url String url,
                                       @HeaderMap Map<String, String> headers,
                                       @Query("keyindex") String keyindex);
+    @GET("/preregistration/v1/sync/{pre_registration_id}/{stationId}")
+    Call<ResponseWrapper<Map<String, Object>>> getPreRegistrationData(@Query("pre_registration_id") String preRegistrationId, @Query("stationId") String stationId);
 }
