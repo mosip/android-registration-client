@@ -14,6 +14,8 @@ import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../profile/profile.dart';
+
 class MobileHomePage extends StatefulWidget {
   const MobileHomePage({
     super.key,
@@ -33,7 +35,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
   int selectedTab = 2;
 
   changeTab(int index) {
-    if (index == 0 || index == 2) {
+    if (index == 0 || index == 2 || index == 4) {
       setState(() {
         selectedTab = index;
       });
@@ -71,9 +73,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
       const Center(
         child: Text("Notifications"),
       ),
-      const Center(
-        child: Text("Profile"),
-      ),
+      const ProfilePage(),
     ];
 
     return SafeArea(

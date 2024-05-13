@@ -57,7 +57,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
           String code = globalProvider.languageToCodeMapper[element]!;
           registrationTaskProvider
               .addSimpleTypeDemographicField(
-                  widget.field.id ?? "", value, value, code);
+                  widget.field.id ?? "", value, code);
         }
       } else {
         registrationTaskProvider
