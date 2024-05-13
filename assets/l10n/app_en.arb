@@ -216,5 +216,12 @@
   "onboarded": "Onboarded",
   "sync_alert_title": "Sync to continue!",
   "sync_alert_content": "Machine or Center is not active. Activate and Sync to continue.",
-  "sync_alert_text": "Sync"
+  "sync_alert_text": "Sync",
+  "officer": "Officer",
+  "operator": "Operator",
+  "supervisor": "Supervisor",
+  "online": "Online",
+  "offline": "Offline",
+  "logout_action_required": "There is still some action required!",
+  "logout_warning_message": "Clicking on logout will terminate the process and could result in data loss."
 }
