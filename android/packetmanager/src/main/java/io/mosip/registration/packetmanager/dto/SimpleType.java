@@ -12,5 +12,4 @@ public class SimpleType {
 
     private String language;
     private String value;
-    private String name;
 }
