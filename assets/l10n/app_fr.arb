@@ -216,5 +216,12 @@
   "onboarded": "Intégré",
   "sync_alert_title": "Synchronisation pour continuer!",
   "sync_alert_content": "La machine ou le centre n'est pas actif. Activez et synchronisez pour continuer.",
-  "sync_alert_text": "Synchroniser"
+  "sync_alert_text": "Synchroniser",
+  "officer": "Officier",
+  "operator": "Opérateur",
+  "supervisor": "Superviseur",
+  "online": "En ligne",
+  "offline": "Hors ligne",
+  "logout_action_required": "Il y a encore des actions à faire !",
+  "logout_warning_message": "Cliquer sur se déconnecter mettra fin au processus et pourrait entraîner une perte de données."
 }

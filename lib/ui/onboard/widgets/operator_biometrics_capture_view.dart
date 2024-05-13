@@ -96,8 +96,8 @@ class _OperatorBiometricsCaptureState
                     right: 15,
                     child: (biometricAttributeData.exceptions.contains(true))
                         ? Image.asset(
-                      "assets/images/Group 57548@2x.png",
-                    )
+                            "assets/images/Group 57548@2x.png",
+                          )
                         : Image.asset(
                             "assets/images/Group 57745@2x.png",
                           )),
