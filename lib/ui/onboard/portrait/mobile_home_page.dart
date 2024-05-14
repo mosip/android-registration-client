@@ -14,6 +14,7 @@ import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+
 class MobileHomePage extends StatefulWidget {
   const MobileHomePage({
     super.key,

@@ -32,7 +32,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   Future<List<DynamicFieldData?>> _getFieldValues(
       String fieldName, String langCode) async {
     return await registrationTaskProvider
-        .getFieldValues(fieldName, langCode);
+        .getFieldValues(fieldName, langCode, globalProvider.chosenLang);
   }
 
   bool showError = false;
@@ -71,7 +71,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   String? selectedOption;
 
-  void handleOptionChange(String? value) {
+  void handleOptionChange(String? value, String? name) {
     for (var element in globalProvider.chosenLang) {
       String code =
           globalProvider.languageToCodeMapper[element]!;
@@ -141,7 +141,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                                         setState(() {
                                           selectedOption = value;
                                         });
-                                        handleOptionChange(e.code);
+                                        handleOptionChange(e.code,e.name);
                                     }
                                     //handleOptionChange,
                                   ),

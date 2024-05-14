@@ -67,6 +67,7 @@ List<Color> appColors = [
  const Color dashBoardPacketUploadColor = Color(0xFF4B9B21);
  const Color dashBoardPacketUploadPendingColor = Color(0xFFE5961A);
  const Color dashBoardPacketUploadExceptionColor = Color(0xFFB71D1D);
+ const Color logoutButtonColor = Color(0xFFC70000);
  const Color bottomBarSelectedColor = Color(0xFFEFF4FF);
 
 List<Color> secondaryColors = [

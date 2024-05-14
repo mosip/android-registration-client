@@ -455,7 +455,7 @@ public class TemplateService {
                     .filter(valueDTO -> valueDTO.getLanguage().equals(lang)).findFirst();
 
             if (demoValueInRequiredLang.isPresent() && demoValueInRequiredLang.get().getValue() != null) {
-                value = demoValueInRequiredLang.get().getValue();
+                    value = demoValueInRequiredLang.get().getValue();
             }
         } else if (fieldValue instanceof String || fieldValue instanceof Integer || fieldValue instanceof BigInteger
                 || fieldValue instanceof Double) {

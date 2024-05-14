@@ -49,11 +49,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
       } else {
         fieldValueData = await context
             .read<RegistrationTaskProvider>()
-            .getFieldValues(widget.field.subType!, lang);
+            .getFieldValues(widget.field.subType!, lang, globalProvider.chosenLang);
         setState(() {
           selected = fieldValueData[0]!.name;
         });
-        saveData(fieldValueData[0]!.code);
+        saveData(fieldValueData[0]!.code,fieldValueData[0]!.name);
         _saveDataToMap(selected);
       }
     });
@@ -61,7 +61,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     super.initState();
   }
 
-  void saveData(value) {
+  void saveData(value,name) {
     if (widget.field.type == 'simpleType') {
       for (var element in globalProvider.chosenLang) {
         String code =
@@ -95,7 +95,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   Future<void> _getSelectedValueFromMap(String lang) async {
     List<DynamicFieldData?> data = await registrationTaskProvider
-        .getFieldValues(widget.field.subType!, "eng");
+        .getFieldValues(widget.field.subType!, "eng", globalProvider.chosenLang);
     String response = data[0]!.name;
     if (widget.field.type == 'simpleType') {
       if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
@@ -119,11 +119,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     for (var lang in globalProvider.chosenLang) {
       String langC = globalProvider.langToCode(lang);
       List<DynamicFieldData?> data = await registrationTaskProvider
-          .getFieldValues(fieldId, langC);
+          .getFieldValues(fieldId, langC, globalProvider.chosenLang);
 
       if (data.isEmpty) {
         data = await registrationTaskProvider
-            .getFieldValues(fieldId, 'eng');
+            .getFieldValues(fieldId, 'eng', globalProvider.chosenLang);
       }
       labelsData.add(data);
     }
@@ -213,7 +213,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           });
                                           for (var e in fieldValueData) {
                                             if(e!.name == selected){
-                                              saveData(e.code);
+                                              saveData(e.code,e.name);
                                             }
                                           }
                                           _saveDataToMap(e[mandatoryLang]);

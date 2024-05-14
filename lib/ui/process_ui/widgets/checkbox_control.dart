@@ -25,6 +25,8 @@ class CheckboxControl extends StatefulWidget {
 }
 
 class _CheckboxControlState extends State<CheckboxControl> {
+  //bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     GlobalProvider globalProvider =
@@ -58,6 +60,7 @@ class _CheckboxControlState extends State<CheckboxControl> {
                             .fieldInputValue[widget.field.id]
                         : false,
                     onChanged: (value) async {
+                     // isChecked = value!;
                       if (value == true) {
                         globalProvider.setInputMapValue(widget.field.id!, value,
                             globalProvider.fieldInputValue);
