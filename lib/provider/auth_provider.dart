@@ -150,10 +150,11 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  logoutUser() async {
-    await auth.logout();
+ Future<String> logoutUser() async {
+    String logoutResponse = await auth.logout();
     clearUser();
     notifyListeners();
+    return logoutResponse;
   }
 
   validateUser(String username, String langCode) async {

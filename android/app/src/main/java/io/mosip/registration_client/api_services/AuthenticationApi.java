@@ -177,7 +177,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Override
     public void logout(@NonNull AuthResponsePigeon.Result<String> result) {
-        loginService.clearAuthToken();
+        loginService.clearAuthToken(this.context);
         result.success("Logout Success");
     }
 

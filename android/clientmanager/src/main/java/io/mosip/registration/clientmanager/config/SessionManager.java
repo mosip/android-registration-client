@@ -79,7 +79,7 @@ public class SessionManager {
     }
 
     public String clearAuthToken(){
-        sharedPreferences.Editor editor = this.context.getSharedPreferences(
+        SharedPreferences.Editor editor = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.apply();

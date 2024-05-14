@@ -3,6 +3,8 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 
 import android.util.Log;
+import android.widget.Toast;
+
 import com.auth0.android.jwt.JWT;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.entity.UserDetail;
@@ -89,7 +91,7 @@ public class LoginService {
         }
     }
 
-    public String clearAuthToken(){
+    public String clearAuthToken(Context context){
         try{
             String AuthTokenReturned=this.sessionManager.clearAuthToken();
             LOGGER.info("Auth Token is cleared and its value is "+AuthTokenReturned);
