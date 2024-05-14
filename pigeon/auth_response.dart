@@ -28,4 +28,7 @@ class AuthResponse {
 abstract class AuthResponseApi {
   @async
   AuthResponse login(String username, String password, bool isConnected);
+
+  @async
+  String logout();
 }

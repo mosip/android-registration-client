@@ -140,6 +140,22 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  clearUser() {
+    _isLoggedIn = false;
+    _isValidUser = false;
+    _isDefault = false;
+    _isOfficer = false;
+    _isOnboarded = false;
+    _isSupervisor = false;
+    notifyListeners();
+  }
+
+  logoutUser() async {
+    await auth.logout();
+    clearUser();
+    notifyListeners();
+  }
+
   validateUser(String username, String langCode) async {
     final user = await auth.validateUser(username, langCode);
 

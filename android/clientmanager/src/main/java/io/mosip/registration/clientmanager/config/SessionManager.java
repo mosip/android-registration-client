@@ -32,10 +32,16 @@ public class SessionManager {
     public static final String PREFERRED_USERNAME = "preferred_username";
     private static final String EMAIL = "email";
 
+    SharedPreferences sharedPreferences;
+
     private Context context;
 
     private SessionManager(Context context) {
         this.context = context;
+        sharedPreferences = this.context.
+                getSharedPreferences(
+                        this.context.getString(R.string.app_name),
+                        Context.MODE_PRIVATE);
     }
 
     public static SessionManager getSessionManager(Context context) {
@@ -70,6 +76,15 @@ public class SessionManager {
         editor.putBoolean(IS_OPERATOR, roles.contains("REGISTRATION_OPERATOR"));
         editor.apply();
         return roles;
+    }
+
+    public String clearAuthToken(){
+        sharedPreferences.Editor editor = this.context.getSharedPreferences(
+                this.context.getString(R.string.app_name),Context.MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
+        return this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE).getString(USER_TOKEN, null);
     }
 
     public String fetchAuthToken() {

@@ -13,8 +13,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -175,6 +173,12 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             result.success(authResponse);
         }
 
+    }
+
+    @Override
+    public void logout(@NonNull AuthResponsePigeon.Result<String> result) {
+        loginService.clearAuthToken();
+        result.success("Logout Success");
     }
 
     @Override
