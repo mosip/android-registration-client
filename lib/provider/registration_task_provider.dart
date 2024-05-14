@@ -5,9 +5,12 @@
  *
 */
 
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
@@ -83,6 +86,12 @@ class RegistrationTaskProvider with ChangeNotifier {
     _listOfProcesses = value;
     notifyListeners();
   }
+
+  Future<Map<String, dynamic>> loadJsonFromAssets(String filePath) async {
+  String jsonString = await rootBundle.loadString(filePath);
+  log("jsonString $json");
+  return jsonDecode(jsonString);
+}
 
   getListOfProcesses() async {
     List<String?> result = await processSpecService.getNewProcessSpec();

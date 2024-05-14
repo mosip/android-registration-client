@@ -113,6 +113,7 @@ flutter:
     - .git/
     - .git/refs/heads/
     - assets/l10n/
+    - assets/qa-platform1_Update.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
