@@ -22,13 +22,13 @@ public class AcknowledgementPageKannada extends AcknowledgementPage {
 	@AndroidFindBy(accessibility = "ಹೊಸ ನೋಂದಾಯಿ")
 	private WebElement newRegistrationButton;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ಜನಸಂಖ್ಯಾ ಮಾಹಿತಿ\"))")
 	private WebElement demographicInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Documents\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ದಾಖಲೆಗಳು\"))")
 	private WebElement documentsInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ಬಯೋಮೆಟ್ರಿಕ್ಸ್\"))")
 	private WebElement biometricsInformationInAcknowledgementPage;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"ಜನಸಂಖ್ಯಾ ವಿವರಗಳು\"))")

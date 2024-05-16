@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
+import regclient.page.RegistrationTasksPage;
 
 public class ConsentPageTamil extends ConsentPage{
 
@@ -17,7 +18,13 @@ public class ConsentPageTamil extends ConsentPage{
 
 	@AndroidFindBy(accessibility = "அறிந்தவர்")
 	private WebElement informedButton;
-
+	
+	@AndroidFindBy(accessibility = "ரத்துசெய்")
+	private WebElement cancelButton;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"நான் என் பி ஐ ஐ ஐப் பகிர்ந்து கொள்வதற்கான விதிமுறைகளையும் நிபந்தனைகளையும் படித்து ஏற்றுக்கொண்டேன்\"))")
+	private WebElement checkBoxDiscription;
+	
 	public ConsentPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -26,14 +33,16 @@ public class ConsentPageTamil extends ConsentPage{
 		return isElementDisplayed(consentPage);
 	}
 
+	public boolean isCheckBoxReadable() {
+		return isElementDisplayed(checkBoxDiscription);
+	}
+	
 	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
-		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
 	}
 	
 	public  void UnSelectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
-		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
 	}
 
 	public  boolean isInformedButtonEnabled() {
@@ -43,6 +52,11 @@ public class ConsentPageTamil extends ConsentPage{
 	public  DemographicDetailsPage clickOnInformedButton() {
 		clickOnElement(informedButton);
 		return new DemographicDetailsPageTamil(driver);
+	}
+	
+	public RegistrationTasksPage clickOnCancelButton() {
+		clickOnElement(cancelButton);
+		return new  RegistrationTasksPageTamil(driver);
 	}
 
 }

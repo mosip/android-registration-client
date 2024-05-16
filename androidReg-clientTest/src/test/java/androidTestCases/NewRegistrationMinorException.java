@@ -1,5 +1,6 @@
 package androidTestCases;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
@@ -118,7 +119,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		AuthenticationPage authenticationPage=null;
 		AcknowledgementPage acknowledgementPage=null;
 		IntroducerBiometricPage introducerBiometricPage=null;
-		
+
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
 		} 
@@ -511,6 +512,11 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 			introducerBiometricPage=new IntroducerBiometricPageArabic(driver);
 		}
 		assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),"Verify if introducer biometric page is displayed");
+		introducerBiometricPage.clickOnMarkExceptionButton();
+
+		assertTrue(introducerBiometricPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
+		introducerBiometricPage.markOneEyeException();
+		introducerBiometricPage.clickOnIrisScanButton();
 		introducerBiometricPage.clickOnScanButton();
 
 		assertTrue(introducerBiometricPage.isIrisScan(),"Verify if iris scan 1st attempt");
@@ -543,7 +549,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 
 		assertTrue(introducerBiometricPage.isFaceScan(),"Verify if face scan 1st attempt");
 		introducerBiometricPage.closeScanCapturePopUp();
-		biometricDetailsPage=introducerBiometricPage.clickOnNextButton();
+		introducerBiometricPage.clickOnBackButton();
 
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
@@ -565,6 +571,19 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			previewPage=new PreviewPageArabic(driver);
 		}
+		assertFalse(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if User Should not allow to navigate to preview screen, without capture introducer exception face.");
+		biometricDetailsPage.clickOnExceptionScanIcon();
+
+		assertTrue(introducerBiometricPage.isExceptionScanTitleDisplyed(),"Verify if exception scan page is displayed");
+		introducerBiometricPage.clickOnScanButton();
+
+		assertTrue(introducerBiometricPage.isExceptionScan(),"Verify if exception scan 1st attempt");
+		introducerBiometricPage.closeScanCapturePopUp();
+		introducerBiometricPage.clickOnNextButton();
+		
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		biometricDetailsPage.clickOnContinueButton();
+		
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
 		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");

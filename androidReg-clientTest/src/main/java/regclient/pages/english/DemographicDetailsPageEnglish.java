@@ -41,7 +41,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(accessibility = "Female")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.widget.HorizontalScrollView/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Residence Status\")]/parent::android.view.View/parent::android.widget.Button")
@@ -62,28 +62,28 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Postal\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectPostal;
 
-	@AndroidFindBy(accessibility = "14022")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
 	private WebElement selectPostalCode;
 
-	@AndroidFindBy(accessibility = "Non-Foreigner")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-Foreigner\")")
 	private WebElement nonForeignerValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Foreigner")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Foreigner\")")
 	private WebElement foreignerValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Single")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Single\")")
 	private WebElement singleValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Rabat Sale Kenitra")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Rabat Sale Kenitra\")")
 	private WebElement rabatSaleKenitraValueFromDropdown;
 
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Kenitra\"]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Kenitra\")]")
 	private WebElement kenitraValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Rabat")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Rabat\")]")
 	private WebElement rabatValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Ben Mansour")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ben Mansour\")")
 	private WebElement benMansourFromDropdown;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Residence Status\"))")
@@ -281,14 +281,14 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	public  void selectProvinceStatus(String province) {
 		clickOnElement(selectProvinceStatus);
 		if(province.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayedOnScreen(kenitraValueFromDropdown)) {
+			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(province.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
+			if(!isElementDisplayed(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(rabatValueFromDropdown);
@@ -299,14 +299,14 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	public  void selectCityStatus(String city) {
 		clickOnElement(selectCityStatus);
 		if(city.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayedOnScreen(kenitraValueFromDropdown)) {
+			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(city.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
+			if(!isElementDisplayed(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(rabatValueFromDropdown);
