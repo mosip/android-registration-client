@@ -37,7 +37,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
 
   _triggerNavigation() {
     if(widget.newProcess.id == "NEW") {
-      Navigator.pushNamed(context, UpdateProcess.routeName,
+      Navigator.pushNamed(context, NewProcess.routeName,
         arguments: {"process": widget.newProcess});
     }
     
@@ -74,7 +74,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     await globalProvider.fieldValues(widget.newProcess);
 
     List<String> langList = _getRegistrationLanguageList();
-    await registrationTaskProvider.startRegistration(langList);
+    await registrationTaskProvider.startRegistration(langList, widget.newProcess.flow! == "UPDATE" ? "Update" : widget.newProcess.flow!, widget.newProcess.id!);
     registrationTaskProvider.addDemographicField(
         "preferredLang", globalProvider.fieldInputValue["preferredLang"].toString());
     String registrationStartError = registrationTaskProvider.registrationStartError;

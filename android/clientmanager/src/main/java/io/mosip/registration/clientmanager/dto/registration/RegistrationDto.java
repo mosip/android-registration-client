@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
@@ -421,9 +422,9 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.put(RegistrationConstants.FLOW_KEY, this.flowType);
         allIdentityDetails.put(RegistrationConstants.PROCESS_KEY, this.process);
         allIdentityDetails.put("langCodes", this.selectedLanguages);
-        allIdentityDetails.put("isNew", true);
-        allIdentityDetails.put("isUpdate", false);
-        allIdentityDetails.put("isLost", false);
+        allIdentityDetails.put("isNew", Objects.equals(this.flowType, "NEW"));
+        allIdentityDetails.put("isUpdate", Objects.equals(this.flowType, "Update"));
+        allIdentityDetails.put("isLost", Objects.equals(this.flowType, "Lost"));
         allIdentityDetails.put("updatableFields",
                 this.updatableFields == null ? Collections.EMPTY_LIST : this.updatableFields);
         allIdentityDetails.put("updatableFieldGroups",

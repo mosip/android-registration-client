@@ -106,7 +106,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationDto startRegistration(@NonNull List<String> languages) throws Exception {
+    public RegistrationDto startRegistration(@NonNull List<String> languages, String flowType, String process) throws Exception {
         if (registrationDto != null) {
             registrationDto.cleanup();
         }
@@ -137,12 +137,15 @@ public class RegistrationServiceImpl implements RegistrationService {
         for(Modality modality : Modality.values()) {
             bioThresholds.put(modality, getAttemptsCount(modality));
         }
-        this.registrationDto = new RegistrationDto(rid, "NEW", "NEW", version, languages, bioThresholds);
+        this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds);
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE).edit();
         editor.putString(SessionManager.RID, this.registrationDto.getRId());
         editor.commit();
+
+        Log.i(TAG, "flow type: " + this.registrationDto.getFlowType());
+        Log.i(TAG, "process id: " + this.registrationDto.getProcess());
 
         return this.registrationDto;
     }

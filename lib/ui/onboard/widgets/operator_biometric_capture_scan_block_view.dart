@@ -12,7 +12,6 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 // import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
-import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

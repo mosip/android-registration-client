@@ -5,8 +5,6 @@
  *
 */
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -50,7 +48,6 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
         fieldsMap[field.group]!.add(field);
       }
     }
-    log("fields map: $fieldsMap");
     super.initState();
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {

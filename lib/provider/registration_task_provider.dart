@@ -100,8 +100,8 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  startRegistration(List<String> languages) async {
-    _registrationStartError = await registrationService.startRegistration(languages);
+  startRegistration(List<String> languages, String flowType, String process) async {
+    _registrationStartError = await registrationService.startRegistration(languages, flowType, process);
     notifyListeners();
   }
 

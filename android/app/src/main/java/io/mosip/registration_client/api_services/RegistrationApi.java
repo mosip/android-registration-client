@@ -47,11 +47,11 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void startRegistration(@NonNull List<String> languages, @NonNull RegistrationDataPigeon.Result<String> result) {
+    public void startRegistration(@NonNull List<String> languages, @NonNull String flowType, @NonNull String process, @NonNull RegistrationDataPigeon.Result<String> result) {
         auditManagerService.audit(AuditEvent.REGISTRATION_START, Components.REGISTRATION);
         String response = "";
         try {
-            this.registrationDto = registrationService.startRegistration(languages);
+            this.registrationDto = registrationService.startRegistration(languages, flowType, process);
         } catch (Exception e) {
             response = e.getMessage();
             Log.e(getClass().getSimpleName(), "Registration start failed", e);

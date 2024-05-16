@@ -411,15 +411,11 @@ class GlobalProvider with ChangeNotifier {
     String x = '';
     for (var i in chosenLang) {
       String code = languageToCodeMapper[i]!;
-      for (var element in _languages) {
-        if (code == element) {
-          x = "$x${label[code]!}/";
-          continue;
+        if(label[code] != null) {
+          x = "$x${label[code] ?? ""}/ ";
         }
-      }
     }
-    x = x.substring(0, x.length - 1);
-    return x;
+    return x.isEmpty ? x : x.substring(0, x.length - 2);
   }
 
   langToCode(String lang) {
