@@ -26,4 +26,5 @@ public abstract class PreviewPage extends BasePage{
 	
 	public abstract boolean isSingleIrisImageDisplayed();
 
+
 }

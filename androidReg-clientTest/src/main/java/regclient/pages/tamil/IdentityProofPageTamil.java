@@ -22,6 +22,7 @@ public class IdentityProofPageTamil extends IdentityProofPage{
 	@AndroidFindBy(className = "android.widget.ImageView")
 	private WebElement captureImage;
 
+
 	public IdentityProofPageTamil(AppiumDriver driver) {
 		super(driver);
 	}

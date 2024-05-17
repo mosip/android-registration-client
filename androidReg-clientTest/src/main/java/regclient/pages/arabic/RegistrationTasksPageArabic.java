@@ -31,10 +31,9 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage{
 
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
 	private WebElement scriptSyncCompletedMessage ;
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
 	private WebElement dashboardButton;
-
 	
 	public RegistrationTasksPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -78,4 +77,5 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage{
 		clickOnElement(operationalTaskPageTitle);
 		return new OperationalTaskPageArabic(driver);
 	}
+
 }

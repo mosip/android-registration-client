@@ -8,7 +8,7 @@ import regclient.page.DashboardPage;
 import regclient.page.OperationalTaskPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.pages.hindi.OperationalTaskPageHindi;
+
 
 public class RegistrationTasksPageKannada extends RegistrationTasksPage{
 
@@ -78,4 +78,5 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage{
 		clickOnElement(operationalTaskPageTitle);
 		return new OperationalTaskPageKannada(driver);
 	}
+
 }

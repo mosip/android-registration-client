@@ -28,8 +28,8 @@
   "password_exceed": "Password should not exceed 50 characters!",
   "username_incorrect": "User not found!",
   "device_credentials": "Device Credentials",
-  "copy_text": "Copy Text",
-  "download_json": "Download JSON",
+  "copy_text": "COPY TEXT",
+  "download_json": "DOWNLOAD JSON",
   "copy_message": "Machine Details copied to clipboard!",
   "download_message": "File Saved to Downloads!",
   "logout": "LOGOUT",
@@ -81,24 +81,6 @@
       }
     }
   },
-"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
-  "@demographicsScreenEmptyMessage": {
-    "description": "Demographic Screen Empty Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
-  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
-  "@demographicsScreenInvalidMessage": {
-    "description": "Demographic Screen Invalid Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
   "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
   "@documentsScreenName": {
     "description": "Document Screen Name",
@@ -133,6 +115,7 @@
   "retake": "RETAKE",
   "reference_number": "Enter Reference Number",
   "select_value_message": "Please select a value",
+  "enter_value_message": "Please enter a value",
   "invalid_input": "Invalid input",
   "reference_number_validation": "Please enter reference number",
   "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
@@ -216,5 +199,22 @@
   "face":"Face",
   "preview_page": "Preview",
   "packet_auth_page": "Authentication",
-  "acknowledgement_page": "Acknowledgement"
+  "acknowledgement_page": "Acknowledgement",
+  "demographic_information": "Demographic Information",
+  "documents": "Documents",
+  "biometrics": "Biometrics",
+  "share": "SHARE",
+  "packets_created": "Packets Created",
+  "packets_synced": "Packets Synced",
+  "packets_uploaded": "Packets Uploaded",
+  "users": "Users",
+  "user_id": "User ID",
+  "user_name": "User Name",
+  "status": "Status",
+  "active_not_onboarded": "Active - Not Onboarded",
+  "user_inactive": "User Inactive",
+  "onboarded": "Onboarded",
+  "sync_alert_title": "Sync to continue!",
+  "sync_alert_content": "Machine or Center is not active. Activate and Sync to continue.",
+  "sync_alert_text": "Sync"
 }

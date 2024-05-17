@@ -4,7 +4,6 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.RegistrationTasksPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
 public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiometricVerificationpage{

@@ -12,12 +12,12 @@ import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 
 class DynamicResponseServiceImpl implements DynamicResponseService {
   @override
-  Future<List<String?>> fetchFieldValues(
-      String fieldName, String langCode) async {
-    List<String?> fieldValuesList = [];
+  Future<List<DynamicFieldData?>> fetchFieldValues(
+      String fieldName, String langCode, List<String> languages) async {
+    List<DynamicFieldData?> fieldValuesList = [];
     try {
       fieldValuesList =
-          await DynamicResponseApi().getFieldValues(fieldName, langCode);
+          await DynamicResponseApi().getFieldValues(fieldName, langCode, languages);
     } on PlatformException {
       debugPrint('DynamicServiceResponseApi call failed!');
     } catch (e) {
@@ -59,12 +59,12 @@ class DynamicResponseServiceImpl implements DynamicResponseService {
 
   @override
   Future<List<GenericData?>> fetchLocationValuesBasedOnParent(
-      String? parentCode, String hierarchyLevelName, String langCode) async {
+      String? parentCode, String hierarchyLevelName, String langCode,List<String> languages) async {
     List<GenericData?> genericDataList = [];
     try {
       genericDataList = await DynamicResponseApi()
           .getLocationValuesBasedOnParent(
-              parentCode, hierarchyLevelName, langCode);
+              parentCode, hierarchyLevelName, langCode,languages);
     } on PlatformException {
       debugPrint('DynamicServiceResponseApi call failed!');
     } catch (e) {

@@ -19,6 +19,7 @@ public class IntroducerBiometricPageHindi extends IntroducerBiometricPage{
 	private WebElement markExceptionButton;
 	
 	@AndroidFindBy(accessibility = "अस्तित्व चिह्नित करें")
+
 	private WebElement exceptionTypeTitle;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")

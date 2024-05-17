@@ -8,6 +8,7 @@ import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
 
+
 public class ConsentPageKannada extends ConsentPage{
 
 	@AndroidFindBy(accessibility = "ಒಪ್ಪಿಗೆ")
@@ -18,7 +19,7 @@ public class ConsentPageKannada extends ConsentPage{
 
 	@AndroidFindBy(accessibility = "ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ")
 	private WebElement informedButton;
-	
+
 	@AndroidFindBy(accessibility = "ರದ್ದುಮಾಡು")
 	private WebElement cancelButton;
 	
@@ -39,10 +40,12 @@ public class ConsentPageKannada extends ConsentPage{
 	
 	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
+		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
 	}
 	
 	public  void UnSelectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
+		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
 	}
 
 	public  boolean isInformedButtonEnabled() {
@@ -58,4 +61,5 @@ public class ConsentPageKannada extends ConsentPage{
 		clickOnElement(cancelButton);
 		return new  RegistrationTasksPageKannada(driver);
 	}
+
 }

@@ -1,6 +1,8 @@
 package androidTestCases;
 
+
 import static org.testng.Assert.assertFalse;
+
 import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
@@ -512,11 +514,13 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 			introducerBiometricPage=new IntroducerBiometricPageArabic(driver);
 		}
 		assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),"Verify if introducer biometric page is displayed");
+
 		introducerBiometricPage.clickOnMarkExceptionButton();
 
 		assertTrue(introducerBiometricPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
 		introducerBiometricPage.markOneEyeException();
 		introducerBiometricPage.clickOnIrisScanButton();
+
 		introducerBiometricPage.clickOnScanButton();
 
 		assertTrue(introducerBiometricPage.isIrisScan(),"Verify if iris scan 1st attempt");
@@ -550,6 +554,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		assertTrue(introducerBiometricPage.isFaceScan(),"Verify if face scan 1st attempt");
 		introducerBiometricPage.closeScanCapturePopUp();
 		introducerBiometricPage.clickOnBackButton();
+
 
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();

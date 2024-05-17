@@ -282,6 +282,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 		clickOnElement(selectProvinceStatus);
 		if(province.equalsIgnoreCase("Kenitra"))
 			if(!isElementDisplayed(kenitraValueFromDropdown)) {
+
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(kenitraValueFromDropdown);
@@ -299,6 +300,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	public  void selectCityStatus(String city) {
 		clickOnElement(selectCityStatus);
 		if(city.equalsIgnoreCase("Kenitra"))
+
 			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);

@@ -33,9 +33,14 @@ class _DateControlState extends State<DateControl> {
   bool isMvelValid = true;
   TextEditingController dateController = TextEditingController();
   DateTime? pickedDate;
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     _getDataFromMap();
     super.initState();
   }
@@ -49,84 +54,84 @@ class _DateControlState extends State<DateControl> {
         elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         builder: (context) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      width: 50,
+          return ListView(
+            primary: false,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    width: 50,
+                  ),
+                  Text(
+                    widget.field.label!['eng'] ?? "",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.close,
                     ),
-                    Text(
-                      widget.field.label!['eng'] ?? "",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    )
-                  ],
-                ),
-                Container(
-                  height: 2.5,
-                  width: MediaQuery.of(context).size.width,
-                  color: solidPrimary.withOpacity(0.075),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                CustomCupertinoDatePicker(
-                  maxDate: DateTime.now(),
-                  minDate: DateTime(DateTime.now().year - 125),
-                  selectedDate: dateString != ""
-                      ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
-                          .parse(dateString)
-                      : null,
-                  squeeze: 1,
-                  itemExtent: 50,
-                  diameterRatio: 10,
-                  selectionOverlay: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: solidPrimary.withOpacity(0.075),
-                    ),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                ],
+              ),
+              Container(
+                height: 2.5,
+                width: MediaQuery.of(context).size.width,
+                color: solidPrimary.withOpacity(0.075),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              CustomCupertinoDatePicker(
+                maxDate: DateTime.now(),
+                minDate: DateTime(DateTime.now().year - 125),
+                selectedDate: dateString != ""
+                    ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                    .parse(dateString)
+                    : null,
+                squeeze: 1,
+                itemExtent: 50,
+                diameterRatio: 10,
+                selectionOverlay: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: solidPrimary.withOpacity(0.075),
                   ),
-                  selectedStyle: TextStyle(
-                    color: solidPrimary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                  unselectedStyle: TextStyle(
-                    color: Colors.grey[800],
-                    fontSize: 15,
-                  ),
-                  disabledStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 15,
-                  ),
-                  onSelectedItemChanged: (selectedDate) {
-                    String targetDateString = widget.field.format ??
-                        "yyyy/MM/dd"
-                            .replaceAll('dd',
-                                selectedDate.day.toString().padLeft(2, "0"))
-                            .replaceAll('MM',
-                                selectedDate.month.toString().padLeft(2, "0"))
-                            .replaceAll('yyyy', selectedDate.year.toString());
-                    setState(() {
-                      dateController.text = targetDateString;
-                    });
-                    _saveData(dateController.text);
-                    _saveDataToMap(dateController.text);
-                  },
                 ),
-              ],
-            ),
+                selectedStyle: TextStyle(
+                  color: solidPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+                unselectedStyle: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 15,
+                ),
+                disabledStyle: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 15,
+                ),
+                onSelectedItemChanged: (selectedDate) {
+                  String targetDateString = widget.field.format ??
+                      "yyyy/MM/dd"
+                          .replaceAll('dd',
+                          selectedDate.day.toString().padLeft(2, "0"))
+                          .replaceAll('MM',
+                          selectedDate.month.toString().padLeft(2, "0"))
+                          .replaceAll('yyyy', selectedDate.year.toString());
+                  setState(() {
+                    dateController.text = targetDateString;
+                  });
+                  _saveData(dateController.text);
+                  _saveDataToMap(dateController.text);
+                },
+              ),
+            ],
           );
         });
   }
@@ -136,27 +141,25 @@ class _DateControlState extends State<DateControl> {
   }
 
   _saveData(value) {
-    context
-        .read<RegistrationTaskProvider>()
+    registrationTaskProvider
         .addDemographicField(widget.field.id!, value!);
   }
 
   _saveDataToMap(value) {
-    context.read<GlobalProvider>().setInputMapValue(
-          widget.field.id!,
-          value!,
-          context.read<GlobalProvider>().fieldInputValue,
-        );
+    globalProvider.setInputMapValue(
+      widget.field.id!,
+      value!,
+      globalProvider.fieldInputValue,
+    );
   }
 
   _getDataFromMap() {
     String response = "";
-    if (context
-        .read<GlobalProvider>()
+    if (globalProvider
         .fieldInputValue
         .containsKey(widget.field.id)) {
       response =
-          context.read<GlobalProvider>().fieldInputValue[widget.field.id];
+      globalProvider.fieldInputValue[widget.field.id];
     }
     setState(() {
       dateController.text = response;
@@ -167,8 +170,6 @@ class _DateControlState extends State<DateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    String mandatoryLanguageCode =
-        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -199,12 +200,11 @@ class _DateControlState extends State<DateControl> {
                   }
                   if (value == null || value.isEmpty) {
                     return AppLocalizations.of(context)!
-                        .demographicsScreenEmptyMessage(mandatoryLanguageCode);
+                        .select_value_message;
                   }
                   if (!widget.validation.hasMatch(value)) {
                     return AppLocalizations.of(context)!
-                        .demographicsScreenInvalidMessage(
-                            mandatoryLanguageCode);
+                        .invalid_input;
                   }
                   return null;
                 },
@@ -217,7 +217,7 @@ class _DateControlState extends State<DateControl> {
                     vertical: 14,
                     horizontal: 16,
                   ),
-                  hintText: "dd/mm/yyyy",
+                  hintText: "yyyy/MM/dd",
                   hintStyle: const TextStyle(
                     color: appBlackShade3,
                     fontSize: 14,

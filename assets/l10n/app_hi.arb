@@ -90,24 +90,6 @@
       }
     }
   },
-"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
-  "@demographicsScreenEmptyMessage": {
-    "description": "Demographic Screen Empty Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
-  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
-  "@demographicsScreenInvalidMessage": {
-    "description": "Demographic Screen Invalid Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
   "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
   "@biometricsScreenName": {
     "description": "Biometric Screen Name",
@@ -133,6 +115,7 @@
   "retake": "फिर से लेना",
   "reference_number": "संदर्भ संख्या दर्ज करें",
   "select_value_message": "कृपया एक मान चुनें",
+  "enter_value_message": "कृपया कोई मान दर्ज करें",
   "invalid_input": "अमान्य निवेश",
   "reference_number_validation": "कृपया संदर्भ संख्या दर्ज करें",
   "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
@@ -216,5 +199,22 @@
   "face": "चेहरा",
   "preview_page": "पूर्वावलोकन",
   "packet_auth_page": "प्रमाणीकरण",
-  "acknowledgement_page": "पुनर्निर्देशन"
+  "acknowledgement_page": "पुनर्निर्देशन",
+  "demographic_information": "जनसांख्यिकीय जानकारी",
+  "documents": "दस्तावेज़",
+  "biometrics": "बॉयोमेट्रिक्स",
+  "share": "शेयर",
+  "packets_created": "पैकेट बनाए गए",
+  "packets_synced": "पैकेट सिंक किए गए",
+  "packets_uploaded": "पैकेट अपलोड किए गए",
+  "users": "उपयोगकर्ताओं",
+  "user_id": "उपयोगकर्ता पहचान",
+  "user_name": "उपयोगकर्ता नाम",
+  "status": "स्थिति",
+  "active_not_onboarded": "सक्रिय - ऑनबोर्ड नहीं किया गया",
+  "user_inactive": "उपयोगकर्ता निष्क्रिय",
+  "onboarded": "जहाज पर चढ़ाया गया",
+  "sync_alert_title": "जारी रखने के लिए सिंक करें!",
+  "sync_alert_content": "मशीन या केंद्र सक्रिय नहीं है। जारी रखने के लिए सक्रिय करें और सिंक करें।",
+  "sync_alert_text": "सिंक"
 }

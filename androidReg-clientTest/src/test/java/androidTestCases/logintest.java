@@ -10,45 +10,39 @@ import regclient.page.BasePage;
 import regclient.page.DashboardPage;
 import regclient.page.LoginPage;
 import regclient.page.OnBoardPage;
-import regclient.page.OperationalTaskPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 import regclient.pages.arabic.DashboardPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.OnBoardPageArabic;
-import regclient.pages.arabic.OperationalTaskPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SupervisorBiometricVerificationpageArabic;
 import regclient.pages.english.DashboardPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.OnBoardPageEnglish;
-import regclient.pages.english.OperationalTaskPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SupervisorBiometricVerificationpageEnglish;
 import regclient.pages.french.DashboardPageFrench;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.OnBoardPageFrench;
-import regclient.pages.french.OperationalTaskPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SupervisorBiometricVerificationpageFrench;
 import regclient.pages.hindi.DashboardPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.OnBoardPageHindi;
-import regclient.pages.hindi.OperationalTaskPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SupervisorBiometricVerificationpageHindi;
 import regclient.pages.kannada.DashboardPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.OnBoardPageKannada;
-import regclient.pages.kannada.OperationalTaskPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SupervisorBiometricVerificationpageKannada;
 import regclient.pages.tamil.DashboardPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.OnBoardPageTamil;
-import regclient.pages.tamil.OperationalTaskPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SupervisorBiometricVerificationpageTamil;
+
 import regclient.utils.TestDataReader;
 
 public class logintest  extends AndroidBaseTest {
@@ -115,6 +109,7 @@ public class logintest  extends AndroidBaseTest {
 		loginPage.clickOnNextButton();
 
 		assertTrue(loginPage.isUserNotFoundErrorMessageDisplayed(),"verify if error message should be displayeded as “user not found”");
+		
 		loginPage.enterUserName(TestDataReader.readData("onBoardUsername"));
 
 		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
@@ -125,6 +120,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
 
+
 		loginPage.enterPassword(TestDataReader.readData("InvalidPassword"));
 		assertTrue(loginPage.isLoginButtonEnabled(),"Verify if the login button enabled");
 
@@ -133,6 +129,7 @@ public class logintest  extends AndroidBaseTest {
 
 		loginPage.clickOnBackButton();
 		assertTrue(loginPage.isUserNameHeaderDisplayed(),"Verify if the username  input box header  displayed");
+
 		loginPage.enterUserName(TestDataReader.readData("onBoardUsername"));
 
 		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
@@ -305,7 +302,7 @@ public class logintest  extends AndroidBaseTest {
 		supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
 
 		assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-		supervisorBiometricVerificationpage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+	//	supervisorBiometricVerificationpage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 
 		supervisorBiometricVerificationpage.clickOnIrisScanTitle();
 		supervisorBiometricVerificationpage.clickOnScanButton();
@@ -361,7 +358,7 @@ public class logintest  extends AndroidBaseTest {
 		supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
 
 		assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-		supervisorBiometricVerificationpage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+	//	supervisorBiometricVerificationpage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 
 		supervisorBiometricVerificationpage.clickOnThumbsScanTitle();
 		supervisorBiometricVerificationpage.clickOnScanButton();
@@ -391,5 +388,6 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton(), "Verify if verify and save button is display and enable");
 
 		assertFalse(supervisorBiometricVerificationpage.isExceptionScanTitleDisplyed(),"Verify if exception scan icon is displayed");
+
 	}
 }

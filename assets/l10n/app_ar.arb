@@ -81,24 +81,6 @@
       }
     }
   },
-"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
-  "@demographicsScreenEmptyMessage": {
-    "description": "Demographic Screen Empty Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
-  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
-  "@demographicsScreenInvalidMessage": {
-    "description": "Demographic Screen Invalid Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
   "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
   "@documentsScreenName": {
     "description": "Document Screen Name",
@@ -133,6 +115,7 @@
   "retake": "استعادة",
   "reference_number": "أدخل الرقم المرجعي",
   "select_value_message": "رجاءا اختر قيمة",
+  "enter_value_message": "الرجاء إدخال قيمة",
   "invalid_input": "مدخل غير صالح",
   "reference_number_validation": "الرجاء إدخال الرقم المرجعي",
   "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
@@ -216,5 +199,22 @@
   "face": "الوجه",
   "preview_page": "معاينة",
   "packet_auth_page": "المصادقة",
-  "acknowledgement_page": "الاعتراف" 
+  "acknowledgement_page": "الاعتراف",
+  "demographic_information": "المعلومات الديموغرافية",
+  "documents": "وثائق",
+  "biometrics": "القياسات الحيوية",
+  "share": "يشارك",
+  "packets_created": "تم إنشاء الحزم",
+  "packets_synced": "تمت مزامنة الحزم",
+  "packets_uploaded": "تم تحميل الحزم",
+  "users": "المستخدمين",
+  "user_id": "معرف المستخدم",
+  "user_name": "اسم المستخدم",
+  "status": "حالة",
+  "active_not_onboarded": "نشط - غير مسجل",
+  "user_inactive": "المستخدم غير نشط",
+  "onboarded": "على متن الطائرة",
+  "sync_alert_title": "المزامنة للمتابعة!",
+  "sync_alert_content": "الجهاز أو المركز غير نشط. قم بتنشيطه والمزامنة للمتابعة.",
+  "sync_alert_text": "مزامنة"
 }

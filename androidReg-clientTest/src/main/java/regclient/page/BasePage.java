@@ -4,7 +4,8 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.HidesKeyboard;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
-import org.openqa.selenium.By;
+
+
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
@@ -16,7 +17,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static java.time.Duration.ofSeconds;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;

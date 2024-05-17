@@ -10,26 +10,32 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class TransliterationOptions;
+@class DashBoardData;
 
-@interface TransliterationOptions : NSObject
+@interface DashBoardData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithInput:(NSString *)input
-    sourceLanguage:(NSString *)sourceLanguage
-    targetLanguage:(NSString *)targetLanguage;
-@property(nonatomic, copy) NSString * input;
-@property(nonatomic, copy) NSString * sourceLanguage;
-@property(nonatomic, copy) NSString * targetLanguage;
++ (instancetype)makeWithUserId:(NSString *)userId
+    userName:(NSString *)userName
+    userStatus:(NSNumber *)userStatus
+    userIsOnboarded:(NSNumber *)userIsOnboarded;
+@property(nonatomic, copy) NSString * userId;
+@property(nonatomic, copy) NSString * userName;
+@property(nonatomic, strong) NSNumber * userStatus;
+@property(nonatomic, strong) NSNumber * userIsOnboarded;
 @end
 
-/// The codec used by TransliterationApi.
-NSObject<FlutterMessageCodec> *TransliterationApiGetCodec(void);
+/// The codec used by DashBoardApi.
+NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
 
-@protocol TransliterationApi
-- (void)transliterateOptions:(TransliterationOptions *)options completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@protocol DashBoardApi
+- (void)getDashBoardDetailsWithCompletion:(void (^)(NSArray<DashBoardData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCreatedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getSyncedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void TransliterationApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<TransliterationApi> *_Nullable api);
+extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

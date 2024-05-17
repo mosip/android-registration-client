@@ -9,6 +9,7 @@ import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
 
+
 public class ConsentPageEnglish extends ConsentPage{
 
 	@AndroidFindBy(accessibility = "Consent")
@@ -56,6 +57,7 @@ public class ConsentPageEnglish extends ConsentPage{
 		clickOnElement(informedButton);
 		return new DemographicDetailsPageEnglish(driver);
 	}
+
 
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);

@@ -7,7 +7,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +30,7 @@ class HtmlBoxControl extends StatelessWidget {
     bool isMobile = MediaQuery.of(context).size.width < 750;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    GlobalProvider globalProvider = Provider.of<GlobalProvider>(context, listen: false);
 
     return Card(
       color: pureWhite,
@@ -51,7 +52,7 @@ class HtmlBoxControl extends StatelessWidget {
                     ? Expanded(
                         child: InkWell(
                           onTap: () {
-                            context.read<GlobalProvider>().htmlBoxTabIndex =
+                            globalProvider.htmlBoxTabIndex =
                                 i;
                           },
                           child: Container(
@@ -70,8 +71,7 @@ class HtmlBoxControl extends StatelessWidget {
                                   : pureWhite,
                             ),
                             child: Text(
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .chosenLang
                                   .elementAt(i),
                               textAlign: TextAlign.center,
@@ -90,7 +90,7 @@ class HtmlBoxControl extends StatelessWidget {
                       )
                     : InkWell(
                         onTap: () {
-                          context.read<GlobalProvider>().htmlBoxTabIndex =
+                          globalProvider.htmlBoxTabIndex =
                               i;
                         },
                         child: Container(
@@ -110,8 +110,7 @@ class HtmlBoxControl extends StatelessWidget {
                                 : pureWhite,
                           ),
                           child: Text(
-                            context
-                                .read<GlobalProvider>()
+                            globalProvider
                                 .chosenLang
                                 .elementAt(i),
                             textAlign: TextAlign.center,
@@ -156,37 +155,34 @@ class HtmlRenderer extends StatefulWidget {
 class _HtmlRendererState extends State<HtmlRenderer> {
   @override
   Widget build(BuildContext context) {
-    for (int i = 0; i < context.read<GlobalProvider>().chosenLang.length; i++) {
-      List<int> bytes = utf8.encode(context
-          .read<GlobalProvider>()
+    GlobalProvider globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    for (int i = 0; i < globalProvider.chosenLang.length; i++) {
+      List<int> bytes = utf8.encode(globalProvider
           .fieldDisplayValues[widget.field.id][i]);
       Uint8List unit8List = Uint8List.fromList(bytes);
       String? hash;
       DemographicsApi().getHashValue(unit8List).then((value) {
         hash = value;
-        context.read<GlobalProvider>().fieldInputValue[widget.field.id!] = hash;
+        globalProvider.fieldInputValue[widget.field.id!] = hash;
         debugPrint("ID : ${widget.field.id!}");
         DemographicsApi().addSimpleTypeDemographicField(
             widget.field.id!,
             value,
-            context
-                .read<GlobalProvider>()
-                .langToCode(context.read<GlobalProvider>().chosenLang[i]));
+            globalProvider
+                .langToCode(globalProvider.chosenLang[i]));
       });
     }
-    String lang = context
-                .read<GlobalProvider>()
-                .langToCode(context.read<GlobalProvider>().chosenLang[context.watch<GlobalProvider>().htmlBoxTabIndex]);
+    String lang = globalProvider
+                .langToCode(globalProvider.chosenLang[context.watch<GlobalProvider>().htmlBoxTabIndex]);
     log(lang);
     return SingleChildScrollView(
-      child: Html(
-        data:
+        child: Directionality(textDirection: intl.Bidi.isRtlLanguage(lang.substring(0,2)) ? TextDirection.rtl : TextDirection.ltr,
+          child: Html(
+            data:
             context.watch<GlobalProvider>().fieldDisplayValues[widget.field.id]
-                [context.watch<GlobalProvider>().htmlBoxTabIndex],
-        style: {
-     'html':  Style(textAlign: Bidi.isRtlLanguage(lang.substring(0,2)) ? TextAlign.right : TextAlign.left),
-    },
-      ),
+            [context.watch<GlobalProvider>().htmlBoxTabIndex],
+          ),
+        )
       // Text(context.watch<GlobalProvider>().fieldDisplayValues[field.id][context.watch<GlobalProvider>().htmlBoxTabIndex])
     );
   }

@@ -90,24 +90,6 @@
       }
     }
   },
-"demographicsScreenEmptyMessage": "{language, select, eng{Please Enter a Value} ara{ادخل قيمه من فضلك} fra{Entrer un nombre, SVP} hin{कृपया मूल्य दर्ज करें} kan{ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ} tam{தயவுசெய்து மதிப்பை உள்ளிடவும்} other{Please Enter a Value}}",
-  "@demographicsScreenEmptyMessage": {
-    "description": "Demographic Screen Empty Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
-  "demographicsScreenInvalidMessage": "{language, select, eng{Invalid input} ara{مدخل غير صالح} fra{Entrée invalide} hin{अमान्य निवेश} kan{ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್} tam{தவறான உள்ளீடு} other{Invalid input}}",
-  "@demographicsScreenInvalidMessage": {
-    "description": "Demographic Screen Invalid Validation Message",
-    "placeholders": {
-      "language": {
-        "type": "String"
-      }
-    }
-  },
   "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
   "@biometricsScreenName": {
     "description": "Biometric Screen Name",
@@ -133,6 +115,7 @@
   "retake": "ರೀಟೇಕ್",
   "reference_number": "ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
   "select_value_message": "ದಯವಿಟ್ಟು ಮೌಲ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "enter_value_message": "ದಯವಿಟ್ಟು ಒಂದು ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ",
   "invalid_input": "ಅಮಾನ್ಯ ಇನ್\u200Cಪುಟ್",
   "reference_number_validation": "ದಯವಿಟ್ಟು ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
   "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
@@ -216,5 +199,22 @@
   "face": "ಮುಖ",
   "preview_page": "ಪೂರ್ವದರು",
   "packet_auth_page": "ಪ್ರಮಾಣಿಕತೆ",
-  "acknowledgement_page": "ಅರ್ಹಿಚ್ಛೆ"
+  "acknowledgement_page": "ಅರ್ಹಿಚ್ಛೆ",
+  "demographic_information": "ಜನಸಂಖ್ಯಾ ಮಾಹಿತಿ",
+  "documents": "ದಾಖಲೆಗಳು",
+  "biometrics": "ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+  "share": "ಶೇರ್ ಮಾಡಿ",
+  "packets_created": "ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ರಚಿಸಲಾಗಿದೆ",
+  "packets_synced": "ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆ",
+  "packets_uploaded": "ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ",
+  "users": "ಬಳಕೆದಾರರು",
+  "user_id": "ಬಳಕೆದಾರರ ಗುರುತು",
+  "user_name": "ಬಳಕೆದಾರ ಹೆಸರು",
+  "status": "ಸ್ಥಿತಿ",
+  "active_not_onboarded": "ಸಕ್ರಿಯ - ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಲಾಗಿಲ್ಲ",
+  "user_inactive": "ಬಳಕೆದಾರ ನಿಷ್ಕ್ರಿಯ",
+  "onboarded": "ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಲಾಗಿದೆ",
+  "sync_alert_title": "ಮುಂದುವರಿಸಲು ಸಿಂಕ್ ಮಾಡಿ!",
+  "sync_alert_content": "ಯಂತ್ರ ಅಥವಾ ಕೇಂದ್ರ ಸಕ್ರಿಯವಿಲ್ಲ. ಮುಂದುವರಿಸಲು ಸಕ್ರಿಯಗೊಳಿಸಿ ಮತ್ತು ಸಿಂಕ್ ಮಾಡಿ.",
+  "sync_alert_text": "ಸಿಂಕ್ ಮಾಡಿ"
 }

@@ -30,6 +30,23 @@ public class RegistrationRepository {
         return this.registrationDao.findRegistrationByStatus(status, batchSize);
     }
 
+    public int getAllRegistrationByStatus(String status) {
+        return this.registrationDao.findAllRegistrationByStatus(status);
+    }
+
+    public  int getAllRegistrationByPendingStatus(String syncedStatus, String approvedStatus) {
+        return  this.registrationDao.findRegistrationCountBySyncedStatusAndApprovedStatus(syncedStatus, approvedStatus);
+    }
+
+    public  int findRegistrationCountBySyncedStatus(String syncedStatus) {
+        return  this.registrationDao.findRegistrationCountBySyncedStatus(syncedStatus);
+    }
+
+    public  int getAllCreatedPacketStatus() {
+        return  this.registrationDao.getAllCreatedPacketStatus();
+    }
+
+
     public Registration getRegistration(String packetId) {
         return this.registrationDao.findOneByPacketId(packetId);
     }
@@ -56,5 +73,9 @@ public class RegistrationRepository {
         registration.setAdditionalInfo(additionalInfo.toString().getBytes(StandardCharsets.UTF_8));
         this.registrationDao.insert(registration);
         return registration;
+    }
+
+    public void deleteRegistration(String packetId) {
+        this.registrationDao.delete(packetId);
     }
 }

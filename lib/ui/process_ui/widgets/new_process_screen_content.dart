@@ -28,7 +28,6 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
-import '../../../platform_spi/registration_service.dart';
 import 'radio_button_control.dart';
 
 class NewProcessScreenContent extends StatefulWidget {
@@ -43,8 +42,14 @@ class NewProcessScreenContent extends StatefulWidget {
 }
 
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
+
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     super.initState();
   }
 
@@ -71,7 +76,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        return BiometricCaptureControl(e: e);
+        if(context.watch<GlobalProvider>().mvelRequiredFields[e.id] ?? true) {
+          return BiometricCaptureControl(e: e);
+        }
+        return Container();
       case "button":
         if (e.subType == "preferredLang") {
           return ButtonControl(field: e);
@@ -114,23 +122,31 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     }
   }
 
-  evaluateMVEL(
+  evaluateMVELVisible(
       String fieldData, String? engine, String? expression, Field e) async {
-    final RegistrationService registrationService = RegistrationService();
-    registrationService.evaluateMVEL(fieldData, expression!).then((value) {
+    registrationTaskProvider.evaluateMVELVisible(fieldData, expression!).then((value) {
       if (!value) {
-        context.read<GlobalProvider>().removeFieldFromMap(
-            e.id!, context.read<GlobalProvider>().fieldInputValue);
-        context.read<RegistrationTaskProvider>().removeDemographicField(e.id!);
+        globalProvider.removeFieldFromMap(
+            e.id!, globalProvider.fieldInputValue);
+        registrationTaskProvider.removeDemographicField(e.id!);
       }
-      context.read<GlobalProvider>().setMvelValues(e.id!, value);
+      globalProvider.setMvelVisibleFields(e.id!, value);
     });
   }
 
-  _checkMvel(Field e) {
+  evaluateMVELRequired(
+      String fieldData, String? engine, String? expression, Field e) async {
+    registrationTaskProvider.evaluateMVELRequired(fieldData, expression!).then((value) {
+      globalProvider.setMvelRequiredFields(e.id!, value);
+    });
+  }
+
+  _checkMvelVisible(Field e) async {
     if (e.required == false) {
       if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
-        evaluateMVEL(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
+        await evaluateMVELVisible(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
+            e.requiredOn?[0]?.expr, e);
+        await evaluateMVELRequired(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
             e.requiredOn?[0]?.expr, e);
       }
     }
@@ -143,9 +159,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       child: Column(
         children: [
           ...widget.screen.fields!.map((e) {
-            _checkMvel(e!);
+            _checkMvelVisible(e!);
             if (e.inputRequired == true) {
-              if (context.read<GlobalProvider>().mvelValues[e.id] ?? true) {
+              if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
                 return widgetType(e);
               }
             }

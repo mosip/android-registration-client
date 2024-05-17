@@ -8,6 +8,7 @@ import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
 
+
 public class ConsentPageHindi extends ConsentPage{
 
 	@AndroidFindBy(accessibility = "सहमति")
@@ -39,10 +40,13 @@ public class ConsentPageHindi extends ConsentPage{
 	
 	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
+		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
 	}
 	
 	public  void UnSelectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
+		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
+
 	}
 
 	public  boolean isInformedButtonEnabled() {
@@ -53,6 +57,7 @@ public class ConsentPageHindi extends ConsentPage{
 		clickOnElement(informedButton);
 		return new DemographicDetailsPageHindi(driver);
 	}
+
 
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);

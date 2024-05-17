@@ -18,6 +18,8 @@ String notificationIcon = 'assets/svg/Notifications.svg';
 String settingsIcon = 'assets/svg/Settings.svg';
 String mosipLogo = 'assets/svg/MOSIP Logo.svg';
 String syncDataIcon = 'assets/svg/Synchronising Data.svg';
+String dashboardSelectedIcon = 'assets/svg/DashboardSelected.svg';
+String settingsSelectedIcon = 'assets/svg/SettingsSelected.svg';
 Color solidPrimary = const Color(0xFF1C43A1);
 
 Color backgroundColor = const Color(0xFFF8FCFF);
@@ -62,6 +64,11 @@ List<Color> appColors = [
  const Color appRed = Color(0xFFBE1B1B);
  const Color dropDownSelector = Color(0xFF1C429F);
  const Color dropDownDividerColor = Color(0xFFBDCDF4);
+ const Color dashBoardPacketUploadColor = Color(0xFF4B9B21);
+ const Color dashBoardPacketUploadPendingColor = Color(0xFFE5961A);
+ const Color dashBoardPacketUploadExceptionColor = Color(0xFFB71D1D);
+ const Color logoutButtonColor = Color(0xFFC70000);
+ const Color bottomBarSelectedColor = Color(0xFFEFF4FF);
 
 List<Color> secondaryColors = [
   const Color(0xFF214FBF),

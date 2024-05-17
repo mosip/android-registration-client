@@ -9,6 +9,7 @@ public abstract class ConsentPage extends BasePage{
 	}
 
 	public abstract boolean isConsentPageDisplayed();
+
 	
 	public abstract boolean isCheckBoxReadable();
 

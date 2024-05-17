@@ -27,4 +27,5 @@ public abstract class RegistrationTasksPage extends BasePage {
 	
 	public abstract  OperationalTaskPage clickOnOperationalTasksTitle();
 
+
 }

@@ -9,6 +9,7 @@ import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
 
 
+
 public class ConsentPageArabic extends ConsentPage {
 
 	@AndroidFindBy(accessibility = "موافقة")
@@ -38,6 +39,7 @@ public class ConsentPageArabic extends ConsentPage {
 		return isElementDisplayed(checkBoxDiscription);
 	}
 	
+
 	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
 		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
@@ -61,5 +63,6 @@ public class ConsentPageArabic extends ConsentPage {
 		clickOnElement(cancelButton);
 		return new  RegistrationTasksPageArabic(driver);
 	}
+
 
 }

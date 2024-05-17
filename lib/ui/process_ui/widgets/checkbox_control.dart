@@ -25,8 +25,14 @@ class CheckboxControl extends StatefulWidget {
 }
 
 class _CheckboxControlState extends State<CheckboxControl> {
+  //bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
+    GlobalProvider globalProvider =
+        Provider.of<GlobalProvider>(context, listen: false);
+    RegistrationTaskProvider registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
@@ -54,20 +60,15 @@ class _CheckboxControlState extends State<CheckboxControl> {
                             .fieldInputValue[widget.field.id]
                         : false,
                     onChanged: (value) async {
+                     // isChecked = value!;
                       if (value == true) {
-                        context.read<GlobalProvider>().setInputMapValue(
-                            widget.field.id!,
-                            value,
-                            context.read<GlobalProvider>().fieldInputValue);
+                        globalProvider.setInputMapValue(widget.field.id!, value,
+                            globalProvider.fieldInputValue);
                       } else {
-                        context
-                            .read<GlobalProvider>()
-                            .fieldInputValue
-                            .remove(widget.field.id!);
+                        globalProvider.fieldInputValue.remove(widget.field.id!);
                         setState(() {});
                       }
-                      context
-                          .read<RegistrationTaskProvider>()
+                      registrationTaskProvider
                           .addConsentField(value != null && value ? 'Y' : 'N');
                       await DemographicsApi().addDemographicField(
                           widget.field.id!, value!.toString());
@@ -79,8 +80,7 @@ class _CheckboxControlState extends State<CheckboxControl> {
               child: (widget.field.inputRequired!)
                   ? RichText(
                       text: TextSpan(
-                      text: context
-                          .read<GlobalProvider>()
+                      text: globalProvider
                           .chooseLanguage(widget.field.label!),
                       style: TextStyle(
                         color: blackShade1,
@@ -94,8 +94,7 @@ class _CheckboxControlState extends State<CheckboxControl> {
                       ],
                     ))
                   : Text(
-                      context
-                          .read<GlobalProvider>()
+                      globalProvider
                           .chooseLanguage(widget.field.label!),
                     ),
             ),

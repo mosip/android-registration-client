@@ -41,9 +41,14 @@ class _TextBoxControlState extends State<TextBoxControl>
     with WidgetsBindingObserver {
   bool isMvelValid = true;
   Map<String, TextEditingController> controllerMap = {};
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     super.initState();
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
@@ -75,48 +80,45 @@ class _TextBoxControlState extends State<TextBoxControl>
 
   void saveData(value, lang) {
     if (widget.e.type == 'simpleType') {
-      context
-          .read<RegistrationTaskProvider>()
+      registrationTaskProvider
           .addSimpleTypeDemographicField(widget.e.id!, value!, lang);
     } else {
-      context
-          .read<RegistrationTaskProvider>()
+      registrationTaskProvider
           .addDemographicField(widget.e.id!, value!);
     }
   }
 
   void _saveDataToMap(value, lang) {
     if (widget.e.type == 'simpleType') {
-      context.read<GlobalProvider>().setLanguageSpecificValue(
+      globalProvider.setLanguageSpecificValue(
             widget.e.id!,
             value!,
             lang,
-            context.read<GlobalProvider>().fieldInputValue,
+            globalProvider.fieldInputValue,
           );
     } else {
-      context.read<GlobalProvider>().setInputMapValue(
+      globalProvider.setInputMapValue(
             widget.e.id!,
             value!,
-            context.read<GlobalProvider>().fieldInputValue,
+            globalProvider.fieldInputValue,
           );
     }
   }
 
   String _getDataFromMap(String lang) {
     String response = "";
-    if (context
-        .read<GlobalProvider>()
+    if (globalProvider
         .fieldInputValue
         .containsKey(widget.e.id)) {
       if (widget.e.type == 'simpleType') {
-        if ((context.read<GlobalProvider>().fieldInputValue[widget.e.id]
+        if ((globalProvider.fieldInputValue[widget.e.id]
                 as Map<String, dynamic>)
             .containsKey(lang)) {
           response =
-              context.read<GlobalProvider>().fieldInputValue[widget.e.id][lang];
+              globalProvider.fieldInputValue[widget.e.id][lang];
         }
       } else {
-        response = context.read<GlobalProvider>().fieldInputValue[widget.e.id];
+        response = globalProvider.fieldInputValue[widget.e.id];
       }
     }
     return response;
@@ -126,9 +128,9 @@ class _TextBoxControlState extends State<TextBoxControl>
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    List<String> choosenLang = context.read<GlobalProvider>().chosenLang;
+    List<String> choosenLang = globalProvider.chosenLang;
     if (!(widget.e.type == "simpleType")) {
-      choosenLang = ["English"];
+      choosenLang = [choosenLang[0]];
     }
     Map<String, String> tranliterationLangMapper = {
       "eng": "Latin",
@@ -140,7 +142,7 @@ class _TextBoxControlState extends State<TextBoxControl>
     };
 
     String mandatoryLanguageCode =
-        context.read<GlobalProvider>().mandatoryLanguages[0] ?? "eng";
+        globalProvider.mandatoryLanguages[0] ?? "eng";
 
     return Card(
       elevation: 5,
@@ -164,7 +166,7 @@ class _TextBoxControlState extends State<TextBoxControl>
               horizontalGridSpacing: 16,
               verticalGridSpacing: 12,
               children: choosenLang.map((code) {
-                String lang = context.read<GlobalProvider>().langToCode(code);
+                String lang = globalProvider.langToCode(code);
                 setState(() {
                   controllerMap.putIfAbsent(lang,
                       () => TextEditingController(text: _getDataFromMap(lang)));
@@ -179,7 +181,7 @@ class _TextBoxControlState extends State<TextBoxControl>
                       if (lang == mandatoryLanguageCode) {
                         for (var target in choosenLang) {
                           String targetCode =
-                              context.read<GlobalProvider>().langToCode(target);
+                              globalProvider.langToCode(target);
                           if (targetCode != mandatoryLanguageCode) {
                             log("$mandatoryLanguageCode ----> $targetCode");
                             try {
@@ -206,29 +208,29 @@ class _TextBoxControlState extends State<TextBoxControl>
                       saveData(value, lang);
                     },
                     validator: (value) {
-                      if (!widget.e.required! && widget.e.requiredOn!.isEmpty) {
+                      if (!widget.e.required! &&
+                          (widget.e.requiredOn == null ||
+                              widget.e.requiredOn!.isEmpty)) {
                         if (value == null || value.isEmpty) {
                           return null;
                         } else if (!widget.validation.hasMatch(value)) {
                           return AppLocalizations.of(context)!
-                              .demographicsScreenInvalidMessage(
-                                  mandatoryLanguageCode);
+                              .invalid_input;
                         }
                       }
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenEmptyMessage(
-                                mandatoryLanguageCode);
+                            .enter_value_message;
                       }
                       if (!widget.validation.hasMatch(value)) {
                         return AppLocalizations.of(context)!
-                            .demographicsScreenInvalidMessage(
-                                mandatoryLanguageCode);
+                            .invalid_input;
                       }
                       return null;
                     },
-                    textAlign:
-                        Bidi.isRtlLanguage(lang.substring(0,2)) ? TextAlign.right : TextAlign.left,
+                    textAlign: Bidi.isRtlLanguage(lang.substring(0, 2))
+                        ? TextAlign.right
+                        : TextAlign.left,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),

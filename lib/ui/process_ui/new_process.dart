@@ -18,7 +18,6 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
-import 'package:registration_client/platform_spi/registration_service.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -52,6 +51,9 @@ class NewProcess extends StatefulWidget {
 class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
+  late AuthProvider authProvider;
+  late ConnectivityProvider connectivityProvider;
+  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
 
   List<String> postRegistrationTabs = [
@@ -60,12 +62,19 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     'Acknowledgement',
   ];
 
+  Map<String, String>? templateTitleMap;
+
   String username = '';
   String password = '';
 
   @override
   void initState() {
-    _registrationScreenLoadedAudit();
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    connectivityProvider =
+        Provider.of<ConnectivityProvider>(context, listen: false);
     super.initState();
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
@@ -83,6 +92,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         }
       },
     ));
+    _registrationScreenLoadedAudit();
   }
 
   @override
@@ -103,21 +113,6 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     );
   }
 
-  _showNetworkError() {
-    _showInSnackBar(AppLocalizations.of(context)!.network_error);
-  }
-
-  _submitRegistration() async {
-    RegistrationSubmitResponse registrationSubmitResponse =
-        await registrationTaskProvider.submitRegistrationDto(username);
-
-    return registrationSubmitResponse;
-  }
-
-  _getIsPacketAuthenticated() {
-    return context.read<AuthProvider>().isPacketAuthenticated;
-  }
-
   _authenticatePacket(BuildContext context) async {
     if (!_validateUsername(context)) {
       return false;
@@ -127,14 +122,14 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       return false;
     }
 
-    if (!_isUserLoggedInUser(context)) {
+    if (authProvider.currentUser.userId != username) {
+      _showInSnackBar(appLocalizations.invalid_user);
       return false;
     }
 
-    await context.read<AuthProvider>().authenticatePacket(username, password);
-    bool isPacketAuthenticated = _getIsPacketAuthenticated();
+    await authProvider.authenticatePacket(username, password);
 
-    if (!isPacketAuthenticated) {
+    if (!authProvider.isPacketAuthenticated) {
       _showErrorInSnackbar();
       return false;
     }
@@ -142,20 +137,20 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   }
 
   _showErrorInSnackbar() {
-    String errorMsg = context.read<AuthProvider>().packetError;
+    String errorMsg = authProvider.packetError;
     String snackbarText = "";
 
     switch (errorMsg) {
       case "REG_TRY_AGAIN":
-        snackbarText = AppLocalizations.of(context)!.login_failed;
+        snackbarText = appLocalizations.login_failed;
         break;
 
       case "REG_INVALID_REQUEST":
-        snackbarText = AppLocalizations.of(context)!.password_incorrect;
+        snackbarText = appLocalizations.password_incorrect;
         break;
 
       case "REG_NETWORK_ERROR":
-        snackbarText = AppLocalizations.of(context)!.network_error;
+        snackbarText = appLocalizations.network_error;
         break;
 
       case "":
@@ -171,12 +166,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   bool _validateUsername(BuildContext context) {
     if (username.trim().isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_required);
+      _showInSnackBar(appLocalizations.username_required);
       return false;
     }
 
     if (username.trim().length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.username_exceed);
+      _showInSnackBar(appLocalizations.username_exceed);
       return false;
     }
 
@@ -185,41 +180,21 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   bool _validatePassword(BuildContext context) {
     if (password.trim().isEmpty) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_required);
+      _showInSnackBar(appLocalizations.password_required);
       return false;
     }
 
     if (password.trim().length > 50) {
-      _showInSnackBar(AppLocalizations.of(context)!.password_exceed);
+      _showInSnackBar(appLocalizations.password_exceed);
       return false;
     }
 
     return true;
   }
-
-  bool _isUserLoggedInUser(BuildContext context) {
-    final user = context.read<AuthProvider>().currentUser;
-    if (user.userId != username) {
-      _showInSnackBar(AppLocalizations.of(context)!.invalid_user);
-      return false;
-    }
-    return true;
-  }
-
-  // _onTabBackNavigate(int index, BuildContext context) {
-  //   if (index < globalProvider.newProcessTabIndex) {
-  //     globalProvider.newProcessTabIndex = index;
-  //   }
-  // }
 
   _resetValuesOnRegistrationComplete() {
     Navigator.of(context).pop();
-    globalProvider.newProcessTabIndex = 0;
-    globalProvider.htmlBoxTabIndex = 0;
-    globalProvider.setRegId("");
-    for (int i = 0;
-        i < context.read<RegistrationTaskProvider>().listOfProcesses.length;
-        i++) {
+    for (int i = 0; i < registrationTaskProvider.listOfProcesses.length; i++) {
       Process process = Process.fromJson(
         jsonDecode(
           context
@@ -237,23 +212,21 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW") {
-      _newRegistrationClickedAudit();
-      context.read<GlobalProvider>().clearMap();
-      context.read<GlobalProvider>().clearScannedPages();
-      context.read<GlobalProvider>().newProcessTabIndex = 0;
-      context.read<GlobalProvider>().htmlBoxTabIndex = 0;
-      context.read<GlobalProvider>().setRegId("");
+      globalProvider.clearMap();
+      globalProvider.clearScannedPages();
+      globalProvider.newProcessTabIndex = 0;
+      globalProvider.htmlBoxTabIndex = 0;
+      globalProvider.setRegId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
               field.fieldType == 'default') {
-            context
-                .read<GlobalProvider>()
-                .initializeGroupedHierarchyMap(field.group!);
+            globalProvider.initializeGroupedHierarchyMap(field.group!);
           }
         }
       }
-      context.read<GlobalProvider>().createRegistrationLanguageMap();
+      globalProvider.createRegistrationLanguageMap();
+      globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -264,54 +237,59 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     return Container();
   }
 
-  _newRegistrationClickedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-HOME-002", "REG-MOD-102");
-  }
-
   void _registrationScreenLoadedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-002", "REG-MOD-103");
+    await globalProvider.getAudit("REG-EVT-002", "REG-MOD-103");
   }
 
   _nextButtonClickedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-003", "REG-MOD-103");
-  }
-
-  _getIsConnected() {
-    return context.read<ConnectivityProvider>().isConnected;
+    await globalProvider.getAudit("REG-EVT-003", "REG-MOD-103");
   }
 
   bool continueButton = false;
   @override
   Widget build(BuildContext context) {
     postRegistrationTabs = [
-      AppLocalizations.of(context)!.preview_page,
-      AppLocalizations.of(context)!.packet_auth_page,
-      AppLocalizations.of(context)!.acknowledgement_page,
+      appLocalizations.preview_page,
+      appLocalizations.packet_auth_page,
+      appLocalizations.acknowledgement_page,
     ];
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    registrationTaskProvider =
-        Provider.of<RegistrationTaskProvider>(context, listen: false);
     bool isMobile = MediaQuery.of(context).size.width < 750;
     double w = ScreenUtil().screenWidth;
     Map<String, dynamic> arguments =
         ModalRoute.of(context)!.settings.arguments! as Map<String, dynamic>;
     final Process newProcess = arguments["process"];
     int size = newProcess.screens!.length;
-    evaluateMVEL(
+
+    evaluateMVELVisible(
         String fieldData, String? engine, String? expression, Field e) async {
-      final RegistrationService registrationService = RegistrationService();
-      bool required =
-          await registrationService.evaluateMVEL(fieldData, expression!);
+      bool visible = await registrationTaskProvider.evaluateMVELVisible(
+          fieldData, expression!);
+      return visible;
+    }
+
+    evaluateMVELRequired(
+        String fieldData, String? engine, String? expression, Field e) async {
+      bool required = await registrationTaskProvider.evaluateMVELRequired(
+          fieldData, expression!);
       return required;
+    }
+
+    Future<bool> onWillPop() async {
+      if (globalProvider.newProcessTabIndex > 0 &&
+          globalProvider.newProcessTabIndex <
+              newProcess.screens!.length + postRegistrationTabs.length - 1) {
+        globalProvider.newProcessTabIndex =
+            globalProvider.newProcessTabIndex - 1;
+      } else {
+        return true;
+      }
+      return false;
     }
 
     isExceptionPresent(String id) {
       bool isExceptionPresent = false;
-      for (BiometricAttributeData x
-          in context.read<GlobalProvider>().fieldInputValue[id]) {
+      for (BiometricAttributeData x in globalProvider.fieldInputValue[id]) {
         if (x.exceptions.contains(true) || x.title == "Exception") {
           isExceptionPresent = true;
           break;
@@ -349,60 +327,134 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       return i;
     }
 
+    ageDateChangeValidation(int currentIndex) async {
+      if (globalProvider.newProcessTabIndex < size) {
+        Screen screen = newProcess.screens!.elementAt(currentIndex)!;
+        for (int i = 0; i < screen.fields!.length; i++) {
+          if (screen.fields!.elementAt(i)!.id == "dateOfBirth") {
+            if (globalProvider.checkAgeGroupChange == "") {
+              globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
+            } else {
+              if (globalProvider.checkAgeGroupChange
+                      .compareTo(globalProvider.ageGroup) ==
+                  0) {
+              } else {
+                List<Screen?> screens = [];
+                for (int i = 0;
+                    i < registrationTaskProvider.listOfProcesses.length;
+                    i++) {
+                  Process process = Process.fromJson(
+                    jsonDecode(
+                      context
+                          .read<RegistrationTaskProvider>()
+                          .listOfProcesses
+                          .elementAt(i)
+                          .toString(),
+                    ),
+                  );
+                  if (process.id == "NEW") {
+                    screens = process.screens!;
+                  }
+                }
+                for (Screen? screen in screens) {
+                  if (screen!.name! == "Documents" ||
+                      screen!.name! == "BiometricDetails") {
+                    for (Field? field in screen!.fields!) {
+                      if (globalProvider.fieldInputValue
+                          .containsKey(field!.id!)) {
+                        globalProvider.fieldInputValue.remove(field.id);
+                      }
+                    }
+                  }
+                }
+                await BiometricsApi().clearBiometricAndDocumentHashmap();
+                globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
+              }
+            }
+          }
+        }
+      }
+    }
+
     customValidation(int currentIndex) async {
       bool isValid = true;
-      Screen screen = newProcess.screens!.elementAt(currentIndex)!;
-      for (int i = 0; i < screen.fields!.length; i++) {
-        if (screen.fields!.elementAt(i)!.inputRequired! &&
-            screen.fields!.elementAt(i)!.required!) {
-          if (!(context
-                  .read<GlobalProvider>()
-                  .fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.id)) &&
-              !(context
-                  .read<GlobalProvider>()
-                  .fieldInputValue
-                  .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-              !(context.read<GlobalProvider>().fieldInputValue.containsKey(
-                  "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-            // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
+      if (globalProvider.newProcessTabIndex < size) {
+        Screen screen = newProcess.screens!.elementAt(currentIndex)!;
+        for (int i = 0; i < screen.fields!.length; i++) {
+          if (screen.fields!.elementAt(i)!.inputRequired! &&
+              screen.fields!.elementAt(i)!.required!) {
+            if (!(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                !(globalProvider.fieldInputValue
+                    .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                !(globalProvider.fieldInputValue.containsKey(
+                    "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+              // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
 
-            // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
-            //   _showInSnackBar(AppLocalizations.of(context)!.upload_document);
-            // }
-            isValid = false;
+              // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
+              //   _showInSnackBar(appLocalizations.upload_document);
+              // }
+              isValid = false;
 
-            break;
-          }
-          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-              screen.fields!
-                  .elementAt(i)!
-                  .conditionalBioAttributes!
-                  .isNotEmpty) {
-            String response = await BiometricsApi().getAgeGroup();
-            if (!(response.compareTo(screen.fields!
+              break;
+            }
+            if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+                screen.fields!
                     .elementAt(i)!
                     .conditionalBioAttributes!
-                    .first!
-                    .ageGroup!) ==
-                0)) {
-              if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
-                int count = returnBiometricListLength(
-                    screen.fields!.elementAt(i)!.bioAttributes,
-                    screen.fields!.elementAt(i)!.id!);
-                if (globalProvider
-                        .completeException[screen.fields!.elementAt(i)!.id!] !=
-                    null) {
-                  int length = globalProvider
-                      .completeException[screen.fields!.elementAt(i)!.id!]
-                      .length;
-                  count = count - length;
-                }
+                    .isNotEmpty) {
+              String response = await BiometricsApi().getAgeGroup();
+              if (!(response.compareTo(screen.fields!
+                      .elementAt(i)!
+                      .conditionalBioAttributes!
+                      .first!
+                      .ageGroup!) ==
+                  0)) {
+                if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                  int count = returnBiometricListLength(
+                      screen.fields!.elementAt(i)!.bioAttributes,
+                      screen.fields!.elementAt(i)!.id!);
+                  if (globalProvider.completeException[
+                          screen.fields!.elementAt(i)!.id!] !=
+                      null) {
+                    int length = globalProvider
+                        .completeException[screen.fields!.elementAt(i)!.id!]
+                        .length;
+                    count = count - length;
+                  }
 
-                if (globalProvider
-                        .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                        .length <
-                    count) {
+                  if (globalProvider
+                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                          .length <
+                      count) {
+                    isValid = false;
+
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          if (screen.fields!.elementAt(i)!.requiredOn != null &&
+              screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
+            bool visible = await evaluateMVELVisible(
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
+                screen.fields!.elementAt(i)!);
+            bool required = await evaluateMVELRequired(
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
+                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
+                screen.fields!.elementAt(i)!);
+            if (visible && required) {
+              if (screen.fields!.elementAt(i)!.inputRequired!) {
+                if (!(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                    !(globalProvider.fieldInputValue
+                        .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                    !(globalProvider.fieldInputValue.containsKey(
+                        "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
                   isValid = false;
 
                   break;
@@ -410,48 +462,51 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               }
             }
           }
-        }
-        if (screen.fields!.elementAt(i)!.requiredOn != null && screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
-          bool required = await evaluateMVEL(
-              jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-              screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-              screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-              screen.fields!.elementAt(i)!);
-          if (required) {
-            if (screen.fields!.elementAt(i)!.inputRequired!) {
-              if (!(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                  !(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                  !(globalProvider.fieldInputValue.containsKey(
-                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-                isValid = false;
-
-                break;
-              }
-            }
-          }
-        }
-        if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-            screen.fields!.elementAt(i)!.conditionalBioAttributes!.isNotEmpty) {
-          String response = await BiometricsApi().getAgeGroup();
-          if (response.compareTo(screen.fields!
+          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+              screen.fields!
                   .elementAt(i)!
                   .conditionalBioAttributes!
-                  .first!
-                  .ageGroup!) ==
-              0) {
-            bool valid = await BiometricsApi()
-                .conditionalBioAttributeValidation(
-                    screen.fields!.elementAt(i)!.id!,
-                    screen.fields!
-                        .elementAt(i)!
-                        .conditionalBioAttributes!
-                        .first!
-                        .validationExpr!);
-            if (!valid) {
-              isValid = false;
-              break;
+                  .isNotEmpty) {
+            String response = await BiometricsApi().getAgeGroup();
+            if (response.compareTo(screen.fields!
+                    .elementAt(i)!
+                    .conditionalBioAttributes!
+                    .first!
+                    .ageGroup!) ==
+                0) {
+              bool valid = await BiometricsApi()
+                  .conditionalBioAttributeValidation(
+                      screen.fields!.elementAt(i)!.id!,
+                      screen.fields!
+                          .elementAt(i)!
+                          .conditionalBioAttributes!
+                          .first!
+                          .validationExpr!);
+              if (screen.fields!.elementAt(i)!.exceptionPhotoRequired == true) {
+                List<BiometricAttributeData> biometricAttributeDataList =
+                    globalProvider
+                        .fieldInputValue[screen.fields!.elementAt(i)!.id!];
+                bool isExceptionPresent = false;
+                bool isExceptionAttributePresent = false;
+                for (var biometricAttributeData in biometricAttributeDataList) {
+                  if (globalProvider.exceptionAttributes
+                      .contains(biometricAttributeData.title)) {
+                    isExceptionPresent = true;
+                  }
+                  if (biometricAttributeData.title == "Exception") {
+                    isExceptionAttributePresent = true;
+                  }
+                }
+                if (isExceptionPresent == true &&
+                    isExceptionAttributePresent == false) {
+                  isValid = false;
+                  break;
+                }
+              }
+              if (!valid) {
+                isValid = false;
+                break;
+              }
             }
           }
         }
@@ -461,16 +516,18 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
+        ageDateChangeValidation(globalProvider.newProcessTabIndex);
         bool customValidator =
             await customValidation(globalProvider.newProcessTabIndex);
         if (customValidator) {
           if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
+             templateTitleMap = {'demographicInfo': AppLocalizations.of(context)!.demographic_information ?? "Demographic Information", 'documents': AppLocalizations.of(context)!.documents ?? "Documents", 'bioMetrics': AppLocalizations.of(context)!.biometrics ?? "Biometrics"};
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(true);
-              await registrationTaskProvider.getAcknowledgementTemplate(false);
+              await registrationTaskProvider.getPreviewTemplate(true,templateTitleMap!);
+              await registrationTaskProvider.getAcknowledgementTemplate(false,templateTitleMap!);
             }
 
             globalProvider.newProcessTabIndex =
@@ -486,7 +543,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
             return;
           }
           RegistrationSubmitResponse registrationSubmitResponse =
-              await _submitRegistration();
+              await registrationTaskProvider.submitRegistrationDto(username);
           if (registrationSubmitResponse.errorCode!.isNotEmpty) {
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
@@ -507,370 +564,385 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      continueButton = value;
+      continueButton = value &&
+          globalProvider.formKey.currentState != null &&
+          globalProvider.formKey.currentState!.validate();
+
+      if (globalProvider.newProcessTabIndex >= size) {
+        continueButton = true;
+      }
     });
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: secondaryColors.elementAt(10),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            border: const Border(
-              top: BorderSide(
-                color: dividerColor,
-                width: 1,
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: secondaryColors.elementAt(10),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              border: const Border(
+                top: BorderSide(
+                  color: dividerColor,
+                  width: 1,
+                ),
               ),
+              color: pureWhite,
             ),
-            color: pureWhite,
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: isPortrait ? 20.w : 60.w,
-            vertical: 16.h,
-          ),
-          // height: isPortrait ? 94.h : 84.h,
-          child: globalProvider.newProcessTabIndex == 0
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        child: SizedBox(
-                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
-                          child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.go_back,
-                              style: TextStyle(
-                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
+            padding: EdgeInsets.symmetric(
+              horizontal: isPortrait ? 20.w : 60.w,
+              vertical: 16.h,
+            ),
+            // height: isPortrait ? 94.h : 84.h,
+            child: globalProvider.newProcessTabIndex == 0
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          child: SizedBox(
+                            height: isPortrait && !isMobileSize ? 68.h : 52.h,
+                            child: Center(
+                              child: Text(
+                                appLocalizations.go_back,
+                                style: TextStyle(
+                                  fontSize:
+                                      isPortrait && !isMobileSize ? 22 : 14,
+                                ),
                               ),
                             ),
                           ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
                       ),
-                    ),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: SizedBox(
-                          height: isPortrait && !isMobileSize ? 68.h : 52.h,
-                          child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.informed,
-                              style: TextStyle(
-                                fontSize: isPortrait && !isMobileSize ? 22 : 14,
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          child: SizedBox(
+                            height: isPortrait && !isMobileSize ? 68.h : 52.h,
+                            child: Center(
+                              child: Text(
+                                appLocalizations.informed,
+                                style: TextStyle(
+                                  fontSize:
+                                      isPortrait && !isMobileSize ? 22 : 14,
+                                ),
                               ),
                             ),
                           ),
+                          onPressed: () {
+                            continueButtonTap(context, size, newProcess);
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      globalProvider.newProcessTabIndex == size + 2
+                          ? ElevatedButton(
+                              onPressed: () async {
+                                await connectivityProvider
+                                    .checkNetworkConnection();
+                                bool isConnected =
+                                    connectivityProvider.isConnected;
+                                if (!isConnected) {
+                                  _showInSnackBar(
+                                      appLocalizations.network_error);
+                                  return;
+                                }
+                                globalProvider.syncPacket(globalProvider.regId);
+                              },
+                              child: Text(appLocalizations.sync_packet),
+                            )
+                          : const SizedBox.shrink(),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      globalProvider.newProcessTabIndex == size + 2
+                          ? ElevatedButton(
+                              onPressed: () async {
+                                await connectivityProvider
+                                    .checkNetworkConnection();
+                                bool isConnected =
+                                    connectivityProvider.isConnected;
+                                if (!isConnected) {
+                                  _showInSnackBar(
+                                      appLocalizations.network_error);
+                                  return;
+                                }
+                                globalProvider
+                                    .uploadPacket(globalProvider.regId);
+                              },
+                              child: Text(appLocalizations.upload_packet),
+                            )
+                          : const SizedBox.shrink(),
+                      const Expanded(
+                        child: SizedBox(),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          maximumSize: MaterialStateProperty.all<Size>(
+                              const Size(209, 52)),
+                          minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(209, 52)),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              continueButton ? solidPrimary : Colors.grey),
                         ),
                         onPressed: () {
                           continueButtonTap(context, size, newProcess);
                         },
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    !isPortrait && globalProvider.newProcessTabIndex == size + 2
-                        ? ElevatedButton(
-                            onPressed: () async {
-                              await context
-                                  .read<ConnectivityProvider>()
-                                  .checkNetworkConnection();
-                              bool isConnected = _getIsConnected();
-                              if (!isConnected) {
-                                _showNetworkError();
-                                return;
-                              }
-                              globalProvider.syncPacket(globalProvider.regId);
-                            },
-                            child:
-                                Text(AppLocalizations.of(context)!.sync_packet),
-                          )
-                        : const SizedBox.shrink(),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    !isPortrait && globalProvider.newProcessTabIndex == size + 2
-                        ? ElevatedButton(
-                            onPressed: () async {
-                              await context
-                                  .read<ConnectivityProvider>()
-                                  .checkNetworkConnection();
-                              bool isConnected = _getIsConnected();
-                              if (!isConnected) {
-                                _showNetworkError();
-                                return;
-                              }
-                              globalProvider.uploadPacket(globalProvider.regId);
-                            },
-                            child: Text(
-                                AppLocalizations.of(context)!.upload_packet),
-                          )
-                        : const SizedBox.shrink(),
-                    const Expanded(
-                      child: SizedBox(),
-                    ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        maximumSize: MaterialStateProperty.all<Size>(
-                            const Size(209, 52)),
-                        minimumSize: MaterialStateProperty.all<Size>(
-                            const Size(209, 52)),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            continueButton ? solidPrimary : Colors.grey),
-                      ),
-                      onPressed: () {
-                        continueButtonTap(context, size, newProcess);
-                      },
-                      child: Text(context
-                                  .read<GlobalProvider>()
-                                  .newProcessTabIndex <=
-                              size
-                          ? AppLocalizations.of(context)!.continue_text
-                          : globalProvider.newProcessTabIndex == size + 1
-                              ? AppLocalizations.of(context)!.authenticate
-                              : AppLocalizations.of(context)!.new_registration),
-                    ),
-                  ],
-                ),
-        ),
-        body: SingleChildScrollView(
-          child: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-            ),
-            child: Column(
-              children: [
-                isPortrait
-                    ? const SizedBox()
-                    : const Column(
-                        children: [
-                          TabletHeader(),
-                          TabletNavbar(),
-                        ],
-                      ),
-                Container(
-                  padding: isMobile && !isMobileSize
-                      ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
-                      : const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Color(0xff214FBF), Color(0xff1C43A1)],
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: w,
-                        height: isPortrait ? 21.w : 30.w,
-                      ),
-                      Padding(
-                        padding: isPortrait
-                            ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
-                            : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
                         child: Text(
-                          newProcess.label![
-                              context.read<GlobalProvider>().selectedLanguage]!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                  color: pureWhite,
-                                  fontWeight: semiBold,
-                                  fontSize: isPortrait ? 24 : 21),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                      Divider(
-                        height: 12.h,
-                        thickness: 1,
-                        color: secondaryColors.elementAt(2),
-                      ),
-                      Padding(
-                        padding: isPortrait
-                            ? const EdgeInsets.all(0)
-                            : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
-                        child: Stack(
-                          alignment: FractionalOffset.centerRight,
-                          children: [
-                            Padding(
-                              padding: isPortrait
-                                  ? EdgeInsets.fromLTRB(20.w, 10.h, 0, 0)
-                                  : EdgeInsets.fromLTRB(0, 10.h, 0, 0),
-                              child: SizedBox(
-                                height: 36.h,
-                                child: ListView.builder(
-                                    padding: const EdgeInsets.all(0),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: newProcess.screens!.length + 3,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          if (context
-                                                  .read<GlobalProvider>()
-                                                  .newProcessTabIndex ==
-                                              size + 2) {
-                                            return;
-                                          }
-
-                                          if (index <
-                                              context
-                                                  .read<GlobalProvider>()
-                                                  .newProcessTabIndex) {
-                                            context
-                                                .read<GlobalProvider>()
-                                                .newProcessTabIndex = index;
-                                          }
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8.h),
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  bottom: BorderSide(
-                                                      color: (context
-                                                                  .watch<
-                                                                      GlobalProvider>()
-                                                                  .newProcessTabIndex ==
-                                                              index)
-                                                          ? pureWhite
-                                                          : Colors.transparent,
-                                                      width: 3),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  (index <
-                                                          context
-                                                              .watch<
-                                                                  GlobalProvider>()
-                                                              .newProcessTabIndex)
-                                                      ? Icon(
-                                                          Icons.check_circle,
-                                                          size: 17,
-                                                          color: secondaryColors
-                                                              .elementAt(11),
-                                                        )
-                                                      : (context
-                                                                  .watch<
-                                                                      GlobalProvider>()
-                                                                  .newProcessTabIndex ==
-                                                              index)
-                                                          ? Icon(
-                                                              Icons.circle,
-                                                              color: pureWhite,
-                                                              size: 17,
-                                                            )
-                                                          : Icon(
-                                                              Icons
-                                                                  .circle_outlined,
-                                                              size: 17,
-                                                              color:
-                                                                  secondaryColors
-                                                                      .elementAt(
-                                                                          9),
-                                                            ),
-                                                  SizedBox(
-                                                    width: 6.w,
-                                                  ),
-                                                  Text(
-                                                    index < size
-                                                        ? newProcess
-                                                                .screens![index]!
-                                                                .label![
-                                                            context
-                                                                .read<
-                                                                    GlobalProvider>()
-                                                                .selectedLanguage]!
-                                                        : postRegistrationTabs[
-                                                            index - size],
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleSmall
-                                                        ?.copyWith(
-                                                            color: (context
-                                                                        .watch<
-                                                                            GlobalProvider>()
-                                                                        .newProcessTabIndex ==
-                                                                    index)
-                                                                ? pureWhite
-                                                                : secondaryColors
-                                                                    .elementAt(
-                                                                        9),
-                                                            fontWeight:
-                                                                semiBold,
-                                                            fontSize: 14),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 35.w,
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              ),
-                            ),
-                            Container(
-                              height: 36.h,
-                              width: 25.w,
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              color: solidPrimary,
-                              child: Icon(
-                                Icons.arrow_forward_ios_outlined,
-                                color: pureWhite,
-                                size: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
+                            context.read<GlobalProvider>().newProcessTabIndex <=
+                                    size
+                                ? appLocalizations.continue_text
+                                : globalProvider.newProcessTabIndex == size + 1
+                                    ? appLocalizations.authenticate
+                                    : appLocalizations.new_registration),
                       ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: isPortrait
-                      ? const EdgeInsets.all(0)
-                      : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
-                  child: context.watch<GlobalProvider>().newProcessTabIndex <
-                          size
-                      ? NewProcessScreenContent(
-                          context: context,
-                          screen: newProcess.screens!.elementAt(context
-                              .watch<GlobalProvider>()
-                              .newProcessTabIndex)!)
-                      : context.watch<GlobalProvider>().newProcessTabIndex ==
-                              size
-                          ? const PreviewPage()
-                          : context
-                                      .watch<GlobalProvider>()
-                                      .newProcessTabIndex ==
-                                  size + 1
-                              ? _getPacketAuthComponent()
-                              : const AcknowledgementPage(),
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-              ],
+          ),
+          body: SingleChildScrollView(
+            child: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+              ),
+              child: Column(
+                children: [
+                  isPortrait
+                      ? const SizedBox()
+                      : const Column(
+                          children: [
+                            TabletHeader(),
+                            TabletNavbar(),
+                          ],
+                        ),
+                  Container(
+                    padding: isMobile && !isMobileSize
+                        ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
+                        : const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0xff214FBF), Color(0xff1C43A1)],
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: w,
+                          height: isPortrait ? 21.w : 30.w,
+                        ),
+                        Padding(
+                          padding: isPortrait
+                              ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
+                              : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
+                          child: Text(
+                            newProcess.label![context
+                                .read<GlobalProvider>()
+                                .selectedLanguage]!,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    color: pureWhite,
+                                    fontWeight: semiBold,
+                                    fontSize: isPortrait ? 24 : 21),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30.h,
+                        ),
+                        Divider(
+                          height: 12.h,
+                          thickness: 1,
+                          color: secondaryColors.elementAt(2),
+                        ),
+                        Padding(
+                          padding: isPortrait
+                              ? const EdgeInsets.all(0)
+                              : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
+                          child: Stack(
+                            alignment: FractionalOffset.centerRight,
+                            children: [
+                              Padding(
+                                padding: isPortrait
+                                    ? EdgeInsets.fromLTRB(20.w, 10.h, 0, 0)
+                                    : EdgeInsets.fromLTRB(0, 10.h, 0, 0),
+                                child: SizedBox(
+                                  height: 36.h,
+                                  child: ListView.builder(
+                                      padding: const EdgeInsets.all(0),
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: newProcess.screens!.length + 3,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            if (context
+                                                    .read<GlobalProvider>()
+                                                    .newProcessTabIndex ==
+                                                size + 2) {
+                                              return;
+                                            }
+
+                                            if (index <
+                                                context
+                                                    .read<GlobalProvider>()
+                                                    .newProcessTabIndex) {
+                                              context
+                                                  .read<GlobalProvider>()
+                                                  .newProcessTabIndex = index;
+                                            }
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 8.h),
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                        color: (context
+                                                                    .watch<
+                                                                        GlobalProvider>()
+                                                                    .newProcessTabIndex ==
+                                                                index)
+                                                            ? pureWhite
+                                                            : Colors
+                                                                .transparent,
+                                                        width: 3),
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    (index <
+                                                            context
+                                                                .watch<
+                                                                    GlobalProvider>()
+                                                                .newProcessTabIndex)
+                                                        ? Icon(
+                                                            Icons.check_circle,
+                                                            size: 17,
+                                                            color:
+                                                                secondaryColors
+                                                                    .elementAt(
+                                                                        11),
+                                                          )
+                                                        : (context
+                                                                    .watch<
+                                                                        GlobalProvider>()
+                                                                    .newProcessTabIndex ==
+                                                                index)
+                                                            ? Icon(
+                                                                Icons.circle,
+                                                                color:
+                                                                    pureWhite,
+                                                                size: 17,
+                                                              )
+                                                            : Icon(
+                                                                Icons
+                                                                    .circle_outlined,
+                                                                size: 17,
+                                                                color: secondaryColors
+                                                                    .elementAt(
+                                                                        9),
+                                                              ),
+                                                    SizedBox(
+                                                      width: 6.w,
+                                                    ),
+                                                    Text(
+                                                      index < size
+                                                          ? newProcess
+                                                                  .screens![index]!
+                                                                  .label![
+                                                              context
+                                                                  .read<
+                                                                      GlobalProvider>()
+                                                                  .selectedLanguage]!
+                                                          : postRegistrationTabs[
+                                                              index - size],
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleSmall
+                                                          ?.copyWith(
+                                                              color: (context
+                                                                          .watch<
+                                                                              GlobalProvider>()
+                                                                          .newProcessTabIndex ==
+                                                                      index)
+                                                                  ? pureWhite
+                                                                  : secondaryColors
+                                                                      .elementAt(
+                                                                          9),
+                                                              fontWeight:
+                                                                  semiBold,
+                                                              fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 35.w,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              ),
+                              Container(
+                                height: 36.h,
+                                width: 25.w,
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                color: solidPrimary,
+                                child: Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  color: pureWhite,
+                                  size: 17,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: isPortrait
+                        ? const EdgeInsets.all(0)
+                        : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
+                    child: context.watch<GlobalProvider>().newProcessTabIndex <
+                            size
+                        ? NewProcessScreenContent(
+                            context: context,
+                            screen: newProcess.screens!.elementAt(context
+                                .watch<GlobalProvider>()
+                                .newProcessTabIndex)!)
+                        : context.watch<GlobalProvider>().newProcessTabIndex ==
+                                size
+                            ? const PreviewPage()
+                            : context
+                                        .watch<GlobalProvider>()
+                                        .newProcessTabIndex ==
+                                    size + 1
+                                ? _getPacketAuthComponent()
+                                : const AcknowledgementPage(),
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -905,7 +977,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 height: 26.h,
               ),
               Text(
-                AppLocalizations.of(context)!.authenticate_using_password,
+                appLocalizations.authenticate_using_password,
                 style: TextStyle(
                     fontSize: isPortrait && !isMobileSize ? 24 : 18,
                     fontWeight: semiBold,
@@ -917,7 +989,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               Row(
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.username,
+                    appLocalizations.username,
                     style: isPortrait
                         ? AppTextStyle.tabletPortraitTextfieldHeader
                         : AppTextStyle.mobileTextfieldHeader,
@@ -940,7 +1012,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               Row(
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.password,
+                    appLocalizations.password,
                     style: isPortrait
                         ? AppTextStyle.tabletPortraitTextfieldHeader
                         : AppTextStyle.mobileTextfieldHeader,
@@ -998,8 +1070,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       ),
       child: TextField(
         decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.enter_username,
-          hintStyle: isPortrait
+          hintText: appLocalizations.enter_username,
+          hintStyle: isPortrait && !isMobileSize
               ? AppTextStyle.tabletPortraitTextfieldHintText
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
@@ -1036,8 +1108,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       child: TextField(
         obscureText: true,
         decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.enter_password,
-          hintStyle: isPortrait
+          hintText: appLocalizations.enter_password,
+          hintStyle: isPortrait && !isMobileSize
               ? AppTextStyle.tabletPortraitTextfieldHintText
               : AppTextStyle.mobileTextfieldHintText,
           border: InputBorder.none,
