@@ -2,12 +2,14 @@ package io.mosip.registration.clientmanager.spi;
 
 import io.mosip.registration.clientmanager.dto.PacketStatusRequest;
 import io.mosip.registration.clientmanager.dto.PacketStatusResponse;
+import io.mosip.registration.clientmanager.dto.PreRegArchiveDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,5 +85,5 @@ public interface SyncRestService {
                                       @HeaderMap Map<String, String> headers,
                                       @Query("keyindex") String keyindex);
     @GET("/preregistration/v1/sync/{pre_registration_id}/{stationId}")
-    Call<ResponseWrapper<Map<String, Object>>> getPreRegistrationData(@Query("pre_registration_id") String preRegistrationId, @Query("stationId") String stationId);
+    Call<ResponseWrapper<PreRegArchiveDto>> getPreRegistrationData(@Path("pre_registration_id") String preRegistrationId, @Path("stationId") String stationId, @Query("version") String version);
 }

@@ -13,20 +13,26 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
+import io.mosip.registration.clientmanager.dto.ResponseDto;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncServiceImpl;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration_client.model.DashBoardPigeon;
+import lombok.val;
 
 @Singleton
 public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     private UserDetailDao userDetailDao;
     private RegistrationRepository registrationRepository;
+    private PreRegistrationDataSyncService preRegistrationData;
 
     @Inject
-    public DashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository){
+    public DashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository,PreRegistrationDataSyncService preRegistrationData){
         this.userDetailDao = userDetailDao;
         this.registrationRepository = registrationRepository;
+        this.preRegistrationData = preRegistrationData;
     };
 
     @Override
@@ -52,6 +58,8 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     @Override
     public void getPacketUploadedDetails(@NonNull DashBoardPigeon.Result<Long> result) {
         int uploadedValues = 0;
+        ResponseDto response = this.preRegistrationData.getPreRegistration("40872612530435",false);
+        Log.i("get","Getting pre reg id.."+ response.getSuccessResponseDTO());
         try{
             uploadedValues = this.registrationRepository.getAllRegistrationByStatus(PacketClientStatus.UPLOADED.name());
 //            List<String> response = new ArrayList<>();

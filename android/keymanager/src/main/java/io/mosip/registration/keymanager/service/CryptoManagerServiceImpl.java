@@ -167,7 +167,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         return cipher.doFinal(data);
     }
 
-    private byte[] symmetricEncrypt(SecretKey secretKey, byte[] data, byte[] aad) throws Exception {
+    public byte[] symmetricEncrypt(SecretKey secretKey, byte[] data, byte[] aad) throws Exception {
         final Cipher cipher = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
         SecretKeySpec keySpec = new SecretKeySpec(secretKey.getEncoded(), AES);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec);
@@ -186,7 +186,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         return cipher.doFinal(data);
     }
 
-    private byte[] generateAadAndEncryptData(SecretKey secretKey, String data) throws Exception {
+    public byte[] generateAadAndEncryptData(SecretKey secretKey, String data) throws Exception {
         Log.i(TAG,"Provided AAD value is null or empty byte array. So generating random 32 bytes for AAD.");
         byte[] aad = generateRandomBytes(GCM_AAD_LENGTH);
         byte[] nonce = copyOfRange(aad, 0, GCM_NONCE_LENGTH);

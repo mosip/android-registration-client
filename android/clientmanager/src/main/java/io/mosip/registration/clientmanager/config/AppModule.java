@@ -12,10 +12,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
+import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.service.*;
-import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -240,4 +242,16 @@ public class AppModule {
     TemplateService TemplateService(MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository) {
         return new TemplateService(appContext, masterDataService, identitySchemaRepository);
     }
+
+    @Provides
+    @Singleton
+    PreRegistrationDataSyncService PreRegistrationDataSyncService(PreRegistrationDataSyncDao preRegistrationDao, MasterDataService masterDataService, SyncRestService syncRestService) {
+        return new PreRegistrationDataSyncServiceImpl(appContext, preRegistrationDao, masterDataService, syncRestService);
+    }
+    @Provides
+    @Singleton
+    PreRegistrationDataSyncDao PreRegistrationDataSyncDao(PreRegistrationDataSyncRepositoryDao preRegistrationRepositoryDao) {
+        return new PreRegistrationDataSyncDaoImpl(preRegistrationRepositoryDao);
+    }
+
 }

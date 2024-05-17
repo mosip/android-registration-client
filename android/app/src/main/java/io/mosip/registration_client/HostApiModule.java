@@ -32,6 +32,7 @@ import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -221,8 +222,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
-        return new DashBoardDetailsApi(userDetailDao, registrationRepository);
+    DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository, PreRegistrationDataSyncService preRegistrationData) {
+        return new DashBoardDetailsApi(userDetailDao, registrationRepository,preRegistrationData);
     }
 }
 

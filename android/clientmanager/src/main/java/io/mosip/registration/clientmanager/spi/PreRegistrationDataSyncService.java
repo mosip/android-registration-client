@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.spi;
 
+import io.mosip.registration.clientmanager.dto.ResponseDto;
+
 public interface PreRegistrationDataSyncService {
-    public ResponseDTO getPreRegistration(String preRegistrationId, boolean forceDownload);
+    ResponseDto getPreRegistration(String preRegistrationId, boolean forceDownload);
 }

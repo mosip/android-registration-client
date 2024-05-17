@@ -57,6 +57,7 @@ public class RegistrationDto extends Observable {
     private String rId;
     private String flowType;
     private String process;
+    private String preRegistrationId;
     private Double schemaVersion;
     private List<String> selectedLanguages;
     private ConsentDto consentDto;
@@ -415,5 +416,8 @@ public class RegistrationDto extends Observable {
         if(hasChanged()) { clearChanged(); }
         setChanged();
         notifyObservers(getMVELDataContext());
+    }
+    public void addAllDocument(String fieldId, DocumentDto value) {
+        this.documents.put(fieldId, value);
     }
 }
