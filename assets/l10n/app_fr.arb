@@ -216,5 +216,13 @@
   "onboarded": "Intégré",
   "sync_alert_title": "Synchronisation pour continuer!",
   "sync_alert_content": "La machine ou le centre n'est pas actif. Activez et synchronisez pour continuer.",
-  "sync_alert_text": "Synchroniser"
+  "sync_alert_text": "Synchroniser",
+  "onboarded_successfully": "Vous avez été intégré avec succès.",
+  "operator_biometric_updated_successfully": "Les données biométriques de l'opérateur ont été mises à jour avec succès.",
+  "home": "MAISON",
+  "verify_and_save": "VÉRIFIER ET ENREGISTRER",
+  "supervisors_biometric_verification": "Supervisor's Biometric Verification",
+  "help_topics": "Sujets d'aide",
+  "onboard_request_message": "Veuillez appuyer sur le bouton Get Onboard pour vous intégrer au portail."
+  "hello_s": "Bonjour "
 }
