@@ -221,7 +221,7 @@
   "operator_biometric_updated_successfully": "Les données biométriques de l'opérateur ont été mises à jour avec succès.",
   "home": "MAISON",
   "verify_and_save": "VÉRIFIER ET ENREGISTRER",
-  "supervisors_biometric_verification": "Supervisor's Biometric Verification",
+  "supervisors_biometric_verification": "Vérification biométrique du superviseur",
   "help_topics": "Sujets d'aide",
   "onboard_request_message": "Veuillez appuyer sur le bouton Get Onboard pour vous intégrer au portail.",
   "hello_s": "Bonjour "
