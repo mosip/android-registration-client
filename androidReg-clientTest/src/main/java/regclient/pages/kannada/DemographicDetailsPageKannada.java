@@ -132,6 +132,12 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್")
 	private WebElement errorMessageInvalidInputText;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement calenderIcon;
+	
+	@AndroidFindBy(accessibility = "ಸ್ಕ್ರಿಮ್")
+	private WebElement backgroundScreen;
 
 	public DemographicDetailsPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -369,5 +375,13 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 		}else
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+	}
+	
+	public  void selectCurrentCalenderDate() {
+		clickOnElement(calenderIcon);		
+	}
+	
+	public  void closeCalender() {
+		clickOnElement(backgroundScreen);		
 	}
 }

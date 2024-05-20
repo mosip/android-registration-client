@@ -133,6 +133,12 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "مدخل غير صالح")
 	private WebElement errorMessageInvalidInputText;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement calenderIcon;
+	
+	@AndroidFindBy(accessibility = "تمويه")
+	private WebElement backgroundScreen;
 
 	public DemographicDetailsPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -374,6 +380,12 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 	}
 
-
+	public  void selectCurrentCalenderDate() {
+		clickOnElement(calenderIcon);		
+	}
+	
+	public  void closeCalender() {
+		clickOnElement(backgroundScreen);		
+	}
 
 }

@@ -70,8 +70,26 @@ public class BasePage {
 	protected void clickAndsendKeysToTextBox(WebElement element, String text) {
 		this.waitForElementToBeVisible(element);
 		element.click();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		element.clear();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		element.sendKeys(text);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		((HidesKeyboard) driver).hideKeyboard();
 	}
 

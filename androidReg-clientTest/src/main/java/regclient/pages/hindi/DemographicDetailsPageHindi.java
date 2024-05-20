@@ -133,6 +133,12 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "अमान्य निवेश")
 	private WebElement errorMessageInvalidInputText;
 	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement calenderIcon;
+	
+	@AndroidFindBy(accessibility = "स्क्रिम")
+	private WebElement backgroundScreen;
+	
 	public DemographicDetailsPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
@@ -371,4 +377,11 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 	}
 
+	public  void selectCurrentCalenderDate() {
+		clickOnElement(calenderIcon);		
+	}
+	
+	public  void closeCalender() {
+		clickOnElement(backgroundScreen);		
+	}
 }
