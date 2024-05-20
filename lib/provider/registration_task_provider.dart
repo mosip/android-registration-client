@@ -35,6 +35,7 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   String _previewTemplate = "";
   String _acknowledgementTemplate = "";
+  String _lastSuccessfulUpdatedTime = "";
 
   List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
@@ -43,6 +44,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get acknowledgementTemplate => _acknowledgementTemplate;
   String get registrationStartError => _registrationStartError;
   bool get isRegistrationSaved => _isRegistrationSaved;
+  String get lastSuccessfulUpdatedTime => _lastSuccessfulUpdatedTime;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
@@ -230,5 +232,15 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<List<DashBoardData?>> getDashBoardDetails() async {
     return await dashBoard.getDashBoardDetails();
+  }
+
+  getLastUpdatedTime() async {
+    UpdatedTimeData lastUpdatedTime = await dashBoard.getUpdatedTime();
+    setLastSuccessfulSyncTime(lastUpdatedTime.updatedTime!);
+  }
+
+  setLastSuccessfulSyncTime(String syncTime) {
+    _lastSuccessfulUpdatedTime = syncTime;
+    notifyListeners();
   }
 }

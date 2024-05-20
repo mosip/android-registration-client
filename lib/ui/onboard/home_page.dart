@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
   late RegistrationTaskProvider registrationTaskProvider;
   late ConnectivityProvider connectivityProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  String lastOperatorUpdateBiometricTime = "";
 
   @override
   void initState() {
@@ -82,6 +83,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _fetchProcessSpec() async {
+    await registrationTaskProvider.getLastUpdatedTime();
     await registrationTaskProvider.getListOfProcesses();
     await _getFieldValues("preferredLang", globalProvider.selectedLanguage);
     await globalProvider.getRegCenterName(
@@ -127,6 +129,15 @@ class _HomePageState extends State<HomePage> {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     appLocalizations = AppLocalizations.of(context)!;
 
+
+    try {
+      String dateString = context.watch<RegistrationTaskProvider>().lastSuccessfulUpdatedTime;
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(dateString));
+      lastOperatorUpdateBiometricTime = DateFormat("EEEE d MMMM, hh:mma").format(dateTime);
+    } catch (e) {
+      lastOperatorUpdateBiometricTime = "";
+    }
+
     List<Map<String, dynamic>> operationalTasks = [
       {
         "icon": SvgPicture.asset(
@@ -164,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) =>
                       OperatorOnboardingBiometricsCaptureControl()));
         },
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+        "subtitle": lastOperatorUpdateBiometricTime.toString(),
       },
       {
         "icon": SvgPicture.asset(
