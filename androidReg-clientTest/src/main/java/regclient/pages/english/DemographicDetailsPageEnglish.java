@@ -41,7 +41,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(accessibility = "Female")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.widget.HorizontalScrollView/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Residence Status\")]/parent::android.view.View/parent::android.widget.Button")
