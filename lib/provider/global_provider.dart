@@ -40,10 +40,20 @@ class GlobalProvider with ChangeNotifier {
   String _centerName = "";
   String _machineName = "";
   final formKey = GlobalKey<FormState>();
+  final updateFieldKey = GlobalKey<FormState>();
+  String _updateUINNumber = "";
   String _onboardingProcessName="";
-  String get onboardingProcessName=>_onboardingProcessName;
+  String get updateUINNumber => _updateUINNumber;
+  String get onboardingProcessName => _onboardingProcessName;
+
   set onboardingProcessName(String value) {
     _onboardingProcessName = value;
+    notifyListeners();
+  }
+
+  set updateUINNumber(String value) {
+    _updateUINNumber = value;
+    notifyListeners();
   }
 
   Process? _currentProcess;
@@ -770,5 +780,15 @@ class GlobalProvider with ChangeNotifier {
   addToSelectedFieldList(String id) {
     _selectedFieldList.add(id);
     notifyListeners();
+  }
+
+  clearRegistrationProcessData() {
+    clearMap();
+    clearScannedPages();
+    newProcessTabIndex = 0;
+    htmlBoxTabIndex = 0;
+    setRegId("");
+    selectedUpdateFields = {};
+    updateUINNumber = "";
   }
 }

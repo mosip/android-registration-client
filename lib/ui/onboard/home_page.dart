@@ -96,12 +96,14 @@ class _HomePageState extends State<HomePage> {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW" || process.id == "UPDATE") {
-      globalProvider.clearMap();
-      globalProvider.clearScannedPages();
-      globalProvider.newProcessTabIndex = 0;
-      globalProvider.htmlBoxTabIndex = 0;
-      globalProvider.setRegId("");
-      globalProvider.selectedUpdateFields = {};
+      // globalProvider.clearMap();
+      // globalProvider.clearScannedPages();
+      // globalProvider.newProcessTabIndex = 0;
+      // globalProvider.htmlBoxTabIndex = 0;
+      // globalProvider.setRegId("");
+      // globalProvider.selectedUpdateFields = {};
+      // globalProvider.updateUINNumber = "";
+      globalProvider.clearRegistrationProcessData();
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&

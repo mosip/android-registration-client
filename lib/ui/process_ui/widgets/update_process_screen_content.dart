@@ -41,7 +41,8 @@ class UpdateProcessScreenContent extends StatefulWidget {
       _UpdateProcessScreenContentState();
 }
 
-class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent> {
+class _UpdateProcessScreenContentState
+    extends State<UpdateProcessScreenContent> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
 
@@ -50,6 +51,7 @@ class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent>
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
+
     super.initState();
   }
 
@@ -63,7 +65,7 @@ class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent>
       }
     }
 
-    if(e.id == "preferredLang") {
+    if (e.id == "preferredLang") {
       return const SizedBox.shrink();
     }
 
@@ -121,7 +123,9 @@ class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent>
 
   evaluateMVELVisible(
       String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider.evaluateMVELVisible(fieldData, expression!).then((value) {
+    registrationTaskProvider
+        .evaluateMVELVisible(fieldData, expression!)
+        .then((value) {
       if (!value) {
         globalProvider.removeFieldFromMap(
             e.id!, globalProvider.fieldInputValue);
@@ -133,19 +137,24 @@ class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent>
 
   evaluateMVELRequired(
       String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider.evaluateMVELRequired(fieldData, expression!).then((value) {
+    registrationTaskProvider
+        .evaluateMVELRequired(fieldData, expression!)
+        .then((value) {
+      if (!value) {
+        globalProvider.removeFieldFromMap(
+            e.id!, globalProvider.fieldInputValue);
+        registrationTaskProvider.removeDemographicField(e.id!);
+      }
       globalProvider.setMvelRequiredFields(e.id!, value);
     });
   }
 
   checkMvelVisible(Field e) async {
-    if (e.required == false) {
-      if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
-        await evaluateMVELVisible(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
-            e.requiredOn?[0]?.expr, e);
-        await evaluateMVELRequired(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
-            e.requiredOn?[0]?.expr, e);
-      }
+    if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
+      await evaluateMVELVisible(jsonEncode(e.toJson()),
+          e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
+      await evaluateMVELRequired(jsonEncode(e.toJson()),
+          e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
     }
   }
 
@@ -157,9 +166,15 @@ class _UpdateProcessScreenContentState extends State<UpdateProcessScreenContent>
         children: [
           ...widget.screen.fields!.map((e) {
             checkMvelVisible(e!);
-            if(e.group!.toLowerCase() == "consent" || e.group!.toLowerCase() == "consenttext") {
+            if (e.group!.toLowerCase() == "consent" ||
+                e.group!.toLowerCase() == "consenttext") {
               return widgetType(e);
             } else if (globalProvider.selectedUpdateFields[e.group] != null) {
+              return widgetType(e);
+            } else if (context
+                    .watch<GlobalProvider>()
+                    .mvelRequiredFields[e.id] ??
+                false) {
               return widgetType(e);
             }
             return Container();

@@ -272,6 +272,11 @@ class _UpdateProcessState extends State<UpdateProcess>
               newProcess.screens!.length + postRegistrationTabs.length - 1) {
         globalProvider.newProcessTabIndex =
             globalProvider.newProcessTabIndex - 1;
+      } else if (globalProvider.newProcessTabIndex == 0 &&
+          fieldSelectionCompleted) {
+        setState(() {
+          fieldSelectionCompleted = false;
+        });
       } else {
         return true;
       }
@@ -333,62 +338,64 @@ class _UpdateProcessState extends State<UpdateProcess>
     }
 
     customValidation(int currentIndex) async {
-      bool isValid = true;
+      if (currentIndex == 0 && !fieldSelectionCompleted) {
+        if (globalProvider.selectedUpdateFields.isEmpty ||
+            globalProvider.updateFieldKey.currentState == null ||
+            !globalProvider.updateFieldKey.currentState!.validate()) {
+          return false;
+        }
+      }
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
         for (int i = 0; i < screen.fields!.length; i++) {
           String group = screen.fields!.elementAt(i)!.group!;
-          if(globalProvider.selectedUpdateFields[group] == null) {
-            return isValid;
-          }
-          if (screen.fields!.elementAt(i)!.required!) {
-            if (!(globalProvider.fieldInputValue
-                    .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                !(globalProvider.fieldInputValue
-                    .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                !(globalProvider.fieldInputValue.containsKey(
-                    "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-              isValid = false;
-
-              break;
+          String fieldId = screen.fields!.elementAt(i)!.id!;
+          if (globalProvider.selectedUpdateFields[group] != null) {
+            if (screen.fields!.elementAt(i)!.required!) {
+              if (!(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                  !(globalProvider.fieldInputValue.containsKey(
+                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+                return false;
+              }
             }
-          }
-          if (screen.fields!.elementAt(i)!.requiredOn != null &&
-              screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
-            bool visible = await evaluateMVELVisible(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
-            bool required = await evaluateMVELRequired(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
-                log("field: ${screen.fields!.elementAt(i)!.id} \n visible: $visible \n required: $required");
-            if (visible && required) {
-              if (screen.fields!.elementAt(i)!.inputRequired!) {
-                if (!(globalProvider.fieldInputValue
-                        .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                    !(globalProvider.fieldInputValue
-                        .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                    !(globalProvider.fieldInputValue.containsKey(
-                        "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-                  isValid = false;
-
-                  break;
-                }
+            if (globalProvider.mvelRequiredFields[fieldId] ?? false) {
+              if (!(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                  !(globalProvider.fieldInputValue.containsKey(
+                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+                return false;
+              }
+            }
+          } else {
+            if (globalProvider.mvelRequiredFields[fieldId] ?? false) {
+              if (!(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
+                  !(globalProvider.fieldInputValue.containsKey(
+                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+                return false;
               }
             }
           }
         }
       }
-      return isValid;
+      return true;
     }
 
     continueButtonTap(BuildContext context, int size, newProcess) async {
-      if (globalProvider.selectedUpdateFields.isEmpty) {
-        return;
+      if (globalProvider.newProcessTabIndex == 0 && !fieldSelectionCompleted) {
+        if (globalProvider.selectedUpdateFields.isEmpty ||
+            globalProvider.updateFieldKey.currentState == null ||
+            !globalProvider.updateFieldKey.currentState!.validate()) {
+          log("validation failed");
+          return;
+        }
       }
       if (!fieldSelectionCompleted) {
         setState(() {
@@ -404,8 +411,7 @@ class _UpdateProcessState extends State<UpdateProcess>
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
               templateTitleMap = {
-                'demographicInfo':
-                    appLocalizations.demographic_information,
+                'demographicInfo': appLocalizations.demographic_information,
                 'documents': appLocalizations.documents,
                 'bioMetrics': appLocalizations.biometrics,
               };
@@ -451,12 +457,16 @@ class _UpdateProcessState extends State<UpdateProcess>
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      continueButton = value &&
-          globalProvider.formKey.currentState != null &&
-          globalProvider.formKey.currentState!.validate();
+      if (globalProvider.newProcessTabIndex == 0 && !fieldSelectionCompleted) {
+        continueButton = value;
+      } else {
+        continueButton = value &&
+            globalProvider.formKey.currentState != null &&
+            globalProvider.formKey.currentState!.validate();
 
-      if (globalProvider.newProcessTabIndex >= size) {
-        continueButton = true;
+        if (globalProvider.newProcessTabIndex >= size) {
+          continueButton = true;
+        }
       }
     });
 
@@ -501,7 +511,13 @@ class _UpdateProcessState extends State<UpdateProcess>
                                   ),
                                 ),
                                 onPressed: () {
-                                  Navigator.of(context).pop();
+                                  if (!fieldSelectionCompleted) {
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    setState(() {
+                                      fieldSelectionCompleted = false;
+                                    });
+                                  }
                                 },
                               )
                             : const SizedBox(),
@@ -517,12 +533,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                             minimumSize: MaterialStateProperty.all<Size>(
                                 const Size(209, 52)),
                             backgroundColor: MaterialStateProperty.all<Color>(
-                                context
-                                        .watch<GlobalProvider>()
-                                        .selectedUpdateFields
-                                        .isNotEmpty
-                                    ? solidPrimary
-                                    : Colors.grey),
+                                continueButton ? solidPrimary : Colors.grey),
                           ),
                           child: SizedBox(
                             height: isPortrait && !isMobileSize ? 68.h : 52.h,
@@ -661,160 +672,172 @@ class _UpdateProcessState extends State<UpdateProcess>
                           ),
                         ),
                         SizedBox(
-                          height:  30.h,
+                          height: 30.h,
                         ),
-                        fieldSelectionCompleted ? Divider(
-                          height: 12.h,
-                          thickness: 1,
-                          color: secondaryColors.elementAt(2),
-                        ) : const SizedBox(),
-                        fieldSelectionCompleted ? Padding(
-                          padding: isPortrait
-                              ? const EdgeInsets.all(0)
-                              : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
-                          child: Stack(
-                            alignment: FractionalOffset.centerRight,
-                            children: [
-                              Padding(
+                        fieldSelectionCompleted
+                            ? Divider(
+                                height: 12.h,
+                                thickness: 1,
+                                color: secondaryColors.elementAt(2),
+                              )
+                            : const SizedBox(),
+                        fieldSelectionCompleted
+                            ? Padding(
                                 padding: isPortrait
-                                    ? EdgeInsets.fromLTRB(20.w, 10.h, 0, 0)
-                                    : EdgeInsets.fromLTRB(0, 10.h, 0, 0),
-                                child: SizedBox(
-                                  height: 36.h,
-                                  child: ListView.builder(
-                                      padding: const EdgeInsets.all(0),
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: newProcess.screens!.length + 3,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            if (context
-                                                    .read<GlobalProvider>()
-                                                    .newProcessTabIndex ==
-                                                size + 2) {
-                                              return;
-                                            }
+                                    ? const EdgeInsets.all(0)
+                                    : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
+                                child: Stack(
+                                  alignment: FractionalOffset.centerRight,
+                                  children: [
+                                    Padding(
+                                      padding: isPortrait
+                                          ? EdgeInsets.fromLTRB(
+                                              20.w, 10.h, 0, 0)
+                                          : EdgeInsets.fromLTRB(0, 10.h, 0, 0),
+                                      child: SizedBox(
+                                        height: 36.h,
+                                        child: ListView.builder(
+                                            padding: const EdgeInsets.all(0),
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount:
+                                                newProcess.screens!.length + 3,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  if (context
+                                                          .read<
+                                                              GlobalProvider>()
+                                                          .newProcessTabIndex ==
+                                                      size + 2) {
+                                                    return;
+                                                  }
 
-                                            if (index <
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .newProcessTabIndex) {
-                                              context
-                                                  .read<GlobalProvider>()
-                                                  .newProcessTabIndex = index;
-                                            }
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8.h),
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                        color: (context
-                                                                    .watch<
-                                                                        GlobalProvider>()
-                                                                    .newProcessTabIndex ==
-                                                                index)
-                                                            ? pureWhite
-                                                            : Colors
-                                                                .transparent,
-                                                        width: 3),
-                                                  ),
-                                                ),
+                                                  if (index <
+                                                      context
+                                                          .read<
+                                                              GlobalProvider>()
+                                                          .newProcessTabIndex) {
+                                                    context
+                                                        .read<GlobalProvider>()
+                                                        .newProcessTabIndex = index;
+                                                  }
+                                                },
                                                 child: Row(
                                                   children: [
-                                                    (index <
-                                                            context
-                                                                .watch<
-                                                                    GlobalProvider>()
-                                                                .newProcessTabIndex)
-                                                        ? Icon(
-                                                            Icons.check_circle,
-                                                            size: 17,
-                                                            color:
-                                                                secondaryColors
-                                                                    .elementAt(
-                                                                        11),
-                                                          )
-                                                        : (context
-                                                                    .watch<
-                                                                        GlobalProvider>()
-                                                                    .newProcessTabIndex ==
-                                                                index)
-                                                            ? Icon(
-                                                                Icons.circle,
-                                                                color:
-                                                                    pureWhite,
-                                                                size: 17,
-                                                              )
-                                                            : Icon(
-                                                                Icons
-                                                                    .circle_outlined,
-                                                                size: 17,
-                                                                color: secondaryColors
-                                                                    .elementAt(
-                                                                        9),
-                                                              ),
-                                                    SizedBox(
-                                                      width: 6.w,
-                                                    ),
-                                                    Text(
-                                                      index < size
-                                                          ? newProcess
-                                                                  .screens![index]!
-                                                                  .label![
-                                                              context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .selectedLanguage]!
-                                                          : postRegistrationTabs[
-                                                              index - size],
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleSmall
-                                                          ?.copyWith(
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              0, 0, 0, 8.h),
+                                                      decoration: BoxDecoration(
+                                                        border: Border(
+                                                          bottom: BorderSide(
                                                               color: (context
                                                                           .watch<
                                                                               GlobalProvider>()
                                                                           .newProcessTabIndex ==
                                                                       index)
                                                                   ? pureWhite
-                                                                  : secondaryColors
+                                                                  : Colors
+                                                                      .transparent,
+                                                              width: 3),
+                                                        ),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          (index <
+                                                                  context
+                                                                      .watch<
+                                                                          GlobalProvider>()
+                                                                      .newProcessTabIndex)
+                                                              ? Icon(
+                                                                  Icons
+                                                                      .check_circle,
+                                                                  size: 17,
+                                                                  color: secondaryColors
                                                                       .elementAt(
-                                                                          9),
-                                                              fontWeight:
-                                                                  semiBold,
-                                                              fontSize: 14),
+                                                                          11),
+                                                                )
+                                                              : (context
+                                                                          .watch<
+                                                                              GlobalProvider>()
+                                                                          .newProcessTabIndex ==
+                                                                      index)
+                                                                  ? Icon(
+                                                                      Icons
+                                                                          .circle,
+                                                                      color:
+                                                                          pureWhite,
+                                                                      size: 17,
+                                                                    )
+                                                                  : Icon(
+                                                                      Icons
+                                                                          .circle_outlined,
+                                                                      size: 17,
+                                                                      color: secondaryColors
+                                                                          .elementAt(
+                                                                              9),
+                                                                    ),
+                                                          SizedBox(
+                                                            width: 6.w,
+                                                          ),
+                                                          Text(
+                                                            index < size
+                                                                ? newProcess
+                                                                        .screens![
+                                                                            index]!
+                                                                        .label![
+                                                                    context
+                                                                        .read<
+                                                                            GlobalProvider>()
+                                                                        .selectedLanguage]!
+                                                                : postRegistrationTabs[
+                                                                    index -
+                                                                        size],
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .titleSmall
+                                                                ?.copyWith(
+                                                                    color: (context.watch<GlobalProvider>().newProcessTabIndex ==
+                                                                            index)
+                                                                        ? pureWhite
+                                                                        : secondaryColors
+                                                                            .elementAt(
+                                                                                9),
+                                                                    fontWeight:
+                                                                        semiBold,
+                                                                    fontSize:
+                                                                        14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 35.w,
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                width: 35.w,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }),
+                                              );
+                                            }),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 36.h,
+                                      width: 25.w,
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      color: solidPrimary,
+                                      child: Icon(
+                                        Icons.arrow_forward_ios_outlined,
+                                        color: pureWhite,
+                                        size: 17,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Container(
-                                height: 36.h,
-                                width: 25.w,
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                color: solidPrimary,
-                                child: Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  color: pureWhite,
-                                  size: 17,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ) : const SizedBox.shrink(),
+                              )
+                            : const SizedBox.shrink(),
                         const SizedBox(
                           height: 5,
                         ),

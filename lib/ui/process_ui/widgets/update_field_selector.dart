@@ -34,6 +34,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, List<Field>> fieldsMap = {};
+  final RegExp validation = RegExp(r'^([0-9]{10})$');
 
   @override
   void initState() {
@@ -158,27 +159,35 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                 ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 8),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    textCapitalization: TextCapitalization.words,
-                    onChanged: (value) async {},
-                    validator: (value) {
-                      if (value == null) {
-                        return "Please enter a valid UIN";
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: appGreyShade, width: 1),
+                  child: Form(
+                    key: context.watch<GlobalProvider>().updateFieldKey,
+                    child: TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      textCapitalization: TextCapitalization.words,
+                      initialValue: globalProvider.updateUINNumber,
+                      onChanged: (value) {
+                        globalProvider.updateUINNumber = value;
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return "Please enter a valid UIN";
+                        } else if(!validation.hasMatch(value)) {
+                          return "Please enter a valid UIN";
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide:
+                              const BorderSide(color: appGreyShade, width: 1),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14, horizontal: 16),
+                        hintText: "Enter UIN Number",
+                        hintStyle:
+                            const TextStyle(color: appBlackShade3, fontSize: 14),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 14, horizontal: 16),
-                      hintText: "Enter UIN Number",
-                      hintStyle:
-                          const TextStyle(color: appBlackShade3, fontSize: 14),
                     ),
                   ),
                 ),
