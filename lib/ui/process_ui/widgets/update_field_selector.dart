@@ -35,12 +35,14 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, List<Field>> fieldsMap = {};
   final RegExp validation = RegExp(r'^([0-9]{10})$');
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
+        controller = TextEditingController(text: globalProvider.updateUINNumber);
     for (var screen in widget.process.screens!) {
       for (var field in screen!.fields!) {
         if(fieldsMap[field!.group!] == null) {
@@ -164,7 +166,8 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                     child: TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       textCapitalization: TextCapitalization.words,
-                      initialValue: globalProvider.updateUINNumber,
+                      // initialValue: globalProvider.updateUINNumber,
+                      controller: controller,
                       onChanged: (value) {
                         globalProvider.updateUINNumber = value;
                       },

@@ -338,12 +338,8 @@ class _UpdateProcessState extends State<UpdateProcess>
     }
 
     customValidation(int currentIndex) async {
-      if (currentIndex == 0 && !fieldSelectionCompleted) {
-        if (globalProvider.selectedUpdateFields.isEmpty ||
-            globalProvider.updateFieldKey.currentState == null ||
-            !globalProvider.updateFieldKey.currentState!.validate()) {
-          return false;
-        }
+      if (currentIndex == 0) {
+        return true;
       }
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
@@ -393,7 +389,6 @@ class _UpdateProcessState extends State<UpdateProcess>
         if (globalProvider.selectedUpdateFields.isEmpty ||
             globalProvider.updateFieldKey.currentState == null ||
             !globalProvider.updateFieldKey.currentState!.validate()) {
-          log("validation failed");
           return;
         }
       }
@@ -457,16 +452,21 @@ class _UpdateProcessState extends State<UpdateProcess>
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      if (globalProvider.newProcessTabIndex == 0 && !fieldSelectionCompleted) {
-        continueButton = value;
+      if (globalProvider.newProcessTabIndex == 0) {
+        if (!fieldSelectionCompleted) {
+          continueButton = globalProvider.updateFieldKey.currentState != null &&
+              globalProvider.updateFieldKey.currentState!.validate();
+        } else {
+          continueButton = true;
+        }
       } else {
         continueButton = value &&
             globalProvider.formKey.currentState != null &&
             globalProvider.formKey.currentState!.validate();
+      }
 
-        if (globalProvider.newProcessTabIndex >= size) {
-          continueButton = true;
-        }
+      if (globalProvider.newProcessTabIndex >= size) {
+        continueButton = true;
       }
     });
 
@@ -490,7 +490,7 @@ class _UpdateProcessState extends State<UpdateProcess>
               vertical: 16.h,
             ),
             // height: isPortrait ? 94.h : 84.h,
-            child: globalProvider.newProcessTabIndex == 0
+            child: context.watch<GlobalProvider>().newProcessTabIndex == 0
                 ? Row(
                     children: [
                       Expanded(
@@ -533,7 +533,15 @@ class _UpdateProcessState extends State<UpdateProcess>
                             minimumSize: MaterialStateProperty.all<Size>(
                                 const Size(209, 52)),
                             backgroundColor: MaterialStateProperty.all<Color>(
-                                continueButton ? solidPrimary : Colors.grey),
+                                !fieldSelectionCompleted
+                                    ? (context
+                                                .watch<GlobalProvider>()
+                                                .selectedUpdateFields
+                                                .isNotEmpty &&
+                                            continueButton)
+                                        ? solidPrimary
+                                        : Colors.grey
+                                    : solidPrimary),
                           ),
                           child: SizedBox(
                             height: isPortrait && !isMobileSize ? 68.h : 52.h,
@@ -705,22 +713,18 @@ class _UpdateProcessState extends State<UpdateProcess>
                                                 int index) {
                                               return GestureDetector(
                                                 onTap: () {
-                                                  if (context
-                                                          .read<
-                                                              GlobalProvider>()
+                                                  if (globalProvider
                                                           .newProcessTabIndex ==
                                                       size + 2) {
                                                     return;
                                                   }
 
                                                   if (index <
-                                                      context
-                                                          .read<
-                                                              GlobalProvider>()
+                                                      globalProvider
                                                           .newProcessTabIndex) {
-                                                    context
-                                                        .read<GlobalProvider>()
-                                                        .newProcessTabIndex = index;
+                                                    globalProvider
+                                                            .newProcessTabIndex =
+                                                        index;
                                                   }
                                                 },
                                                 child: Row(
