@@ -6,7 +6,6 @@
 */
 
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +16,7 @@ import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -337,6 +337,76 @@ class _UpdateProcessState extends State<UpdateProcess>
       return i;
     }
 
+    biometricRequiredFieldValidation(Field field) async {
+      if (field.controlType == "biometrics") {
+        int count = returnBiometricListLength(field.bioAttributes, field.id!);
+        if (globalProvider.completeException[field.id!] != null) {
+          int length = globalProvider.completeException[field.id!].length;
+          count = count - length;
+        }
+
+        if (globalProvider.fieldInputValue[field.id!].length < count) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    biometricConditionalFieldValidation(Field field) async {
+      bool valid = await BiometricsApi().conditionalBioAttributeValidation(
+          field.id!, field.conditionalBioAttributes!.first!.validationExpr!);
+      if (field.exceptionPhotoRequired == true) {
+        List<BiometricAttributeData> biometricAttributeDataList =
+            globalProvider.fieldInputValue[field.id!];
+        bool isExceptionPresent = false;
+        bool isExceptionAttributePresent = false;
+        for (var biometricAttributeData in biometricAttributeDataList) {
+          if (globalProvider.exceptionAttributes
+              .contains(biometricAttributeData.title)) {
+            isExceptionPresent = true;
+          }
+          if (biometricAttributeData.title == "Exception") {
+            isExceptionAttributePresent = true;
+          }
+        }
+        if (isExceptionPresent == true &&
+            isExceptionAttributePresent == false) {
+          return false;
+        }
+      }
+      if (!valid) {
+        return false;
+      }
+      return true;
+    }
+
+    biometricValidation(Field field) async {
+      if (field.conditionalBioAttributes != null &&
+          field.conditionalBioAttributes!.isNotEmpty) {
+        String response = await BiometricsApi().getAgeGroup();
+        if (response
+                .compareTo(field.conditionalBioAttributes!.first!.ageGroup!) !=
+            0) {
+          bool isValid = await biometricRequiredFieldValidation(field);
+          if (!isValid) {
+            return false;
+          }
+        }
+
+        if (response
+                .compareTo(field.conditionalBioAttributes!.first!.ageGroup!) ==
+            0) {
+          bool isValid = await biometricConditionalFieldValidation(field);
+          if (!isValid) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
     customValidation(int currentIndex) async {
       if (currentIndex == 0) {
         return true;
@@ -344,38 +414,41 @@ class _UpdateProcessState extends State<UpdateProcess>
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
         for (int i = 0; i < screen.fields!.length; i++) {
-          String group = screen.fields!.elementAt(i)!.group!;
-          String fieldId = screen.fields!.elementAt(i)!.id!;
+          Field field = screen.fields!.elementAt(i)!;
+          String group = field.group!;
+          String fieldId = field.id!;
           if (globalProvider.selectedUpdateFields[group] != null) {
-            if (screen.fields!.elementAt(i)!.required!) {
-              if (!(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
+            if (field.required! ||
+                (globalProvider.mvelRequiredFields[fieldId] ?? false)) {
+              if (!(globalProvider.fieldInputValue.containsKey(field.id)) &&
                   !(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                  !(globalProvider.fieldInputValue.containsKey(
-                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+                      .containsKey(field.subType)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey("${field.group}${field.subType}"))) {
                 return false;
               }
-            }
-            if (globalProvider.mvelRequiredFields[fieldId] ?? false) {
-              if (!(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                  !(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                  !(globalProvider.fieldInputValue.containsKey(
-                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+
+              bool isValid = await biometricValidation(field);
+              if (!isValid) {
                 return false;
               }
             }
           } else {
             if (globalProvider.mvelRequiredFields[fieldId] ?? false) {
-              if (!(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.id)) &&
+              if (!(globalProvider.fieldInputValue.containsKey(field.id)) &&
                   !(globalProvider.fieldInputValue
-                      .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                  !(globalProvider.fieldInputValue.containsKey(
-                      "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
+                      .containsKey(field.subType)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey("${field.group}${field.subType}"))) {
                 return false;
+              }
+
+              if (field.conditionalBioAttributes != null &&
+                  field.conditionalBioAttributes!.isNotEmpty) {
+                bool isValid = await biometricConditionalFieldValidation(field);
+                if (!isValid) {
+                  return false;
+                }
               }
             }
           }

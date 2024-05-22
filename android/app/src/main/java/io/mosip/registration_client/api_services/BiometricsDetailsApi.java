@@ -631,7 +631,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                     }
                 }
             }
-            Log.i(TAG, "Printing Map: " + dataContext);
+//            Log.i(TAG, "Printing Map: " + dataContext);
             Boolean response = UserInterfaceHelperService.evaluateValidationExpression(expression, dataContext);
             result.success(response);
         } catch (Exception e) {

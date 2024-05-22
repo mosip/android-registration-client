@@ -75,7 +75,7 @@ class _UpdateProcessScreenContentState
         if (e.subType == "gender") {
           return RadioButtonControl(field: e);
         }
-        if(e.group!.toLowerCase() == "consent") {
+        if (e.group!.toLowerCase() == "consent") {
           return TermsAndConditions(field: e);
         }
         return CheckboxControl(field: e);
@@ -174,7 +174,11 @@ class _UpdateProcessScreenContentState
                 e.group!.toLowerCase() == "consenttext") {
               return widgetType(e);
             } else if (globalProvider.selectedUpdateFields[e.group] != null) {
-              return widgetType(e);
+              if (e.group!.toLowerCase() != "biometrics" ||
+                  (e.required! ||
+                      (globalProvider.mvelRequiredFields[e.id] ?? false))) {
+                return widgetType(e);
+              }
             } else if (context
                     .watch<GlobalProvider>()
                     .mvelRequiredFields[e.id] ??

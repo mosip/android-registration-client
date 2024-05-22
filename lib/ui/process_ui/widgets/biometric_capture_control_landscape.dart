@@ -142,11 +142,18 @@ class _BiometricCaptureControlLandscapeState
                       .chooseLanguage(widget.field.label!),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontSize: 20, color: blackShade1, fontWeight: semiBold),
-                  children: const [
-                    TextSpan(
-                      text: " *",
-                      style: TextStyle(color: Colors.red, fontSize: 15),
-                    )
+                  children: [
+                    if (widget.field.required! ||
+                        (widget.field.requiredOn != null &&
+                            widget.field.requiredOn!.isNotEmpty &&
+                            (context
+                                    .read<GlobalProvider>()
+                                    .mvelRequiredFields[widget.field.id] ??
+                                false)))
+                      const TextSpan(
+                        text: " *",
+                        style: TextStyle(color: Colors.red, fontSize: 15),
+                      )
                   ],
                 ))
               : Text(
@@ -351,7 +358,8 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Iris")
                   BiometricCaptureScanBlock(
-                    title: "${AppLocalizations.of(context)!.iris} ${AppLocalizations.of(context)!.scan}",
+                    title:
+                        "${AppLocalizations.of(context)!.iris} ${AppLocalizations.of(context)!.scan}",
                     middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -366,7 +374,8 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Right Hand")
                   BiometricCaptureScanBlock(
-                      title: "${AppLocalizations.of(context)!.right_hand} ${AppLocalizations.of(context)!.scan}",
+                      title:
+                          "${AppLocalizations.of(context)!.right_hand} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -381,7 +390,8 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Left Hand")
                   BiometricCaptureScanBlock(
-                      title: "${AppLocalizations.of(context)!.left_hand} ${AppLocalizations.of(context)!.scan}",
+                      title:
+                          "${AppLocalizations.of(context)!.left_hand} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -396,7 +406,8 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Thumbs")
                   BiometricCaptureScanBlock(
-                      title: "${AppLocalizations.of(context)!.thumbs} ${AppLocalizations.of(context)!.scan}",
+                      title:
+                          "${AppLocalizations.of(context)!.thumbs} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -411,7 +422,8 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Face")
                   BiometricCaptureScanBlock(
-                      title: "${AppLocalizations.of(context)!.face} ${AppLocalizations.of(context)!.scan}",
+                      title:
+                          "${AppLocalizations.of(context)!.face} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -426,7 +438,8 @@ class _BiometricCaptureControlLandscapeState
                         .biometricAttribute ==
                     "Exception")
                   BiometricCaptureScanBlock(
-                      title: "${AppLocalizations.of(context)!.exception} ${AppLocalizations.of(context)!.scan}",
+                      title:
+                          "${AppLocalizations.of(context)!.exception} ${AppLocalizations.of(context)!.scan}",
                       middleBlock: BiometricScanMiddleBlock(
                         biometricAttributeData: context
                             .read<BiometricCaptureControlProvider>()
@@ -464,8 +477,7 @@ class _BiometricCaptureControlLandscapeState
                                     InkWell(
                                       onTap: () async {
                                         if (!(biometricCaptureControlProvider
-                                                .iris
-                                                .exceptions
+                                                .iris.exceptions
                                                 .elementAt(0)) ==
                                             true) {
                                           await BiometricsApi().addBioException(
@@ -531,9 +543,9 @@ class _BiometricCaptureControlLandscapeState
                                               .customSetterIris(
                                                   "0", "thresholdPercentage");
                                         }
-                                        List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                            .iris
-                                            .exceptions;
+                                        List<bool> exceptionListCopy =
+                                            biometricCaptureControlProvider
+                                                .iris.exceptions;
                                         exceptionListCopy[0] =
                                             !(exceptionListCopy.elementAt(0));
                                         biometricCaptureControlProvider
@@ -541,21 +553,17 @@ class _BiometricCaptureControlLandscapeState
                                                 "exceptions");
 
                                         if (biometricCaptureControlProvider
-                                            .iris
-                                            .exceptions
+                                            .iris.exceptions
                                             .contains(true)) {
                                           if (biometricCaptureControlProvider
-                                              .iris
-                                              .exceptionType
-                                              .isEmpty) {
+                                              .iris.exceptionType.isEmpty) {
                                             biometricCaptureControlProvider
                                                 .customSetterIris("Permanent",
                                                     "exceptionType");
                                           }
                                         }
                                         if (!biometricCaptureControlProvider
-                                            .iris
-                                            .exceptions
+                                            .iris.exceptions
                                             .contains(true)) {
                                           biometricCaptureControlProvider
                                               .customSetterIris(
@@ -568,8 +576,7 @@ class _BiometricCaptureControlLandscapeState
                                       ),
                                     ),
                                     (biometricCaptureControlProvider
-                                                .iris
-                                                .exceptions[0] ==
+                                                .iris.exceptions[0] ==
                                             true)
                                         ? Positioned(
                                             top: 0,
@@ -601,8 +608,7 @@ class _BiometricCaptureControlLandscapeState
                                     InkWell(
                                       onTap: () async {
                                         if (!(biometricCaptureControlProvider
-                                                .iris
-                                                .exceptions
+                                                .iris.exceptions
                                                 .elementAt(1)) ==
                                             true) {
                                           await BiometricsApi().addBioException(
@@ -669,30 +675,26 @@ class _BiometricCaptureControlLandscapeState
                                                   "0", "thresholdPercentage");
                                         }
 
-                                        List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                            .iris
-                                            .exceptions;
+                                        List<bool> exceptionListCopy =
+                                            biometricCaptureControlProvider
+                                                .iris.exceptions;
                                         exceptionListCopy[1] =
                                             !(exceptionListCopy.elementAt(1));
                                         biometricCaptureControlProvider
                                             .customSetterIris(exceptionListCopy,
                                                 "exceptions");
                                         if (biometricCaptureControlProvider
-                                            .iris
-                                            .exceptions
+                                            .iris.exceptions
                                             .contains(true)) {
                                           if (biometricCaptureControlProvider
-                                              .iris
-                                              .exceptionType
-                                              .isEmpty) {
+                                              .iris.exceptionType.isEmpty) {
                                             biometricCaptureControlProvider
                                                 .customSetterIris("Permanent",
                                                     "exceptionType");
                                           }
                                         }
                                         if (!biometricCaptureControlProvider
-                                            .iris
-                                            .exceptions
+                                            .iris.exceptions
                                             .contains(true)) {
                                           biometricCaptureControlProvider
                                               .customSetterIris(
@@ -705,8 +707,7 @@ class _BiometricCaptureControlLandscapeState
                                       ),
                                     ),
                                     (biometricCaptureControlProvider
-                                                .iris
-                                                .exceptions[1] ==
+                                                .iris.exceptions[1] ==
                                             true)
                                         ? Positioned(
                                             top: 0,
@@ -761,8 +762,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .rightHand
-                                                  .exceptions
+                                                  .rightHand.exceptions
                                                   .elementAt(0)) ==
                                               true) {
                                             await BiometricsApi()
@@ -830,9 +830,9 @@ class _BiometricCaptureControlLandscapeState
                                                     "0", "thresholdPercentage");
                                           }
 
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .rightHand.exceptions;
                                           exceptionListCopy[0] =
                                               !(exceptionListCopy.elementAt(0));
                                           biometricCaptureControlProvider
@@ -841,8 +841,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .rightHand
@@ -855,8 +854,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand(
@@ -882,8 +880,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .rightHand
-                                                  .exceptions
+                                                  .rightHand.exceptions
                                                   .elementAt(1)) ==
                                               true) {
                                             await BiometricsApi()
@@ -951,9 +948,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterRightHand(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .rightHand.exceptions;
                                           exceptionListCopy[1] =
                                               !(exceptionListCopy.elementAt(1));
                                           biometricCaptureControlProvider
@@ -962,8 +959,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .rightHand
@@ -976,8 +972,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand(
@@ -1003,8 +998,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .rightHand
-                                                  .exceptions
+                                                  .rightHand.exceptions
                                                   .elementAt(2)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1071,9 +1065,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterRightHand(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .rightHand.exceptions;
                                           exceptionListCopy[2] =
                                               !(exceptionListCopy.elementAt(2));
                                           biometricCaptureControlProvider
@@ -1082,8 +1076,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .rightHand
@@ -1096,8 +1089,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand(
@@ -1123,8 +1115,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .rightHand
-                                                  .exceptions
+                                                  .rightHand.exceptions
                                                   .elementAt(3)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1191,9 +1182,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterRightHand(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .rightHand.exceptions;
                                           exceptionListCopy[3] =
                                               !(exceptionListCopy.elementAt(3));
                                           biometricCaptureControlProvider
@@ -1202,8 +1193,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .rightHand
@@ -1216,8 +1206,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .rightHand
-                                              .exceptions
+                                              .rightHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterRightHand(
@@ -1281,8 +1270,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .leftHand
-                                                  .exceptions
+                                                  .leftHand.exceptions
                                                   .elementAt(0)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1349,9 +1337,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterLeftHand(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .leftHand.exceptions;
                                           exceptionListCopy[0] =
                                               !(exceptionListCopy.elementAt(0));
                                           biometricCaptureControlProvider
@@ -1360,8 +1348,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .leftHand
@@ -1374,8 +1361,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand(
@@ -1401,8 +1387,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .leftHand
-                                                  .exceptions
+                                                  .leftHand.exceptions
                                                   .elementAt(1)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1469,9 +1454,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterLeftHand(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .leftHand.exceptions;
                                           exceptionListCopy[1] =
                                               !(exceptionListCopy.elementAt(1));
                                           biometricCaptureControlProvider
@@ -1480,8 +1465,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .leftHand
@@ -1494,8 +1478,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand(
@@ -1521,8 +1504,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .leftHand
-                                                  .exceptions
+                                                  .leftHand.exceptions
                                                   .elementAt(2)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1589,9 +1571,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterLeftHand(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .leftHand.exceptions;
                                           exceptionListCopy[2] =
                                               !(exceptionListCopy.elementAt(2));
                                           biometricCaptureControlProvider
@@ -1600,8 +1582,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .leftHand
@@ -1614,8 +1595,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand(
@@ -1641,8 +1621,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .leftHand
-                                                  .exceptions
+                                                  .leftHand.exceptions
                                                   .elementAt(3)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1709,9 +1688,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterLeftHand(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .leftHand.exceptions;
                                           exceptionListCopy[3] =
                                               !(exceptionListCopy.elementAt(3));
                                           biometricCaptureControlProvider
@@ -1720,8 +1699,7 @@ class _BiometricCaptureControlLandscapeState
                                                   "exceptions");
 
                                           if (biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
                                                 .leftHand
@@ -1734,8 +1712,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .leftHand
-                                              .exceptions
+                                              .leftHand.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterLeftHand(
@@ -1798,8 +1775,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .thumbs
-                                                  .exceptions
+                                                  .thumbs.exceptions
                                                   .elementAt(0)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1819,9 +1795,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterThumbs(
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
-                                                .customSetterThumbs([
-                                              "assets/svg/Thumbs.svg"
-                                            ], "listofImages");
+                                                .customSetterThumbs(
+                                                    ["assets/svg/Thumbs.svg"],
+                                                    "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
                                             biometricCaptureControlProvider
@@ -1851,9 +1827,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterThumbs(
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
-                                                .customSetterThumbs([
-                                              "assets/svg/Thumbs.svg"
-                                            ], "listofImages");
+                                                .customSetterThumbs(
+                                                    ["assets/svg/Thumbs.svg"],
+                                                    "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
                                             biometricCaptureControlProvider
@@ -1868,9 +1844,9 @@ class _BiometricCaptureControlLandscapeState
                                                     "0", "thresholdPercentage");
                                           }
 
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .thumbs
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .thumbs.exceptions;
                                           exceptionListCopy[0] =
                                               !(exceptionListCopy.elementAt(0));
                                           biometricCaptureControlProvider
@@ -1878,13 +1854,10 @@ class _BiometricCaptureControlLandscapeState
                                                   exceptionListCopy,
                                                   "exceptions");
                                           if (biometricCaptureControlProvider
-                                              .thumbs
-                                              .exceptions
+                                              .thumbs.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
-                                                .thumbs
-                                                .exceptionType
-                                                .isEmpty) {
+                                                .thumbs.exceptionType.isEmpty) {
                                               biometricCaptureControlProvider
                                                   .customSetterThumbs(
                                                       "Permanent",
@@ -1892,8 +1865,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .thumbs
-                                              .exceptions
+                                              .thumbs.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterThumbs(
@@ -1919,8 +1891,7 @@ class _BiometricCaptureControlLandscapeState
                                       child: InkWell(
                                         onTap: () async {
                                           if (!(biometricCaptureControlProvider
-                                                  .thumbs
-                                                  .exceptions
+                                                  .thumbs.exceptions
                                                   .elementAt(1)) ==
                                               true) {
                                             await BiometricsApi()
@@ -1939,9 +1910,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterThumbs(
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
-                                                .customSetterThumbs([
-                                              "assets/svg/Thumbs.svg"
-                                            ], "listofImages");
+                                                .customSetterThumbs(
+                                                    ["assets/svg/Thumbs.svg"],
+                                                    "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
                                             biometricCaptureControlProvider
@@ -1971,9 +1942,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterThumbs(
                                                     0, "attemptNo");
                                             biometricCaptureControlProvider
-                                                .customSetterThumbs([
-                                              "assets/svg/Thumbs.svg"
-                                            ], "listofImages");
+                                                .customSetterThumbs(
+                                                    ["assets/svg/Thumbs.svg"],
+                                                    "listofImages");
                                             List<BiometricsDto>
                                                 listOfBiometrics = [];
                                             biometricCaptureControlProvider
@@ -1987,9 +1958,9 @@ class _BiometricCaptureControlLandscapeState
                                                 .customSetterThumbs(
                                                     "0", "thresholdPercentage");
                                           }
-                                          List<bool> exceptionListCopy = biometricCaptureControlProvider
-                                              .thumbs
-                                              .exceptions;
+                                          List<bool> exceptionListCopy =
+                                              biometricCaptureControlProvider
+                                                  .thumbs.exceptions;
                                           exceptionListCopy[1] =
                                               !(exceptionListCopy.elementAt(1));
                                           biometricCaptureControlProvider
@@ -1997,13 +1968,10 @@ class _BiometricCaptureControlLandscapeState
                                                   exceptionListCopy,
                                                   "exceptions");
                                           if (biometricCaptureControlProvider
-                                              .thumbs
-                                              .exceptions
+                                              .thumbs.exceptions
                                               .contains(true)) {
                                             if (biometricCaptureControlProvider
-                                                .thumbs
-                                                .exceptionType
-                                                .isEmpty) {
+                                                .thumbs.exceptionType.isEmpty) {
                                               biometricCaptureControlProvider
                                                   .customSetterThumbs(
                                                       "Permanent",
@@ -2011,8 +1979,7 @@ class _BiometricCaptureControlLandscapeState
                                             }
                                           }
                                           if (!biometricCaptureControlProvider
-                                              .thumbs
-                                              .exceptions
+                                              .thumbs.exceptions
                                               .contains(true)) {
                                             biometricCaptureControlProvider
                                                 .customSetterThumbs(

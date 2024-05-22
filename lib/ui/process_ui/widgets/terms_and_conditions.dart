@@ -11,9 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 
-import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 class TermsAndConditions extends StatefulWidget {
