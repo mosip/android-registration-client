@@ -61,28 +61,28 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Postale\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectPostal;
 
-	@AndroidFindBy(accessibility = "14022")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
 	private WebElement selectPostalCode;
 
-	@AndroidFindBy(accessibility = "Non-étranger")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-étranger\")")
 	private WebElement nonForeignerValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Étrangère")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Étrangère\")")
 	private WebElement foreignerValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Seule")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Seule\")")
 	private WebElement singleValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Rabat-Salé-Kénitra")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Rabat-Salé-Kénitra\")")
 	private WebElement rabatSaleKenitraValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Kénitra")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Kénitra\")]")
 	private WebElement kenitraValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Rabat")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Rabat\")]")
 	private WebElement rabatValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "Ben Mansour")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ben Mansour\")")
 	private WebElement benMansourFromDropdown;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Statut de résidence\"))")
@@ -132,6 +132,12 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "Entrée invalide")
 	private WebElement errorMessageInvalidInputText;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement calenderIcon;
+	
+	@AndroidFindBy(accessibility = "Fond")
+	private WebElement backgroundScreen;
 	
 	public DemographicDetailsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -280,14 +286,14 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	public  void selectProvinceStatus(String province) {
 		clickOnElement(selectProvinceStatus);
 		if(province.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayedOnScreen(kenitraValueFromDropdown)) {
+			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(province.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
+			if(!isElementDisplayed(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(rabatValueFromDropdown);
@@ -298,14 +304,14 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	public  void selectCityStatus(String city) {
 		clickOnElement(selectCityStatus);
 		if(city.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayed(kenitraValueFromDropdown,10)) {
+			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(city.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
+			if(!isElementDisplayed(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(rabatValueFromDropdown);
@@ -370,5 +376,12 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 		}else
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 	}
-
+	
+	public  void selectCurrentCalenderDate() {
+		clickOnElement(calenderIcon);		
+	}
+	
+	public  void closeCalender() {
+		clickOnElement(backgroundScreen);		
+	}
 }

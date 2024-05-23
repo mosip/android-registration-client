@@ -29,6 +29,12 @@ public class PreviewPageArabic extends PreviewPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
 	private WebElement biometricsInformationInPreviewPage;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 1 )\"))")
+	private WebElement singleIrisImage;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 2 )\"))")
+	private WebElement bothIrisImage;
+	
 	@AndroidFindBy(accessibility = "يكمل")
 	private WebElement continueButton;
 	
@@ -64,6 +70,14 @@ public class PreviewPageArabic extends PreviewPage {
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageArabic(driver);
+	}
+	
+	public boolean isBothIrisImageDisplayed() {
+		return isElementDisplayed(bothIrisImage);
+	}
+	
+	public boolean isSingleIrisImageDisplayed() {
+		return isElementDisplayed(singleIrisImage);
 	}
 
 }

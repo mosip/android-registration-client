@@ -13,20 +13,26 @@ public class PreviewPageHindi extends PreviewPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"नया पंजीकरण\"))")
 	private WebElement newRegistrationTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"जनसांख्यिकीय जानकारी\"))")
 	private WebElement demographicInformationInPreviewPage;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Application ID\"))")
 	private WebElement applicationIDPreviewPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Documents\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"दस्तावेज़\"))")
 	private WebElement documentsInformationInPreviewPage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"जनसांख्यिकीय विवरण\"))")
 	private WebElement demographicDetailsTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"बॉयोमेट्रिक्स\"))")
 	private WebElement biometricsInformationInPreviewPage;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 1 )\"))")
+	private WebElement singleIrisImage;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 2 )\"))")
+	private WebElement bothIrisImage;
 	
 	@AndroidFindBy(accessibility = "जारी रखें")
 	private WebElement continueButton;
@@ -63,6 +69,14 @@ public class PreviewPageHindi extends PreviewPage{
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageHindi(driver);
+	}
+	
+	public boolean isBothIrisImageDisplayed() {
+		return isElementDisplayed(bothIrisImage);
+	}
+	
+	public boolean isSingleIrisImageDisplayed() {
+		return isElementDisplayed(singleIrisImage);
 	}
 
 }

@@ -6,6 +6,8 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
+import regclient.page.RegistrationTasksPage;
+
 
 public class ConsentPageKannada extends ConsentPage{
 
@@ -17,6 +19,12 @@ public class ConsentPageKannada extends ConsentPage{
 
 	@AndroidFindBy(accessibility = "ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ")
 	private WebElement informedButton;
+
+	@AndroidFindBy(accessibility = "ರದ್ದುಮಾಡು")
+	private WebElement cancelButton;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ನನ್ನ ಪಿಐಐ ಹಂಚಿಕೊಳ್ಳಲು ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ\"))")
+	private WebElement checkBoxDiscription;
 	
 	public ConsentPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -26,6 +34,10 @@ public class ConsentPageKannada extends ConsentPage{
 		return isElementDisplayed(consentPage);
 	}
 
+	public boolean isCheckBoxReadable() {
+		return isElementDisplayed(checkBoxDiscription);
+	}
+	
 	public  void selectTermAndConditionCheckbox() {
 		clickOnElement(termAndConditionCheckBox);
 		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
@@ -44,4 +56,10 @@ public class ConsentPageKannada extends ConsentPage{
 		clickOnElement(informedButton);
 		return new DemographicDetailsPageKannada(driver);
 	}
+	
+	public RegistrationTasksPage clickOnCancelButton() {
+		clickOnElement(cancelButton);
+		return new  RegistrationTasksPageKannada(driver);
+	}
+
 }
