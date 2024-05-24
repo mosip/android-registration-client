@@ -7,6 +7,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
+import regclient.pages.english.ConsentPageEnglish;
+import regclient.pages.english.DocumentuploadPageEnglish;
 
 public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 
@@ -85,34 +87,34 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ben Mansour\")")
 	private WebElement benMansourFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Statut de résidence\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Statut de résidence\")")
 	private WebElement residenceStatusHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Région\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Région\")")
 	private WebElement regionHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Province\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Province\")")
 	private WebElement provinceHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Ville\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ville\")")
 	private WebElement cityHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Zone\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Zone\")")
 	private WebElement zoneHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Postale\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Postale\")")
 	private WebElement postalCodeHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Téléphoner\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Téléphoner\")")
 	private WebElement mobileNumberHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"E-mail\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"E-mail\")")
 	private WebElement emailHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"nom del'introducteur\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"nom del'introducteur\")")
 	private WebElement introducerNameHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducteur RID\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Introducteur RID\")")
 	private WebElement introducerRidHeader;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Téléphoner\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
@@ -136,6 +138,9 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
 	private WebElement calenderIcon;
 	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement getSelectedDate;
+	
 	@AndroidFindBy(accessibility = "Fond")
 	private WebElement backgroundScreen;
 	
@@ -153,7 +158,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	
 	public  ConsentPage clickOnConsentPageTitle() {
 		clickOnElement(consentTitle);
-		return new ConsentPageFrench(driver);
+		return new ConsentPageEnglish(driver);
 	}
 
 	public  void enterFullName(String fullName) {
@@ -193,34 +198,58 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	}
 
 	public boolean isResidenceStatusHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(residenceStatusHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(residenceStatusHeader);
 	}
 
 	public boolean isRegionHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(regionHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(regionHeader);
 	}
 
 	public boolean isProvinceHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(provinceHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(provinceHeader);
 	}
 
 	public boolean isCityHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(cityHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(cityHeader);
 	}
 
 	public boolean isPostalCodeHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(postalCodeHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(postalCodeHeader);
 	}
 
 	public boolean isMobileNumberHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(mobileNumberHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(mobileNumberHeader);
 	}
 
 	public boolean isZoneHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(zoneHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(zoneHeader);
 	}
 
 	public boolean isEmailHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(emailHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(emailHeader);
 	}
 	
@@ -341,7 +370,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 
 	public  DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentUploadPageFrench(driver);
+		return new DocumentuploadPageEnglish(driver);
 
 	}
 
@@ -361,20 +390,20 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 	}
 	
-	public  void enterIntroducerName(String EmailID) {
+	public  void enterIntroducerName(String introducerName) {
 		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 		}else
-		clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 	}
 	
-	public  void enterIntroducerRid(String EmailID) {
+	public  void enterIntroducerRid(String introducerRid) {
 		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 		}else
-		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 	}
 	
 	public  void selectCurrentCalenderDate() {
@@ -383,5 +412,13 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	
 	public  void closeCalender() {
 		clickOnElement(backgroundScreen);		
+	}
+	
+	public  boolean checkDateFormatAndCurrectDate() {
+		getTextFromLocator(getSelectedDate);
+		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
+			return	true;
+		else
+			return false;
 	}
 }

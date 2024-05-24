@@ -399,6 +399,8 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
 		applicantBiometricsPage.markOneEyeException();
+		
+		assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if exception count is displayed");
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
 		
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
@@ -422,6 +424,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnClosePopUp();
 
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
+		assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if exception count is displayed");
 		applicantBiometricsPage.clickOnRightHandScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
 
@@ -440,6 +443,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnClosePopUp();
 		
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception type is displayed");
+		assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if exception count is displayed");
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
 		
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
@@ -463,6 +467,8 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
 		applicantBiometricsPage.markOneFingureException();
+		
+		assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if exception count is displayed");
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
 		
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
@@ -515,6 +521,8 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			previewPage=new PreviewPageArabic(driver);
 		}
+		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
+		assertTrue(previewPage.isFingerExceptionText(),"Verify if finger exception  In PreviewPage is displayed");
 		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");

@@ -41,7 +41,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(accessibility = "Female")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.view.View/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.widget.HorizontalScrollView/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Residence Status\")]/parent::android.view.View/parent::android.widget.Button")
@@ -136,6 +136,9 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
 	private WebElement calenderIcon;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement getSelectedDate;
 	
 	@AndroidFindBy(accessibility = "Scrim")
 	private WebElement backgroundScreen;
@@ -387,20 +390,20 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 	}
 	
-	public  void enterIntroducerName(String EmailID) {
+	public  void enterIntroducerName(String introducerName) {
 		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 		}else
-		clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 	}
 	
-	public  void enterIntroducerRid(String EmailID) {
+	public  void enterIntroducerRid(String introducerRid) {
 		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 		}else
-		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 	}
 	
 	public  void selectCurrentCalenderDate() {
@@ -409,5 +412,13 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	
 	public  void closeCalender() {
 		clickOnElement(backgroundScreen);		
+	}
+	
+	public  boolean checkDateFormatAndCurrectDate() {
+		getTextFromLocator(getSelectedDate);
+		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
+			return	true;
+		else
+			return false;
 	}
 }

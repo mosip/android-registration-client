@@ -7,6 +7,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
+import regclient.pages.english.ConsentPageEnglish;
+import regclient.pages.english.DocumentuploadPageEnglish;
 
 
 public class DemographicDetailsPageTamil extends DemographicDetailsPage{
@@ -41,7 +43,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "பெண்")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"சிவில் நிலை\")]/parent::android.widget.HorizontalScrollView/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"சிவில் நிலை\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"குடியிருப்பு நிலை\")]/parent::android.view.View/parent::android.widget.Button")
@@ -86,34 +88,34 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"பென் மன்சூர்\")")
 	private WebElement benMansourFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"குடியிருப்பு நிலை\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"குடியிருப்பு நிலை\")")
 	private WebElement residenceStatusHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"பிராந்தியம்\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"பிராந்தியம்\")")
 	private WebElement regionHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"மாகாணம்\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"மாகாணம்\")")
 	private WebElement provinceHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"நகரம்\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"நகரம்\")")
 	private WebElement cityHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"மண்டலம்\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"மண்டலம்\")")
 	private WebElement zoneHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"அஞ்சல்\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"அஞ்சல்\")")
 	private WebElement postalCodeHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"தொலைபேசி\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"தொலைபேசி\")")
 	private WebElement mobileNumberHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"மின்னஞ்சல்\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"மின்னஞ்சல்\")")
 	private WebElement emailHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"அறிமுகம் பெயர்\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"அறிமுகம் பெயர்\")")
 	private WebElement introducerNameHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"அறிமுகம் RID\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"அறிமுகம் RID\")")
 	private WebElement introducerRidHeader;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"தொலைபேசி\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
@@ -140,6 +142,10 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "ஸ்க்ரிம்")
 	private WebElement backgroundScreen;
 	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement getSelectedDate;
+	
+	
 	public DemographicDetailsPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -154,7 +160,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	
 	public  ConsentPage clickOnConsentPageTitle() {
 		clickOnElement(consentTitle);
-		return new ConsentPageTamil(driver);
+		return new ConsentPageEnglish(driver);
 	}
 
 	public  void enterFullName(String fullName) {
@@ -194,34 +200,58 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	}
 
 	public boolean isResidenceStatusHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(residenceStatusHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(residenceStatusHeader);
 	}
 
 	public boolean isRegionHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(regionHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(regionHeader);
 	}
 
 	public boolean isProvinceHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(provinceHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(provinceHeader);
 	}
 
 	public boolean isCityHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(cityHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(cityHeader);
 	}
 
 	public boolean isPostalCodeHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(postalCodeHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(postalCodeHeader);
 	}
 
 	public boolean isMobileNumberHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(mobileNumberHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(mobileNumberHeader);
 	}
 
 	public boolean isZoneHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(zoneHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(zoneHeader);
 	}
 
 	public boolean isEmailHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(emailHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(emailHeader);
 	}
 	
@@ -287,14 +317,14 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	public  void selectProvinceStatus(String province) {
 		clickOnElement(selectProvinceStatus);
 		if(province.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayedOnScreen(kenitraValueFromDropdown)) {
+			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(province.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
+			if(!isElementDisplayed(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(rabatValueFromDropdown);
@@ -305,14 +335,14 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	public  void selectCityStatus(String city) {
 		clickOnElement(selectCityStatus);
 		if(city.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayedOnScreen(kenitraValueFromDropdown)) {
+			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(city.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
+			if(!isElementDisplayed(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(rabatValueFromDropdown);
@@ -342,7 +372,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 
 	public  DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentuploadPageTamil(driver);
+		return new DocumentuploadPageEnglish(driver);
 
 	}
 
@@ -362,20 +392,20 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 	}
 	
-	public  void enterIntroducerName(String EmailID) {
+	public  void enterIntroducerName(String introducerName) {
 		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 		}else
-		clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 	}
 	
-	public  void enterIntroducerRid(String EmailID) {
+	public  void enterIntroducerRid(String introducerRid) {
 		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 		}else
-		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 	}
 	
 	public  void selectCurrentCalenderDate() {
@@ -384,5 +414,13 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	
 	public  void closeCalender() {
 		clickOnElement(backgroundScreen);		
+	}
+	
+	public  boolean checkDateFormatAndCurrectDate() {
+		getTextFromLocator(getSelectedDate);
+		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
+			return	true;
+		else
+			return false;
 	}
 }

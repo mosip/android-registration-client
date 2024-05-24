@@ -76,5 +76,7 @@ public abstract class DemographicDetailsPage extends BasePage{
 	public abstract  void selectCurrentCalenderDate();
 	
 	public abstract  void closeCalender();
+	
+	public abstract  boolean checkDateFormatAndCurrectDate();
 
 }

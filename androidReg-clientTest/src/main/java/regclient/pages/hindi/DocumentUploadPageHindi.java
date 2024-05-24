@@ -66,6 +66,16 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 
 	@AndroidFindBy(xpath = "//android.widget.ImageView")
 	private WebElement captureImage;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")
+	private WebElement addressProofReferenceNumberTextbox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पहचान प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")
+	private WebElement identityProofReferenceNumberTextbox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"जन्मतिथि प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")
+	private WebElement dobProofReferenceNumberTextbox;
+
 
 	public DocumentUploadPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -171,14 +181,17 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 	}
 
 	public  boolean isImageDisplyed() {
+		waitTime(1);
 		return isElementDisplayed(captureImage);
 	}
 
 	public  boolean isSecondImageDisplyed() {
+		waitTime(1);
 		return isElementDisplayed(previewSecondCaptureImage);
 	}
 
 	public  boolean isThirdImageDisplyed() {
+		waitTime(1);
 		return isElementDisplayed(previewThirdCaptureImage);
 	}
 
@@ -223,6 +236,28 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 			swipeOrScroll();
 		}
 		return isElementEnabled(scanButtonRelationshipProof);
+	}
+	
+	public  void enterReferenceNumberInAdressProof() {
+		if(!isElementDisplayedOnScreen(addressProofReferenceNumberTextbox)) {
+			swipeOrScroll();
+			clickAndsendKeysToTextBox(addressProofReferenceNumberTextbox,"1234567890");
+		}else
+		clickAndsendKeysToTextBox(addressProofReferenceNumberTextbox,"1234567890");
+	}
+	
+	public  void enterReferenceNumberInIdentityProof() {
+		while(!isElementDisplayedOnScreen(identityProofReferenceNumberTextbox)) {
+			swipeOrScroll();
+		}
+		clickAndsendKeysToTextBox(identityProofReferenceNumberTextbox,"1234567890");
+	}
+	
+	public  void enterReferenceNumberInDobProof() {
+		while(!isElementDisplayedOnScreen(dobProofReferenceNumberTextbox)) {
+			swipeOrScroll();
+		}
+		clickAndsendKeysToTextBox(dobProofReferenceNumberTextbox,"1234567890");
 	}
 
 }

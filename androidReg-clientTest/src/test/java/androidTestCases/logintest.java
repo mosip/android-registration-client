@@ -10,36 +10,43 @@ import regclient.page.BasePage;
 import regclient.page.DashboardPage;
 import regclient.page.LoginPage;
 import regclient.page.OnBoardPage;
+import regclient.page.OperationalTaskPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 import regclient.pages.arabic.DashboardPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.OnBoardPageArabic;
+import regclient.pages.arabic.OperationalTaskPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SupervisorBiometricVerificationpageArabic;
 import regclient.pages.english.DashboardPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.OnBoardPageEnglish;
+import regclient.pages.english.OperationalTaskPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SupervisorBiometricVerificationpageEnglish;
 import regclient.pages.french.DashboardPageFrench;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.OnBoardPageFrench;
+import regclient.pages.french.OperationalTaskPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SupervisorBiometricVerificationpageFrench;
 import regclient.pages.hindi.DashboardPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.OnBoardPageHindi;
+import regclient.pages.hindi.OperationalTaskPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SupervisorBiometricVerificationpageHindi;
 import regclient.pages.kannada.DashboardPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.OnBoardPageKannada;
+import regclient.pages.kannada.OperationalTaskPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SupervisorBiometricVerificationpageKannada;
 import regclient.pages.tamil.DashboardPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.OnBoardPageTamil;
+import regclient.pages.tamil.OperationalTaskPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SupervisorBiometricVerificationpageTamil;
 
@@ -75,6 +82,7 @@ public class logintest  extends AndroidBaseTest {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
 		OnBoardPage onBoardPage=null;
+		OperationalTaskPage operationalTaskPage=null;
 		RegistrationTasksPage registrationTasksPage=null;
 		DashboardPage dashboardPage=null;
 
@@ -178,7 +186,31 @@ public class logintest  extends AndroidBaseTest {
 			registrationTasksPage=new RegistrationTasksPageArabic(driver);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(), "Verify if registration tasks page is loaded");
-		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
+		registrationTasksPage.clickOnOperationalTasksTitle();	
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			operationalTaskPage=new OperationalTaskPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			operationalTaskPage=new OperationalTaskPageHindi(driver);
+
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			operationalTaskPage=new OperationalTaskPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			operationalTaskPage=new OperationalTaskPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			operationalTaskPage=new OperationalTaskPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			operationalTaskPage=new OperationalTaskPageArabic(driver);
+		}
+		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
+
+		operationalTaskPage.clickSynchronizeDataButton();
+		assertTrue(operationalTaskPage.checkLastSyncDate(), "Verify  last sync date and time");
+		
 		registrationTasksPage.clickOnDashboardButton();
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
