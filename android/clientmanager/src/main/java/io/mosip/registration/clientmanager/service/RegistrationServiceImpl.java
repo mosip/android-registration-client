@@ -166,7 +166,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 //        try {
             String individualBiometricsFieldId = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID);
-            String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);Ï
+            String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
 
             for (String fieldName : this.registrationDto.getDemographics().keySet()) {
                 switch (this.registrationDto.getFlowType()) {
