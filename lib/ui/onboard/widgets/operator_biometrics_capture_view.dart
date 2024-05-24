@@ -22,8 +22,18 @@ class OperatorBiometricsCaptureView extends StatefulWidget {
 
 class _OperatorBiometricsCaptureState
     extends State<OperatorBiometricsCaptureView> {
+  late GlobalProvider globalProvider;
   bool isSavingBiometrics = false;
+  late BiometricCaptureControlProvider biometricCaptureControlProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  
+  @override
+  void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    biometricCaptureControlProvider = Provider.of<BiometricCaptureControlProvider>(context, listen: false);
+    super.initState();
+  }
+
 
   Widget _getBiometricCaptureSelectionBlockMobile(
       BiometricAttributeData biometricAttributeData) {
@@ -151,76 +161,57 @@ class _OperatorBiometricsCaptureState
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ElevatedButton(
               onPressed: () async {
-                if ((context
-                    .read<BiometricCaptureControlProvider>()
+                if ((biometricCaptureControlProvider
                     .iris
-                    .isScanned || !context
-                    .read<BiometricCaptureControlProvider>()
+                    .isScanned || !biometricCaptureControlProvider
                     .iris
                     .exceptions.contains(false)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                    (biometricCaptureControlProvider
                         .iris
                         .qualityPercentage >=
-                        int.parse(context
-                            .read<BiometricCaptureControlProvider>()
+                        int.parse(biometricCaptureControlProvider
                             .iris
                             .thresholdPercentage)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                    (biometricCaptureControlProvider
                         .rightHand
-                        .isScanned || !context
-                        .read<BiometricCaptureControlProvider>()
+                        .isScanned || !biometricCaptureControlProvider
                         .rightHand
                         .exceptions.contains(false)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                    (biometricCaptureControlProvider
                         .rightHand
                         .qualityPercentage >=
-                        int.parse(context
-                            .read<BiometricCaptureControlProvider>()
+                        int.parse(biometricCaptureControlProvider
                             .rightHand
-                            .thresholdPercentage)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                            .thresholdPercentage) || !biometricCaptureControlProvider.rightHand.exceptions.contains(false)) &&
+                    (biometricCaptureControlProvider
                         .leftHand
-                        .isScanned|| !context
-                        .read<BiometricCaptureControlProvider>()
+                        .isScanned|| !biometricCaptureControlProvider
                         .leftHand
                         .exceptions.contains(false)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                    (biometricCaptureControlProvider
                         .leftHand
                         .qualityPercentage >=
-                        int.parse(context
-                            .read<BiometricCaptureControlProvider>()
+                        int.parse(biometricCaptureControlProvider
                             .leftHand
-                            .thresholdPercentage)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                            .thresholdPercentage) || !biometricCaptureControlProvider.leftHand.exceptions.contains(false)) &&
+                    (biometricCaptureControlProvider
                         .thumbs
-                        .isScanned|| !context
-                        .read<BiometricCaptureControlProvider>()
+                        .isScanned|| !biometricCaptureControlProvider
                         .thumbs
                         .exceptions.contains(false)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                    (biometricCaptureControlProvider
                         .thumbs
                         .qualityPercentage >=
-                        int.parse(context
-                            .read<BiometricCaptureControlProvider>()
+                        int.parse(biometricCaptureControlProvider
                             .thumbs
-                            .thresholdPercentage)) &&
-                    (context
-                        .read<BiometricCaptureControlProvider>()
+                            .thresholdPercentage) || !biometricCaptureControlProvider.thumbs.exceptions.contains(false)) &&
+                    (biometricCaptureControlProvider
                         .face
                         .qualityPercentage >=
-                        int.parse(context
-                            .read<BiometricCaptureControlProvider>()
+                        int.parse(biometricCaptureControlProvider
                             .face
                             .thresholdPercentage)) &&
-                    context
-                        .read<BiometricCaptureControlProvider>()
+                    biometricCaptureControlProvider
                         .face
                         .isScanned) {
                   setState(() {
@@ -291,7 +282,7 @@ class _OperatorBiometricsCaptureState
                     );
 
                     setState(() {
-                      context.read<GlobalProvider>().setCurrentIndex(1);
+                      globalProvider.setCurrentIndex(1);
                     });
                   }
                 }
@@ -308,78 +299,60 @@ class _OperatorBiometricsCaptureState
                     ?.copyWith(fontSize: 26.h, color: pureWhite),
               ),
               style: OutlinedButton.styleFrom(
-                  backgroundColor: ((context
-                      .read<BiometricCaptureControlProvider>()
+                  backgroundColor: ((biometricCaptureControlProvider
                       .iris
-                      .isScanned || !context
-                      .read<BiometricCaptureControlProvider>()
+                      .isScanned || !biometricCaptureControlProvider
                       .iris
                       .exceptions.contains(false)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                      (biometricCaptureControlProvider
                           .iris
                           .qualityPercentage >=
-                          int.parse(context
-                              .read<BiometricCaptureControlProvider>()
+                          int.parse(biometricCaptureControlProvider
                               .iris
                               .thresholdPercentage)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                      (biometricCaptureControlProvider
                           .rightHand
-                          .isScanned || !context
-                          .read<BiometricCaptureControlProvider>()
+                          .isScanned || !biometricCaptureControlProvider
                           .rightHand
                           .exceptions.contains(false)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                      (biometricCaptureControlProvider
                           .rightHand
                           .qualityPercentage >=
-                          int.parse(context
-                              .read<BiometricCaptureControlProvider>()
+                          int.parse(biometricCaptureControlProvider
                               .rightHand
-                              .thresholdPercentage)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                              .thresholdPercentage) || !biometricCaptureControlProvider.rightHand.exceptions.contains(false)) &&
+                      (biometricCaptureControlProvider
                           .leftHand
-                          .isScanned|| !context
-                          .read<BiometricCaptureControlProvider>()
+                          .isScanned|| !biometricCaptureControlProvider
                           .leftHand
                           .exceptions.contains(false)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                      (biometricCaptureControlProvider
                           .leftHand
                           .qualityPercentage >=
-                          int.parse(context
-                              .read<BiometricCaptureControlProvider>()
+                          int.parse(biometricCaptureControlProvider
                               .leftHand
-                              .thresholdPercentage)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                              .thresholdPercentage) || !biometricCaptureControlProvider.leftHand.exceptions.contains(false)) &&
+                      (biometricCaptureControlProvider
                           .thumbs
-                          .isScanned|| !context
-                          .read<BiometricCaptureControlProvider>()
+                          .isScanned|| !biometricCaptureControlProvider
                           .thumbs
                           .exceptions.contains(false)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                      (biometricCaptureControlProvider
                           .thumbs
                           .qualityPercentage >=
-                          int.parse(context
-                              .read<BiometricCaptureControlProvider>()
+                          int.parse(biometricCaptureControlProvider
                               .thumbs
-                              .thresholdPercentage)) &&
-                      (context
-                          .read<BiometricCaptureControlProvider>()
+                              .thresholdPercentage) || !biometricCaptureControlProvider.thumbs.exceptions.contains(false)) &&
+                      (biometricCaptureControlProvider
                           .face
                           .qualityPercentage >=
-                          int.parse(context
-                              .read<BiometricCaptureControlProvider>()
+                          int.parse(biometricCaptureControlProvider
                               .face
                               .thresholdPercentage)) &&
-                      context
-                          .read<BiometricCaptureControlProvider>()
+                      biometricCaptureControlProvider
                           .face
-                          .isScanned)
+                          .isScanned
+                  )
                       ? solidPrimary
                       : secondaryColors.elementAt(22)),
             ),
@@ -449,72 +422,54 @@ class _OperatorBiometricsCaptureState
                         minItemsPerRow: (isMobileSize) ? 1 : 2,
                         maxItemsPerRow: (isMobileSize) ? 1 : 2,
                         children: [
-                          if (context
-                              .read<GlobalProvider>()
+                          if (globalProvider
                               .operatorOnboardingAttributes
                               .contains("leftEye") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("rightEye"))
-                            _getBiometricCaptureSelectionBlockMobile(context
-                                .read<BiometricCaptureControlProvider>()
+                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
                                 .iris),
-                          if (context
-                              .read<GlobalProvider>()
+                          if (globalProvider
                               .operatorOnboardingAttributes
                               .contains("rightLittle") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("rightRing") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("rightMiddle") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("rightIndex"))
-                            _getBiometricCaptureSelectionBlockMobile(context
-                                .read<BiometricCaptureControlProvider>()
+                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
                                 .rightHand),
-                          if (context
-                              .read<GlobalProvider>()
+                          if (globalProvider
                               .operatorOnboardingAttributes
                               .contains("leftLittle") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("leftRing") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("leftMiddle") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("leftIndex"))
-                            _getBiometricCaptureSelectionBlockMobile(context
-                                .read<BiometricCaptureControlProvider>()
+                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
                                 .leftHand),
-                          if (context
-                              .read<GlobalProvider>()
+                          if (globalProvider
                               .operatorOnboardingAttributes
                               .contains("rightThumb") &&
-                              context
-                                  .read<GlobalProvider>()
+                              globalProvider
                                   .operatorOnboardingAttributes
                                   .contains("leftThumb"))
-                            _getBiometricCaptureSelectionBlockMobile(context
-                                .read<BiometricCaptureControlProvider>()
+                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
                                 .thumbs),
-                          if (context
-                              .read<GlobalProvider>()
+                          if (globalProvider
                               .operatorOnboardingAttributes
                               .contains("face"))
-                            _getBiometricCaptureSelectionBlockMobile(context
-                                .read<BiometricCaptureControlProvider>()
+                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
                                 .face),
                         ]),
                   )
