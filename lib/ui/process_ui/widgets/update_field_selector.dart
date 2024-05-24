@@ -166,10 +166,10 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                     child: TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       textCapitalization: TextCapitalization.words,
-                      // initialValue: globalProvider.updateUINNumber,
                       controller: controller,
                       onChanged: (value) {
                         globalProvider.updateUINNumber = value;
+                        registrationTaskProvider.addDemographicField("UIN", value);
                       },
                       validator: (value) {
                         if (value == null) {

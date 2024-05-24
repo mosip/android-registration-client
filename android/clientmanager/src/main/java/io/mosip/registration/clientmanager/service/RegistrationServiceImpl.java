@@ -166,11 +166,23 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 //        try {
             String individualBiometricsFieldId = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID);
-            String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+            String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);Ï
 
-            this.registrationDto.getAllDemographicFields().forEach(entry -> {
-                packetWriterService.setField(this.registrationDto.getRId(), entry.getKey(), entry.getValue());
-            });
+            for (String fieldName : this.registrationDto.getDemographics().keySet()) {
+                switch (this.registrationDto.getFlowType()) {
+                    case "Update":
+                        if (this.registrationDto.getDemographics().get(fieldName) != null && (this.registrationDto.getUpdatableFields().contains(fieldName) ||
+                                fieldName.equals("UIN")))
+                            packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
+                        break;
+                    case "Correction":
+                    case "Lost":
+                    case "NEW":
+                        if (this.registrationDto.getDemographics().get(fieldName) != null)
+                            packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
+                        break;
+                }
+            }
 
             this.registrationDto.getAllDocumentFields().forEach(entry -> {
                 Document document = new Document();

@@ -283,20 +283,6 @@ class _UpdateProcessState extends State<UpdateProcess>
       return false;
     }
 
-    evaluateMVELVisible(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool visible = await registrationTaskProvider.evaluateMVELVisible(
-          fieldData, expression!);
-      return visible;
-    }
-
-    evaluateMVELRequired(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool required = await registrationTaskProvider.evaluateMVELRequired(
-          fieldData, expression!);
-      return required;
-    }
-
     isExceptionPresent(String id) {
       bool isExceptionPresent = false;
       for (BiometricAttributeData x in globalProvider.fieldInputValue[id]) {
@@ -466,6 +452,9 @@ class _UpdateProcessState extends State<UpdateProcess>
         }
       }
       if (!fieldSelectionCompleted) {
+        globalProvider.clearMap();
+        globalProvider.clearScannedPages();
+        await BiometricsApi().clearBiometricAndDocumentHashmap();
         setState(() {
           fieldSelectionCompleted = true;
         });
