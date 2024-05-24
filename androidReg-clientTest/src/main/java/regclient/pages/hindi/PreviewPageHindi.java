@@ -33,10 +33,11 @@ public class PreviewPageHindi extends PreviewPage{
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 2 )\"))")
 	private WebElement bothIrisImage;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
 	private WebElement fingerExceptionText;
 	
+
 	@AndroidFindBy(accessibility = "जारी रखें")
 	private WebElement continueButton;
 	

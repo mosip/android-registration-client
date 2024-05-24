@@ -6,7 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
-import regclient.pages.english.SupervisorBiometricVerificationpageEnglish;
+
 
 public class OperationalTaskPageTamil extends OperationalTaskPage{
 
@@ -26,12 +26,14 @@ public class OperationalTaskPageTamil extends OperationalTaskPage{
 
 	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
 		clickOnElement(updateOperatorBiometricsButton);
-		return new SupervisorBiometricVerificationpageEnglish(driver);
+		return new SupervisorBiometricVerificationpageTamil(driver);
+
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
 		return isElementDisplayed(systemStorageUsageTitle);
 	}
+
 
 	public  void clickSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);
@@ -45,4 +47,5 @@ public class OperationalTaskPageTamil extends OperationalTaskPage{
 		else
 			return false;
 	}
+
 }

@@ -6,7 +6,8 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
-import regclient.pages.english.SupervisorBiometricVerificationpageEnglish;
+
+
 
 public class OperationalTaskPageKannada extends OperationalTaskPage{
 
@@ -15,23 +16,24 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 	
 	@AndroidFindBy(accessibility = "System Storage Usage")
 	private WebElement systemStorageUsageTitle;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ\")")
 	private WebElement synchronizeDataButton ;
 
-	
 	public OperationalTaskPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
 		clickOnElement(updateOperatorBiometricsButton);
-		return new SupervisorBiometricVerificationpageEnglish(driver);
+		return new SupervisorBiometricVerificationpageKannada(driver);
+
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
 		return isElementDisplayed(systemStorageUsageTitle);
 	}
+
 
 	public  void clickSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);

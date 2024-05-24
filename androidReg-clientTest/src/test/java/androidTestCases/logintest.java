@@ -10,7 +10,9 @@ import regclient.page.BasePage;
 import regclient.page.DashboardPage;
 import regclient.page.LoginPage;
 import regclient.page.OnBoardPage;
+
 import regclient.page.OperationalTaskPage;
+
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 import regclient.pages.arabic.DashboardPageArabic;
@@ -186,6 +188,7 @@ public class logintest  extends AndroidBaseTest {
 			registrationTasksPage=new RegistrationTasksPageArabic(driver);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(), "Verify if registration tasks page is loaded");
+
 		registrationTasksPage.clickOnOperationalTasksTitle();	
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			operationalTaskPage=new OperationalTaskPageEnglish(driver);
@@ -210,7 +213,7 @@ public class logintest  extends AndroidBaseTest {
 
 		operationalTaskPage.clickSynchronizeDataButton();
 		assertTrue(operationalTaskPage.checkLastSyncDate(), "Verify  last sync date and time");
-		
+
 		registrationTasksPage.clickOnDashboardButton();
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {

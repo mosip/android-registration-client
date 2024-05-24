@@ -145,6 +145,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
 	private WebElement getSelectedDate;
 
+
 	public DemographicDetailsPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -422,4 +423,6 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 		else
 			return false;
 	}
+
+
 }

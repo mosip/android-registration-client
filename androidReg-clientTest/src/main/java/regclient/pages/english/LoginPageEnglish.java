@@ -172,6 +172,7 @@ public class LoginPageEnglish extends LoginPage {
 		clickOnElement(englishButton);
 	}
 
+
 	public boolean isSyncCompletedSuccessfullyMessageDisplayed() {
 		return isElementDisplayed(syncCompletedSuccessfullyMessage,2000);
 	}

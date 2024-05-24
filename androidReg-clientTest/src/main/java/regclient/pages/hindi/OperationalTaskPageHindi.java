@@ -6,7 +6,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
-import regclient.pages.english.SupervisorBiometricVerificationpageEnglish;
 
 public class OperationalTaskPageHindi extends OperationalTaskPage{
 
@@ -19,19 +18,21 @@ public class OperationalTaskPageHindi extends OperationalTaskPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"डेटा सिंक्रनाइज़ करें\")")
 	private WebElement synchronizeDataButton ;
 
-	
+
 	public OperationalTaskPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
 		clickOnElement(updateOperatorBiometricsButton);
-		return new SupervisorBiometricVerificationpageEnglish(driver);
+		return new SupervisorBiometricVerificationpageHindi(driver);
+
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
 		return isElementDisplayed(systemStorageUsageTitle);
 	}
+
 
 	public  void clickSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);

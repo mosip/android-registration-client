@@ -8,7 +8,7 @@ import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
 public class OperationalTaskPageEnglish extends OperationalTaskPage{
-	String date=getCurrentDateWord();
+
 
 	@AndroidFindBy(accessibility = "Update Operator Biometrics")
 	private WebElement updateOperatorBiometricsButton;
@@ -19,7 +19,6 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchronize Data\")")
 	private WebElement synchronizeDataButton ;
 
-	
 	public OperationalTaskPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
@@ -45,5 +44,6 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 		else
 			return false;
 	}
+
 	
 }

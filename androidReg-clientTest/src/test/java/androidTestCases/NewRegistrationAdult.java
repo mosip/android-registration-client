@@ -511,6 +511,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
 	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
+
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");

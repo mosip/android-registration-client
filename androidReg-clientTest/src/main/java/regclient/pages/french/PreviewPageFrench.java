@@ -38,6 +38,7 @@ public class PreviewPageFrench extends PreviewPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
 	private WebElement fingerExceptionText;
 	
+
 	@AndroidFindBy(accessibility = "CONTINUER")
 	private WebElement continueButton;
 	

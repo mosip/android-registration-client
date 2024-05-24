@@ -144,6 +144,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
 	private WebElement getSelectedDate;
 
+
 	public DemographicDetailsPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -421,4 +422,5 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 		else
 			return false;
 	}
+	
 }

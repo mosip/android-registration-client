@@ -145,7 +145,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
 	private WebElement getSelectedDate;
 	
-	
+
 	public DemographicDetailsPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -423,4 +423,5 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 		else
 			return false;
 	}
+	
 }
