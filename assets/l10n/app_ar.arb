@@ -223,5 +223,13 @@
   "online": "متصل",
   "offline": "غير متصل على الانترنت",
   "logout_action_required": "لا يزال هناك بعض الإجراءات المطلوبة!",
-  "logout_warning_message": "سيؤدي النقر فوق تسجيل الخروج إلى إنهاء العملية وقد يؤدي إلى فقدان البيانات."
+  "logout_warning_message": "سيؤدي النقر فوق تسجيل الخروج إلى إنهاء العملية وقد يؤدي إلى فقدان البيانات.",
+  "onboarded_successfully": "لقد انضممت بنجاح.",
+  "operator_biometric_updated_successfully": "تم تحديث القياسات الحيوية للمشغل بنجاح.",
+  "home": "بيت",
+  "verify_and_save": "التحقق والحفظ",
+  "supervisors_biometric_verification": "التحقق البيومتري للمشرف",
+  "help_topics": "مواضيع المساعدة",
+  "onboard_request_message": "الرجاء الضغط على زر \"الانضمام\" للانضمام إلى البوابة.",
+  "hello_s": "مرحبًا "
 }

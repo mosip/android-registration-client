@@ -223,5 +223,13 @@
   "online": "ऑनलाइन",
   "offline": "ऑफलाइन",
   "logout_action_required": "अभी भी कुछ कार्रवाई की आवश्यकता है!",
-  "logout_warning_message": "लॉगआउट पर क्लिक करने से प्रक्रिया समाप्त हो जाएगी और डेटा हानि हो सकती है।"
+  "logout_warning_message": "लॉगआउट पर क्लिक करने से प्रक्रिया समाप्त हो जाएगी और डेटा हानि हो सकती है।",
+  "onboarded_successfully": "आप सफलतापूर्वक शामिल हो गए हैं.",
+  "operator_biometric_updated_successfully": "ऑपरेटर बायोमेट्रिक्स सफलतापूर्वक अपडेट किया गया।",
+  "home": "घर",
+  "verify_and_save": "सत्यापित करें और सहेजें",
+  "supervisors_biometric_verification": "पर्यवेक्षक का बायोमेट्रिक सत्यापन",
+  "help_topics": "सहायता के विषय",
+  "onboard_request_message": "कृपया स्वयं को पोर्टल में शामिल करने के लिए गेट ऑनबोर्ड बटन पर टैप करें।",
+  "hello_s": "नमस्ते "
 }

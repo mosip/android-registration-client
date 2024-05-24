@@ -223,5 +223,13 @@
   "online": "Online",
   "offline": "Offline",
   "logout_action_required": "There is still some action required!",
-  "logout_warning_message": "Clicking on logout will terminate the process and could result in data loss."
+  "logout_warning_message": "Clicking on logout will terminate the process and could result in data loss.",
+  "onboarded_successfully": "You have onboarded successfully.",
+  "operator_biometric_updated_successfully": "Operator biometrics updated successfully.",
+  "home": "HOME",
+  "verify_and_save": "VERIFY & SAVE",
+  "supervisors_biometric_verification": "Supervisor's Biometric Verification",
+  "help_topics": "Help topics",
+  "onboard_request_message": "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
+  "hello_s": "Hello "
 }
