@@ -58,21 +58,31 @@ class _LogoutAlertState extends State<LogoutAlert> {
       content: SizedBox(
         width: MediaQuery.of(context).size.width / 1.4,
         height: MediaQuery.of(context).size.height / 6,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-            Text(appLocalizations.logout_action_required,
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: semiBold)),
-            const SizedBox(height: 10),
-            Text(appLocalizations.logout_warning_message),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                height: 15,
+              ),
+              Text(appLocalizations.logout_action_required,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: semiBold)),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Text(appLocalizations.logout_warning_message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontWeight: regular)),
+              ),
+            ],
+          ),
         ),
       ),
       actions: [
