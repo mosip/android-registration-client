@@ -10,6 +10,7 @@ import 'package:registration_client/ui/onboard/widgets/operator_biometric_captur
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OperatorBiometricsCaptureView extends StatefulWidget {
   const OperatorBiometricsCaptureView({super.key});
@@ -24,6 +25,7 @@ class _OperatorBiometricsCaptureState
   late GlobalProvider globalProvider;
   bool isSavingBiometrics = false;
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
+  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   
   @override
   void initState() {
@@ -31,8 +33,8 @@ class _OperatorBiometricsCaptureState
     biometricCaptureControlProvider = Provider.of<BiometricCaptureControlProvider>(context, listen: false);
     super.initState();
   }
-  
-  
+
+
   Widget _getBiometricCaptureSelectionBlockMobile(
       BiometricAttributeData biometricAttributeData) {
     return InkWell(
@@ -248,8 +250,8 @@ class _OperatorBiometricsCaptureState
                               ),
                               SvgPicture.asset(
                                   "assets/svg/success_message_icon.svg"),
-                              Text((globalProvider.onboardingProcessName=="Onboarding")?
-                              "You have onboarded successfully.":"Operator biometrics updated successfully.",
+                              Text((context.read<GlobalProvider>().onboardingProcessName=="Onboarding")?
+                              appLocalizations.onboarded_successfully:appLocalizations.operator_biometric_updated_successfully,
                                 style: TextStyle(
                                     fontSize: 28,
                                     fontWeight: semiBold,
@@ -263,7 +265,7 @@ class _OperatorBiometricsCaptureState
                                   Navigator.pop(context);
                                 },
                                 child: Text(
-                                  "HOME",
+                                  appLocalizations.home,
                                   style: TextStyle(
                                       fontSize: 19,
                                       fontWeight: bold,
@@ -290,7 +292,7 @@ class _OperatorBiometricsCaptureState
                 color: appWhite,
               )
                   : Text(
-                "VERIFY & SAVE",
+                appLocalizations.verify_and_save,
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
@@ -372,7 +374,7 @@ class _OperatorBiometricsCaptureState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Supervisor's Biometric Verification",
+                      appLocalizations.supervisors_biometric_verification,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: (isMobileSize) ? 16.w : 24.w,
                           color: blackShade1,

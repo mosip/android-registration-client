@@ -22,16 +22,16 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Button\")")
 	private WebElement newRegistrationButton;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"जनसांख्यिकीय जानकारी\"))")
 	private WebElement demographicInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Documents\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"दस्तावेज़\"))")
 	private WebElement documentsInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"बॉयोमेट्रिक्स\"))")
 	private WebElement biometricsInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Demographic Details\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"जनसांख्यिकीय विवरण\"))")
 	private WebElement demographicDetailsTitle;
 
 	public AcknowledgementPageHindi(AppiumDriver driver) {

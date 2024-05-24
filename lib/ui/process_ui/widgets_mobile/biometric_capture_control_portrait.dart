@@ -125,6 +125,13 @@ class _BiometricCaptureControlPortraitState
                         : Image.asset(
                             "assets/images/Group 57745@2x.png",
                           )),
+              if (!biometricAttributeData.exceptions.contains(false))
+                Positioned(
+                    top: 15,
+                    right: 15,
+                    child: Image.asset(
+                      "assets/images/Group 57548@2x.png",
+                    )),
               if (biometricAttributeData.isScanned == true)
                 Positioned(
                     top: 20,

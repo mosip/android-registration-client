@@ -22,13 +22,13 @@ public class AcknowledgementPageFrench extends AcknowledgementPage{
 	@AndroidFindBy(accessibility = "NOUVELLE INSCRIPTION")
 	private WebElement newRegistrationButton;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Informations démographiques\"))")
 	private WebElement demographicInformationInAcknowledgementPage;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Documents\"))")
 	private WebElement documentsInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biométrie\"))")
 	private WebElement biometricsInformationInAcknowledgementPage;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Détails démographiques\"))")

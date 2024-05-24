@@ -216,5 +216,13 @@
   "onboarded": "على متن الطائرة",
   "sync_alert_title": "المزامنة للمتابعة!",
   "sync_alert_content": "الجهاز أو المركز غير نشط. قم بتنشيطه والمزامنة للمتابعة.",
-  "sync_alert_text": "مزامنة"
+  "sync_alert_text": "مزامنة",
+  "onboarded_successfully": "لقد انضممت بنجاح.",
+  "operator_biometric_updated_successfully": "تم تحديث القياسات الحيوية للمشغل بنجاح.",
+  "home": "بيت",
+  "verify_and_save": "التحقق والحفظ",
+  "supervisors_biometric_verification": "التحقق البيومتري للمشرف",
+  "help_topics": "مواضيع المساعدة",
+  "onboard_request_message": "الرجاء الضغط على زر \"الانضمام\" للانضمام إلى البوابة.",
+  "hello_s": "مرحبًا "
 }
