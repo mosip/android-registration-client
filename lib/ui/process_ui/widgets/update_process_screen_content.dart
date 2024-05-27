@@ -144,7 +144,7 @@ class _UpdateProcessScreenContentState
     registrationTaskProvider
         .evaluateMVELRequired(fieldData, expression!)
         .then((value) {
-      if (!value) {
+      if (!value && globalProvider.selectedUpdateFields[e.group] == null) {
         globalProvider.removeFieldFromMap(
             e.id!, globalProvider.fieldInputValue);
         registrationTaskProvider.removeDemographicField(e.id!);

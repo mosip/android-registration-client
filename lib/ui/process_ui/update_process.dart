@@ -6,6 +6,7 @@
 */
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -374,8 +375,10 @@ class _UpdateProcessState extends State<UpdateProcess>
         if (response
                 .compareTo(field.conditionalBioAttributes!.first!.ageGroup!) !=
             0) {
+              log("First check biometrics validating");
           bool isValid = await biometricRequiredFieldValidation(field);
           if (!isValid) {
+            log("failed first check ${field.id}");
             return false;
           }
         }
@@ -383,8 +386,10 @@ class _UpdateProcessState extends State<UpdateProcess>
         if (response
                 .compareTo(field.conditionalBioAttributes!.first!.ageGroup!) ==
             0) {
+              log("Second check biometrics validating");
           bool isValid = await biometricConditionalFieldValidation(field);
           if (!isValid) {
+            log("failed second check");
             return false;
           }
         }
