@@ -78,5 +78,13 @@ public abstract class DemographicDetailsPage extends BasePage{
 	public abstract  void closeCalender();
 	
 	public abstract  boolean checkDateFormatAndCurrectDate();
+	
+	public abstract boolean checkAddress1SecondLanguageTextBoxNotNull();
+
+	public abstract boolean checkAddress2SecondLanguageTextBoxNotNull();
+
+	public abstract boolean checkAddress3SecondLanguageTextBoxNotNull();
+
+	public abstract boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull();
 
 }

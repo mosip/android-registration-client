@@ -919,8 +919,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			previewPage=new PreviewPageArabic(driver);
 		}
 
-		assertTrue(previewPage.isBothIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
+		assertTrue(previewPage.isBothIrisImageDisplayed(),"Verify if both iris  image In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
@@ -973,10 +973,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
-
+		
 		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
 
-		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		previewPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			authenticationPage=new AuthenticationPageEnglish(driver);

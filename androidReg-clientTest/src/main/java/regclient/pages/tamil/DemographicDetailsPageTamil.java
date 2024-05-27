@@ -36,6 +36,15 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"தற்காலிக முகவரி3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine3TextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"நிரந்தர முகவரி1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine1TextBoxSecondLangauge;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"தற்காலிக முகவரி\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine2TextBoxSecondLangauge;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"தற்காலிக முகவரி3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine3TextBoxSecondLangauge;
 
 	@AndroidFindBy(accessibility = "ஆண்")
 	private WebElement maleButton;
@@ -126,6 +135,9 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"அறிமுகம் பெயர்\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerNameTextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"அறிமுகம் பெயர்\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement introducerNameTextBoxSecondLangauge;
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"அறிமுகம் RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerRidTextBox;
@@ -422,6 +434,34 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 			return	true;
 		else
 			return false;
+	}
+	
+	public boolean checkAddress1SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine1TextBoxSecondLangauge)==null || getTextFromLocator(addressLine1TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress2SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine2TextBoxSecondLangauge)==null || getTextFromLocator(addressLine2TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress3SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine3TextBoxSecondLangauge)==null || getTextFromLocator(addressLine3TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull() {
+		if(getTextFromLocator(introducerNameTextBoxSecondLangauge)==null || getTextFromLocator(introducerNameTextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
 	}
 	
 }
