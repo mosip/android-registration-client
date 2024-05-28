@@ -489,6 +489,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  clearExceptions() {
+    _exceptionAttributes = [];
+    _completeException = {};
+    notifyListeners();
+  }
+
   // Language Config
   fetchAllLanguages() async {
     return await dynamicResponseService.fetchAllLanguages();
@@ -784,6 +790,7 @@ class GlobalProvider with ChangeNotifier {
 
   clearRegistrationProcessData() {
     clearMap();
+    clearExceptions();
     clearScannedPages();
     newProcessTabIndex = 0;
     htmlBoxTabIndex = 0;

@@ -356,6 +356,7 @@ class _UpdateProcessState extends State<UpdateProcess>
             isExceptionAttributePresent = true;
           }
         }
+
         if (isExceptionPresent == true &&
             isExceptionAttributePresent == false) {
           return false;
@@ -418,7 +419,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                           .toString(),
                     ),
                   );
-                  if (process.id == "NEW") {
+                  if (process.id == "NEW" || process.id == "UPDATE") {
                     screens = process.screens!;
                   }
                 }
@@ -431,6 +432,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                   }
                 }
                 await BiometricsApi().clearBiometricAndDocumentHashmap();
+                globalProvider.clearExceptions();
                 globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
               }
             }
