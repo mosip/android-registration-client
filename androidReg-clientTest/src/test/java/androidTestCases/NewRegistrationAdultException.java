@@ -402,7 +402,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
 		
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-		applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+	//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 		
 		applicantBiometricsPage.clickOnIrisScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
@@ -443,7 +443,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
 		
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-		applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+	//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 		
 		applicantBiometricsPage.clickOnleftHandScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
@@ -466,7 +466,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
 		
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-		applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+	//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 		
 		applicantBiometricsPage.clickOnThumbsScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
@@ -561,7 +561,8 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-		assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+	//	assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");

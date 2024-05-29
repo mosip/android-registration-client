@@ -65,7 +65,7 @@ public class DocumentuploadPageEnglish extends DocumentUploadPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"DOB Proof\"))")
 	private WebElement dobsHeader;
 
-	@AndroidFindBy(xpath = "//android.widget.ImageView")
+	@AndroidFindBy(className= "android.widget.ImageView")
 	private WebElement captureImage;
 
 	public DocumentuploadPageEnglish(AppiumDriver driver) {
@@ -182,6 +182,12 @@ public class DocumentuploadPageEnglish extends DocumentUploadPage {
 	}
 
 	public  boolean isThirdImageDisplyed() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return isElementDisplayed(previewThirdCaptureImage);
 	}
 

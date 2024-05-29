@@ -22,13 +22,13 @@ public class AcknowledgementPageTamil extends AcknowledgementPage {
 	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc=\"புதிய பதிவு\"]")
 	private WebElement newRegistrationButton;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"மக்கள்தொகை தகவல்\"))")
 	private WebElement demographicInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Documents\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ஆவணங்கள்\"))")
 	private WebElement documentsInformationInAcknowledgementPage;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"பயோமெட்ரிக்ஸ்\"))")
 	private WebElement biometricsInformationInAcknowledgementPage;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"மக்கள்தொகை விவரங்கள்\"))")
