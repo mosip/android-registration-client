@@ -99,6 +99,7 @@ class _HomePageState extends State<HomePage> {
     if (process.id == "NEW") {
       globalProvider.clearMap();
       globalProvider.clearScannedPages();
+      globalProvider.clearExceptions();
       globalProvider.newProcessTabIndex = 0;
       globalProvider.htmlBoxTabIndex = 0;
       globalProvider.setRegId("");

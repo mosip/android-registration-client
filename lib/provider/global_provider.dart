@@ -59,6 +59,12 @@ class GlobalProvider with ChangeNotifier {
     'Arabic': false,
     'French': false,
   };
+
+  clearExceptions() {
+    _exceptionAttributes = [];
+    _completeException = {};
+    notifyListeners();
+  }
   Map<String, String> _thresholdValuesMap = {
     'mosip.registration.leftslap_fingerprint_threshold': '0',
     'mosip.registration.rightslap_fingerprint_threshold': '0',
