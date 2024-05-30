@@ -221,7 +221,8 @@
   "operator_biometric_updated_successfully": "Operator biometrics updated successfully.",
   "home": "HOME",
   "verify_and_save": "VERIFY & SAVE",
-  "supervisors_biometric_verification": "Supervisor's Biometric Verification",
+  "supervisors_biometric_onboard": "Supervisor's Biometric Onboarding",
+  "supervisors_biometric_update": "Supervisor's Biometric Update",
   "help_topics": "Help topics",
   "onboard_request_message": "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
   "hello_s": "Hello "
