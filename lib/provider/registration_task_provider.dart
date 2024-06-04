@@ -85,7 +85,7 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   getListOfProcesses() async {
     List<String?> result = await processSpecService.getNewProcessSpec();
-    String jsonString = await rootBundle.loadString('assets/qa-platform1_Update.json');
+    String jsonString = await rootBundle.loadString('assets/updateProcess.json');
     List<String?> list = [];
     // if (result.isEmpty) {
     //   _listOfProcesses = [];

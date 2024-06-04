@@ -375,7 +375,13 @@ class _UpdateProcessState extends State<UpdateProcess>
         if (response
                 .compareTo(field.conditionalBioAttributes!.first!.ageGroup!) !=
             0) {
-          bool isValid = await biometricRequiredFieldValidation(field);
+          bool isValid = true;
+          if (field.conditionalBioAttributes!.first!.ageGroup! == "ALL") {
+            isValid = await biometricConditionalFieldValidation(field);
+          } else {
+            isValid = await biometricRequiredFieldValidation(field);
+          }
+
           if (!isValid) {
             return false;
           }
