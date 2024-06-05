@@ -17,6 +17,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -497,7 +498,7 @@ class _UpdateProcessState extends State<UpdateProcess>
       return true;
     }
 
-    continueButtonTap(BuildContext context, int size, newProcess) async {
+    continueButtonTap(int size, newProcess) async {
       if (globalProvider.newProcessTabIndex == 0 && !fieldSelectionCompleted) {
         if (globalProvider.selectedUpdateFields.isEmpty ||
             globalProvider.updateFieldKey.currentState == null ||
@@ -674,8 +675,12 @@ class _UpdateProcessState extends State<UpdateProcess>
                               ),
                             ),
                           ),
-                          onPressed: () {
-                            continueButtonTap(context, size, newProcess);
+                          onPressed: () async {
+                            if(fieldSelectionCompleted) {
+                              registrationTaskProvider.addConsentField("Y");
+                              await DemographicsApi().addDemographicField("consent", "true");
+                            }
+                            continueButtonTap(size, newProcess);
                           },
                         ),
                       ),
@@ -735,7 +740,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                               continueButton ? solidPrimary : Colors.grey),
                         ),
                         onPressed: () {
-                          continueButtonTap(context, size, newProcess);
+                          continueButtonTap(size, newProcess);
                         },
                         child: Text(
                             context.read<GlobalProvider>().newProcessTabIndex <=
