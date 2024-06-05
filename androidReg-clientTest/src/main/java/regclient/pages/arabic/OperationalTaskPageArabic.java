@@ -15,6 +15,9 @@ public class OperationalTaskPageArabic extends OperationalTaskPage{
 	@AndroidFindBy(accessibility = "System Storage Usage")
 	private WebElement systemStorageUsageTitle;
 	
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"مزامنة البيانات\")")
+	private WebElement synchronizeDataButton ;
+	
 	public OperationalTaskPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -28,4 +31,17 @@ public class OperationalTaskPageArabic extends OperationalTaskPage{
 		return isElementDisplayed(systemStorageUsageTitle);
 	}
 
+	public  void clickSynchronizeDataButton() {
+		clickOnElement(synchronizeDataButton);
+		waitTime(50);
+	}
+	
+	public boolean checkLastSyncDate() {
+		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
+		if(contentDesc.contains("مزامنة البيانات\n"+getCurrentDateWord()+","))
+			return true;
+		else
+			return false;
+	}
+	
 }

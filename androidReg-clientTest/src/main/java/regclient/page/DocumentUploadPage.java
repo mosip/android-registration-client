@@ -54,4 +54,10 @@ public abstract class DocumentUploadPage extends BasePage {
 	public abstract  boolean isScanButtonDobProofEnabled();
 
 	public abstract  boolean isScanButtonRelationshipProoffEnabled();
+	
+	public abstract  void enterReferenceNumberInAdressProof();
+	
+	public abstract  void enterReferenceNumberInIdentityProof();
+	
+	public abstract  void enterReferenceNumberInDobProof();
 }
