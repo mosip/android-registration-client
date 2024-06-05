@@ -55,8 +55,9 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
       if (widget.field.type == 'simpleType') {
         for (var element in globalProvider.chosenLang) {
           String code = globalProvider.languageToCodeMapper[element]!;
-          registrationTaskProvider.addSimpleTypeDemographicField(
-              widget.field.id ?? "", value, value, code);
+          registrationTaskProvider
+              .addSimpleTypeDemographicField(
+                  widget.field.id ?? "", value, code);
         }
       } else {
         registrationTaskProvider.addDemographicField(
@@ -107,9 +108,14 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     }
   }
 
-  Future<List<DynamicFieldData?>> _getFieldValues(
-      String fieldId, String langCode) async {
-    return await registrationTaskProvider.getFieldValues(fieldId, langCode);
+  Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
+    List<String> selectedLang =[];
+    for (var lang in globalProvider.chosenLang) {
+      String langCode = globalProvider.langToCode(lang);
+      selectedLang.add(langCode);
+    }
+    return await registrationTaskProvider
+        .getFieldValues(fieldId, langCode, selectedLang);
   }
 
   @override
@@ -157,7 +163,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           items: snapshot.data!
                               .map((option) => DropdownMenuItem(
                                     value: option!.name,
-                                    child: Text(option.name),
+                                    child: Text(option.concatenatedName),
                                   ))
                               .toList(),
                           autovalidateMode: AutovalidateMode.onUserInteraction,

@@ -54,14 +54,6 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 		return new ApplicantBiometricsPageEnglish(driver);
 	}
 	
-	public IntroducerBiometricPage clickOnIntroducerIrisScan() {
-		while(!isElementDisplayedOnScreen(introducerIrisScanIcon)) {
-			swipeOrScroll();
-		}
-		clickOnElement(introducerIrisScanIcon);
-		return new IntroducerBiometricPageEnglish(driver);
-	}
-	
 	public ApplicantBiometricsPage clickOnRightHandScanIcon() {
 		clickOnElement(rightHandScanIcon);
 		return new ApplicantBiometricsPageEnglish(driver);
@@ -85,6 +77,16 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	public ApplicantBiometricsPage clickOnExceptionScanIcon() {
 		clickOnElement(exceptionScanIcon);
 		return new ApplicantBiometricsPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerIrisScan() {
+		while(!isElementDisplayedOnScreen(introducerIrisScanIcon)) {
+			swipeOrScroll();
+		}
+		clickOnElement(introducerIrisScanIcon);
+		return new IntroducerBiometricPageEnglish(driver);
+
 	}
 	
 	public  PreviewPage clickOnContinueButton() {

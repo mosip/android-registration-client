@@ -4,8 +4,11 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.page.DashboardPage;
+import regclient.page.OperationalTaskPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
+import regclient.pages.english.DashboardPageEnglish;
 
 public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 
@@ -19,6 +22,9 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 	@AndroidFindBy(accessibility = "Tâches opérationnelles")
 	private WebElement operationalTaskPageTitle;
 
+	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
+	private WebElement dashboardButton;
+	
 	@AndroidFindBy(accessibility = "Nouvelle inscription")
 	private WebElement newRegistrationButton;
 
@@ -63,5 +69,13 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 		return isElementDisplayed(scriptSyncCompletedMessage);
 	}
 
-
+	public  DashboardPage clickOnDashboardButton() {
+		clickOnElement(dashboardButton);
+		return new DashboardPageEnglish(driver);
+	}
+	
+	public  OperationalTaskPage clickOnOperationalTasksTitle() {
+		clickOnElement(operationalTaskPageTitle);
+		return new OperationalTaskPageFrench(driver);
+	}
 }

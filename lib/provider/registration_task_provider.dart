@@ -153,8 +153,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   addSimpleTypeDemographicField(
-      String fieldId, String value, String name, String language) async {
-    await demographics.addSimpleTypeDemographicField(fieldId, value, name, language);
+      String fieldId, String value, String language) async {
+    await demographics.addSimpleTypeDemographicField(fieldId, value, language);
   }
 
   getSimpleTypeDemographicField(String fieldId, String language) async {
@@ -175,8 +175,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   Future<List<DynamicFieldData?>> getFieldValues(
-      String fieldName, String langCode) async {
-    return await dynamicResponseService.fetchFieldValues(fieldName, langCode);
+      String fieldName, String langCode, List<String> languages) async {
+    return await dynamicResponseService.fetchFieldValues(fieldName, langCode, languages);
   }
 
   Future<List<GenericData?>> getLocationValues(
@@ -192,9 +192,9 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   Future<List<GenericData?>> getLocationValuesBasedOnParent(
-      String? parentCode, String fieldName, String langCode) async {
+      String? parentCode, String fieldName, String langCode,List<String> languages) async {
     return await dynamicResponseService.fetchLocationValuesBasedOnParent(
-        parentCode, fieldName, langCode);
+        parentCode, fieldName, langCode,languages);
   }
 
   addDocument(

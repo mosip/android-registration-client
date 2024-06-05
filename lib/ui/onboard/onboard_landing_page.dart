@@ -19,6 +19,7 @@ import 'package:registration_client/ui/onboard/widgets/onboard_landing_page_card
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OnboardLandingPage extends StatelessWidget {
   static const route = "/onboard-landing-page";
@@ -126,7 +127,7 @@ class OnboardLandingPage extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(16.w, 80.h, 0, 0),
                     child: RichText(
                         text: TextSpan(
-                            text: "Hello ",
+                            text: AppLocalizations.of(context)!.hello_s,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
@@ -153,7 +154,7 @@ class OnboardLandingPage extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.fromLTRB(16.w, 8.h, 0, 0),
                     child: Text(
-                      "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
+                      AppLocalizations.of(context)!.onboard_request_message,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: const Color(0xffFFFFFF).withOpacity(0.6),
                           fontSize: 18,
@@ -174,7 +175,7 @@ class OnboardLandingPage extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             vertical: 18.h, horizontal: 44.w),
                         child: Text(
-                          "Get Onboard",
+                          AppLocalizations.of(context)!.get_onboard,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -199,7 +200,7 @@ class OnboardLandingPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Help topics",
+                        AppLocalizations.of(context)!.help_topics,
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge

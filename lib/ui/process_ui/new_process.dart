@@ -214,6 +214,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     if (process.id == "NEW") {
       globalProvider.clearMap();
       globalProvider.clearScannedPages();
+      globalProvider.clearExceptions();
       globalProvider.newProcessTabIndex = 0;
       globalProvider.htmlBoxTabIndex = 0;
       globalProvider.setRegId("");
@@ -368,6 +369,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   }
                 }
                 await BiometricsApi().clearBiometricAndDocumentHashmap();
+                globalProvider.clearExceptions();
                 globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
               }
             }

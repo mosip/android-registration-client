@@ -80,8 +80,8 @@ class _TextBoxControlState extends State<TextBoxControl>
 
   void saveData(value, lang) {
     if (widget.e.type == 'simpleType') {
-      registrationTaskProvider.addSimpleTypeDemographicField(
-          widget.e.id!, value!, value!, lang);
+      registrationTaskProvider
+          .addSimpleTypeDemographicField(widget.e.id!, value!, lang);
     } else {
       registrationTaskProvider.addDemographicField(widget.e.id!, value!);
     }

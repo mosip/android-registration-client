@@ -225,5 +225,13 @@
   "onboarded": "जहाज पर चढ़ाया गया",
   "sync_alert_title": "जारी रखने के लिए सिंक करें!",
   "sync_alert_content": "मशीन या केंद्र सक्रिय नहीं है। जारी रखने के लिए सक्रिय करें और सिंक करें।",
-  "sync_alert_text": "सिंक"
+  "sync_alert_text": "सिंक",
+  "onboarded_successfully": "आप सफलतापूर्वक शामिल हो गए हैं.",
+  "operator_biometric_updated_successfully": "ऑपरेटर बायोमेट्रिक्स सफलतापूर्वक अपडेट किया गया।",
+  "home": "घर",
+  "verify_and_save": "सत्यापित करें और सहेजें",
+  "supervisors_biometric_verification": "पर्यवेक्षक का बायोमेट्रिक सत्यापन",
+  "help_topics": "सहायता के विषय",
+  "onboard_request_message": "कृपया स्वयं को पोर्टल में शामिल करने के लिए गेट ऑनबोर्ड बटन पर टैप करें।",
+  "hello_s": "नमस्ते "
 }

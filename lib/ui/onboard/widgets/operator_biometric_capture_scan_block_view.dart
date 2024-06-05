@@ -241,7 +241,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                           .map((e) => Image.memory(
                                 e,
                                 height: (isMobileSize) ? 70.h : 130.h,
-                              )),(biometricAttributeData.title == "Iris" &&
+                              )),
+                      (biometricAttributeData.title == "Iris" &&
                               biometricAttributeData.exceptions.contains(true))
                           ? ((biometricAttributeData.exceptions.first == true)
                               ? const SizedBox()
@@ -2308,7 +2309,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Supervisor's Biometric Verification",
+                        AppLocalizations.of(context)!
+                            .supervisors_biometric_verification,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontSize: (isMobileSize) ? 14.h : 24.h,
                             color: blackShade1,

@@ -49,7 +49,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
       } else {
         fieldValueData = await context
             .read<RegistrationTaskProvider>()
-            .getFieldValues(widget.field.subType!, lang);
+            .getFieldValues(widget.field.subType!, lang, globalProvider.chosenLang);
         setState(() {
           selected = fieldValueData[0]!.name;
         });
@@ -67,7 +67,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
         String code =
             globalProvider.languageToCodeMapper[element]!;
         registrationTaskProvider
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, name, code);
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
       }
     } else {
       registrationTaskProvider
@@ -95,7 +95,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
   Future<void> _getSelectedValueFromMap(String lang) async {
     List<DynamicFieldData?> data = await registrationTaskProvider
-        .getFieldValues(widget.field.subType!, "eng");
+        .getFieldValues(widget.field.subType!, "eng", globalProvider.chosenLang);
     String response = data[0]!.name;
     if (widget.field.type == 'simpleType') {
       if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
@@ -119,11 +119,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     for (var lang in globalProvider.chosenLang) {
       String langC = globalProvider.langToCode(lang);
       List<DynamicFieldData?> data = await registrationTaskProvider
-          .getFieldValues(fieldId, langC);
+          .getFieldValues(fieldId, langC, globalProvider.chosenLang);
 
       if (data.isEmpty) {
         data = await registrationTaskProvider
-            .getFieldValues(fieldId, 'eng');
+            .getFieldValues(fieldId, 'eng', globalProvider.chosenLang);
       }
       labelsData.add(data);
     }

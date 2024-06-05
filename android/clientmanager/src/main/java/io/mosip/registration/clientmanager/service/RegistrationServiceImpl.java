@@ -235,7 +235,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             //TODO add name, phone and email in additional info
 
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
-                    centerMachineDto.getCenterId(), "NEW", additionalInfo);
+                    centerMachineDto.getCenterId(), "UPDATE", additionalInfo);
 
 //        } finally {
             clearRegistration();

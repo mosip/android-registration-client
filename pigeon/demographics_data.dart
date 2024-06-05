@@ -13,7 +13,7 @@ abstract class DemographicsApi {
 
   @async
   void addSimpleTypeDemographicField(
-      String fieldId, String value, String name, String language);
+      String fieldId, String value, String language);
 
   @async
   String getSimpleTypeDemographicField(String fieldId, String language);
