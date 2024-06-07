@@ -22,5 +22,14 @@ abstract class PacketAuthApi {
   void uploadPacket(String packetId);
 
   @async
+  void syncPacketAll(List<String> packetIds);
+
+  @async
+  void uploadPacketAll(List<String> packetIds);
+
+  @async
   List<String> getAllRegistrationPacket();
+
+  @async
+  void updatePacketStatus(String packetId, String? serverStatus, String clientStatus);
 }
