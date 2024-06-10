@@ -97,7 +97,6 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
-    private ProcessSpecRepository processSpecRepository;
     private String regCenterId;
     private String result = "";
 
@@ -119,8 +118,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  CertificateManagerService certificateManagerService,
                                  LanguageRepository languageRepository,
                                  JobManagerService jobManagerService,
-                                 FileSignatureDao fileSignatureDao,
-                                 ProcessSpecRepository processSpecRepository) {
+                                 FileSignatureDao fileSignatureDao) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -141,7 +139,6 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
         this.fileSignatureDao = fileSignatureDao;
-        this.processSpecRepository = processSpecRepository;
     }
 
     @Override
@@ -475,8 +472,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                 try {
                     ProcessSpecDto processSpecDto = JsonUtils.jsonStringToJavaObject(jsonObject.get(key).toString(),
                             new TypeReference<ProcessSpecDto>() {});
-                    Log.i(TAG, "process spec dto: " + processSpecDto);
-//                    identitySchemaDao.createProcessSpec(key, idSchemaResponse.getIdVersion(), processSpecDto);
+                    identitySchemaRepository.createProcessSpec(context, key, idSchemaResponse.getIdVersion(), processSpecDto);
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage(), e);
                 }

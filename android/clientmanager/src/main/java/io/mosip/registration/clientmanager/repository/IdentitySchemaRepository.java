@@ -41,10 +41,11 @@ public class IdentitySchemaRepository {
     private TemplateRepository templateRepository;
     private ProcessSpecDao processSpecDao;
 
-    public IdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
+    public IdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao, ProcessSpecDao processSpecDao) {
         this.templateRepository = templateRepository;
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaDao = identitySchemaDao;
+        this.processSpecDao = processSpecDao;
     }
 
     public void saveIdentitySchema(Context context, IdSchemaResponse idSchemaResponse) throws Exception {
@@ -71,8 +72,7 @@ public class IdentitySchemaRepository {
     }
 
     public void createProcessSpec(Context context, String type, double idVersion, ProcessSpecDto processSpecDto) throws Exception {
-        IdentitySchema identitySchema = new IdentitySchema();
-        identitySchema.setId(type);
+        IdentitySchema identitySchema = new IdentitySchema(type);
         identitySchema.setSchemaVersion(idVersion);
         String schema = JsonUtils.javaObjectToJsonString(processSpecDto);
         Log.i(TAG, "Schema path: " + context.getFilesDir());
@@ -85,8 +85,7 @@ public class IdentitySchemaRepository {
         identitySchema.setFileHash(HMACUtils2.digestAsPlainText(schema.getBytes(StandardCharsets.UTF_8)));
         identitySchemaDao.insertIdentitySchema(identitySchema);
 
-        ProcessSpec processSpec = new ProcessSpec();
-        processSpec.setId(processSpecDto.getId());
+        ProcessSpec processSpec = new ProcessSpec(processSpecDto.getId());
         processSpec.setType(type);
         processSpec.setIdVersion(idVersion);
         processSpec.setOrderNum(processSpecDto.getOrder());
@@ -150,7 +149,7 @@ public class IdentitySchemaRepository {
         throw new Exception("Failed to load Identity schema for version : " + identitySchema.getSchemaVersion());
     }
     
-    private List<ProcessSpecDto> getAllProcessSpecDTO(Context context, Double idVersion) throws Exception {
+    public List<ProcessSpecDto> getAllProcessSpecDTO(Context context, Double idVersion) throws Exception {
         List<ProcessSpecDto> processSpecDtoList = new ArrayList<>();
         List<ProcessSpec> processSpecList = processSpecDao.getAllProcessSpec(idVersion);
         if(processSpecList == null ) {
@@ -162,7 +161,7 @@ public class IdentitySchemaRepository {
             if(identitySchema == null) {
                 throw new Exception("No identity schema found for process spec with type: " + processSpec.getType());
             }
-            ProcessSpecDto processSpecDto = getProcessSpecDtoFromFile(context, processSpec.getType());
+            ProcessSpecDto processSpecDto = getProcessSpecDtoFromFile(context, processSpec.getType(), identitySchema);
             processSpecDtoList.add(processSpecDto);
         }
         return processSpecDtoList;

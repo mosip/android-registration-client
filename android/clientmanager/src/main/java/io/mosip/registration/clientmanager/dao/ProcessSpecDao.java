@@ -14,9 +14,6 @@ public interface ProcessSpecDao {
     @Query("select * from process_spec where id_version=:idVersion and is_active=1 order by order_num asc")
     List<ProcessSpec> getAllProcessSpec(double idVersion);
 
-    @Query("select * from process_spec where id=:processId and id_version=:idVersion and is_active=1")
-    ProcessSpec findByIdAndIdVersion(String processId, double idVersion);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertProcessSpec(ProcessSpec processSpec);
 }

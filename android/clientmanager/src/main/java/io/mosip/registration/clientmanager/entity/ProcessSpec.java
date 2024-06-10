@@ -5,18 +5,18 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data
 @Entity(tableName = "process_spec")
+@Data
 public class ProcessSpec {
-    @ColumnInfo(name = "type")
-    private String type;
-
     @NonNull
     @PrimaryKey
     @ColumnInfo(name = "id")
     private String id;
+    @ColumnInfo(name = "type")
+    private String type;
 
     @ColumnInfo(name = "id_version")
     private double idVersion;

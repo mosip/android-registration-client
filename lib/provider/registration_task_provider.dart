@@ -85,23 +85,18 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   getListOfProcesses() async {
     List<String?> result = await processSpecService.getNewProcessSpec();
-    String jsonString = await rootBundle.loadString('assets/updateProcess.json');
-    List<String?> list = [];
-    // if (result.isEmpty) {
-    //   _listOfProcesses = [];
-    // } else {
-    //   _listOfProcesses = result;
-    // }
-    for (var element in result) {
-      list.add(element);
+    if (result.isEmpty) {
+      _listOfProcesses = [];
+    } else {
+      _listOfProcesses = result;
     }
-    list.add(jsonString);
-    _listOfProcesses = list;
     notifyListeners();
   }
 
-  startRegistration(List<String> languages, String flowType, String process) async {
-    _registrationStartError = await registrationService.startRegistration(languages, flowType, process);
+  startRegistration(
+      List<String> languages, String flowType, String process) async {
+    _registrationStartError = await registrationService.startRegistration(
+        languages, flowType, process);
     notifyListeners();
   }
 
@@ -110,7 +105,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   evaluateMVELRequired(String fieldData, String expression) async {
-    return await registrationService.evaluateMVELRequired(fieldData, expression);
+    return await registrationService.evaluateMVELRequired(
+        fieldData, expression);
   }
 
   setPreviewTemplate(String value) {
@@ -119,7 +115,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getPreviewTemplate(bool isPreview, Map<String, String> templateValues) async {
-    _previewTemplate = await registrationService.getPreviewTemplate(isPreview, templateValues);
+    _previewTemplate =
+        await registrationService.getPreviewTemplate(isPreview, templateValues);
     notifyListeners();
   }
 
@@ -128,8 +125,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAcknowledgementTemplate(bool isAcknowledgement, Map<String, String> templateValues) async {
-    _acknowledgementTemplate = await registrationService.getPreviewTemplate(isAcknowledgement, templateValues);
+  getAcknowledgementTemplate(
+      bool isAcknowledgement, Map<String, String> templateValues) async {
+    _acknowledgementTemplate = await registrationService.getPreviewTemplate(
+        isAcknowledgement, templateValues);
     notifyListeners();
   }
 
@@ -176,7 +175,8 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<List<DynamicFieldData?>> getFieldValues(
       String fieldName, String langCode, List<String> languages) async {
-    return await dynamicResponseService.fetchFieldValues(fieldName, langCode, languages);
+    return await dynamicResponseService.fetchFieldValues(
+        fieldName, langCode, languages);
   }
 
   Future<List<GenericData?>> getLocationValues(
@@ -191,10 +191,10 @@ class RegistrationTaskProvider with ChangeNotifier {
         fieldName, applicantType, langCode);
   }
 
-  Future<List<GenericData?>> getLocationValuesBasedOnParent(
-      String? parentCode, String fieldName, String langCode,List<String> languages) async {
+  Future<List<GenericData?>> getLocationValuesBasedOnParent(String? parentCode,
+      String fieldName, String langCode, List<String> languages) async {
     return await dynamicResponseService.fetchLocationValuesBasedOnParent(
-        parentCode, fieldName, langCode,languages);
+        parentCode, fieldName, langCode, languages);
   }
 
   addDocument(
@@ -210,8 +210,9 @@ class RegistrationTaskProvider with ChangeNotifier {
     await document.removeDocument(fieldId, pageIndex);
   }
 
-  Future<List<String?>> getDocumentType(String categoryCode,String langCode) async {
-    return await documentCategory.getDocumentCategories(categoryCode,langCode);
+  Future<List<String?>> getDocumentType(
+      String categoryCode, String langCode) async {
+    return await documentCategory.getDocumentCategories(categoryCode, langCode);
   }
 
   removeDocumentField(String fieldId) async {

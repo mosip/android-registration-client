@@ -144,9 +144,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         editor.putString(SessionManager.RID, this.registrationDto.getRId());
         editor.commit();
 
-        Log.i(TAG, "flow type: " + this.registrationDto.getFlowType());
-        Log.i(TAG, "process id: " + this.registrationDto.getProcess());
-
         return this.registrationDto;
     }
 
@@ -235,7 +232,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             //TODO add name, phone and email in additional info
 
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
-                    centerMachineDto.getCenterId(), "UPDATE", additionalInfo);
+                    centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo);
 
 //        } finally {
             clearRegistration();
