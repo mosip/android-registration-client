@@ -470,6 +470,35 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   .conditionalBioAttributes!
                   .isNotEmpty) {
             String response = await BiometricsApi().getAgeGroup();
+            if (!(response.compareTo(screen.fields!
+                .elementAt(i)!
+                .conditionalBioAttributes!
+                .first!
+                .ageGroup!) ==
+                0)) {
+              if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                int count = returnBiometricListLength(
+                    screen.fields!.elementAt(i)!.bioAttributes,
+                    screen.fields!.elementAt(i)!.id!);
+                if (globalProvider.completeException[
+                screen.fields!.elementAt(i)!.id!] !=
+                    null) {
+                  int length = globalProvider
+                      .completeException[screen.fields!.elementAt(i)!.id!]
+                      .length;
+                  count = count - length;
+                }
+
+                if (globalProvider
+                    .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                    .length <
+                    count) {
+                  isValid = false;
+
+                  break;
+                }
+              }
+            }
             if (response.compareTo(screen.fields!
                     .elementAt(i)!
                     .conditionalBioAttributes!
