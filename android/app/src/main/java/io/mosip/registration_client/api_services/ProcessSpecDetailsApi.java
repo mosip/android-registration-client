@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -81,6 +82,11 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         List<String> processSpecList = new ArrayList<>();
         try {
             List<ProcessSpecDto> processSpecDtoList = identitySchemaRepository.getAllProcessSpecDTO(context, identitySchemaRepository.getLatestSchemaVersion());
+            if(processSpecDtoList == null || processSpecDtoList.isEmpty()) {
+                ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(context,
+                        identitySchemaRepository.getLatestSchemaVersion());
+                processSpecDtoList = Arrays.asList(processSpecDto);
+            }
             processSpecDtoList.forEach((processSpecDto -> {
                 ObjectWriter ow;
                 try {
@@ -93,8 +99,6 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
                     Log.e(getClass().getSimpleName(), "Error in fetching process spec", e);
                 }
             }));
-//            ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(context,
-//                    identitySchemaRepository.getLatestSchemaVersion());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
         }
