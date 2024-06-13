@@ -23,5 +23,7 @@ abstract class AuthService {
 
   Future<String> logout();
 
+  Future<String> stopAlarmService();
+
   factory AuthService() => getAuthServiceImpl();
 }

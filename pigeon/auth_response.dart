@@ -31,4 +31,7 @@ abstract class AuthResponseApi {
 
   @async
   String logout();
+
+  @async
+  String stopAlarmService();
 }

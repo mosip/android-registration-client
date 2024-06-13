@@ -182,6 +182,11 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     }
 
     @Override
+    public void stopAlarmService(@NonNull AuthResponsePigeon.Result<String> result) {
+        result.success("Success");
+    }
+
+    @Override
     public void login(@NonNull String username, @NonNull String password, @NonNull Boolean isConnected, @NonNull AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
         if(!isConnected) {
