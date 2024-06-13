@@ -10,7 +10,6 @@ import 'package:registration_client/ui/onboard/widgets/operator_biometric_captur
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OperatorBiometricsCaptureView extends StatefulWidget {
   const OperatorBiometricsCaptureView({super.key});
@@ -26,14 +25,14 @@ class _OperatorBiometricsCaptureState
   bool isSavingBiometrics = false;
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-  
+
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    biometricCaptureControlProvider = Provider.of<BiometricCaptureControlProvider>(context, listen: false);
+    biometricCaptureControlProvider =
+        Provider.of<BiometricCaptureControlProvider>(context, listen: false);
     super.initState();
   }
-
 
   Widget _getBiometricCaptureSelectionBlockMobile(
       BiometricAttributeData biometricAttributeData) {
@@ -51,9 +50,9 @@ class _OperatorBiometricsCaptureState
               context,
               MaterialPageRoute(
                   builder: (context) => ChangeNotifierProvider.value(
-                    value: providerCopy,
-                    child: OperatorBiometricCaptureScanBlockView(),
-                  ))).then((value) {
+                        value: providerCopy,
+                        child: OperatorBiometricCaptureScanBlockView(),
+                      ))).then((value) {
             setState(() {});
           });
         },
@@ -68,15 +67,15 @@ class _OperatorBiometricsCaptureState
                     border: Border.all(
                         color: (biometricAttributeData.isScanned == true)
                             ? (biometricAttributeData.exceptions.contains(true))
-                            ? secondaryColors.elementAt(16)
-                            : secondaryColors.elementAt(11)
+                                ? secondaryColors.elementAt(16)
+                                : secondaryColors.elementAt(11)
                             : (context
-                            .watch<
-                            BiometricCaptureControlProvider>()
-                            .biometricAttribute ==
-                            biometricAttributeData.title)
-                            ? secondaryColors.elementAt(12)
-                            : secondaryColors.elementAt(14)),
+                                        .watch<
+                                            BiometricCaptureControlProvider>()
+                                        .biometricAttribute ==
+                                    biometricAttributeData.title)
+                                ? secondaryColors.elementAt(12)
+                                : secondaryColors.elementAt(14)),
                     borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -130,9 +129,9 @@ class _OperatorBiometricsCaptureState
                           horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
                           color: (biometricAttributeData.qualityPercentage
-                              .toInt() <
-                              int.parse(biometricAttributeData
-                                  .thresholdPercentage))
+                                      .toInt() <
+                                  int.parse(biometricAttributeData
+                                      .thresholdPercentage))
                               ? secondaryColors.elementAt(26)
                               : secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
@@ -161,59 +160,32 @@ class _OperatorBiometricsCaptureState
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ElevatedButton(
               onPressed: () async {
-                if ((biometricCaptureControlProvider
-                    .iris
-                    .isScanned || !biometricCaptureControlProvider
-                    .iris
-                    .exceptions.contains(false)) &&
-                    (biometricCaptureControlProvider
-                        .iris
-                        .qualityPercentage >=
+                if ((biometricCaptureControlProvider.iris.isScanned || !biometricCaptureControlProvider.iris.exceptions.contains(false)) &&
+                    (biometricCaptureControlProvider.iris.qualityPercentage >=
                         int.parse(biometricCaptureControlProvider
-                            .iris
-                            .thresholdPercentage)) &&
-                    (biometricCaptureControlProvider
-                        .rightHand
-                        .isScanned || !biometricCaptureControlProvider
-                        .rightHand
-                        .exceptions.contains(false)) &&
-                    (biometricCaptureControlProvider
-                        .rightHand
-                        .qualityPercentage >=
-                        int.parse(biometricCaptureControlProvider
-                            .rightHand
-                            .thresholdPercentage) || !biometricCaptureControlProvider.rightHand.exceptions.contains(false)) &&
-                    (biometricCaptureControlProvider
-                        .leftHand
-                        .isScanned|| !biometricCaptureControlProvider
-                        .leftHand
-                        .exceptions.contains(false)) &&
-                    (biometricCaptureControlProvider
-                        .leftHand
-                        .qualityPercentage >=
-                        int.parse(biometricCaptureControlProvider
-                            .leftHand
-                            .thresholdPercentage) || !biometricCaptureControlProvider.leftHand.exceptions.contains(false)) &&
-                    (biometricCaptureControlProvider
-                        .thumbs
-                        .isScanned|| !biometricCaptureControlProvider
-                        .thumbs
-                        .exceptions.contains(false)) &&
-                    (biometricCaptureControlProvider
-                        .thumbs
-                        .qualityPercentage >=
-                        int.parse(biometricCaptureControlProvider
-                            .thumbs
-                            .thresholdPercentage) || !biometricCaptureControlProvider.thumbs.exceptions.contains(false)) &&
-                    (biometricCaptureControlProvider
-                        .face
-                        .qualityPercentage >=
-                        int.parse(biometricCaptureControlProvider
-                            .face
-                            .thresholdPercentage)) &&
-                    biometricCaptureControlProvider
-                        .face
-                        .isScanned) {
+                            .iris.thresholdPercentage)) &&
+                    (biometricCaptureControlProvider.rightHand.isScanned ||
+                        !biometricCaptureControlProvider.rightHand.exceptions
+                            .contains(false)) &&
+                    (biometricCaptureControlProvider.rightHand.qualityPercentage >=
+                            int.parse(biometricCaptureControlProvider
+                                .rightHand.thresholdPercentage) ||
+                        !biometricCaptureControlProvider.rightHand.exceptions
+                            .contains(false)) &&
+                    (biometricCaptureControlProvider.leftHand.isScanned ||
+                        !biometricCaptureControlProvider.leftHand.exceptions
+                            .contains(false)) &&
+                    (biometricCaptureControlProvider.leftHand.qualityPercentage >= int.parse(biometricCaptureControlProvider.leftHand.thresholdPercentage) ||
+                        !biometricCaptureControlProvider.leftHand.exceptions
+                            .contains(false)) &&
+                    (biometricCaptureControlProvider.thumbs.isScanned ||
+                        !biometricCaptureControlProvider.thumbs.exceptions
+                            .contains(false)) &&
+                    (biometricCaptureControlProvider.thumbs.qualityPercentage >=
+                            int.parse(biometricCaptureControlProvider.thumbs.thresholdPercentage) ||
+                        !biometricCaptureControlProvider.thumbs.exceptions.contains(false)) &&
+                    (biometricCaptureControlProvider.face.qualityPercentage >= int.parse(biometricCaptureControlProvider.face.thresholdPercentage)) &&
+                    biometricCaptureControlProvider.face.isScanned) {
                   setState(() {
                     isSavingBiometrics = true;
                   });
@@ -250,8 +222,14 @@ class _OperatorBiometricsCaptureState
                               ),
                               SvgPicture.asset(
                                   "assets/svg/success_message_icon.svg"),
-                              Text((context.read<GlobalProvider>().onboardingProcessName=="Onboarding")?
-                              appLocalizations.onboarded_successfully:appLocalizations.operator_biometric_updated_successfully,
+                              Text(
+                                (context
+                                            .read<GlobalProvider>()
+                                            .onboardingProcessName ==
+                                        "Onboarding")
+                                    ? appLocalizations.onboarded_successfully
+                                    : appLocalizations
+                                        .operator_biometric_updated_successfully,
                                 style: TextStyle(
                                     fontSize: 28,
                                     fontWeight: semiBold,
@@ -289,70 +267,37 @@ class _OperatorBiometricsCaptureState
               },
               child: isSavingBiometrics
                   ? CircularProgressIndicator(
-                color: appWhite,
-              )
+                      color: appWhite,
+                    )
                   : Text(
-                appLocalizations.verify_and_save,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontSize: 26.h, color: pureWhite),
-              ),
+                      appLocalizations.verify_and_save,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontSize: 26.h, color: pureWhite),
+                    ),
               style: OutlinedButton.styleFrom(
-                  backgroundColor: ((biometricCaptureControlProvider
-                      .iris
-                      .isScanned || !biometricCaptureControlProvider
-                      .iris
-                      .exceptions.contains(false)) &&
-                      (biometricCaptureControlProvider
-                          .iris
-                          .qualityPercentage >=
-                          int.parse(biometricCaptureControlProvider
-                              .iris
-                              .thresholdPercentage)) &&
-                      (biometricCaptureControlProvider
-                          .rightHand
-                          .isScanned || !biometricCaptureControlProvider
-                          .rightHand
-                          .exceptions.contains(false)) &&
-                      (biometricCaptureControlProvider
-                          .rightHand
-                          .qualityPercentage >=
-                          int.parse(biometricCaptureControlProvider
-                              .rightHand
-                              .thresholdPercentage) || !biometricCaptureControlProvider.rightHand.exceptions.contains(false)) &&
-                      (biometricCaptureControlProvider
-                          .leftHand
-                          .isScanned|| !biometricCaptureControlProvider
-                          .leftHand
-                          .exceptions.contains(false)) &&
-                      (biometricCaptureControlProvider
-                          .leftHand
-                          .qualityPercentage >=
-                          int.parse(biometricCaptureControlProvider
-                              .leftHand
-                              .thresholdPercentage) || !biometricCaptureControlProvider.leftHand.exceptions.contains(false)) &&
-                      (biometricCaptureControlProvider
-                          .thumbs
-                          .isScanned|| !biometricCaptureControlProvider
-                          .thumbs
-                          .exceptions.contains(false)) &&
-                      (biometricCaptureControlProvider
-                          .thumbs
-                          .qualityPercentage >=
-                          int.parse(biometricCaptureControlProvider
-                              .thumbs
-                              .thresholdPercentage) || !biometricCaptureControlProvider.thumbs.exceptions.contains(false)) &&
-                      (biometricCaptureControlProvider
-                          .face
-                          .qualityPercentage >=
-                          int.parse(biometricCaptureControlProvider
-                              .face
-                              .thresholdPercentage)) &&
-                      biometricCaptureControlProvider
-                          .face
-                          .isScanned
-                  )
+                  backgroundColor: ((biometricCaptureControlProvider.iris.isScanned || !biometricCaptureControlProvider.iris.exceptions.contains(false)) &&
+                          (biometricCaptureControlProvider.iris.qualityPercentage >=
+                              int.parse(biometricCaptureControlProvider
+                                  .iris.thresholdPercentage)) &&
+                          (biometricCaptureControlProvider.rightHand.isScanned ||
+                              !biometricCaptureControlProvider.rightHand.exceptions
+                                  .contains(false)) &&
+                          (biometricCaptureControlProvider.rightHand.qualityPercentage >= int.parse(biometricCaptureControlProvider.rightHand.thresholdPercentage) ||
+                              !biometricCaptureControlProvider.rightHand.exceptions
+                                  .contains(false)) &&
+                          (biometricCaptureControlProvider.leftHand.isScanned ||
+                              !biometricCaptureControlProvider.leftHand.exceptions
+                                  .contains(false)) &&
+                          (biometricCaptureControlProvider.leftHand.qualityPercentage >= int.parse(biometricCaptureControlProvider.leftHand.thresholdPercentage) ||
+                              !biometricCaptureControlProvider.leftHand.exceptions
+                                  .contains(false)) &&
+                          (biometricCaptureControlProvider.thumbs.isScanned ||
+                              !biometricCaptureControlProvider.thumbs.exceptions.contains(false)) &&
+                          (biometricCaptureControlProvider.thumbs.qualityPercentage >= int.parse(biometricCaptureControlProvider.thumbs.thresholdPercentage) || !biometricCaptureControlProvider.thumbs.exceptions.contains(false)) &&
+                          (biometricCaptureControlProvider.face.qualityPercentage >= int.parse(biometricCaptureControlProvider.face.thresholdPercentage)) &&
+                          biometricCaptureControlProvider.face.isScanned)
                       ? solidPrimary
                       : secondaryColors.elementAt(22)),
             ),
@@ -374,7 +319,9 @@ class _OperatorBiometricsCaptureState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      appLocalizations.supervisors_biometric_verification,
+                      globalProvider.onboardingProcessName == "Onboarding"
+                          ? appLocalizations.supervisors_biometric_onboard
+                          : appLocalizations.supervisors_biometric_update,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: (isMobileSize) ? 16.w : 24.w,
                           color: blackShade1,
@@ -422,55 +369,42 @@ class _OperatorBiometricsCaptureState
                         minItemsPerRow: (isMobileSize) ? 1 : 2,
                         maxItemsPerRow: (isMobileSize) ? 1 : 2,
                         children: [
-                          if (globalProvider
-                              .operatorOnboardingAttributes
-                              .contains("leftEye") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                          if (globalProvider.operatorOnboardingAttributes
+                                  .contains("leftEye") &&
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("rightEye"))
-                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
-                                .iris),
-                          if (globalProvider
-                              .operatorOnboardingAttributes
-                              .contains("rightLittle") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                            _getBiometricCaptureSelectionBlockMobile(
+                                biometricCaptureControlProvider.iris),
+                          if (globalProvider.operatorOnboardingAttributes
+                                  .contains("rightLittle") &&
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("rightRing") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("rightMiddle") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("rightIndex"))
-                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
-                                .rightHand),
-                          if (globalProvider
-                              .operatorOnboardingAttributes
-                              .contains("leftLittle") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                            _getBiometricCaptureSelectionBlockMobile(
+                                biometricCaptureControlProvider.rightHand),
+                          if (globalProvider.operatorOnboardingAttributes
+                                  .contains("leftLittle") &&
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("leftRing") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("leftMiddle") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("leftIndex"))
-                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
-                                .leftHand),
-                          if (globalProvider
-                              .operatorOnboardingAttributes
-                              .contains("rightThumb") &&
-                              globalProvider
-                                  .operatorOnboardingAttributes
+                            _getBiometricCaptureSelectionBlockMobile(
+                                biometricCaptureControlProvider.leftHand),
+                          if (globalProvider.operatorOnboardingAttributes
+                                  .contains("rightThumb") &&
+                              globalProvider.operatorOnboardingAttributes
                                   .contains("leftThumb"))
-                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
-                                .thumbs),
-                          if (globalProvider
-                              .operatorOnboardingAttributes
+                            _getBiometricCaptureSelectionBlockMobile(
+                                biometricCaptureControlProvider.thumbs),
+                          if (globalProvider.operatorOnboardingAttributes
                               .contains("face"))
-                            _getBiometricCaptureSelectionBlockMobile(biometricCaptureControlProvider
-                                .face),
+                            _getBiometricCaptureSelectionBlockMobile(
+                                biometricCaptureControlProvider.face),
                         ]),
                   )
                 ],
