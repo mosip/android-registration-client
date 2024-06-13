@@ -151,7 +151,8 @@ public class UserDetailRepository {
         userTokenDao.insert(userToken);
     }
     public void updateUserDetail(String userId){
-        userDetailDao.updateUserDetail(true,userId);
+        Long updatedTime = System.currentTimeMillis();
+        userDetailDao.updateUserDetail(true,userId,updatedTime);
     }
     public String getUserAuthToken(String userId) {
         UserToken userToken = userTokenDao.findByUsername(userId);

@@ -222,7 +222,7 @@ public class HostApiModule {
     @Provides
     @Singleton
     DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
-        return new DashBoardDetailsApi(userDetailDao, registrationRepository);
+        return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository);
     }
 }
 
