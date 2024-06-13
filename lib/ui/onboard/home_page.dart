@@ -19,6 +19,7 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/export_packet/export_packet_ui.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
 // import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
@@ -172,7 +173,13 @@ class _HomePageState extends State<HomePage> {
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
         "title": appLocalizations.appliction_upload,
-        "onTap": () {},
+        "onTap": (context) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const ExportPacketsPage()));
+        },
         "subtitle": "3 application(s)"
       },
       {

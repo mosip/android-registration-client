@@ -81,3 +81,12 @@ const Map<String, String> languageCodeToLocale = {
   "chi": "zh",
   "zul": "zu",
 };
+
+enum ClientStatus {
+  CREATED,
+  APPROVED,
+  REJECTED,
+  SYNCED,
+  UPLOADED,
+  EXPORTED,
+}
