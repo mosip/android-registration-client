@@ -6,11 +6,14 @@
 */
 
 package io.mosip.registration_client.api_services;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,8 +22,13 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.service.PacketServiceImpl;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -34,15 +42,17 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     LoginService loginService;
     AuditManagerService auditManagerService;
     PacketService packetService;
+    RegistrationRepository registrationRepository;
 
     @Inject
     public PacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                   LoginService loginService, PacketService packetService,
+                                   LoginService loginService, PacketService packetService,RegistrationRepository registrationRepository ,
                                    AuditManagerService auditManagerService) {
         this.syncRestService = syncRestService;
         this.syncRestFactory = syncRestFactory;
         this.loginService = loginService;
         this.packetService = packetService;
+        this.registrationRepository = registrationRepository;
         this.auditManagerService = auditManagerService;
     }
 
@@ -95,15 +105,83 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     }
 
     @Override
+    public void syncPacketAll(@NonNull List<String> packetIds, @NonNull PacketAuthPigeon.Result<Void> result) {
+        Log.e(getClass().getSimpleName(), packetIds.toString());
+        final Integer[] remainingPack = {packetIds.size()};
+        for (String value: packetIds){
+            try {
+                Log.d(getClass().getSimpleName(), "Syncing " + value);
+                auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
+                packetService.syncRegistration(value, new AsyncPacketTaskCallBack() {
+                    @Override
+                    public void inProgress(String RID) {
+                        //Do nothing
+                    }
+
+                    @Override
+                    public void onComplete(String RID, PacketTaskStatus status) {
+                        remainingPack[0] -= 1;
+                        Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
+                        if(remainingPack[0] == 0){
+                            Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+                            result.success(null);
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void uploadPacketAll(@NonNull List<String> packetIds, @NonNull PacketAuthPigeon.Result<Void> result) {
+        Log.e(getClass().getSimpleName(), packetIds.toString());
+        final Integer[] remainingPack = {packetIds.size()};
+        for (String value: packetIds){
+            try {
+                Log.d(getClass().getSimpleName(), "Uploading " + value);
+                auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
+                packetService.uploadRegistration(value, new AsyncPacketTaskCallBack() {
+                    @Override
+                    public void inProgress(String RID) {
+                        //Do nothing
+                    }
+
+                    @Override
+                    public void onComplete(String RID, PacketTaskStatus status) {
+                        remainingPack[0] -= 1;
+                        Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
+                        if(remainingPack[0] == 0){
+                            Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+                            result.success(null);
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), e.getMessage());
+            }
+        }
+    }
+
+    @Override
     public void getAllRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
+        List<String> packets = new ArrayList();
         try{
-            List<Registration> allRegistration = packetService.getAllRegistrations(1,5);
-            allRegistration.forEach(value-> {
-                Log.e(getClass().getSimpleName(), value.toString());
-            });
+            List<Registration> allRegistration = packetService.getAllRegistrations(1,20);
+            ObjectMapper mapper = new ObjectMapper();
+            for (Registration element : allRegistration) {
+                String json = mapper.writeValueAsString(element);
+                packets.add(json);
+            }
         }catch(Exception e){
             Log.e(getClass().getSimpleName(), "Unable to get packets", e);
         }
-        result.success(Arrays.asList("Welcome", "to", "my", "list"));
+        result.success(packets);
+    }
+
+    @Override
+    public void updatePacketStatus(@NonNull String packetId, @Nullable String serverStatus, @NonNull String clientStatus, @NonNull PacketAuthPigeon.Result<Void> result) {
+        registrationRepository.updateStatus(packetId, serverStatus, clientStatus);
     }
 }
