@@ -461,82 +461,81 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
                   break;
                 }
-              }
-            }
-          }
-          if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-              screen.fields!
-                  .elementAt(i)!
-                  .conditionalBioAttributes!
-                  .isNotEmpty) {
-            String response = await BiometricsApi().getAgeGroup();
-            if (!(response.compareTo(screen.fields!
-                .elementAt(i)!
-                .conditionalBioAttributes!
-                .first!
-                .ageGroup!) ==
-                0)) {
-              if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
-                int count = returnBiometricListLength(
-                    screen.fields!.elementAt(i)!.bioAttributes,
-                    screen.fields!.elementAt(i)!.id!);
-                if (globalProvider.completeException[
-                screen.fields!.elementAt(i)!.id!] !=
-                    null) {
-                  int length = globalProvider
-                      .completeException[screen.fields!.elementAt(i)!.id!]
-                      .length;
-                  count = count - length;
-                }
+                if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+                    screen.fields!
+                        .elementAt(i)!
+                        .conditionalBioAttributes!
+                        .isNotEmpty) {
+                  String response = await BiometricsApi().getAgeGroup();
+                  if (!(response.compareTo(screen.fields!
+                      .elementAt(i)!
+                      .conditionalBioAttributes!
+                      .first!
+                      .ageGroup!) ==
+                      0)) {
+                    if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                      int count = returnBiometricListLength(
+                          screen.fields!.elementAt(i)!.bioAttributes,
+                          screen.fields!.elementAt(i)!.id!);
+                      if (globalProvider.completeException[
+                      screen.fields!.elementAt(i)!.id!] !=
+                          null) {
+                        int length = globalProvider
+                            .completeException[screen.fields!.elementAt(i)!.id!]
+                            .length;
+                        count = count - length;
+                      }
+                      if (globalProvider
+                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                          .length <
+                          count) {
+                        isValid = false;
 
-                if (globalProvider
-                    .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                    .length <
-                    count) {
-                  isValid = false;
-
-                  break;
-                }
-              }
-            }
-            if (response.compareTo(screen.fields!
-                    .elementAt(i)!
-                    .conditionalBioAttributes!
-                    .first!
-                    .ageGroup!) ==
-                0) {
-              bool valid = await BiometricsApi()
-                  .conditionalBioAttributeValidation(
-                      screen.fields!.elementAt(i)!.id!,
-                      screen.fields!
-                          .elementAt(i)!
-                          .conditionalBioAttributes!
-                          .first!
-                          .validationExpr!);
-              if (screen.fields!.elementAt(i)!.exceptionPhotoRequired == true) {
-                List<BiometricAttributeData> biometricAttributeDataList =
-                    globalProvider
-                        .fieldInputValue[screen.fields!.elementAt(i)!.id!];
-                bool isExceptionPresent = false;
-                bool isExceptionAttributePresent = false;
-                for (var biometricAttributeData in biometricAttributeDataList) {
-                  if (globalProvider.exceptionAttributes
-                      .contains(biometricAttributeData.title)) {
-                    isExceptionPresent = true;
+                        break;
+                      }
+                    }
                   }
-                  if (biometricAttributeData.title == "Exception") {
-                    isExceptionAttributePresent = true;
+                  if (response.compareTo(screen.fields!
+                      .elementAt(i)!
+                      .conditionalBioAttributes!
+                      .first!
+                      .ageGroup!) ==
+                      0) {
+                    bool valid = await BiometricsApi()
+                        .conditionalBioAttributeValidation(
+                        screen.fields!.elementAt(i)!.id!,
+                        screen.fields!
+                            .elementAt(i)!
+                            .conditionalBioAttributes!
+                            .first!
+                            .validationExpr!);
+                    if (screen.fields!.elementAt(i)!.exceptionPhotoRequired == true) {
+                      List<BiometricAttributeData> biometricAttributeDataList =
+                      globalProvider
+                          .fieldInputValue[screen.fields!.elementAt(i)!.id!];
+                      bool isExceptionPresent = false;
+                      bool isExceptionAttributePresent = false;
+                      for (var biometricAttributeData in biometricAttributeDataList) {
+                        if (globalProvider.exceptionAttributes
+                            .contains(biometricAttributeData.title)) {
+                          isExceptionPresent = true;
+                        }
+                        if (biometricAttributeData.title == "Exception") {
+                          isExceptionAttributePresent = true;
+                        }
+                      }
+                      if (isExceptionPresent == true &&
+                          isExceptionAttributePresent == false) {
+                        isValid = false;
+                        break;
+                      }
+                    }
+                    if (!valid) {
+                      isValid = false;
+                      break;
+                    }
                   }
                 }
-                if (isExceptionPresent == true &&
-                    isExceptionAttributePresent == false) {
-                  isValid = false;
-                  break;
-                }
-              }
-              if (!valid) {
-                isValid = false;
-                break;
               }
             }
           }
