@@ -89,20 +89,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getFieldValues(String fieldId, String langCode) async {
-    List<DynamicFieldData?> fieldValues =
-        await registrationTaskProvider.getFieldValues(fieldId, langCode, globalProvider.chosenLang);
+    List<DynamicFieldData?> fieldValues = await registrationTaskProvider
+        .getFieldValues(fieldId, langCode, globalProvider.chosenLang);
     globalProvider.setNotificationLanguages(fieldValues);
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW" || process.id == "UPDATE") {
-      // globalProvider.clearMap();
-      // globalProvider.clearScannedPages();
-      // globalProvider.newProcessTabIndex = 0;
-      // globalProvider.htmlBoxTabIndex = 0;
-      // globalProvider.setRegId("");
-      // globalProvider.selectedUpdateFields = {};
-      // globalProvider.updateUINNumber = "";
       globalProvider.clearRegistrationProcessData();
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
@@ -159,7 +152,7 @@ class _HomePageState extends State<HomePage> {
         "title": AppLocalizations.of(context)!.update_operator_biomterics,
         "onTap": (context) async {
           await BiometricsApi().startOperatorOnboarding();
-          globalProvider.onboardingProcessName="Updation";
+          globalProvider.onboardingProcessName = "Updation";
           Navigator.push(
               context,
               MaterialPageRoute(

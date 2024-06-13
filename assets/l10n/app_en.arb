@@ -233,5 +233,9 @@
   "supervisors_biometric_verification": "Supervisor's Biometric Verification",
   "help_topics": "Help topics",
   "onboard_request_message": "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
-  "hello_s": "Hello "
+  "hello_s": "Hello ",
+  "uin_number": "UIN Number",
+  "valid_uin": "Please enter a valid UIN",
+  "enter_uin": "Enter UIN Number",
+  "select_update_attributes": "Select all the attributes that need to be updated"
 }

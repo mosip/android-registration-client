@@ -16,6 +16,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/widgets/field_button_widget.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/life_cycle_event_handler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class UpdateFieldSelector extends StatefulWidget {
@@ -36,16 +37,17 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   Map<String, List<Field>> fieldsMap = {};
   final RegExp validation = RegExp(r'^([0-9]{10})$');
   TextEditingController controller = TextEditingController();
+  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
-        controller = TextEditingController(text: globalProvider.updateUINNumber);
+    controller = TextEditingController(text: globalProvider.updateUINNumber);
     for (var screen in widget.process.screens!) {
       for (var field in screen!.fields!) {
-        if(fieldsMap[field!.group!] == null) {
+        if (fieldsMap[field!.group!] == null) {
           fieldsMap[field.group!] = [];
         }
         fieldsMap[field.group]!.add(field);
@@ -74,8 +76,9 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
     String title = "";
     for (var element in globalProvider.chosenLang) {
       String code = globalProvider.languageToCodeMapper[element]!;
-      title +=
-          " / ${field.groupLabel![code]}";
+      if (field.groupLabel![code] != null) {
+        title += " / ${field.groupLabel![code]}";
+      }
     }
     return title.substring(3);
   }
@@ -139,7 +142,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                   child: Row(
                     children: [
                       Text(
-                        "UIN Number",
+                        appLocalizations.uin_number,
                         style: TextStyle(
                             fontSize: isPortrait && !isMobileSize ? 18 : 14,
                             fontWeight: semiBold),
@@ -169,13 +172,14 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       controller: controller,
                       onChanged: (value) {
                         globalProvider.updateUINNumber = value;
-                        registrationTaskProvider.addDemographicField("UIN", value);
+                        registrationTaskProvider.addDemographicField(
+                            "UIN", value);
                       },
                       validator: (value) {
                         if (value == null) {
-                          return "Please enter a valid UIN";
-                        } else if(!validation.hasMatch(value)) {
-                          return "Please enter a valid UIN";
+                          return appLocalizations.valid_uin;
+                        } else if (!validation.hasMatch(value)) {
+                          return appLocalizations.valid_uin;
                         }
                         return null;
                       },
@@ -187,9 +191,9 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 14, horizontal: 16),
-                        hintText: "Enter UIN Number",
-                        hintStyle:
-                            const TextStyle(color: appBlackShade3, fontSize: 14),
+                        hintText: appLocalizations.enter_uin,
+                        hintStyle: const TextStyle(
+                            color: appBlackShade3, fontSize: 14),
                       ),
                     ),
                   ),
@@ -216,7 +220,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                   child: Row(
                     children: [
                       Text(
-                        "Select all the attributes that need to be updated",
+                        appLocalizations.select_update_attributes,
                         style: TextStyle(
                             fontSize: isPortrait && !isMobileSize ? 18 : 14,
                             fontWeight: semiBold),
@@ -245,9 +249,12 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                   verticalGridSpacing: 12,
                   children: fieldsMap.keys.map((key) {
                     return FieldButtonWidget(
-                      isSelected: context.watch<GlobalProvider>().selectedUpdateFields[key] != null,
+                      isSelected: context
+                              .watch<GlobalProvider>()
+                              .selectedUpdateFields[key] !=
+                          null,
                       onTap: () {
-                        if(globalProvider.selectedUpdateFields[key] == null) {
+                        if (globalProvider.selectedUpdateFields[key] == null) {
                           globalProvider.addSelectedUpdateFieldKey(key);
                           _addFieldsToRegistrationDTO(key);
                           _addFieldGroupToRegistrationDTO(key);

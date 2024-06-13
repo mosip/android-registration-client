@@ -218,11 +218,7 @@ class _UpdateProcessState extends State<UpdateProcess>
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW" || process.id == "UPDATE") {
-      globalProvider.clearMap();
-      globalProvider.clearScannedPages();
-      globalProvider.newProcessTabIndex = 0;
-      globalProvider.htmlBoxTabIndex = 0;
-      globalProvider.setRegId("");
+      globalProvider.clearRegistrationProcessData();
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
@@ -676,9 +672,10 @@ class _UpdateProcessState extends State<UpdateProcess>
                             ),
                           ),
                           onPressed: () async {
-                            if(fieldSelectionCompleted) {
+                            if (fieldSelectionCompleted) {
                               registrationTaskProvider.addConsentField("Y");
-                              await DemographicsApi().addDemographicField("consent", "true");
+                              await DemographicsApi()
+                                  .addDemographicField("consent", "true");
                             }
                             continueButtonTap(size, newProcess);
                           },

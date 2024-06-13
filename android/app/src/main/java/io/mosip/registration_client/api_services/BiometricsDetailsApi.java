@@ -590,13 +590,18 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
     @Override
     public void getAgeGroup(@NonNull BiometricsPigeon.Result<String> result) {
+        String group = "";
         try {
             RegistrationDto registrationDto = registrationService.getRegistrationDto();
             Map<String, Object> age_group = registrationDto.getAgeGroup();
-            result.success((String) age_group.get("ageGroup"));
+            Object savedGroup = age_group.get("ageGroup");
+            if(savedGroup != null) {
+                group = (String) savedGroup;
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+        result.success(group);
     }
 
     @Override

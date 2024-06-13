@@ -233,5 +233,9 @@
   "supervisors_biometric_verification": "Vérification biométrique du superviseur",
   "help_topics": "Sujets d'aide",
   "onboard_request_message": "Veuillez appuyer sur le bouton Get Onboard pour vous intégrer au portail.",
-  "hello_s": "Bonjour "
+  "hello_s": "Bonjour ",
+  "uin_number": "Numéro UIN",
+  "valid_uin": "Veuillez saisir un UIN valide",
+  "enter_uin": "Entrez le numéro UIN",
+  "select_update_attributes": "Sélectionnez tous les attributs qui doivent être mis à jour"
 }
