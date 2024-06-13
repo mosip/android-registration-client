@@ -6,6 +6,7 @@ import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_biometric_capture_scan_block_view.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -207,6 +208,7 @@ class _OperatorBiometricsCaptureState
                     isSavingBiometrics = false;
                   });
                   if (isOperatorBiometricSaved != "") {
+                    await context.read<RegistrationTaskProvider>().getLastUpdatedTime();
                     Navigator.pop(context);
                     showDialog<String>(
                       context: context,

@@ -12,5 +12,7 @@ abstract class DashBoard {
 
   Future<int> getSyncedPacketDetails();
 
+  Future<UpdatedTimeData> getUpdatedTime();
+
   factory DashBoard() => DashBoardImpl();
 }
