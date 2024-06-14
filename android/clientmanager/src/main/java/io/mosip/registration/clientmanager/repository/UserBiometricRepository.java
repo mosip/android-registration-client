@@ -52,8 +52,9 @@ public class UserBiometricRepository {
 
     public String saveOnboardStatus(String userId) {
         UserDetail userDetail = userDetailDao.getUserDetail(userId);
+        Long updatedTime = System.currentTimeMillis();
         if (userDetail != null) {
-            userDetailDao.updateUserDetail(true, userId);
+            userDetailDao.updateUserDetail(true, userId,updatedTime);
         }
         return RegistrationConstants.SUCCESS;
     }
