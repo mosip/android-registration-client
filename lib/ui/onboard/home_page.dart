@@ -19,6 +19,7 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/export_packet/export_packet_ui.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
 
@@ -43,6 +44,7 @@ class _HomePageState extends State<HomePage> {
   late RegistrationTaskProvider registrationTaskProvider;
   late ConnectivityProvider connectivityProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  String lastOperatorUpdateBiometricTime = "";
 
   @override
   void initState() {
@@ -81,6 +83,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _fetchProcessSpec() async {
+    await registrationTaskProvider.getLastUpdatedTime();
     await registrationTaskProvider.getListOfProcesses();
     await _getFieldValues("preferredLang", globalProvider.selectedLanguage);
     await globalProvider.getRegCenterName(
@@ -122,6 +125,15 @@ class _HomePageState extends State<HomePage> {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     appLocalizations = AppLocalizations.of(context)!;
 
+
+    try {
+      String dateString = context.watch<RegistrationTaskProvider>().lastSuccessfulUpdatedTime;
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(dateString));
+      lastOperatorUpdateBiometricTime = DateFormat("EEEE d MMMM, hh:mma").format(dateTime);
+    } catch (e) {
+      lastOperatorUpdateBiometricTime = "";
+    }
+
     List<Map<String, dynamic>> operationalTasks = [
       {
         "icon": SvgPicture.asset(
@@ -159,14 +171,20 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) =>
                       OperatorOnboardingBiometricsCaptureControl()));
         },
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+        "subtitle": lastOperatorUpdateBiometricTime.toString(),
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
         "title": appLocalizations.appliction_upload,
-        "onTap": () {},
+        "onTap": (context) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const ExportPacketsPage()));
+        },
         "subtitle": "3 application(s)"
       },
       {

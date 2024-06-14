@@ -68,4 +68,17 @@ class DashBoardImpl implements DashBoard {
     }
     return createdPacketsData;
   }
+
+  @override
+  Future<UpdatedTimeData> getUpdatedTime() async {
+    late UpdatedTimeData updatedTime;
+    try {
+      updatedTime = await DashBoardApi().getUpdatedTime();
+    } on PlatformException {
+      debugPrint('Unable to get last updated time!');
+    } catch (e) {
+      debugPrint('Unable to get last updated time! ${e.toString()}');
+    }
+    return updatedTime;
+  }
 }

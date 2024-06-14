@@ -104,4 +104,8 @@ public class Registration {
         return packetId + "\n" + (serverStatus == null ? clientStatus : serverStatus);
     }
 
+    @NonNull
+    public String getPacketIdRegistration() {
+        return packetId;
+    }
 }
