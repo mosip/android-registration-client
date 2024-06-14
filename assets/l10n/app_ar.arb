@@ -228,7 +228,8 @@
   "operator_biometric_updated_successfully": "تم تحديث القياسات الحيوية للمشغل بنجاح.",
   "home": "بيت",
   "verify_and_save": "التحقق والحفظ",
-  "supervisors_biometric_verification": "التحقق البيومتري للمشرف",
+  "supervisors_biometric_onboard": "تسجيل المشرف الحيوي",
+  "supervisors_biometric_update": "تحديث المشرف الحيوي",
   "help_topics": "مواضيع المساعدة",
   "onboard_request_message": "الرجاء الضغط على زر \"الانضمام\" للانضمام إلى البوابة.",
   "hello_s": "مرحبًا "
