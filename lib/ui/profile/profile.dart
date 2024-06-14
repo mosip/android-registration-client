@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
 import '../../provider/auth_provider.dart';
+import '../../provider/sync_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,6 +19,21 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  late SyncProvider syncProvider;
+
+  @override
+  void initState() {
+    syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    super.initState();
+  }
+
+  void _showInSnackBar(String value) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value),
+      ),
+    );
+  }
 
 
   @override
@@ -182,11 +198,24 @@ class _ProfilePageState extends State<ProfilePage> {
               const Divider(color: Color(0xFFF5F8FF), height: 4),
               const SizedBox(height: 15),
               GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) => const LogoutAlert(),
-                  );
+                onTap: () async{
+                  if(syncProvider.isSyncInProgress){
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => const LogoutAlert(),
+                    );
+                  }else{
+                    String result = await authProvider.logoutUser();
+                    if (result.contains("Logout Success")) {
+                      _showInSnackBar("You have been successfully logged out!");
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/login-page', (route) => false);
+                    } else {
+                      _showInSnackBar(
+                          "Something went wrong, please try again after some time");
+                      Navigator.of(context).pop();
+                    }
+                  }
                 },
                 child: Text(
                   appLocalizations.logout,

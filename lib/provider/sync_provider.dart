@@ -29,6 +29,7 @@ class SyncProvider with ChangeNotifier {
   bool _masterDataSyncSuccess = false;
   bool _cacertsSyncSuccess = false;
   bool _kernelCertsSyncSuccess = false;
+  bool isSyncInProgress = false;
 
   String get lastSuccessfulSyncTime => _lastSuccessfulSyncTime;
   int get currentSyncProgress => _currentSyncProgress;
@@ -184,6 +185,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   manualSync() async {
+    isSyncInProgress = true;
     Sync syncResult = await syncResponseService.getMasterDataSync(true);
     if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
       syncResult = await syncResponseService.getIDSchemaSync(true);
@@ -198,6 +200,7 @@ class SyncProvider with ChangeNotifier {
               if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
                 syncResult = await syncResponseService.getCaCertsSync(true);
                 await getLastSyncTime();
+                isSyncInProgress= false;
               }
             }
           }

@@ -153,7 +153,6 @@ class AuthProvider with ChangeNotifier {
  Future<String> logoutUser() async {
     String logoutResponse = await auth.logout();
     String stopAlarmServiceResponse = await auth.stopAlarmService();
-    debugPrint("stopAlarmServiceResponse is:-->\n\n\n$stopAlarmServiceResponse\n\n\n");
     clearUser();
     notifyListeners();
     return logoutResponse;
