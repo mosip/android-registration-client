@@ -210,6 +210,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   batchJob() async {
-    await syncResponseService.batchJob();
+    isSyncInProgress= true;
+    await syncResponseService.batchJob().then((value) => isSyncInProgress= false);
   }
 }
