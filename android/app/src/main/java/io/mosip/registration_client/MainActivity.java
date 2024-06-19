@@ -16,7 +16,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -37,7 +36,6 @@ import javax.inject.Inject;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
@@ -100,6 +98,7 @@ import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
+import io.mosip.registration_client.utils.CustomToast;
 
 import android.net.Uri;
 
@@ -193,13 +192,13 @@ public class MainActivity extends FlutterActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
-                syncRegistrationPackets(context);
-                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                scheduler.schedule(()-> {
-                    createBackgroundTask("registrationPacketUploadJob");
-                }, 1, TimeUnit.MINUTES);
-            }
+        if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
+            syncRegistrationPackets(context);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.schedule(()-> {
+                createBackgroundTask("registrationPacketUploadJob");
+            }, 1, TimeUnit.MINUTES);
+        }
         }
     };
 
@@ -263,10 +262,10 @@ public class MainActivity extends FlutterActivity {
             Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
             Integer batchSize = getBatchSize();
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
+            final Integer[] remainingPack = {registrationList.size(), 0};
 
-//          Variable is accessed within inner class. Needs to be declared final also it is modified too in the inner class
-//          Solution: using final array variable with one element that can be altered
-            final Integer[] remainingPack = {registrationList.size()};
+            Integer packetSize = registrationList.size();
+            CustomToast newToast = new CustomToast(this);
 
             if(registrationList.isEmpty()){
                 uploadRegistrationPackets(context);
@@ -276,17 +275,34 @@ public class MainActivity extends FlutterActivity {
                 try {
                     Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
                     auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
+
+                    Integer remaining = packetSize - remainingPack[0];
+                    newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                    newToast.showToast();
+
                     packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
                         @Override
                         public void inProgress(String RID) {
                             //Do nothing
+                            newToast.showToast();
                         }
 
                         @Override
                         public void onComplete(String RID, PacketTaskStatus status) {
+                            if(status.equals(PacketTaskStatus.SYNC_COMPLETED)){
+                                remainingPack[1] += 1;
+                            }
                             remainingPack[0] -= 1;
-                            Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
+
+                            Integer remaining = packetSize - remainingPack[0];
+                            newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
                             if(remainingPack[0] == 0){
+                                Integer failed = packetSize- remainingPack[1];
+                                newToast.setIcon(R.drawable.done);
+                                newToast.setText(String.format("Sync Packet Status: %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
+                                newToast.showToast();
+
                                 Log.d(getClass().getSimpleName(), "Last Packet"+RID);
                                 uploadRegistrationPackets(context);
                             }
@@ -304,11 +320,45 @@ public class MainActivity extends FlutterActivity {
             Log.d(getClass().getSimpleName(), "Upload Packets in main activity");
             Integer batchSize = getBatchSize();
             List<Registration>  registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name(), batchSize);
+
+            Integer packetSize = registrationList.size();
+            final Integer[] remainingPack = {packetSize, 0};
+            CustomToast newToast = new CustomToast(this);
+
             for (Registration value : registrationList) {
                 try {
                     Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
                     auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
-                    packetService.uploadRegistration(value.getPacketId());
+
+                    Integer remaining = packetSize - remainingPack[0];
+                    newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                    newToast.showToast();
+
+                    packetService.uploadRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
+                        @Override
+                        public void inProgress(String RID) {
+                            //Do nothing
+                            newToast.showToast();
+                        }
+
+                        @Override
+                        public void onComplete(String RID, PacketTaskStatus status) {
+                            if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)){
+                                remainingPack[1] += 1;
+                            }
+                            remainingPack[0] -= 1;
+
+                            Integer remaining = packetSize - remainingPack[0];
+                            newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
+                            if(remainingPack[0] == 0){
+                                Integer failed = packetSize- remainingPack[1];
+                                newToast.setIcon(R.drawable.done);
+                                newToast.setText(String.format("Upload Packet Status : %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
+                                newToast.showToast();
+                            }
+                        }
+                    });
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
@@ -369,6 +419,7 @@ public class MainActivity extends FlutterActivity {
         biometricsDetailsApi.setCallbackActivity(this);
         RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
+        packetAuthenticationApi.setCallbackActivity(this);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
         DocumentCategoryPigeon.DocumentCategoryApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentCategoryApi);

@@ -64,8 +64,10 @@ import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.CronParserUtil;
+import io.mosip.registration_client.utils.CustomToast;
 import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.NetworkUtils;
+import io.mosip.registration_client.R;
 import io.mosip.registration_client.UploadBackgroundService;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 
@@ -307,16 +309,16 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     private void syncRegistrationPackets(Context context) {
-        if (NetworkUtils.isNetworkConnected(context)) {
+        if(NetworkUtils.isNetworkConnected(context)){
             Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
             Integer batchSize = getBatchSize();
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
+            final Integer[] remainingPack = {registrationList.size(), 0};
 
-//          Variable is accessed within inner class. Needs to be declared final also it is modified too in the inner class
-//          Solution: using final array variable with one element that can be altered
-            final Integer[] remainingPack = {registrationList.size()};
+            Integer packetSize = registrationList.size();
+            CustomToast newToast = new CustomToast(activity);
 
-            if (registrationList.isEmpty()) {
+            if(registrationList.isEmpty()){
                 uploadRegistrationPackets(context);
                 return;
             }
@@ -324,18 +326,35 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 try {
                     Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
                     auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
+
+                    Integer remaining = packetSize - remainingPack[0];
+                    newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                    newToast.showToast();
+
                     packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
                         @Override
                         public void inProgress(String RID) {
                             //Do nothing
+                            newToast.showToast();
                         }
 
                         @Override
                         public void onComplete(String RID, PacketTaskStatus status) {
+                            if(status.equals(PacketTaskStatus.SYNC_COMPLETED)){
+                                remainingPack[1] += 1;
+                            }
                             remainingPack[0] -= 1;
-                            Log.d(getClass().getSimpleName(), "Remaining pack" + remainingPack[0]);
-                            if (remainingPack[0] == 0) {
-                                Log.d(getClass().getSimpleName(), "Last Packet" + RID);
+
+                            Integer remaining = packetSize - remainingPack[0];
+                            newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
+                            if(remainingPack[0] == 0){
+                                Integer failed = packetSize- remainingPack[1];
+                                newToast.setIcon(R.drawable.done);
+                                newToast.setText(String.format("Sync Packet Status: %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
+                                newToast.showToast();
+
+                                Log.d(getClass().getSimpleName(), "Last Packet"+RID);
                                 uploadRegistrationPackets(context);
                             }
                         }
@@ -348,15 +367,49 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     private void uploadRegistrationPackets(Context context) {
-        if (NetworkUtils.isNetworkConnected(context)) {
+        if(NetworkUtils.isNetworkConnected(context)){
             Log.d(getClass().getSimpleName(), "Upload Packets in main activity");
             Integer batchSize = getBatchSize();
-            List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name(), batchSize);
+            List<Registration>  registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name(), batchSize);
+
+            Integer packetSize = registrationList.size();
+            final Integer[] remainingPack = {packetSize, 0};
+            CustomToast newToast = new CustomToast(activity);
+
             for (Registration value : registrationList) {
                 try {
                     Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
                     auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
-                    packetService.uploadRegistration(value.getPacketId());
+
+                    Integer remaining = packetSize - remainingPack[0];
+                    newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                    newToast.showToast();
+
+                    packetService.uploadRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
+                        @Override
+                        public void inProgress(String RID) {
+                            //Do nothing
+                            newToast.showToast();
+                        }
+
+                        @Override
+                        public void onComplete(String RID, PacketTaskStatus status) {
+                            if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)){
+                                remainingPack[1] += 1;
+                            }
+                            remainingPack[0] -= 1;
+
+                            Integer remaining = packetSize - remainingPack[0];
+                            newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
+                            if(remainingPack[0] == 0){
+                                Integer failed = packetSize- remainingPack[1];
+                                newToast.setIcon(R.drawable.done);
+                                newToast.setText(String.format("Upload Packet Status : %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
+                                newToast.showToast();
+                            }
+                        }
+                    });
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
