@@ -18,10 +18,6 @@ public class IdentityProofPageTamil extends IdentityProofPage{
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
-	
-	@AndroidFindBy(className = "android.widget.ImageView")
-	private WebElement captureImage;
-
 
 	public IdentityProofPageTamil(AppiumDriver driver) {
 		super(driver);
@@ -37,7 +33,6 @@ public class IdentityProofPageTamil extends IdentityProofPage{
 	}
 
 	public void cropCaptureImage() {
-		isElementDisplayed(captureImage);
 		cropCaptureImage(imageleftCorner);
 	}
 

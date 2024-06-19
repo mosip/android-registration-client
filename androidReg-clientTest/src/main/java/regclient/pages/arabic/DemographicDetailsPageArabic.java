@@ -40,7 +40,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "أنثى")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الأحوال المدنية\")]/parent::android.widget.HorizontalScrollView/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الأحوال المدنية\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"حالة الإقامة\")]/parent::android.view.View/parent::android.widget.Button")
@@ -61,29 +61,28 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"بريدي\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectPostal;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
+	@AndroidFindBy(accessibility = "14022")
 	private WebElement selectPostalCode;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"غير أجنبي\")")
+	@AndroidFindBy(accessibility = "غير أجنبي")
 	private WebElement nonForeignerValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"أجنبي\")")
+	@AndroidFindBy(accessibility = "أجنبي")
 	private WebElement foreignerValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"الأرامل\")")
+	@AndroidFindBy(accessibility = "الأرامل")
 	private WebElement singleValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"الرباط سلا القنيطرة\")")
+	@AndroidFindBy(accessibility = "الرباط سلا القنيطرة")
 	private WebElement rabatSaleKenitraValueFromDropdown;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"القنيطرة\")]")
+	@AndroidFindBy(accessibility = "القنيطرة")
 	private WebElement kenitraValueFromDropdown;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الرباط\")]")
 	@AndroidFindBy(accessibility = "الرباط")
 	private WebElement rabatValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"بن منصور\")")
+	@AndroidFindBy(accessibility = "بن منصور")
 	private WebElement benMansourFromDropdown;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"حالة الإقامة\"))")
@@ -133,12 +132,6 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "مدخل غير صالح")
 	private WebElement errorMessageInvalidInputText;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
-	private WebElement calenderIcon;
-	
-	@AndroidFindBy(accessibility = "تمويه")
-	private WebElement backgroundScreen;
 
 	public DemographicDetailsPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -287,15 +280,14 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	public  void selectProvinceStatus(String province) {
 		clickOnElement(selectProvinceStatus);
 		if(province.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayed(kenitraValueFromDropdown)) {
-
+			if(!isElementDisplayedOnScreen(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(province.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayed(rabatValueFromDropdown)) {
+			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(rabatValueFromDropdown);
@@ -306,15 +298,14 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	public  void selectCityStatus(String city) {
 		clickOnElement(selectCityStatus);
 		if(city.equalsIgnoreCase("Kenitra"))
-
-			if(!isElementDisplayed(kenitraValueFromDropdown)) {
+			if(!isElementDisplayed(kenitraValueFromDropdown,5)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(kenitraValueFromDropdown);
 			}else
 				clickOnElement(kenitraValueFromDropdown);
 		if(city.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayed(rabatValueFromDropdown)) {
+			if(!isElementDisplayedOnScreen(rabatValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
 				clickOnElement(rabatValueFromDropdown);
@@ -380,12 +371,6 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 	}
 
-	public  void selectCurrentCalenderDate() {
-		clickOnElement(calenderIcon);		
-	}
-	
-	public  void closeCalender() {
-		clickOnElement(backgroundScreen);		
-	}
+
 
 }

@@ -61,28 +61,28 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ಅಂಚೆ\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectPostal;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
+	@AndroidFindBy(accessibility = "14022")
 	private WebElement selectPostalCode;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ವಿದೇಶಿಯರಲ್ಲದವರು\")")
+	@AndroidFindBy(accessibility = "ವಿದೇಶಿಯರಲ್ಲದವರು")
 	private WebElement nonForeignerValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ವಿದೇಶಿಗ\")")
+	@AndroidFindBy(accessibility = "ವಿದೇಶಿಗ")
 	private WebElement foreignerValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ಏಕ\")")
+	@AndroidFindBy(accessibility = "ಏಕ")
 	private WebElement singleValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ರಬತ್ ಸಲೆ ಕೆನಿತ್ರ\")")
+	@AndroidFindBy(accessibility = "ರಬತ್ ಸಲೆ ಕೆನಿತ್ರ")
 	private WebElement rabatSaleKenitraValueFromDropdown;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ಕೆನಿತ್ರಾ\")]")
+	@AndroidFindBy(accessibility = "ಕೆನಿತ್ರಾ")
 	private WebElement kenitraValueFromDropdown;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ರಬತ್\")]")
+	@AndroidFindBy(accessibility = "ರಬತ್")
 	private WebElement rabatValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ಬಿನ್ ಮನ್ಸೂರ್\")")
+	@AndroidFindBy(accessibility = "ಬಿನ್ ಮನ್ಸೂರ್")
 	private WebElement benMansourFromDropdown;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ನಿವಾಸ ಸ್ಥಿತಿ\"))")
@@ -132,12 +132,6 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್")
 	private WebElement errorMessageInvalidInputText;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
-	private WebElement calenderIcon;
-	
-	@AndroidFindBy(accessibility = "ಸ್ಕ್ರಿಮ್")
-	private WebElement backgroundScreen;
 
 	public DemographicDetailsPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -375,13 +369,5 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 		}else
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
-	}
-	
-	public  void selectCurrentCalenderDate() {
-		clickOnElement(calenderIcon);		
-	}
-	
-	public  void closeCalender() {
-		clickOnElement(backgroundScreen);		
 	}
 }

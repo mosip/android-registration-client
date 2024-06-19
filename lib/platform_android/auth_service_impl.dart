@@ -57,6 +57,33 @@ class AuthServiceImpl implements AuthService {
 
     return packetAuth;
   }
+
+  @override
+  Future<String> logout() async {
+    late String logoutResponse;
+    try {
+      logoutResponse = await AuthResponseApi().logout();
+    }on PlatformException {
+      debugPrint('Logout Api call failed!');
+    }catch (e) {
+      debugPrint(e.toString());
+    }
+
+    return logoutResponse;
+  }
+
+  @override
+  Future<String> stopAlarmService() async {
+    late String stopAlarmServiceResponse;
+    try {
+      stopAlarmServiceResponse = await AuthResponseApi().stopAlarmService();
+    }on PlatformException {
+      debugPrint('stopAlarmService Api call failed!');
+    }catch (e) {
+      debugPrint(e.toString());
+    }
+    return stopAlarmServiceResponse;
+  }
 }
 
 AuthService getAuthServiceImpl() => AuthServiceImpl();

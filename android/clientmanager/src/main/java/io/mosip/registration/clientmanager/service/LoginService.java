@@ -3,6 +3,8 @@ package io.mosip.registration.clientmanager.service;
 import android.content.Context;
 
 import android.util.Log;
+import android.widget.Toast;
+
 import com.auth0.android.jwt.JWT;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.entity.UserDetail;
@@ -18,6 +20,7 @@ import io.mosip.registration.keymanager.util.CryptoUtil;
 import org.mvel2.MVEL;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,6 +29,9 @@ import javax.inject.Singleton;
 public class LoginService {
 
     private static final String TAG = LoginService.class.getSimpleName();
+
+    private static final Logger LOGGER =
+            Logger.getLogger(LoginService.class.getName());
 
     private SessionManager sessionManager;
 
@@ -84,6 +90,18 @@ public class LoginService {
             throw ex;
         }
     }
+
+    public String clearAuthToken(Context context){
+        try{
+            String AuthTokenReturned=this.sessionManager.clearAuthToken();
+            LOGGER.info("Auth Token is cleared and its value is "+AuthTokenReturned);
+            return AuthTokenReturned;
+        }catch (Exception ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+            throw ex;
+        }
+        }
+
 
     public String saveUserAuthTokenOffline(String userId) throws Exception {
         String token = userDetailRepository.getUserAuthToken(userId);

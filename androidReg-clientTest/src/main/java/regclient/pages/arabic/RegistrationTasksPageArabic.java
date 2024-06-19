@@ -4,8 +4,6 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.DashboardPage;
-import regclient.page.OperationalTaskPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
 
@@ -32,8 +30,6 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage{
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
 	private WebElement scriptSyncCompletedMessage ;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
-	private WebElement dashboardButton;
 	
 	public RegistrationTasksPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -68,14 +64,4 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage{
 		return isElementDisplayed(scriptSyncCompletedMessage);
 	}
 	
-	public  DashboardPage clickOnDashboardButton() {
-		clickOnElement(dashboardButton);
-		return new DashboardPageArabic(driver);
-	}
-	
-	public  OperationalTaskPage clickOnOperationalTasksTitle() {
-		clickOnElement(operationalTaskPageTitle);
-		return new OperationalTaskPageArabic(driver);
-	}
-
 }

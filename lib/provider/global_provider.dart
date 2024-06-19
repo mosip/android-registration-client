@@ -525,7 +525,7 @@ class GlobalProvider with ChangeNotifier {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
     await createLanguageCodeMapper();
-    String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
+    String mandatoryLang = selectedLanguage ?? _mandatoryLanguages[0] ?? "eng";
     if (!isManualSync) {
       await toggleLocale(mandatoryLang);
     }

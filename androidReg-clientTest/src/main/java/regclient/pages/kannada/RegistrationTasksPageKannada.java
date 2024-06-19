@@ -4,20 +4,14 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.DashboardPage;
-import regclient.page.OperationalTaskPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-
 
 public class RegistrationTasksPageKannada extends RegistrationTasksPage{
 
 	@AndroidFindBy(accessibility = "ನೋಂದಣಿ ಕಾರ್ಯಗಳು")
 	private WebElement registrationTasksTitle;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
-	private WebElement dashboardButton;
-	
 	@AndroidFindBy(accessibility = "ಕಾರ್ಯಾಚರಣೆಯ ಕಾರ್ಯಗಳು")
 	private WebElement operationalTaskPageTitle;
 
@@ -67,16 +61,6 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage{
 
 	public boolean isScriptSyncCompletedDisplayed() {
 		return isElementDisplayed(scriptSyncCompletedMessage);
-	}
-	
-	public  DashboardPage clickOnDashboardButton() {
-		clickOnElement(dashboardButton);
-		return new DashboardPageKannada(driver);
-	}
-
-	public  OperationalTaskPage clickOnOperationalTasksTitle() {
-		clickOnElement(operationalTaskPageTitle);
-		return new OperationalTaskPageKannada(driver);
 	}
 
 }

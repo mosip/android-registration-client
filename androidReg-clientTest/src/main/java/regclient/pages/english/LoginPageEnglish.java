@@ -89,9 +89,8 @@ public class LoginPageEnglish extends LoginPage {
 
 	@AndroidFindBy(accessibility = "spanish")
 	private WebElement spanishButton;
-	
-	@AndroidFindBy(accessibility = "Sync Completed Successfully")
-	private WebElement syncCompletedSuccessfullyMessage;
+
+
 
 
 	public  void enterUserName(String username) {
@@ -171,8 +170,7 @@ public class LoginPageEnglish extends LoginPage {
 	public void selectLanguage() {
 			clickOnElement(englishButton);
 		}
+	
 
-	public boolean isSyncCompletedSuccessfullyMessageDisplayed() {
-		return isElementDisplayed(syncCompletedSuccessfullyMessage,2000);
-	}
+
 }
