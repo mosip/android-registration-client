@@ -21,6 +21,7 @@ class SyncProvider with ChangeNotifier {
   String _currentProgressType = "";
   bool _isSyncing = false;
   bool _isGlobalSyncInProgress = false;
+  bool _isSyncAndUploadInProgress = false;
 
   bool _policyKeySyncSuccess = false;
   bool _globalParamsSyncSuccess = false;
@@ -36,6 +37,7 @@ class SyncProvider with ChangeNotifier {
   String get currentProgressType => _currentProgressType;
   bool get isSyncing => _isSyncing;
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
+  bool get isSyncAndUploadInProgress => _isSyncAndUploadInProgress;
   bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
@@ -46,6 +48,11 @@ class SyncProvider with ChangeNotifier {
 
   set isSyncing(bool value) {
     _isSyncing = value;
+    notifyListeners();
+  }
+
+  set isSyncAndUploadInProgress(bool value) {
+    _isSyncAndUploadInProgress = value;
     notifyListeners();
   }
 

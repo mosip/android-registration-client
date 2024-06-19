@@ -127,12 +127,11 @@ class _LogoutAlertState extends State<LogoutAlert> {
                 onPressed: () async {
                   String result = await authProvider.logoutUser();
                   if (result.contains("Logout Success")) {
-                    _showInSnackBar("You have been successfully logged out!");
+                    _showInSnackBar(appLocalizations.logout_success);
                     Navigator.pushNamedAndRemoveUntil(
                         context, '/login-page', (route) => false);
                   } else {
-                    _showInSnackBar(
-                        "Something went wrong, please try again after some time");
+                    _showInSnackBar(appLocalizations.logout_failure);
                     Navigator.of(context).pop();
                   }
                 },

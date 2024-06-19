@@ -232,5 +232,7 @@
   "supervisors_biometric_update": "تحديث المشرف الحيوي",
   "help_topics": "مواضيع المساعدة",
   "onboard_request_message": "الرجاء الضغط على زر \"الانضمام\" للانضمام إلى البوابة.",
-  "hello_s": "مرحبًا "
+  "hello_s": "مرحبًا ",
+  "logout_success": "لقد تم تسجيل بنجاح!",
+  "logout_failure": "حدث خطأ ما، يرجى المحاولة مرة أخرى بعد مرور بعض الوقت"
 }

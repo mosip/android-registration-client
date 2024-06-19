@@ -199,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 15),
               GestureDetector(
                 onTap: () async{
-                  if(syncProvider.isSyncInProgress){
+                  if(syncProvider.isSyncInProgress || syncProvider.isSyncAndUploadInProgress){
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => const LogoutAlert(),
@@ -207,12 +207,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   }else{
                     String result = await authProvider.logoutUser();
                     if (result.contains("Logout Success")) {
-                      _showInSnackBar("You have been successfully logged out!");
+                      _showInSnackBar(appLocalizations.logout_success);
                       Navigator.pushNamedAndRemoveUntil(
                           context, '/login-page', (route) => false);
                     } else {
-                      _showInSnackBar(
-                          "Something went wrong, please try again after some time");
+                      _showInSnackBar(appLocalizations.logout_failure);
                       Navigator.of(context).pop();
                     }
                   }

@@ -232,5 +232,7 @@
   "supervisors_biometric_update": "Supervisor's Biometric Update",
   "help_topics": "Help topics",
   "onboard_request_message": "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
-  "hello_s": "Hello "
+  "hello_s": "Hello ",
+  "logout_success": "You have been successfully logged out!",
+  "logout_failure": "Something went wrong, please try again after some time"
 }
