@@ -7,6 +7,7 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
+import '../../platform_spi/sync_response_service.dart';
 import '../../provider/auth_provider.dart';
 import '../../provider/sync_provider.dart';
 
@@ -20,6 +21,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   late SyncProvider syncProvider;
+  late SyncResponseService syncResponseService = SyncResponseService();
 
   @override
   void initState() {
@@ -198,8 +200,12 @@ class _ProfilePageState extends State<ProfilePage> {
               const Divider(color: Color(0xFFF5F8FF), height: 4),
               const SizedBox(height: 15),
               GestureDetector(
-                onTap: () async{
-                  if(syncProvider.isSyncInProgress || syncProvider.isSyncAndUploadInProgress){
+                onTap: () async {
+                  bool periodicSyncAndUploadStatus = await syncResponseService
+                      .getSyncAndUploadInProgressStatus();
+                  if (syncProvider.isSyncInProgress ||
+                      syncProvider.isSyncAndUploadInProgress ||
+                      periodicSyncAndUploadStatus) {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => const LogoutAlert(),
