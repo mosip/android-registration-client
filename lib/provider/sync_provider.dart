@@ -21,6 +21,7 @@ class SyncProvider with ChangeNotifier {
   String _currentProgressType = "";
   bool _isSyncing = false;
   bool _isGlobalSyncInProgress = false;
+  bool _isSyncAndUploadInProgress = false;
 
   bool _policyKeySyncSuccess = false;
   bool _globalParamsSyncSuccess = false;
@@ -29,12 +30,14 @@ class SyncProvider with ChangeNotifier {
   bool _masterDataSyncSuccess = false;
   bool _cacertsSyncSuccess = false;
   bool _kernelCertsSyncSuccess = false;
+  bool isSyncInProgress = false;
 
   String get lastSuccessfulSyncTime => _lastSuccessfulSyncTime;
   int get currentSyncProgress => _currentSyncProgress;
   String get currentProgressType => _currentProgressType;
   bool get isSyncing => _isSyncing;
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
+  bool get isSyncAndUploadInProgress => _isSyncAndUploadInProgress;
   bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
@@ -45,6 +48,11 @@ class SyncProvider with ChangeNotifier {
 
   set isSyncing(bool value) {
     _isSyncing = value;
+    notifyListeners();
+  }
+
+  set isSyncAndUploadInProgress(bool value) {
+    _isSyncAndUploadInProgress = value;
     notifyListeners();
   }
 
@@ -184,6 +192,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   manualSync() async {
+    isSyncInProgress = true;
     Sync syncResult = await syncResponseService.getMasterDataSync(true);
     if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
       syncResult = await syncResponseService.getIDSchemaSync(true);
@@ -198,6 +207,7 @@ class SyncProvider with ChangeNotifier {
               if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
                 syncResult = await syncResponseService.getCaCertsSync(true);
                 await getLastSyncTime();
+                isSyncInProgress= false;
               }
             }
           }
@@ -207,6 +217,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   batchJob() async {
-    await syncResponseService.batchJob();
+    isSyncInProgress= true;
+    await syncResponseService.batchJob().then((value) => isSyncInProgress= false);
   }
 }

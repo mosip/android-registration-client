@@ -217,6 +217,13 @@
   "sync_alert_title": "المزامنة للمتابعة!",
   "sync_alert_content": "الجهاز أو المركز غير نشط. قم بتنشيطه والمزامنة للمتابعة.",
   "sync_alert_text": "مزامنة",
+  "officer": "ضابط",
+  "operator": "المشغل أو العامل",
+  "supervisor": "مشرف",
+  "online": "متصل",
+  "offline": "غير متصل على الانترنت",
+  "logout_action_required": "لا يزال هناك بعض الإجراءات المطلوبة!",
+  "logout_warning_message": "سيؤدي النقر فوق تسجيل الخروج إلى إنهاء العملية وقد يؤدي إلى فقدان البيانات.",
   "onboarded_successfully": "لقد انضممت بنجاح.",
   "operator_biometric_updated_successfully": "تم تحديث القياسات الحيوية للمشغل بنجاح.",
   "home": "بيت",
@@ -225,5 +232,7 @@
   "supervisors_biometric_update": "تحديث المشرف الحيوي",
   "help_topics": "مواضيع المساعدة",
   "onboard_request_message": "الرجاء الضغط على زر \"الانضمام\" للانضمام إلى البوابة.",
-  "hello_s": "مرحبًا "
+  "hello_s": "مرحبًا ",
+  "logout_success": "لقد تم تسجيل بنجاح!",
+  "logout_failure": "حدث خطأ ما، يرجى المحاولة مرة أخرى بعد مرور بعض الوقت"
 }

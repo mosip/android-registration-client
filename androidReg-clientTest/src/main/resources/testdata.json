@@ -1,9 +1,8 @@
 {
     "username": "9343",
-    "onBoardUsername":"1919",
     "password": "admin123",
     "language": "eng",
-    "defaultlanguage": "ara",
+    "defaultlanguage": "eng",
     "notificationLanguage": "eng",
     "fullname": "abcd",
     "adultage": "20",
@@ -20,6 +19,5 @@
     "emailId": "abc@gmail.com",
     "RID": "10001105671003120240215071549",
     "nonRegisteredUsername": "123456789",
-    "InvalidPassword": "123456789",
-    "comments":"asdfgh"
+    "InvalidPassword": "123456789"
 }

@@ -17,9 +17,6 @@ public class IdentityProofPageKannada extends IdentityProofPage{
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
-	
-	@AndroidFindBy(className = "android.widget.ImageView")
-	private WebElement captureImage;
 
 	public IdentityProofPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -35,7 +32,6 @@ public class IdentityProofPageKannada extends IdentityProofPage{
 	}
 
 	public void cropCaptureImage() {
-		isElementDisplayed(captureImage);
 		cropCaptureImage(imageleftCorner);
 	}
 

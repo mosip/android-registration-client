@@ -21,7 +21,7 @@ public class TestDataReader {
 		case "username":
 			return "9343";
 		case "language":
-			return "eng";
+			return "fra";
 		case "defaultlanguage":
 			return "ara";
 		case "notificationLanguage":
@@ -67,7 +67,7 @@ public class TestDataReader {
 		JSONParser parser = new JSONParser();
 		Object obj = null;
 		try {
-			obj = parser.parse(new FileReader(System.getProperty("user.dir")+"//src//main//resources//testdata.json"));
+			obj = parser.parse(new FileReader(System.getProperty("user.dir")+"\\src\\main\\resources\\testdata.json"));
 		} catch (FileNotFoundException e) {
 			
 			e.printStackTrace();

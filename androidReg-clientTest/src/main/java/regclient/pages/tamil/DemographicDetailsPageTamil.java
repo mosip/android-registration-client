@@ -41,7 +41,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "பெண்")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"சிவில் நிலை\")]/parent::android.widget.HorizontalScrollView/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"சிவில் நிலை\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"குடியிருப்பு நிலை\")]/parent::android.view.View/parent::android.widget.Button")
@@ -62,28 +62,28 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"அஞ்சல்\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectPostal;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
+	@AndroidFindBy(accessibility = "14022")
 	private WebElement selectPostalCode;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"வெளிநாட்டவர் அல்லாதவர்\")")
+	@AndroidFindBy(accessibility = "வெளிநாட்டவர் அல்லாதவர்")
 	private WebElement nonForeignerValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"வெளிநாட்டவர்\")")
+	@AndroidFindBy(accessibility = "வெளிநாட்டவர்")
 	private WebElement foreignerValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ஒற்றை\")")
+	@AndroidFindBy(accessibility = "ஒற்றை")
 	private WebElement singleValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ரபத் சேல் கெனிட்ரா\")")
+	@AndroidFindBy(accessibility = "ரபத் சேல் கெனிட்ரா")
 	private WebElement rabatSaleKenitraValueFromDropdown;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"கெனிட்ரா\")]")
+	@AndroidFindBy(accessibility = "கெனிட்ரா")
 	private WebElement kenitraValueFromDropdown;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ரபாத்\")]")
+	@AndroidFindBy(accessibility = "ரபாத்")
 	private WebElement rabatValueFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"பென் மன்சூர்\")")
+	@AndroidFindBy(accessibility = "பென் மன்சூர்")
 	private WebElement benMansourFromDropdown;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"குடியிருப்பு நிலை\"))")
@@ -133,13 +133,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್")
 	private WebElement errorMessageInvalidInputText;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
-	private WebElement calenderIcon;
 
-	@AndroidFindBy(accessibility = "ஸ்க்ரிம்")
-	private WebElement backgroundScreen;
-	
 	public DemographicDetailsPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -376,13 +370,5 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage{
 			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 		}else
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
-	}
-	
-	public  void selectCurrentCalenderDate() {
-		clickOnElement(calenderIcon);		
-	}
-	
-	public  void closeCalender() {
-		clickOnElement(backgroundScreen);		
 	}
 }

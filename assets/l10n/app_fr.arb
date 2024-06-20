@@ -217,6 +217,13 @@
   "sync_alert_title": "Synchronisation pour continuer!",
   "sync_alert_content": "La machine ou le centre n'est pas actif. Activez et synchronisez pour continuer.",
   "sync_alert_text": "Synchroniser",
+  "officer": "Officier",
+  "operator": "Opérateur",
+  "supervisor": "Superviseur",
+  "online": "En ligne",
+  "offline": "Hors ligne",
+  "logout_action_required": "Il y a encore des actions à faire !",
+  "logout_warning_message": "Cliquer sur se déconnecter mettra fin au processus et pourrait entraîner une perte de données.",
   "onboarded_successfully": "Vous avez été intégré avec succès.",
   "operator_biometric_updated_successfully": "Les données biométriques de l'opérateur ont été mises à jour avec succès.",
   "home": "MAISON",
@@ -225,5 +232,7 @@
   "supervisors_biometric_update": "Mise à jour biométrique du superviseur",
   "help_topics": "Sujets d'aide",
   "onboard_request_message": "Veuillez appuyer sur le bouton Get Onboard pour vous intégrer au portail.",
-  "hello_s": "Bonjour "
+  "hello_s": "Bonjour ",
+  "logout_success": "Vous avez été déconnecté avec succès!",
+  "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps"
 }

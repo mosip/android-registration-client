@@ -100,6 +100,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     Context context;
     private String regCenterId;
 
+    boolean syncAndUploadInProgressStatus = false;
+
     private Activity activity;
 
     @Inject
@@ -265,6 +267,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         }
     }
 
+    @Override
+    public void getSyncAndUploadInProgressStatus(@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        result.success(syncAndUploadInProgressStatus);
+    }
+
     void resetAlarm(String api){
         Intent intent = new Intent(activity, UploadBackgroundService.class);
         PendingIntent pendingIntent;
@@ -322,6 +329,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }
             for (Registration value : registrationList) {
                 try {
+                    syncAndUploadInProgressStatus = true;
                     Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
                     auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
                     packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
@@ -338,9 +346,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 Log.d(getClass().getSimpleName(), "Last Packet" + RID);
                                 uploadRegistrationPackets(context);
                             }
+                            syncAndUploadInProgressStatus = false;
                         }
                     });
                 } catch (Exception e) {
+                    syncAndUploadInProgressStatus = false;
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             }
@@ -354,10 +364,13 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name(), batchSize);
             for (Registration value : registrationList) {
                 try {
+                    syncAndUploadInProgressStatus = true;
                     Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
                     auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
                     packetService.uploadRegistration(value.getPacketId());
+                    syncAndUploadInProgressStatus = false;
                 } catch (Exception e) {
+                    syncAndUploadInProgressStatus = false;
                     Log.e(getClass().getSimpleName(), e.getMessage());
                 }
             }
