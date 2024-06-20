@@ -7,6 +7,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import io.mosip.registration_client.R;
+
 public class CustomToast{
 
     private Toast toast = null;
