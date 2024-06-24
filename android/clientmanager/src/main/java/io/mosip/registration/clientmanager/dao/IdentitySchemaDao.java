@@ -12,8 +12,8 @@ public interface IdentitySchemaDao {
     @Query("select * from identity_schema order by schema_version desc limit 1")
     IdentitySchema findLatestSchema();
 
-    @Query("select * from identity_schema where schema_version = :schemaVer")
-    IdentitySchema findIdentitySchema(Double schemaVer);
+    @Query("select * from identity_schema where schema_version = :schemaVer and file_name=:fileName")
+    IdentitySchema findIdentitySchema(Double schemaVer, String fileName);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertIdentitySchema(IdentitySchema identitySchema);

@@ -12,11 +12,11 @@ import 'package:registration_client/platform_spi/registration_service.dart';
 
 class RegistrationServiceImpl implements RegistrationService {
   @override
-  Future<String> startRegistration(List<String> langauages) async {
+  Future<String> startRegistration(List<String> langauages, String flowType, String process) async {
     String registrationStartResponse = '';
     try {
       registrationStartResponse =
-          await RegistrationDataApi().startRegistration(langauages);
+          await RegistrationDataApi().startRegistration(langauages, flowType, process);
     } on PlatformException {
       registrationStartResponse = "Something went wrong!";
       debugPrint('RegApi call failed');

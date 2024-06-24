@@ -11,28 +11,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
 
-import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-class CheckboxControl extends StatefulWidget {
-  const CheckboxControl({super.key, required this.field});
+class TermsAndConditions extends StatefulWidget {
+  const TermsAndConditions({super.key, required this.field});
   final Field field;
 
   @override
-  State<CheckboxControl> createState() => _CheckboxControlState();
+  State<TermsAndConditions> createState() => _TermsAndConditionsState();
 }
 
-class _CheckboxControlState extends State<CheckboxControl> {
-  //bool isChecked = false;
+class _TermsAndConditionsState extends State<TermsAndConditions> {
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
     GlobalProvider globalProvider =
         Provider.of<GlobalProvider>(context, listen: false);
-    RegistrationTaskProvider registrationTaskProvider =
-        Provider.of<RegistrationTaskProvider>(context, listen: false);
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
@@ -46,39 +42,6 @@ class _CheckboxControlState extends State<CheckboxControl> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Semantics(
-              // identifier: 'ConsentCheckBox',
-              child: SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: Checkbox(
-                      activeColor: solidPrimary,
-                      value: (context
-                              .watch<GlobalProvider>()
-                              .fieldInputValue
-                              .containsKey(widget.field.id))
-                          ? context
-                              .watch<GlobalProvider>()
-                              .fieldInputValue[widget.field.id]
-                          : false,
-                      onChanged: (value) async {
-                        // isChecked = value!;
-                        if (value == true) {
-                          globalProvider.setInputMapValue(widget.field.id!, value,
-                              globalProvider.fieldInputValue);
-                        } else {
-                          globalProvider.fieldInputValue.remove(widget.field.id!);
-                          setState(() {});
-                        }
-                        registrationTaskProvider
-                            .addConsentField(value! ? 'Y' : 'N');
-                        await DemographicsApi().addDemographicField(
-                            widget.field.id!, value.toString());
-                      })),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
             Flexible(
               child: (widget.field.inputRequired!)
                   ? RichText(

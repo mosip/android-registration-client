@@ -40,10 +40,20 @@ class GlobalProvider with ChangeNotifier {
   String _centerName = "";
   String _machineName = "";
   final formKey = GlobalKey<FormState>();
+  final updateFieldKey = GlobalKey<FormState>();
+  String _updateUINNumber = "";
   String _onboardingProcessName="";
-  String get onboardingProcessName=>_onboardingProcessName;
+  String get updateUINNumber => _updateUINNumber;
+  String get onboardingProcessName => _onboardingProcessName;
+
   set onboardingProcessName(String value) {
     _onboardingProcessName = value;
+    notifyListeners();
+  }
+
+  set updateUINNumber(String value) {
+    _updateUINNumber = value;
+    notifyListeners();
   }
 
   Process? _currentProcess;
@@ -60,11 +70,6 @@ class GlobalProvider with ChangeNotifier {
     'French': false,
   };
 
-  clearExceptions() {
-    _exceptionAttributes = [];
-    _completeException = {};
-    notifyListeners();
-  }
   Map<String, String> _thresholdValuesMap = {
     'mosip.registration.leftslap_fingerprint_threshold': '0',
     'mosip.registration.rightslap_fingerprint_threshold': '0',
@@ -417,15 +422,11 @@ class GlobalProvider with ChangeNotifier {
     String x = '';
     for (var i in chosenLang) {
       String code = languageToCodeMapper[i]!;
-      for (var element in _languages) {
-        if (code == element) {
-          x = "$x${label[code]!}/";
-          continue;
+        if(label[code] != null) {
+          x = "$x${label[code] ?? ""}/ ";
         }
-      }
     }
-    x = x.substring(0, x.length - 1);
-    return x;
+    return x.isEmpty ? x : x.substring(0, x.length - 2);
   }
 
   langToCode(String lang) {
@@ -486,6 +487,12 @@ class GlobalProvider with ChangeNotifier {
   clearMap() {
     _fieldInputValue = {};
     log("input value $_fieldInputValue");
+    notifyListeners();
+  }
+
+  clearExceptions() {
+    _exceptionAttributes = [];
+    _completeException = {};
     notifyListeners();
   }
 
@@ -750,5 +757,46 @@ class GlobalProvider with ChangeNotifier {
   removeProofOfExceptionFieldFromMap(
       String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
+  }
+
+  Map<String, bool> _selectedUpdateFields = {};
+  List<String> _selectedFieldList = [];
+  Map<String, bool> get selectedUpdateFields => _selectedUpdateFields;
+  List<String> get selectedFieldList => _selectedFieldList;
+
+  set selectedUpdateFields(Map<String, bool> value) {
+    _selectedUpdateFields = value;
+    notifyListeners();
+  }
+
+  addSelectedUpdateFieldKey(String key) {
+    _selectedUpdateFields[key] = true;
+    notifyListeners();
+  }
+
+  removeSelectedUpdateFieldKey(String key) {
+      _selectedUpdateFields.remove(key);
+    notifyListeners();
+  }
+
+  setSelectedFieldList(List<String> value) {
+    _selectedFieldList = value;
+    notifyListeners();
+  }
+
+  addToSelectedFieldList(String id) {
+    _selectedFieldList.add(id);
+    notifyListeners();
+  }
+
+  clearRegistrationProcessData() {
+    clearMap();
+    clearExceptions();
+    clearScannedPages();
+    newProcessTabIndex = 0;
+    htmlBoxTabIndex = 0;
+    setRegId("");
+    selectedUpdateFields = {};
+    updateUINNumber = "";
   }
 }

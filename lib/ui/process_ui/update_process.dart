@@ -17,6 +17,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -30,8 +31,9 @@ import 'package:registration_client/ui/post_registration/acknowledgement_page.da
 
 import 'package:registration_client/ui/post_registration/preview_page.dart';
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
+import 'package:registration_client/ui/process_ui/widgets/update_field_selector.dart';
 
-import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
+import 'package:registration_client/ui/process_ui/widgets/update_process_screen_content.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -39,22 +41,26 @@ import 'package:registration_client/utils/app_style.dart';
 
 import '../../utils/life_cycle_event_handler.dart';
 
-class NewProcess extends StatefulWidget {
-  const NewProcess({super.key});
+class UpdateProcess extends StatefulWidget {
+  const UpdateProcess({
+    super.key,
+  });
 
-  static const routeName = '/new_process';
+  static const routeName = '/update_process';
 
   @override
-  State<NewProcess> createState() => _NewProcessState();
+  State<UpdateProcess> createState() => _UpdateProcessState();
 }
 
-class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
+class _UpdateProcessState extends State<UpdateProcess>
+    with WidgetsBindingObserver {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   late AuthProvider authProvider;
   late ConnectivityProvider connectivityProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
+  bool fieldSelectionCompleted = false;
 
   List<String> postRegistrationTabs = [
     'Preview',
@@ -204,20 +210,15 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               .toString(),
         ),
       );
-      if (process.id == "NEW") {
+      if (process.id == "NEW" || process.id == "UPDATE") {
         getProcessUI(context, process);
       }
     }
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    if (process.id == "NEW") {
-      globalProvider.clearMap();
-      globalProvider.clearScannedPages();
-      globalProvider.clearExceptions();
-      globalProvider.newProcessTabIndex = 0;
-      globalProvider.htmlBoxTabIndex = 0;
-      globalProvider.setRegId("");
+    if (process.id == "NEW" || process.id == "UPDATE") {
+      globalProvider.clearRegistrationProcessData();
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
@@ -262,26 +263,17 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     final Process newProcess = arguments["process"];
     int size = newProcess.screens!.length;
 
-    evaluateMVELVisible(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool visible = await registrationTaskProvider.evaluateMVELVisible(
-          fieldData, expression!);
-      return visible;
-    }
-
-    evaluateMVELRequired(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool required = await registrationTaskProvider.evaluateMVELRequired(
-          fieldData, expression!);
-      return required;
-    }
-
     Future<bool> onWillPop() async {
       if (globalProvider.newProcessTabIndex > 0 &&
           globalProvider.newProcessTabIndex <
               newProcess.screens!.length + postRegistrationTabs.length - 1) {
         globalProvider.newProcessTabIndex =
             globalProvider.newProcessTabIndex - 1;
+      } else if (globalProvider.newProcessTabIndex == 0 &&
+          fieldSelectionCompleted) {
+        setState(() {
+          fieldSelectionCompleted = false;
+        });
       } else {
         return true;
       }
@@ -328,6 +320,83 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       return i;
     }
 
+    biometricRequiredFieldValidation(Field field) async {
+      if (field.controlType == "biometrics") {
+        int count = returnBiometricListLength(field.bioAttributes, field.id!);
+        if (globalProvider.completeException[field.id!] != null) {
+          int length = globalProvider.completeException[field.id!].length;
+          count = count - length;
+        }
+
+        if (globalProvider.fieldInputValue[field.id!].length < count) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    biometricConditionalFieldValidation(Field field) async {
+      bool valid = await BiometricsApi().conditionalBioAttributeValidation(
+          field.id!, field.conditionalBioAttributes!.first!.validationExpr!);
+      if (field.exceptionPhotoRequired == true) {
+        List<BiometricAttributeData> biometricAttributeDataList =
+            globalProvider.fieldInputValue[field.id!];
+        bool isExceptionPresent = false;
+        bool isExceptionAttributePresent = false;
+        for (var biometricAttributeData in biometricAttributeDataList) {
+          if (globalProvider.exceptionAttributes
+              .contains(biometricAttributeData.title)) {
+            isExceptionPresent = true;
+          }
+          if (biometricAttributeData.title == "Exception") {
+            isExceptionAttributePresent = true;
+          }
+        }
+
+        if (isExceptionPresent == true &&
+            isExceptionAttributePresent == false) {
+          return false;
+        }
+      }
+      if (!valid) {
+        return false;
+      }
+      return true;
+    }
+
+    biometricValidation(Field field) async {
+      if (field.conditionalBioAttributes != null &&
+          field.conditionalBioAttributes!.isNotEmpty) {
+        String response = await BiometricsApi().getAgeGroup();
+        if (response
+                .compareTo(field.conditionalBioAttributes!.first!.ageGroup!) !=
+            0) {
+          bool isValid = true;
+          if (field.conditionalBioAttributes!.first!.ageGroup! == "ALL") {
+            isValid = await biometricConditionalFieldValidation(field);
+          } else {
+            isValid = await biometricRequiredFieldValidation(field);
+          }
+
+          if (!isValid) {
+            return false;
+          }
+        }
+
+        if (response
+                .compareTo(field.conditionalBioAttributes!.first!.ageGroup!) ==
+            0) {
+          bool isValid = await biometricConditionalFieldValidation(field);
+          if (!isValid) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
     ageDateChangeValidation(int currentIndex) async {
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
@@ -353,7 +422,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           .toString(),
                     ),
                   );
-                  if (process.id == "NEW") {
+                  if (process.id == "NEW" || process.id == "UPDATE") {
                     screens = process.screens!;
                   }
                 }
@@ -361,10 +430,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   if (screen!.name! == "Documents" ||
                       screen.name! == "BiometricDetails") {
                     for (Field? field in screen.fields!) {
-                      if (globalProvider.fieldInputValue
-                          .containsKey(field!.id!)) {
-                        globalProvider.fieldInputValue.remove(field.id);
-                      }
+                      globalProvider.fieldInputValue.remove(field!.id);
                     }
                   }
                 }
@@ -379,172 +445,72 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(int currentIndex) async {
-      bool isValid = true;
+      if (currentIndex == 0) {
+        return true;
+      }
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
         for (int i = 0; i < screen.fields!.length; i++) {
-          if (screen.fields!.elementAt(i)!.inputRequired! &&
-              screen.fields!.elementAt(i)!.required!) {
-            if (!(globalProvider.fieldInputValue
-                    .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                !(globalProvider.fieldInputValue
-                    .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                !(globalProvider.fieldInputValue.containsKey(
-                    "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-              // log("field: ${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}");
+          Field field = screen.fields!.elementAt(i)!;
+          String group = field.group!;
+          String fieldId = field.id!;
+          if (globalProvider.selectedUpdateFields[group] != null) {
+            if (field.required! ||
+                (globalProvider.mvelRequiredFields[fieldId] ?? false)) {
+              if (!(globalProvider.fieldInputValue.containsKey(field.id)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey(field.subType)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey("${field.group}${field.subType}"))) {
+                return false;
+              }
 
-              // if (screen.fields!.elementAt(i)!.controlType == "fileupload") {
-              //   _showInSnackBar(appLocalizations.upload_document);
-              // }
-              isValid = false;
-
-              break;
-            }
-            if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-                screen.fields!
-                    .elementAt(i)!
-                    .conditionalBioAttributes!
-                    .isNotEmpty) {
-              String response = await BiometricsApi().getAgeGroup();
-              if (!(response.compareTo(screen.fields!
-                      .elementAt(i)!
-                      .conditionalBioAttributes!
-                      .first!
-                      .ageGroup!) ==
-                  0)) {
-                if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
-                  int count = returnBiometricListLength(
-                      screen.fields!.elementAt(i)!.bioAttributes,
-                      screen.fields!.elementAt(i)!.id!);
-                  if (globalProvider.completeException[
-                          screen.fields!.elementAt(i)!.id!] !=
-                      null) {
-                    int length = globalProvider
-                        .completeException[screen.fields!.elementAt(i)!.id!]
-                        .length;
-                    count = count - length;
-                  }
-
-                  if (globalProvider
-                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                          .length <
-                      count) {
-                    isValid = false;
-
-                    break;
-                  }
-                }
+              bool isValid = await biometricValidation(field);
+              if (!isValid) {
+                return false;
               }
             }
-          }
-          if (screen.fields!.elementAt(i)!.requiredOn != null &&
-              screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
-            bool visible = await evaluateMVELVisible(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
-            bool required = await evaluateMVELRequired(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
-            if (visible && required) {
-              if (screen.fields!.elementAt(i)!.inputRequired!) {
-                if (!(globalProvider.fieldInputValue
-                        .containsKey(screen.fields!.elementAt(i)!.id)) &&
-                    !(globalProvider.fieldInputValue
-                        .containsKey(screen.fields!.elementAt(i)!.subType)) &&
-                    !(globalProvider.fieldInputValue.containsKey(
-                        "${screen.fields!.elementAt(i)!.group}${screen.fields!.elementAt(i)!.subType}"))) {
-                  isValid = false;
+          } else {
+            if (globalProvider.mvelRequiredFields[fieldId] ?? false) {
+              if (!(globalProvider.fieldInputValue.containsKey(field.id)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey(field.subType)) &&
+                  !(globalProvider.fieldInputValue
+                      .containsKey("${field.group}${field.subType}"))) {
+                return false;
+              }
 
-                  break;
-                }
-                if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
-                    screen.fields!
-                        .elementAt(i)!
-                        .conditionalBioAttributes!
-                        .isNotEmpty) {
-                  String response = await BiometricsApi().getAgeGroup();
-                  if (!(response.compareTo(screen.fields!
-                      .elementAt(i)!
-                      .conditionalBioAttributes!
-                      .first!
-                      .ageGroup!) ==
-                      0)) {
-                    if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
-                      int count = returnBiometricListLength(
-                          screen.fields!.elementAt(i)!.bioAttributes,
-                          screen.fields!.elementAt(i)!.id!);
-                      if (globalProvider.completeException[
-                      screen.fields!.elementAt(i)!.id!] !=
-                          null) {
-                        int length = globalProvider
-                            .completeException[screen.fields!.elementAt(i)!.id!]
-                            .length;
-                        count = count - length;
-                      }
-                      if (globalProvider
-                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                          .length <
-                          count) {
-                        isValid = false;
-
-                        break;
-                      }
-                    }
-                  }
-                  if (response.compareTo(screen.fields!
-                      .elementAt(i)!
-                      .conditionalBioAttributes!
-                      .first!
-                      .ageGroup!) ==
-                      0) {
-                    bool valid = await BiometricsApi()
-                        .conditionalBioAttributeValidation(
-                        screen.fields!.elementAt(i)!.id!,
-                        screen.fields!
-                            .elementAt(i)!
-                            .conditionalBioAttributes!
-                            .first!
-                            .validationExpr!);
-                    if (screen.fields!.elementAt(i)!.exceptionPhotoRequired == true) {
-                      List<BiometricAttributeData> biometricAttributeDataList =
-                      globalProvider
-                          .fieldInputValue[screen.fields!.elementAt(i)!.id!];
-                      bool isExceptionPresent = false;
-                      bool isExceptionAttributePresent = false;
-                      for (var biometricAttributeData in biometricAttributeDataList) {
-                        if (globalProvider.exceptionAttributes
-                            .contains(biometricAttributeData.title)) {
-                          isExceptionPresent = true;
-                        }
-                        if (biometricAttributeData.title == "Exception") {
-                          isExceptionAttributePresent = true;
-                        }
-                      }
-                      if (isExceptionPresent == true &&
-                          isExceptionAttributePresent == false) {
-                        isValid = false;
-                        break;
-                      }
-                    }
-                    if (!valid) {
-                      isValid = false;
-                      break;
-                    }
-                  }
+              if (field.conditionalBioAttributes != null &&
+                  field.conditionalBioAttributes!.isNotEmpty) {
+                bool isValid = await biometricConditionalFieldValidation(field);
+                if (!isValid) {
+                  return false;
                 }
               }
             }
           }
         }
       }
-      return isValid;
+      return true;
     }
 
-    continueButtonTap(BuildContext context, int size, newProcess) async {
+    continueButtonTap(int size, newProcess) async {
+      if (globalProvider.newProcessTabIndex == 0 && !fieldSelectionCompleted) {
+        if (globalProvider.selectedUpdateFields.isEmpty ||
+            globalProvider.updateFieldKey.currentState == null ||
+            !globalProvider.updateFieldKey.currentState!.validate()) {
+          return;
+        }
+      }
+      if (!fieldSelectionCompleted) {
+        globalProvider.clearMap();
+        globalProvider.clearScannedPages();
+        await BiometricsApi().clearBiometricAndDocumentHashmap();
+        setState(() {
+          fieldSelectionCompleted = true;
+        });
+        return;
+      }
       if (globalProvider.newProcessTabIndex < size) {
         ageDateChangeValidation(globalProvider.newProcessTabIndex);
         bool customValidator =
@@ -553,11 +519,17 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-             templateTitleMap = {'demographicInfo': appLocalizations.demographic_information, 'documents': appLocalizations.documents, 'bioMetrics': appLocalizations.biometrics};
+              templateTitleMap = {
+                'demographicInfo': appLocalizations.demographic_information,
+                'documents': appLocalizations.documents,
+                'bioMetrics': appLocalizations.biometrics,
+              };
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(true,templateTitleMap!);
-              await registrationTaskProvider.getAcknowledgementTemplate(false,templateTitleMap!);
+              await registrationTaskProvider.getPreviewTemplate(
+                  true, templateTitleMap!);
+              await registrationTaskProvider.getAcknowledgementTemplate(
+                  false, templateTitleMap!);
             }
 
             globalProvider.newProcessTabIndex =
@@ -594,9 +566,18 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      continueButton = value &&
-          globalProvider.formKey.currentState != null &&
-          globalProvider.formKey.currentState!.validate();
+      if (globalProvider.newProcessTabIndex == 0) {
+        if (!fieldSelectionCompleted) {
+          continueButton = globalProvider.updateFieldKey.currentState != null &&
+              globalProvider.updateFieldKey.currentState!.validate();
+        } else {
+          continueButton = true;
+        }
+      } else {
+        continueButton = value &&
+            globalProvider.formKey.currentState != null &&
+            globalProvider.formKey.currentState!.validate();
+      }
 
       if (globalProvider.newProcessTabIndex >= size) {
         continueButton = true;
@@ -623,38 +604,66 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               vertical: 16.h,
             ),
             // height: isPortrait ? 94.h : 84.h,
-            child: globalProvider.newProcessTabIndex == 0
+            child: context.watch<GlobalProvider>().newProcessTabIndex == 0
                 ? Row(
                     children: [
                       Expanded(
-                        child: OutlinedButton(
-                          child: SizedBox(
-                            height: isPortrait && !isMobileSize ? 68.h : 52.h,
-                            child: Center(
-                              child: Text(
-                                appLocalizations.go_back,
-                                style: TextStyle(
-                                  fontSize:
-                                      isPortrait && !isMobileSize ? 22 : 14,
+                        child: fieldSelectionCompleted
+                            ? OutlinedButton(
+                                child: SizedBox(
+                                  height:
+                                      isPortrait && !isMobileSize ? 68.h : 52.h,
+                                  child: Center(
+                                    child: Text(
+                                      appLocalizations.go_back,
+                                      style: TextStyle(
+                                        fontSize: isPortrait && !isMobileSize
+                                            ? 22
+                                            : 14,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
+                                onPressed: () {
+                                  if (!fieldSelectionCompleted) {
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    setState(() {
+                                      fieldSelectionCompleted = false;
+                                    });
+                                  }
+                                },
+                              )
+                            : const SizedBox(),
                       ),
                       SizedBox(
                         width: 10.w,
                       ),
                       Expanded(
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            maximumSize: MaterialStateProperty.all<Size>(
+                                const Size(209, 52)),
+                            minimumSize: MaterialStateProperty.all<Size>(
+                                const Size(209, 52)),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                !fieldSelectionCompleted
+                                    ? (context
+                                                .watch<GlobalProvider>()
+                                                .selectedUpdateFields
+                                                .isNotEmpty &&
+                                            continueButton)
+                                        ? solidPrimary
+                                        : Colors.grey
+                                    : solidPrimary),
+                          ),
                           child: SizedBox(
                             height: isPortrait && !isMobileSize ? 68.h : 52.h,
                             child: Center(
                               child: Text(
-                                appLocalizations.informed,
+                                fieldSelectionCompleted
+                                    ? appLocalizations.informed
+                                    : appLocalizations.continue_text,
                                 style: TextStyle(
                                   fontSize:
                                       isPortrait && !isMobileSize ? 22 : 14,
@@ -662,8 +671,13 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               ),
                             ),
                           ),
-                          onPressed: () {
-                            continueButtonTap(context, size, newProcess);
+                          onPressed: () async {
+                            if (fieldSelectionCompleted) {
+                              registrationTaskProvider.addConsentField("Y");
+                              await DemographicsApi()
+                                  .addDemographicField("consent", "true");
+                            }
+                            continueButtonTap(size, newProcess);
                           },
                         ),
                       ),
@@ -723,7 +737,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               continueButton ? solidPrimary : Colors.grey),
                         ),
                         onPressed: () {
-                          continueButtonTap(context, size, newProcess);
+                          continueButtonTap(size, newProcess);
                         },
                         child: Text(
                             context.read<GlobalProvider>().newProcessTabIndex <=
@@ -774,9 +788,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               ? EdgeInsets.fromLTRB(20.w, 0, 0, 0)
                               : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
                           child: Text(
-                            newProcess.label![context
-                                .read<GlobalProvider>()
-                                .selectedLanguage]!,
+                            newProcess.label![globalProvider.selectedLanguage]!,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -789,158 +801,166 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                         SizedBox(
                           height: 30.h,
                         ),
-                        Divider(
-                          height: 12.h,
-                          thickness: 1,
-                          color: secondaryColors.elementAt(2),
-                        ),
-                        Padding(
-                          padding: isPortrait
-                              ? const EdgeInsets.all(0)
-                              : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
-                          child: Stack(
-                            alignment: FractionalOffset.centerRight,
-                            children: [
-                              Padding(
+                        fieldSelectionCompleted
+                            ? Divider(
+                                height: 12.h,
+                                thickness: 1,
+                                color: secondaryColors.elementAt(2),
+                              )
+                            : const SizedBox(),
+                        fieldSelectionCompleted
+                            ? Padding(
                                 padding: isPortrait
-                                    ? EdgeInsets.fromLTRB(20.w, 10.h, 0, 0)
-                                    : EdgeInsets.fromLTRB(0, 10.h, 0, 0),
-                                child: SizedBox(
-                                  height: 36.h,
-                                  child: ListView.builder(
-                                      padding: const EdgeInsets.all(0),
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: newProcess.screens!.length + 3,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            if (context
-                                                    .read<GlobalProvider>()
-                                                    .newProcessTabIndex ==
-                                                size + 2) {
-                                              return;
-                                            }
+                                    ? const EdgeInsets.all(0)
+                                    : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
+                                child: Stack(
+                                  alignment: FractionalOffset.centerRight,
+                                  children: [
+                                    Padding(
+                                      padding: isPortrait
+                                          ? EdgeInsets.fromLTRB(
+                                              20.w, 10.h, 0, 0)
+                                          : EdgeInsets.fromLTRB(0, 10.h, 0, 0),
+                                      child: SizedBox(
+                                        height: 36.h,
+                                        child: ListView.builder(
+                                            padding: const EdgeInsets.all(0),
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount:
+                                                newProcess.screens!.length + 3,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  if (globalProvider
+                                                          .newProcessTabIndex ==
+                                                      size + 2) {
+                                                    return;
+                                                  }
 
-                                            if (index <
-                                                context
-                                                    .read<GlobalProvider>()
-                                                    .newProcessTabIndex) {
-                                              context
-                                                  .read<GlobalProvider>()
-                                                  .newProcessTabIndex = index;
-                                            }
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8.h),
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                        color: (context
-                                                                    .watch<
-                                                                        GlobalProvider>()
-                                                                    .newProcessTabIndex ==
-                                                                index)
-                                                            ? pureWhite
-                                                            : Colors
-                                                                .transparent,
-                                                        width: 3),
-                                                  ),
-                                                ),
+                                                  if (index <
+                                                      globalProvider
+                                                          .newProcessTabIndex) {
+                                                    globalProvider
+                                                            .newProcessTabIndex =
+                                                        index;
+                                                  }
+                                                },
                                                 child: Row(
                                                   children: [
-                                                    (index <
-                                                            context
-                                                                .watch<
-                                                                    GlobalProvider>()
-                                                                .newProcessTabIndex)
-                                                        ? Icon(
-                                                            Icons.check_circle,
-                                                            size: 17,
-                                                            color:
-                                                                secondaryColors
-                                                                    .elementAt(
-                                                                        11),
-                                                          )
-                                                        : (context
-                                                                    .watch<
-                                                                        GlobalProvider>()
-                                                                    .newProcessTabIndex ==
-                                                                index)
-                                                            ? Icon(
-                                                                Icons.circle,
-                                                                color:
-                                                                    pureWhite,
-                                                                size: 17,
-                                                              )
-                                                            : Icon(
-                                                                Icons
-                                                                    .circle_outlined,
-                                                                size: 17,
-                                                                color: secondaryColors
-                                                                    .elementAt(
-                                                                        9),
-                                                              ),
-                                                    SizedBox(
-                                                      width: 6.w,
-                                                    ),
-                                                    Text(
-                                                      index < size
-                                                          ? newProcess
-                                                                  .screens![index]!
-                                                                  .label![
-                                                              context
-                                                                  .read<
-                                                                      GlobalProvider>()
-                                                                  .selectedLanguage]!
-                                                          : postRegistrationTabs[
-                                                              index - size],
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleSmall
-                                                          ?.copyWith(
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              0, 0, 0, 8.h),
+                                                      decoration: BoxDecoration(
+                                                        border: Border(
+                                                          bottom: BorderSide(
                                                               color: (context
                                                                           .watch<
                                                                               GlobalProvider>()
                                                                           .newProcessTabIndex ==
                                                                       index)
                                                                   ? pureWhite
-                                                                  : secondaryColors
+                                                                  : Colors
+                                                                      .transparent,
+                                                              width: 3),
+                                                        ),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          (index <
+                                                                  context
+                                                                      .watch<
+                                                                          GlobalProvider>()
+                                                                      .newProcessTabIndex)
+                                                              ? Icon(
+                                                                  Icons
+                                                                      .check_circle,
+                                                                  size: 17,
+                                                                  color: secondaryColors
                                                                       .elementAt(
-                                                                          9),
-                                                              fontWeight:
-                                                                  semiBold,
-                                                              fontSize: 14),
+                                                                          11),
+                                                                )
+                                                              : (context
+                                                                          .watch<
+                                                                              GlobalProvider>()
+                                                                          .newProcessTabIndex ==
+                                                                      index)
+                                                                  ? Icon(
+                                                                      Icons
+                                                                          .circle,
+                                                                      color:
+                                                                          pureWhite,
+                                                                      size: 17,
+                                                                    )
+                                                                  : Icon(
+                                                                      Icons
+                                                                          .circle_outlined,
+                                                                      size: 17,
+                                                                      color: secondaryColors
+                                                                          .elementAt(
+                                                                              9),
+                                                                    ),
+                                                          SizedBox(
+                                                            width: 6.w,
+                                                          ),
+                                                          Text(
+                                                            index < size
+                                                                ? newProcess
+                                                                        .screens![
+                                                                            index]!
+                                                                        .label![
+                                                                    context
+                                                                        .read<
+                                                                            GlobalProvider>()
+                                                                        .selectedLanguage]!
+                                                                : postRegistrationTabs[
+                                                                    index -
+                                                                        size],
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .titleSmall
+                                                                ?.copyWith(
+                                                                    color: (context.watch<GlobalProvider>().newProcessTabIndex ==
+                                                                            index)
+                                                                        ? pureWhite
+                                                                        : secondaryColors
+                                                                            .elementAt(
+                                                                                9),
+                                                                    fontWeight:
+                                                                        semiBold,
+                                                                    fontSize:
+                                                                        14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 35.w,
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                width: 35.w,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }),
+                                              );
+                                            }),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 36.h,
+                                      width: 25.w,
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      color: solidPrimary,
+                                      child: Icon(
+                                        Icons.arrow_forward_ios_outlined,
+                                        color: pureWhite,
+                                        size: 17,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Container(
-                                height: 36.h,
-                                width: 25.w,
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                color: solidPrimary,
-                                child: Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  color: pureWhite,
-                                  size: 17,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              )
+                            : const SizedBox.shrink(),
                         const SizedBox(
                           height: 5,
                         ),
@@ -951,22 +971,26 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                     padding: isPortrait
                         ? const EdgeInsets.all(0)
                         : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
-                    child: context.watch<GlobalProvider>().newProcessTabIndex <
-                            size
-                        ? NewProcessScreenContent(
-                            context: context,
-                            screen: newProcess.screens!.elementAt(context
-                                .watch<GlobalProvider>()
-                                .newProcessTabIndex)!)
-                        : context.watch<GlobalProvider>().newProcessTabIndex ==
+                    child: !fieldSelectionCompleted
+                        ? UpdateFieldSelector(process: newProcess)
+                        : context.watch<GlobalProvider>().newProcessTabIndex <
                                 size
-                            ? const PreviewPage()
+                            ? UpdateProcessScreenContent(
+                                context: context,
+                                screen: newProcess.screens!.elementAt(context
+                                    .watch<GlobalProvider>()
+                                    .newProcessTabIndex)!)
                             : context
                                         .watch<GlobalProvider>()
                                         .newProcessTabIndex ==
-                                    size + 1
-                                ? _getPacketAuthComponent()
-                                : const AcknowledgementPage(),
+                                    size
+                                ? const PreviewPage()
+                                : context
+                                            .watch<GlobalProvider>()
+                                            .newProcessTabIndex ==
+                                        size + 1
+                                    ? _getPacketAuthComponent()
+                                    : const AcknowledgementPage(),
                   ),
                   SizedBox(
                     height: 20.h,
