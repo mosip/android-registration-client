@@ -17,6 +17,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -379,6 +380,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(int currentIndex) async {
+      if (currentIndex == 0) {
+        return true;
+      }
       bool isValid = true;
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
@@ -461,24 +465,26 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
                   break;
                 }
-                if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+                if (screen.fields!.elementAt(i)!.conditionalBioAttributes !=
+                        null &&
                     screen.fields!
                         .elementAt(i)!
                         .conditionalBioAttributes!
                         .isNotEmpty) {
                   String response = await BiometricsApi().getAgeGroup();
                   if (!(response.compareTo(screen.fields!
-                      .elementAt(i)!
-                      .conditionalBioAttributes!
-                      .first!
-                      .ageGroup!) ==
+                          .elementAt(i)!
+                          .conditionalBioAttributes!
+                          .first!
+                          .ageGroup!) ==
                       0)) {
-                    if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                    if (screen.fields!.elementAt(i)!.controlType ==
+                        "biometrics") {
                       int count = returnBiometricListLength(
                           screen.fields!.elementAt(i)!.bioAttributes,
                           screen.fields!.elementAt(i)!.id!);
                       if (globalProvider.completeException[
-                      screen.fields!.elementAt(i)!.id!] !=
+                              screen.fields!.elementAt(i)!.id!] !=
                           null) {
                         int length = globalProvider
                             .completeException[screen.fields!.elementAt(i)!.id!]
@@ -486,8 +492,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                         count = count - length;
                       }
                       if (globalProvider
-                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                          .length <
+                              .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                              .length <
                           count) {
                         isValid = false;
 
@@ -496,26 +502,28 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                     }
                   }
                   if (response.compareTo(screen.fields!
-                      .elementAt(i)!
-                      .conditionalBioAttributes!
-                      .first!
-                      .ageGroup!) ==
+                          .elementAt(i)!
+                          .conditionalBioAttributes!
+                          .first!
+                          .ageGroup!) ==
                       0) {
                     bool valid = await BiometricsApi()
                         .conditionalBioAttributeValidation(
-                        screen.fields!.elementAt(i)!.id!,
-                        screen.fields!
-                            .elementAt(i)!
-                            .conditionalBioAttributes!
-                            .first!
-                            .validationExpr!);
-                    if (screen.fields!.elementAt(i)!.exceptionPhotoRequired == true) {
+                            screen.fields!.elementAt(i)!.id!,
+                            screen.fields!
+                                .elementAt(i)!
+                                .conditionalBioAttributes!
+                                .first!
+                                .validationExpr!);
+                    if (screen.fields!.elementAt(i)!.exceptionPhotoRequired ==
+                        true) {
                       List<BiometricAttributeData> biometricAttributeDataList =
-                      globalProvider
-                          .fieldInputValue[screen.fields!.elementAt(i)!.id!];
+                          globalProvider.fieldInputValue[
+                              screen.fields!.elementAt(i)!.id!];
                       bool isExceptionPresent = false;
                       bool isExceptionAttributePresent = false;
-                      for (var biometricAttributeData in biometricAttributeDataList) {
+                      for (var biometricAttributeData
+                          in biometricAttributeDataList) {
                         if (globalProvider.exceptionAttributes
                             .contains(biometricAttributeData.title)) {
                           isExceptionPresent = true;
@@ -544,7 +552,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       return isValid;
     }
 
-    continueButtonTap(BuildContext context, int size, newProcess) async {
+    continueButtonTap(int size, newProcess) async {
       if (globalProvider.newProcessTabIndex < size) {
         ageDateChangeValidation(globalProvider.newProcessTabIndex);
         bool customValidator =
@@ -553,11 +561,17 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-             templateTitleMap = {'demographicInfo': appLocalizations.demographic_information, 'documents': appLocalizations.documents, 'bioMetrics': appLocalizations.biometrics};
+              templateTitleMap = {
+                'demographicInfo': appLocalizations.demographic_information,
+                'documents': appLocalizations.documents,
+                'bioMetrics': appLocalizations.biometrics
+              };
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(true,templateTitleMap!);
-              await registrationTaskProvider.getAcknowledgementTemplate(false,templateTitleMap!);
+              await registrationTaskProvider.getPreviewTemplate(
+                  true, templateTitleMap!);
+              await registrationTaskProvider.getAcknowledgementTemplate(
+                  false, templateTitleMap!);
             }
 
             globalProvider.newProcessTabIndex =
@@ -662,8 +676,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               ),
                             ),
                           ),
-                          onPressed: () {
-                            continueButtonTap(context, size, newProcess);
+                          onPressed: () async {
+                            registrationTaskProvider.addConsentField("Y");
+                            await DemographicsApi()
+                                .addDemographicField("consent", "true");
+                            continueButtonTap(size, newProcess);
                           },
                         ),
                       ),
@@ -723,7 +740,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               continueButton ? solidPrimary : Colors.grey),
                         ),
                         onPressed: () {
-                          continueButtonTap(context, size, newProcess);
+                          continueButtonTap(size, newProcess);
                         },
                         child: Text(
                             context.read<GlobalProvider>().newProcessTabIndex <=
