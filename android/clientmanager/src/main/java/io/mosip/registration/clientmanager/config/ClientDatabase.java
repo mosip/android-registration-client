@@ -19,6 +19,7 @@ import io.mosip.registration.clientmanager.dao.LanguageDao;
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
+import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
 import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
@@ -40,6 +41,7 @@ import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.LocationHierarchy;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.clientmanager.entity.ProcessSpec;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
@@ -58,7 +60,7 @@ import io.mosip.registration.keymanager.entity.KeyStore;
         ApplicantValidDocument.class, Template.class, KeyStore.class,
         Location.class, GlobalParam.class, IdentitySchema.class, LocationHierarchy.class,
         BlocklistedWord.class, SyncJobDef.class, UserDetail.class, UserBiometric.class, UserPassword.class, JobTransaction.class,
-        CACertificateStore.class, Language.class, Audit.class, FileSignature.class},
+        CACertificateStore.class, Language.class, Audit.class, FileSignature.class, ProcessSpec.class},
         version = 1, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
 
@@ -123,6 +125,8 @@ public abstract class ClientDatabase extends RoomDatabase {
     public abstract AuditDao auditDao();
 
     public abstract FileSignatureDao fileSignatureDao();
+
+    public abstract ProcessSpecDao processSpecDao();
 
     public static void destroyDB() {
         INSTANCE = null;

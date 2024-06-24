@@ -67,7 +67,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
     }
     String dateString = dateController.text;
     DateTime date =
-        DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
+        DateFormat(widget.field.format == null ||
+                                  widget.field.format!.toLowerCase() == "none"
+                              ? "yyyy/MM/dd"
+                              : widget.field.format).parse(dateString);
 
     DateTime currentDate = DateTime.now();
     if (date.compareTo(currentDate) < 0) {
@@ -87,7 +90,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
     }
     String dateString = dateController.text;
     DateTime date =
-        DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(dateString);
+        DateFormat(widget.field.format == null ||
+                                  widget.field.format!.toLowerCase() == "none"
+                              ? "yyyy/MM/dd"
+                              : widget.field.format).parse(dateString);
     registrationTaskProvider.setDateField(
       widget.field.id ?? "",
       widget.field.subType ?? "",
@@ -109,7 +115,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
     if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
       String savedDate = globalProvider.fieldInputValue[widget.field.id];
       DateTime parsedDate =
-          DateFormat(widget.field.format ?? "yyyy/MM/dd").parse(savedDate);
+          DateFormat(widget.field.format == null ||
+                                  widget.field.format!.toLowerCase() == "none"
+                              ? "yyyy/MM/dd"
+                              : widget.field.format).parse(savedDate);
       setState(() {
         dateController.text = savedDate;
         ageController.text = calculateYearDifference(parsedDate, DateTime.now())
@@ -124,7 +133,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
     DateTime currentDate = DateTime.now();
     DateTime calculatedDate = DateTime(currentDate.year - age, 1, 1);
     setState(() {
-      dateController.text = DateFormat(widget.field.format ?? "yyyy/MM/dd")
+      dateController.text = DateFormat(widget.field.format == null ||
+                                  widget.field.format!.toLowerCase() == "none"
+                              ? "yyyy/MM/dd"
+                              : widget.field.format)
           .format(calculatedDate);
     });
   }
@@ -175,7 +187,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
                 maxDate: DateTime.now(),
                 minDate: DateTime(DateTime.now().year - 125),
                 selectedDate: dateString != ""
-                    ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                    ? DateFormat(widget.field.format == null ||
+                                  widget.field.format!.toLowerCase() == "none"
+                              ? "yyyy/MM/dd"
+                              : widget.field.format)
                         .parse(dateString)
                     : null,
                 squeeze: 1,
@@ -201,8 +216,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
                   fontSize: 15,
                 ),
                 onSelectedItemChanged: (selectedDate) {
-                  String targetDateString = widget.field.format ??
-                      "yyyy/MM/dd"
+                  String targetDateString = (widget.field.format == null ||
+                                  widget.field.format!.toLowerCase() == "none"
+                              ? "yyyy/MM/dd"
+                              : widget.field.format!)
                           .replaceAll(
                               'dd', selectedDate.day.toString().padLeft(2, "0"))
                           .replaceAll('MM',
@@ -267,7 +284,10 @@ class _AgeDateControlState extends State<AgeDateControl> {
                             color: appBlackShade3,
                             fontSize: 14,
                           ),
-                          hintText: widget.field.format ?? "yyyy/MM/dd",
+                          hintText: widget.field.format == null ||
+                                  widget.field.format!.toLowerCase() == "none"
+                              ? "yyyy/MM/dd"
+                              : widget.field.format,
                           prefixIcon: Icon(
                             Icons.calendar_month_outlined,
                             color: solidPrimary,
