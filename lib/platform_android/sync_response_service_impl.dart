@@ -127,6 +127,19 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncResponse;
   }
+
+  @override
+  Future<bool> getSyncAndUploadInProgressStatus() async{
+    bool syncAndUploadResponse = false;
+    try {
+      syncAndUploadResponse = await SyncApi().getSyncAndUploadInProgressStatus();
+    } on PlatformException {
+      debugPrint('getSyncAndUploadInProgressStatus call failed, PlatformException');
+    } catch (e) {
+      debugPrint('getSyncAndUploadInProgressStatus has failed! ${e.toString()}');
+    }
+    return syncAndUploadResponse;
+  }
 }
 
 SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

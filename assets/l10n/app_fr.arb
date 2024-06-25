@@ -238,5 +238,14 @@
   "uin_number": "Numéro UIN",
   "valid_uin": "Veuillez saisir un UIN valide",
   "enter_uin": "Entrez le numéro UIN",
-  "select_update_attributes": "Sélectionnez tous les attributs qui doivent être mis à jour"
+  "select_update_attributes": "Sélectionnez tous les attributs qui doivent être mis à jour",
+  "logout_action_required": "Il y a encore des actions à faire !",
+  "logout_warning_message": "Cliquer sur se déconnecter mettra fin au processus et pourrait entraîner une perte de données.",
+  "officer": "Officier",
+  "operator": "Opérateur",
+  "supervisor": "Superviseur",
+  "online": "En ligne",
+  "offline": "Hors ligne",
+  "logout_success": "Vous avez été déconnecté avec succès!",
+  "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps"
 }
