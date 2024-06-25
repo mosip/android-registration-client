@@ -238,5 +238,14 @@
   "uin_number": "UIN Number",
   "valid_uin": "Please enter a valid UIN",
   "enter_uin": "Enter UIN Number",
-  "select_update_attributes": "Select all the attributes that need to be updated"
+  "select_update_attributes": "Select all the attributes that need to be updated",
+  "logout_action_required": "There is still some action required!",
+  "logout_warning_message": "Clicking on logout will terminate the process and could result in data loss.",
+  "officer": "Officer",
+  "operator": "Operator",
+  "supervisor": "Supervisor",
+  "online": "Online",
+  "offline": "Offline",
+  "logout_success": "You have been successfully logged out!",
+  "logout_failure": "Something went wrong, please try again after some time"
 }
