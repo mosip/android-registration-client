@@ -74,7 +74,9 @@ class _HomePageState extends State<HomePage> {
     }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
+    syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
+    syncProvider.isSyncAndUploadInProgress = false;
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);
