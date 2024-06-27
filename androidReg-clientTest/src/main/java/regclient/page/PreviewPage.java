@@ -21,5 +21,10 @@ public abstract class PreviewPage extends BasePage{
 	public abstract boolean isApplicationIDPreviewPagePageDisplayed();
 
 	public abstract DemographicDetailsPage clickOnDemographicDetailsTitle();
+	
+	public abstract boolean isBothIrisImageDisplayed();
+	
+	public abstract boolean isSingleIrisImageDisplayed();
+
 
 }

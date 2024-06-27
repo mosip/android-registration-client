@@ -39,6 +39,7 @@ import io.mosip.registration.clientmanager.dao.LanguageDao;
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
+import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
@@ -48,7 +49,6 @@ import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
-import io.mosip.registration.clientmanager.entity.UserBiometric;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
@@ -296,6 +296,12 @@ public class RoomModule {
         return clientDatabase.fileSignatureDao();
     }
 
+    @Singleton
+    @Provides
+    ProcessSpecDao providesProcessSpecDao(ClientDatabase clientDatabase) {
+        return clientDatabase.processSpecDao();
+    }
+
     @Provides
     @Singleton
     RegistrationRepository provideRegistrationRepository(RegistrationDao registrationDao, ObjectMapper objectMapper) {
@@ -359,8 +365,8 @@ public class RoomModule {
 
     @Provides
     @Singleton
-    IdentitySchemaRepository provideIdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
-        return new IdentitySchemaRepository(templateRepository, globalParamRepository, identitySchemaDao);
+    IdentitySchemaRepository provideIdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao, ProcessSpecDao processSpecDao) {
+        return new IdentitySchemaRepository(templateRepository, globalParamRepository, identitySchemaDao, processSpecDao);
     }
 
     @Provides

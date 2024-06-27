@@ -61,28 +61,28 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"डाक का\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectPostal;
 
-	@AndroidFindBy(accessibility = "14022")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
 	private WebElement selectPostalCode;
 
-	@AndroidFindBy(accessibility = "गैर-विदेशी")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"गैर-विदेशी\")")
 	private WebElement nonForeignerValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "परदेशी")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"परदेशी\")")
 	private WebElement foreignerValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "अकेला")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"अकेला\")")
 	private WebElement singleValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "रबात बिक्री केनित्र")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"रबात बिक्री केनित्र\")")
 	private WebElement rabatSaleKenitraValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "केनिट्रा")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"केनिट्रा\")]")
 	private WebElement kenitraValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "रबात")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"रबात\")]")
 	private WebElement rabatValueFromDropdown;
 
-	@AndroidFindBy(accessibility = "बेन मंसूर")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"बेन मंसूर\")")
 	private WebElement benMansourFromDropdown;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"आवास की स्थिति\"))")
@@ -97,7 +97,7 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"शहर\"))")
 	private WebElement cityHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"क्षेत्र\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"/क्षेत्र\"))")
 	private WebElement zoneHeader;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"डाक का\"))")
@@ -132,6 +132,12 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "अमान्य निवेश")
 	private WebElement errorMessageInvalidInputText;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement calenderIcon;
+	
+	@AndroidFindBy(accessibility = "स्क्रिम")
+	private WebElement backgroundScreen;
 	
 	public DemographicDetailsPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -371,4 +377,11 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
 	}
 
+	public  void selectCurrentCalenderDate() {
+		clickOnElement(calenderIcon);		
+	}
+	
+	public  void closeCalender() {
+		clickOnElement(backgroundScreen);		
+	}
 }

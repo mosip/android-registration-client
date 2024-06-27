@@ -12,6 +12,7 @@ import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/ui/onboard/onboard_landing_page.dart';
 import 'package:registration_client/ui/onboard/home_page.dart';
+import 'package:registration_client/ui/process_ui/update_process.dart';
 
 class AppRouter {
   AppRouter._();
@@ -19,6 +20,7 @@ class AppRouter {
   static Map<String, Widget Function(BuildContext)> routes = {
     LoginPage.route: (context) => const LoginPage(),
     NewProcess.routeName: (context) => const NewProcess(),
+    UpdateProcess.routeName: (context) => const UpdateProcess(),
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
   };

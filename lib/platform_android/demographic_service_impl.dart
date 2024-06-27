@@ -24,10 +24,10 @@ class DemographicServiceImpl implements DemographicService {
 
   @override
   Future<void> addSimpleTypeDemographicField(
-      String fieldId, String value, String name, String language) async {
+      String fieldId, String value, String language) async {
     try {
       await DemographicsApi()
-          .addSimpleTypeDemographicField(fieldId, value, name, language);
+          .addSimpleTypeDemographicField(fieldId, value, language);
     } on PlatformException {
       debugPrint('DemographicsApi call failed');
     } catch (e) {
@@ -95,6 +95,50 @@ class DemographicServiceImpl implements DemographicService {
       debugPrint('Field not added ${e.toString()}');
     }
     return fieldValue;
+  }
+  
+  @override
+  Future<void> addUpdatableFieldGroup(String fieldGroup) async {
+    try {
+      await DemographicsApi().addUpdatableFieldGroup(fieldGroup);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable field group not added ${e.toString()}');
+    }
+  }
+  
+  @override
+  Future<void> addUpdatableFields(List<String> fieldIds) async {
+    try {
+      await DemographicsApi().addUpdatableFields(fieldIds);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable fields not added ${e.toString()}');
+    }
+  }
+  
+  @override
+  Future<void> removeUpdatableFieldGroup(String fieldGroup) async {
+    try {
+      await DemographicsApi().removeUpdatableFieldGroup(fieldGroup);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable field group not removed ${e.toString()}');
+    }
+  }
+  
+  @override
+  Future<void> removeUpdatableFields(List<String> fieldIds) async {
+    try {
+      await DemographicsApi().removeUpdatableFields(fieldIds);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable fields not removed ${e.toString()}');
+    }
   }
 }
 

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
@@ -65,6 +66,13 @@ public class RegistrationDto extends Observable {
     private Map<String, DocumentDto> documents;
     private Map<String, BiometricsDto> biometrics;
 
+    private boolean isBiometricMarkedForUpdate;
+    private List<String> updatableFields;
+    private List<String> updatableFieldGroups;
+    private boolean isUpdateUINNonBiometric;
+    private boolean isNameNotUpdated;
+    private List<String> defaultUpdatableFieldGroups;
+
     //Supporting fields
     public Map<String, Object> AGE_GROUPS = new HashMap<>();
     public Map<String, AtomicInteger> ATTEMPTS;
@@ -86,6 +94,9 @@ public class RegistrationDto extends Observable {
         this.demographics = new HashMap<>();
         this.documents = new HashMap<>();
         this.biometrics = new HashMap<>();
+        this.updatableFields = new ArrayList<>();
+        this.updatableFieldGroups = new ArrayList<>();
+        this.defaultUpdatableFieldGroups = new ArrayList<>();
         this.ATTEMPTS = new HashMap<>();
         this.EXCEPTIONS = new HashMap<>();
         this.BIO_THRESHOLDS = bioThresholds;
@@ -164,12 +175,12 @@ public class RegistrationDto extends Observable {
     public void clearExceptionsHashmap(){
         this.EXCEPTIONS.clear();
     }
-    public void addDemographicField(String fieldId, String value, String name, String language) {
+    public void addDemographicField(String fieldId, String value, String language) {
         this.demographics.compute(fieldId, (k, v) -> {
             v = v != null ? v : new ArrayList<SimpleType>();
             ((List<SimpleType>)v).removeIf( e -> e.getLanguage().equalsIgnoreCase(language));
             if(isValidValue(value))
-                ((List<SimpleType>)v).add(new SimpleType(language, value, name));
+                ((List<SimpleType>)v).add(new SimpleType(language, value));
             return v;
         });
         clearAndNotifyAllObservers();
@@ -177,6 +188,26 @@ public class RegistrationDto extends Observable {
 
     public void removeDemographicField(String fieldId) {
         this.demographics.remove(fieldId);
+    }
+
+    public void addUpdatableFields(List<String> fieldIds) {
+        this.updatableFields.addAll(fieldIds);
+        clearAndNotifyAllObservers();
+    }
+
+    public void addUpdatableFieldGroup(String fieldGroup) {
+        this.updatableFieldGroups.add(fieldGroup);
+        clearAndNotifyAllObservers();
+    }
+
+    public void removeUpdatableFields(List<String> fieldIds) {
+        this.updatableFields.removeAll(fieldIds);
+        clearAndNotifyAllObservers();
+    }
+
+    public void removeUpdatableFieldGroup(String fieldGroup) {
+        this.updatableFieldGroups.remove(fieldGroup);
+        clearAndNotifyAllObservers();
     }
 
     public void setConsent(String consentText) {
@@ -396,10 +427,13 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.put(RegistrationConstants.FLOW_KEY, this.flowType);
         allIdentityDetails.put(RegistrationConstants.PROCESS_KEY, this.process);
         allIdentityDetails.put("langCodes", this.selectedLanguages);
-        allIdentityDetails.put("isNew", true);
-        allIdentityDetails.put("isUpdate", false);
-        allIdentityDetails.put("isLost", false);
-        allIdentityDetails.put("updatableFieldGroups", Collections.EMPTY_LIST);
+        allIdentityDetails.put("isNew", Objects.equals(this.flowType, "NEW"));
+        allIdentityDetails.put("isUpdate", Objects.equals(this.flowType, "Update"));
+        allIdentityDetails.put("isLost", Objects.equals(this.flowType, "Lost"));
+        allIdentityDetails.put("updatableFields",
+                this.updatableFields == null ? Collections.EMPTY_LIST : this.updatableFields);
+        allIdentityDetails.put("updatableFieldGroups",
+                this.updatableFieldGroups == null ? Collections.EMPTY_LIST : this.updatableFieldGroups);
         allIdentityDetails.putAll(this.demographics);
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);

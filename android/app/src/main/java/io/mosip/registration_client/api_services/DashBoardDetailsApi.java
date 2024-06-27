@@ -1,5 +1,7 @@
 package io.mosip.registration_client.api_services;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -27,12 +29,19 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     private UserDetailDao userDetailDao;
     private RegistrationRepository registrationRepository;
     private PreRegistrationDataSyncService preRegistrationData;
+    public static final String PREFERRED_USERNAME = "preferred_username";
+    SharedPreferences sharedPreferences;
+    private Context context;
 
     @Inject
-    public DashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository,PreRegistrationDataSyncService preRegistrationData){
+    public DashBoardDetailsApi(Context context, UserDetailDao userDetailDao, RegistrationRepository registrationRepository,PreRegistrationDataSyncService preRegistrationData){
+        this.context = context;
         this.userDetailDao = userDetailDao;
         this.registrationRepository = registrationRepository;
         this.preRegistrationData = preRegistrationData;
+        sharedPreferences = this.context.getSharedPreferences(
+                this.context.getString(io.mosip.registration.clientmanager.R.string.app_name),
+                Context.MODE_PRIVATE);
     };
 
     @Override
@@ -115,5 +124,20 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
             Log.e(getClass().getSimpleName(), "Getting SyncedData failed!" + Arrays.toString(e.getStackTrace()));
         }
         result.success((long)syncedPacketsCount);
+    }
+
+    @Override
+    public void getUpdatedTime(@NonNull DashBoardPigeon.Result<DashBoardPigeon.UpdatedTimeData> result) {
+        DashBoardPigeon.UpdatedTimeData updatedTime = null;
+        Long globalUpdatedTime;
+        try{
+            globalUpdatedTime = this.userDetailDao.getUpdatedTime(sharedPreferences.getString(PREFERRED_USERNAME,""));
+            updatedTime = new DashBoardPigeon.UpdatedTimeData.Builder()
+                    .setUpdatedTime(String.valueOf(globalUpdatedTime))
+                    .build();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Getting Updated Date failed!" + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(updatedTime);
     }
 }

@@ -99,9 +99,18 @@
       }
     }
   },
-  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "notificationLanguage": "{language, select, eng{Preferred Language of Communication} ara{لغة التواصل المفضلة} fra{Langue de communication préférée} hin{संचार की पसंदीदा भाषा} kan{ಸಂವಹನದ ಆದ್ಯತೆಯ ಭಾಷೆ} tam{விருப்பமான தொடர்பு மொழி} other{Notification Languages}}",
   "@notificationLanguage": {
     "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "dataEntryLanguage": "{language, select, eng{Data Entry Language} ara{لغة إدخال البيانات} fra{Langue de saisie des données} hin{डाटा एंट्री भाषा} kan{ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ} tam{தரவு நுழைவு மொழி} other{Notification Languages}}",
+  "@dataEntryLanguage": {
+    "description": "Data Entry Language Label",
     "placeholders": {
       "language": {
         "type": "String"
@@ -216,5 +225,27 @@
   "onboarded": "जहाज पर चढ़ाया गया",
   "sync_alert_title": "जारी रखने के लिए सिंक करें!",
   "sync_alert_content": "मशीन या केंद्र सक्रिय नहीं है। जारी रखने के लिए सक्रिय करें और सिंक करें।",
-  "sync_alert_text": "सिंक"
+  "sync_alert_text": "सिंक",
+  "onboarded_successfully": "आप सफलतापूर्वक शामिल हो गए हैं.",
+  "operator_biometric_updated_successfully": "ऑपरेटर बायोमेट्रिक्स सफलतापूर्वक अपडेट किया गया।",
+  "home": "घर",
+  "verify_and_save": "सत्यापित करें और सहेजें",
+  "supervisors_biometric_onboard": "पर्यवेक्षक का बायोमेट्रिक ऑनबोर्डिंग",
+  "supervisors_biometric_update": "पर्यवेक्षक का बायोमेट्रिक अपडेट",
+  "help_topics": "सहायता के विषय",
+  "onboard_request_message": "कृपया स्वयं को पोर्टल में शामिल करने के लिए गेट ऑनबोर्ड बटन पर टैप करें।",
+  "hello_s": "नमस्ते ",
+  "uin_number": "यूआईएन नंबर",
+  "valid_uin": "कृपया एक वैध यूआईएन दर्ज करें",
+  "enter_uin": "यूआईएन नंबर दर्ज करें",
+  "select_update_attributes": "उन सभी विशेषताओं का चयन करें जिन्हें अद्यतन करने की आवश्यकता है",
+  "logout_action_required": "अभी भी कुछ कार्रवाई की आवश्यकता है!",
+  "logout_warning_message": "लॉगआउट पर क्लिक करने से प्रक्रिया समाप्त हो जाएगी और डेटा हानि हो सकती है।",
+  "officer": "अफ़सर",
+  "operator": "ऑपरेटर",
+  "supervisor": "पर्यवेक्षक",
+  "online": "ऑनलाइन",
+  "offline": "ऑफलाइन",
+  "logout_success": "आप सफलता पूर्वक लॉगआउट कर चुके हैं!",
+  "logout_failure": "कुछ गलती हो गई है, कृपया कुछ समय बाद पुनः प्रयास करें"
 }

@@ -72,5 +72,9 @@ public abstract class DemographicDetailsPage extends BasePage{
 	public abstract  void enterIntroducerName(String EmailID);
 	
 	public abstract  void enterIntroducerRid(String EmailID);
+	
+	public abstract  void selectCurrentCalenderDate();
+	
+	public abstract  void closeCalender();
 
 }

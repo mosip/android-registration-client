@@ -22,5 +22,10 @@ public abstract class RegistrationTasksPage extends BasePage {
 	public abstract boolean isMasterDataSyncCompletedDisplayed();
 
 	public abstract boolean isScriptSyncCompletedDisplayed();
+	
+	public abstract  DashboardPage clickOnDashboardButton();
+	
+	public abstract  OperationalTaskPage clickOnOperationalTasksTitle();
+
 
 }

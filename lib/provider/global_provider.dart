@@ -41,10 +41,20 @@ class GlobalProvider with ChangeNotifier {
   String _machineName = "";
   String _preRegId = "";
   final formKey = GlobalKey<FormState>();
+  final updateFieldKey = GlobalKey<FormState>();
+  String _updateUINNumber = "";
   String _onboardingProcessName="";
-  String get onboardingProcessName=>_onboardingProcessName;
+  String get updateUINNumber => _updateUINNumber;
+  String get onboardingProcessName => _onboardingProcessName;
+
   set onboardingProcessName(String value) {
     _onboardingProcessName = value;
+    notifyListeners();
+  }
+
+  set updateUINNumber(String value) {
+    _updateUINNumber = value;
+    notifyListeners();
   }
 
   Process? _currentProcess;
@@ -60,6 +70,7 @@ class GlobalProvider with ChangeNotifier {
     'Arabic': false,
     'French': false,
   };
+
   Map<String, String> _thresholdValuesMap = {
     'mosip.registration.leftslap_fingerprint_threshold': '0',
     'mosip.registration.rightslap_fingerprint_threshold': '0',
@@ -418,15 +429,11 @@ class GlobalProvider with ChangeNotifier {
     String x = '';
     for (var i in chosenLang) {
       String code = languageToCodeMapper[i]!;
-      for (var element in _languages) {
-        if (code == element) {
-          x = "$x${label[code]!}/";
-          continue;
+        if(label[code] != null) {
+          x = "$x${label[code] ?? ""}/ ";
         }
-      }
     }
-    x = x.substring(0, x.length - 1);
-    return x;
+    return x.isEmpty ? x : x.substring(0, x.length - 2);
   }
 
   langToCode(String lang) {
@@ -490,6 +497,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  clearExceptions() {
+    _exceptionAttributes = [];
+    _completeException = {};
+    notifyListeners();
+  }
+
   // Language Config
   fetchAllLanguages() async {
     return await dynamicResponseService.fetchAllLanguages();
@@ -526,7 +539,7 @@ class GlobalProvider with ChangeNotifier {
     _languageDataList = await dynamicResponseService.fetchAllLanguages();
     await setLanguageConfigData();
     await createLanguageCodeMapper();
-    String mandatoryLang = _mandatoryLanguages[0] ?? "eng";
+    String mandatoryLang = selectedLanguage ?? _mandatoryLanguages[0] ?? "eng";
     if (!isManualSync) {
       await toggleLocale(mandatoryLang);
     }
@@ -751,5 +764,46 @@ class GlobalProvider with ChangeNotifier {
   removeProofOfExceptionFieldFromMap(
       String key, Map<String, dynamic> commonMap) {
     commonMap.remove(key);
+  }
+
+  Map<String, bool> _selectedUpdateFields = {};
+  List<String> _selectedFieldList = [];
+  Map<String, bool> get selectedUpdateFields => _selectedUpdateFields;
+  List<String> get selectedFieldList => _selectedFieldList;
+
+  set selectedUpdateFields(Map<String, bool> value) {
+    _selectedUpdateFields = value;
+    notifyListeners();
+  }
+
+  addSelectedUpdateFieldKey(String key) {
+    _selectedUpdateFields[key] = true;
+    notifyListeners();
+  }
+
+  removeSelectedUpdateFieldKey(String key) {
+      _selectedUpdateFields.remove(key);
+    notifyListeners();
+  }
+
+  setSelectedFieldList(List<String> value) {
+    _selectedFieldList = value;
+    notifyListeners();
+  }
+
+  addToSelectedFieldList(String id) {
+    _selectedFieldList.add(id);
+    notifyListeners();
+  }
+
+  clearRegistrationProcessData() {
+    clearMap();
+    clearExceptions();
+    clearScannedPages();
+    newProcessTabIndex = 0;
+    htmlBoxTabIndex = 0;
+    setRegId("");
+    selectedUpdateFields = {};
+    updateUINNumber = "";
   }
 }

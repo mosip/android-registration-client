@@ -34,4 +34,6 @@ abstract class SyncApi{
   String getPreRegIds();
   @async
   Sync getKernelCertsSync(bool isManualSync);
+  @async
+  bool getSyncAndUploadInProgressStatus();
 }

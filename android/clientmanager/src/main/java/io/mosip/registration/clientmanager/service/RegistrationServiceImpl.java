@@ -106,7 +106,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationDto startRegistration(@NonNull List<String> languages) throws Exception {
+    public RegistrationDto startRegistration(@NonNull List<String> languages, String flowType, String process) throws Exception {
         if (registrationDto != null) {
             registrationDto.cleanup();
         }
@@ -137,7 +137,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         for(Modality modality : Modality.values()) {
             bioThresholds.put(modality, getAttemptsCount(modality));
         }
-        this.registrationDto = new RegistrationDto(rid, "NEW", "NEW", version, languages, bioThresholds);
+        this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds);
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE).edit();
@@ -165,9 +165,21 @@ public class RegistrationServiceImpl implements RegistrationService {
             String individualBiometricsFieldId = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID);
             String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
 
-            this.registrationDto.getAllDemographicFields().forEach(entry -> {
-                packetWriterService.setField(this.registrationDto.getRId(), entry.getKey(), entry.getValue());
-            });
+            for (String fieldName : this.registrationDto.getDemographics().keySet()) {
+                switch (this.registrationDto.getFlowType()) {
+                    case "Update":
+                        if (this.registrationDto.getDemographics().get(fieldName) != null && (this.registrationDto.getUpdatableFields().contains(fieldName) ||
+                                fieldName.equals("UIN")))
+                            packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
+                        break;
+                    case "Correction":
+                    case "Lost":
+                    case "NEW":
+                        if (this.registrationDto.getDemographics().get(fieldName) != null)
+                            packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
+                        break;
+                }
+            }
 
             this.registrationDto.getAllDocumentFields().forEach(entry -> {
                 Document document = new Document();
@@ -220,7 +232,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             //TODO add name, phone and email in additional info
 
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
-                    centerMachineDto.getCenterId(), "NEW", additionalInfo);
+                    centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo);
 
 //        } finally {
             clearRegistration();

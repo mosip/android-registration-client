@@ -14,7 +14,7 @@ public class PreviewPageFrench extends PreviewPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Nouvelle inscription\"))")
 	private WebElement newRegistrationTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Informations démographiques\"))")
 	private WebElement demographicInformationInPreviewPage;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Application ID\"))")
@@ -26,8 +26,14 @@ public class PreviewPageFrench extends PreviewPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Détails démographiques\"))")
 	private WebElement demographicDetailsTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biométrie\"))")
 	private WebElement biometricsInformationInPreviewPage;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 1 )\"))")
+	private WebElement singleIrisImage;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 2 )\"))")
+	private WebElement bothIrisImage;
 	
 	@AndroidFindBy(accessibility = "CONTINUER")
 	private WebElement continueButton;
@@ -64,6 +70,14 @@ public class PreviewPageFrench extends PreviewPage{
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageFrench(driver);
+	}
+	
+	public boolean isBothIrisImageDisplayed() {
+		return isElementDisplayed(bothIrisImage);
+	}
+	
+	public boolean isSingleIrisImageDisplayed() {
+		return isElementDisplayed(singleIrisImage);
 	}
 
 }

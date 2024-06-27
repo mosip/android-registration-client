@@ -67,7 +67,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
         String code =
             globalProvider.languageToCodeMapper[element]!;
         registrationTaskProvider
-            .addSimpleTypeDemographicField(widget.field.id ?? "", value, name, code);
+            .addSimpleTypeDemographicField(widget.field.id ?? "", value, code);
       }
     } else {
       registrationTaskProvider

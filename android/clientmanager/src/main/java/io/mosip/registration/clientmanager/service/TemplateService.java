@@ -282,9 +282,16 @@ public class TemplateService {
         }
 
         if (!capturedException.isEmpty()) {
-        Bitmap faceBitmap = UserInterfaceHelperService.getFaceBitMap(capturedException.get(0));
-            setBiometricImage(velocityContext, "ExceptionImageSource", isPreview ? faceBitmap : BitmapFactory.decodeResource(appContext.getResources(),
-                            R.drawable.exception_photo), isPreview);
+            if ("applicant".equalsIgnoreCase(field.getSubType())) {
+                Bitmap applicantExceptionBitmap = UserInterfaceHelperService.getFaceBitMap(registrationDto.getBestBiometrics(field.getId(), Modality.EXCEPTION_PHOTO).get(0));
+                setBiometricImage(velocityContext, "ExceptionImageSource", isPreview ? applicantExceptionBitmap : BitmapFactory.decodeResource(appContext.getResources(),
+                        R.drawable.exception_photo), isPreview);
+            }
+            if ("introducer".equalsIgnoreCase(field.getSubType())) {
+                Bitmap introducerExceptionBitmap = UserInterfaceHelperService.getFaceBitMap(registrationDto.getBestBiometrics(field.getId(), Modality.EXCEPTION_PHOTO).get(0));
+                setBiometricImage(velocityContext, "IntroducerExceptionImageSource", isPreview ? introducerExceptionBitmap : BitmapFactory.decodeResource(appContext.getResources(),
+                        R.drawable.exception_photo), isPreview);
+            }
         }
 
         return bioData;
@@ -455,7 +462,7 @@ public class TemplateService {
                     .filter(valueDTO -> valueDTO.getLanguage().equals(lang)).findFirst();
 
             if (demoValueInRequiredLang.isPresent() && demoValueInRequiredLang.get().getValue() != null) {
-                    value = demoValueInRequiredLang.get().getName();
+                    value = demoValueInRequiredLang.get().getValue();
             }
         } else if (fieldValue instanceof String || fieldValue instanceof Integer || fieldValue instanceof BigInteger
                 || fieldValue instanceof Double) {

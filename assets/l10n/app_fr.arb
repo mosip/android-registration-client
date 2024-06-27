@@ -99,9 +99,18 @@
       }
     }
   },
-  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "notificationLanguage": "{language, select, eng{Preferred Language of Communication} ara{لغة التواصل المفضلة} fra{Langue de communication préférée} hin{संचार की पसंदीदा भाषा} kan{ಸಂವಹನದ ಆದ್ಯತೆಯ ಭಾಷೆ} tam{விருப்பமான தொடர்பு மொழி} other{Notification Languages}}",
   "@notificationLanguage": {
     "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "dataEntryLanguage": "{language, select, eng{Data Entry Language} ara{لغة إدخال البيانات} fra{Langue de saisie des données} hin{डाटा एंट्री भाषा} kan{ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ} tam{தரவு நுழைவு மொழி} other{Notification Languages}}",
+  "@dataEntryLanguage": {
+    "description": "Data Entry Language Label",
     "placeholders": {
       "language": {
         "type": "String"
@@ -216,5 +225,27 @@
   "onboarded": "Intégré",
   "sync_alert_title": "Synchronisation pour continuer!",
   "sync_alert_content": "La machine ou le centre n'est pas actif. Activez et synchronisez pour continuer.",
-  "sync_alert_text": "Synchroniser"
+  "sync_alert_text": "Synchroniser",
+  "onboarded_successfully": "Vous avez été intégré avec succès.",
+  "operator_biometric_updated_successfully": "Les données biométriques de l'opérateur ont été mises à jour avec succès.",
+  "home": "MAISON",
+  "verify_and_save": "VÉRIFIER ET ENREGISTRER",
+  "supervisors_biometric_onboard": "Enrôlement biométrique du superviseur",
+  "supervisors_biometric_update": "Mise à jour biométrique du superviseur",
+  "help_topics": "Sujets d'aide",
+  "onboard_request_message": "Veuillez appuyer sur le bouton Get Onboard pour vous intégrer au portail.",
+  "hello_s": "Bonjour ",
+  "uin_number": "Numéro UIN",
+  "valid_uin": "Veuillez saisir un UIN valide",
+  "enter_uin": "Entrez le numéro UIN",
+  "select_update_attributes": "Sélectionnez tous les attributs qui doivent être mis à jour",
+  "logout_action_required": "Il y a encore des actions à faire !",
+  "logout_warning_message": "Cliquer sur se déconnecter mettra fin au processus et pourrait entraîner une perte de données.",
+  "officer": "Officier",
+  "operator": "Opérateur",
+  "supervisor": "Superviseur",
+  "online": "En ligne",
+  "offline": "Hors ligne",
+  "logout_success": "Vous avez été déconnecté avec succès!",
+  "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps"
 }

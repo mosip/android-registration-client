@@ -15,10 +15,11 @@ public class IntroducerBiometricPageHindi extends IntroducerBiometricPage{
 	@AndroidFindBy(accessibility = "आईरिस स्कैन")
 	private WebElement irisScanButton;
 	
-	@AndroidFindBy(accessibility = "Mark Exception")
+	@AndroidFindBy(accessibility = "अस्तित्व चिह्नित करें")
 	private WebElement markExceptionButton;
 	
-	@AndroidFindBy(accessibility = "Mark Exception")
+	@AndroidFindBy(accessibility = "अस्तित्व चिह्नित करें")
+
 	private WebElement exceptionTypeTitle;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")

@@ -12,7 +12,7 @@ abstract class DemographicService {
   Future<String> getDemographicField(String fieldId);
 
   Future<void> addSimpleTypeDemographicField(
-      String fieldId, String value, String name, String language);
+      String fieldId, String value, String language);
 
   Future<String> getSimpleTypeDemographicField(String fieldId, String language);
 
@@ -22,6 +22,14 @@ abstract class DemographicService {
   Future<void> removeDemographicField(String fieldId);
 
   Future<void> setConsentField(String consentData);
+
+  Future<void> addUpdatableFields(List<String> fieldIds);
+
+  Future<void> addUpdatableFieldGroup(String fieldGroup);
+
+  Future<void> removeUpdatableFields(List<String> fieldIds);
+
+  Future<void> removeUpdatableFieldGroup(String fieldGroup);
 
   factory DemographicService() => getDemographicServiceImpl();
 }

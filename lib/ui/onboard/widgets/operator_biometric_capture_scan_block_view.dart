@@ -12,7 +12,7 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 // import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
-import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -27,6 +27,7 @@ class OperatorBiometricCaptureScanBlockView extends StatefulWidget {
 class _OperatorBiometricCaptureScanBlockViewState
     extends State<OperatorBiometricCaptureScanBlockView> {
   bool isPortrait = true;
+  late GlobalProvider globalProvider;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _OperatorBiometricCaptureScanBlockViewState
     context
         .read<BiometricCaptureControlProvider>()
         .biometricCaptureScanBlockTabIndex = 1;
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
   }
 
   setInitialState() {
@@ -242,7 +244,8 @@ class _OperatorBiometricCaptureScanBlockViewState
                           .map((e) => Image.memory(
                                 e,
                                 height: (isMobileSize) ? 70.h : 130.h,
-                              )),(biometricAttributeData.title == "Iris" &&
+                              )),
+                      (biometricAttributeData.title == "Iris" &&
                               biometricAttributeData.exceptions.contains(true))
                           ? ((biometricAttributeData.exceptions.first == true)
                               ? const SizedBox()
@@ -2309,7 +2312,11 @@ class _OperatorBiometricCaptureScanBlockViewState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Supervisor's Biometric Verification",
+                        globalProvider.onboardingProcessName == "Onboarding"
+                            ? AppLocalizations.of(context)!
+                                .supervisors_biometric_onboard
+                            : AppLocalizations.of(context)!
+                                .supervisors_biometric_update,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontSize: (isMobileSize) ? 14.h : 24.h,
                             color: blackShade1,
