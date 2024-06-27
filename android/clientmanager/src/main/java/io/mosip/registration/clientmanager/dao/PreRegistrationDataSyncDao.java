@@ -21,13 +21,13 @@ public interface PreRegistrationDataSyncDao {
     public PreRegistrationList get(String preRegId);
 
     
-    public long save(PreRegistrationList preRegistration);
+    public void save(PreRegistrationList preRegistration);
 
    
     public List<PreRegistrationList> fetchRecordsToBeDeleted(String startDate);
 
    
-  //  public long update(PreRegistrationList preReg);
+    public long update(String id,String updatedBy,String updatedTime);
 
     
     //public void deleteAll(List<PreRegistrationList> preRegistrationList);
@@ -38,5 +38,5 @@ public interface PreRegistrationDataSyncDao {
    
     public String getLastPreRegPacketDownloadedTime();
 
-    public PreRegistrationList getById(long id);
+    public PreRegistrationList getById(String id);
 }

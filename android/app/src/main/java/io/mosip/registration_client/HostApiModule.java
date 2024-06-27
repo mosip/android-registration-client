@@ -46,7 +46,6 @@ import io.mosip.registration.clientmanager.repository.MachineRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
-import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -167,8 +166,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService) {
-        return new DynamicDetailsApi(masterDataService, auditManagerService);
+    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService,PreRegistrationDataSyncService preRegistrationData,RegistrationService registrationService,IdentitySchemaRepository identitySchemaService) {
+        return new DynamicDetailsApi(appContext, masterDataService, auditManagerService,preRegistrationData,registrationService,identitySchemaService);
     }
 
     @Provides
@@ -194,7 +193,7 @@ public class HostApiModule {
             AuditManagerService auditManagerService,
             MasterDataService masterDataService,
             PacketService packetService,
-            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao) {
+            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService) {
         return new MasterDataSyncApi(clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
@@ -204,7 +203,7 @@ public class HostApiModule {
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
                 syncJobDefRepository, languageRepository, jobManagerService,
-                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao
+                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao, preRegistrationDataSyncService
         );
     }
 

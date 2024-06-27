@@ -144,6 +144,19 @@ class _TextBoxControlState extends State<TextBoxControl>
     String mandatoryLanguageCode =
         globalProvider.mandatoryLanguages[0] ?? "eng";
 
+    for (var e in choosenLang){
+      String lang = globalProvider.langToCode(e);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          String data = _getDataFromMap(lang);
+          if (!controllerMap.containsKey(lang)) {
+            controllerMap[lang] = TextEditingController(text: data);
+          } else {
+            controllerMap[lang]!.text = data;
+          }
+        });
+      });
+    }
     return Card(
       elevation: 5,
       color: pureWhite,

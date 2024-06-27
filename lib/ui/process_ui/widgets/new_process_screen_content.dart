@@ -155,24 +155,28 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: context.watch<GlobalProvider>().formKey,
-      child: Column(
-        children: [
-          if(widget.screen.preRegFetchRequired==true)...[
-            const PreRegDataControl(),
-          ],
-          ...widget.screen.fields!.map((e) {
-            _checkMvelVisible(e!);
-            if (e.inputRequired == true) {
-              if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
-                return widgetType(e);
-              }
-            }
-            return Container();
-          }).toList(),
+    return Column(
+      children: [
+        if(widget.screen.preRegFetchRequired==true)...[
+          PreRegDataControl(screen:widget.screen),
         ],
-      ),
+        Form(
+          key: context.watch<GlobalProvider>().formKey,
+          child: Column(
+            children: [
+              ...widget.screen.fields!.map((e) {
+                _checkMvelVisible(e!);
+                if (e.inputRequired == true) {
+                  if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
+                    return widgetType(e);
+                  }
+                }
+                return Container();
+              }).toList(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

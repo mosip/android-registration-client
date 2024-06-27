@@ -102,8 +102,12 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
         await _getFieldValues(widget.field.subType!, lang);
     for (var element in data) {
       if (element!.name == response) {
-        setState(() {
-          selected = response;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              selected = response;
+            });
+          }
         });
       }
     }
@@ -121,6 +125,13 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
 
   @override
   Widget build(BuildContext context) {
+    String lang = globalProvider.selectedLanguage;
+    if (context
+        .read<GlobalProvider>()
+        .fieldInputValue
+        .containsKey(widget.field.id ?? "")) {
+      _getSelectedValueFromMap(lang);
+    }
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(

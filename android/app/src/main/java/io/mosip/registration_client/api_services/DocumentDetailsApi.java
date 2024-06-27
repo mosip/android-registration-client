@@ -38,7 +38,7 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
     @Override
     public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String reference, @NonNull byte[] bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
         try {
-            this.registrationService.getRegistrationDto().addDocument(fieldId, docType,reference,bytes);
+            this.registrationService.getRegistrationDto().addDocument(fieldId, docType,null,reference,bytes);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add Document failed!" + Arrays.toString(e.getStackTrace()));
         }

@@ -31,6 +31,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.spec.MGF1ParameterSpec;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static java.util.Arrays.copyOfRange;
@@ -251,5 +252,18 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
             Log.e(TAG, "Error generating certificate thumbprint.", e);
             throw new Exception("CERTIFICATE_THUMBPRINT_ERROR");
         }
+    }
+
+    public byte[] symmetricDecrypt(SecretKey key, byte[] data, byte[] aad) throws Exception {
+        final Cipher cipher = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+        byte[] randomIV = Arrays.copyOfRange(data, data.length - cipher.getBlockSize(), data.length);
+        SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), AES);
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, randomIV);
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
+        if (aad != null && aad.length != 0) {
+            cipher.updateAAD(aad);
+        }
+        byte[] output = cipher.doFinal(Arrays.copyOf(data, data.length - cipher.getBlockSize()));
+        return output;
     }
 }

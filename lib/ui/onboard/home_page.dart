@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage> {
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
     await syncProvider.batchJob();
+    await syncProvider.getPreRegistrationIds();
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);
@@ -102,6 +103,7 @@ class _HomePageState extends State<HomePage> {
       globalProvider.newProcessTabIndex = 0;
       globalProvider.htmlBoxTabIndex = 0;
       globalProvider.setRegId("");
+      globalProvider.setPreRegistrationId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&

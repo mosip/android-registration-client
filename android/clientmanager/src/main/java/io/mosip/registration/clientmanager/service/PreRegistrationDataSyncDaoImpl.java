@@ -10,13 +10,6 @@ import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 
-/**
- * {@link PreRegistrationDataSyncDao}
- *
- * @author YASWANTH S
- * @since 1.0.0
- *
- */
 
 public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDao {
 
@@ -40,17 +33,17 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
 
     }
 
-    public PreRegistrationList getById(long id){
+    public PreRegistrationList getById(String id){
         return this.preRegistrationRepositoryDao.getById(id);
     }
 
 
-    public long save(PreRegistrationList preRegistration) {
+    public void save(PreRegistrationList preRegistration) {
 
         Log.i(TAG,"REGISTRATION - PRE_REGISTRATION_DATA_SYNC - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL"+
                 "Saving Pre-Registration");
 
-        return this.preRegistrationRepositoryDao.save(preRegistration);
+        this.preRegistrationRepositoryDao.insert(preRegistration);
     }
 
     public List<PreRegistrationList> fetchRecordsToBeDeleted(String startDate) {
@@ -61,34 +54,14 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
         return this.preRegistrationRepositoryDao.findByAppointmentDateBeforeAndIsDeleted(startDate, false);
     }
 
-//    public long update(PreRegistrationList preReg) {
-//
-//        Log.i(TAG,"REGISTRATION - PRE_REGISTRATION_DATA_SYNC_RECORD_UPDATE - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL"
-//                +"Update the deleted records");
-//
-//        return this.preRegistrationRepositoryDao.update(preReg);
-//
-//    }
+    public long update(String id,String updatedBy,String updatedTime) {
 
+        Log.i(TAG,"REGISTRATION - PRE_REGISTRATION_DATA_SYNC_RECORD_UPDATE - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL"
+                +"Update the deleted records");
 
-//    public void deleteAll(List<PreRegistrationList> preRegistrationLists) {
-//        Log.i(TAG,"REGISTRATION - PRE_REGISTRATION_DATA_SYNC_RECORD_UPDATE - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL"+
-//               "Delete records started");
-//        /* Parase List to Iterable */
-//        Iterable<PreRegistrationList> iterablePreRegistrationList = preRegistrationLists;
-//
-//        this.preRegistrationRepositoryDao.deleteInBatch(iterablePreRegistrationList);
-//        Log.i(TAG,"REGISTRATION - PRE_REGISTRATION_DATA_SYNC_RECORD_UPDATE - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL"+
-//           "delete records ended");
-//
-//    }
+        return this.preRegistrationRepositoryDao.update(id, updatedBy, updatedTime);
 
-
-//    public List<PreRegistrationList> getAllPreRegPackets() {
-//
-//        return this.preRegistrationRepositoryDao.findAll();
-//    }
-
+    }
 
     public String getLastPreRegPacketDownloadedTime() {
         Log.i(TAG,"REGISTRATION - PRE_REGISTRATION_GET_DOWNLOADED_TIME - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL"+

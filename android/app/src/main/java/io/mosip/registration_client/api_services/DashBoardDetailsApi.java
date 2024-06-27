@@ -58,8 +58,6 @@ public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     @Override
     public void getPacketUploadedDetails(@NonNull DashBoardPigeon.Result<Long> result) {
         int uploadedValues = 0;
-        ResponseDto response = this.preRegistrationData.getPreRegistration("40872612530435",false);
-        Log.i("get","Getting pre reg id.."+ response.getSuccessResponseDTO());
         try{
             uploadedValues = this.registrationRepository.getAllRegistrationByStatus(PacketClientStatus.UPLOADED.name());
 //            List<String> response = new ArrayList<>();

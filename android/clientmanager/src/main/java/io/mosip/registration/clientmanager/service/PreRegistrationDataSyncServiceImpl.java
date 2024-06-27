@@ -1,6 +1,9 @@
 package io.mosip.registration.clientmanager.service;
 
+import static io.mosip.registration.clientmanager.config.SessionManager.USER_NAME;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,16 +12,16 @@ import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
-import io.mosip.registration.clientmanager.dto.MainResponseDto;
 import io.mosip.registration.clientmanager.dto.PreRegArchiveDto;
+import io.mosip.registration.clientmanager.dto.PreRegistrationDataSyncDto;
+import io.mosip.registration.clientmanager.dto.PreRegistrationDataSyncRequestDto;
 import io.mosip.registration.clientmanager.dto.PreRegistrationDto;
-import io.mosip.registration.clientmanager.dto.ResponseDto;
-import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
+import io.mosip.registration.clientmanager.dto.PreRegistrationIdsDto;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
-import io.mosip.registration.clientmanager.exception.RegBaseCheckedException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
@@ -26,25 +29,30 @@ import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.packetmanager.util.DateUtils;
-import io.mosip.registration.packetmanager.util.JsonUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import androidx.annotation.NonNull;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.io.FileUtils;
-
-import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 import java.sql.Timestamp;
-import java.util.LinkedHashMap;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Map;
-import java.util.Objects;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 
 public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSyncService {
@@ -54,172 +62,295 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     PreRegZipHandlingService preRegZipHandlingService;
     MasterDataService masterDataService;
     SyncRestService syncRestService;
+    SharedPreferences sharedPreferences;
+    PreRegistrationList preRegistration;
+    GlobalParamRepository globalParamRepository;
     private Context context;
+    private String result = "";
+    ExecutorService executorServiceForPreReg = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    public PreRegistrationDataSyncServiceImpl(Context context,PreRegistrationDataSyncDao preRegistrationDao,MasterDataService masterDataService,SyncRestService syncRestService){
+    public PreRegistrationDataSyncServiceImpl(Context context,PreRegistrationDataSyncDao preRegistrationDao,MasterDataService masterDataService,SyncRestService syncRestService,PreRegZipHandlingService preRegZipHandlingService,PreRegistrationList preRegistration,GlobalParamRepository globalParamRepository){
         this.context = context;
         this.preRegistrationDao = preRegistrationDao;
         this.masterDataService = masterDataService;
         this.syncRestService = syncRestService;
+        this.preRegZipHandlingService = preRegZipHandlingService;
+        this.preRegistration = preRegistration;
+        this.globalParamRepository = globalParamRepository;
+        sharedPreferences = this.context.getSharedPreferences(
+                this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
     }
 
     @Override
-    public ResponseDto getPreRegistration(@NonNull String preRegistrationId, boolean forceDownload) {
-        ResponseDto responseDTO = new ResponseDto();
+    public void fetchPreRegistrationIds(Runnable onFinish) {
+        Log.i(TAG,"Fetching Pre-Registration Id's started {}");
+
+        CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
+        Log.i(TAG,"Pre-Registration get center Id"+ centerMachineDto.getCenterId());
+        if (centerMachineDto == null) {
+            result = "pre_reg_id_sync_failed";
+            onFinish.run();
+            return;
+        }
+
+        // prepare required Dto to send through API
+        PreRegistrationDataSyncDto preRegistrationDataSyncDto = new PreRegistrationDataSyncDto();
+
+        Timestamp reqTime = new Timestamp(System.currentTimeMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        preRegistrationDataSyncDto.setId(RegistrationConstants.PRE_REGISTRATION_DUMMY_ID);
+        preRegistrationDataSyncDto.setRequestTime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
+        preRegistrationDataSyncDto.setVersion(RegistrationConstants.VER);
+
+        PreRegistrationDataSyncRequestDto preRegistrationDataSyncRequestDto = new PreRegistrationDataSyncRequestDto();
+        preRegistrationDataSyncRequestDto.setRegistrationCenterId(centerMachineDto.getCenterId());
+        preRegistrationDataSyncRequestDto.setFromDate(getFromDate(reqTime));
+        preRegistrationDataSyncRequestDto.setToDate(getToDate(reqTime));
+
+        preRegistrationDataSyncDto.setRequest(preRegistrationDataSyncRequestDto);
+
+        //REST call to get Pre Registration Id's
+        Call<ResponseWrapper<PreRegistrationIdsDto>> call = this.syncRestService.getPreRegistrationIds(preRegistrationDataSyncDto);
+
+        Log.i(TAG,"REST API Url "+call);
+        call.enqueue(new Callback<ResponseWrapper<PreRegistrationIdsDto>>() {
+            @Override
+            public void onResponse(Call<ResponseWrapper<PreRegistrationIdsDto>> call, Response<ResponseWrapper<PreRegistrationIdsDto>> response) {
+                if (response.isSuccessful()) {
+                    ServiceError error = SyncRestUtil.getServiceError(response.body());
+                    if(error == null) {
+                        try {
+                            ResponseWrapper<PreRegistrationIdsDto> responseWrapper = response.body();
+
+                            //pre-rids received
+                            if (responseWrapper != null && responseWrapper.getResponse() != null) {
+                                Map<String, String> preRegIds = responseWrapper.getResponse().getPreRegistrationIds();
+                                getPreRegistrationPackets(preRegIds);
+                                Log.i(TAG,"Fetching Pre-Registration data ended successfully");
+                            }
+                           Toast.makeText(context, "Pre RegId Sync Completed", Toast.LENGTH_LONG).show();
+                           result = "";
+                           onFinish.run();
+                        } catch (Exception e) {
+                            result = "pre_reg_id_sync_failed";
+                            Log.e(TAG, "pre_reg_id_sync_failed", e);
+                            Toast.makeText(context, "Pre RegId Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            onFinish.run();
+                        }
+
+                    } else {
+                        result = "pre_reg_id_sync_failed";
+                        Toast.makeText(context, "Pre RegId Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        onFinish.run();
+                    }
+                } else {
+                    result = "pre_reg_id_sync_failed";
+                    Toast.makeText(context, "Pre RegId Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    onFinish.run();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseWrapper<PreRegistrationIdsDto>> call, Throwable t) {
+                Log.e(TAG,"Pre Registration Data Sync "+ t);
+                result = "pre_reg_id_sync_failed";
+                Toast.makeText(context, "Pre RegId Sync failed", Toast.LENGTH_LONG).show();
+                onFinish.run();
+            }
+        });
+    }
+
+    private void getPreRegistrationPackets(Map<String, String> preRegIds) {
+        Log.i(TAG,"Fetching Pre-Registration ID's in parallel mode started");
+        /* Get Packets Using pre registration ID's */
+        for (Map.Entry<String, String> preRegDetail : preRegIds.entrySet()) {
+            try {
+                executorServiceForPreReg.execute(
+                        new Runnable() {
+                            public void run() {
+                                //TODO - Need to inform pre-reg team to correct date format
+                                preRegDetail.setValue(preRegDetail.getValue().endsWith("Z") ? preRegDetail.getValue() : preRegDetail.getValue() + "Z");
+                                try {
+                                    fetchPreRegistration(preRegDetail.getKey(), String.valueOf(Timestamp.from(Instant.parse(preRegDetail.getValue()))));
+                                } catch (Exception e) {
+                                    Log.e(TAG,"Failed to fetch pre-reg packet", e);
+                                }
+                            }
+                        }
+                );
+            } catch (Exception ex) {
+                Log.e(TAG,"Failed to fetch pre-reg packet", ex);
+            }
+        }
+        Log.e(TAG,"Added Pre-Registration packet fetch task in parallel mode completed");
+    }
+
+    @Override
+    public Map<String, Object> getPreRegistration(@NonNull String preRegistrationId, boolean forceDownload) {
+        Log.i(getClass().getSimpleName(),"enter pre reg.....");
+        Map<String, Object> attributeData = new WeakHashMap<>();
         try {
-            PreRegistrationList preRegistration = this.preRegistrationDao.get(preRegistrationId);
+            preRegistration = this.preRegistrationDao.get(preRegistrationId);
             preRegistration = fetchPreRegistration(preRegistrationId, preRegistration == null ? null :
                     forceDownload ? null : preRegistration.getLastUpdatedPreRegTimeStamp());
 
-            if (preRegistration != null) {
+            if (preRegistration != null && preRegistration.getPacketPath()!=null) {
                 byte[] decryptedPacket = preRegZipHandlingService.decryptPreRegPacket(
                         preRegistration.getPacketSymmetricKey(),
                         FileUtils.readFileToByteArray(FileUtils.getFile(preRegistration.getPacketPath())));
-                setPacketToResponse(responseDTO, decryptedPacket, preRegistrationId);
-                return responseDTO;
+                attributeData = setPacketToResponse(decryptedPacket, preRegistrationId);
             }
-        } catch (RegBaseCheckedException regBaseCheckedException) {
-            Log.e(TAG,"Failed to fetch pre-reg packet", regBaseCheckedException);
-            //setErrorResponse(responseDTO, regBaseCheckedException.getErrorCode(), null);
-            return responseDTO;
         } catch (Exception e) {
             Log.e(TAG,"Failed to fetch pre-reg packet", e);
         }
-        //setErrorResponse(responseDTO, RegistrationConstants.PRE_REG_TO_GET_PACKET_ERROR, null);
-        return responseDTO;
+        return attributeData;
     }
 
     private PreRegistrationList fetchPreRegistration(String preRegistrationId, String lastUpdatedTimeStamp) throws ClientCheckedException {
         Log.i(TAG,"Fetching Pre-Registration started for {}"+ preRegistrationId);
-        PreRegistrationList preRegistration;
+       // PreRegistrationList preRegistration;
 
         /* Check in Database whether required record already exists or not */
         preRegistration = this.preRegistrationDao.get(preRegistrationId);
-        if(preRegistration == null || !FileUtils.getFile(preRegistration.getPacketPath()).exists()) {
+        if(preRegistration == null || preRegistration.getPacketPath() == null ||
+                !FileUtils.getFile(preRegistration.getPacketPath()).exists()) {
             Log.i(TAG,"Pre-Registration ID is not present downloading {}"+ preRegistrationId);
-            return downloadAndSavePacket(preRegistration, preRegistrationId, lastUpdatedTimeStamp);
+            try {
+                preRegistration = downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return preRegistration;
         }
 
         if(lastUpdatedTimeStamp == null /*||
                 preRegistration.getLastUpdatedPreRegTimeStamp().before(lastUpdatedTimeStamp)*/) {
             Log.i(TAG,"Pre-Registration ID is not up-to-date downloading {}"+ preRegistrationId);
-            return downloadAndSavePacket(preRegistration, preRegistrationId, lastUpdatedTimeStamp);
+            try {
+                return downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
         return preRegistration;
     }
 
-    private void setPacketToResponse(ResponseDto responseDTO, byte[] decryptedPacket, String preRegistrationId) {
-
+    private Map<String, Object> setPacketToResponse(byte[] decryptedPacket, String preRegistrationId) {
+        Map<String, Object> attributes = new WeakHashMap<>();
         try {
-            /* create attributes */
+            // create attributes
             RegistrationDto registrationDto = preRegZipHandlingService.extractPreRegZipFile(decryptedPacket);
             registrationDto.setPreRegistrationId(preRegistrationId);
-            Map<String, Object> attributes = new WeakHashMap<>();
             attributes.put("registrationDto", registrationDto);
-           // setSuccessResponse(responseDTO, RegistrationConstants.PRE_REG_SUCCESS_MESSAGE, attributes);
+            Log.i(TAG,"get registrationDto"+attributes);
         } catch (Exception regBaseCheckedException) {
             Log.e(TAG,"REGISTRATION - PRE_REGISTRATION_DATA_SYNC - PRE_REGISTRATION_DATA_SYNC_SERVICE_IMPL",
                     regBaseCheckedException);
-           // setErrorResponse(responseDTO, RegistrationConstants.PRE_REG_TO_GET_PACKET_ERROR, null);
         }
-
+        return attributes;
     }
 
-    private PreRegistrationList downloadAndSavePacket(PreRegistrationList preRegistration, @NonNull String preRegistrationId,
-                                                      String lastUpdatedTimeStamp) throws ClientCheckedException {
-
-        //final PreRegistrationList getPreRegistrationList = preRegistration;
+    private PreRegistrationList downloadAndSavePacket(@NonNull String preRegistrationId,
+                                                      String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         Log.i(TAG,"Pre-Registration get center Id"+ centerMachineDto.getCenterId() + centerMachineDto.getMachineId());
-        if (centerMachineDto == null)
+        if (centerMachineDto == null) {
             throw new ClientCheckedException(context, R.string.err_001);
-
-
-        Call<ResponseWrapper<PreRegArchiveDto>> call = this.syncRestService.getPreRegistrationData(preRegistrationId, centerMachineDto.getMachineId(), BuildConfig.CLIENT_VERSION);
-
-
-        try {
-            Response<ResponseWrapper<PreRegArchiveDto>> response = call.execute();
-
-            // Handle response
-           // handlePreRegistrationResponse(response, preRegistration, preRegistrationId, lastUpdatedTimeStamp);
-
-            if (response.isSuccessful()) {
-
-                ResponseWrapper<PreRegArchiveDto> responseWrapper = response.body();
-                Log.i(TAG,"Pre-Registration all data "+ response.body());
-
-                if (responseWrapper != null && responseWrapper.getResponse() != null) {
-
-                    Log.i(TAG,"Pre-Registration all main dto "+ responseWrapper.getResponse().getZipBytes());
-                    if(responseWrapper.getResponse() != null && responseWrapper.getResponse().getZipBytes() != null) {
-                        PreRegistrationDto preRegistrationDto = preRegZipHandlingService
-                                .encryptAndSavePreRegPacket(preRegistrationId, responseWrapper.getResponse().getZipBytes());
-
-                        // Transaction
-//                            SyncTransaction syncTransaction = syncManager.createSyncTransaction(
-//                                    RegistrationConstants.RETRIEVED_PRE_REG_ID, RegistrationConstants.RETRIEVED_PRE_REG_ID,
-//                                    RegistrationConstants.JOB_TRIGGER_POINT_SYSTEM, "PDS_J00003");
-
-                        // save in Pre-Reg List
-                        PreRegistrationList preRegistrationList = preparePreRegistration(preRegistrationDto);
-
-                        if(responseWrapper.getResponse().getAppointmentDate() != null) {
-                            preRegistrationList.setAppointmentDate(DateUtils.parseUTCToLocalDateTime(responseWrapper.getResponse().getAppointmentDate(),
-                                    "yyyy-MM-dd"));
-                        }
-
-                        preRegistrationList.setLastUpdatedPreRegTimeStamp(lastUpdatedTimeStamp == null ?
-                                String.valueOf(Timestamp.valueOf(String.valueOf(DateUtils.getUTCCurrentDateTime()))) : lastUpdatedTimeStamp);
-                        if (preRegistration == null) {
-                            long id = this.preRegistrationDao.save(preRegistrationList);
-                            preRegistration = this.preRegistrationDao.getById(id);
-                        } else {
-                            preRegistrationList.setId(getPreRegistrationList.getId());
-                            preRegistrationList.setUpdBy(getUserIdFromSession());
-                            preRegistrationList.setUpdDtimes(new Timestamp(System.currentTimeMillis()));
-//                            long id = this.preRegistrationDao.update(preRegistrationList);
-//                            preRegistration = this.preRegistrationDao.getById(id);
-                        }
-                    } else if (responseWrapper.getErrors() != null && !responseWrapper.getErrors().isEmpty()) {
-//                            PreRegistrationExceptionJSONInfoDTO errorResponse = mainResponseDTO.getErrors().get(0);
-//                            Log.i(TAG,"Pre-reg-id {} errors from response {}", preRegistrationId,
-//                                    errorResponse.getErrorCode(), errorResponse.getMessage());
-//                            throw new RegBaseCheckedException(errorResponse.getErrorCode(), errorResponse.getMessage());
-                    }
-
-                }
-
-            } else {
-                Log.e(TAG, "Response not successful: " + response.message());
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to execute call: " + e.getMessage(), e);
         }
 
-        return preRegistration;
+        Callable<PreRegistrationList> callable = () -> {
+            Call<ResponseWrapper<PreRegArchiveDto>> call = this.syncRestService.getPreRegistrationData(preRegistrationId, centerMachineDto.getMachineId(), BuildConfig.CLIENT_VERSION);
+            Response<ResponseWrapper<PreRegArchiveDto>> response = call.execute();// Synchronous call
+
+            if (response.isSuccessful() && response.body() != null) {
+                ServiceError error = SyncRestUtil.getServiceError(response.body());
+                if (error == null) {
+                    ResponseWrapper<PreRegArchiveDto> responseWrapper = response.body();
+                    PreRegArchiveDto preRegArchiveDto = responseWrapper.getResponse();
+                    if (preRegArchiveDto != null && preRegArchiveDto.getZipBytes() != null) {
+                        String stringZipBytes = preRegArchiveDto.getZipBytes();
+                        String byteString = stringZipBytes.replaceAll("\\+", "-").replaceAll("/", "_");
+                        PreRegistrationDto preRegistrationDto = preRegZipHandlingService.encryptAndSavePreRegPacket(preRegistrationId, byteString, centerMachineDto);
+
+                        // save in Pre-Reg List
+                        PreRegistrationList preRegistrationList = preparePreRegistration(centerMachineDto, preRegistrationDto, preRegArchiveDto.getAppointmentDate(), lastUpdatedTimeStamp);
+                        preRegistration = preRegistrationList;
+                        return preRegistration;
+                    } else {
+                        throw new NullPointerException("PreRegArchiveDto or ZipBytes is null");
+                    }
+                } else {
+                    throw new Exception("Service Error: " + error.getMessage());
+                }
+            } else {
+                throw new Exception("Unsuccessful response or empty body");
+            }
+        };
+
+        FutureTask<PreRegistrationList> futureTask = new FutureTask<>(callable);
+        new Thread(futureTask).start();
+
+        // This will block until the computation is done
+        return futureTask.get();
     }
 
-    private PreRegistrationList preparePreRegistration(
-            PreRegistrationDto preRegistrationDto) {
+    private PreRegistrationList preparePreRegistration(CenterMachineDto centerMachineDto,
+            PreRegistrationDto preRegistrationDto, String appointmentDate,String lastUpdatedTimeStamp) {
+
+        LocalDateTime currentUTCTime = LocalDateTime.now(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedCurrentUTCTime = currentUTCTime.format(formatter);
 
         PreRegistrationList preRegistrationList = new PreRegistrationList();
-
-        preRegistrationList.setId(UUID.randomUUID().toString());
+        String id = UUID.randomUUID().toString();
+        preRegistrationList.setId(id);
         preRegistrationList.setPreRegId(preRegistrationDto.getPreRegId());
-        // preRegistrationList.setAppointmentDate(preRegistrationDto.getAppointmentDate());
+        if(appointmentDate!=null){
+           preRegistrationList.setAppointmentDate(appointmentDate);
+        }
+        preRegistrationList.setLastUpdatedPreRegTimeStamp(lastUpdatedTimeStamp == null ?
+                String.valueOf(Timestamp.valueOf(formattedCurrentUTCTime)) : lastUpdatedTimeStamp);
         preRegistrationList.setPacketSymmetricKey(preRegistrationDto.getSymmetricKey());
-//        preRegistrationList.setStatusCode(syncTransaction.getStatusCode());
-//        preRegistrationList.setStatusComment(syncTransaction.getStatusComment());
+        preRegistrationList.setStatusCode("Executed with success");
+        preRegistrationList.setStatusComment("Executed with success");
         preRegistrationList.setPacketPath(preRegistrationDto.getPacketPath());
 //        preRegistrationList.setsJobId(syncTransaction.getSyncJobId());
-//        preRegistrationList.setSynctrnId(syncTransaction.getId());
-//        preRegistrationList.setLangCode(syncTransaction.getLangCode());
+        preRegistrationList.setSynctrnId(centerMachineDto.getCenterId());
+        preRegistrationList.setLangCode("eng");
         preRegistrationList.setIsActive(true);
         preRegistrationList.setIsDeleted(false);
-        //preRegistrationList.setCrBy(syncTransaction.getCrBy());
-        preRegistrationList.setCrDtime(new Timestamp(System.currentTimeMillis()));
+        preRegistrationList.setCrBy(sharedPreferences.getString(USER_NAME, ""));
+        preRegistrationList.setCrDtime(String.valueOf(System.currentTimeMillis()));
+        preRegistrationDao.save(preRegistrationList);
         return preRegistrationList;
+    }
+
+
+    private String getToDate(Timestamp reqTime) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(reqTime);
+        cal.add(Calendar.DATE,
+                Integer.parseInt(String.valueOf(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRE_REG_DAYS_LIMIT))));
+
+        return formatDate(cal);
+
+    }
+    private String formatDate(Calendar cal) {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");// dd/MM/yyyy
+        Date toDate = cal.getTime();
+
+        return sdfDate.format(toDate);
+    }
+
+    private String getFromDate(Timestamp reqTime) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(reqTime);
+
+        return formatDate(cal);
     }
 }

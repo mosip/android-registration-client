@@ -48,13 +48,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
-    String lang = context.read<GlobalProvider>().mandatoryLanguages[0]!;
     //load from the map
     if (mounted) {
+      _getPreRegData(widget.field);
       _removeExceptionData(widget.field);
       getScannedDocuments(widget.field);
       myGetDocumentCategoryFuture =
-          _getDocumentType(widget.field.subType!, lang);
+          _getDocumentType(widget.field.subType!, "eng");
     }
 
     if (context
@@ -75,6 +75,28 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _getListOfReferenceNumber();
+  }
+
+  _getPreRegData(Field e){
+    Map<String?, Object?> value = registrationTaskProvider.preRegistrationData;
+    if(value.isNotEmpty){
+      for(String? key in value.keys) {
+        Object? values = value[key];
+        if(e.id == key) {
+          if (values is Map) {
+            doc.title = values["value"];
+            globalProvider.fieldInputValue[e.id!] = doc;
+          }
+          //List<Object?> data = values as List<Object?>;
+          // for (var obj in data) {
+          //   if (obj is Map) {
+          //     String value = obj["value"] ?? '';
+          //
+          //   }
+          // }
+        }
+      }
+    }
   }
 
   String _getDataFromMap(String lang) {

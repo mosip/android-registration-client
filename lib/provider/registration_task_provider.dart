@@ -27,6 +27,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   final DashBoard dashBoard = DashBoard();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   final DocumentCategory documentCategory = DocumentCategory();
+  //final PreRegistrationDetails preRegistrationService = PreRegistrationDetails();
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
@@ -35,6 +36,7 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   String _previewTemplate = "";
   String _acknowledgementTemplate = "";
+  Map<String?, Object?> _preRegistrationData = {};
 
   List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
@@ -43,6 +45,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get acknowledgementTemplate => _acknowledgementTemplate;
   String get registrationStartError => _registrationStartError;
   bool get isRegistrationSaved => _isRegistrationSaved;
+  Map<String?, Object?> get preRegistrationData => _preRegistrationData;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
@@ -230,5 +233,10 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<List<DashBoardData?>> getDashBoardDetails() async {
     return await dashBoard.getDashBoardDetails();
+  }
+
+  Future<Map<String?, Object?>>fetchPreRegistrationDetail(String preRegistrationId) async {
+    _preRegistrationData = await dynamicResponseService.fetchPreRegistrationDetails(preRegistrationId);
+    return _preRegistrationData;
   }
 }

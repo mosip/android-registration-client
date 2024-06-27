@@ -73,24 +73,8 @@ public class RegistrationConstants {
     public static final String APPLICANT_TYPE_MVEL_SCRIPT = "mosip.kernel.applicantType.mvel.file";
     public static final String RESPONSE_SIGNATURE_PUBLIC_KEY_APP_ID = "SERVER-RESPONSE";
     public static final String RESPONSE_SIGNATURE_PUBLIC_KEY_REF_ID = "SIGN-VERIFY";
-    public static final String PRE_REG_TO_GET_ID_ERROR = "PRE_REG_TO_GET_ID_ERROR";
-    public static final String PRE_REG_TO_GET_PACKET_ERROR = "PRE_REG_TO_GET_PACKET_ERROR";
-    public static final String PRE_REG_PACKET_NETWORK_ERROR = "PRE_REG_PACKET_NETWORK_ERROR";
-    public static final String PRE_REG_SUCCESS_MESSAGE = "PRE_REG_SUCCESS_MESSAGE";
 
-    public static final String PRE_REGISTRATION_ID = "pre_registration_id";
-    public static final String GET_PRE_REGISTRATION_IDS = "get_pre_registration_Ids";
-    public static final String GET_PRE_REGISTRATION = "get_pre_registration";
-    public static final String REGISTRATION_CLIENT_ID = "10";
     public static final String PRE_REGISTRATION_DUMMY_ID = "mosip.pre-registration.datasync.fetch.ids";
     public static final String VER = "1.0";
-    public static final String CONSUMED_PRID_ERROR_CODE = "PRG_DATA_SYNC_022";
-    public static final String PRE_REG_CONSUMED_PACKET_ERROR = "PRE_REG_CONSUMED_PACKET_ERROR";
-    public static final String IS_PRE_REG_SYNC = "PreRegSync";
-    public static final String PRE_REG_FILE_NAME = "fileName";
-    public static final String PRE_REG_FILE_CONTENT = "fileContent";
-    public static final String PRE_REG_APPOINMENT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-    public static final String USER_STATION_ID = "stationId";
-    public static final String JOB_TRIGGER_POINT_SYSTEM = "System";
-    public static final String RETRIEVED_PRE_REG_ID = "Retrieved Pre Registration";
+    public static final String PRE_REG_DAYS_LIMIT = "mosip.registration.pre_reg_no_of_days_limit";
 }

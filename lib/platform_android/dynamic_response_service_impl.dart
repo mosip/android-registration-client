@@ -98,6 +98,20 @@ class DynamicResponseServiceImpl implements DynamicResponseService {
     }
     return locationHierarchy;
   }
+
+  @override
+  Future<Map<String?, Object?>> fetchPreRegistrationDetails(String preRegId) async {
+    Map<String?, Object?> response = {};
+    try {
+      response = await DynamicResponseApi()
+          .fetchPreRegistrationDetails(preRegId);
+    } on PlatformException {
+      debugPrint('PreRegistrationServiceResponseApi call failed!');
+    } catch (e) {
+      debugPrint('Pre Registration Values not fetched! ${e.toString()}');
+    }
+    return response;
+  }
 }
 
 DynamicResponseService getDynamicResponseServiceImpl() =>

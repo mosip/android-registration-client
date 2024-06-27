@@ -31,5 +31,7 @@ abstract class SyncApi{
   @async
   String batchJob();
   @async
+  String getPreRegIds();
+  @async
   Sync getKernelCertsSync(bool isManualSync);
 }

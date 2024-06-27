@@ -10,6 +10,7 @@ import androidx.room.Update;
 import java.util.Date;
 import java.util.List;
 
+import io.mosip.registration.clientmanager.entity.ApplicantValidDocument;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.keymanager.entity.CACertificateStore;
 
@@ -33,13 +34,16 @@ public interface PreRegistrationDataSyncRepositoryDao {
 
     @Query("SELECT * FROM pre_registration_list ORDER BY last_upd_dtimes DESC")
     PreRegistrationList findTopByOrderByLastUpdatedPreRegTimeStampDesc();
-//    @Update
-//    long update(PreRegistrationList preReg);
+    @Query("REPLACE INTO pre_registration_list ( id,  upd_by, upd_dtimes) VALUES (:id, :updatedBy, :updatedTime)")
+    long update(String id,String updatedBy,String updatedTime);
 
-    @Insert()
-    long save(PreRegistrationList preRegistration);
+//    @Insert()
+//    long save(PreRegistrationList preRegistration);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(PreRegistrationList preRegistration);
 
     @Query("SELECT * FROM pre_registration_list WHERE id = :id LIMIT 1")
-    PreRegistrationList getById(long id);
+    PreRegistrationList getById(String id);
 
 }

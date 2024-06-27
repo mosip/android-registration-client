@@ -5,18 +5,23 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import javax.crypto.KeyGenerator;
 import javax.inject.Singleton;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
+import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.service.*;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
+import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
+import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandlingServiceImpl;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
@@ -245,8 +250,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    PreRegistrationDataSyncService PreRegistrationDataSyncService(PreRegistrationDataSyncDao preRegistrationDao, MasterDataService masterDataService, SyncRestService syncRestService) {
-        return new PreRegistrationDataSyncServiceImpl(appContext, preRegistrationDao, masterDataService, syncRestService);
+    PreRegistrationDataSyncService PreRegistrationDataSyncService(PreRegistrationDataSyncDao preRegistrationDao, MasterDataService masterDataService, SyncRestService syncRestService, PreRegZipHandlingService preRegZipHandlingService, PreRegistrationList preRegistration,GlobalParamRepository globalParamRepository) {
+        return new PreRegistrationDataSyncServiceImpl(appContext, preRegistrationDao, masterDataService, syncRestService,preRegZipHandlingService,preRegistration,globalParamRepository);
     }
     @Provides
     @Singleton
@@ -254,4 +259,14 @@ public class AppModule {
         return new PreRegistrationDataSyncDaoImpl(preRegistrationRepositoryDao);
     }
 
+    @Provides
+    @Singleton
+    PreRegZipHandlingService PreRegZipHandlingService(ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade, RegistrationService registrationService, CryptoManagerService cryptoManagerService,PacketKeeper packetKeeper,IPacketCryptoService iPacketCryptoService, MasterDataService masterDataService) {
+        return new PreRegZipHandlingServiceImpl(appContext, applicantValidDocumentDao,identitySchemaService,clientCryptoFacade,registrationService,cryptoManagerService,packetKeeper,iPacketCryptoService,masterDataService);
+    }
+    @Provides
+    @Singleton
+    PreRegistrationList PreRegistrationList() {
+        return new PreRegistrationList();
+    }
 }
