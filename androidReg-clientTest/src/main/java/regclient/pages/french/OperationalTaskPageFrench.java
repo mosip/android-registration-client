@@ -7,6 +7,7 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
+
 public class OperationalTaskPageFrench extends OperationalTaskPage{
 
 	@AndroidFindBy(accessibility = "Mettre à jour les données biométriques de l'opérateur")
@@ -15,6 +16,10 @@ public class OperationalTaskPageFrench extends OperationalTaskPage{
 	@AndroidFindBy(accessibility = "System Storage Usage")
 	private WebElement systemStorageUsageTitle;
 	
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchroniser les données\")")
+	private WebElement synchronizeDataButton ;
+
+
 	public OperationalTaskPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
@@ -22,10 +27,24 @@ public class OperationalTaskPageFrench extends OperationalTaskPage{
 	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
 		clickOnElement(updateOperatorBiometricsButton);
 		return new SupervisorBiometricVerificationpageFrench(driver);
+
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
 		return isElementDisplayed(systemStorageUsageTitle);
+	}
+
+	public  void clickSynchronizeDataButton() {
+		clickOnElement(synchronizeDataButton);
+		waitTime(50);
+	}
+	
+	public boolean checkLastSyncDate() {
+		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
+		if(contentDesc.contains("Synchroniser les données\n"+getCurrentDateWord()+","))
+			return true;
+		else
+			return false;
 	}
 
 }

@@ -242,6 +242,9 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
 		demographicPage.selectCurrentCalenderDate();
 		demographicPage.closeCalender();
+		
+		assertTrue(demographicPage.checkDateFormatAndCurrectDate(),"Verify date format and current date and time");
+
 		demographicPage.selectGender(TestDataReader.readData("gender"));
 		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
 		demographicPage.enterAddressLine2(TestDataReader.readData("address"));

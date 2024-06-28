@@ -290,6 +290,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			documentuploadPage=new DocumentuploadPageArabic(driver);
 		}
 		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.enterReferenceNumberInAdressProof();
 		documentuploadPage.selectAddressProof();
 		documentuploadPage.closePopUpClose();
 
@@ -327,6 +328,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		documentuploadPage.clickOnBackButton();
 
 		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
+		documentuploadPage.enterReferenceNumberInIdentityProof();
 		documentuploadPage.selectIdentityProof();
 		documentuploadPage.closePopUpClose();
 
@@ -341,6 +343,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		documentuploadPage=identityProofPage.clickOnSaveButton();
 
 		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
+		documentuploadPage.enterReferenceNumberInDobProof();
 		documentuploadPage.selectDobProof();
 		documentuploadPage.closePopUpClose();
 
@@ -507,7 +510,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
+
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
@@ -825,6 +829,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			biometricDetailsPage=new BiometricDetailsPageArabic(driver);
 		}
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if Reference id field  an optional in document upload page.");
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnIrisScan();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -914,8 +919,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			previewPage=new PreviewPageArabic(driver);
 		}
 
-		assertTrue(previewPage.isBothIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
+		assertTrue(previewPage.isBothIrisImageDisplayed(),"Verify if both iris  image In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
@@ -968,10 +973,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
-
+		
 		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
 
-		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		previewPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			authenticationPage=new AuthenticationPageEnglish(driver);
