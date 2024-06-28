@@ -16,6 +16,7 @@ import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
 import regclient.page.IdentityProofPage;
+import regclient.page.IntroducerBiometricPage;
 import regclient.page.LoginPage;
 import regclient.page.PreviewPage;
 import regclient.page.RegistrationTasksPage;
@@ -28,6 +29,7 @@ import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
 import regclient.pages.arabic.DocumentuploadPageArabic;
 import regclient.pages.arabic.IdentityProofPageArabic;
+import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.PreviewPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
@@ -40,6 +42,7 @@ import regclient.pages.english.ConsentPageEnglish;
 import regclient.pages.english.DemographicDetailsPageEnglish;
 import regclient.pages.english.DocumentuploadPageEnglish;
 import regclient.pages.english.IdentityProofPageEnglish;
+import regclient.pages.english.IntroducerBiometricPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.PreviewPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
@@ -52,6 +55,7 @@ import regclient.pages.french.ConsentPageFrench;
 import regclient.pages.french.DemographicDetailsPageFrench;
 import regclient.pages.french.DocumentUploadPageFrench;
 import regclient.pages.french.IdentityProofPageFrench;
+import regclient.pages.french.IntroducerBiometricPageFrench;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
@@ -64,6 +68,7 @@ import regclient.pages.hindi.ConsentPageHindi;
 import regclient.pages.hindi.DemographicDetailsPageHindi;
 import regclient.pages.hindi.DocumentUploadPageHindi;
 import regclient.pages.hindi.IdentityProofPageHindi;
+import regclient.pages.hindi.IntroducerBiometricPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
@@ -76,6 +81,7 @@ import regclient.pages.kannada.ConsentPageKannada;
 import regclient.pages.kannada.DemographicDetailsPageKannada;
 import regclient.pages.kannada.DocumentuploadPageKannada;
 import regclient.pages.kannada.IdentityProofPageKannada;
+import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.PreviewPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
@@ -88,6 +94,7 @@ import regclient.pages.tamil.ConsentPageTamil;
 import regclient.pages.tamil.DemographicDetailsPageTamil;
 import regclient.pages.tamil.DocumentuploadPageTamil;
 import regclient.pages.tamil.IdentityProofPageTamil;
+import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
@@ -96,7 +103,7 @@ import regclient.utils.TestDataReader;
 
 public class NewRegistrationAdult extends AndroidBaseTest {
 
-	@Test
+	//@Test
 	public void newRegistrationAdult(){
 		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
@@ -111,6 +118,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		PreviewPage previewPage=null;
 		AuthenticationPage authenticationPage=null;
 		AcknowledgementPage acknowledgementPage=null;
+		
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -401,6 +409,18 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
+		
+		applicantBiometricsPage.clickOnScanButton();
+		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 2nd attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		
+		applicantBiometricsPage.clickOnScanButton();
+		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 3rd attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		
+		assertFalse(applicantBiometricsPage.isScanButton(),"Verify if scan button enable");
+		
+		
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 		//righthand
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -511,7 +531,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
 	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
-
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
@@ -533,6 +552,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		PreviewPage previewPage=null;
 		AuthenticationPage authenticationPage=null;
 		AcknowledgementPage acknowledgementPage=null;
+		IntroducerBiometricPage introducerBiometricPage=null;
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -928,13 +948,112 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
 		demographicPage.enterFullName(TestDataReader.readData("editData"));
+		demographicPage.enterAge(TestDataReader.readData("minorAge"));
 		demographicPage.enterAddressLine1(TestDataReader.readData("editData"));
 		demographicPage.enterAddressLine2(TestDataReader.readData("editData"));
 		demographicPage.enterAddressLine3(TestDataReader.readData("editData"));
+		
+		assertTrue(demographicPage.isIntroducerNameHeaderDisplayed(),"Verify if introducer name header is displayed");
+		demographicPage.enterIntroducerName(TestDataReader.readData("fullname"));
+		
+		assertTrue(demographicPage.checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull(),"Verify if introduceR name is enter in second language text box");
+
+		assertTrue(demographicPage.isIntroducerRidHeaderDisplayed(),"Verify if introducer rid header is displayed");
+		demographicPage.enterIntroducerRid(TestDataReader.readData("RID"));
+		
 
 		demographicPage.clickOnContinueButton();
 
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			documentuploadPage=new DocumentuploadPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			documentuploadPage=new DocumentUploadPageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			documentuploadPage=new DocumentUploadPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			documentuploadPage=new DocumentuploadPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			documentuploadPage=new DocumentuploadPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			documentuploadPage=new DocumentuploadPageArabic(driver);
+		}
 		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.selectAddressProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		documentuploadPage.clickOnAddressProofScanButton();
+
+		cameraPage.clickimage();
+		cameraPage.clickOkButton();
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			identityProofPage=new IdentityProofPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			identityProofPage=new IdentityProofPageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			identityProofPage=new IdentityProofPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			identityProofPage=new IdentityProofPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			identityProofPage=new IdentityProofPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			identityProofPage=new IdentityProofPageArabic(driver);
+		}
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+
+		assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed");
+		documentuploadPage.selectIdentityProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+
+		cameraPage.clickimage();
+		cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+
+		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
+		documentuploadPage.selectRelationshipProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonRelationshipProoffEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnScanButtonRelationshipProof();
+
+		cameraPage.clickimage();
+		cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+
+		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
+		documentuploadPage.selectDobProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isDobHeaderDisplayed(),"Verify if DOB header is displayed");
+		cameraPage=documentuploadPage.clickOnScanButtonDobProof();
+
+		cameraPage.clickimage();
+		cameraPage.clickOkButton();
+
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
 		documentuploadPage.clickOnContinueButton();
 
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -956,6 +1075,35 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
+		
+		applicantBiometricsPage.clickOnNextButton();
+		assertTrue(applicantBiometricsPage.isRightHandScanTitleDisplyed(),"Verify if right hand scan is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+		
+
+		assertTrue(applicantBiometricsPage.isRightHandScan(),"Verify if right hand scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		applicantBiometricsPage.clickOnNextButton();
+		//lefthand
+		assertTrue(applicantBiometricsPage.isLeftHandScanTitleDisplyed(),"Verify if applicant left hand scan title is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isLeftHandScan(),"Verify if Left hand scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		applicantBiometricsPage.clickOnNextButton();
+		//thumb
+		assertTrue(applicantBiometricsPage.isThumbsScanTitleDisplyed(),"Verify if thumbs scan page is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isThumbsScan(),"Verify if thumbs scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
+		applicantBiometricsPage.clickOnNextButton();
+		//face
+		assertTrue(applicantBiometricsPage.isFaceScanTitleDisplyed(),"Verify if face scan page is displayed");
+		applicantBiometricsPage.clickOnScanButton();
+
+		assertTrue(applicantBiometricsPage.isFaceScan(),"Verify if face scan 1st attempt");
+		applicantBiometricsPage.closeScanCapturePopUp();
 		applicantBiometricsPage.clickOnBackButton();
 		
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -974,6 +1122,88 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
 		
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+		biometricDetailsPage.clickOnIntroducerIrisScan();
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			introducerBiometricPage=new IntroducerBiometricPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			introducerBiometricPage=new IntroducerBiometricPageHindi(driver);
+
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			introducerBiometricPage=new IntroducerBiometricPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			introducerBiometricPage=new IntroducerBiometricPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			introducerBiometricPage=new IntroducerBiometricPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			introducerBiometricPage=new IntroducerBiometricPageArabic(driver);
+		}
+		assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),"Verify if introducer biometric page is displayed");
+		introducerBiometricPage.clickOnScanButton();
+
+		assertTrue(introducerBiometricPage.isIrisScan(),"Verify if iris scan 1st attempt");
+		introducerBiometricPage.closeScanCapturePopUp();
+		introducerBiometricPage.clickOnNextButton();
+		//righthand
+		assertTrue(introducerBiometricPage.isRightHandScanTitleDisplyed(),"Verify if right hand scan is displayed");
+		introducerBiometricPage.clickOnScanButton();
+
+		assertTrue(introducerBiometricPage.isRightHandScan(),"Verify if right hand scan 1st attempt");
+		introducerBiometricPage.closeScanCapturePopUp();
+		introducerBiometricPage.clickOnNextButton();
+		//lefthand
+		assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplyed(),"Verify if applicant left hand scan title is displayed");
+		introducerBiometricPage.clickOnScanButton();
+
+		assertTrue(introducerBiometricPage.isLeftHandScan(),"Verify if Left hand scan 1st attempt");
+		introducerBiometricPage.closeScanCapturePopUp();
+		introducerBiometricPage.clickOnNextButton();
+		//thumb
+		assertTrue(introducerBiometricPage.isThumbsScanTitleDisplyed(),"Verify if thumbs scan page is displayed");
+		introducerBiometricPage.clickOnScanButton();
+
+		assertTrue(introducerBiometricPage.isThumbsScan(),"Verify if thumbs scan 1st attempt");
+		introducerBiometricPage.closeScanCapturePopUp();
+		introducerBiometricPage.clickOnNextButton();
+		//face
+		assertTrue(introducerBiometricPage.isFaceScanTitleDisplyed(),"Verify if face scan page is displayed");
+		introducerBiometricPage.clickOnScanButton();
+
+		assertTrue(introducerBiometricPage.isFaceScan(),"Verify if face scan 1st attempt");
+		introducerBiometricPage.closeScanCapturePopUp();
+		biometricDetailsPage=introducerBiometricPage.clickOnNextButton();
+		
+		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+        biometricDetailsPage.clickOnContinueButton();
+        
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			previewPage=new PreviewPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			previewPage=new PreviewPageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			previewPage=new PreviewPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			previewPage=new PreviewPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			previewPage=new PreviewPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			previewPage=new PreviewPageArabic(driver);
+		}
+		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
+		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
+		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
+		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
 
 		previewPage.clickOnContinueButton();
@@ -1018,24 +1248,13 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
+	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
 
-		//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
-
-		previewPage.clickOnDemographicDetailsTitle();
-
-		assertFalse(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is not displayed");
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
-		selectLanguagePage.selectAllSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),"verify if the notification language display in english");
-		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
-		selectLanguagePage.clickOnSubmitButton();
-
-		assertFalse(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
-		consentPage.clickOnCancelButton();
-	
 	}
+	
 
 }

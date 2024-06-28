@@ -1,95 +1,96 @@
-package regclient.pages.english;
+package regclient.pages.arabic;
 
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.SupervisorBiometricVerificationpage;
+import regclient.page.UpdateOperatorBiometricspage;
 
-public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiometricVerificationpage{
+public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometricspage{
 
-	@AndroidFindBy(accessibility = "Supervisor's Biometric Onboarding")
-	private WebElement supervisorBiometricVerificationPageTitle;
+	public UpdateOperatorBiometricspageArabic(AppiumDriver driver) {
+		super(driver);
+		
+	}
+	@AndroidFindBy(accessibility = "تحديث المشرف الحيوي")
+	private WebElement supervisorBiometricUpdatePageTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"القزحية مسح\"))")
 	private WebElement irisScanIcon;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Right\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"اليد اليمنى مسح\"))")
 	private WebElement rightHandScanIcon;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Left\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"اليد اليسرى مسح\"))")
 	private WebElement leftHandScanIcon;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Thumbs\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"الأبهام مسح\"))")
 	private WebElement thumbsScanIcon;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Face\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"الوجه مسح\"))")
 	private WebElement faceScanIcon;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"استثناء مسح\"))")
 	private WebElement exceptionScanIcon;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Iris Scan\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"القزحية مسح\"))")
 	private WebElement irisScanButtonTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Right Hand\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"اليد اليمنى مسح\"))")
 	private WebElement rightHandScanTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Left Hand\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"اليد اليسرى مسح\"))")
 	private WebElement leftHandScanTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Thumbs Scan\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"الأبهام مسح\"))")
 	private WebElement thumbsScanTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Face Scan\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"الوجه مسح\"))")
 	private WebElement faceScanTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"استثناء مسح\"))")
 	private WebElement exceptionScanTitle;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Scan\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"مسح\"))")
 	private WebElement scanButton;
 	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capture')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris')]")
 	private WebElement irisCapturerHeader;
 	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'RightHand Capture')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'RightHand')]")
 	private WebElement rightHandCapturerHeader;
 	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'LeftHand Capture')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'LeftHand')]")
 	private WebElement leftHandCapturerHeader;
 	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Thumbs Capture')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Thumbs')]")
 	private WebElement thumbsCapturerHeader;
 	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Face Capture')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Face')]")
 	private WebElement faceCapturerHeader;
-	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception Capture')]")
-	private WebElement exceptionCapturerHeader;
 	
 	@AndroidFindBy(className = "android.widget.Button")
 	private WebElement popUpCloseButton;
 	
-	@AndroidFindBy(accessibility = "NEXT")
+	@AndroidFindBy(accessibility = "مقبل")
 	private WebElement nextButton;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
 	private WebElement irisScanQuality;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
 	private WebElement rightHandScanQuality;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
 	private WebElement leftHandScanQuality;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
 	private WebElement thumbsScanQuality;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View[contains(@content-desc, \"%\")]")
 	private WebElement faceScanQuality;
 	
-	@AndroidFindBy(accessibility = "Mark Exception")
+	@AndroidFindBy(accessibility = "وضع علامة استثناء")
 	private WebElement markExceptionButton;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
@@ -98,49 +99,49 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
 	private WebElement firstFingureExceptionImage;
 	
-	@AndroidFindBy(accessibility = "Mark Exception")
+	@AndroidFindBy(accessibility = "وضع علامة استثناء")
 	private WebElement exceptionTypeTitle;
 	
-	@AndroidFindBy(accessibility = "Temporary")
+	@AndroidFindBy(accessibility = "دائم")
+	private WebElement permanentButton;
+	
+	@AndroidFindBy(accessibility = "مؤقت")
 	private WebElement temporaryButton;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Comments\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"التعليقات\"))")
 	private WebElement commentsHeader;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Comments\")]/following-sibling::android.widget.EditText")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"التعليقات\")]/following-sibling::android.widget.EditText")
 	private WebElement commentsTextBox;
 	
-	@AndroidFindBy(accessibility = "Marking exceptions on Face is not allowed")
+	@AndroidFindBy(accessibility = "وضع علامة على الاستثناءات على الوجه غير مسموح")
 	private WebElement markingExceptionsOnFaceIsNotAllowedText;
 	
 	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
 	private WebElement zoomButton;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View")
 	private WebElement scanQualityText;
 	
-	@AndroidFindBy(accessibility = "VERIFY & SAVE")
+	@AndroidFindBy(accessibility = "التحقق والحفظ")
 	private WebElement verifyAndSaveButton;
 	
-	@AndroidFindBy(accessibility = "Dismiss")
+	@AndroidFindBy(accessibility = "رفض")
 	private WebElement dismissPage;
 	
-	@AndroidFindBy(accessibility = "You have onboarded successfully.")
+	@AndroidFindBy(accessibility = "تم تحديث القياسات الحيوية للمشغل بنجاح.")
 	private WebElement successPopup;
 	
-	@AndroidFindBy(accessibility = "HOME")
+	@AndroidFindBy(accessibility = "بيت")
 	private WebElement homeButton;
 	
-	public SupervisorBiometricVerificationpageEnglish(AppiumDriver driver) {
-		super(driver);
-	}
 
 	public void clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
 	}
 	
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		return isElementDisplayed(supervisorBiometricVerificationPageTitle);
+	public boolean isSupervisorBiometricUpdatePageLoaded() {
+		return isElementDisplayed(supervisorBiometricUpdatePageTitle);
 	}
 	
 	public void clickOnRightHandScanIcon() {
@@ -214,10 +215,6 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	
 	public  boolean isFaceScan() {
 		return isElementDisplayed(faceCapturerHeader,2000);
-	}
-	
-	public  boolean isExceptionScan() {
-		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
 	
 	public  boolean isIrisScanQualityDisplyed() {
@@ -301,7 +298,6 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	public void clickOnFaceScanTitle() {
 		clickOnElement(faceScanTitle);
 	}
-	
 	public boolean checkThresholdValueIris() {
 		int requiredValue=60;
 		String scanValue =scanQualityText.getAttribute("contentDescription");
@@ -354,12 +350,9 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	
 	public boolean isverifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-		
-		
 	}
-
-	@Override
-	public void clickOnverifyAndSaveButton() {
+	
+	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
 		
 	}
@@ -369,7 +362,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 	
 	
-	public boolean isOperatorOnboardedPopupLoaded() {
+	public boolean isOperatorBiometricsUpdatedPopupLoaded() {
 		return isElementDisplayed(successPopup);	
 	}
 	

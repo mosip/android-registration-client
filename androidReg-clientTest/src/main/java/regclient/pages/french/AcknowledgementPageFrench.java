@@ -73,4 +73,6 @@ public class AcknowledgementPageFrench extends AcknowledgementPage{
 		return new DemographicDetailsPageFrench(driver);
 	}
 
+	
+
 }

@@ -2,12 +2,12 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 
-public abstract class SupervisorBiometricVerificationpage extends BasePage{
+public abstract class UpdateOperatorBiometricspage extends BasePage{
 
-	public SupervisorBiometricVerificationpage(AppiumDriver driver) {
+	public UpdateOperatorBiometricspage(AppiumDriver driver) {
 		super(driver);
+		
 	}
-	public abstract boolean isSupervisorBiometricVerificationPageLoaded();
 
 	public abstract void clickOnIrisScan();
 
@@ -95,13 +95,17 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage{
 	
 	public abstract boolean checkThresholdValueFace();
 	
+	public abstract boolean isSupervisorBiometricUpdatePageLoaded();
+    
 	public abstract boolean isverifyAndSaveButtonEnabled();
 	
-	public abstract void clickOnverifyAndSaveButton();
-	
-	public abstract boolean isdismissPageLoaded();
-	
-	public abstract boolean isOperatorOnboardedPopupLoaded();
-	
+	public abstract boolean isOperatorBiometricsUpdatedPopupLoaded();
+
 	public abstract void clickOnHomeButton();
+
+	public abstract void clickOnVerifyAndSaveButton();
+
+	public abstract boolean isdismissPageLoaded();
+
+	
 }

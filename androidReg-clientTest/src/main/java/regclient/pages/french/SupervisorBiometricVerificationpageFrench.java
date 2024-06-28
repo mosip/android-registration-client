@@ -120,8 +120,17 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Seuil \")]/following-sibling::android.view.View")
 	private WebElement scanQualityText;
 	
-	@AndroidFindBy(accessibility = "VERIFY & SAVE")
+	@AndroidFindBy(accessibility = "VÉRIFIER ET ENREGISTRER")
 	private WebElement verifyAndSaveButton;
+	
+	@AndroidFindBy(accessibility = "Ignorer")
+	private WebElement dismissPage;
+	
+	@AndroidFindBy(accessibility = "Vous avez été intégré avec succès.")
+	private WebElement successPopup;
+	
+	@AndroidFindBy(accessibility = "MAISON")
+	private WebElement homeButton;
 	
 	public SupervisorBiometricVerificationpageFrench(AppiumDriver driver) {
 		super(driver);
@@ -340,8 +349,29 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 			return false;
 	}
 	
-	public boolean clickOnVerifyAndSaveButton() {
+	public boolean isverifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
+		
+		
+	}
+
+	@Override
+	public void clickOnverifyAndSaveButton() {
+		clickOnElement(verifyAndSaveButton);
+		
+	}
+	
+	public boolean isdismissPageLoaded() {
+		return isElementDisplayed(dismissPage);
+	}
+	
+	
+	public boolean isOperatorOnboardedPopupLoaded() {
+		return isElementDisplayed(successPopup);	
+	}
+	
+	public void clickOnHomeButton() {
+		clickOnElement(homeButton);
 	}
 
 }

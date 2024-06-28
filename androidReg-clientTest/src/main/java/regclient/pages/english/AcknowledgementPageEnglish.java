@@ -85,6 +85,7 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 		return new DemographicDetailsPageEnglish(driver);
 	}
 	
+
 	public void clickOnSyncPacketButton() {
 		clickOnElement(syncPacketButton);
 		String message=getTextFromLocator(packetSyncSuccessfullyMessage);
@@ -95,4 +96,5 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	public void clickOnUploadPacketButton() {
 		clickOnElement(syncPacketButton);
 	}
+
 }

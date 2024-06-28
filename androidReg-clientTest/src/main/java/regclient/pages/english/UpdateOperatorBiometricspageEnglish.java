@@ -4,12 +4,17 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.SupervisorBiometricVerificationpage;
+import regclient.page.UpdateOperatorBiometricspage;
 
-public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiometricVerificationpage{
+public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometricspage{
 
-	@AndroidFindBy(accessibility = "Supervisor's Biometric Onboarding")
-	private WebElement supervisorBiometricVerificationPageTitle;
+	public UpdateOperatorBiometricspageEnglish(AppiumDriver driver) {
+		super(driver);
+		
+	}
+	
+	@AndroidFindBy(accessibility = "Supervisor's Biometric Update")
+	private WebElement supervisorBiometricUpdatePageTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
@@ -125,22 +130,18 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	@AndroidFindBy(accessibility = "Dismiss")
 	private WebElement dismissPage;
 	
-	@AndroidFindBy(accessibility = "You have onboarded successfully.")
+	@AndroidFindBy(accessibility = "Operator biometrics updated successfully.")
 	private WebElement successPopup;
 	
 	@AndroidFindBy(accessibility = "HOME")
 	private WebElement homeButton;
 	
-	public SupervisorBiometricVerificationpageEnglish(AppiumDriver driver) {
-		super(driver);
-	}
-
 	public void clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
 	}
 	
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		return isElementDisplayed(supervisorBiometricVerificationPageTitle);
+	public boolean isSupervisorBiometricUpdatePageLoaded() {
+		return isElementDisplayed(supervisorBiometricUpdatePageTitle);
 	}
 	
 	public void clickOnRightHandScanIcon() {
@@ -354,14 +355,6 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	
 	public boolean isverifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-		
-		
-	}
-
-	@Override
-	public void clickOnverifyAndSaveButton() {
-		clickOnElement(verifyAndSaveButton);
-		
 	}
 	
 	public boolean isdismissPageLoaded() {
@@ -369,12 +362,18 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 	
 	
-	public boolean isOperatorOnboardedPopupLoaded() {
+	public boolean isOperatorBiometricsUpdatedPopupLoaded() {
 		return isElementDisplayed(successPopup);	
 	}
 	
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
+	}
+
+	@Override
+	public void clickOnVerifyAndSaveButton() {
+		clickOnElement(verifyAndSaveButton);
+		
 	}
 
 }

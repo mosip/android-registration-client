@@ -4,6 +4,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
+
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
 
 public class LoginPageEnglish extends LoginPage {
@@ -107,6 +110,7 @@ public class LoginPageEnglish extends LoginPage {
 	}
 
 	public  void enterPassword(String password) {
+		retryFindElement(passwordTextBox,Duration.ofSeconds(10));
 		clickAndsendKeysToTextBox(passwordTextBox,password);
 	}
 
