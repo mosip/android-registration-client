@@ -195,7 +195,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Pre-Registration ID",
+              "Application ID",
               style: TextStyle(
                   fontSize: isPortrait && !isMobileSize ? 18 : 14),
             ),
@@ -223,7 +223,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             const BorderSide(color: appGreyShade, width: 1),
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 14),
-                      hintText: "Enter Pre-Registration ID",
+                      hintText: "Enter Application ID",
                       hintStyle:
                           const TextStyle(color: appBlackShade3, fontSize: 14),
                     ),
@@ -247,12 +247,12 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                         if(preRegIdController.text.isEmpty){
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Please Enter Pre-Registration ID"),
+                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Please Enter Application ID"),
                           );
                         } else if(!RegExp(r'^\d{14}$').hasMatch(preRegIdController.text)){
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Pre-Reg. ID does not exist!",subError: "Please check the entered Pre-Reg. ID or enter a new ID and try to fetch it again."),
+                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
                           );
                         } else {
                             setState(() {
@@ -301,7 +301,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       if(data!=null && !RegExp(r'^\d{14}$').hasMatch(data)){
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Pre-Reg. ID does not exist!",subError: "Please check the entered Pre-Reg. ID or enter a new ID and try to fetch it again."),
+                          builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
                         );
                       } else if(data!=null) {
                         setState(() {

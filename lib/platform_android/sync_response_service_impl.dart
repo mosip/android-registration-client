@@ -121,9 +121,9 @@ class SyncResponseServiceImpl implements SyncResponseService {
     try {
       preRegIdResponse = await SyncApi().getPreRegIds();
     } on PlatformException {
-      debugPrint('Pre Registration Id Api call failed, PlatformException');
+      debugPrint('Application Id Api call failed, PlatformException');
     } catch (e) {
-      debugPrint('Pre Registration Id call has failed! ${e.toString()}');
+      debugPrint('Application Id call has failed! ${e.toString()}');
     }
     return preRegIdResponse;
   }

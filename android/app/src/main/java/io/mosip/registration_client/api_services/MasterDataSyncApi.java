@@ -264,8 +264,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         if (NetworkUtils.isNetworkConnected(this.context)) {
             try {
                 preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
-                    Log.i(TAG, "Pre Registration Id's Sync Completed");
-                    result.success("Pre Registration Id's Sync Completed.");
+                    Log.i(TAG, "Application Id's Sync Completed");
+                    result.success("Application Id's Sync Completed.");
                 });
             } catch (Exception e) {
                 e.printStackTrace();

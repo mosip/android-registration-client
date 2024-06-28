@@ -89,7 +89,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         Log.i(TAG,"Pre-Registration get center Id"+ centerMachineDto.getCenterId());
         if (centerMachineDto == null) {
-            result = "pre_reg_id_sync_failed";
+            result = "application_id_sync_failed";
             onFinish.run();
             return;
         }
@@ -129,34 +129,34 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                             if (responseWrapper != null && responseWrapper.getResponse() != null) {
                                 Map<String, String> preRegIds = responseWrapper.getResponse().getPreRegistrationIds();
                                 getPreRegistrationPackets(preRegIds);
-                                Log.i(TAG,"Fetching Pre-Registration data ended successfully");
+                                Log.i(TAG,"Fetching Application data ended successfully");
                             }
-                           Toast.makeText(context, "Pre RegId Sync Completed", Toast.LENGTH_LONG).show();
+                           Toast.makeText(context, "Application Id Sync Completed", Toast.LENGTH_LONG).show();
                            result = "";
                            onFinish.run();
                         } catch (Exception e) {
-                            result = "pre_reg_id_sync_failed";
-                            Log.e(TAG, "pre_reg_id_sync_failed", e);
-                            Toast.makeText(context, "Pre RegId Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            result = "application_id_sync_failed";
+                            Log.e(TAG, "application_id_sync_failed", e);
+                            Toast.makeText(context, "Application Id Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
                             onFinish.run();
                         }
 
                     } else {
-                        result = "pre_reg_id_sync_failed";
-                        Toast.makeText(context, "Pre RegId Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        result = "application_id_sync_failed";
+                        Toast.makeText(context, "Application Id Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
                         onFinish.run();
                     }
                 } else {
-                    result = "pre_reg_id_sync_failed";
-                    Toast.makeText(context, "Pre RegId Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    result = "application_id_sync_failed";
+                    Toast.makeText(context, "Application Id Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
                     onFinish.run();
                 }
             }
             @Override
             public void onFailure(Call<ResponseWrapper<PreRegistrationIdsDto>> call, Throwable t) {
-                Log.e(TAG,"Pre Registration Data Sync "+ t);
-                result = "pre_reg_id_sync_failed";
-                Toast.makeText(context, "Pre RegId Sync failed", Toast.LENGTH_LONG).show();
+                Log.e(TAG,"Application Data Sync "+ t);
+                result = "application_id_sync_failed";
+                Toast.makeText(context, "Application Id Sync failed", Toast.LENGTH_LONG).show();
                 onFinish.run();
             }
         });

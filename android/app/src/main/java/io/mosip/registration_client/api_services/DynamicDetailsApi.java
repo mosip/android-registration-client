@@ -248,7 +248,7 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Fetch pre registration details failed: " + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), "Fetch Application ID details failed: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(preRegistrationData);
     }

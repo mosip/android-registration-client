@@ -106,9 +106,9 @@ class DynamicResponseServiceImpl implements DynamicResponseService {
       response = await DynamicResponseApi()
           .fetchPreRegistrationDetails(preRegId);
     } on PlatformException {
-      debugPrint('PreRegistrationServiceResponseApi call failed!');
+      debugPrint('ApplicationIDServiceResponseApi call failed!');
     } catch (e) {
-      debugPrint('Pre Registration Values not fetched! ${e.toString()}');
+      debugPrint('Application Values not fetched! ${e.toString()}');
     }
     return response;
   }
