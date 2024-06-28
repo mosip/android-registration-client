@@ -7,8 +7,14 @@
 
 package io.mosip.registration_client.api_services;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,6 +34,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration_client.R;
+import io.mosip.registration_client.UploadBackgroundService;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -186,5 +193,43 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
         }
         doLogin(username, password, result);
         return;
+    }
+
+    @Override
+    public void logout(@NonNull AuthResponsePigeon.Result<String> result) {
+        loginService.clearAuthToken(this.context);
+        result.success("Logout Success");
+    }
+
+    @Override
+    public void stopAlarmService(@NonNull AuthResponsePigeon.Result<String> result) {
+        String resultString = "";
+        try{
+            Intent intent = new Intent(context, UploadBackgroundService.class);
+            PendingIntent pendingIntent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                pendingIntent = PendingIntent.getForegroundService(
+                        this.context,
+                        0,  // Request code
+                        intent,
+                        PendingIntent.FLAG_IMMUTABLE
+                );
+            } else {
+                pendingIntent = PendingIntent.getService(
+                        this.context,
+                        0,  // Request code
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+            }
+            AlarmManager alarmManager = (AlarmManager) getSystemService(context, AlarmManager.class);
+            assert alarmManager != null;
+            alarmManager.cancel(pendingIntent);
+            resultString = "Success";
+        }catch (Exception e){
+            resultString = "Fail to Stop Alarm Service";
+            Log.e(getClass().getSimpleName(), "Failed to stop alarm service", e);
+        }
+        result.success(resultString);
     }
 }
