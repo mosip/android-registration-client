@@ -185,6 +185,7 @@ public class BasePage {
 		}
 		
 	}
+
 	public WebElement retryFindElement(WebElement element, Duration timeout) {
 		int attempts = 0;
 	    int maxAttempts = 5;
@@ -203,4 +204,5 @@ public class BasePage {
 	    }
 	    throw new RuntimeException("Element not found after " + maxAttempts + " attempts");
     }
+
 }

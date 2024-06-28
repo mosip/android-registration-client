@@ -27,4 +27,16 @@ abstract class DemographicsApi {
 
   @async
   void setConsentField(String consentData);
+
+  @async
+  String addUpdatableFields(List<String> fieldIds);
+
+  @async
+  String addUpdatableFieldGroup(String fieldGroup);
+
+  @async
+  String removeUpdatableFields(List<String> fieldIds);
+
+  @async
+  String removeUpdatableFieldGroup(String fieldGroup);
 }

@@ -78,4 +78,6 @@ public abstract class ApplicantBiometricsPage extends BasePage{
 	public abstract boolean isScanButton();
 
 
+
+
 }

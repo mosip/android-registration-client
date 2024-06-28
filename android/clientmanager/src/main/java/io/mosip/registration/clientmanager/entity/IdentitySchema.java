@@ -18,6 +18,9 @@ public class IdentitySchema {
     @ColumnInfo(name = "schema_version")
     private Double schemaVersion;
 
+    @ColumnInfo(name = "file_name")
+    private String fileName;
+
     @ColumnInfo(name = "file_length")
     private Long fileLength;
 

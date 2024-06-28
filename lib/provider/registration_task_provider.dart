@@ -5,9 +5,8 @@
  *
 */
 
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
@@ -35,6 +34,7 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   String _previewTemplate = "";
   String _acknowledgementTemplate = "";
+  String _lastSuccessfulUpdatedTime = "";
 
   List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
@@ -43,6 +43,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get acknowledgementTemplate => _acknowledgementTemplate;
   String get registrationStartError => _registrationStartError;
   bool get isRegistrationSaved => _isRegistrationSaved;
+  String get lastSuccessfulUpdatedTime => _lastSuccessfulUpdatedTime;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
@@ -94,8 +95,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  startRegistration(List<String> languages) async {
-    _registrationStartError = await registrationService.startRegistration(languages);
+  startRegistration(
+      List<String> languages, String flowType, String process) async {
+    _registrationStartError = await registrationService.startRegistration(
+        languages, flowType, process);
     notifyListeners();
   }
 
@@ -104,7 +107,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   evaluateMVELRequired(String fieldData, String expression) async {
-    return await registrationService.evaluateMVELRequired(fieldData, expression);
+    return await registrationService.evaluateMVELRequired(
+        fieldData, expression);
   }
 
   setPreviewTemplate(String value) {
@@ -113,7 +117,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   getPreviewTemplate(bool isPreview, Map<String, String> templateValues) async {
-    _previewTemplate = await registrationService.getPreviewTemplate(isPreview, templateValues);
+    _previewTemplate =
+        await registrationService.getPreviewTemplate(isPreview, templateValues);
     notifyListeners();
   }
 
@@ -122,8 +127,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAcknowledgementTemplate(bool isAcknowledgement, Map<String, String> templateValues) async {
-    _acknowledgementTemplate = await registrationService.getPreviewTemplate(isAcknowledgement, templateValues);
+  getAcknowledgementTemplate(
+      bool isAcknowledgement, Map<String, String> templateValues) async {
+    _acknowledgementTemplate = await registrationService.getPreviewTemplate(
+        isAcknowledgement, templateValues);
     notifyListeners();
   }
 
@@ -170,7 +177,8 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<List<DynamicFieldData?>> getFieldValues(
       String fieldName, String langCode, List<String> languages) async {
-    return await dynamicResponseService.fetchFieldValues(fieldName, langCode, languages);
+    return await dynamicResponseService.fetchFieldValues(
+        fieldName, langCode, languages);
   }
 
   Future<List<GenericData?>> getLocationValues(
@@ -185,10 +193,10 @@ class RegistrationTaskProvider with ChangeNotifier {
         fieldName, applicantType, langCode);
   }
 
-  Future<List<GenericData?>> getLocationValuesBasedOnParent(
-      String? parentCode, String fieldName, String langCode,List<String> languages) async {
+  Future<List<GenericData?>> getLocationValuesBasedOnParent(String? parentCode,
+      String fieldName, String langCode, List<String> languages) async {
     return await dynamicResponseService.fetchLocationValuesBasedOnParent(
-        parentCode, fieldName, langCode,languages);
+        parentCode, fieldName, langCode, languages);
   }
 
   addDocument(
@@ -204,8 +212,9 @@ class RegistrationTaskProvider with ChangeNotifier {
     await document.removeDocument(fieldId, pageIndex);
   }
 
-  Future<List<String?>> getDocumentType(String categoryCode,String langCode) async {
-    return await documentCategory.getDocumentCategories(categoryCode,langCode);
+  Future<List<String?>> getDocumentType(
+      String categoryCode, String langCode) async {
+    return await documentCategory.getDocumentCategories(categoryCode, langCode);
   }
 
   removeDocumentField(String fieldId) async {
@@ -230,5 +239,31 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<List<DashBoardData?>> getDashBoardDetails() async {
     return await dashBoard.getDashBoardDetails();
+  }
+
+  Future<void> addUpdatableFields(List<String> fieldIds) async {
+    await demographics.addUpdatableFields(fieldIds);
+  }
+
+  Future<void> addUpdatableFieldGroup(String fieldGroup) async {
+    await demographics.addUpdatableFieldGroup(fieldGroup);
+  }
+
+  Future<void> removeUpdatableFields(List<String> fieldIds) async {
+    await demographics.removeUpdatableFields(fieldIds);
+  }
+
+  Future<void> removeUpdatableFieldGroup(String fieldGroup) async {
+    await demographics.removeUpdatableFieldGroup(fieldGroup);
+  }
+
+  getLastUpdatedTime() async {
+    UpdatedTimeData lastUpdatedTime = await dashBoard.getUpdatedTime();
+    setLastSuccessfulSyncTime(lastUpdatedTime.updatedTime!);
+  }
+
+  setLastSuccessfulSyncTime(String syncTime) {
+    _lastSuccessfulUpdatedTime = syncTime;
+    notifyListeners();
   }
 }

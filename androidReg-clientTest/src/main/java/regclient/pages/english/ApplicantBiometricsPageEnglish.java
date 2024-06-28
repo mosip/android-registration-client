@@ -260,4 +260,5 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 			// TODO Auto-generated method stub
 			return false;
 		}
+
 }

@@ -86,8 +86,15 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	}
 	
 
-//		String message=getTextFromLocator(packetSyncSuccessfullyMessage);
-//		Assert.assertEquals(message,"Login" );
+	public void clickOnSyncPacketButton() {
+		clickOnElement(syncPacketButton);
+		String message=getTextFromLocator(packetSyncSuccessfullyMessage);
+		Assert.assertEquals(message,"Login" );
 
+	}
 	
+	public void clickOnUploadPacketButton() {
+		clickOnElement(syncPacketButton);
+	}
+
 }

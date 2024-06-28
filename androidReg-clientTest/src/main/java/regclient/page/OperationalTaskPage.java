@@ -16,5 +16,4 @@ public abstract class OperationalTaskPage extends BasePage{
 	
 	public abstract boolean checkLastSyncDate();
 
-	
 }

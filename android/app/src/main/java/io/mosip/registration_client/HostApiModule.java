@@ -153,9 +153,9 @@ public class HostApiModule {
     @Provides
     @Singleton
     PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                                       LoginService loginService, PacketService packetService,
+                                                       LoginService loginService, PacketService packetService, RegistrationRepository registrationRepository,
                                                        AuditManagerService auditManagerService) {
-        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService, auditManagerService);
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService,registrationRepository, auditManagerService);
     }
 
     @Provides
@@ -222,7 +222,7 @@ public class HostApiModule {
     @Provides
     @Singleton
     DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
-        return new DashBoardDetailsApi(userDetailDao, registrationRepository);
+        return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository);
     }
 }
 

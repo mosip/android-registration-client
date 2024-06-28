@@ -52,6 +52,43 @@ class PacketServiceImpl implements PacketService {
     }
     return packetStatus;
   }
+
+  @override
+  Future<void> updatePacketStatus(String packetId, String? serverStatus, String clientStatus) async {
+    try {
+      await PacketAuthApi().updatePacketStatus(packetId, serverStatus, clientStatus);
+      log("Sucess Status updated");
+    } on PlatformException {
+      debugPrint('PacketAuthenticationApi call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  Future<void> packetSyncAll(List<String> packetIds) async {
+    try {
+      await PacketAuthApi().syncPacketAll(packetIds);
+      log("Sucess Packets Sync");
+    } on PlatformException {
+      debugPrint('Sync call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  Future<void> packetUploadAll(List<String> packetIds) async {
+    try {
+      await PacketAuthApi().uploadPacketAll(packetIds);
+      log("Sucess Packets Upload");
+    } on PlatformException {
+      debugPrint('Sync call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
 }
 
 PacketService getPacketServiceImpl() => PacketServiceImpl();

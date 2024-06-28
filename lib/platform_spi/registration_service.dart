@@ -9,7 +9,7 @@ import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 import 'package:registration_client/platform_android/registration_service_impl.dart';
 
 abstract class RegistrationService {
-  Future<String> startRegistration(List<String> languages);
+  Future<String> startRegistration(List<String> languages, String flopwType, String process);
   Future<bool> evaluateMVELVisible(String fieldData, String expression);
   Future<bool> evaluateMVELRequired(String fieldData, String expression);
   Future<String> getPreviewTemplate(bool isPreview,Map<String,String> templateValues);

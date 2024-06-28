@@ -45,16 +45,6 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 		else
 			return false;
 	}
-    
-	
-	 
-		
-		
-	
-
-
-		
-	
 
 	
 }

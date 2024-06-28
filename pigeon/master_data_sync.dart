@@ -32,4 +32,6 @@ abstract class SyncApi{
   String batchJob();
   @async
   Sync getKernelCertsSync(bool isManualSync);
+  @async
+  bool getSyncAndUploadInProgressStatus();
 }
