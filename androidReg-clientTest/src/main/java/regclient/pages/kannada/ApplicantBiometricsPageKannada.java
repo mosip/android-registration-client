@@ -96,6 +96,9 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ಕೊರಗುಗಳು\"))")
 	private WebElement commentsHeader;
 	
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"ಅಂಶಗಳು\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
+	private WebElement exceptionCount;
+	
 	public ApplicantBiometricsPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -243,4 +246,11 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 		return isElementDisplayed(commentsHeader);
 	}
 
+	public  boolean isExceptionCountDisplyed() {
+		if(!isElementDisplayedOnScreen(exceptionCount)) {
+			swipeOrScroll();
+			isElementDisplayed(exceptionCount);
+		}
+		return isElementDisplayed(exceptionCount);
+	}
 }

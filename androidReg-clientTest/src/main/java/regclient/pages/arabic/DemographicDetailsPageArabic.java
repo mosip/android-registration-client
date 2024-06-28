@@ -7,6 +7,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
+import regclient.pages.english.ConsentPageEnglish;
+import regclient.pages.english.DocumentuploadPageEnglish;
 
 public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 
@@ -14,7 +16,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	private WebElement demographicDetailspage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"موافقة\"))")
-	private WebElement ConsentTitle;
+	private WebElement consentTitle;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(0)")
 	private WebElement fullNameTextBox;
@@ -27,12 +29,21 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"عنوان دائم1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine1TextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"عنوان دائم1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine1TextBoxSecondLangauge;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"عنوان مؤقت2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine2TextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"عنوان مؤقت2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine2TextBoxSecondLangauge;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"عنوان مؤقت3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine3TextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"عنوان مؤقت3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine3TextBoxSecondLangauge;
 
 	@AndroidFindBy(accessibility = "آحرون")
 	private WebElement maleButton;
@@ -40,7 +51,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "أنثى")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الأحوال المدنية\")]/parent::android.widget.HorizontalScrollView/parent::android.widget.Button")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الأحوال المدنية\")]/parent::android.view.View/parent::android.widget.Button")
 	private WebElement selectMaritalStatus;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"حالة الإقامة\")]/parent::android.view.View/parent::android.widget.Button")
@@ -86,34 +97,34 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"بن منصور\")")
 	private WebElement benMansourFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"حالة الإقامة\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"حالة الإقامة\")")
 	private WebElement residenceStatusHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"منطقة\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"منطقة\")")
 	private WebElement regionHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"المحافظة\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"المحافظة\")")
 	private WebElement provinceHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"مدينة\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"مدينة\")")
 	private WebElement cityHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"منطقة\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"منطقة\")")
 	private WebElement zoneHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"بريدي\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"بريدي\")")
 	private WebElement postalCodeHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"هاتف\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"هاتف\")")
 	private WebElement mobileNumberHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"البريد الإلكتروني\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"البريد الإلكتروني\")")
 	private WebElement emailHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"اسم مقدم العرض\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"اسم مقدم العرض\")")
 	private WebElement introducerNameHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"معرف RID\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"معرف RID\")")
 	private WebElement introducerRidHeader;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"هاتف\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
@@ -124,6 +135,9 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"اسم مقدم العرض\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerNameTextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"اسم مقدم العرض\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
+	private WebElement introducerNameTextBoxSecondLangauge;
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"معرف RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerRidTextBox;
@@ -139,6 +153,10 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	
 	@AndroidFindBy(accessibility = "تمويه")
 	private WebElement backgroundScreen;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement getSelectedDate;
+
 
 	public DemographicDetailsPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -153,8 +171,8 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	}
 	
 	public  ConsentPage clickOnConsentPageTitle() {
-		clickOnElement(ConsentTitle);
-		return new ConsentPageArabic(driver);
+		clickOnElement(consentTitle);
+		return new ConsentPageEnglish(driver);
 	}
 
 	public  void enterFullName(String fullName) {
@@ -194,34 +212,58 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	}
 
 	public boolean isResidenceStatusHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(residenceStatusHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(residenceStatusHeader);
 	}
 
 	public boolean isRegionHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(regionHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(regionHeader);
 	}
 
 	public boolean isProvinceHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(provinceHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(provinceHeader);
 	}
 
 	public boolean isCityHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(cityHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(cityHeader);
 	}
 
 	public boolean isPostalCodeHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(postalCodeHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(postalCodeHeader);
 	}
 
 	public boolean isMobileNumberHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(mobileNumberHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(mobileNumberHeader);
 	}
 
 	public boolean isZoneHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(zoneHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(zoneHeader);
 	}
 
 	public boolean isEmailHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(emailHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(emailHeader);
 	}
 	
@@ -288,7 +330,6 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 		clickOnElement(selectProvinceStatus);
 		if(province.equalsIgnoreCase("Kenitra"))
 			if(!isElementDisplayed(kenitraValueFromDropdown)) {
-
 				swipeOrScroll();
 				clickOnElement(selectProvinceStatus);
 				clickOnElement(kenitraValueFromDropdown);
@@ -306,7 +347,6 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	public  void selectCityStatus(String city) {
 		clickOnElement(selectCityStatus);
 		if(city.equalsIgnoreCase("Kenitra"))
-
 			if(!isElementDisplayed(kenitraValueFromDropdown)) {
 				swipeOrScroll();
 				clickOnElement(selectCityStatus);
@@ -344,7 +384,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 
 	public  DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentuploadPageArabic(driver);
+		return new DocumentuploadPageEnglish(driver);
 
 	}
 
@@ -364,22 +404,22 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 	}
 	
-	public  void enterIntroducerName(String EmailID) {
+	public  void enterIntroducerName(String introducerName) {
 		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 		}else
-		clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 	}
 	
-	public  void enterIntroducerRid(String EmailID) {
+	public  void enterIntroducerRid(String introducerRid) {
 		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 		}else
-		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 	}
-
+	
 	public  void selectCurrentCalenderDate() {
 		clickOnElement(calenderIcon);		
 	}
@@ -387,5 +427,40 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	public  void closeCalender() {
 		clickOnElement(backgroundScreen);		
 	}
+	
+	public  boolean checkDateFormatAndCurrectDate() {
+		getTextFromLocator(getSelectedDate);
+		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
+			return	true;
+		else
+			return false;
+	}
 
+	public boolean checkAddress1SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine1TextBoxSecondLangauge)==null || getTextFromLocator(addressLine1TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress2SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine2TextBoxSecondLangauge)==null || getTextFromLocator(addressLine2TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress3SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine3TextBoxSecondLangauge)==null || getTextFromLocator(addressLine3TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull() {
+		if(getTextFromLocator(introducerNameTextBoxSecondLangauge)==null || getTextFromLocator(introducerNameTextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
 }

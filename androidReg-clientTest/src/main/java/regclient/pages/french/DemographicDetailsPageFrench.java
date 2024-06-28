@@ -7,6 +7,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
+import regclient.pages.english.ConsentPageEnglish;
+import regclient.pages.english.DocumentuploadPageEnglish;
 
 public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 
@@ -33,6 +35,15 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement addressLine3TextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine1TextBoxSecondLangauge;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine2TextBoxSecondLangauge;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement addressLine3TextBoxSecondLangauge;
 
 	@AndroidFindBy(accessibility = "Mâle")
 	private WebElement maleButton;
@@ -85,34 +96,34 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ben Mansour\")")
 	private WebElement benMansourFromDropdown;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Statut de résidence\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Statut de résidence\")")
 	private WebElement residenceStatusHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Région\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Région\")")
 	private WebElement regionHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Province\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Province\")")
 	private WebElement provinceHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Ville\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ville\")")
 	private WebElement cityHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Zone\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Zone\")")
 	private WebElement zoneHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Postale\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Postale\")")
 	private WebElement postalCodeHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Téléphoner\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Téléphoner\")")
 	private WebElement mobileNumberHeader;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"E-mail\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"E-mail\")")
 	private WebElement emailHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"nom del'introducteur\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"nom del'introducteur\")")
 	private WebElement introducerNameHeader;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducteur RID\"))")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Introducteur RID\")")
 	private WebElement introducerRidHeader;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Téléphoner\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
@@ -123,6 +134,9 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"nom del'introducteur\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerNameTextBox;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"nom del'introducteur\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
+	private WebElement introducerNameTextBoxSecondLangauge;
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducteur RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement introducerRidTextBox;
@@ -135,6 +149,9 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
 	private WebElement calenderIcon;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
+	private WebElement getSelectedDate;
 	
 	@AndroidFindBy(accessibility = "Fond")
 	private WebElement backgroundScreen;
@@ -153,7 +170,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	
 	public  ConsentPage clickOnConsentPageTitle() {
 		clickOnElement(consentTitle);
-		return new ConsentPageFrench(driver);
+		return new ConsentPageEnglish(driver);
 	}
 
 	public  void enterFullName(String fullName) {
@@ -193,34 +210,58 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	}
 
 	public boolean isResidenceStatusHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(residenceStatusHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(residenceStatusHeader);
 	}
 
 	public boolean isRegionHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(regionHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(regionHeader);
 	}
 
 	public boolean isProvinceHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(provinceHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(provinceHeader);
 	}
 
 	public boolean isCityHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(cityHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(cityHeader);
 	}
 
 	public boolean isPostalCodeHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(postalCodeHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(postalCodeHeader);
 	}
 
 	public boolean isMobileNumberHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(mobileNumberHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(mobileNumberHeader);
 	}
 
 	public boolean isZoneHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(zoneHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(zoneHeader);
 	}
 
 	public boolean isEmailHeaderDisplayed() {
+		while(!isElementDisplayedOnScreen(emailHeader)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(emailHeader);
 	}
 	
@@ -341,7 +382,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 
 	public  DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentUploadPageFrench(driver);
+		return new DocumentuploadPageEnglish(driver);
 
 	}
 
@@ -361,20 +402,20 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 	}
 	
-	public  void enterIntroducerName(String EmailID) {
+	public  void enterIntroducerName(String introducerName) {
 		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 		}else
-		clickAndsendKeysToTextBox(introducerNameTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 	}
 	
-	public  void enterIntroducerRid(String EmailID) {
+	public  void enterIntroducerRid(String introducerRid) {
 		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
 			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 		}else
-		clickAndsendKeysToTextBox(introducerRidTextBox,EmailID);
+		clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 	}
 	
 	public  void selectCurrentCalenderDate() {
@@ -383,5 +424,41 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	
 	public  void closeCalender() {
 		clickOnElement(backgroundScreen);		
+	}
+	
+	public  boolean checkDateFormatAndCurrectDate() {
+		getTextFromLocator(getSelectedDate);
+		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
+			return	true;
+		else
+			return false;
+	}
+	
+	public boolean checkAddress1SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine1TextBoxSecondLangauge)==null || getTextFromLocator(addressLine1TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress2SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine2TextBoxSecondLangauge)==null || getTextFromLocator(addressLine2TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress3SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine3TextBoxSecondLangauge)==null || getTextFromLocator(addressLine3TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull() {
+		if(getTextFromLocator(introducerNameTextBoxSecondLangauge)==null || getTextFromLocator(introducerNameTextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
 	}
 }

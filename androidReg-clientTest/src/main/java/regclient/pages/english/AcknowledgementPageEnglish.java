@@ -1,6 +1,8 @@
 package regclient.pages.english;
 
+
 import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
@@ -34,6 +36,15 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Demographic Details\"))")
 	private WebElement demographicDetailsTitle;
+	
+	@AndroidFindBy(accessibility = "Sync Packet")
+	private WebElement syncPacketButton;
+	
+	@AndroidFindBy(accessibility = "//*[@text=\"Packet synced successfully\"]")
+	private WebElement packetSyncSuccessfullyMessage;
+	
+	@AndroidFindBy(xpath = "Upload Packet")
+	private WebElement uploadPacketButton;
 	
 	public AcknowledgementPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -72,5 +83,16 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageEnglish(driver);
+	}
+	
+	public void clickOnSyncPacketButton() {
+		clickOnElement(syncPacketButton);
+		String message=getTextFromLocator(packetSyncSuccessfullyMessage);
+		Assert.assertEquals(message,"Login" );
+
+	}
+	
+	public void clickOnUploadPacketButton() {
+		clickOnElement(syncPacketButton);
 	}
 }

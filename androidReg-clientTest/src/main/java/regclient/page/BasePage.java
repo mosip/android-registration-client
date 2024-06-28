@@ -19,7 +19,11 @@ import static java.time.Duration.ofSeconds;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Locale;
 
 public class BasePage {
 	protected AppiumDriver driver;
@@ -70,26 +74,11 @@ public class BasePage {
 	protected void clickAndsendKeysToTextBox(WebElement element, String text) {
 		this.waitForElementToBeVisible(element);
 		element.click();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		waitTime(1);
 		element.clear();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		waitTime(1);
 		element.sendKeys(text);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		waitTime(1);
 		((HidesKeyboard) driver).hideKeyboard();
 	}
 
@@ -172,5 +161,28 @@ public class BasePage {
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    }
+	}
+	
+	protected String  getCurrentDate() {
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");      
+		return  currentDateTime.format(formatter);
+	}
+	
+	protected String  getCurrentDateWord() {
+		 LocalDate today = LocalDate.now();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM", Locale.ENGLISH);
+	        String formattedDate = today.format(formatter);
+			return formattedDate;
+	}
+	
+	public void waitTime(int sec) {
+		try {
+			Thread.sleep(sec*1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
