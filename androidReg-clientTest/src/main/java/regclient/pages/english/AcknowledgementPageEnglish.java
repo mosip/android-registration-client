@@ -85,14 +85,9 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 		return new DemographicDetailsPageEnglish(driver);
 	}
 	
-	public void clickOnSyncPacketButton() {
-		clickOnElement(syncPacketButton);
-		String message=getTextFromLocator(packetSyncSuccessfullyMessage);
-		Assert.assertEquals(message,"Login" );
 
-	}
+//		String message=getTextFromLocator(packetSyncSuccessfullyMessage);
+//		Assert.assertEquals(message,"Login" );
+
 	
-	public void clickOnUploadPacketButton() {
-		clickOnElement(syncPacketButton);
-	}
 }

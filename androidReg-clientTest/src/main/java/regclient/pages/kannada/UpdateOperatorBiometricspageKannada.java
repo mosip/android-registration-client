@@ -4,12 +4,17 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.SupervisorBiometricVerificationpage;
+import regclient.page.UpdateOperatorBiometricspage;
 
-public class SupervisorBiometricVerificationpageKannada extends SupervisorBiometricVerificationpage{
+public class UpdateOperatorBiometricspageKannada extends UpdateOperatorBiometricspage{
 
-	@AndroidFindBy(accessibility = "Supervisor's Biometric Verification")
-	private WebElement supervisorBiometricVerificationPageTitle;
+	public UpdateOperatorBiometricspageKannada(AppiumDriver driver) {
+		super(driver);
+		
+	}
+	
+	@AndroidFindBy(accessibility = "ನಿರೀಕ್ಷಕರ ಬಯೋಮೆಟ್ರಿಕ್ ನವೀಕರಣ")
+	private WebElement supervisorBiometricUpdatePageTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ಐರಿಸ್ ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement irisScanIcon;
@@ -140,22 +145,18 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	@AndroidFindBy(accessibility = "ವಜಾಗೊಳಿಸಿ")
 	private WebElement dismissPage;
 	
-	@AndroidFindBy(accessibility = "ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಿರುವಿರಿ.")
+	@AndroidFindBy(accessibility = "ಆಪರೇಟರ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ.")
 	private WebElement successPopup;
 	
 	@AndroidFindBy(accessibility = "ಮನೆ")
 	private WebElement homeButton;
-
-	public SupervisorBiometricVerificationpageKannada(AppiumDriver driver) {
-		super(driver);
-	}
-
+	
 	public void clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
 	}
 	
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		return isElementDisplayed(supervisorBiometricVerificationPageTitle);
+	public boolean isSupervisorBiometricUpdatePageLoaded() {
+		return isElementDisplayed(supervisorBiometricUpdatePageTitle);
 	}
 	
 	public void clickOnRightHandScanIcon() {
@@ -312,7 +313,6 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	public void clickOnFaceScanTitle() {
 		clickOnElement(faceScanTitle);
 	}
-	
 	public boolean checkThresholdValueIris() {
 		int requiredValue=60;
 		String scanValue =scanQualityText.getAttribute("contentDescription");
@@ -365,11 +365,9 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	
 	public boolean isverifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-			
 	}
-
-	@Override
-	public void clickOnverifyAndSaveButton() {
+	
+	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
 		
 	}
@@ -379,12 +377,13 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	}
 	
 	
-	public boolean isOperatorOnboardedPopupLoaded() {
+	public boolean isOperatorBiometricsUpdatedPopupLoaded() {
 		return isElementDisplayed(successPopup);	
 	}
 	
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
+
 
 }

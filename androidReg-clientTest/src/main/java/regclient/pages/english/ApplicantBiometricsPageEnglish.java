@@ -254,4 +254,10 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 			}
 			return isElementDisplayed(exceptionCount);
 		}
+
+		@Override
+		public boolean isScanButton() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 }
