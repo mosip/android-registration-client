@@ -19,5 +19,9 @@ abstract class AuthService {
 
   Future<PacketAuth> packetAuthentication(String username, String password);
 
+  Future<String> logout();
+
+  Future<String> stopAlarmService();
+
   factory AuthService() => getAuthServiceImpl();
 }

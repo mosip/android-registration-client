@@ -107,7 +107,7 @@ public class RegistrationServiceImplTest {
         File mockFile = mock(File.class);
         when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
-        RegistrationDto registrationDto = registrationService.startRegistration(Arrays.asList("eng"));
+        RegistrationDto registrationDto = registrationService.startRegistration(Arrays.asList("eng"), "NEW", "NEW");
         RegistrationDto result = registrationService.getRegistrationDto();
 
         Assert.assertNotNull(registrationDto);
@@ -139,7 +139,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         List<String> selectedLanguages = new ArrayList<>();
         selectedLanguages.add("eng");
-        RegistrationDto registrationDto = registrationService.startRegistration(selectedLanguages);
+        RegistrationDto registrationDto = registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
         RegistrationDto result = registrationService.getRegistrationDto();
 
         Assert.assertNotNull(registrationDto);
@@ -153,7 +153,7 @@ public class RegistrationServiceImplTest {
     public void startRegistrationWithoutMasterSync_throwException() throws Exception {
         List<String> selectedLanguages = new ArrayList<>();
         selectedLanguages.add("eng");
-        registrationService.startRegistration(selectedLanguages);
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -167,7 +167,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineStatus(true);
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
-        registrationService.startRegistration(selectedLanguages);
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -183,7 +183,7 @@ public class RegistrationServiceImplTest {
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
-        registrationService.startRegistration(selectedLanguages);
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -199,7 +199,7 @@ public class RegistrationServiceImplTest {
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
-        registrationService.startRegistration(selectedLanguages);
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -215,7 +215,7 @@ public class RegistrationServiceImplTest {
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
-        registrationService.startRegistration(selectedLanguages);
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -235,7 +235,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         List<String> languages = new ArrayList<>();
         languages.add("eng");
-        RegistrationDto registrationDto = registrationService.startRegistration(languages);
+        RegistrationDto registrationDto = registrationService.startRegistration(languages, "NEW", "NEW");
         RegistrationDto result = registrationService.getRegistrationDto();
 
         Assert.assertNotNull(registrationDto);

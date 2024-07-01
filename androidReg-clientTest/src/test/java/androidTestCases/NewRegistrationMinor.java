@@ -48,6 +48,7 @@ import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SelectLanguagePageEnglish;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
+import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SelectLanguagePageArabic;
@@ -61,6 +62,7 @@ import regclient.pages.french.DocumentUploadPageFrench;
 import regclient.pages.french.IdentityProofPageFrench;
 import regclient.pages.french.IntroducerBiometricPageFrench;
 import regclient.pages.french.LoginPageFrench;
+import regclient.pages.french.ManageApplicationsPageFrench;
 import regclient.pages.french.OperationalTaskPageFrench;
 import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
@@ -75,6 +77,7 @@ import regclient.pages.hindi.DocumentUploadPageHindi;
 import regclient.pages.hindi.IdentityProofPageHindi;
 import regclient.pages.hindi.IntroducerBiometricPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
+import regclient.pages.hindi.ManageApplicationsPageHindi;
 import regclient.pages.hindi.OperationalTaskPageHindi;
 import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
@@ -89,6 +92,7 @@ import regclient.pages.kannada.DocumentuploadPageKannada;
 import regclient.pages.kannada.IdentityProofPageKannada;
 import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
+import regclient.pages.kannada.ManageApplicationsPageKannada;
 import regclient.pages.kannada.OperationalTaskPageKannada;
 import regclient.pages.kannada.PreviewPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
@@ -103,6 +107,7 @@ import regclient.pages.tamil.DocumentuploadPageTamil;
 import regclient.pages.tamil.IdentityProofPageTamil;
 import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
+import regclient.pages.tamil.ManageApplicationsPageTamil;
 import regclient.pages.tamil.OperationalTaskPageTamil;
 import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
@@ -253,13 +258,13 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		demographicPage.enterAge(TestDataReader.readData("minorAge"));
 		demographicPage.selectGender(TestDataReader.readData("gender"));
 		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
-		
+
 		assertTrue(demographicPage.checkAddress1SecondLanguageTextBoxNotNull(),"Verify if address1 is enter in second language text box");
 		demographicPage.enterAddressLine2(TestDataReader.readData("address"));
-		
+
 		assertTrue(demographicPage.checkAddress2SecondLanguageTextBoxNotNull(),"Verify if address2 is enter in second language text box");
 		demographicPage.enterAddressLine3(TestDataReader.readData("address"));
-		
+
 		assertTrue(demographicPage.checkAddress3SecondLanguageTextBoxNotNull(),"Verify if address3 is enter in second language text box");
 		demographicPage.selectMaritalStatus();
 
@@ -289,7 +294,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 
 		assertTrue(demographicPage.isIntroducerNameHeaderDisplayed(),"Verify if introducer name header is displayed");
 		demographicPage.enterIntroducerName(TestDataReader.readData("fullname"));
-		
+
 		assertTrue(demographicPage.checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull(),"Verify if introduceR name is enter in second language text box");
 
 		assertTrue(demographicPage.isIntroducerRidHeaderDisplayed(),"Verify if introducer rid header is displayed");
@@ -583,7 +588,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-	//	assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+		//	assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
 
 		assertTrue(acknowledgementPage.isDemographicInformationInAcknowledgementPageDisplayed(),"Verify if Demographic Information In authenticationPage is displayed");
 		assertTrue(acknowledgementPage.isDocumentsInformationInAcknowledgementPageDisplayed(),"Verify if Documents Information In authenticationPage is displayed");
@@ -621,22 +626,21 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			manageApplicationsPage=new ManageApplicationsPageEnglish(driver);
 		} 
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-		//			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
-		//
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-		//			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-		//			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-		//			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-		//			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
-		//		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			manageApplicationsPage=new ManageApplicationsPageHindi(driver);	
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
+		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
 		manageApplicationsPage.enterAID(Aid);
 

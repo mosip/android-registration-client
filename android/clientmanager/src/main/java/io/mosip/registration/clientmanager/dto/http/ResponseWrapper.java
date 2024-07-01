@@ -17,6 +17,11 @@ public class ResponseWrapper<T> {
     @Valid
     private T response;
 
+    public T getResponse() {
+        return response;
+    }
+
     private List<ServiceError> errors = new ArrayList<>();
+
 
 }

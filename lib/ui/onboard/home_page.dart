@@ -19,9 +19,9 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/export_packet/export_packet_ui.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
-// import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
   late RegistrationTaskProvider registrationTaskProvider;
   late ConnectivityProvider connectivityProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  String lastOperatorUpdateBiometricTime = "";
 
   @override
   void initState() {
@@ -73,7 +74,10 @@ class _HomePageState extends State<HomePage> {
     }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
+    syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
+    syncProvider.isSyncAndUploadInProgress = false;
+    await syncProvider.getPreRegistrationIds();
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);
@@ -82,6 +86,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _fetchProcessSpec() async {
+    await registrationTaskProvider.getLastUpdatedTime();
     await registrationTaskProvider.getListOfProcesses();
     await _getFieldValues("preferredLang", globalProvider.selectedLanguage);
     await globalProvider.getRegCenterName(
@@ -90,18 +95,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getFieldValues(String fieldId, String langCode) async {
-    List<DynamicFieldData?> fieldValues =
-        await registrationTaskProvider.getFieldValues(fieldId, langCode, globalProvider.chosenLang);
+    List<DynamicFieldData?> fieldValues = await registrationTaskProvider
+        .getFieldValues(fieldId, langCode, globalProvider.chosenLang);
     globalProvider.setNotificationLanguages(fieldValues);
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    if (process.id == "NEW") {
-      globalProvider.clearMap();
-      globalProvider.clearScannedPages();
-      globalProvider.newProcessTabIndex = 0;
-      globalProvider.htmlBoxTabIndex = 0;
-      globalProvider.setRegId("");
+    if (process.id == "NEW" || process.id == "UPDATE") {
+      globalProvider.clearRegistrationProcessData();
+      globalProvider.setPreRegistrationId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
@@ -126,6 +128,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     appLocalizations = AppLocalizations.of(context)!;
+
+
+    try {
+      String dateString = context.watch<RegistrationTaskProvider>().lastSuccessfulUpdatedTime;
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(dateString));
+      lastOperatorUpdateBiometricTime = DateFormat("EEEE d MMMM, hh:mma").format(dateTime);
+    } catch (e) {
+      lastOperatorUpdateBiometricTime = "";
+    }
 
     List<Map<String, dynamic>> operationalTasks = [
       {
@@ -157,21 +168,27 @@ class _HomePageState extends State<HomePage> {
         "title": AppLocalizations.of(context)!.update_operator_biomterics,
         "onTap": (context) async {
           await BiometricsApi().startOperatorOnboarding();
-          globalProvider.onboardingProcessName="Updation";
+          globalProvider.onboardingProcessName = "Updation";
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       OperatorOnboardingBiometricsCaptureControl()));
         },
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+        "subtitle": lastOperatorUpdateBiometricTime.toString(),
       },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
         "title": appLocalizations.appliction_upload,
-        "onTap": () {},
+        "onTap": (context) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const ExportPacketsPage()));
+        },
         "subtitle": "3 application(s)"
       },
       {

@@ -30,6 +30,7 @@ import regclient.pages.arabic.DemographicDetailsPageArabic;
 import regclient.pages.arabic.DocumentuploadPageArabic;
 import regclient.pages.arabic.IdentityProofPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
+import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
 import regclient.pages.arabic.PreviewPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
@@ -57,6 +58,7 @@ import regclient.pages.french.DemographicDetailsPageFrench;
 import regclient.pages.french.DocumentUploadPageFrench;
 import regclient.pages.french.IdentityProofPageFrench;
 import regclient.pages.french.LoginPageFrench;
+import regclient.pages.french.ManageApplicationsPageFrench;
 import regclient.pages.french.OperationalTaskPageFrench;
 import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
@@ -70,6 +72,7 @@ import regclient.pages.hindi.DemographicDetailsPageHindi;
 import regclient.pages.hindi.DocumentUploadPageHindi;
 import regclient.pages.hindi.IdentityProofPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
+import regclient.pages.hindi.ManageApplicationsPageHindi;
 import regclient.pages.hindi.OperationalTaskPageHindi;
 import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
@@ -83,6 +86,7 @@ import regclient.pages.kannada.DemographicDetailsPageKannada;
 import regclient.pages.kannada.DocumentuploadPageKannada;
 import regclient.pages.kannada.IdentityProofPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
+import regclient.pages.kannada.ManageApplicationsPageKannada;
 import regclient.pages.kannada.OperationalTaskPageKannada;
 import regclient.pages.kannada.PreviewPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
@@ -96,6 +100,7 @@ import regclient.pages.tamil.DemographicDetailsPageTamil;
 import regclient.pages.tamil.DocumentuploadPageTamil;
 import regclient.pages.tamil.IdentityProofPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
+import regclient.pages.tamil.ManageApplicationsPageTamil;
 import regclient.pages.tamil.OperationalTaskPageTamil;
 import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
@@ -121,7 +126,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		AcknowledgementPage acknowledgementPage=null;
 		OperationalTaskPage operationalTaskPage=null;
 		ManageApplicationsPage manageApplicationsPage=null;
-		
+
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
 		} 
@@ -243,7 +248,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
 		demographicPage.clickOnContinueButton();
-		
+
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed after clicking disable continue button");
 		demographicPage.enterFullName(TestDataReader.readData("fullname"));
 
@@ -410,13 +415,13 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
 		applicantBiometricsPage.markOneEyeException();
-		
+
 		assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if exception count is displayed");
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
-		
+
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-	//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
-		
+		//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+
 		applicantBiometricsPage.clickOnIrisScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
 
@@ -451,14 +456,14 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		assertTrue(applicantBiometricsPage.isLeftHandScanTitleDisplyed(),"Verify if applicant right hand scan is displayed");
 		applicantBiometricsPage.markOneFingureException();
 		applicantBiometricsPage.clickOnClosePopUp();
-		
+
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception type is displayed");
 		assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if exception count is displayed");
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
-		
+
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-	//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
-		
+		//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+
 		applicantBiometricsPage.clickOnleftHandScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
 
@@ -477,13 +482,13 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
 		applicantBiometricsPage.markOneFingureException();
-		
+
 		assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if exception count is displayed");
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
-		
+
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
-	//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
-		
+		//	applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
+
 		applicantBiometricsPage.clickOnThumbsScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
 
@@ -497,19 +502,19 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		assertTrue(applicantBiometricsPage.isFaceScan(),"Verify if face scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
 		applicantBiometricsPage.clickOnBackButton();
-		
+
 		biometricDetailsPage.clickOnContinueButton();
 		//Exception
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is still displayed without capture exception");
 		applicantBiometricsPage=biometricDetailsPage.clickOnExceptionScanIcon();
-		
+
 		assertTrue(applicantBiometricsPage.isExceptionScanTitleDisplyed(),"Verify if exception scan page is displayed");
 		applicantBiometricsPage.clickOnScanButton();
 
 		assertTrue(applicantBiometricsPage.isExceptionScan(),"Verify if exception scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
 		biometricDetailsPage=applicantBiometricsPage.clickOnNextButton();
-		
+
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
 
@@ -580,7 +585,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-	//	assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
+		//	assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
 
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
@@ -615,22 +620,21 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			manageApplicationsPage=new ManageApplicationsPageEnglish(driver);
 		} 
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-		//			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
-		//
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-		//			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-		//			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-		//			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-		//			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
-		//		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
+		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
 		manageApplicationsPage.enterAID(Aid);
 
@@ -640,7 +644,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
 		manageApplicationsPage.selectUploadedOptionDropdown();
-		
+
 		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if Filtre packet is uploaded ");
 
 	}

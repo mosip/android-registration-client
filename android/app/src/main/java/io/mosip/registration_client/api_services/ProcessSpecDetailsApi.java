@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
-*/
+ */
 
 package io.mosip.registration_client.api_services;
 
@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,7 +48,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         this.context = context;
         this.identitySchemaRepository = identitySchemaRepository;
         this.globalParamRepository = globalParamRepository;
-        this.registrationService=registrationService;
+        this.registrationService = registrationService;
         this.auditManagerService = auditManagerService;
     }
 
@@ -58,7 +59,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
                     identitySchemaRepository.getLatestSchemaVersion());
             result.success(schemaJson);
             return;
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getUISchema", e);
         }
         result.success("");
@@ -78,17 +79,27 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
 
     @Override
     public void getNewProcessSpec(@NonNull ProcessSpecPigeon.Result<List<String>> result) {
-        ObjectWriter ow;
-        List<String> processSpecList=new ArrayList<>();
+        List<String> processSpecList = new ArrayList<>();
         try {
-            ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(context,
-                    identitySchemaRepository.getLatestSchemaVersion());
-            ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            if(processSpecDto != null) {
-                String json = ow.writeValueAsString(processSpecDto);
-                processSpecList.add(json);
+            List<ProcessSpecDto> processSpecDtoList = identitySchemaRepository.getAllProcessSpecDTO(context, identitySchemaRepository.getLatestSchemaVersion());
+            if(processSpecDtoList == null || processSpecDtoList.isEmpty()) {
+                ProcessSpecDto processSpecDto = identitySchemaRepository.getNewProcessSpec(context,
+                        identitySchemaRepository.getLatestSchemaVersion());
+                processSpecDtoList = Arrays.asList(processSpecDto);
             }
-        } catch (Exception e){
+            processSpecDtoList.forEach((processSpecDto -> {
+                ObjectWriter ow;
+                try {
+                    ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+                    if (processSpecDto != null) {
+                        String json = ow.writeValueAsString(processSpecDto);
+                        processSpecList.add(json);
+                    }
+                } catch (Exception e) {
+                    Log.e(getClass().getSimpleName(), "Error in fetching process spec", e);
+                }
+            }));
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getNewProcessSpec", e);
         }
         result.success(processSpecList);
@@ -99,7 +110,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         List<String> mandatoryLanguageList = new ArrayList<>();
         try {
             mandatoryLanguageList = globalParamRepository.getMandatoryLanguageCodes();
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getMandatoryLanguageCodes", e);
         }
         result.success(mandatoryLanguageList);
@@ -110,7 +121,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         List<String> optionalLanguageList = new ArrayList<>();
         try {
             optionalLanguageList = globalParamRepository.getOptionalLanguageCodes();
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getOptionalLanguageCodes", e);
         }
         result.success(optionalLanguageList);
@@ -121,10 +132,10 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         int minLangCount = 0;
         try {
             minLangCount = globalParamRepository.getMinLanguageCount();
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getMinLangCount", e);
         }
-        result.success((long)minLangCount);
+        result.success((long) minLangCount);
     }
 
     @Override
@@ -132,9 +143,9 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         int maxLangCount = 0;
         try {
             maxLangCount = globalParamRepository.getMaxLanguageCount();
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getMaxLangCount", e);
         }
-        result.success((long)maxLangCount);
+        result.success((long) maxLangCount);
     }
 }

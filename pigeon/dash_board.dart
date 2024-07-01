@@ -14,6 +14,13 @@ class DashBoardData {
   });
 }
 
+class UpdatedTimeData {
+  final String? updatedTime;
+  UpdatedTimeData({
+    this.updatedTime,
+  });
+}
+
 @HostApi()
 abstract class DashBoardApi {
   @async
@@ -26,4 +33,6 @@ abstract class DashBoardApi {
   int getCreatedPacketDetails();
   @async
   int getSyncedPacketDetails();
+  @async
+  UpdatedTimeData getUpdatedTime();
 }

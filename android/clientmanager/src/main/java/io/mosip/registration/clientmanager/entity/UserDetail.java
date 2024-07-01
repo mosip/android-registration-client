@@ -70,4 +70,7 @@ public class UserDetail implements Serializable {
 
 	@ColumnInfo(name = "is_officer")
 	private boolean isOfficer;
+
+	@ColumnInfo(name = "updated_dtimes")
+	private Long updatedDtimes;
 }

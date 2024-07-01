@@ -108,9 +108,18 @@
       }
     }
   },
-  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "notificationLanguage": "{language, select, eng{Preferred Language of Communication} ara{لغة التواصل المفضلة} fra{Langue de communication préférée} hin{संचार की पसंदीदा भाषा} kan{ಸಂವಹನದ ಆದ್ಯತೆಯ ಭಾಷೆ} tam{விருப்பமான தொடர்பு மொழி} other{Notification Languages}}",
   "@notificationLanguage": {
     "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "dataEntryLanguage": "{language, select, eng{Data Entry Language} ara{لغة إدخال البيانات} fra{Langue de saisie des données} hin{डाटा एंट्री भाषा} kan{ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ} tam{தரவு நுழைவு மொழி} other{Notification Languages}}",
+  "@dataEntryLanguage": {
+    "description": "Data Entry Language Label",
     "placeholders": {
       "language": {
         "type": "String"
@@ -230,8 +239,22 @@
   "operator_biometric_updated_successfully": "ஆபரேட்டர் பயோமெட்ரிக்ஸ் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
   "home": "வீடு",
   "verify_and_save": "சரிபார்த்து சேமிக்கவும்",
-  "supervisors_biometric_verification": "மேற்பார்வையாளரின் பயோமெட்ரிக் சரிபார்ப்பு",
+  "supervisors_biometric_onboard": "மேற்பார்வையாளர் பயோமேட்ரிக் உறுப்பினர் சேர்க்கை",
+  "supervisors_biometric_update": "மேற்பார்வையாளர் பயோமேட்ரிக் புதுப்பிப்பு",
   "help_topics": "உதவி தலைப்புகள்",
   "onboard_request_message": "போர்ட்டலில் உங்களை உள்வாங்க, \"ஆன்போர்டைப் பெறு\" பொத்தானைத் தட்டவும்.",
-  "hello_s": "வணக்கம் "
+  "hello_s": "வணக்கம் ",
+  "uin_number": "UIN எண்",
+  "valid_uin": "சரியான UIN ஐ உள்ளிடவும்",
+  "enter_uin": "UIN எண்ணை உள்ளிடவும்",
+  "select_update_attributes": "புதுப்பிக்கப்பட வேண்டிய அனைத்து பண்புக்கூறுகளையும் தேர்ந்தெடுக்கவும்",
+  "logout_action_required": "இன்னும் சில நடவடிக்கை தேவை!",
+  "logout_warning_message": "வெளியேறு என்பதைக் கிளிக் செய்வதன் மூலம் செயல்முறை முடிவடையும் மற்றும் தரவு இழப்பு ஏற்படலாம்.",
+  "officer": "அதிகாரி",
+  "operator": "இயக்குபவர்",
+  "supervisor": "மேற்பார்வையாளர்",
+  "online": "நிகழ்நிலை",
+  "offline": "ஆஃப்லைனில்",
+  "logout_success": "நீங்கள் வெற்றிகரமாக வெளியேறிவிட்டீர்கள்!",
+  "logout_failure": "ஏதோ தவறாகிவிட்டது, சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்"
 }

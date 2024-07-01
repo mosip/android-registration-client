@@ -32,6 +32,7 @@ import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -45,7 +46,6 @@ import io.mosip.registration.clientmanager.repository.MachineRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
-import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -153,9 +153,9 @@ public class HostApiModule {
     @Provides
     @Singleton
     PacketAuthenticationApi getPacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                                       LoginService loginService, PacketService packetService,
+                                                       LoginService loginService, PacketService packetService, RegistrationRepository registrationRepository,
                                                        AuditManagerService auditManagerService) {
-        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService, auditManagerService);
+        return new PacketAuthenticationApi(syncRestService, syncRestFactory, loginService, packetService,registrationRepository, auditManagerService);
     }
 
     @Provides
@@ -166,8 +166,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService) {
-        return new DynamicDetailsApi(masterDataService, auditManagerService);
+    DynamicDetailsApi getDynamicDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService,PreRegistrationDataSyncService preRegistrationData,RegistrationService registrationService,IdentitySchemaRepository identitySchemaService) {
+        return new DynamicDetailsApi(appContext, masterDataService, auditManagerService,preRegistrationData,registrationService,identitySchemaService);
     }
 
     @Provides
@@ -193,7 +193,7 @@ public class HostApiModule {
             AuditManagerService auditManagerService,
             MasterDataService masterDataService,
             PacketService packetService,
-            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao) {
+            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService) {
         return new MasterDataSyncApi(clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
@@ -203,7 +203,7 @@ public class HostApiModule {
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
                 syncJobDefRepository, languageRepository, jobManagerService,
-                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao
+                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao, preRegistrationDataSyncService
         );
     }
 
@@ -221,8 +221,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
-        return new DashBoardDetailsApi(userDetailDao, registrationRepository);
+    DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository, PreRegistrationDataSyncService preRegistrationData) {
+        return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository,preRegistrationData);
     }
 }
 

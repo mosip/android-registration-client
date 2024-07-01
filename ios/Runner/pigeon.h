@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class DashBoardData;
+@class UpdatedTimeData;
 
 @interface DashBoardData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -25,6 +26,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSNumber * userIsOnboarded;
 @end
 
+@interface UpdatedTimeData : NSObject
++ (instancetype)makeWithUpdatedTime:(nullable NSString *)updatedTime;
+@property(nonatomic, copy, nullable) NSString * updatedTime;
+@end
+
 /// The codec used by DashBoardApi.
 NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
 
@@ -34,6 +40,7 @@ NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
 - (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)getCreatedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)getSyncedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getUpdatedTimeWithCompletion:(void (^)(UpdatedTimeData *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
