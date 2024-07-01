@@ -15,7 +15,7 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	@AndroidFindBy(accessibility = "Registration Tasks")
 	private WebElement registrationTasksTitle;
 	
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
+	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(6)")
 	private WebElement dashboardButton;
 
 	@AndroidFindBy(accessibility = "Operational Tasks")
@@ -30,7 +30,7 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Policy key Sync Completed\"]")
 	private WebElement policykeySyncCompletedMessage ;
 
-	@AndroidFindBy(xpath = "//*[contains(@text,'Sync Completed')]")
+	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Master Data Sync Completed\"]")
 	private WebElement masterDataSyncCompletedMessage ;
 
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")

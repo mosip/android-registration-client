@@ -116,6 +116,19 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
+  Future<String> getPreRegIds() async {
+    String preRegIdResponse = "";
+    try {
+      preRegIdResponse = await SyncApi().getPreRegIds();
+    } on PlatformException {
+      debugPrint('Application Id Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('Application Id call has failed! ${e.toString()}');
+    }
+    return preRegIdResponse;
+  }
+
+  @override
   Future<Sync> getKernelCertsSync(bool isManualSync) async {
     late Sync syncResponse;
     try {

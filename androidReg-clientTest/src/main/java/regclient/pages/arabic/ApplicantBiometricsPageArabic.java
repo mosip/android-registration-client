@@ -96,6 +96,9 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"التعليقات\"))")
 	private WebElement commentsHeader;
 	
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"الاستثناءات\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
+	private WebElement exceptionCount;
+	
 	
 	
 	public ApplicantBiometricsPageArabic(AppiumDriver driver) {
@@ -243,6 +246,14 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	
 	public  boolean isCommentHeaderDisplyed() {
 		return isElementDisplayed(commentsHeader);
+	}
+	
+	public  boolean isExceptionCountDisplyed() {
+		if(!isElementDisplayedOnScreen(exceptionCount)) {
+			swipeOrScroll();
+			isElementDisplayed(exceptionCount);
+		}
+		return isElementDisplayed(exceptionCount);
 	}
 
 }
