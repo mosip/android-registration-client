@@ -2849,6 +2849,9 @@ class _BiometricCaptureScanBlockPortraitState
     for (int i = 0; i < list.length; i++) {
       if (list[i] == title) {
         if (i < list.length - 1) {
+          context
+              .read<BiometricCaptureControlProvider>()
+              .biometricCaptureScanBlockTabIndex = 1;
           return list[i + 1];
         } else {
           return null;
