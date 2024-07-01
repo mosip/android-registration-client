@@ -308,13 +308,13 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	}
 
 	public  void selectMaritalStatus() {
-		clickOnElement(selectMaritalStatus);
-		if(!isElementDisplayedOnScreen(singleValueFromDropdown)) {
-			swipeOrScroll();
-			clickOnElement(selectMaritalStatus);
-			clickOnElement(singleValueFromDropdown);
-		}else
-			clickOnElement(singleValueFromDropdown);
+//		clickOnElement(selectMaritalStatus);
+//		if(!isElementDisplayedOnScreen(singleValueFromDropdown)) {
+//			swipeOrScroll();
+//			clickOnElement(selectMaritalStatus);
+//			clickOnElement(singleValueFromDropdown);
+//		}else
+//			clickOnElement(singleValueFromDropdown);
 	}
 
 	public  void selectResidenceStatus(String ResidenceStatus) {

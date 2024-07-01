@@ -18,6 +18,9 @@ public class OperationalTaskPageFrench extends OperationalTaskPage{
 	
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchroniser les données\")")
 	private WebElement synchronizeDataButton ;
+	
+	@AndroidFindBy(accessibility = "Téléchargement d'application")
+	private WebElement applicationUploadTitle;
 
 
 	public OperationalTaskPageFrench(AppiumDriver driver) {
@@ -46,5 +49,17 @@ public class OperationalTaskPageFrench extends OperationalTaskPage{
 		else
 			return false;
 	}
+	
+	public  void clickApplicationUploadTitle() {
+		clickOnElement(applicationUploadTitle);
+	}
+	
+	public boolean isApplicationUploadTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(applicationUploadTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(applicationUploadTitle);
+	}
+
 
 }

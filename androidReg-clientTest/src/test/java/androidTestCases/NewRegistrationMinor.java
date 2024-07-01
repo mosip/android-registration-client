@@ -17,6 +17,8 @@ import regclient.page.DocumentUploadPage;
 import regclient.page.IdentityProofPage;
 import regclient.page.IntroducerBiometricPage;
 import regclient.page.LoginPage;
+import regclient.page.ManageApplicationsPage;
+import regclient.page.OperationalTaskPage;
 import regclient.page.PreviewPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
@@ -38,12 +40,15 @@ import regclient.pages.arabic.DocumentuploadPageArabic;
 import regclient.pages.arabic.IdentityProofPageArabic;
 import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.english.LoginPageEnglish;
+import regclient.pages.english.ManageApplicationsPageEnglish;
+import regclient.pages.english.OperationalTaskPageEnglish;
 import regclient.pages.english.PreviewPageEnglish;
 import regclient.pages.arabic.PreviewPageArabic;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SelectLanguagePageEnglish;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
+import regclient.pages.arabic.OperationalTaskPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SelectLanguagePageArabic;
 import regclient.pages.french.AcknowledgementPageFrench;
@@ -56,6 +61,7 @@ import regclient.pages.french.DocumentUploadPageFrench;
 import regclient.pages.french.IdentityProofPageFrench;
 import regclient.pages.french.IntroducerBiometricPageFrench;
 import regclient.pages.french.LoginPageFrench;
+import regclient.pages.french.OperationalTaskPageFrench;
 import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SelectLanguagePageFrench;
@@ -69,6 +75,7 @@ import regclient.pages.hindi.DocumentUploadPageHindi;
 import regclient.pages.hindi.IdentityProofPageHindi;
 import regclient.pages.hindi.IntroducerBiometricPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
+import regclient.pages.hindi.OperationalTaskPageHindi;
 import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SelectLanguagePageHindi;
@@ -82,6 +89,7 @@ import regclient.pages.kannada.DocumentuploadPageKannada;
 import regclient.pages.kannada.IdentityProofPageKannada;
 import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
+import regclient.pages.kannada.OperationalTaskPageKannada;
 import regclient.pages.kannada.PreviewPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SelectLanguagePageKannada;
@@ -95,6 +103,7 @@ import regclient.pages.tamil.DocumentuploadPageTamil;
 import regclient.pages.tamil.IdentityProofPageTamil;
 import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
+import regclient.pages.tamil.OperationalTaskPageTamil;
 import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
@@ -118,6 +127,8 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		AuthenticationPage authenticationPage=null;
 		AcknowledgementPage acknowledgementPage=null;
 		IntroducerBiometricPage introducerBiometricPage=null;
+		OperationalTaskPage operationalTaskPage=null;
+		ManageApplicationsPage manageApplicationsPage=null;
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -529,6 +540,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		String Aid=previewPage.getAID();
 		previewPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			authenticationPage=new AuthenticationPageEnglish(driver);
@@ -579,6 +591,60 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
+		consentPage.clickOnCancelButton();
+
+		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
+		registrationTasksPage.clickOnOperationalTasksTitle();	
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			operationalTaskPage=new OperationalTaskPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			operationalTaskPage=new OperationalTaskPageHindi(driver);
+
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			operationalTaskPage=new OperationalTaskPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			operationalTaskPage=new OperationalTaskPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			operationalTaskPage=new OperationalTaskPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			operationalTaskPage=new OperationalTaskPageArabic(driver);
+		}
+		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
+		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
+
+		operationalTaskPage.clickApplicationUploadTitle();       
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			manageApplicationsPage=new ManageApplicationsPageEnglish(driver);
+		} 
+		//		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+		//			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
+		//
+		//		}
+		//		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+		//			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
+		//		}
+		//		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+		//			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
+		//		}
+		//		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+		//			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
+		//		}
+		//		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+		//			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
+		//		}
+		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
+		manageApplicationsPage.enterAID(Aid);
+
+		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		manageApplicationsPage.clickOnSearchCheckBox();
+		manageApplicationsPage.clickOnUploadButton();
+
+		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
 
 	}
 

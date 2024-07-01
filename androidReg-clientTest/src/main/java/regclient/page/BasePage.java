@@ -3,10 +3,10 @@ package regclient.page;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.HidesKeyboard;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
-
-
+import io.netty.handler.timeout.TimeoutException;
 
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
@@ -107,14 +107,14 @@ public class BasePage {
 	protected void clickOnCheckBox() {
 		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
 		Sequence sequence = new Sequence(finger1, 1)
-				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 69, 1158)) //69 1158//temporary solution to click on checkbox using x and y axis
+				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 72, 1123)) //69 1158  99 1758//temporary solution to click on checkbox using x and y axis
 				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger1, Duration.ofMillis(100))) // Add a small pause (adjust duration as needed)
 				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 		driver.perform(Collections.singletonList(sequence));
 	}
 
-	private void waitForElementToBeVisible(WebElement element, int waitTime) {
+	protected void waitForElementToBeVisible(WebElement element, int waitTime) {
 		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(waitTime));
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
@@ -185,4 +185,35 @@ public class BasePage {
 		}
 		
 	}
+	
+	public WebElement retryFindElement(WebElement element, Duration timeout) {
+		int attempts = 0;
+	    int maxAttempts = 5;
+
+	    while (attempts < maxAttempts) {
+	        try {
+	            WebDriverWait wait = new WebDriverWait(driver, timeout);
+	            wait.until(ExpectedConditions.visibilityOf(element));
+	            return element;
+	        } catch (StaleElementReferenceException e) {
+	            System.out.println("StaleElementReferenceException caught. Retrying... " + attempts);
+	            attempts++;
+	        } catch (TimeoutException e) {
+	            System.out.println("TimeoutException caught. Retrying... " + attempts);
+	            attempts++;
+	        }
+	    }
+	    throw new RuntimeException("Element not found after " + maxAttempts + " attempts");
+    }
+	
+	protected void clickOnOkay() {
+		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
+		Sequence sequence = new Sequence(finger1, 1)
+				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 625, 2051)) //69 1158//temporary solution to click on checkbox using x and y axis
+				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+				.addAction(new Pause(finger1, Duration.ofMillis(100))) // Add a small pause (adjust duration as needed)
+				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+		driver.perform(Collections.singletonList(sequence));
+	}
+
 }

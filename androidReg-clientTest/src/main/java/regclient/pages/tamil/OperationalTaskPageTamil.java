@@ -19,6 +19,8 @@ public class OperationalTaskPageTamil extends OperationalTaskPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"தரவை ஒத்திசைக்கவும்\")")
 	private WebElement synchronizeDataButton ;
 
+	@AndroidFindBy(accessibility = "விண்ணப்பப் பதிவேற்றம்")
+	private WebElement applicationUploadTitle;
 	
 	public OperationalTaskPageTamil(AppiumDriver driver) {
 		super(driver);
@@ -46,6 +48,17 @@ public class OperationalTaskPageTamil extends OperationalTaskPage{
 			return true;
 		else
 			return false;
+	}
+	
+	public  void clickApplicationUploadTitle() {
+		clickOnElement(applicationUploadTitle);
+	}
+	
+	public boolean isApplicationUploadTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(applicationUploadTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(applicationUploadTitle);
 	}
 
 }
