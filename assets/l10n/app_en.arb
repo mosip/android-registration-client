@@ -129,6 +129,47 @@
   },
   "synchronize_data": "Synchronize Data",
   "registration_tasks": "Registration Tasks",
+
+
+  "manage_applications": "Manage Applications",
+  "search_application": "Search by Application ID",
+  "upload": "UPLOAD",
+  "export": "EXPORT",
+  "number_of_application": "Displaying {number} Applications",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} Applications Selected",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "Client Status",
+  "server_status": "Server Status",
+  "clear_filter": "Clear Filter",
+  "serial_number": "S.no",
+  "application_id": "Application ID",
+  "reg_date":"Reg. Date",
+  "reg_type":"Reg. Type",
+  "operator_id": "Operator ID",
+
+
+
   "operation_tasks": "Operational Tasks",
   "system_storage_usage": "System Storage Usage",
   "download_pre_registration_data": "Download Pre-Registration Data",

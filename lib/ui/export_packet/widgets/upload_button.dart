@@ -54,7 +54,7 @@ class _UploadButtonState extends State<UploadButton> {
           children: [
             const Icon(Icons.cloud_upload_outlined, size: 28,),
             const SizedBox(width: 6,),
-            Text('UPLOAD', style:Theme.of(context).textTheme.titleLarge?.copyWith(color: (context.watch<ExportPacketsProvider>().countSelected==0)? Colors.grey :  solidPrimary, fontSize: 17),),
+            Text(AppLocalizations.of(context)!.upload, style:Theme.of(context).textTheme.titleLarge?.copyWith(color: (context.watch<ExportPacketsProvider>().countSelected==0)? Colors.grey :  solidPrimary, fontSize: 17),),
           ],
         ),
       ),

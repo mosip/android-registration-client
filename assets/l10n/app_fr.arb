@@ -129,6 +129,50 @@
   },
   "synchronize_data": "Synchroniser les données",
   "registration_tasks": "Tâches d'inscription",
+
+
+
+  "manage_applications": "Gérer des applications",
+  "search_application": "Rechercher par ID d'application",
+  "upload": "TÉLÉCHARGER",
+  "export": "EXPORTER",
+  "number_of_application": "Affichage de {number} applications",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} Applications sélectionnées",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "Statut du client",
+  "server_status": "État du serveur",
+  "clear_filter": "Effacer le filtre",
+  "serial_number": "S.non",
+  "application_id": "ID d'application",
+  "reg_date":"Rég. Date",
+  "reg_type":"Rég. Taper",
+  "operator_id": "ID de l'opérateur",
+
+
+
+
+
   "operation_tasks": "Tâches opérationnelles",
   "system_storage_usage": "Utilisation du stockage système",
   "download_pre_registration_data": "Télécharger les données de pré-inscription",

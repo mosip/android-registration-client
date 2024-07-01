@@ -7,6 +7,8 @@ import '../../../provider/export_packet_provider.dart';
 import '../../../utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class ExportButton extends StatefulWidget {
   const ExportButton({super.key});
 
@@ -55,7 +57,7 @@ class _ExportButtonState extends State<ExportButton> {
           children: [
             const Icon(Icons.upload_sharp, size: 26,),
             const SizedBox(width: 4,),
-            Text('EXPORT', style:Theme.of(context).textTheme.titleLarge?.copyWith(color: solidPrimary, fontSize: 17),),
+            Text(AppLocalizations.of(context)!.export, style:Theme.of(context).textTheme.titleLarge?.copyWith(color: solidPrimary, fontSize: 17),),
           ],
         ),
       ),
