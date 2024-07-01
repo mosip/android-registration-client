@@ -46,7 +46,7 @@ class ExportPacketsPage extends StatelessWidget {
               const Row(
                 children: [
                   Flexible(
-                    flex: 3,
+                    flex: 2,
                     child: SearchBoxExport(),
                   ),
                   SizedBox(width: 10),

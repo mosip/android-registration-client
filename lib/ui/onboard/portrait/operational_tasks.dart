@@ -9,9 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/provider.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
+
+import '../../../provider/registration_task_provider.dart';
 
 class OperationalTasks extends StatefulWidget {
   const OperationalTasks({
@@ -25,6 +28,14 @@ class OperationalTasks extends StatefulWidget {
 }
 
 class _OperationalTasksState extends State<OperationalTasks> {
+
+
+  @override
+  void initState() {
+    context.read<RegistrationTaskProvider>().getApplicationUploadNumber();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(

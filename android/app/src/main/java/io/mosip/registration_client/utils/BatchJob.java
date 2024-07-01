@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,111 +48,132 @@ public class BatchJob {
         this.activity=mainActivity;
     }
 
-    public void syncRegistrationPackets(Context context) {
-        if(NetworkUtils.isNetworkConnected(context)){
-            Log.d(getClass().getSimpleName(), "Sync Packets in Batch Job");
-            Integer batchSize = getBatchSize();
-            List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
-            final Integer[] remainingPack = {registrationList.size(), 0};
-
-            Integer packetSize = registrationList.size();
-            CustomToast newToast = new CustomToast(activity);
-
-            if(registrationList.isEmpty()){
-                uploadRegistrationPackets(context);
-                return;
+    private List<Registration> getRegistrationList(List<String> statusList){
+        Integer batchSize = getBatchSize();
+        List<Registration> registrationList =  new ArrayList();
+        for(String status: statusList){
+            if(registrationList.size() >= batchSize){
+                break;
             }
-            for (Registration value : registrationList) {
-                try {
-                    Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
-                    auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
+            List<Registration> newList = packetService.getRegistrationsByStatus(status, (batchSize - registrationList.size()));
+            registrationList.addAll(newList);
+        }
+        return registrationList;
+    }
 
-                    Integer remaining = packetSize - remainingPack[0];
-                    newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
-                    newToast.showToast();
+    public void syncRegistrationPackets(Context context) {
+        Log.d(getClass().getSimpleName(), "Sync Packets in Batch Job");
+        List<Registration> registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.APPROVED.name(), PacketClientStatus.EXPORTED.name()));
+        final Integer[] remainingPack = {registrationList.size(), 0};
 
-                    packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
-                        @Override
-                        public void inProgress(String RID) {
-                            //Do nothing
+        Integer packetSize = registrationList.size();
+        CustomToast newToast = new CustomToast(activity);
+
+        if(registrationList.isEmpty()){
+            uploadRegistrationPackets(context);
+            return;
+        }
+        for (Registration value : registrationList) {
+            try {
+                Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
+                auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
+
+                Integer remaining = packetSize - remainingPack[0];
+                newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                newToast.showToast();
+
+                packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
+                    @Override
+                    public void inProgress(String RID) {
+                        //Do nothing
+                        newToast.showToast();
+                    }
+
+                    @Override
+                    public void onComplete(String RID, PacketTaskStatus status) {
+                        if(status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)){
+                            remainingPack[1] += 1;
+                        }
+                        remainingPack[0] -= 1;
+
+                        Integer remaining = packetSize - remainingPack[0];
+                        newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
+                        if(remainingPack[0] == 0){
+                            Integer failed = packetSize- remainingPack[1];
+                            newToast.setIcon(R.drawable.done);
+                            String message = "Sync Packet Status :";
+                            if(remainingPack[1] != 0){
+                                message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
+                            }
+                            if(failed != 0){
+                                message = message + String.format(" %s/%s Failed", failed, packetSize);
+                            }
+                            newToast.setText(message);
                             newToast.showToast();
+
+                            Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+                            uploadRegistrationPackets(context);
                         }
-
-                        @Override
-                        public void onComplete(String RID, PacketTaskStatus status) {
-                            if(status.equals(PacketTaskStatus.SYNC_COMPLETED)){
-                                remainingPack[1] += 1;
-                            }
-                            remainingPack[0] -= 1;
-
-                            Integer remaining = packetSize - remainingPack[0];
-                            newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
-
-                            if(remainingPack[0] == 0){
-                                Integer failed = packetSize- remainingPack[1];
-                                newToast.setIcon(R.drawable.done);
-                                newToast.setText(String.format("Sync Packet Status: %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
-                                newToast.showToast();
-
-                                Log.d(getClass().getSimpleName(), "Last Packet"+RID);
-                                uploadRegistrationPackets(context);
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
-                }
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), e.getMessage());
             }
         }
     }
 
     public void uploadRegistrationPackets(Context context) {
-        if(NetworkUtils.isNetworkConnected(context)){
-            Log.d(getClass().getSimpleName(), "Upload Packets in Batch Job");
-            Integer batchSize = getBatchSize();
-            List<Registration>  registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name(), batchSize);
+        Log.d(getClass().getSimpleName(), "Upload Packets in Batch Job");
+        List<Registration>  registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.SYNCED.name(), PacketClientStatus.EXPORTED.name()));
 
-            Integer packetSize = registrationList.size();
-            final Integer[] remainingPack = {packetSize, 0};
-            CustomToast newToast = new CustomToast(activity);
+        Integer packetSize = registrationList.size();
+        final Integer[] remainingPack = {packetSize, 0};
+        CustomToast newToast = new CustomToast(activity);
 
-            for (Registration value : registrationList) {
-                try {
-                    Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
-                    auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
+        for (Registration value : registrationList) {
+            try {
+                Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
+                auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
 
-                    Integer remaining = packetSize - remainingPack[0];
-                    newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
-                    newToast.showToast();
+                Integer remaining = packetSize - remainingPack[0];
+                newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                newToast.showToast();
 
-                    packetService.uploadRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
-                        @Override
-                        public void inProgress(String RID) {
-                            //Do nothing
+                packetService.uploadRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
+                    @Override
+                    public void inProgress(String RID) {
+                        //Do nothing
+                        newToast.showToast();
+                    }
+
+                    @Override
+                    public void onComplete(String RID, PacketTaskStatus status) {
+                        if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)  || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)){
+                            remainingPack[1] += 1;
+                        }
+                        remainingPack[0] -= 1;
+
+                        Integer remaining = packetSize - remainingPack[0];
+                        newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
+                        if(remainingPack[0] == 0){
+                            Integer failed = packetSize- remainingPack[1];
+                            newToast.setIcon(R.drawable.done);
+                            String message = "Upload Packet Status :";
+                            if(remainingPack[1] != 0){
+                                message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
+                            }
+                            if(failed != 0){
+                                message = message + String.format(" %s/%s Failed", failed, packetSize);
+                            }
+                            newToast.setText(message);
                             newToast.showToast();
                         }
-
-                        @Override
-                        public void onComplete(String RID, PacketTaskStatus status) {
-                            if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)){
-                                remainingPack[1] += 1;
-                            }
-                            remainingPack[0] -= 1;
-
-                            Integer remaining = packetSize - remainingPack[0];
-                            newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
-
-                            if(remainingPack[0] == 0){
-                                Integer failed = packetSize- remainingPack[1];
-                                newToast.setIcon(R.drawable.done);
-                                newToast.setText(String.format("Upload Packet Status : %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
-                                newToast.showToast();
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
-                }
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), e.getMessage());
             }
         }
     }

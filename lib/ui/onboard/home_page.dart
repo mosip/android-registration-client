@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) =>
                       OperatorOnboardingBiometricsCaptureControl()));
         },
-        "subtitle": lastOperatorUpdateBiometricTime.toString(),
+        "subtitle": lastOperatorUpdateBiometricTime.toString() == "" ? "Not updated yet" :"Last Updated on ${lastOperatorUpdateBiometricTime.toString()}",
       },
       {
         "icon": SvgPicture.asset(
@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) =>
                       const ExportPacketsPage()));
         },
-        "subtitle": "3 application(s)"
+        "subtitle": "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
       },
       {
         "icon": SvgPicture.asset(

@@ -67,7 +67,7 @@ public class PacketServiceImpl implements PacketService {
     public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
-            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
+            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name(), PacketClientStatus.EXPORTED.name());
 
     public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name(), PacketServerStatus.UPLOAD_PENDING.name());
 
@@ -166,7 +166,9 @@ public class PacketServiceImpl implements PacketService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null && response.body().getResponse().get(0).getStatus().equalsIgnoreCase("SUCCESS")) {
-                        registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
+                        if(!PacketClientStatus.EXPORTED.name().equals(registration.getClientStatus())){
+                            registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
+                        }
                         callBack.onComplete(packetId, PacketTaskStatus.SYNC_COMPLETED);
 //                        Toast.makeText(context, "Packet synced successfully", Toast.LENGTH_LONG).show();
                     } else {

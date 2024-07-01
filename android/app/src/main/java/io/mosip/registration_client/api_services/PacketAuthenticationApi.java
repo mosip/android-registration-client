@@ -112,7 +112,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
-                        if(status.equals(PacketTaskStatus.SYNC_COMPLETED)){
+                        if(status.equals(PacketTaskStatus.SYNC_COMPLETED)  || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)){
                             remainingPack[1] += 1;
                         }
                         remainingPack[0] -= 1;
@@ -121,9 +121,16 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                         newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
                         if(remainingPack[0] == 0){
-                            Integer failed = packetSize- remainingPack[1];
+                            Integer failed = packetSize - remainingPack[1];
                             newToast.setIcon(R.drawable.done);
-                            newToast.setText(String.format("Sync Packet Status: %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
+                            String message = "Sync Packet Status :";
+                            if(remainingPack[1] != 0){
+                                message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
+                            }
+                            if(failed != 0){
+                                message = message + String.format(" %s/%s Failed", failed, packetSize);
+                            }
+                            newToast.setText(message);
                             newToast.showToast();
                             result.success(null);
                         }
@@ -156,7 +163,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
-                        if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)){
+                        if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)  || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)){
                             remainingPack[1] += 1;
                         }
                         remainingPack[0] -= 1;
@@ -165,9 +172,16 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                         newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
                         if(remainingPack[0] == 0){
-                            Integer failed = packetSize- remainingPack[1];
+                            Integer failed = packetSize - remainingPack[1];
                             newToast.setIcon(R.drawable.done);
-                            newToast.setText(String.format("Upload Packet Status : %s/%s Success, %s/%s failed", remainingPack[1].toString(), packetSize.toString(), failed.toString() ,packetSize.toString()));
+                            String message = "Upload Packet Status :";
+                            if(remainingPack[1] != 0){
+                                message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
+                            }
+                            if(failed != 0){
+                                message = message + String.format(" %s/%s Failed", failed, packetSize);
+                            }
+                            newToast.setText(message);
                             newToast.showToast();
                             result.success(null);
                         }
