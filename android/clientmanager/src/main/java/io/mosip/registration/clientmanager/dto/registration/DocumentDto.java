@@ -12,5 +12,6 @@ public class DocumentDto {
     private String format;
     private String refNumber;
     private String path;
+    private String value;
     private List<byte[]> content = new ArrayList<>();
 }

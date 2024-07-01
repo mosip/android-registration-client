@@ -45,10 +45,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   @override
   void initState() {
-    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    registrationTaskProvider =
-        Provider.of<RegistrationTaskProvider>(context, listen: false);
-    _getSavedDate();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+      registrationTaskProvider =
+          Provider.of<RegistrationTaskProvider>(context, listen: false);
+      _getSavedDate();
+    });
     super.initState();
   }
 
@@ -112,18 +114,22 @@ class _AgeDateControlState extends State<AgeDateControl> {
   }
 
   void _getSavedDate() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
       String savedDate = globalProvider.fieldInputValue[widget.field.id];
       DateTime parsedDate =
           DateFormat(widget.field.format == null ||
-                                  widget.field.format!.toLowerCase() == "none"
-                              ? "yyyy/MM/dd"
-                              : widget.field.format).parse(savedDate);
-      setState(() {
-        dateController.text = savedDate;
-        ageController.text = calculateYearDifference(parsedDate, DateTime.now())
-            .abs()
-            .toString();
+              widget.field.format!.toLowerCase() == "none"
+              ? "yyyy/MM/dd"
+              : widget.field.format).parse(savedDate);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          dateController.text = savedDate;
+          ageController.text =
+              calculateYearDifference(parsedDate, DateTime.now())
+                  .abs()
+                  .toString();
+        });
       });
     }
   }
@@ -239,6 +245,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   @override
   Widget build(BuildContext context) {
+    _getSavedDate();
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(

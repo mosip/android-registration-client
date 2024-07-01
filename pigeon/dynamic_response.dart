@@ -40,6 +40,11 @@ class DynamicFieldData{
     required this.concatenatedName,
   });
 }
+class PreRegFieldData{
+  final Map<String, Object> result;
+  final String error;
+  PreRegFieldData({required this.result,required this.error});
+}
 
 @HostApi()
 abstract class DynamicResponseApi {
@@ -63,4 +68,7 @@ abstract class DynamicResponseApi {
 
   @async
   Map<String, String> getLocationHierarchyMap();
+
+  @async
+  Map<String, Object> fetchPreRegistrationDetails(String preRegId);
 }
