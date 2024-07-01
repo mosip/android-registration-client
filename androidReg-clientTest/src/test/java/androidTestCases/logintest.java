@@ -56,7 +56,7 @@ import regclient.utils.TestDataReader;
 
 public class logintest  extends AndroidBaseTest {
 
-	//@Test
+	@Test
 	public void initallLaunch() {
 		BasePage.disableAutoRotation();
 		LoginPageEnglish   loginPage= new LoginPageEnglish(driver);
@@ -243,7 +243,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(dashboardPage.isStatusTitleDisplayed(),"Verify if status displayed");
 	}
 
-//	@Test
+	@Test
 	public void getOnBoard() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
