@@ -258,6 +258,11 @@ public class PacketServiceImpl implements PacketService {
     }
 
     @Override
+    public List<Registration> getAllNotUploadedRegistrations(int page, int pageLimit) {
+        return this.registrationRepository.getAllNotUploadedRegistrations();
+    }
+
+    @Override
     public List<Registration> getRegistrationsByStatus(String status, Integer batchSize) {
         return this.registrationRepository.getRegistrationsByStatus(status, batchSize);
     }

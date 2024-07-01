@@ -120,7 +120,7 @@ class ExportPacketsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void uploadSelected() async {
+  Future<void> uploadSelected() async {
     List<String> toBeUploaded = [];
     List<String> uploadStatus = [ClientStatus.SYNCED.name, ClientStatus.EXPORTED.name,];
 
@@ -141,7 +141,7 @@ class ExportPacketsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void exportSelected() async{
+  Future<void> exportSelected() async{
     List<File> sourceFiles = [];
     List<String> toBeExported = [];
     List<String> exportStatus = [ ClientStatus.APPROVED.name, ClientStatus.SYNCED.name, ClientStatus.EXPORTED.name, ];

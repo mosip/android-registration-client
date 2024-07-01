@@ -197,7 +197,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     public void getAllRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
         List<String> packets = new ArrayList();
         try{
-            List<Registration> allRegistration = packetService.getAllRegistrations(1,20);
+            List<Registration> allRegistration = packetService.getAllNotUploadedRegistrations(1,20);
             ObjectMapper mapper = new ObjectMapper();
             for (Registration element : allRegistration) {
                 String json = mapper.writeValueAsString(element);

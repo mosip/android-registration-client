@@ -9,6 +9,7 @@ import 'package:registration_client/utils/app_config.dart';
 
 
 import '../../provider/export_packet_provider.dart';
+import '../../provider/registration_task_provider.dart';
 import 'widgets/clear_dropdown_filter.dart';
 import 'widgets/client_status_dropdown.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -32,6 +33,7 @@ class ExportPacketsPage extends StatelessWidget {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.white.withOpacity(0.2), padding: const EdgeInsets.all(4)),
               child: const Icon(Icons.arrow_back, size: 32,),
               onPressed: (){
+                context.read<RegistrationTaskProvider>().getApplicationUploadNumber();
                 Navigator.of(context).pop();
               },
             ),

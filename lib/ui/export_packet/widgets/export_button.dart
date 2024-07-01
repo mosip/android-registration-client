@@ -47,7 +47,8 @@ class _ExportButtonState extends State<ExportButton> {
         }else{
           await exportPacketsProvider.packetSyncAll();
         }
-        exportPacketsProvider.exportSelected();
+        await exportPacketsProvider.exportSelected();
+        exportPacketsProvider.searchedList();
       },
       style: OutlinedButton.styleFrom(side: BorderSide(width: 1.5, color: solidPrimary),backgroundColor: Colors.white),
       child: SizedBox(
