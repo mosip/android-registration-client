@@ -1447,17 +1447,17 @@ class _BiometricCaptureScanBlockPortraitState
                   onTap: () {
                     showDialog<String>(
                       context: context,
-                      builder: (context) => SingleChildScrollView(
-                        child: Center(
-                          child: AlertDialog(
-                            insetPadding: EdgeInsets.symmetric(
-                                vertical: (isMobileSize) ? 10 : 24,
-                                horizontal: (isMobileSize) ? 10 : 40),
-                            content: Container(
-                              height: (isMobileSize) ? 500 : 720,
-                              width: (isMobileSize) ? 404 : 760,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12)),
+                      builder: (context) => Center(
+                        child: AlertDialog(
+                          insetPadding: EdgeInsets.symmetric(
+                              vertical: (isMobileSize) ? 10 : 24,
+                              horizontal: (isMobileSize) ? 10 : 40),
+                          content: Container(
+                            height: (isMobileSize) ? 500 : 720,
+                            width: (isMobileSize) ? 404 : 760,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12)),
+                            child: SingleChildScrollView(
                               child: Column(
                                 children: [
                                   Row(
@@ -2169,13 +2169,13 @@ class _BiometricCaptureScanBlockPortraitState
                   onTap: () {
                     showDialog<String>(
                       context: context,
-                      builder: (context) => SingleChildScrollView(
-                        child: AlertDialog(
-                          content: Container(
-                            height: (isMobileSize) ? 500 : 720,
-                            width: (isMobileSize) ? 404 : 760,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12)),
+                      builder: (context) => AlertDialog(
+                        content: Container(
+                          height: (isMobileSize) ? 500 : 720,
+                          width: (isMobileSize) ? 404 : 760,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12)),
+                          child: SingleChildScrollView(
                             child: Column(
                               children: [
                                 Row(
