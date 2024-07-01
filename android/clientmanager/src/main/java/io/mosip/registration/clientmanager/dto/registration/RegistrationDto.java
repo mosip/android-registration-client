@@ -180,7 +180,7 @@ public class RegistrationDto extends Observable {
             v = v != null ? v : new ArrayList<SimpleType>();
             ((List<SimpleType>)v).removeIf( e -> e.getLanguage().equalsIgnoreCase(language));
             if(isValidValue(value))
-                ((List<SimpleType>)v).add(new SimpleType(language, value,""));
+                ((List<SimpleType>)v).add(new SimpleType(language, value));
             return v;
         });
         clearAndNotifyAllObservers();

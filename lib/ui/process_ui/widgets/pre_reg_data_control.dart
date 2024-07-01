@@ -93,11 +93,11 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                   String name = obj['name'] ?? '';
                   String language = obj['language'] ?? '';
                   String value = obj["value"] ?? '';
-                  GenericData data = GenericData(name: name, code: value, langCode: language);
+                  GenericData data = GenericData(name: value, code: value, langCode: language);
                   if(e.controlType == "textbox"){
                     globalProvider.setLanguageSpecificValue(
                       key!,
-                      name,
+                      value,
                       language,
                       globalProvider.fieldInputValue,
                     );
@@ -109,7 +109,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                     if(e.id == "gender"){
                       globalProvider.setLanguageSpecificValue(
                         key!,
-                        name,
+                        value,
                         language,
                         globalProvider.fieldInputValue,
                       );
@@ -117,21 +117,27 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                     if(e.fieldType == "dynamic"){
                       globalProvider.setLanguageSpecificValue(
                         key!,
-                        name,
+                        value,
                         language,
                         globalProvider.fieldInputValue,
                       );
                     }
                     if(e.id != "gender" && e.fieldType != "dynamic") {
-                      if(language == lang) {
-                        globalProvider.setLanguageSpecificValue(
-                          "${e.group}${e.subType}",
-                          data,
-                          lang,
-                          globalProvider.fieldInputValue,
-                        );
-                        globalProvider.setLocationHierarchy(
-                            e.group!, data.code, index!);
+                      temp = await registrationTaskProvider.getLocationValues("$index", globalProvider.selectedLanguage);
+                      for(var subData in temp) {
+                        GenericData dataSubValue = GenericData(name: subData!.name, code: subData.code, langCode: lang);
+                        if (language == lang) {
+                          if (data.code == subData.code) {
+                            globalProvider.setLanguageSpecificValue(
+                              "${e.group}${e.subType}",
+                              dataSubValue,
+                              lang,
+                              globalProvider.fieldInputValue,
+                            );
+                            globalProvider.setLocationHierarchy(
+                                e.group!, subData.code, index!);
+                          }
+                        }
                       }
                     }
                     for(var parentData in allValue){
@@ -139,14 +145,14 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                           String dynamicValue = parentData.code ?? '';
                           GenericData dataValue = GenericData(name: dynamicName, code: dynamicValue, langCode: lang);
                           if(dynamicValue == value){
+                            globalProvider.setLocationHierarchy(
+                                e.group!, dynamicValue, index!);
                             globalProvider.setLanguageSpecificValue(
                               "${e.group}${e.subType}",
                               dataValue,
                               lang,
                               globalProvider.fieldInputValue,
                             );
-                            globalProvider.setLocationHierarchy(
-                                e.group!, dataValue.code, index!);
                           }
                     }
                   }
