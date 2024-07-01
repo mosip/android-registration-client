@@ -340,15 +340,15 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
                                 break;
                             }
                         }
-                        if(genericValueListDynamic!=null) {
-                            for (GenericValueDto dto : genericValueListDynamic) {
-                                if (dto.getCode().equalsIgnoreCase(value)) {
-                                    updatedName = dto.getName();
-                                    break;
-                                }
-                            }
-                        }
-                        list.add(new SimpleType(object.optString("language", ""), object.optString("value",""), updatedName!= "" ? updatedName : value));
+//                        if(genericValueListDynamic!=null) {
+//                            for (GenericValueDto dto : genericValueListDynamic) {
+//                                if (dto.getCode().equalsIgnoreCase(value)) {
+//                                    updatedName = dto.getName();
+//                                    break;
+//                                }
+//                            }
+//                        }
+                        list.add(new SimpleType(object.optString("language", ""), updatedName!= "" ? updatedName : object.optString("value","")));
                     }
                     return list;
             }
