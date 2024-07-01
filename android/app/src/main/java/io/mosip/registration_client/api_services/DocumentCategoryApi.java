@@ -85,6 +85,7 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
         try {
             Map<String, Object> dataContext = this.registrationService.getRegistrationDto().getMVELDataContext();
             String applicantTypeCode = this.evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
+            Log.i(getClass().getSimpleName(), "applicantType: " + applicantTypeCode);
             documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));

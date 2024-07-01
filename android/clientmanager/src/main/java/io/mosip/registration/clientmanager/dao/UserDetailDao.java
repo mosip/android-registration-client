@@ -23,13 +23,15 @@ public abstract class UserDetailDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertAllUsers(List<UserDetail> users);
 
-    @Query("update user_detail set is_onboarded = :isOnboarded where id = :userId")
-    public abstract void updateUserDetail(boolean isOnboarded, String userId);
+    @Query("update user_detail set is_onboarded = :isOnboarded , updated_dtimes = :updatedDtimes where id = :userId")
+    public abstract void updateUserDetail(boolean isOnboarded, String userId,Long updatedDtimes);
 
     @Transaction
     public void truncateAndInsertAll(List<UserDetail> users) {
         deleteAllUsers();
         insertAllUsers(users);
     }
+    @Query("select updated_dtimes from user_detail where id=:id and is_onboarded=1")
+    public abstract Long getUpdatedTime(String id);
 
 }

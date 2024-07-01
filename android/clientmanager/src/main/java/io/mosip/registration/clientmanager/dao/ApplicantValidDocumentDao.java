@@ -22,4 +22,7 @@ public interface ApplicantValidDocumentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ApplicantValidDocument applicantValidDocument);
+
+    @Query("select name from document_type where code=:code")
+    List<String> findAllDocTypesByCode(String code);
 }

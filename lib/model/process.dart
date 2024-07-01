@@ -17,7 +17,7 @@ class Process with _$Process {
     Map<String,String>? label,
     Map<String,String>? caption,
     String? icon,
-    String? autoSelectedGroups,
+    List<String>? autoSelectedGroups,
   }) = _Process;
 
   factory Process.fromJson(Map<String, Object?> json) =>

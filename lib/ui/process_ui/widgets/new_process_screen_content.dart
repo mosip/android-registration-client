@@ -26,6 +26,7 @@ import 'package:registration_client/ui/process_ui/widgets/gender_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
 import 'radio_button_control.dart';
@@ -154,21 +155,28 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: context.watch<GlobalProvider>().formKey,
-      child: Column(
-        children: [
-          ...widget.screen.fields!.map((e) {
-            _checkMvelVisible(e!);
-            if (e.inputRequired == true) {
-              if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
-                return widgetType(e);
-              }
-            }
-            return Container();
-          }).toList(),
+    return Column(
+      children: [
+        if(widget.screen.preRegFetchRequired==true)...[
+          PreRegDataControl(screen:widget.screen),
         ],
-      ),
+        Form(
+          key: context.watch<GlobalProvider>().formKey,
+          child: Column(
+            children: [
+              ...widget.screen.fields!.map((e) {
+                _checkMvelVisible(e!);
+                if (e.inputRequired == true) {
+                  if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
+                    return widgetType(e);
+                  }
+                }
+                return Container();
+              }).toList(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -23,5 +23,13 @@ abstract class DemographicService {
 
   Future<void> setConsentField(String consentData);
 
+  Future<void> addUpdatableFields(List<String> fieldIds);
+
+  Future<void> addUpdatableFieldGroup(String fieldGroup);
+
+  Future<void> removeUpdatableFields(List<String> fieldIds);
+
+  Future<void> removeUpdatableFieldGroup(String fieldGroup);
+
   factory DemographicService() => getDemographicServiceImpl();
 }

@@ -12,4 +12,5 @@ public class Document implements Serializable {
     private String type;
     private String format;
     private String refNumber;
+    private String category;
 }
