@@ -24,5 +24,7 @@ public abstract class AcknowledgementPage extends BasePage{
 
 	public abstract DemographicDetailsPage clickOnDemographicDetailsTitle();
 	
+	public abstract String getAID();
+		
 
 }
