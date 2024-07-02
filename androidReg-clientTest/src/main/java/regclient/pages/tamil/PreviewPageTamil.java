@@ -35,6 +35,10 @@ public class PreviewPageTamil extends PreviewPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 2 )\"))")
 	private WebElement bothIrisImage;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
+	private WebElement fingerExceptionText;
+	
+
 	@AndroidFindBy(accessibility = "தொடர்க")
 	private WebElement continueButton;
 	
@@ -78,6 +82,15 @@ public class PreviewPageTamil extends PreviewPage {
 	
 	public boolean isSingleIrisImageDisplayed() {
 		return isElementDisplayed(singleIrisImage);
+	}
+	
+	public boolean isFingerExceptionText() {
+		return isElementDisplayed(fingerExceptionText);
+	}
+
+	public String getAID() {
+		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
+		return applicationID;
 	}
 
 }

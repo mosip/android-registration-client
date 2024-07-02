@@ -135,4 +135,44 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
             Log.e(getClass().getSimpleName(), "Add consent dto failed!" + Arrays.toString(e.getStackTrace()));
         }
     }
+
+    @Override
+    public void addUpdatableFields(@NonNull List<String> fieldIds, @NonNull DemographicsDataPigeon.Result<String> result) {
+        try {
+            this.registrationService.getRegistrationDto().addUpdatableFields(fieldIds);
+            result.success("Ok");
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Add updatable fields failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @Override
+    public void addUpdatableFieldGroup(@NonNull String fieldGroup, @NonNull DemographicsDataPigeon.Result<String> result) {
+        try {
+            this.registrationService.getRegistrationDto().addUpdatableFieldGroup(fieldGroup);
+            result.success("Ok");
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Add updatable field group failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @Override
+    public void removeUpdatableFields(@NonNull List<String> fieldIds, @NonNull DemographicsDataPigeon.Result<String> result) {
+        try {
+            this.registrationService.getRegistrationDto().removeUpdatableFields(fieldIds);
+            result.success("Ok");
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Remove updatable fields failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @Override
+    public void removeUpdatableFieldGroup(@NonNull String fieldGroup, @NonNull DemographicsDataPigeon.Result<String> result) {
+        try {
+            this.registrationService.getRegistrationDto().removeUpdatableFieldGroup(fieldGroup);
+            result.success("Ok");
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Remove updatable field group failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
 }

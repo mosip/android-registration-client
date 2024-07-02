@@ -15,6 +15,7 @@ import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
@@ -422,10 +423,14 @@ public class MasterDataServiceImpl implements MasterDataService {
                                    Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     try {
-                        ResponseWrapper<IdSchemaResponse> wrapper = JsonUtils.jsonStringToJavaObject(response.body().string(),
+                        String jsonString = response.body().string();
+                        JSONObject jsonObject = new JSONObject(jsonString);
+                        String responseString = jsonObject.get("response").toString();
+                        ResponseWrapper<IdSchemaResponse> wrapper = JsonUtils.jsonStringToJavaObject(jsonString,
                                 new TypeReference<ResponseWrapper<IdSchemaResponse>>() {
                                 });
                         identitySchemaRepository.saveIdentitySchema(context, wrapper.getResponse());
+                        saveProcessSpec(wrapper.getResponse(), responseString);
                         result = "";
                         if(isManualSync) {
                             Toast.makeText(context, "Identity schema and UI Spec Sync Completed", Toast.LENGTH_LONG).show();
@@ -457,6 +462,24 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
         });
     }
+
+    private void saveProcessSpec(IdSchemaResponse idSchemaResponse, String jsonString) throws Exception {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        Iterator<String> keys = jsonObject.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            if(key.toLowerCase().endsWith("process")) {
+                try {
+                    ProcessSpecDto processSpecDto = JsonUtils.jsonStringToJavaObject(jsonObject.get(key).toString(),
+                            new TypeReference<ProcessSpecDto>() {});
+                    identitySchemaRepository.createProcessSpec(context, key, idSchemaResponse.getIdVersion(), processSpecDto);
+                } catch (IOException e) {
+                    Log.e(TAG, e.getMessage(), e);
+                }
+            }
+        }
+    }
+
 
     @Override
     public void syncUserDetails(Runnable onFinish, boolean isManualSync) throws Exception {

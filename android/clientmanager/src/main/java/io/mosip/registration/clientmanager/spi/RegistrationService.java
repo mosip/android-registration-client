@@ -13,7 +13,7 @@ public interface RegistrationService {
 
     void rejectRegistration(Registration registration);
 
-    RegistrationDto startRegistration(List<String> languages) throws Exception;
+    RegistrationDto startRegistration(List<String> languages, String flowType, String process) throws Exception;
 
     RegistrationDto getRegistrationDto() throws Exception;
 

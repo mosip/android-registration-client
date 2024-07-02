@@ -218,6 +218,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       globalProvider.newProcessTabIndex = 0;
       globalProvider.htmlBoxTabIndex = 0;
       globalProvider.setRegId("");
+      globalProvider.setPreRegistrationId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
@@ -359,8 +360,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 }
                 for (Screen? screen in screens) {
                   if (screen!.name! == "Documents" ||
-                      screen!.name! == "BiometricDetails") {
-                    for (Field? field in screen!.fields!) {
+                      screen.name! == "BiometricDetails") {
+                    for (Field? field in screen.fields!) {
                       if (globalProvider.fieldInputValue
                           .containsKey(field!.id!)) {
                         globalProvider.fieldInputValue.remove(field.id);
@@ -553,7 +554,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-             templateTitleMap = {'demographicInfo': AppLocalizations.of(context)!.demographic_information ?? "Demographic Information", 'documents': AppLocalizations.of(context)!.documents ?? "Documents", 'bioMetrics': AppLocalizations.of(context)!.biometrics ?? "Biometrics"};
+             templateTitleMap = {'demographicInfo': appLocalizations.demographic_information, 'documents': appLocalizations.documents, 'bioMetrics': appLocalizations.biometrics};
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
               await registrationTaskProvider.getPreviewTemplate(true,templateTitleMap!);

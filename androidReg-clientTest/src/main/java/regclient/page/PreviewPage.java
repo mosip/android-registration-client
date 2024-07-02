@@ -25,6 +25,8 @@ public abstract class PreviewPage extends BasePage{
 	public abstract boolean isBothIrisImageDisplayed();
 	
 	public abstract boolean isSingleIrisImageDisplayed();
+	
+	public abstract boolean isFingerExceptionText() ;
 
-
+	public abstract String getAID();
 }

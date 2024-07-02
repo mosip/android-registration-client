@@ -22,7 +22,6 @@ import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/export_packet/export_packet_ui.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
-// import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -75,7 +74,10 @@ class _HomePageState extends State<HomePage> {
     }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
+    syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
+    syncProvider.isSyncAndUploadInProgress = false;
+    await syncProvider.getPreRegistrationIds();
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);
@@ -93,19 +95,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getFieldValues(String fieldId, String langCode) async {
-    List<DynamicFieldData?> fieldValues =
-        await registrationTaskProvider.getFieldValues(fieldId, langCode, globalProvider.chosenLang);
+    List<DynamicFieldData?> fieldValues = await registrationTaskProvider
+        .getFieldValues(fieldId, langCode, globalProvider.chosenLang);
     globalProvider.setNotificationLanguages(fieldValues);
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    if (process.id == "NEW") {
-      globalProvider.clearMap();
-      globalProvider.clearScannedPages();
-      globalProvider.clearExceptions();
-      globalProvider.newProcessTabIndex = 0;
-      globalProvider.htmlBoxTabIndex = 0;
-      globalProvider.setRegId("");
+    if (process.id == "NEW" || process.id == "UPDATE") {
+      globalProvider.clearRegistrationProcessData();
+      globalProvider.setPreRegistrationId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
@@ -170,7 +168,7 @@ class _HomePageState extends State<HomePage> {
         "title": AppLocalizations.of(context)!.update_operator_biomterics,
         "onTap": (context) async {
           await BiometricsApi().startOperatorOnboarding();
-          globalProvider.onboardingProcessName="Updation";
+          globalProvider.onboardingProcessName = "Updation";
           Navigator.push(
               context,
               MaterialPageRoute(

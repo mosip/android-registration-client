@@ -99,9 +99,18 @@
       }
     }
   },
-  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "notificationLanguage": "{language, select, eng{Preferred Language of Communication} ara{لغة التواصل المفضلة} fra{Langue de communication préférée} hin{संचार की पसंदीदा भाषा} kan{ಸಂವಹನದ ಆದ್ಯತೆಯ ಭಾಷೆ} tam{விருப்பமான தொடர்பு மொழி} other{Notification Languages}}",
   "@notificationLanguage": {
     "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "dataEntryLanguage": "{language, select, eng{Data Entry Language} ara{لغة إدخال البيانات} fra{Langue de saisie des données} hin{डाटा एंट्री भाषा} kan{ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ} tam{தரவு நுழைவு மொழி} other{Notification Languages}}",
+  "@dataEntryLanguage": {
+    "description": "Data Entry Language Label",
     "placeholders": {
       "language": {
         "type": "String"
@@ -268,5 +277,18 @@
   "supervisors_biometric_update": "ನಿರೀಕ್ಷಕರ ಬಯೋಮೆಟ್ರಿಕ್ ನವೀಕರಣ",
   "help_topics": "ಸಹಾಯ ವಿಷಯಗಳು",
   "onboard_request_message": "ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನಿಮ್ಮನ್ನು ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಲು ದಯವಿಟ್ಟು \"ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ\" ಬಟನ್ ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.",
-  "hello_s": "ನಮಸ್ಕಾರ "
+  "hello_s": "ನಮಸ್ಕಾರ ",
+  "uin_number": "UIN ಸಂಖ್ಯೆ",
+  "valid_uin": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ UIN ಅನ್ನು ನಮೂದಿಸಿ",
+  "enter_uin": "UIN ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "select_update_attributes": "ನವೀಕರಿಸಬೇಕಾದ ಎಲ್ಲಾ ಗುಣಲಕ್ಷಣಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "logout_action_required": "ಇನ್ನೂ ಕೆಲವು ಕ್ರಮಗಳ ಅಗತ್ಯವಿದೆ!",
+  "logout_warning_message": "ಲಾಗ್ಔಟ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡುವುದರಿಂದ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಕೊನೆಗೊಳಿಸುತ್ತದೆ ಮತ್ತು ಡೇಟಾ ನಷ್ಟಕ್ಕೆ ಕಾರಣವಾಗಬಹುದು.",
+  "officer": "ಅಧಿಕಾರಿ",
+  "operator": "ಆಪರೇಟರ್",
+  "supervisor": "ಮೇಲ್ವಿಚಾರಕ",
+  "online": "ಆನ್ಲೈನ್",
+  "offline": "ಆಫ್ಲೈನ್",
+  "logout_success": "ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಲಾಗ್ ಔಟ್ ಆಗಿರುವಿರಿ!",
+  "logout_failure": "ಏನೋ ತಪ್ಪಾಗಿದೆ, ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ"
 }

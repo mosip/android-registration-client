@@ -4,6 +4,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
+
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
 
 public class LoginPageEnglish extends LoginPage {
@@ -89,7 +92,7 @@ public class LoginPageEnglish extends LoginPage {
 
 	@AndroidFindBy(accessibility = "spanish")
 	private WebElement spanishButton;
-	
+
 	@AndroidFindBy(accessibility = "Sync Completed Successfully")
 	private WebElement syncCompletedSuccessfullyMessage;
 
@@ -107,6 +110,7 @@ public class LoginPageEnglish extends LoginPage {
 	}
 
 	public  void enterPassword(String password) {
+		retryFindElement(passwordTextBox,Duration.ofSeconds(10));
 		clickAndsendKeysToTextBox(passwordTextBox,password);
 	}
 
@@ -140,8 +144,8 @@ public class LoginPageEnglish extends LoginPage {
 	}
 
 	public boolean isWelcomeMessageInSelectedLanguageDisplayed() {
-			return isElementDisplayed(welcomeMessageEnglish);
-	
+		return isElementDisplayed(welcomeMessageEnglish);
+
 	}
 
 	public boolean isHelpButtonDisplayed() {
@@ -169,8 +173,9 @@ public class LoginPageEnglish extends LoginPage {
 	}
 
 	public void selectLanguage() {
-			clickOnElement(englishButton);
-		}
+		clickOnElement(englishButton);
+	}
+
 
 	public boolean isSyncCompletedSuccessfullyMessageDisplayed() {
 		return isElementDisplayed(syncCompletedSuccessfullyMessage,2000);

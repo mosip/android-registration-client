@@ -17,7 +17,9 @@ abstract class SyncResponseService {
   Future<Sync> getMasterDataSync(bool isManualSync);
   Future<Sync> getCaCertsSync(bool isManualSync);
   Future<String> batchJob();
+  Future<String> getPreRegIds();
   Future<Sync> getKernelCertsSync(bool isManualSync);
+  Future<bool> getSyncAndUploadInProgressStatus();
 
   factory SyncResponseService() => getSyncResponseServiceImpl();
 }

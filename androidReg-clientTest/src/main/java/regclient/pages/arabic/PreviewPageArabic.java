@@ -38,6 +38,9 @@ public class PreviewPageArabic extends PreviewPage {
 	@AndroidFindBy(accessibility = "يكمل")
 	private WebElement continueButton;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
+	private WebElement fingerExceptionText;
+	
 	public PreviewPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -80,4 +83,13 @@ public class PreviewPageArabic extends PreviewPage {
 		return isElementDisplayed(singleIrisImage);
 	}
 
+	public boolean isFingerExceptionText() {
+		return isElementDisplayed(fingerExceptionText);
+	}
+	
+	public String getAID() {
+		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
+		return applicationID;
+	}
+	
 }

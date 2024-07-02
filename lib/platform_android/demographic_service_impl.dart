@@ -96,6 +96,50 @@ class DemographicServiceImpl implements DemographicService {
     }
     return fieldValue;
   }
+  
+  @override
+  Future<void> addUpdatableFieldGroup(String fieldGroup) async {
+    try {
+      await DemographicsApi().addUpdatableFieldGroup(fieldGroup);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable field group not added ${e.toString()}');
+    }
+  }
+  
+  @override
+  Future<void> addUpdatableFields(List<String> fieldIds) async {
+    try {
+      await DemographicsApi().addUpdatableFields(fieldIds);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable fields not added ${e.toString()}');
+    }
+  }
+  
+  @override
+  Future<void> removeUpdatableFieldGroup(String fieldGroup) async {
+    try {
+      await DemographicsApi().removeUpdatableFieldGroup(fieldGroup);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable field group not removed ${e.toString()}');
+    }
+  }
+  
+  @override
+  Future<void> removeUpdatableFields(List<String> fieldIds) async {
+    try {
+      await DemographicsApi().removeUpdatableFields(fieldIds);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable fields not removed ${e.toString()}');
+    }
+  }
 }
 
 DemographicService getDemographicServiceImpl() => DemographicServiceImpl();

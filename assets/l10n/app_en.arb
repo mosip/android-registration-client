@@ -99,9 +99,18 @@
       }
     }
   },
-  "notificationLanguage": "{language, select, eng{Notification Languages} ara{لغات الإخطار} fra{Langues de notification} hin{अधिसूचना भाषाएँ} kan{ಅಧಿಸೂಚನೆ ಭಾಷೆಗಳು} tam{அறிவிப்பு மொழிகள்} other{Notification Languages}}",
+  "notificationLanguage": "{language, select, eng{Preferred Language of Communication} ara{لغة التواصل المفضلة} fra{Langue de communication préférée} hin{संचार की पसंदीदा भाषा} kan{ಸಂವಹನದ ಆದ್ಯತೆಯ ಭಾಷೆ} tam{விருப்பமான தொடர்பு மொழி} other{Notification Languages}}",
   "@notificationLanguage": {
     "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "dataEntryLanguage": "{language, select, eng{Data Entry Language} ara{لغة إدخال البيانات} fra{Langue de saisie des données} hin{डाटा एंट्री भाषा} kan{ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ} tam{தரவு நுழைவு மொழி} other{Notification Languages}}",
+  "@dataEntryLanguage": {
+    "description": "Data Entry Language Label",
     "placeholders": {
       "language": {
         "type": "String"
@@ -200,7 +209,7 @@
   "go_back": "GO BACK",
   "informed": "INFORMED",
   "logo_text": "Powered by MOSIP",
-  "get_onboard": "GET ONBOARD",
+  "get_onboard": "GET ONBOARDED",
   "skip_to_home": "SKIP TO HOME",
   "continue_text": "CONTINUE",
   "authenticate": "AUTHENTICATE",
@@ -213,7 +222,7 @@
   "registration_acknowledgement": "Registration Acknowledgement",
   "print_text": "PRINT",
   "hello": "HELLO",
-  "onboard_process_help": "Please tap 'GET ONBOARD' to get started with the onboarding process.",
+  "onboard_process_help": "Please tap on 'GET ONBOARDED' to get started with the onboarding process.",
   "default_not_found": "Required role not found!",
   "mark_exception":"Mark Exception",
   "threshold":"Threshold",
@@ -266,5 +275,18 @@
   "supervisors_biometric_update": "Supervisor's Biometric Update",
   "help_topics": "Help topics",
   "onboard_request_message": "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
-  "hello_s": "Hello "
+  "hello_s": "Hello ",
+  "uin_number": "UIN Number",
+  "valid_uin": "Please enter a valid UIN",
+  "enter_uin": "Enter UIN Number",
+  "select_update_attributes": "Select all the attributes that need to be updated",
+  "logout_action_required": "There is still some action required!",
+  "logout_warning_message": "Clicking on logout will terminate the process and could result in data loss.",
+  "officer": "Officer",
+  "operator": "Operator",
+  "supervisor": "Supervisor",
+  "online": "Online",
+  "offline": "Offline",
+  "logout_success": "You have been successfully logged out!",
+  "logout_failure": "Something went wrong, please try again after some time"
 }

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
+import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
 import io.mosip.registration.clientmanager.dto.AgeGroupConfigDto;
 import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
 import io.mosip.registration.clientmanager.dto.uispec.ConditionalBioAttrDto;
@@ -17,6 +18,7 @@ import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.RequiredDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
 import io.mosip.registration.clientmanager.entity.IdentitySchema;
+import io.mosip.registration.clientmanager.entity.ProcessSpec;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
 import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.apache.commons.io.IOUtils;
@@ -37,11 +39,13 @@ public class IdentitySchemaRepository {
     private IdentitySchemaDao identitySchemaDao;
     private GlobalParamRepository globalParamRepository;
     private TemplateRepository templateRepository;
+    private ProcessSpecDao processSpecDao;
 
-    public IdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao) {
+    public IdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao, ProcessSpecDao processSpecDao) {
         this.templateRepository = templateRepository;
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaDao = identitySchemaDao;
+        this.processSpecDao = processSpecDao;
     }
 
     public void saveIdentitySchema(Context context, IdSchemaResponse idSchemaResponse) throws Exception {
@@ -61,9 +65,33 @@ public class IdentitySchemaRepository {
         try(FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(schema);
         }
+        identitySchema.setFileName("schema_"+identitySchema.getSchemaVersion());
         identitySchema.setFileLength(file.length());
         identitySchema.setFileHash(HMACUtils2.digestAsPlainText(schema.getBytes(StandardCharsets.UTF_8)));
         identitySchemaDao.insertIdentitySchema(identitySchema);
+    }
+
+    public void createProcessSpec(Context context, String type, double idVersion, ProcessSpecDto processSpecDto) throws Exception {
+        IdentitySchema identitySchema = new IdentitySchema(type);
+        identitySchema.setSchemaVersion(idVersion);
+        String schema = JsonUtils.javaObjectToJsonString(processSpecDto);
+        Log.i(TAG, "Schema path: " + context.getFilesDir());
+        File file = new File(context.getFilesDir(), type);
+        try(FileWriter fileWriter = new FileWriter(file)) {
+            fileWriter.write(schema);
+        }
+        identitySchema.setFileName(type);
+        identitySchema.setFileLength(file.length());
+        identitySchema.setFileHash(HMACUtils2.digestAsPlainText(schema.getBytes(StandardCharsets.UTF_8)));
+        identitySchemaDao.insertIdentitySchema(identitySchema);
+
+        ProcessSpec processSpec = new ProcessSpec(processSpecDto.getId());
+        processSpec.setType(type);
+        processSpec.setIdVersion(idVersion);
+        processSpec.setOrderNum(processSpecDto.getOrder());
+        processSpec.setActive(processSpecDto.isActive());
+        processSpec.setFlow(processSpecDto.getFlow());
+        processSpecDao.insertProcessSpec(processSpec);
     }
 
     public Double getLatestSchemaVersion() {
@@ -72,7 +100,7 @@ public class IdentitySchemaRepository {
     }
 
     public String getSchemaJson(Context context, Double version) throws Exception {
-        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version);
+        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version, "schema_"+version);
 
 
         if(identitySchema == null)
@@ -82,7 +110,7 @@ public class IdentitySchemaRepository {
     }
 
     public ProcessSpecDto getNewProcessSpec(Context context, Double version) throws Exception {
-        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version);
+        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version, "schema_"+version);
 
         if(identitySchema == null)
             throw new Exception("Identity schema not found for version : " + version);
@@ -115,6 +143,42 @@ public class IdentitySchemaRepository {
                 throw new Exception("Schema file is tampered");
 
             return JsonUtils.jsonStringToJavaObject(content, IdSchemaResponse.class);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to get identity schema", e);
+        }
+        throw new Exception("Failed to load Identity schema for version : " + identitySchema.getSchemaVersion());
+    }
+    
+    public List<ProcessSpecDto> getAllProcessSpecDTO(Context context, Double idVersion) throws Exception {
+        List<ProcessSpecDto> processSpecDtoList = new ArrayList<>();
+        List<ProcessSpec> processSpecList = processSpecDao.getAllProcessSpec(idVersion);
+        if(processSpecList == null ) {
+            throw new Exception("No process spec found for version: " + idVersion);
+        }
+        for (ProcessSpec processSpec : processSpecList) {
+            String filename = processSpec.getType();
+            IdentitySchema identitySchema = identitySchemaDao.findIdentitySchema(idVersion, filename);
+            if(identitySchema == null) {
+                throw new Exception("No identity schema found for process spec with type: " + processSpec.getType());
+            }
+            ProcessSpecDto processSpecDto = getProcessSpecDtoFromFile(context, processSpec.getType(), identitySchema);
+            processSpecDtoList.add(processSpecDto);
+        }
+        return processSpecDtoList;
+    }
+    
+    private ProcessSpecDto getProcessSpecDtoFromFile(Context context, String type, IdentitySchema identitySchema) throws Exception {
+        File file = new File(context.getFilesDir(), type);
+        if(file.length() != identitySchema.getFileLength())
+            throw new Exception("Schema file is tampered");
+
+        try(FileReader fileReader = new FileReader(file)) {
+            String content = IOUtils.toString(fileReader);
+            String hash = HMACUtils2.digestAsPlainText(content.getBytes(StandardCharsets.UTF_8));
+            if(!hash.equalsIgnoreCase(identitySchema.getFileHash()))
+                throw new Exception("Schema file is tampered");
+
+            return JsonUtils.jsonStringToJavaObject(content, ProcessSpecDto.class);
         } catch (IOException e) {
             Log.e(TAG, "Failed to get identity schema", e);
         }
@@ -242,7 +306,7 @@ public class IdentitySchemaRepository {
                     FieldSpecDto field = objectMapper.treeToValue(element, FieldSpecDto.class);
                     consentFields.add(field);
                 }
-                ScreenSpecDto consentScreen = new ScreenSpecDto("Consent", consentScreenLabel, consentFields, 1);
+                ScreenSpecDto consentScreen = new ScreenSpecDto("Consent", consentScreenLabel, consentFields, 1, false);
                 screens.add(consentScreen);
             } catch (JsonProcessingException e) {
                 Log.e(TAG, "Failed to build consent screen", e);
@@ -254,7 +318,7 @@ public class IdentitySchemaRepository {
             demoScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("demographicsScreenName_"+primaryLanguage));
             if (secondaryLanguage != null)
                 demoScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("demographicsScreenName_"+secondaryLanguage));
-            ScreenSpecDto demographicScreen = new ScreenSpecDto("DemographicDetails", demoScreenLabel, demographics, 2);
+            ScreenSpecDto demographicScreen = new ScreenSpecDto("DemographicDetails", demoScreenLabel, demographics, 2, true);
             screens.add(demographicScreen);
             Log.i(TAG, "Building demographics screen completed");
 
@@ -263,7 +327,7 @@ public class IdentitySchemaRepository {
             docScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("documentsScreenName_"+primaryLanguage));
             if (secondaryLanguage != null)
                 docScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("documentsScreenName_"+secondaryLanguage));
-            ScreenSpecDto documentsScreen = new ScreenSpecDto("Documents", docScreenLabel, documents, 3);
+            ScreenSpecDto documentsScreen = new ScreenSpecDto("Documents", docScreenLabel, documents, 3, false);
             screens.add(documentsScreen);
             Log.i(TAG, "Building documents screen completed");
 
@@ -272,7 +336,7 @@ public class IdentitySchemaRepository {
             bioScreenLabel.put(primaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("biometricsScreenName_"+primaryLanguage));
             if (secondaryLanguage != null)
                 bioScreenLabel.put(secondaryLanguage, this.globalParamRepository.getCachedStringGlobalParam("biometricsScreenName_"+secondaryLanguage));
-            ScreenSpecDto biometricsScreen = new ScreenSpecDto("BiometricDetails", bioScreenLabel, biometrics, 4);
+            ScreenSpecDto biometricsScreen = new ScreenSpecDto("BiometricDetails", bioScreenLabel, biometrics, 4, false);
             screens.add(biometricsScreen);
             Log.i(TAG, "Building biometrics screen completed");
 

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
@@ -57,12 +58,20 @@ public class RegistrationDto extends Observable {
     private String rId;
     private String flowType;
     private String process;
+    private String preRegistrationId;
     private Double schemaVersion;
     private List<String> selectedLanguages;
     private ConsentDto consentDto;
     private Map<String, Object> demographics;
     private Map<String, DocumentDto> documents;
     private Map<String, BiometricsDto> biometrics;
+
+    private boolean isBiometricMarkedForUpdate;
+    private List<String> updatableFields;
+    private List<String> updatableFieldGroups;
+    private boolean isUpdateUINNonBiometric;
+    private boolean isNameNotUpdated;
+    private List<String> defaultUpdatableFieldGroups;
 
     //Supporting fields
     public Map<String, Object> AGE_GROUPS = new HashMap<>();
@@ -85,6 +94,9 @@ public class RegistrationDto extends Observable {
         this.demographics = new HashMap<>();
         this.documents = new HashMap<>();
         this.biometrics = new HashMap<>();
+        this.updatableFields = new ArrayList<>();
+        this.updatableFieldGroups = new ArrayList<>();
+        this.defaultUpdatableFieldGroups = new ArrayList<>();
         this.ATTEMPTS = new HashMap<>();
         this.EXCEPTIONS = new HashMap<>();
         this.BIO_THRESHOLDS = bioThresholds;
@@ -178,15 +190,39 @@ public class RegistrationDto extends Observable {
         this.demographics.remove(fieldId);
     }
 
+    public void addUpdatableFields(List<String> fieldIds) {
+        this.updatableFields.addAll(fieldIds);
+        clearAndNotifyAllObservers();
+    }
+
+    public void addUpdatableFieldGroup(String fieldGroup) {
+        this.updatableFieldGroups.add(fieldGroup);
+        clearAndNotifyAllObservers();
+    }
+
+    public void removeUpdatableFields(List<String> fieldIds) {
+        this.updatableFields.removeAll(fieldIds);
+        clearAndNotifyAllObservers();
+    }
+
+    public void removeUpdatableFieldGroup(String fieldGroup) {
+        this.updatableFieldGroups.remove(fieldGroup);
+        clearAndNotifyAllObservers();
+    }
+
     public void setConsent(String consentText) {
         this.consentDto = new ConsentDto(consentText, LocalDateTime.now(ZoneOffset.UTC));
     }
 
-    public void addDocument(String fieldId, String docType, String reference, byte[] bytes) {
+    public void addDocument(String fieldId, String docType, String format,String reference, byte[] bytes) {
         if( docType != null && bytes != null ) {
             DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
             documentDto.setType(docType);
-            documentDto.setFormat("pdf");
+            if(format != null) {
+                documentDto.setFormat(format);
+            }else{
+                documentDto.setFormat("pdf");
+            }
             documentDto.setRefNumber(reference);
             documentDto.getContent().add(bytes);
             this.documents.put(fieldId, documentDto);
@@ -391,10 +427,13 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.put(RegistrationConstants.FLOW_KEY, this.flowType);
         allIdentityDetails.put(RegistrationConstants.PROCESS_KEY, this.process);
         allIdentityDetails.put("langCodes", this.selectedLanguages);
-        allIdentityDetails.put("isNew", true);
-        allIdentityDetails.put("isUpdate", false);
-        allIdentityDetails.put("isLost", false);
-        allIdentityDetails.put("updatableFieldGroups", Collections.EMPTY_LIST);
+        allIdentityDetails.put("isNew", Objects.equals(this.flowType, "NEW"));
+        allIdentityDetails.put("isUpdate", Objects.equals(this.flowType, "Update"));
+        allIdentityDetails.put("isLost", Objects.equals(this.flowType, "Lost"));
+        allIdentityDetails.put("updatableFields",
+                this.updatableFields == null ? Collections.EMPTY_LIST : this.updatableFields);
+        allIdentityDetails.put("updatableFieldGroups",
+                this.updatableFieldGroups == null ? Collections.EMPTY_LIST : this.updatableFieldGroups);
         allIdentityDetails.putAll(this.demographics);
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);
@@ -415,5 +454,16 @@ public class RegistrationDto extends Observable {
         if(hasChanged()) { clearChanged(); }
         setChanged();
         notifyObservers(getMVELDataContext());
+    }
+
+    public void addWithoutDocument(String fieldId, String docType, String format,String value, String reference) {
+        if( docType != null) {
+            DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
+            documentDto.setType(docType);
+            documentDto.setFormat(format);
+            documentDto.setValue(value);
+            documentDto.setRefNumber(reference);
+            this.documents.put(fieldId, documentDto);
+        }
     }
 }

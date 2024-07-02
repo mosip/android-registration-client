@@ -140,13 +140,12 @@ class _BiometricCaptureControlPortraitState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
-
-                          color: (biometricAttributeData.qualityPercentage.toInt() <
-                                int.parse(
-                                    biometricAttributeData.thresholdPercentage))
-                            ? secondaryColors.elementAt(26)
-                            : secondaryColors.elementAt(11),
-
+                          color: (biometricAttributeData.qualityPercentage
+                                      .toInt() <
+                                  int.parse(biometricAttributeData
+                                      .thresholdPercentage))
+                              ? secondaryColors.elementAt(26)
+                              : secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
                       child: Text(
@@ -161,10 +160,8 @@ class _BiometricCaptureControlPortraitState
         ));
   }
 
-
   @override
   Widget build(BuildContext context) {
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -176,7 +173,9 @@ class _BiometricCaptureControlPortraitState
           child: Card(
             margin: const EdgeInsets.all(0),
             child: Padding(
-              padding:(isMobileSize)?const EdgeInsets.fromLTRB(20, 9, 0, 9):const EdgeInsets.fromLTRB(20, 18, 0, 18),
+              padding: (isMobileSize)
+                  ? const EdgeInsets.fromLTRB(20, 9, 0, 9)
+                  : const EdgeInsets.fromLTRB(20, 18, 0, 18),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -190,14 +189,24 @@ class _BiometricCaptureControlPortraitState
                               .textTheme
                               .titleLarge
                               ?.copyWith(
-                                  fontSize: (isMobileSize)?16.w:24.w,
+                                  fontSize: (isMobileSize) ? 16.w : 24.w,
                                   color: blackShade1,
-                                  fontWeight: semiBold,overflow: TextOverflow.ellipsis),
-                          children: const [
-                            TextSpan(
-                              text: " *",
-                              style: TextStyle(color: Colors.red, fontSize: 15),
-                            )
+                                  fontWeight: semiBold,
+                                  overflow: TextOverflow.ellipsis),
+                          children: [
+                            if (widget.field.required! ||
+                                (widget.field.requiredOn != null &&
+                                    widget.field.requiredOn!.isNotEmpty &&
+                                    (context
+                                                .read<GlobalProvider>()
+                                                .mvelRequiredFields[
+                                            widget.field.id] ??
+                                        false)))
+                              const TextSpan(
+                                text: " *",
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 15),
+                              )
                           ],
                         ))
                       : Text(
@@ -208,9 +217,10 @@ class _BiometricCaptureControlPortraitState
                               .textTheme
                               .titleLarge
                               ?.copyWith(
-                                  fontSize: (isMobileSize)?16.w:24.w,
+                                  fontSize: (isMobileSize) ? 16.w : 24.w,
                                   color: blackShade1,
-                                  fontWeight: semiBold,overflow: TextOverflow.ellipsis),
+                                  fontWeight: semiBold,
+                                  overflow: TextOverflow.ellipsis),
                         ),
                   // SizedBox(
                   //   height: (isMobileSize)?20.h:52.h,
@@ -230,19 +240,8 @@ class _BiometricCaptureControlPortraitState
                     0)
                 ? Container(
                     margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    height: (isMobileSize)?(((((context
-                                            .read<
-                                                BiometricCaptureControlProvider>()
-                                            .returnNoOfAttributes(
-                                                widget
-                                                .field
-                                                .conditionalBioAttributes!
-                                                .first!
-                                                .bioAttributes!))
-                                        .toDouble()))
-                                .ceil() *
-                            409.h) +
-                        70.h):((((context
+                    height: (isMobileSize)
+                        ? (((((context
                                             .read<
                                                 BiometricCaptureControlProvider>()
                                             .returnNoOfAttributes(widget
@@ -250,11 +249,23 @@ class _BiometricCaptureControlPortraitState
                                                 .conditionalBioAttributes!
                                                 .first!
                                                 .bioAttributes!))
-                                        .toDouble()) /
-                                    2)
-                                .ceil() *
-                            335.h) +
-                        70.h,
+                                        .toDouble()))
+                                    .ceil() *
+                                409.h) +
+                            70.h)
+                        : ((((context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .returnNoOfAttributes(widget
+                                                    .field
+                                                    .conditionalBioAttributes!
+                                                    .first!
+                                                    .bioAttributes!))
+                                            .toDouble()) /
+                                        2)
+                                    .ceil() *
+                                335.h) +
+                            70.h,
                     width: double.infinity,
                     child: ResponsiveGridList(
                       listViewBuilderOptions: ListViewBuilderOptions(
@@ -262,8 +273,8 @@ class _BiometricCaptureControlPortraitState
                       minItemWidth: 372.h,
                       verticalGridSpacing: 17,
                       horizontalGridMargin: 30,
-                      minItemsPerRow: (isMobileSize)?1:2,
-                      maxItemsPerRow: (isMobileSize)?1:2,
+                      minItemsPerRow: (isMobileSize) ? 1 : 2,
+                      maxItemsPerRow: (isMobileSize) ? 1 : 2,
                       children: [
                         if (widget.field.conditionalBioAttributes!.first!
                                 .bioAttributes!
@@ -352,24 +363,26 @@ class _BiometricCaptureControlPortraitState
                   )
                 : Container(
                     margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    height: (isMobileSize)?(((((context
+                    height: (isMobileSize)
+                        ? (((((context
                                             .read<
                                                 BiometricCaptureControlProvider>()
                                             .returnNoOfAttributes(
                                                 widget.field.bioAttributes!))
                                         .toDouble()))
-                                .ceil() *
-                            335.h) +
-                        409.h):(((((context
-                                            .read<
-                                                BiometricCaptureControlProvider>()
-                                            .returnNoOfAttributes(
-                                                widget.field.bioAttributes!))
-                                        .toDouble()) /
-                                    2)
-                                .ceil() *
-                            335.h) +
-                        70.h),
+                                    .ceil() *
+                                335.h) +
+                            409.h)
+                        : (((((context
+                                                .read<
+                                                    BiometricCaptureControlProvider>()
+                                                .returnNoOfAttributes(widget
+                                                    .field.bioAttributes!))
+                                            .toDouble()) /
+                                        2)
+                                    .ceil() *
+                                335.h) +
+                            70.h),
                     width: double.infinity,
                     child: ResponsiveGridList(
                         listViewBuilderOptions: ListViewBuilderOptions(
@@ -377,8 +390,8 @@ class _BiometricCaptureControlPortraitState
                         minItemWidth: 372.h,
                         verticalGridSpacing: 17,
                         horizontalGridMargin: 30,
-                        minItemsPerRow: (isMobileSize)?1:2,
-                      maxItemsPerRow: (isMobileSize)?1:2,
+                        minItemsPerRow: (isMobileSize) ? 1 : 2,
+                        maxItemsPerRow: (isMobileSize) ? 1 : 2,
                         children: [
                           if (widget.field.bioAttributes!.contains("leftEye") &&
                               widget.field.bioAttributes!.contains("rightEye"))

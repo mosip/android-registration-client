@@ -72,6 +72,8 @@ public abstract class ApplicantBiometricsPage extends BasePage{
 	public abstract boolean isExceptionScan();
 
 	public abstract boolean isCommentHeaderDisplyed();
+	
+	public abstract  boolean isExceptionCountDisplyed();
 
 
 }
