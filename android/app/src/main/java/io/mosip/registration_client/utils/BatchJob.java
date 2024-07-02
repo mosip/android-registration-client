@@ -34,6 +34,7 @@ public class BatchJob {
     GlobalParamDao globalParamDao;
     SyncJobDefRepository syncJobDefRepository;
     Activity activity;
+    boolean syncAndUploadInProgressStatus = false;
 
     @Inject
     public BatchJob(PacketService packetService, AuditManagerService auditManagerService,
@@ -46,6 +47,10 @@ public class BatchJob {
 
     public void setCallbackActivity(MainActivity mainActivity){
         this.activity=mainActivity;
+    }
+
+    public boolean getInProgressStatus(){
+        return syncAndUploadInProgressStatus;
     }
 
     private List<Registration> getRegistrationList(List<String> statusList){
@@ -75,6 +80,7 @@ public class BatchJob {
         }
         for (Registration value : registrationList) {
             try {
+                syncAndUploadInProgressStatus = true;
                 Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
                 auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
 
@@ -100,6 +106,7 @@ public class BatchJob {
                         newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
                         if(remainingPack[0] == 0){
+                            syncAndUploadInProgressStatus = false;
                             Integer failed = packetSize- remainingPack[1];
                             newToast.setIcon(R.drawable.done);
                             String message = "Sync Packet Status :";
@@ -118,6 +125,7 @@ public class BatchJob {
                     }
                 });
             } catch (Exception e) {
+                syncAndUploadInProgressStatus = false;
                 Log.e(getClass().getSimpleName(), e.getMessage());
             }
         }
@@ -133,6 +141,7 @@ public class BatchJob {
 
         for (Registration value : registrationList) {
             try {
+                syncAndUploadInProgressStatus = true;
                 Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
                 auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
 
@@ -158,6 +167,7 @@ public class BatchJob {
                         newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
                         if(remainingPack[0] == 0){
+                            syncAndUploadInProgressStatus = false;
                             Integer failed = packetSize- remainingPack[1];
                             newToast.setIcon(R.drawable.done);
                             String message = "Upload Packet Status :";
@@ -173,6 +183,7 @@ public class BatchJob {
                     }
                 });
             } catch (Exception e) {
+                syncAndUploadInProgressStatus = false;
                 Log.e(getClass().getSimpleName(), e.getMessage());
             }
         }
