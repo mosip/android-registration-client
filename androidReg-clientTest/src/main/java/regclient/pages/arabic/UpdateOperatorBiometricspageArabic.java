@@ -291,7 +291,7 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 		clickOnElement(rightHandScanTitle);
 	}
 	
-	public void clickOnleftHandScanTitle() {
+	public void clickOnLeftHandScanTitle() {
 		clickOnElement(leftHandScanTitle);
 	}
 	
@@ -348,7 +348,7 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 			return false;
 	}
 	
-	public boolean isverifyAndSaveButtonEnabled() {
+	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
 	}
 	
@@ -357,7 +357,7 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 		
 	}
 	
-	public boolean isdismissPageLoaded() {
+	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
 	

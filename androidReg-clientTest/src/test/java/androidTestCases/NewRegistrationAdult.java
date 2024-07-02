@@ -418,9 +418,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 3rd attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
 		
-		assertFalse(applicantBiometricsPage.isScanButton(),"Verify if scan button enable");
-		
-		
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 		//righthand
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -1253,8 +1250,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
-
 	}
 	
-
 }

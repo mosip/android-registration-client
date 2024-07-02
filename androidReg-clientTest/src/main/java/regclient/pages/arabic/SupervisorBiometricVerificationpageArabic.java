@@ -347,22 +347,19 @@ public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometr
 			return false;
 	}
 	
-	public boolean isverifyAndSaveButtonEnabled() {
-		return isElementDisplayed(verifyAndSaveButton);
-		
-		
+	public boolean isVerifyAndSaveButtonEnabled() {
+		return isElementDisplayed(verifyAndSaveButton);	
 	}
 
 	@Override
-	public void clickOnverifyAndSaveButton() {
+	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
 		
 	}
 	
-	public boolean isdismissPageLoaded() {
+	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
-	
 	
 	public boolean isOperatorOnboardedPopupLoaded() {
 		return isElementDisplayed(successPopup);	

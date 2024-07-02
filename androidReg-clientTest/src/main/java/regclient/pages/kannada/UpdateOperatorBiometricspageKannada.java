@@ -306,7 +306,7 @@ public class UpdateOperatorBiometricspageKannada extends UpdateOperatorBiometric
 		clickOnElement(rightHandScanTitle);
 	}
 	
-	public void clickOnleftHandScanTitle() {
+	public void clickOnLeftHandScanTitle() {
 		clickOnElement(leftHandScanTitle);
 	}
 	
@@ -363,7 +363,7 @@ public class UpdateOperatorBiometricspageKannada extends UpdateOperatorBiometric
 			return false;
 	}
 	
-	public boolean isverifyAndSaveButtonEnabled() {
+	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
 	}
 	
@@ -372,7 +372,7 @@ public class UpdateOperatorBiometricspageKannada extends UpdateOperatorBiometric
 		
 	}
 	
-	public boolean isdismissPageLoaded() {
+	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
 	

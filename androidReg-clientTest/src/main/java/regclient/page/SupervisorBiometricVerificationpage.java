@@ -95,11 +95,11 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage{
 	
 	public abstract boolean checkThresholdValueFace();
 	
-	public abstract boolean isverifyAndSaveButtonEnabled();
+	public abstract boolean isVerifyAndSaveButtonEnabled();
 	
-	public abstract void clickOnverifyAndSaveButton();
+	public abstract void clickOnVerifyAndSaveButton();
 	
-	public abstract boolean isdismissPageLoaded();
+	public abstract boolean isDismissPageLoaded();
 	
 	public abstract boolean isOperatorOnboardedPopupLoaded();
 	

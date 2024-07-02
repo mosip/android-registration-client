@@ -81,7 +81,7 @@ public abstract class UpdateOperatorBiometricspage extends BasePage{
     
     public abstract void clickOnRightHandScanTitle();
 
-    public abstract void clickOnleftHandScanTitle();
+    public abstract void clickOnLeftHandScanTitle();
     
     public abstract void clickOnFaceScanTitle();
     
@@ -97,7 +97,7 @@ public abstract class UpdateOperatorBiometricspage extends BasePage{
 	
 	public abstract boolean isSupervisorBiometricUpdatePageLoaded();
     
-	public abstract boolean isverifyAndSaveButtonEnabled();
+	public abstract boolean isVerifyAndSaveButtonEnabled();
 	
 	public abstract boolean isOperatorBiometricsUpdatedPopupLoaded();
 
@@ -105,7 +105,6 @@ public abstract class UpdateOperatorBiometricspage extends BasePage{
 
 	public abstract void clickOnVerifyAndSaveButton();
 
-	public abstract boolean isdismissPageLoaded();
+	public abstract boolean isDismissPageLoaded();
 
-	
 }

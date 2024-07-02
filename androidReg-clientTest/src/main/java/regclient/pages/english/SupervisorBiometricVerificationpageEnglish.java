@@ -352,19 +352,19 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 			return false;
 	}
 	
-	public boolean isverifyAndSaveButtonEnabled() {
+	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
 		
 		
 	}
 
 	@Override
-	public void clickOnverifyAndSaveButton() {
+	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
 		
 	}
 	
-	public boolean isdismissPageLoaded() {
+	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
 	
@@ -376,5 +376,4 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
-
 }

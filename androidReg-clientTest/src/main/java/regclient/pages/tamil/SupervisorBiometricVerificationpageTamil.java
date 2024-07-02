@@ -363,18 +363,18 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 			return false;
 	}
 	
-	public boolean isverifyAndSaveButtonEnabled() {
+	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
 			
 	}
 
 	@Override
-	public void clickOnverifyAndSaveButton() {
+	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
 		
 	}
 	
-	public boolean isdismissPageLoaded() {
+	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
 	

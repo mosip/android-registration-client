@@ -84,7 +84,6 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isSyncCompletedSuccessfullyMessageDisplayed(), "Verify if the sync is completed");
 
 	}
-
 	@Test
 	public void loginTest() {
 		BasePage.disableAutoRotation();
@@ -428,15 +427,14 @@ public class logintest  extends AndroidBaseTest {
 		supervisorBiometricVerificationpage.clickOnNextButton();
 
 		assertTrue(supervisorBiometricVerificationpage.isSupervisorBiometricVerificationPageLoaded(), "Verify if operational tasks page is loaded");
-		assertTrue(supervisorBiometricVerificationpage.isverifyAndSaveButtonEnabled(), "Verify if verify and save button is display and enable");
+		assertTrue(supervisorBiometricVerificationpage.isVerifyAndSaveButtonEnabled(), "Verify if verify and save button is display and enable");
 		assertFalse(supervisorBiometricVerificationpage.isExceptionScanTitleDisplyed(),"Verify if exception scan icon is displayed");
-		supervisorBiometricVerificationpage.clickOnverifyAndSaveButton();
+		supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
 		
-		assertTrue(supervisorBiometricVerificationpage.isdismissPageLoaded(),"Verify if dismiss page is displayed");
+		assertTrue(supervisorBiometricVerificationpage.isDismissPageLoaded(),"Verify if dismiss page is displayed");
 		assertTrue(supervisorBiometricVerificationpage.isOperatorOnboardedPopupLoaded(),"Verify if operator biometrics updated success message is displayed");
 		supervisorBiometricVerificationpage.clickOnHomeButton();
 		
-
 	}
 	
 	@Test
@@ -589,7 +587,7 @@ public class logintest  extends AndroidBaseTest {
 		UpdateOperatorBiometricspage.clickOnMarkExceptionButton();
 
 		assertTrue(UpdateOperatorBiometricspage.isZoomButtonDisplyed(),"Verify if zoom button  is displayed");
-		UpdateOperatorBiometricspage.clickOnleftHandScanTitle();
+		UpdateOperatorBiometricspage.clickOnLeftHandScanTitle();
 		UpdateOperatorBiometricspage.clickOnScanButton();
 
 		assertTrue(UpdateOperatorBiometricspage.isLeftHandScan(),"Verify if Left hand scan 1st attempt");
@@ -659,10 +657,10 @@ public class logintest  extends AndroidBaseTest {
 		UpdateOperatorBiometricspage.clickOnNextButton();
 
 		assertTrue(UpdateOperatorBiometricspage.isSupervisorBiometricUpdatePageLoaded(), "Verify if supervisor biometric update page is loaded");
-		assertTrue(UpdateOperatorBiometricspage.isverifyAndSaveButtonEnabled(), "Verify if verify and save button is display and enable");
+		assertTrue(UpdateOperatorBiometricspage.isVerifyAndSaveButtonEnabled(), "Verify if verify and save button is display and enable");
 		UpdateOperatorBiometricspage.clickOnVerifyAndSaveButton();
 		
-		assertTrue(UpdateOperatorBiometricspage.isdismissPageLoaded(),"Verify if dismiss page is displayed");
+		assertTrue(UpdateOperatorBiometricspage.isDismissPageLoaded(),"Verify if dismiss page is displayed");
 		assertTrue(UpdateOperatorBiometricspage.isOperatorBiometricsUpdatedPopupLoaded(),"Verify if operator biometrics updated success message is displayed");
 		UpdateOperatorBiometricspage.clickOnHomeButton();
 		
