@@ -72,5 +72,9 @@ public class AcknowledgementPageKannada extends AcknowledgementPage {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageKannada(driver);
 	}
+	
+	public String getAID() {
+		return getTextFromLocator(applicationID);
+	}
 
 }

@@ -18,6 +18,8 @@ public class OperationalTaskPageHindi extends OperationalTaskPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"डेटा सिंक्रनाइज़ करें\")")
 	private WebElement synchronizeDataButton ;
 
+	@AndroidFindBy(accessibility = "आवेदन अपलोड करें")
+	private WebElement applicationUploadTitle;
 
 	public OperationalTaskPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -45,6 +47,17 @@ public class OperationalTaskPageHindi extends OperationalTaskPage{
 			return true;
 		else
 			return false;
+	}
+	
+	public  void clickApplicationUploadTitle() {
+		clickOnElement(applicationUploadTitle);
+	}
+	
+	public boolean isApplicationUploadTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(applicationUploadTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(applicationUploadTitle);
 	}
 
 }
