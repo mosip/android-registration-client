@@ -34,8 +34,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        if(!widget.isFreezed && !widget.isDisabled){
+      onTap: () {
+        if (!widget.isFreezed && !widget.isDisabled) {
           widget.onTap();
         }
       },
@@ -48,32 +48,48 @@ class _LanguageComponentState extends State<LanguageComponent> {
         ),
         decoration: BoxDecoration(
           color: widget.isFreezed
-              ? languageFreezedColor
+              ? appButtonBorderText
               : widget.isSelected
                   ? appButtonBorderText
                   : Colors.transparent,
           border: Border.all(
             width: 1,
-            color: widget.isDisabled ? appBlackShade3 :
-            widget.isSelected
-                ? appButtonBorderText
-                : languageSelectedColor,
+            color: widget.isDisabled
+                ? appBlackShade3
+                : widget.isSelected
+                    ? appButtonBorderText
+                    : languageSelectedColor,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(36),
           ),
         ),
-        child: Text(
-          widget.title,
-          style: TextStyle(
-            fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
-            color: widget.isDisabled ? appBlackShade3 :
-            widget.isFreezed
-                ? appBlack
-                : widget.isSelected
-                    ? appWhite
-                    : appBlackShade1,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            widget.isFreezed || widget.isSelected
+                ? Icon(
+                    Icons.check,
+                    color: widget.isFreezed ? appGreyShade : appWhite,
+                  )
+                : const SizedBox(),
+            SizedBox(
+              width: widget.isFreezed || widget.isSelected ? 15.02 : 0,
+            ),
+            Text(
+              widget.title,
+              style: TextStyle(
+                fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
+                color: widget.isDisabled
+                    ? appBlackShade3
+                    : widget.isFreezed
+                        ? appGreyShade
+                        : widget.isSelected
+                            ? appWhite
+                            : appBlackShade1,
+              ),
+            ),
+          ],
         ),
       ),
     );

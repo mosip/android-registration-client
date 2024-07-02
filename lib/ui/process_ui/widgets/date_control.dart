@@ -92,7 +92,7 @@ class _DateControlState extends State<DateControl> {
                 minDate: DateTime(DateTime.now().year - 125),
                 selectedDate: dateString != ""
                     ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
-                    .parse(dateString)
+                        .parse(dateString)
                     : null,
                 squeeze: 1,
                 itemExtent: 50,
@@ -119,10 +119,10 @@ class _DateControlState extends State<DateControl> {
                 onSelectedItemChanged: (selectedDate) {
                   String targetDateString = widget.field.format ??
                       "yyyy/MM/dd"
-                          .replaceAll('dd',
-                          selectedDate.day.toString().padLeft(2, "0"))
+                          .replaceAll(
+                              'dd', selectedDate.day.toString().padLeft(2, "0"))
                           .replaceAll('MM',
-                          selectedDate.month.toString().padLeft(2, "0"))
+                              selectedDate.month.toString().padLeft(2, "0"))
                           .replaceAll('yyyy', selectedDate.year.toString());
                   setState(() {
                     dateController.text = targetDateString;
@@ -141,8 +141,7 @@ class _DateControlState extends State<DateControl> {
   }
 
   _saveData(value) {
-    registrationTaskProvider
-        .addDemographicField(widget.field.id!, value!);
+    registrationTaskProvider.addDemographicField(widget.field.id!, value!);
   }
 
   _saveDataToMap(value) {
@@ -155,11 +154,8 @@ class _DateControlState extends State<DateControl> {
 
   _getDataFromMap() {
     String response = "";
-    if (globalProvider
-        .fieldInputValue
-        .containsKey(widget.field.id)) {
-      response =
-      globalProvider.fieldInputValue[widget.field.id];
+    if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
+      response = globalProvider.fieldInputValue[widget.field.id];
     }
     setState(() {
       dateController.text = response;
@@ -199,12 +195,10 @@ class _DateControlState extends State<DateControl> {
                     return null;
                   }
                   if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!
-                        .select_value_message;
+                    return AppLocalizations.of(context)!.select_value_message;
                   }
                   if (!widget.validation.hasMatch(value)) {
-                    return AppLocalizations.of(context)!
-                        .invalid_input;
+                    return AppLocalizations.of(context)!.invalid_input;
                   }
                   return null;
                 },
@@ -217,7 +211,7 @@ class _DateControlState extends State<DateControl> {
                     vertical: 14,
                     horizontal: 16,
                   ),
-                  hintText: "yyyy/MM/dd",
+                  hintText: ("yyyy/MM/dd").toUpperCase(),
                   hintStyle: const TextStyle(
                     color: appBlackShade3,
                     fontSize: 14,
