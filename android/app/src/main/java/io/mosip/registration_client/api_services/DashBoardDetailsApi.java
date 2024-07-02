@@ -15,24 +15,30 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
+import io.mosip.registration.clientmanager.dto.ResponseDto;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncServiceImpl;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration_client.model.DashBoardPigeon;
+import lombok.val;
 
 @Singleton
 public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     private UserDetailDao userDetailDao;
     private RegistrationRepository registrationRepository;
+    private PreRegistrationDataSyncService preRegistrationData;
     public static final String PREFERRED_USERNAME = "preferred_username";
     SharedPreferences sharedPreferences;
     private Context context;
 
     @Inject
-    public DashBoardDetailsApi(Context context, UserDetailDao userDetailDao, RegistrationRepository registrationRepository){
+    public DashBoardDetailsApi(Context context, UserDetailDao userDetailDao, RegistrationRepository registrationRepository,PreRegistrationDataSyncService preRegistrationData){
         this.context = context;
         this.userDetailDao = userDetailDao;
         this.registrationRepository = registrationRepository;
+        this.preRegistrationData = preRegistrationData;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(io.mosip.registration.clientmanager.R.string.app_name),
                 Context.MODE_PRIVATE);

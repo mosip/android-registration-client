@@ -242,8 +242,14 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		demographicPage.enterAge(TestDataReader.readData("minorAge"));
 		demographicPage.selectGender(TestDataReader.readData("gender"));
 		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
+		
+		assertTrue(demographicPage.checkAddress1SecondLanguageTextBoxNotNull(),"Verify if address1 is enter in second language text box");
 		demographicPage.enterAddressLine2(TestDataReader.readData("address"));
+		
+		assertTrue(demographicPage.checkAddress2SecondLanguageTextBoxNotNull(),"Verify if address2 is enter in second language text box");
 		demographicPage.enterAddressLine3(TestDataReader.readData("address"));
+		
+		assertTrue(demographicPage.checkAddress3SecondLanguageTextBoxNotNull(),"Verify if address3 is enter in second language text box");
 		demographicPage.selectMaritalStatus();
 
 		assertTrue(demographicPage.isResidenceStatusHeaderDisplayed(),"Verify if residence status header is displayed");
@@ -272,6 +278,8 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 
 		assertTrue(demographicPage.isIntroducerNameHeaderDisplayed(),"Verify if introducer name header is displayed");
 		demographicPage.enterIntroducerName(TestDataReader.readData("fullname"));
+		
+		assertTrue(demographicPage.checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull(),"Verify if introduceR name is enter in second language text box");
 
 		assertTrue(demographicPage.isIntroducerRidHeaderDisplayed(),"Verify if introducer rid header is displayed");
 		demographicPage.enterIntroducerRid(TestDataReader.readData("RID"));

@@ -96,6 +96,9 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Commentaires\"))")
 	private WebElement commentsHeader;
 	
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Des exceptions\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
+	private WebElement exceptionCount;
+	
 	public ApplicantBiometricsPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
@@ -242,5 +245,12 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage{
 	public  boolean isCommentHeaderDisplyed() {
 		return isElementDisplayed(commentsHeader);
 	}
-
+	
+	public  boolean isExceptionCountDisplyed() {
+		if(!isElementDisplayedOnScreen(exceptionCount)) {
+			swipeOrScroll();
+			isElementDisplayed(exceptionCount);
+		}
+		return isElementDisplayed(exceptionCount);
+	}
 }

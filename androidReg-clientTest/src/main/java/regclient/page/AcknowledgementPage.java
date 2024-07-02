@@ -23,5 +23,6 @@ public abstract class AcknowledgementPage extends BasePage{
 	public abstract boolean isBiometricsInformationInAcknowledgementPageDisplayed();
 
 	public abstract DemographicDetailsPage clickOnDemographicDetailsTitle();
+	
 
 }

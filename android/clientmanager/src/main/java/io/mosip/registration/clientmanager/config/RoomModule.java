@@ -40,6 +40,7 @@ import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
 import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
+import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
@@ -416,5 +417,11 @@ public class RoomModule {
     @Singleton
     AuditRepository provideAuditRepository(AuditDao auditDao) {
         return new AuditRepository(auditDao);
+    }
+
+    @Singleton
+    @Provides
+    PreRegistrationDataSyncRepositoryDao providesPreRegistrationDataSyncRepository(ClientDatabase clientDatabase) {
+        return clientDatabase.preRegistrationDataSyncRepositoryDao();
     }
 }

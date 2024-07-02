@@ -5,21 +5,16 @@
  *
 */
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
-import '../../../model/screen.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_cupertino_picker.dart';
 import 'custom_label.dart';
@@ -45,10 +40,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   @override
   void initState() {
-    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    registrationTaskProvider =
-        Provider.of<RegistrationTaskProvider>(context, listen: false);
-    _getSavedDate();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+      registrationTaskProvider =
+          Provider.of<RegistrationTaskProvider>(context, listen: false);
+      _getSavedDate();
+    });
     super.initState();
   }
 
@@ -112,6 +109,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
   }
 
   void _getSavedDate() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
       String savedDate = globalProvider.fieldInputValue[widget.field.id];
       DateTime parsedDate = DateFormat(widget.field.format == null ||
@@ -119,11 +117,14 @@ class _AgeDateControlState extends State<AgeDateControl> {
               ? "yyyy/MM/dd"
               : widget.field.format)
           .parse(savedDate);
-      setState(() {
-        dateController.text = savedDate;
-        ageController.text = calculateYearDifference(parsedDate, DateTime.now())
-            .abs()
-            .toString();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          dateController.text = savedDate;
+          ageController.text =
+              calculateYearDifference(parsedDate, DateTime.now())
+                  .abs()
+                  .toString();
+        });
       });
     }
   }
@@ -239,6 +240,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   @override
   Widget build(BuildContext context) {
+    _getSavedDate();
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(

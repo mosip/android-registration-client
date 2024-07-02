@@ -2147,13 +2147,13 @@ class _BiometricCaptureScanBlockPortraitState
                   onTap: () {
                     showDialog<String>(
                       context: context,
-                      builder: (context) => SingleChildScrollView(
-                        child: AlertDialog(
-                          content: Container(
-                            height: (isMobileSize) ? 500 : 720,
-                            width: (isMobileSize) ? 404 : 760,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12)),
+                      builder: (context) => AlertDialog(
+                        content: Container(
+                          height: (isMobileSize) ? 500 : 720,
+                          width: (isMobileSize) ? 404 : 760,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12)),
+                          child: SingleChildScrollView(
                             child: Column(
                               children: [
                                 Row(
@@ -2827,6 +2827,9 @@ class _BiometricCaptureScanBlockPortraitState
     for (int i = 0; i < list.length; i++) {
       if (list[i] == title) {
         if (i < list.length - 1) {
+          context
+              .read<BiometricCaptureControlProvider>()
+              .biometricCaptureScanBlockTabIndex = 1;
           return list[i + 1];
         } else {
           return null;
