@@ -98,6 +98,8 @@ import io.mosip.registration_client.model.RegistrationDataPigeon;
 import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
+import io.mosip.registration_client.utils.BatchJob;
+import io.mosip.registration_client.utils.CustomToast;
 
 import android.net.Uri;
 
@@ -167,7 +169,6 @@ public class MainActivity extends FlutterActivity {
     @Inject
     DocumentDetailsApi documentDetailsApi;
 
-
     @Inject
     DynamicDetailsApi dynamicDetailsApi;
 
@@ -188,16 +189,19 @@ public class MainActivity extends FlutterActivity {
     @Inject
     DashBoardDetailsApi dashBoardDetailsApi;
 
+    @Inject
+    BatchJob batchJob;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
-                syncRegistrationPackets(context);
-                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                scheduler.schedule(()-> {
-                    createBackgroundTask("registrationPacketUploadJob");
-                }, 1, TimeUnit.MINUTES);
-            }
+        if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
+            batchJob.syncRegistrationPackets(context);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.schedule(()-> {
+                createBackgroundTask("registrationPacketUploadJob");
+            }, 1, TimeUnit.MINUTES);
+        }
         }
     };
 
@@ -240,7 +244,7 @@ public class MainActivity extends FlutterActivity {
                 permissionIntent.setData(Uri.fromParts("package", getPackageName(), null));
                 startActivity(permissionIntent);
             }
-            long alarmTime = getIntervalMillis(api);
+            long alarmTime = batchJob.getIntervalMillis(api);
             long currentTime = System.currentTimeMillis();
             long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
             Log.d(getClass().getSimpleName(), String.valueOf(delay)+ " Next Execution");
@@ -256,91 +260,6 @@ public class MainActivity extends FlutterActivity {
         }
     }
 
-    private void syncRegistrationPackets(Context context) {
-        if(NetworkUtils.isNetworkConnected(context)){
-            Log.d(getClass().getSimpleName(), "Sync Packets in main activity");
-            Integer batchSize = getBatchSize();
-            List<Registration> registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.APPROVED.name(), batchSize);
-
-//          Variable is accessed within inner class. Needs to be declared final also it is modified too in the inner class
-//          Solution: using final array variable with one element that can be altered
-            final Integer[] remainingPack = {registrationList.size()};
-
-            if(registrationList.isEmpty()){
-                uploadRegistrationPackets(context);
-                return;
-            }
-            for (Registration value : registrationList) {
-                try {
-                    Log.d(getClass().getSimpleName(), "Syncing " + value.getPacketId());
-                    auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
-                    packetService.syncRegistration(value.getPacketId(), new AsyncPacketTaskCallBack() {
-                        @Override
-                        public void inProgress(String RID) {
-                            //Do nothing
-                        }
-
-                        @Override
-                        public void onComplete(String RID, PacketTaskStatus status) {
-                            remainingPack[0] -= 1;
-                            Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
-                            if(remainingPack[0] == 0){
-                                Log.d(getClass().getSimpleName(), "Last Packet"+RID);
-                                uploadRegistrationPackets(context);
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
-                }
-            }
-        }
-    }
-
-    private void uploadRegistrationPackets(Context context) {
-        if(NetworkUtils.isNetworkConnected(context)){
-            Log.d(getClass().getSimpleName(), "Upload Packets in main activity");
-            Integer batchSize = getBatchSize();
-            List<Registration>  registrationList = packetService.getRegistrationsByStatus(PacketClientStatus.SYNCED.name(), batchSize);
-            for (Registration value : registrationList) {
-                try {
-                    Log.d(getClass().getSimpleName(), "Uploading " + value.getPacketId());
-                    auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
-                    packetService.uploadRegistration(value.getPacketId());
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
-                }
-            }
-        }
-    }
-
-    private Integer getBatchSize(){
-        // Default batch size is 4
-        List<GlobalParam> globalParams = globalParamDao.getGlobalParams();
-        for (GlobalParam value : globalParams) {
-            if (Objects.equals(value.getId(), "mosip.registration.packet_upload_batch_size")) {
-                return Integer.parseInt(value.getValue());
-            }
-        }
-        return ClientManagerConstant.DEFAULT_BATCH_SIZE;
-    }
-
-    private long getIntervalMillis(String api){
-        // Default everyday at Noon - 12pm
-        String cronExp = ClientManagerConstant.DEFAULT_UPLOAD_CRON;
-        List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
-        for (SyncJobDef value : syncJobs) {
-            if (Objects.equals(value.getApiName(), api)) {
-                Log.d(getClass().getSimpleName(), api + " Cron Expression : " + String.valueOf(value.getSyncFreq()));
-                cronExp = String.valueOf(value.getSyncFreq());
-                break;
-            }
-        }
-        long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(cronExp);
-        Log.d(getClass().getSimpleName(), " Next Execution : " + String.valueOf(nextExecution));
-        return nextExecution;
-    }
-
     public void initializeAppComponent() {
         AppComponent appComponent = DaggerAppComponent.builder()
                 .application(getApplication())
@@ -349,7 +268,6 @@ public class MainActivity extends FlutterActivity {
                 .appModule(new AppModule(getApplication()))
                 .hostApiModule(new HostApiModule(getApplication()))
                 .build();
-
         appComponent.inject(this);
     }
 
@@ -367,6 +285,7 @@ public class MainActivity extends FlutterActivity {
         biometricsDetailsApi.setCallbackActivity(this);
         RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
+        packetAuthenticationApi.setCallbackActivity(this);
         DemographicsDataPigeon.DemographicsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), demographicsDetailsApi);
         DocumentDataPigeon.DocumentApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentDetailsApi);
         DocumentCategoryPigeon.DocumentCategoryApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), documentCategoryApi);
@@ -374,9 +293,9 @@ public class MainActivity extends FlutterActivity {
 
         TransliterationPigeon.TransliterationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),new TransliterationApi(new TransliterationServiceImpl()));
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
+        batchJob.setCallbackActivity(this);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
-        masterDataSyncApi.setCallbackActivity(this);
-
+        masterDataSyncApi.setCallbackActivity(this, batchJob);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
     }
 

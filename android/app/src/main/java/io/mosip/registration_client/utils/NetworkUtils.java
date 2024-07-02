@@ -5,7 +5,7 @@
  *
 */
 
-package io.mosip.registration_client;
+package io.mosip.registration_client.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

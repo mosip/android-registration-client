@@ -5,7 +5,7 @@
  *
 */
 
-package io.mosip.registration_client;
+package io.mosip.registration_client.utils;
 
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;

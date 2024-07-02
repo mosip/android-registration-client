@@ -5,6 +5,9 @@
  *
 */
 
+import 'dart:developer';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
@@ -17,6 +20,8 @@ import 'package:registration_client/platform_spi/document_category_service.dart'
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/platform_spi/registration_service.dart';
+
+import '../platform_android/packet_service_impl.dart';
 
 class RegistrationTaskProvider with ChangeNotifier {
   final RegistrationService registrationService = RegistrationService();
@@ -37,6 +42,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   String _lastSuccessfulUpdatedTime = "";
   Map<String?, Object?> _preRegistrationData = {};
 
+  int _numberOfPackets = 0;
+
   List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
@@ -45,10 +52,16 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get registrationStartError => _registrationStartError;
   bool get isRegistrationSaved => _isRegistrationSaved;
   String get lastSuccessfulUpdatedTime => _lastSuccessfulUpdatedTime;
+  int get numberOfPackets => _numberOfPackets;
   Map<String?, Object?> get preRegistrationData => _preRegistrationData;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
+    notifyListeners();
+  }
+
+  setNumberOfPackets(int value) {
+    _numberOfPackets = value;
     notifyListeners();
   }
 
@@ -229,6 +242,12 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<int> getPacketUploadedPendingDetails() async {
     return await dashBoard.getPacketUploadedPendingDetails();
+  }
+
+  void getApplicationUploadNumber() async{
+    List<String?> packets = await PacketServiceImpl().getAllRegistrationPacket();
+    log("Number of Packets: ${packets.length}");
+    setNumberOfPackets(packets.length);
   }
 
   Future<int> getCreatedPacketDetails() async {

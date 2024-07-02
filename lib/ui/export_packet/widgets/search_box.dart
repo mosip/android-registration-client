@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/export_packet_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchBoxExport extends StatelessWidget {
   const SearchBoxExport({super.key});
@@ -13,10 +14,10 @@ class SearchBoxExport extends StatelessWidget {
       color: Colors.white,
       child: TextField(
         onTapOutside: (pointer){FocusScope.of(context).unfocus();},
-        decoration:  const InputDecoration(
-          labelText:  "Search by Application ID",
-          prefixIcon: Icon(Icons.search),
-          border: OutlineInputBorder(),
+        decoration:   InputDecoration(
+          labelText:  AppLocalizations.of(context)!.search_application,
+          prefixIcon: const Icon(Icons.search),
+          border: const OutlineInputBorder(),
         ),
         onChanged: (value) {
           context.read<ExportPacketsProvider>().setSearchList(value);

@@ -67,7 +67,7 @@ public class PacketServiceImpl implements PacketService {
     public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
-            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
+            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name(), PacketClientStatus.EXPORTED.name());
 
     public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name(), PacketServerStatus.UPLOAD_PENDING.name());
 
@@ -166,16 +166,18 @@ public class PacketServiceImpl implements PacketService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null && response.body().getResponse().get(0).getStatus().equalsIgnoreCase("SUCCESS")) {
-                        registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
+                        if(!PacketClientStatus.EXPORTED.name().equals(registration.getClientStatus())){
+                            registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
+                        }
                         callBack.onComplete(packetId, PacketTaskStatus.SYNC_COMPLETED);
-                        Toast.makeText(context, "Packet synced successfully", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "Packet synced successfully", Toast.LENGTH_LONG).show();
                     } else {
                         callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
-                        Toast.makeText(context, "Packet sync failed : " + error, Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "Packet sync failed : " + error, Toast.LENGTH_LONG).show();
                     }
                 } else {
                     callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
-                    Toast.makeText(context, "Packet sync failed with Status Code : " + response.code(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(context, "Packet sync failed with Status Code : " + response.code(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -183,7 +185,7 @@ public class PacketServiceImpl implements PacketService {
             public void onFailure(Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call, Throwable t) {
                 Log.e(TAG, "Packet sync failed", t);
                 callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
-                Toast.makeText(context, "Packet sync failed", Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, "Packet sync failed", Toast.LENGTH_LONG).show();
             }
         });
         callBack.inProgress(packetId);
@@ -229,14 +231,14 @@ public class PacketServiceImpl implements PacketService {
                         registrationRepository.updateStatus(packetId, response.body().getResponse().getStatus(),
                                 PacketClientStatus.UPLOADED.name());
                         callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_COMPLETED);
-                        Toast.makeText(context, "Packet uploaded successfully", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "Packet uploaded successfully", Toast.LENGTH_LONG).show();
                     } else {
                         callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
-                        Toast.makeText(context, "Packet uploaded failed : " + error.getMessage(), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "Packet uploaded failed : " + error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 } else {
                     callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
-                    Toast.makeText(context, "Packet uploaded failed with Status Code : " + response.code(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(context, "Packet uploaded failed with Status Code : " + response.code(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -244,7 +246,7 @@ public class PacketServiceImpl implements PacketService {
             public void onFailure(Call<RegProcResponseWrapper<UploadResponse>> call, Throwable t) {
                 Log.e(TAG, "Packet uploaded failed", t);
                 callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
-                Toast.makeText(context, "Packet uploaded failed", Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, "Packet uploaded failed", Toast.LENGTH_LONG).show();
             }
         });
         callBack.inProgress(packetId);
@@ -253,6 +255,11 @@ public class PacketServiceImpl implements PacketService {
     @Override
     public List<Registration> getAllRegistrations(int page, int pageLimit) {
         return this.registrationRepository.getAllRegistrations();
+    }
+
+    @Override
+    public List<Registration> getAllNotUploadedRegistrations(int page, int pageLimit) {
+        return this.registrationRepository.getAllNotUploadedRegistrations();
     }
 
     @Override

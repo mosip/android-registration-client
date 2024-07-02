@@ -138,6 +138,49 @@
   },
   "synchronize_data": "ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ",
   "registration_tasks": "ನೋಂದಣಿ ಕಾರ್ಯಗಳು",
+
+
+
+  "manage_applications": "ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ",
+  "search_application": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ ಮೂಲಕ ಹುಡುಕಿ",
+  "upload": "ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+  "export": "ರಫ್ತು ಮಾಡಿ",
+  "number_of_application": "{number} ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತಿದೆ",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} ಅಪ್ಲಿಕೇಶನ್\u200Cಗಳನ್ನು ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "ಕ್ಲೈಂಟ್ ಸ್ಥಿತಿ",
+  "server_status": "ಸರ್ವರ್ ಸ್ಥಿತಿ",
+  "clear_filter": "Clear Filter",
+  "serial_number": "ಎಸ್.ಎನ್",
+  "application_id": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ",
+  "reg_date":"ರೆಗ್. ದಿನಾಂಕ",
+  "reg_type":"ರೆಗ್. ಪ್ರಕಾರ",
+  "operator_id": "ಆಪರೇಟರ್ ಐಡಿ",
+
+
+
+
   "operation_tasks": "ಕಾರ್ಯಾಚರಣೆಯ ಕಾರ್ಯಗಳು",
   "system_storage_usage": "ಸಿಸ್ಟಮ್ ಶೇಖರಣಾ ಬಳಕೆ",
   "download_pre_registration_data": "ಪೂರ್ವ-ನೋಂದಣಿ ಡೇಟಾವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",

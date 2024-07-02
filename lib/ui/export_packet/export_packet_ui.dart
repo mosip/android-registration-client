@@ -9,8 +9,10 @@ import 'package:registration_client/utils/app_config.dart';
 
 
 import '../../provider/export_packet_provider.dart';
+import '../../provider/registration_task_provider.dart';
 import 'widgets/clear_dropdown_filter.dart';
 import 'widgets/client_status_dropdown.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ExportPacketsPage extends StatelessWidget {
   const ExportPacketsPage({super.key});
@@ -31,11 +33,12 @@ class ExportPacketsPage extends StatelessWidget {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.white.withOpacity(0.2), padding: const EdgeInsets.all(4)),
               child: const Icon(Icons.arrow_back, size: 32,),
               onPressed: (){
+                context.read<RegistrationTaskProvider>().getApplicationUploadNumber();
                 Navigator.of(context).pop();
               },
             ),
           ),
-          title: const Text('Manage Applications'),
+          title: Text(AppLocalizations.of(context)!.manage_applications),
         ),
         backgroundColor: backgroundColor,
         body: Padding(
@@ -46,7 +49,7 @@ class ExportPacketsPage extends StatelessWidget {
               const Row(
                 children: [
                   Flexible(
-                    flex: 3,
+                    flex: 2,
                     child: SearchBoxExport(),
                   ),
                   SizedBox(width: 10),
@@ -69,22 +72,29 @@ class ExportPacketsPage extends StatelessWidget {
                   child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                   child:
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        context.watch<ExportPacketsProvider>().countSelected>0
-                            ? Text("${context.watch<ExportPacketsProvider>().countSelected}/${context.watch<ExportPacketsProvider>().matchingPackets.length} Applications Selected", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),)
-                            : Text("Displaying ${context.watch<ExportPacketsProvider>().matchingPackets.length} Applications", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),),
-                        const Row(
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: MediaQuery.of(context)!.size.width-90),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            ClientStatusDropdown(),
-                            SizedBox(width: 16,),
-                            ServerStatusDropdown(),
-                            SizedBox(width: 10,),
-                            ClearDropdownFilter(),
+                            context.watch<ExportPacketsProvider>().countSelected>0
+                                ? Text(AppLocalizations.of(context)!.total_selected_application(context.watch<ExportPacketsProvider>().countSelected, context.watch<ExportPacketsProvider>().matchingPackets.length), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),)
+                                : Text(AppLocalizations.of(context)!.number_of_application(context.watch<ExportPacketsProvider>().matchingPackets.length), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),),
+                            const SizedBox(width: 50,),
+                            const Row(
+                              children: [
+                                ClientStatusDropdown(),
+                                SizedBox(width: 16,),
+                                ServerStatusDropdown(),
+                                SizedBox(width: 8,),
+                                ClearDropdownFilter(),
+                              ],
+                            ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

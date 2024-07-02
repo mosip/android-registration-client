@@ -47,6 +47,14 @@ public interface PacketService {
 
     /**
      *
+     * @param page
+     * @param pageLimit
+     * @return
+     */
+    List<Registration> getAllNotUploadedRegistrations(int page, int pageLimit);
+
+    /**
+     *
      * @param status
      * @return
      */

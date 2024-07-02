@@ -135,12 +135,12 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
             const Expanded(
               child: SizedBox(),
             ),
-            Text(
+            Text(context.watch<SyncProvider>().lastSuccessfulSyncTime!="" ?
               DateFormat("EEEE d MMMM, hh:mma")
                   .format(DateTime.parse(
                           context.watch<SyncProvider>().lastSuccessfulSyncTime)
                       .toLocal())
-                  .toString(),
+                  .toString(): "Last Sync time not found",
               style: const TextStyle(
                 fontSize: 18,
                 color: appBlackShade2,
