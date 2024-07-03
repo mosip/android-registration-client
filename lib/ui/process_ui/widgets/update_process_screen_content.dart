@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -32,10 +33,15 @@ import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 import 'radio_button_control.dart';
 
 class UpdateProcessScreenContent extends StatefulWidget {
-  const UpdateProcessScreenContent(
-      {super.key, required this.context, required this.screen});
+  const UpdateProcessScreenContent({
+    super.key,
+    required this.context,
+    required this.screen,
+    required this.process,
+  });
   final BuildContext context;
   final Screen screen;
+  final Process process;
 
   @override
   State<UpdateProcessScreenContent> createState() =>
@@ -82,7 +88,10 @@ class _UpdateProcessScreenContentState
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        return BiometricCaptureControl(e: e);
+        if (globalProvider.mvelRequiredFields[e.id] ?? false) {
+          return BiometricCaptureControl(e: e);
+        }
+        return Container();
       case "button":
         if (e.subType == "preferredLang") {
           return ButtonControl(field: e);
@@ -170,21 +179,17 @@ class _UpdateProcessScreenContentState
         children: [
           ...widget.screen.fields!.map((e) {
             checkMvelVisible(e!);
-            if (e.group!.toLowerCase() == "consent" ||
-                e.group!.toLowerCase() == "consenttext") {
+            if (widget.process.autoSelectedGroups!.contains(e.group)) {
               return widgetType(e);
             } else if (globalProvider.selectedUpdateFields[e.group] != null) {
-              if (e.group!.toLowerCase() != "biometrics" ||
-                  (e.required! ||
-                      (globalProvider.mvelRequiredFields[e.id] ?? false))) {
-                return widgetType(e);
-              }
-            } else if (context
-                    .watch<GlobalProvider>()
-                    .mvelRequiredFields[e.id] ??
-                false) {
               return widgetType(e);
             }
+            // else if (context
+            //         .watch<GlobalProvider>()
+            //         .mvelRequiredFields[e.id] ??
+            //     false) {
+            //   return widgetType(e);
+            // }
             return Container();
           }).toList(),
         ],

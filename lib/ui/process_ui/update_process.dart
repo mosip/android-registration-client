@@ -470,7 +470,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                 return false;
               }
             }
-          } else {
+          } else if (newProcess.autoSelectedGroups!.contains(group)) {
             if (globalProvider.mvelRequiredFields[fieldId] ?? false) {
               if (!(globalProvider.fieldInputValue.containsKey(field.id)) &&
                   !(globalProvider.fieldInputValue
@@ -505,6 +505,9 @@ class _UpdateProcessState extends State<UpdateProcess>
       if (!fieldSelectionCompleted) {
         globalProvider.clearMap();
         globalProvider.clearScannedPages();
+        globalProvider.clearExceptions();
+        await registrationTaskProvider.changeUpdatableFieldGroups();
+        globalProvider.ageGroup = "";
         await BiometricsApi().clearBiometricAndDocumentHashmap();
         setState(() {
           fieldSelectionCompleted = true;
@@ -977,6 +980,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                                 size
                             ? UpdateProcessScreenContent(
                                 context: context,
+                                process: newProcess,
                                 screen: newProcess.screens!.elementAt(context
                                     .watch<GlobalProvider>()
                                     .newProcessTabIndex)!)

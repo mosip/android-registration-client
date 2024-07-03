@@ -31,5 +31,7 @@ abstract class DemographicService {
 
   Future<void> removeUpdatableFieldGroup(String fieldGroup);
 
+  Future<void> changeUpdatableFieldGroups();
+
   factory DemographicService() => getDemographicServiceImpl();
 }
