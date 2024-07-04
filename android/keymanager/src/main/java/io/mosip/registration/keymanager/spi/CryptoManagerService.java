@@ -23,4 +23,6 @@ public interface CryptoManagerService {
 
     byte[] getCertificateThumbprint(Certificate cert) throws Exception;
 
+    byte[] symmetricDecrypt(SecretKey key, byte[] data, byte[] aad) throws Exception;
+
 }

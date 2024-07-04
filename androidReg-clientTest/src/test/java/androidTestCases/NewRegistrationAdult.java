@@ -18,6 +18,8 @@ import regclient.page.DocumentUploadPage;
 import regclient.page.IdentityProofPage;
 import regclient.page.IntroducerBiometricPage;
 import regclient.page.LoginPage;
+import regclient.page.ManageApplicationsPage;
+import regclient.page.OperationalTaskPage;
 import regclient.page.PreviewPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
@@ -31,6 +33,8 @@ import regclient.pages.arabic.DocumentuploadPageArabic;
 import regclient.pages.arabic.IdentityProofPageArabic;
 import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
+import regclient.pages.arabic.ManageApplicationsPageArabic;
+import regclient.pages.arabic.OperationalTaskPageArabic;
 import regclient.pages.arabic.PreviewPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SelectLanguagePageArabic;
@@ -44,6 +48,8 @@ import regclient.pages.english.DocumentuploadPageEnglish;
 import regclient.pages.english.IdentityProofPageEnglish;
 import regclient.pages.english.IntroducerBiometricPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
+import regclient.pages.english.ManageApplicationsPageEnglish;
+import regclient.pages.english.OperationalTaskPageEnglish;
 import regclient.pages.english.PreviewPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SelectLanguagePageEnglish;
@@ -57,6 +63,8 @@ import regclient.pages.french.DocumentUploadPageFrench;
 import regclient.pages.french.IdentityProofPageFrench;
 import regclient.pages.french.IntroducerBiometricPageFrench;
 import regclient.pages.french.LoginPageFrench;
+import regclient.pages.french.ManageApplicationsPageFrench;
+import regclient.pages.french.OperationalTaskPageFrench;
 import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SelectLanguagePageFrench;
@@ -70,6 +78,8 @@ import regclient.pages.hindi.DocumentUploadPageHindi;
 import regclient.pages.hindi.IdentityProofPageHindi;
 import regclient.pages.hindi.IntroducerBiometricPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
+import regclient.pages.hindi.ManageApplicationsPageHindi;
+import regclient.pages.hindi.OperationalTaskPageHindi;
 import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SelectLanguagePageHindi;
@@ -83,6 +93,8 @@ import regclient.pages.kannada.DocumentuploadPageKannada;
 import regclient.pages.kannada.IdentityProofPageKannada;
 import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
+import regclient.pages.kannada.ManageApplicationsPageKannada;
+import regclient.pages.kannada.OperationalTaskPageKannada;
 import regclient.pages.kannada.PreviewPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SelectLanguagePageKannada;
@@ -96,6 +108,8 @@ import regclient.pages.tamil.DocumentuploadPageTamil;
 import regclient.pages.tamil.IdentityProofPageTamil;
 import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
+import regclient.pages.tamil.ManageApplicationsPageTamil;
+import regclient.pages.tamil.OperationalTaskPageTamil;
 import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
@@ -103,7 +117,7 @@ import regclient.utils.TestDataReader;
 
 public class NewRegistrationAdult extends AndroidBaseTest {
 
-	//@Test
+	@Test
 	public void newRegistrationAdult(){
 		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
@@ -118,7 +132,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		PreviewPage previewPage=null;
 		AuthenticationPage authenticationPage=null;
 		AcknowledgementPage acknowledgementPage=null;
-		
+		OperationalTaskPage operationalTaskPage=null;
+		ManageApplicationsPage manageApplicationsPage=null;
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -168,7 +183,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();
-		
+
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			selectLanguagePage=new SelectLanguagePageEnglish(driver);
 		} 
@@ -480,11 +495,13 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			previewPage=new PreviewPageArabic(driver);
 		}
+
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
 		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		String Aid=previewPage.getAID();
 		previewPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			authenticationPage=new AuthenticationPageEnglish(driver);
@@ -527,13 +544,79 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
+
 	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
+
+		//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");	
+
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
+		consentPage.clickOnCancelButton();
 
+		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
+		registrationTasksPage.clickOnOperationalTasksTitle();	
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			operationalTaskPage=new OperationalTaskPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			operationalTaskPage=new OperationalTaskPageHindi(driver);
+
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			operationalTaskPage=new OperationalTaskPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			operationalTaskPage=new OperationalTaskPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			operationalTaskPage=new OperationalTaskPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			operationalTaskPage=new OperationalTaskPageArabic(driver);
+		}
+		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
+		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
+
+		operationalTaskPage.clickApplicationUploadTitle();       
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			manageApplicationsPage=new ManageApplicationsPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
+
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
+		}
+		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
+		manageApplicationsPage.enterWrongAID(Aid+123);
+
+		assertTrue(manageApplicationsPage.isZeroApplicationDisplayed(), "Verify if wrong Aid should not display");
+		manageApplicationsPage.enterAID(Aid);
+
+		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		manageApplicationsPage.selectApprovedValueDropdown();
+
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
+		manageApplicationsPage.clickOnSearchCheckBox();
+		manageApplicationsPage.clickOnUploadButton();
+
+		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
+		
+
+		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if Filtre packet is uploaded ");
 	}
-	
+
 	@Test
 	public void newRegistrationAdultUploadMultipleDoccuments(){
 		BasePage.disableAutoRotation();
@@ -549,7 +632,10 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		PreviewPage previewPage=null;
 		AuthenticationPage authenticationPage=null;
 		AcknowledgementPage acknowledgementPage=null;
+
 		IntroducerBiometricPage introducerBiometricPage=null;
+		OperationalTaskPage operationalTaskPage=null;
+		ManageApplicationsPage manageApplicationsPage=null;
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -1063,10 +1149,10 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
 		applicantBiometricsPage.markOneEyeException();
 		applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
-		
+
 		assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 		//applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
-		
+
 		applicantBiometricsPage.clickOnIrisScanTitle();
 		applicantBiometricsPage.clickOnScanButton();
 
@@ -1102,20 +1188,20 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(applicantBiometricsPage.isFaceScan(),"Verify if face scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
 		applicantBiometricsPage.clickOnBackButton();
-		
+
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
 		//Exception
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is still displayed without capture exception");
 		applicantBiometricsPage=biometricDetailsPage.clickOnExceptionScanIcon();
-		
+
 		assertTrue(applicantBiometricsPage.isExceptionScanTitleDisplyed(),"Verify if exception scan page is displayed");
 		applicantBiometricsPage.clickOnScanButton();
 
 		assertTrue(applicantBiometricsPage.isExceptionScan(),"Verify if exception scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
 		biometricDetailsPage=applicantBiometricsPage.clickOnNextButton();
-		
+
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
 		
@@ -1203,6 +1289,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
 
+		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
+		String Aid=previewPage.getAID();
 		previewPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			authenticationPage=new AuthenticationPageEnglish(driver);
@@ -1250,6 +1338,67 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
+		selectLanguagePage.selectAllSecondLanguage();
+
+		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),"verify if the notification language display in english");
+		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
+		selectLanguagePage.clickOnSubmitButton();
+
+		assertFalse(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
+		consentPage.clickOnCancelButton();
+
+		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
+		registrationTasksPage.clickOnOperationalTasksTitle();	
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			operationalTaskPage=new OperationalTaskPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			operationalTaskPage=new OperationalTaskPageHindi(driver);
+
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			operationalTaskPage=new OperationalTaskPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			operationalTaskPage=new OperationalTaskPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			operationalTaskPage=new OperationalTaskPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			operationalTaskPage=new OperationalTaskPageArabic(driver);
+		}
+		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
+		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
+
+		operationalTaskPage.clickApplicationUploadTitle();       
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			manageApplicationsPage=new ManageApplicationsPageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
+		}
+		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
+		manageApplicationsPage.enterAID(Aid);
+
+		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		manageApplicationsPage.clickOnSearchCheckBox();
+		manageApplicationsPage.clickOnUploadButton();
+
+		manageApplicationsPage.selectUploadedOptionDropdown();
+		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
 	}
 	
 }

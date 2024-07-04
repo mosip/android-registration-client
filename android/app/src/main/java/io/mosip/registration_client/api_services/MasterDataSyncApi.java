@@ -42,6 +42,7 @@ import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
+import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
 import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
@@ -60,6 +61,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -97,6 +99,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     PacketService packetService;
     GlobalParamDao globalParamDao;
     FileSignatureDao fileSignatureDao;
+    PreRegistrationDataSyncService preRegistrationDataSyncService;
     Context context;
     private String regCenterId;
 
@@ -117,7 +120,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              AuditManagerService auditManagerService,
                              MasterDataService masterDataService,
                              PacketService packetService,
-                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao) {
+                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -142,6 +145,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.packetService = packetService;
         this.globalParamDao = globalParamDao;
         this.fileSignatureDao = fileSignatureDao;
+        this.preRegistrationDataSyncService = preRegistrationDataSyncService;
     }
 
     public void setCallbackActivity(MainActivity mainActivity){
@@ -254,6 +258,23 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         syncRegistrationPackets(this.context);
         result.success("Registration Packet Sync Completed.");
     }
+
+    @Override
+    public void getPreRegIds(@NonNull MasterDataSyncPigeon.Result<String> result) {
+        if (NetworkUtils.isNetworkConnected(this.context)) {
+            try {
+                preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
+                    Log.i(TAG, "Application Id's Sync Completed");
+                    result.success("Application Id's Sync Completed.");
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
 
     @Override
     public void getKernelCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {

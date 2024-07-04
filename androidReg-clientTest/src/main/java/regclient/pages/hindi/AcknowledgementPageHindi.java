@@ -33,6 +33,7 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"जनसांख्यिकीय विवरण\"))")
 	private WebElement demographicDetailsTitle;
+	
 
 	public AcknowledgementPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -72,6 +73,11 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageHindi(driver);
 	}
+	
+	public String getAID() {
+		return getTextFromLocator(applicationID);
+	}
+	
 
 	
 }

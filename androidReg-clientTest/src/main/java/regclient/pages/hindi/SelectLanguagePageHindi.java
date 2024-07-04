@@ -35,7 +35,7 @@ public class SelectLanguagePageHindi extends SelectLanguagePage{
 	@AndroidFindBy(accessibility = "spanish")
 	private WebElement spanishLanguageButton;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'अधिसूचना भाषाएँ')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'संचार की पसंदीदा भाषा')]")
 	private WebElement notificationLanguageHeaderInHindi;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"English\"])[1]")

@@ -62,7 +62,7 @@ import regclient.utils.TestDataReader;
 
 public class logintest  extends AndroidBaseTest {
 
-	//@Test
+	@Test
 	public void initallLaunch() {
 		BasePage.disableAutoRotation();
 		LoginPageEnglish   loginPage= new LoginPageEnglish(driver);

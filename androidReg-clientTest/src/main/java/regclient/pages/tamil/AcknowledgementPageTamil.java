@@ -34,6 +34,9 @@ public class AcknowledgementPageTamil extends AcknowledgementPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"மக்கள்தொகை விவரங்கள்\"))")
 	private WebElement demographicDetailsTitle;
 	
+	@AndroidFindBy(accessibility = "Sync Packet")
+	private WebElement syncPacketButton;
+	
 	public AcknowledgementPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -71,6 +74,15 @@ public class AcknowledgementPageTamil extends AcknowledgementPage {
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageTamil(driver);
+	}
+	
+	public String getAID() {
+		return getTextFromLocator(applicationID);
+	}
+	
+	public void clickOnSyncPacketButton() {
+		waitTime(10);
+		clickOnElement(syncPacketButton);
 	}
 
 

@@ -86,5 +86,9 @@ public class PreviewPageKannada extends PreviewPage {
 		return isElementDisplayed(fingerExceptionText);
 	}
 
+	public String getAID() {
+		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
+		return applicationID;
+	}
 
 }

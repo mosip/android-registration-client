@@ -72,6 +72,12 @@ public class AcknowledgementPageFrench extends AcknowledgementPage{
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageFrench(driver);
 	}
+	
+	public String getAID() {
+		return getTextFromLocator(applicationID);
+	}
+	
+	
 
 	
 

@@ -58,6 +58,7 @@ public class RegistrationDto extends Observable {
     private String rId;
     private String flowType;
     private String process;
+    private String preRegistrationId;
     private Double schemaVersion;
     private List<String> selectedLanguages;
     private ConsentDto consentDto;
@@ -213,11 +214,15 @@ public class RegistrationDto extends Observable {
         this.consentDto = new ConsentDto(consentText, LocalDateTime.now(ZoneOffset.UTC));
     }
 
-    public void addDocument(String fieldId, String docType, String reference, byte[] bytes) {
+    public void addDocument(String fieldId, String docType, String format,String reference, byte[] bytes) {
         if( docType != null && bytes != null ) {
             DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
             documentDto.setType(docType);
-            documentDto.setFormat("pdf");
+            if(format != null) {
+                documentDto.setFormat(format);
+            }else{
+                documentDto.setFormat("pdf");
+            }
             documentDto.setRefNumber(reference);
             documentDto.getContent().add(bytes);
             this.documents.put(fieldId, documentDto);
@@ -449,5 +454,16 @@ public class RegistrationDto extends Observable {
         if(hasChanged()) { clearChanged(); }
         setChanged();
         notifyObservers(getMVELDataContext());
+    }
+
+    public void addWithoutDocument(String fieldId, String docType, String format,String value, String reference) {
+        if( docType != null) {
+            DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
+            documentDto.setType(docType);
+            documentDto.setFormat(format);
+            documentDto.setValue(value);
+            documentDto.setRefNumber(reference);
+            this.documents.put(fieldId, documentDto);
+        }
     }
 }

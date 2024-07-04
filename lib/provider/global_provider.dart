@@ -39,6 +39,7 @@ class GlobalProvider with ChangeNotifier {
   String _centerId = "";
   String _centerName = "";
   String _machineName = "";
+  String _preRegId = "";
   final formKey = GlobalKey<FormState>();
   final updateFieldKey = GlobalKey<FormState>();
   String _updateUINNumber = "";
@@ -145,6 +146,7 @@ class GlobalProvider with ChangeNotifier {
   String get machineName => _machineName;
   Map<String?, String?> get machineDetails => _machineDetails;
   String get regId => _regId;
+  String get preRegId => _preRegId;
 
   String get operatorOnboardingAttributes => _operatorOnboardingAttributes;
   set operatorOnboardingAttributes(String value) {
@@ -302,6 +304,11 @@ class GlobalProvider with ChangeNotifier {
   setMachineName(String value) {
     _machineName = value;
 
+    notifyListeners();
+  }
+
+  setPreRegistrationId(String value){
+    _preRegId = value;
     notifyListeners();
   }
 

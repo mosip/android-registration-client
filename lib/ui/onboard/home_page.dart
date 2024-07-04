@@ -74,7 +74,10 @@ class _HomePageState extends State<HomePage> {
     }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
+    syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
+    syncProvider.isSyncAndUploadInProgress = false;
+    await syncProvider.getPreRegistrationIds();
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);
@@ -100,6 +103,7 @@ class _HomePageState extends State<HomePage> {
   Widget getProcessUI(BuildContext context, Process process) {
     if (process.id == "NEW" || process.id == "UPDATE") {
       globalProvider.clearRegistrationProcessData();
+      globalProvider.setPreRegistrationId("");
       for (var screen in process.screens!) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&

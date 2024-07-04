@@ -2,6 +2,9 @@ package io.mosip.registration.clientmanager.spi;
 
 import io.mosip.registration.clientmanager.dto.PacketStatusRequest;
 import io.mosip.registration.clientmanager.dto.PacketStatusResponse;
+import io.mosip.registration.clientmanager.dto.PreRegArchiveDto;
+import io.mosip.registration.clientmanager.dto.PreRegistrationDataSyncDto;
+import io.mosip.registration.clientmanager.dto.PreRegistrationIdsDto;
 import io.mosip.registration.clientmanager.dto.http.*;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -82,4 +85,12 @@ public interface SyncRestService {
     Call<ResponseBody> downloadScript(@Url String url,
                                       @HeaderMap Map<String, String> headers,
                                       @Query("keyindex") String keyindex);
+
+    @GET("/preregistration/v1/sync/{pre_registration_id}/{stationId}")
+    Call<ResponseWrapper<PreRegArchiveDto>> getPreRegistrationData(@Path("pre_registration_id") String preRegistrationId,
+                                                                   @Path("stationId") String stationId,
+                                                                   @Query("version") String version);
+    @POST("/preregistration/v1/sync")
+    Call<ResponseWrapper<PreRegistrationIdsDto>> getPreRegistrationIds(@Body PreRegistrationDataSyncDto prepareDataSyncRequestDto);
+
 }
