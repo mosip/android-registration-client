@@ -30,7 +30,6 @@ import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
 import 'package:registration_client/ui/post_registration/preview_page.dart';
-import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
@@ -195,49 +194,6 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   _resetValuesOnRegistrationComplete() {
     Navigator.of(context).pop();
-    for (int i = 0; i < registrationTaskProvider.listOfProcesses.length; i++) {
-      Process process = Process.fromJson(
-        jsonDecode(
-          context
-              .read<RegistrationTaskProvider>()
-              .listOfProcesses
-              .elementAt(i)
-              .toString(),
-        ),
-      );
-      if (process.id == "NEW") {
-        getProcessUI(context, process);
-      }
-    }
-  }
-
-  Widget getProcessUI(BuildContext context, Process process) {
-    if (process.id == "NEW") {
-      globalProvider.clearMap();
-      globalProvider.clearScannedPages();
-      globalProvider.clearExceptions();
-      globalProvider.newProcessTabIndex = 0;
-      globalProvider.htmlBoxTabIndex = 0;
-      globalProvider.setRegId("");
-      globalProvider.setPreRegistrationId("");
-      for (var screen in process.screens!) {
-        for (var field in screen!.fields!) {
-          if (field!.controlType == 'dropdown' &&
-              field.fieldType == 'default') {
-            globalProvider.initializeGroupedHierarchyMap(field.group!);
-          }
-        }
-      }
-      globalProvider.createRegistrationLanguageMap();
-      globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => LanguageSelector(
-          newProcess: process,
-        ),
-      );
-    }
-    return Container();
   }
 
   void _registrationScreenLoadedAudit() async {
@@ -744,12 +700,14 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           continueButtonTap(size, newProcess);
                         },
                         child: Text(
-                            context.read<GlobalProvider>().newProcessTabIndex <=
-                                    size
-                                ? appLocalizations.continue_text
-                                : globalProvider.newProcessTabIndex == size + 1
-                                    ? appLocalizations.authenticate
-                                    : appLocalizations.new_registration),
+                          context.read<GlobalProvider>().newProcessTabIndex <=
+                                  size
+                              ? appLocalizations.continue_text
+                              : globalProvider.newProcessTabIndex == size + 1
+                                  ? appLocalizations.authenticate
+                                  : appLocalizations.go_to_home,
+                          style: const TextStyle(color: appWhite),
+                        ),
                       ),
                     ],
                   ),
