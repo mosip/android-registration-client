@@ -15,7 +15,7 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	@AndroidFindBy(accessibility = "Registration Tasks")
 	private WebElement registrationTasksTitle;
 	
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(6)")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Dashboard\")")
 	private WebElement dashboardButton;
 
 	@AndroidFindBy(accessibility = "Operational Tasks")
