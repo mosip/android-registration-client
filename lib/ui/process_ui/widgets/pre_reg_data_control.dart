@@ -218,7 +218,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                     textCapitalization: TextCapitalization.words,
                     controller: preRegIdController,
                     onChanged: (value) {
-                      preRegIdController.text = value;
+                      //preRegIdController.text = value;
                       globalProvider.setPreRegistrationId(value);
                     },
                     textAlign: TextAlign.left,
