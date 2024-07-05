@@ -19,6 +19,9 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ\")")
 	private WebElement synchronizeDataButton ;
+	
+	@AndroidFindBy(accessibility = "ಅಪ್ಲಿಕೇಶನ್ ಅಪ್ಲೋಡ್")
+	private WebElement applicationUploadTitle;
 
 	public OperationalTaskPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -46,6 +49,17 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 			return true;
 		else
 			return false;
+	}
+	
+	public  void clickApplicationUploadTitle() {
+		clickOnElement(applicationUploadTitle);
+	}
+	
+	public boolean isApplicationUploadTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(applicationUploadTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(applicationUploadTitle);
 	}
 
 }

@@ -8,7 +8,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiometricVerificationpage{
 
-	@AndroidFindBy(accessibility = "Supervisor's Biometric Verification")
+	@AndroidFindBy(accessibility = "Supervisor's Biometric Onboarding")
 	private WebElement supervisorBiometricVerificationPageTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")

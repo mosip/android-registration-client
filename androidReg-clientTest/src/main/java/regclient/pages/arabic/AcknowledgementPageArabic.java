@@ -34,6 +34,9 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"التفاصيل الديموغرافية\"))")
 	private WebElement demographicDetailsTitle;
 	
+	@AndroidFindBy(accessibility = "حزمة المزامنة")
+	private WebElement syncPacketButton;
+	
 	public AcknowledgementPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -72,4 +75,14 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageArabic(driver);
 	}
+	
+	public String getAID() {
+		return getTextFromLocator(applicationID);
+	}
+	
+	public void clickOnSyncPacketButton() {
+		waitTime(10);
+		clickOnElement(syncPacketButton);
+	}
+
 }

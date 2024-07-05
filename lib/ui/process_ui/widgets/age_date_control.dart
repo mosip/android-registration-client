@@ -5,6 +5,8 @@
  *
 */
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -118,12 +120,17 @@ class _AgeDateControlState extends State<AgeDateControl> {
               : widget.field.format)
           .parse(savedDate);
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        int cursorPosition = ageController.selection.baseOffset;
         setState(() {
           dateController.text = savedDate;
           ageController.text =
               calculateYearDifference(parsedDate, DateTime.now())
                   .abs()
                   .toString();
+          ageController.selection = TextSelection.fromPosition(
+            TextPosition(
+                offset: min(cursorPosition, ageController.text.length)),
+          );
         });
       });
     }

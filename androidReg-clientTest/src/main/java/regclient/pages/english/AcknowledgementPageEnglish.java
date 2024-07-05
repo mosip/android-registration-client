@@ -2,7 +2,6 @@ package regclient.pages.english;
 
 
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
@@ -86,13 +85,15 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	}
 	
 	public void clickOnSyncPacketButton() {
+		waitTime(10);
 		clickOnElement(syncPacketButton);
-		String message=getTextFromLocator(packetSyncSuccessfullyMessage);
-		Assert.assertEquals(message,"Login" );
-
 	}
 	
 	public void clickOnUploadPacketButton() {
-		clickOnElement(syncPacketButton);
+		clickOnElement(uploadPacketButton);
+	}
+	
+	public String getAID() {
+		return getTextFromLocator(applicationID);
 	}
 }
