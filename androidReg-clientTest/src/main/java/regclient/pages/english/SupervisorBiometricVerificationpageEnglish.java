@@ -122,6 +122,15 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	@AndroidFindBy(accessibility = "VERIFY & SAVE")
 	private WebElement verifyAndSaveButton;
 	
+	@AndroidFindBy(accessibility = "Dismiss")
+	private WebElement dismissPage;
+	
+	@AndroidFindBy(accessibility = "You have onboarded successfully.")
+	private WebElement successPopup;
+	
+	@AndroidFindBy(accessibility = "HOME")
+	private WebElement homeButton;
+	
 	public SupervisorBiometricVerificationpageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
@@ -343,7 +352,28 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 			return false;
 	}
 	
-	public boolean clickOnVerifyAndSaveButton() {
+	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
+		
+		
+	}
+
+	@Override
+	public void clickOnVerifyAndSaveButton() {
+		clickOnElement(verifyAndSaveButton);
+		
+	}
+	
+	public boolean isDismissPageLoaded() {
+		return isElementDisplayed(dismissPage);
+	}
+	
+	
+	public boolean isOperatorOnboardedPopupLoaded() {
+		return isElementDisplayed(successPopup);	
+	}
+	
+	public void clickOnHomeButton() {
+		clickOnElement(homeButton);
 	}
 }

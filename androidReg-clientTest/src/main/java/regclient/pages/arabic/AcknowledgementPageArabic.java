@@ -75,7 +75,6 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 		clickOnElement(demographicDetailsTitle);
 		return new DemographicDetailsPageArabic(driver);
 	}
-	
 	public String getAID() {
 		return getTextFromLocator(applicationID);
 	}
@@ -84,5 +83,4 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 		waitTime(10);
 		clickOnElement(syncPacketButton);
 	}
-
 }

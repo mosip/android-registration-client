@@ -134,8 +134,17 @@ public class SupervisorBiometricVerificationpageHindi extends SupervisorBiometri
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"सीमा \")]/following-sibling::android.view.View")
 	private WebElement scanQualityText;
 	
-	@AndroidFindBy(accessibility = "VERIFY & SAVE")
+	@AndroidFindBy(accessibility = "सत्यापित करें और सहेजें")
 	private WebElement verifyAndSaveButton;
+	
+	@AndroidFindBy(accessibility = "खारिज करें")
+	private WebElement dismissPage;
+	
+	@AndroidFindBy(accessibility = "आप सफलतापूर्वक शामिल हो गए हैं.")
+	private WebElement successPopup;
+	
+	@AndroidFindBy(accessibility = "घर")
+	private WebElement homeButton;
 	
 	public SupervisorBiometricVerificationpageHindi(AppiumDriver driver) {
 		super(driver);
@@ -354,7 +363,28 @@ public class SupervisorBiometricVerificationpageHindi extends SupervisorBiometri
 			return false;
 	}
 	
-	public boolean clickOnVerifyAndSaveButton() {
+	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
+		
+		
+	}
+
+	@Override
+	public void clickOnVerifyAndSaveButton() {
+		clickOnElement(verifyAndSaveButton);
+		
+	}
+	
+	public boolean isDismissPageLoaded() {
+		return isElementDisplayed(dismissPage);
+	}
+	
+	
+	public boolean isOperatorOnboardedPopupLoaded() {
+		return isElementDisplayed(successPopup);	
+	}
+	
+	public void clickOnHomeButton() {
+		clickOnElement(homeButton);
 	}
 }

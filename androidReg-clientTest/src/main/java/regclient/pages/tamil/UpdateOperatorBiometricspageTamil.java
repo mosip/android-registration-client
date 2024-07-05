@@ -4,12 +4,17 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.SupervisorBiometricVerificationpage;
+import regclient.page.UpdateOperatorBiometricspage;
 
-public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometricVerificationpage{
+public class UpdateOperatorBiometricspageTamil extends UpdateOperatorBiometricspage{
 
-	@AndroidFindBy(accessibility = "Supervisor's Biometric Verification")
-	private WebElement supervisorBiometricVerificationPageTitle;
+	public UpdateOperatorBiometricspageTamil(AppiumDriver driver) {
+		super(driver);
+		
+	}
+
+	@AndroidFindBy(accessibility = "மேற்பார்வையாளர் பயோமேட்ரிக் புதுப்பிப்பு")
+	private WebElement supervisorBiometricUpdatePageTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ஐரிஸ் ஊடுகதிர்\"))")
 	private WebElement irisScanIcon;
@@ -140,22 +145,18 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 	@AndroidFindBy(accessibility = "நிராகரிக்கும்")
 	private WebElement dismissPage;
 	
-	@AndroidFindBy(accessibility = "நீங்கள் வெற்றிகரமாக நுழைந்துவிட்டீர்கள்.")
+	@AndroidFindBy(accessibility = "ஆபரேட்டர் பயோமெட்ரிக்ஸ் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.")
 	private WebElement successPopup;
 	
 	@AndroidFindBy(accessibility = "வீடு")
 	private WebElement homeButton;
 	
-	public SupervisorBiometricVerificationpageTamil(AppiumDriver driver) {
-		super(driver);
-	}
-
 	public void clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
 	}
 	
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		return isElementDisplayed(supervisorBiometricVerificationPageTitle);
+	public boolean isSupervisorBiometricUpdatePageLoaded() {
+		return isElementDisplayed(supervisorBiometricUpdatePageTitle);
 	}
 	
 	public void clickOnRightHandScanIcon() {
@@ -305,14 +306,13 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 		clickOnElement(rightHandScanTitle);
 	}
 	
-	public void clickOnleftHandScanTitle() {
+	public void clickOnLeftHandScanTitle() {
 		clickOnElement(leftHandScanTitle);
 	}
 	
 	public void clickOnFaceScanTitle() {
 		clickOnElement(faceScanTitle);
 	}
-
 	public boolean checkThresholdValueIris() {
 		int requiredValue=60;
 		String scanValue =scanQualityText.getAttribute("contentDescription");
@@ -365,10 +365,8 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 	
 	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-			
 	}
-
-	@Override
+	
 	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
 		
@@ -379,7 +377,7 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 	}
 	
 	
-	public boolean isOperatorOnboardedPopupLoaded() {
+	public boolean isOperatorBiometricsUpdatedPopupLoaded() {
 		return isElementDisplayed(successPopup);	
 	}
 	

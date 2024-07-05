@@ -4,12 +4,16 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.page.SupervisorBiometricVerificationpage;
+import regclient.page.UpdateOperatorBiometricspage;
 
-public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometricVerificationpage{
+public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometricspage{
 
-	@AndroidFindBy(accessibility = "Supervisor's Biometric Verification")
-	private WebElement supervisorBiometricVerificationPageTitle;
+	public UpdateOperatorBiometricspageFrench(AppiumDriver driver) {
+		super(driver);
+		
+	}
+	@AndroidFindBy(accessibility = "Mise à jour biométrique du superviseur")
+	private WebElement supervisorBiometricUpdatePageTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
@@ -126,22 +130,18 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	@AndroidFindBy(accessibility = "Ignorer")
 	private WebElement dismissPage;
 	
-	@AndroidFindBy(accessibility = "Vous avez été intégré avec succès.")
+	@AndroidFindBy(accessibility = "Les données biométriques de l'opérateur ont été mises à jour avec succès.")
 	private WebElement successPopup;
 	
 	@AndroidFindBy(accessibility = "MAISON")
 	private WebElement homeButton;
 	
-	public SupervisorBiometricVerificationpageFrench(AppiumDriver driver) {
-		super(driver);
-	}
-
 	public void clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
 	}
 	
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		return isElementDisplayed(supervisorBiometricVerificationPageTitle);
+	public boolean isSupervisorBiometricUpdatePageLoaded() {
+		return isElementDisplayed(supervisorBiometricUpdatePageTitle);
 	}
 	
 	public void clickOnRightHandScanIcon() {
@@ -291,14 +291,13 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 		clickOnElement(rightHandScanTitle);
 	}
 	
-	public void clickOnleftHandScanTitle() {
+	public void clickOnLeftHandScanTitle() {
 		clickOnElement(leftHandScanTitle);
 	}
 	
 	public void clickOnFaceScanTitle() {
 		clickOnElement(faceScanTitle);
 	}
-	
 	public boolean checkThresholdValueIris() {
 		int requiredValue=60;
 		String scanValue =scanQualityText.getAttribute("contentDescription");
@@ -351,11 +350,8 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	
 	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-		
-		
 	}
-
-	@Override
+	
 	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
 		
@@ -366,12 +362,18 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	}
 	
 	
-	public boolean isOperatorOnboardedPopupLoaded() {
+	public boolean isOperatorBiometricsUpdatedPopupLoaded() {
 		return isElementDisplayed(successPopup);	
 	}
 	
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
+
+	public boolean isSupervisorBiometricVerificationPageLoaded() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }

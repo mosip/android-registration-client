@@ -119,8 +119,17 @@ public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometr
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View")
 	private WebElement scanQualityText;
 	
-	@AndroidFindBy(accessibility = "VERIFY & SAVE")
+	@AndroidFindBy(accessibility = "التحقق والحفظ")
 	private WebElement verifyAndSaveButton;
+	
+	@AndroidFindBy(accessibility = "رفض")
+	private WebElement dismissPage;
+	
+	@AndroidFindBy(accessibility = "لقد انضممت بنجاح.")
+	private WebElement successPopup;
+	
+	@AndroidFindBy(accessibility = "بيت")
+	private WebElement homeButton;
 	
 	public SupervisorBiometricVerificationpageArabic(AppiumDriver driver) {
 		super(driver);
@@ -338,7 +347,26 @@ public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometr
 			return false;
 	}
 	
-	public boolean clickOnVerifyAndSaveButton() {
-		return isElementDisplayed(verifyAndSaveButton);
+	public boolean isVerifyAndSaveButtonEnabled() {
+		return isElementDisplayed(verifyAndSaveButton);	
 	}
+
+	@Override
+	public void clickOnVerifyAndSaveButton() {
+		clickOnElement(verifyAndSaveButton);
+		
+	}
+	
+	public boolean isDismissPageLoaded() {
+		return isElementDisplayed(dismissPage);
+	}
+	
+	public boolean isOperatorOnboardedPopupLoaded() {
+		return isElementDisplayed(successPopup);	
+	}
+	
+	public void clickOnHomeButton() {
+		clickOnElement(homeButton);
+	}
+
 }

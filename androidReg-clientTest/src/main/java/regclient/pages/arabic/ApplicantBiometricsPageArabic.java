@@ -255,5 +255,4 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 		}
 		return isElementDisplayed(exceptionCount);
 	}
-
 }

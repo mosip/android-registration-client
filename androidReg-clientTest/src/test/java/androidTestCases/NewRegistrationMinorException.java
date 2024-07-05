@@ -709,6 +709,16 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		manageApplicationsPage.clickOnUploadButton();
 
 		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
+		manageApplicationsPage.clickClientStatusDropdown();
+
+		assertTrue(manageApplicationsPage.isCreatedDropdownOptionDisplayed(), "Verify if Created Dropdown Option Displayed displayed");
+		assertTrue(manageApplicationsPage.isApprovedDropdownOptionDisplayed(), "Verify if Approved Dropdown Option Displayed displayed");
+		assertTrue(manageApplicationsPage.isRejectedDropdownOptionDisplayed(), "Verify if Rejected Dropdown Option Displayed");
+		assertTrue(manageApplicationsPage.isSyncedDropdownOptionDisplayed(), "Verify if Synced Dropdown Option Displayed");
+		assertTrue(manageApplicationsPage.isUploadedDropdownOptionDisplayed(), "Verify if Uploaded Dropdown Option Displayed");
+		assertTrue(manageApplicationsPage.isExportedsDropdownOptionDisplayed(), "Verify if Exported Dropdown Option Displayed");
+
+		manageApplicationsPage.clickDismissButton();
 
 	}
 }
