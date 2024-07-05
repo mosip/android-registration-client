@@ -26,6 +26,7 @@ import 'package:registration_client/ui/process_ui/widgets/gender_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/terms_and_conditions.dart';
 import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
@@ -64,7 +65,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       }
     }
 
-    if(e.id == "preferredLang") {
+    if (e.id == "preferredLang") {
       return const SizedBox.shrink();
     }
 
@@ -73,11 +74,14 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
         if (e.subType == "gender") {
           return RadioButtonControl(field: e);
         }
+        if (e.group!.toLowerCase() == "consent") {
+          return TermsAndConditions(field: e);
+        }
         return CheckboxControl(field: e);
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        if(context.watch<GlobalProvider>().mvelRequiredFields[e.id] ?? true) {
+        if (context.watch<GlobalProvider>().mvelRequiredFields[e.id] ?? true) {
           return BiometricCaptureControl(e: e);
         }
         return Container();
@@ -125,7 +129,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   evaluateMVELVisible(
       String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider.evaluateMVELVisible(fieldData, expression!).then((value) {
+    registrationTaskProvider
+        .evaluateMVELVisible(fieldData, expression!)
+        .then((value) {
       if (!value) {
         globalProvider.removeFieldFromMap(
             e.id!, globalProvider.fieldInputValue);
@@ -137,7 +143,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
 
   evaluateMVELRequired(
       String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider.evaluateMVELRequired(fieldData, expression!).then((value) {
+    registrationTaskProvider
+        .evaluateMVELRequired(fieldData, expression!)
+        .then((value) {
       globalProvider.setMvelRequiredFields(e.id!, value);
     });
   }
@@ -145,10 +153,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   _checkMvelVisible(Field e) async {
     if (e.required == false) {
       if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
-        await evaluateMVELVisible(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
-            e.requiredOn?[0]?.expr, e);
-        await evaluateMVELRequired(jsonEncode(e.toJson()), e.requiredOn?[0]?.engine,
-            e.requiredOn?[0]?.expr, e);
+        await evaluateMVELVisible(jsonEncode(e.toJson()),
+            e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
+        await evaluateMVELRequired(jsonEncode(e.toJson()),
+            e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
       }
     }
   }
@@ -157,8 +165,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if(widget.screen.preRegFetchRequired==true)...[
-          PreRegDataControl(screen:widget.screen),
+        if (widget.screen.preRegFetchRequired == true) ...[
+          PreRegDataControl(screen: widget.screen),
         ],
         Form(
           key: context.watch<GlobalProvider>().formKey,
@@ -167,7 +175,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
               ...widget.screen.fields!.map((e) {
                 _checkMvelVisible(e!);
                 if (e.inputRequired == true) {
-                  if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
+                  if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ??
+                      true) {
                     return widgetType(e);
                   }
                 }

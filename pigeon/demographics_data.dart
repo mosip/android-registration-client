@@ -39,4 +39,7 @@ abstract class DemographicsApi {
 
   @async
   String removeUpdatableFieldGroup(String fieldGroup);
+
+  @async
+  String changeUpdatableFieldGroups();
 }
