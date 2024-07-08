@@ -44,8 +44,16 @@ class GlobalProvider with ChangeNotifier {
   final updateFieldKey = GlobalKey<FormState>();
   String _updateUINNumber = "";
   String _onboardingProcessName="";
+  bool _isPageChanged = false;
   String get updateUINNumber => _updateUINNumber;
   String get onboardingProcessName => _onboardingProcessName;
+  bool get isPageChanged => _isPageChanged;
+
+
+  set isPageChanged(bool value){
+    _isPageChanged = value;
+    notifyListeners();
+  }
 
   set onboardingProcessName(String value) {
     _onboardingProcessName = value;
