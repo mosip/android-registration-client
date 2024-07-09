@@ -171,7 +171,7 @@ public class BasePage {
 	
 	protected String  getCurrentDateWord() {
 		 LocalDate today = LocalDate.now();
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM", Locale.ENGLISH);
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.ENGLISH);
 	        String formattedDate = today.format(formatter);
 			return formattedDate;
 	}

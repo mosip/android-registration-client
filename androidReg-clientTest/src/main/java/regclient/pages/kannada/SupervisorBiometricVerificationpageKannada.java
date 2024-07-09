@@ -134,8 +134,17 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ಸೀಮಾಂಕ \")]/following-sibling::android.view.View")
 	private WebElement scanQualityText;
 	
-	@AndroidFindBy(accessibility = "VERIFY & SAVE")
+	@AndroidFindBy(accessibility = "ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಉಳಿಸಿ")
 	private WebElement verifyAndSaveButton;
+	
+	@AndroidFindBy(accessibility = "ವಜಾಗೊಳಿಸಿ")
+	private WebElement dismissPage;
+	
+	@AndroidFindBy(accessibility = "ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಿರುವಿರಿ.")
+	private WebElement successPopup;
+	
+	@AndroidFindBy(accessibility = "ಮನೆ")
+	private WebElement homeButton;
 
 	public SupervisorBiometricVerificationpageKannada(AppiumDriver driver) {
 		super(driver);
@@ -354,7 +363,28 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 			return false;
 	}
 	
-	public boolean clickOnVerifyAndSaveButton() {
+	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
+			
 	}
+
+	@Override
+	public void clickOnVerifyAndSaveButton() {
+		clickOnElement(verifyAndSaveButton);
+		
+	}
+	
+	public boolean isDismissPageLoaded() {
+		return isElementDisplayed(dismissPage);
+	}
+	
+	
+	public boolean isOperatorOnboardedPopupLoaded() {
+		return isElementDisplayed(successPopup);	
+	}
+	
+	public void clickOnHomeButton() {
+		clickOnElement(homeButton);
+	}
+
 }

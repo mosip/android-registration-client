@@ -95,5 +95,8 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	
 	public String getAID() {
 		return getTextFromLocator(applicationID);
+
 	}
+
+
 }

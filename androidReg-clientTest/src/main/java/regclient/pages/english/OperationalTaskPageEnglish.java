@@ -27,8 +27,8 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 	}
 
 	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
-		clickOnElement(updateOperatorBiometricsButton);
-		return new SupervisorBiometricVerificationpageEnglish(driver);
+	clickOnElement(updateOperatorBiometricsButton);
+	return new SupervisorBiometricVerificationpageEnglish(driver);
 	}
 
 	public boolean isOperationalTaskPageLoaded() {

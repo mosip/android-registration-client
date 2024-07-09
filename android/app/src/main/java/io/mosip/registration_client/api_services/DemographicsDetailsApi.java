@@ -175,4 +175,14 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
             Log.e(getClass().getSimpleName(), "Remove updatable field group failed!" + Arrays.toString(e.getStackTrace()));
         }
     }
+
+    @Override
+    public void changeUpdatableFieldGroups(@NonNull DemographicsDataPigeon.Result<String> result) {
+        try {
+            this.registrationService.getRegistrationDto().changeUpdatableFieldGroups();
+            result.success("Ok");
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Remove updatable field group failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
 }

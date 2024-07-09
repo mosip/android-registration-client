@@ -8,6 +8,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -101,6 +102,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
+    Clipboard.setData(ClipboardData(
+        text: registrationTaskProvider.listOfProcesses.toString()));
     if (process.id == "NEW" || process.id == "UPDATE") {
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");
@@ -129,11 +132,13 @@ class _HomePageState extends State<HomePage> {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     appLocalizations = AppLocalizations.of(context)!;
 
-
     try {
-      String dateString = context.watch<RegistrationTaskProvider>().lastSuccessfulUpdatedTime;
-      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(dateString));
-      lastOperatorUpdateBiometricTime = DateFormat("EEEE d MMMM, hh:mma").format(dateTime);
+      String dateString =
+          context.watch<RegistrationTaskProvider>().lastSuccessfulUpdatedTime;
+      DateTime dateTime =
+          DateTime.fromMillisecondsSinceEpoch(int.parse(dateString));
+      lastOperatorUpdateBiometricTime =
+          DateFormat("EEEE d MMMM, hh:mma").format(dateTime);
     } catch (e) {
       lastOperatorUpdateBiometricTime = "";
     }
@@ -186,8 +191,7 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      const ExportPacketsPage()));
+                  builder: (context) => const ExportPacketsPage()));
         },
         "subtitle": "3 application(s)"
       },
