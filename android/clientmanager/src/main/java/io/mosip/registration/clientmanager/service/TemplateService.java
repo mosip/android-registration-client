@@ -88,7 +88,7 @@ public class TemplateService {
         Double version = identitySchemaRepository.getLatestSchemaVersion();
         if (version == null)
             throw new Exception("No Schema found");
-        List<FieldSpecDto> schemaFields = identitySchemaRepository.getAllFieldSpec(appContext, version);
+        List<FieldSpecDto> schemaFields = identitySchemaRepository.getProcessSpecFields(appContext, registrationDto.getProcess());
 
         setBasicDetails(isPreview, registrationDto, templateTitleValues, velocityContext);
 
