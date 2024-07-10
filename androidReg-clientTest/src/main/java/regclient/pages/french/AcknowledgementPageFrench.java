@@ -76,6 +76,9 @@ public class AcknowledgementPageFrench extends AcknowledgementPage{
 	public String getAID() {
 		return getTextFromLocator(applicationID);
 	}
+	
+	
 
+	
 
 }

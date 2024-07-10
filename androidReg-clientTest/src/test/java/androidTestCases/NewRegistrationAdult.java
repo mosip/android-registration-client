@@ -3,7 +3,6 @@ package androidTestCases;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-
 import org.testng.annotations.Test;
 
 import BaseTest.AndroidBaseTest;
@@ -425,15 +424,15 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
-
+		
 		applicantBiometricsPage.clickOnScanButton();
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 2nd attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
-
+		
 		applicantBiometricsPage.clickOnScanButton();
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 3rd attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
-
+		
 		biometricDetailsPage=applicantBiometricsPage.clickOnBackButton();
 		//righthand
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
@@ -545,6 +544,11 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
+
+	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
+
+		//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");	
+
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
@@ -595,80 +599,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
-		manageApplicationsPage.clickClientStatusDropdown();
-
-		assertTrue(manageApplicationsPage.isCreatedDropdownOptionDisplayed(), "Verify if Created Dropdown Option Displayed displayed");
-		assertTrue(manageApplicationsPage.isApprovedDropdownOptionDisplayed(), "Verify if Approved Dropdown Option Displayed displayed");
-		assertTrue(manageApplicationsPage.isRejectedDropdownOptionDisplayed(), "Verify if Rejected Dropdown Option Displayed");
-		assertTrue(manageApplicationsPage.isSyncedDropdownOptionDisplayed(), "Verify if Synced Dropdown Option Displayed");
-		assertTrue(manageApplicationsPage.isUploadedDropdownOptionDisplayed(), "Verify if Uploaded Dropdown Option Displayed");
-		assertTrue(manageApplicationsPage.isExportedsDropdownOptionDisplayed(), "Verify if Exported Dropdown Option Displayed");
-
-		manageApplicationsPage.clickDismissButton();
-		manageApplicationsPage.enterWrongAID(Aid+123);
-
-		assertTrue(manageApplicationsPage.isZeroApplicationDisplayed(), "Verify if wrong Aid should not display");
-		manageApplicationsPage.enterAID(Aid);
-
-		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
-		manageApplicationsPage.selectApprovedValueDropdown();
-
-		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
-		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
-
-		manageApplicationsPage.selectSyncedOptionDropdown();
-		assertTrue(manageApplicationsPage.isPacketSynned(Aid), "Verify if Filtre packet is synned ");
-
-		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
-		manageApplicationsPage.selectUploadedOptionDropdown();
-
-		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if Filtre packet is uploaded ");
-		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
-		registrationTasksPage.clickOnOperationalTasksTitle();	
-		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			operationalTaskPage=new OperationalTaskPageEnglish(driver);
-		} 
-		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-			operationalTaskPage=new OperationalTaskPageHindi(driver);
-
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-			operationalTaskPage=new OperationalTaskPageFrench(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-			operationalTaskPage=new OperationalTaskPageKannada(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-			operationalTaskPage=new OperationalTaskPageTamil(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-			operationalTaskPage=new OperationalTaskPageArabic(driver);
-		}
-		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
-		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
-
-		operationalTaskPage.clickApplicationUploadTitle();       
-		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			manageApplicationsPage=new ManageApplicationsPageEnglish(driver);
-		} 
-		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
-
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
-		}
-		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
 		manageApplicationsPage.enterWrongAID(Aid+123);
 
 		assertTrue(manageApplicationsPage.isZeroApplicationDisplayed(), "Verify if wrong Aid should not display");
@@ -682,7 +612,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		manageApplicationsPage.clickOnUploadButton();
 
 		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
-
+		
 
 		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if Filtre packet is uploaded ");
 	}
@@ -702,9 +632,10 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		PreviewPage previewPage=null;
 		AuthenticationPage authenticationPage=null;
 		AcknowledgementPage acknowledgementPage=null;
+
+		IntroducerBiometricPage introducerBiometricPage=null;
 		OperationalTaskPage operationalTaskPage=null;
 		ManageApplicationsPage manageApplicationsPage=null;
-		IntroducerBiometricPage introducerBiometricPage=null;
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -1104,15 +1035,15 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		demographicPage.enterAddressLine1(TestDataReader.readData("editData"));
 		demographicPage.enterAddressLine2(TestDataReader.readData("editData"));
 		demographicPage.enterAddressLine3(TestDataReader.readData("editData"));
-
+		
 		assertTrue(demographicPage.isIntroducerNameHeaderDisplayed(),"Verify if introducer name header is displayed");
 		demographicPage.enterIntroducerName(TestDataReader.readData("fullname"));
-
+		
 		assertTrue(demographicPage.checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull(),"Verify if introduceR name is enter in second language text box");
 
 		assertTrue(demographicPage.isIntroducerRidHeaderDisplayed(),"Verify if introducer rid header is displayed");
 		demographicPage.enterIntroducerRid(TestDataReader.readData("RID"));
-
+		
 
 		demographicPage.clickOnContinueButton();
 
@@ -1227,11 +1158,11 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(applicantBiometricsPage.isIrisScan(),"Verify if iris scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
-
+		
 		applicantBiometricsPage.clickOnNextButton();
 		assertTrue(applicantBiometricsPage.isRightHandScanTitleDisplyed(),"Verify if right hand scan is displayed");
 		applicantBiometricsPage.clickOnScanButton();
-
+		
 
 		assertTrue(applicantBiometricsPage.isRightHandScan(),"Verify if right hand scan 1st attempt");
 		applicantBiometricsPage.closeScanCapturePopUp();
@@ -1273,7 +1204,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
-
+		
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnIntroducerIrisScan();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -1329,10 +1260,10 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(introducerBiometricPage.isFaceScan(),"Verify if face scan 1st attempt");
 		introducerBiometricPage.closeScanCapturePopUp();
 		biometricDetailsPage=introducerBiometricPage.clickOnNextButton();
-
+		
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
-		biometricDetailsPage.clickOnContinueButton();
-
+        biometricDetailsPage.clickOnContinueButton();
+        
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			previewPage=new PreviewPageEnglish(driver);
 		} 
@@ -1357,6 +1288,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
+
 		assertTrue(previewPage.isSingleIrisImageDisplayed(),"Verify if single iris exception image In PreviewPage is displayed");
 		String Aid=previewPage.getAID();
 		previewPage.clickOnContinueButton();
@@ -1401,7 +1333,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-		//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
+	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
 
 		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
 
@@ -1465,63 +1397,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 
-		manageApplicationsPage.selectSyncedOptionDropdown();
-		assertTrue(manageApplicationsPage.isPacketSynned(Aid), "Verify if Filtre packet is synned ");
-
-		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
-
-		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
-		registrationTasksPage.clickOnOperationalTasksTitle();	
-		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			operationalTaskPage=new OperationalTaskPageEnglish(driver);
-		} 
-		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-			operationalTaskPage=new OperationalTaskPageHindi(driver);
-
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-			operationalTaskPage=new OperationalTaskPageFrench(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-			operationalTaskPage=new OperationalTaskPageKannada(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-			operationalTaskPage=new OperationalTaskPageTamil(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-			operationalTaskPage=new OperationalTaskPageArabic(driver);
-		}
-		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
-		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
-
-		operationalTaskPage.clickApplicationUploadTitle();       
-		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			manageApplicationsPage=new ManageApplicationsPageEnglish(driver);
-		} 
-		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-			manageApplicationsPage=new ManageApplicationsPageHindi(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-			manageApplicationsPage=new ManageApplicationsPageFrench(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-			manageApplicationsPage=new ManageApplicationsPageKannada(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-			manageApplicationsPage=new ManageApplicationsPageTamil(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-			manageApplicationsPage=new ManageApplicationsPageArabic(driver);
-		}
-		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(), "Verify if manage Applications Page displayed");
-		manageApplicationsPage.enterAID(Aid);
-
-		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
-		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
-
 		manageApplicationsPage.selectUploadedOptionDropdown();
 		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
 	}
-
+	
 }

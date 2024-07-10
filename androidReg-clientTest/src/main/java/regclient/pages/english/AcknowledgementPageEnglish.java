@@ -84,6 +84,7 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 		return new DemographicDetailsPageEnglish(driver);
 	}
 	
+
 	public void clickOnSyncPacketButton() {
 		waitTime(10);
 		clickOnElement(syncPacketButton);
@@ -95,8 +96,6 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	
 	public String getAID() {
 		return getTextFromLocator(applicationID);
-
 	}
-
 
 }
