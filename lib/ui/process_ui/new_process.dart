@@ -55,6 +55,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late ConnectivityProvider connectivityProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
+  ScrollController scrollController = ScrollController();
 
   List<String> postRegistrationTabs = [
     'Preview',
@@ -204,9 +205,23 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     await globalProvider.getAudit("REG-EVT-003", "REG-MOD-103");
   }
 
+  setScrollToTop(){
+      scrollController.animateTo(
+        scrollController.position.minScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+      globalProvider.isPageChanged = false;
+  }
+
   bool continueButton = false;
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if(globalProvider.isPageChanged){
+        setScrollToTop();
+      }
+    });
     postRegistrationTabs = [
       appLocalizations.preview_page,
       appLocalizations.packet_auth_page,
@@ -510,6 +525,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     continueButtonTap(int size, newProcess) async {
+      globalProvider.isPageChanged = true;
       if (globalProvider.newProcessTabIndex < size) {
         ageDateChangeValidation(globalProvider.newProcessTabIndex);
         bool customValidator =
@@ -713,6 +729,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                   ),
           ),
           body: SingleChildScrollView(
+            controller: scrollController,
             child: AnnotatedRegion<SystemUiOverlayStyle>(
               value: const SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
