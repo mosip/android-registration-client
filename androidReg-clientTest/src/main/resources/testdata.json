@@ -21,5 +21,6 @@
     "RID": "10001105671003120240215071549",
     "nonRegisteredUsername": "123456789",
     "InvalidPassword": "123456789",
-    "comments":"asdfgh"
+    "comments":"asdfgh",
+    "env":"qa-platform1-mosip.net"
 }
