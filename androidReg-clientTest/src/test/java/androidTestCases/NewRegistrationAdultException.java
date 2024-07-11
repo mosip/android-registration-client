@@ -217,7 +217,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 			consentPage =new ConsentPageArabic(driver);
 		}
 		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
-		consentPage.selectTermAndConditionCheckbox();
+		//consentPage.selectTermAndConditionCheckbox();
 
 		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
 		consentPage.clickOnInformedButton();
@@ -587,10 +587,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
 		//	assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
 
-		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
-
-		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
-		consentPage.clickOnCancelButton();
+		acknowledgementPage.clickOnGoToHomeButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnOperationalTasksTitle();	

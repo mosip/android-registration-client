@@ -235,8 +235,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
 		assertTrue(consentPage.isCheckBoxReadable(),"Verify if the check box in readable");
 
-		consentPage.selectTermAndConditionCheckbox();
-
 		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
 		consentPage.clickOnInformedButton();
 
@@ -546,13 +544,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
 
 	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
-
-		//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");	
-
-		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
-
-		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
-		consentPage.clickOnCancelButton();
+		acknowledgementPage.clickOnGoToHomeButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnOperationalTasksTitle();	
@@ -731,10 +723,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			consentPage =new ConsentPageArabic(driver);
 		}
 		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
-		consentPage.selectTermAndConditionCheckbox();
-		consentPage.UnSelectTermAndConditionCheckbox();
 
-		consentPage.selectTermAndConditionCheckbox();
 		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
 		consentPage.clickOnInformedButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -1335,8 +1324,10 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
 	//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
 
-		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
-
+		acknowledgementPage.clickOnGoToHomeButton();
+		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
+		registrationTasksPage.clickOnNewRegistrationButton();
+		
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
 		selectLanguagePage.selectAllSecondLanguage();
 
