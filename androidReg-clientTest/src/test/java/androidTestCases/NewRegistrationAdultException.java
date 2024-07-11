@@ -217,7 +217,6 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 			consentPage =new ConsentPageArabic(driver);
 		}
 		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
-		//consentPage.selectTermAndConditionCheckbox();
 
 		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
 		consentPage.clickOnInformedButton();
