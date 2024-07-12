@@ -46,6 +46,14 @@ class GlobalProvider with ChangeNotifier {
   String _onboardingProcessName="";
   String get updateUINNumber => _updateUINNumber;
   String get onboardingProcessName => _onboardingProcessName;
+  bool _preRegControllerRefresh = false;
+  bool get preRegControllerRefresh => _preRegControllerRefresh;
+
+  set preRegControllerRefresh(bool value) {
+    _preRegControllerRefresh = value;
+    notifyListeners();
+  }
+
 
   set onboardingProcessName(String value) {
     _onboardingProcessName = value;

@@ -11,7 +11,8 @@ import 'package:registration_client/utils/app_config.dart';
 
 class PreRegDataControl extends StatefulWidget {
   final Screen screen;
-  const PreRegDataControl({super.key, required this.screen});
+  final VoidCallback onFetched;
+  const PreRegDataControl({super.key, required this.screen, required this.onFetched});
 
 
   @override
@@ -25,7 +26,6 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
       TextEditingController(text: "");
   final _formFieldKey = GlobalKey<FormFieldState>();
   int? index;
-  bool isLoading = false;
   @override
   void initState() {
     registrationTaskProvider =
@@ -180,6 +180,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
         }
       }
     }
+    globalProvider.preRegControllerRefresh = false;
   }
 
 
@@ -250,35 +251,31 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                         ),
                       ),
                       onPressed: () async {
+                        widget.onFetched();
+                        globalProvider.preRegControllerRefresh = true;
                         if(preRegIdController.text.isEmpty){
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Please Enter Application ID"),
                           );
+                          globalProvider.preRegControllerRefresh = false;
                         } else if(!RegExp(r'^\d{14}$').hasMatch(preRegIdController.text)){
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
                           );
+                          globalProvider.preRegControllerRefresh = false;
                         } else {
-                            setState(() {
-                              isLoading = true;
-                            });
                             Map<String?, Object?> value = await context.read<
                                 RegistrationTaskProvider>()
                                 .fetchPreRegistrationDetail(
                                 preRegIdController.text);
                             if (value.isNotEmpty) {
                               widgetValue(widget.screen, value);
-                              setState(() {
-                                isLoading = false;
-                              });
                             }
                         }
                       },
-                      child: isLoading? const CircularProgressIndicator(
-                        value: 2,
-                      ): Text(
+                      child: Text(
                         "FETCH DATA",
                         style: TextStyle(fontSize: isPortrait && !isMobileSize ? 22 : 14, color: solidPrimary,fontWeight: FontWeight.bold),
                       ),
@@ -298,6 +295,8 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       ),
                     ),
                     onPressed: () async {
+                      globalProvider.preRegControllerRefresh = true;
+                      widget.onFetched();
                       var data = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -309,6 +308,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                           context: context,
                           builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
                         );
+                        globalProvider.preRegControllerRefresh = false;
                       } else if(data!=null) {
                         setState(() {
                           preRegIdController.text = data.toString();
