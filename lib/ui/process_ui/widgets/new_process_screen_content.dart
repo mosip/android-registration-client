@@ -46,6 +46,7 @@ class NewProcessScreenContent extends StatefulWidget {
 class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
+  int refreshValue = 0;
 
   @override
   void initState() {
@@ -165,10 +166,14 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (widget.screen.preRegFetchRequired == true) ...[
-          PreRegDataControl(screen: widget.screen),
+        if(widget.screen.preRegFetchRequired==true)...[
+          PreRegDataControl(screen:widget.screen,onFetched: (){
+            setState(() {
+              refreshValue = 1;
+            });
+          }),
         ],
-        Form(
+        (context.watch<GlobalProvider>().preRegControllerRefresh) ? const CircularProgressIndicator() : Form(
           key: context.watch<GlobalProvider>().formKey,
           child: Column(
             children: [

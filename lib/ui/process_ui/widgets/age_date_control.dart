@@ -120,17 +120,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
               : widget.field.format)
           .parse(savedDate);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        int cursorPosition = ageController.selection.baseOffset;
         setState(() {
           dateController.text = savedDate;
           ageController.text =
               calculateYearDifference(parsedDate, DateTime.now())
                   .abs()
                   .toString();
-          ageController.selection = TextSelection.fromPosition(
-            TextPosition(
-                offset: min(cursorPosition, ageController.text.length)),
-          );
         });
       });
     }
@@ -247,7 +242,6 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   @override
   Widget build(BuildContext context) {
-    _getSavedDate();
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Card(
