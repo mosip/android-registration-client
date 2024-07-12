@@ -47,10 +47,12 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
     controller = TextEditingController(text: globalProvider.updateUINNumber);
     for (var screen in widget.process.screens!) {
       for (var field in screen!.fields!) {
-        if (fieldsMap[field!.group!] == null) {
-          fieldsMap[field.group!] = [];
+        if (field!.group != null) {
+          if (fieldsMap[field.group!] == null) {
+            fieldsMap[field.group!] = [];
+          }
+          fieldsMap[field.group]!.add(field);
         }
-        fieldsMap[field.group]!.add(field);
       }
     }
     super.initState();

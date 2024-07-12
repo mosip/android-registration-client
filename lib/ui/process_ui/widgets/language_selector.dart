@@ -36,16 +36,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   late RegistrationTaskProvider registrationTaskProvider;
 
   _triggerNavigation() {
-    if(widget.newProcess.id == "NEW") {
+    if (widget.newProcess.id == "NEW") {
       Navigator.pushNamed(context, NewProcess.routeName,
-        arguments: {"process": widget.newProcess});
+          arguments: {"process": widget.newProcess});
     }
-    
-    if(widget.newProcess.id == "UPDATE") {
+
+    if (widget.newProcess.id == "UPDATE") {
       Navigator.pushNamed(context, UpdateProcess.routeName,
-        arguments: {"process": widget.newProcess});
+          arguments: {"process": widget.newProcess});
     }
-    
   }
 
   _showInSnackBar(String value) {
@@ -74,10 +73,16 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     await globalProvider.fieldValues(widget.newProcess);
 
     List<String> langList = _getRegistrationLanguageList();
-    await registrationTaskProvider.startRegistration(langList, widget.newProcess.flow! == "UPDATE" ? "Update" : widget.newProcess.flow!, widget.newProcess.id!);
-    registrationTaskProvider.addDemographicField(
-        "preferredLang", globalProvider.fieldInputValue["preferredLang"].toString());
-    String registrationStartError = registrationTaskProvider.registrationStartError;
+    await registrationTaskProvider.startRegistration(
+        langList,
+        widget.newProcess.flow! == "UPDATE"
+            ? "Update"
+            : widget.newProcess.flow!,
+        widget.newProcess.id!);
+    registrationTaskProvider.addDemographicField("preferredLang",
+        globalProvider.fieldInputValue["preferredLang"].toString());
+    String registrationStartError =
+        registrationTaskProvider.registrationStartError;
     _navigateBack();
     if (registrationStartError.isEmpty) {
       _triggerNavigation();
@@ -136,7 +141,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+            // mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(),
               ListTile(
@@ -148,8 +153,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   ),
                 ),
                 leading: const Icon(
-                  Icons.check,
-                  color: Colors.green,
+                  Icons.circle_rounded,
+                  color: bulletPointColor,
+                  size: 15,
                 ),
               ),
               ListTile(
@@ -162,8 +168,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   ),
                 ),
                 leading: const Icon(
-                  Icons.check,
-                  color: Colors.green,
+                  Icons.circle_rounded,
+                  color: bulletPointColor,
+                  size: 15,
                 ),
               ),
               SizedBox(

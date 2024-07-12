@@ -17,6 +17,7 @@ import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/pigeon/demographics_data_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -29,7 +30,6 @@ import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
 import 'package:registration_client/ui/post_registration/preview_page.dart';
-import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
@@ -55,6 +55,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late ConnectivityProvider connectivityProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
+  ScrollController scrollController = ScrollController();
 
   List<String> postRegistrationTabs = [
     'Preview',
@@ -194,49 +195,6 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
   _resetValuesOnRegistrationComplete() {
     Navigator.of(context).pop();
-    for (int i = 0; i < registrationTaskProvider.listOfProcesses.length; i++) {
-      Process process = Process.fromJson(
-        jsonDecode(
-          context
-              .read<RegistrationTaskProvider>()
-              .listOfProcesses
-              .elementAt(i)
-              .toString(),
-        ),
-      );
-      if (process.id == "NEW") {
-        getProcessUI(context, process);
-      }
-    }
-  }
-
-  Widget getProcessUI(BuildContext context, Process process) {
-    if (process.id == "NEW") {
-      globalProvider.clearMap();
-      globalProvider.clearScannedPages();
-      globalProvider.clearExceptions();
-      globalProvider.newProcessTabIndex = 0;
-      globalProvider.htmlBoxTabIndex = 0;
-      globalProvider.setRegId("");
-      globalProvider.setPreRegistrationId("");
-      for (var screen in process.screens!) {
-        for (var field in screen!.fields!) {
-          if (field!.controlType == 'dropdown' &&
-              field.fieldType == 'default') {
-            globalProvider.initializeGroupedHierarchyMap(field.group!);
-          }
-        }
-      }
-      globalProvider.createRegistrationLanguageMap();
-      globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => LanguageSelector(
-          newProcess: process,
-        ),
-      );
-    }
-    return Container();
   }
 
   void _registrationScreenLoadedAudit() async {
@@ -247,9 +205,23 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     await globalProvider.getAudit("REG-EVT-003", "REG-MOD-103");
   }
 
+  setScrollToTop(){
+      scrollController.animateTo(
+        scrollController.position.minScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+      globalProvider.isPageChanged = false;
+  }
+
   bool continueButton = false;
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if(globalProvider.isPageChanged){
+        setScrollToTop();
+      }
+    });
     postRegistrationTabs = [
       appLocalizations.preview_page,
       appLocalizations.packet_auth_page,
@@ -380,6 +352,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(int currentIndex) async {
+      if (currentIndex == 0) {
+        return true;
+      }
       bool isValid = true;
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
@@ -462,24 +437,26 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
                   break;
                 }
-                if (screen.fields!.elementAt(i)!.conditionalBioAttributes != null &&
+                if (screen.fields!.elementAt(i)!.conditionalBioAttributes !=
+                        null &&
                     screen.fields!
                         .elementAt(i)!
                         .conditionalBioAttributes!
                         .isNotEmpty) {
                   String response = await BiometricsApi().getAgeGroup();
                   if (!(response.compareTo(screen.fields!
-                      .elementAt(i)!
-                      .conditionalBioAttributes!
-                      .first!
-                      .ageGroup!) ==
+                          .elementAt(i)!
+                          .conditionalBioAttributes!
+                          .first!
+                          .ageGroup!) ==
                       0)) {
-                    if (screen.fields!.elementAt(i)!.controlType == "biometrics") {
+                    if (screen.fields!.elementAt(i)!.controlType ==
+                        "biometrics") {
                       int count = returnBiometricListLength(
                           screen.fields!.elementAt(i)!.bioAttributes,
                           screen.fields!.elementAt(i)!.id!);
                       if (globalProvider.completeException[
-                      screen.fields!.elementAt(i)!.id!] !=
+                              screen.fields!.elementAt(i)!.id!] !=
                           null) {
                         int length = globalProvider
                             .completeException[screen.fields!.elementAt(i)!.id!]
@@ -487,8 +464,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                         count = count - length;
                       }
                       if (globalProvider
-                          .fieldInputValue[screen.fields!.elementAt(i)!.id!]
-                          .length <
+                              .fieldInputValue[screen.fields!.elementAt(i)!.id!]
+                              .length <
                           count) {
                         isValid = false;
 
@@ -497,26 +474,28 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                     }
                   }
                   if (response.compareTo(screen.fields!
-                      .elementAt(i)!
-                      .conditionalBioAttributes!
-                      .first!
-                      .ageGroup!) ==
+                          .elementAt(i)!
+                          .conditionalBioAttributes!
+                          .first!
+                          .ageGroup!) ==
                       0) {
                     bool valid = await BiometricsApi()
                         .conditionalBioAttributeValidation(
-                        screen.fields!.elementAt(i)!.id!,
-                        screen.fields!
-                            .elementAt(i)!
-                            .conditionalBioAttributes!
-                            .first!
-                            .validationExpr!);
-                    if (screen.fields!.elementAt(i)!.exceptionPhotoRequired == true) {
+                            screen.fields!.elementAt(i)!.id!,
+                            screen.fields!
+                                .elementAt(i)!
+                                .conditionalBioAttributes!
+                                .first!
+                                .validationExpr!);
+                    if (screen.fields!.elementAt(i)!.exceptionPhotoRequired ==
+                        true) {
                       List<BiometricAttributeData> biometricAttributeDataList =
-                      globalProvider
-                          .fieldInputValue[screen.fields!.elementAt(i)!.id!];
+                          globalProvider.fieldInputValue[
+                              screen.fields!.elementAt(i)!.id!];
                       bool isExceptionPresent = false;
                       bool isExceptionAttributePresent = false;
-                      for (var biometricAttributeData in biometricAttributeDataList) {
+                      for (var biometricAttributeData
+                          in biometricAttributeDataList) {
                         if (globalProvider.exceptionAttributes
                             .contains(biometricAttributeData.title)) {
                           isExceptionPresent = true;
@@ -545,7 +524,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       return isValid;
     }
 
-    continueButtonTap(BuildContext context, int size, newProcess) async {
+    continueButtonTap(int size, newProcess) async {
+      globalProvider.isPageChanged = true;
       if (globalProvider.newProcessTabIndex < size) {
         ageDateChangeValidation(globalProvider.newProcessTabIndex);
         bool customValidator =
@@ -554,11 +534,17 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           if (globalProvider.formKey.currentState!.validate()) {
             if (globalProvider.newProcessTabIndex ==
                 newProcess.screens!.length - 1) {
-             templateTitleMap = {'demographicInfo': appLocalizations.demographic_information, 'documents': appLocalizations.documents, 'bioMetrics': appLocalizations.biometrics};
+              templateTitleMap = {
+                'demographicInfo': appLocalizations.demographic_information,
+                'documents': appLocalizations.documents,
+                'bioMetrics': appLocalizations.biometrics
+              };
               registrationTaskProvider.setPreviewTemplate("");
               registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(true,templateTitleMap!);
-              await registrationTaskProvider.getAcknowledgementTemplate(false,templateTitleMap!);
+              await registrationTaskProvider.getPreviewTemplate(
+                  true, templateTitleMap!);
+              await registrationTaskProvider.getAcknowledgementTemplate(
+                  false, templateTitleMap!);
             }
 
             globalProvider.newProcessTabIndex =
@@ -663,8 +649,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               ),
                             ),
                           ),
-                          onPressed: () {
-                            continueButtonTap(context, size, newProcess);
+                          onPressed: () async {
+                            registrationTaskProvider.addConsentField("Y");
+                            await DemographicsApi()
+                                .addDemographicField("consent", "true");
+                            continueButtonTap(size, newProcess);
                           },
                         ),
                       ),
@@ -724,20 +713,23 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               continueButton ? solidPrimary : Colors.grey),
                         ),
                         onPressed: () {
-                          continueButtonTap(context, size, newProcess);
+                          continueButtonTap(size, newProcess);
                         },
                         child: Text(
-                            context.read<GlobalProvider>().newProcessTabIndex <=
-                                    size
-                                ? appLocalizations.continue_text
-                                : globalProvider.newProcessTabIndex == size + 1
-                                    ? appLocalizations.authenticate
-                                    : appLocalizations.new_registration),
+                          context.read<GlobalProvider>().newProcessTabIndex <=
+                                  size
+                              ? appLocalizations.continue_text
+                              : globalProvider.newProcessTabIndex == size + 1
+                                  ? appLocalizations.authenticate
+                                  : appLocalizations.go_to_home,
+                          style: const TextStyle(color: appWhite),
+                        ),
                       ),
                     ],
                   ),
           ),
           body: SingleChildScrollView(
+            controller: scrollController,
             child: AnnotatedRegion<SystemUiOverlayStyle>(
               value: const SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,

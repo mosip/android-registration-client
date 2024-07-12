@@ -166,6 +166,27 @@ public class IdentitySchemaRepository {
         }
         return processSpecDtoList;
     }
+
+    public List<FieldSpecDto> getProcessSpecFields(Context context, String processId) throws Exception {
+        Double idVersion = getLatestSchemaVersion();
+        ProcessSpec processSpec = processSpecDao.getProcessSpecFromProcessId(processId, idVersion);
+        if(processSpec == null ) {
+            throw new Exception("No process spec found for version: " + idVersion);
+        }
+
+        String filename = processSpec.getType();
+        IdentitySchema identitySchema = identitySchemaDao.findIdentitySchema(idVersion, filename);
+        if(identitySchema == null) {
+            throw new Exception("No identity schema found for process spec with type: " + processSpec.getType());
+        }
+        ProcessSpecDto processSpecDto = getProcessSpecDtoFromFile(context, processSpec.getType(), identitySchema);
+
+        List<FieldSpecDto> schemaFields = new ArrayList<>();
+        processSpecDto.getScreens().forEach(screen -> {
+            schemaFields.addAll(screen.getFields());
+        });
+        return schemaFields;
+    }
     
     private ProcessSpecDto getProcessSpecDtoFromFile(Context context, String type, IdentitySchema identitySchema) throws Exception {
         File file = new File(context.getFilesDir(), type);

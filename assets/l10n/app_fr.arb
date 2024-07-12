@@ -247,5 +247,6 @@
   "online": "En ligne",
   "offline": "Hors ligne",
   "logout_success": "Vous avez été déconnecté avec succès!",
-  "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps"
+  "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps",
+  "go_to_home": "Aller à la maison"
 }

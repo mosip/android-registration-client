@@ -86,7 +86,15 @@ public class SessionManager {
     public String clearAuthToken(){
         SharedPreferences.Editor editor = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),Context.MODE_PRIVATE).edit();
-        editor.clear();
+//        editor.clear();
+        editor.remove(USER_TOKEN);
+        editor.remove(USER_NAME);
+        editor.remove(PREFERRED_USERNAME);
+        editor.remove(USER_EMAIL);
+        editor.remove(IS_SUPERVISOR);
+        editor.remove(IS_DEFAULT);
+        editor.remove(IS_OFFICER);
+        editor.remove(IS_OPERATOR);
         editor.apply();
         return this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE).getString(USER_TOKEN, null);
