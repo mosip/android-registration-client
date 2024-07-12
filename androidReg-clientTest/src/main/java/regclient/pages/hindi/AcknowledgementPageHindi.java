@@ -6,7 +6,8 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.AcknowledgementPage;
 import regclient.page.DemographicDetailsPage;
-import regclient.page.SelectLanguagePage;
+import regclient.page.RegistrationTasksPage;
+import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class AcknowledgementPageHindi extends AcknowledgementPage {
 	
@@ -19,8 +20,8 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Image\")")
 	private WebElement qrCodeImage;
 	
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Button\")")
-	private WebElement newRegistrationButton;
+	@AndroidFindBy(accessibility = "होम पर जाएं")
+	private WebElement goToHomeButton;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"जनसांख्यिकीय जानकारी\"))")
 	private WebElement demographicInformationInAcknowledgementPage;
@@ -39,9 +40,9 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 		super(driver);
 	}
 	
-	public SelectLanguagePage clickOnNewRegistrationButton() {
-		clickOnElement(newRegistrationButton);
-		return new SelectLanguagePageHindi(driver);
+	public RegistrationTasksPage clickOnGoToHomeButton() {
+		clickOnElement(goToHomeButton);
+		return new RegistrationTasksPageEnglish(driver);
 
 	}
 	

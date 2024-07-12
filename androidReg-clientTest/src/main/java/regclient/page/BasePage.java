@@ -17,6 +17,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static java.time.Duration.ofSeconds;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -104,17 +109,7 @@ public class BasePage {
 	    return new org.openqa.selenium.Point(x, y);
 	}
 
-	protected void clickOnCheckBox() {
-		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
-		Sequence sequence = new Sequence(finger1, 1)
-				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 59, 1004)) //69 1158//temporary solution to click on checkbox using x and y axis
-				//.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 72, 1123)) //69 1158  99 1758//temporary solution to click on checkbox using x and y axis
-				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-				.addAction(new Pause(finger1, Duration.ofMillis(100))) // Add a small pause (adjust duration as needed)
-				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-		driver.perform(Collections.singletonList(sequence));
-	}
-
+	
 	protected void waitForElementToBeVisible(WebElement element, int waitTime) {
 		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(waitTime));
 		wait.until(ExpectedConditions.visibilityOf(element));
@@ -177,7 +172,7 @@ public class BasePage {
 			return formattedDate;
 	}
 	
-	public void waitTime(int sec) {
+	public static void waitTime(int sec) {
 		try {
 			Thread.sleep(sec*1000);
 		} catch (InterruptedException e) {
@@ -207,14 +202,24 @@ public class BasePage {
 	    throw new RuntimeException("Element not found after " + maxAttempts + " attempts");
     }
 	
-	protected void clickOnOkay() {
+
+	
+	protected void clickAndHold() {
 		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
 		Sequence sequence = new Sequence(finger1, 1)
-				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 625, 2051)) //69 1158//temporary solution to click on checkbox using x and y axis
+				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(),547,2198)) //,43,1166
 				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-				.addAction(new Pause(finger1, Duration.ofMillis(100))) // Add a small pause (adjust duration as needed)
-				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+				.addAction(new Pause(finger1, Duration.ofMillis(20000)));
 		driver.perform(Collections.singletonList(sequence));
+	}
+	
+	protected String getMachineDetails() throws UnsupportedFlavorException, IOException {
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Clipboard clipboard = toolkit.getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        String copiedText = (String) contents.getTransferData(DataFlavor.stringFlavor);
+        System.out.println("Copied Text: " + copiedText);
+		return copiedText;
 	}
 
 }

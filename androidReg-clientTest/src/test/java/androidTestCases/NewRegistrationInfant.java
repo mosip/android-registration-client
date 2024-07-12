@@ -229,7 +229,6 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 			consentPage =new ConsentPageArabic(driver);
 		}
 		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
-		consentPage.selectTermAndConditionCheckbox();
 
 		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
 		consentPage.clickOnInformedButton();
@@ -564,10 +563,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		assertTrue(acknowledgementPage.isDemographicInformationInAcknowledgementPageDisplayed(),"Verify if Demographic Information In authenticationPage is displayed");
 		assertTrue(acknowledgementPage.isDocumentsInformationInAcknowledgementPageDisplayed(),"Verify if Documents Information In authenticationPage is displayed");
 		assertTrue(acknowledgementPage.isBiometricsInformationInAcknowledgementPageDisplayed(),"Verify if Biometrics Information In authenticationPage is displayed");
-		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
-
-		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
-		consentPage.clickOnCancelButton();
+		acknowledgementPage.clickOnGoToHomeButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnOperationalTasksTitle();	
