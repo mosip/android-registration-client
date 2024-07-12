@@ -13,13 +13,13 @@ public class OnBoardPageEnglish extends OnBoardPage{
 	@AndroidFindBy(accessibility = "HELP")
 	private WebElement helpButton;
 
-	@AndroidFindBy(accessibility = "GET ONBOARD")
+	@AndroidFindBy(accessibility = "GET ONBOARDED")
 	private WebElement getOnBoardTitle;
 	
 	@AndroidFindBy(accessibility = "SKIP TO HOME")
 	private WebElement skipToHomeScreenButton;
 
-	@AndroidFindBy(accessibility = "Please tap 'GET ONBOARD' to get started with the onboarding process.")
+	@AndroidFindBy(accessibility = "Please tap on 'GET ONBOARDED' to get started with the onboarding process.")
 	private WebElement onBoardWelcomeMessage;
 
 	public OnBoardPageEnglish(AppiumDriver driver) {

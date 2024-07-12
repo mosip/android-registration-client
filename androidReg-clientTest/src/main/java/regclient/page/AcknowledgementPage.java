@@ -8,7 +8,7 @@ public abstract class AcknowledgementPage extends BasePage{
 		super(driver);
 	}
 
-	public abstract SelectLanguagePage clickOnNewRegistrationButton();
+	public abstract RegistrationTasksPage clickOnGoToHomeButton();
 
 	public abstract boolean isAcknowledgementPageDisplayed();
 

@@ -10,12 +10,7 @@ public abstract class ConsentPage extends BasePage{
 
 	public abstract boolean isConsentPageDisplayed();
 
-	
 	public abstract boolean isCheckBoxReadable();
-
-	public abstract  void selectTermAndConditionCheckbox();
-	
-	public abstract  void UnSelectTermAndConditionCheckbox();
 
 	public abstract  boolean isInformedButtonEnabled();
 

@@ -231,7 +231,6 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 			consentPage =new ConsentPageArabic(driver);
 		}
 		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
-		consentPage.selectTermAndConditionCheckbox();
 
 		assertTrue(consentPage.isInformedButtonEnabled(),"Verify if informed  button enabled");
 		consentPage.clickOnInformedButton();
@@ -653,10 +652,8 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-		selectLanguagePage=acknowledgementPage.clickOnNewRegistrationButton();
+		acknowledgementPage.clickOnGoToHomeButton();
 
-		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),"Verify if select language page  is loaded");
-		consentPage.clickOnCancelButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnOperationalTasksTitle();	
