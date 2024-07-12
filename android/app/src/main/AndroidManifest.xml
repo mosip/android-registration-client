@@ -12,7 +12,7 @@
         android:label="Registration Client"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="false">
        <service android:name=".UploadBackgroundService" />
         <activity
             android:name=".MainActivity"
