@@ -8,7 +8,7 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 
 public class CameraPage  extends BasePage{
 
-	@AndroidFindBy(id = "com.sec.android.app.camera:id/bottom_background")
+	@AndroidFindBy(id = "com.motorola.camera3:id/capture_bar_shutter_button")
 	private WebElement clickImageButton;
 	
 	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"OK\"]")

@@ -19,6 +19,7 @@ import regclient.page.LoginPage;
 import regclient.page.ManageApplicationsPage;
 import regclient.page.OperationalTaskPage;
 import regclient.page.PreviewPage;
+import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
 import regclient.pages.arabic.AcknowledgementPageArabic;
@@ -33,6 +34,7 @@ import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
 import regclient.pages.arabic.PreviewPageArabic;
+import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SelectLanguagePageArabic;
 import regclient.pages.english.AcknowledgementPageEnglish;
@@ -47,6 +49,7 @@ import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
 import regclient.pages.english.OperationalTaskPageEnglish;
 import regclient.pages.english.PreviewPageEnglish;
+import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SelectLanguagePageEnglish;
 import regclient.pages.french.AcknowledgementPageFrench;
@@ -61,6 +64,7 @@ import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.ManageApplicationsPageFrench;
 import regclient.pages.french.OperationalTaskPageFrench;
 import regclient.pages.french.PreviewPageFrench;
+import regclient.pages.french.ProfilePageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SelectLanguagePageFrench;
 import regclient.pages.hindi.AcknowledgementPageHindi;
@@ -75,6 +79,7 @@ import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.ManageApplicationsPageHindi;
 import regclient.pages.hindi.OperationalTaskPageHindi;
 import regclient.pages.hindi.PreviewPageHindi;
+import regclient.pages.hindi.ProfilePageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SelectLanguagePageHindi;
 import regclient.pages.kannada.AcknowledgementPageKannada;
@@ -89,6 +94,7 @@ import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.ManageApplicationsPageKannada;
 import regclient.pages.kannada.OperationalTaskPageKannada;
 import regclient.pages.kannada.PreviewPageKannada;
+import regclient.pages.kannada.ProfilePageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SelectLanguagePageKannada;
 import regclient.pages.tamil.AcknowledgementPageTamil;
@@ -103,6 +109,7 @@ import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.ManageApplicationsPageTamil;
 import regclient.pages.tamil.OperationalTaskPageTamil;
 import regclient.pages.tamil.PreviewPageTamil;
+import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.utils.TestDataReader;
@@ -126,6 +133,8 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		AcknowledgementPage acknowledgementPage=null;
 		OperationalTaskPage operationalTaskPage=null;
 		ManageApplicationsPage manageApplicationsPage=null;
+		ProfilePage profilePage=null;
+
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -642,6 +651,35 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		manageApplicationsPage.selectUploadedOptionDropdown();
 
 		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if Filtre packet is uploaded ");
+		manageApplicationsPage.clickOnBackButton();
+		
+		assertTrue(registrationTasksPage.isProfileTitleDisplayed(),"Verify if profile title display on homepage");
+		registrationTasksPage.clickProfileButton();
+		
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			profilePage=new ProfilePageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			profilePage=new ProfilePageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			profilePage=new ProfilePageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			profilePage=new ProfilePageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			profilePage=new ProfilePageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			profilePage=new ProfilePageArabic(driver);
+		}
+		assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title display on Profilepage");
+		profilePage.clickOnLogoutButton();
+		
+		profilePage.clickOnLogoutButton();
+		
+		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded in Selected language");
 
 	}
 }

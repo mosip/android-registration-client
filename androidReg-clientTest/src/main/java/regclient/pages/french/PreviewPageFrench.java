@@ -41,6 +41,9 @@ public class PreviewPageFrench extends PreviewPage{
 	@AndroidFindBy(accessibility = "CONTINUER")
 	private WebElement continueButton;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Mettre à jour l'UIN\"))")
+	private WebElement updateUINTitle;
+	
 	public PreviewPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
@@ -90,5 +93,9 @@ public class PreviewPageFrench extends PreviewPage{
 	public String getAID() {
 		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
 		return applicationID;
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 }

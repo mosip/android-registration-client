@@ -13,6 +13,9 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 		@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Applicant Biometrics')]")
 		private WebElement applicantBiometricsPageTitle;
 		
+		@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Authentication')]")
+		private WebElement authenticationBiometricsPageTitle;
+		
 		@AndroidFindBy(accessibility = "Iris Scan")
 		private WebElement irisScanButton;
 		
@@ -193,6 +196,10 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 		
 		public  boolean isApplicantBiometricsPageDisplyed() {
 			return isElementDisplayed(applicantBiometricsPageTitle);
+		}
+		
+		public  boolean isAuthenticationBiometricsPageDisplyed() {
+			return isElementDisplayed(authenticationBiometricsPageTitle);
 		}
 		
 		public  boolean isExceptionTypeTitleDisplyed() {

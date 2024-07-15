@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.DashboardPage;
 import regclient.page.OperationalTaskPage;
+import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
 
@@ -35,6 +36,12 @@ public class RegistrationTasksPageHindi  extends RegistrationTasksPage{
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
 	private WebElement dashboardButton;
+	
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"प्रोफ़ाइल\")")
+	private WebElement profileButton;
+	
+	@AndroidFindBy(accessibility = "UIN अपडेट करें")
+	private WebElement updateUinButton;
 
 	public RegistrationTasksPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -78,5 +85,19 @@ public class RegistrationTasksPageHindi  extends RegistrationTasksPage{
 		clickOnElement(operationalTaskPageTitle);
 		return new OperationalTaskPageHindi(driver);
 	}
+	
+	public boolean isProfileTitleDisplayed() {
+		return isElementDisplayed(profileButton);
+	}
+	
+	public  ProfilePage clickProfileButton() {
+		clickOnElement(profileButton);
+		return new ProfilePageHindi(driver);
+	}
+	
+	public  SelectLanguagePage clickUpdateMyUINButton() {
+		clickOnElement(updateUinButton);
+		return new SelectLanguagePageHindi(driver);
+	}	
 
 }

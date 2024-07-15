@@ -6,9 +6,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.DashboardPage;
 import regclient.page.OperationalTaskPage;
+import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.pages.english.DashboardPageEnglish;
 
 public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 
@@ -40,6 +40,12 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
 	private WebElement scriptSyncCompletedMessage ;
 
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Profil\")")
+	private WebElement profileButton;
+	
+	@AndroidFindBy(accessibility = "Mettre à jour l'UIN")
+	private WebElement updateUinButton;
+	
 	public  SelectLanguagePage clickOnNewRegistrationButton() {
 		clickOnElement(newRegistrationButton);
 		return new SelectLanguagePageFrench(driver);
@@ -71,11 +77,25 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 
 	public  DashboardPage clickOnDashboardButton() {
 		clickOnElement(dashboardButton);
-		return new DashboardPageEnglish(driver);
+		return new DashboardPageFrench(driver);
 	}
 	
 	public  OperationalTaskPage clickOnOperationalTasksTitle() {
 		clickOnElement(operationalTaskPageTitle);
 		return new OperationalTaskPageFrench(driver);
+	}
+	
+	public boolean isProfileTitleDisplayed() {
+		return isElementDisplayed(profileButton);
+	}
+	
+	public  ProfilePage clickProfileButton() {
+		clickOnElement(profileButton);
+		return new ProfilePageFrench(driver);
+	}
+	
+	public  SelectLanguagePage clickUpdateMyUINButton() {
+		clickOnElement(updateUinButton);
+		return new SelectLanguagePageFrench(driver);
 	}
 }

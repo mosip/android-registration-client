@@ -39,6 +39,9 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage{
 	@AndroidFindBy(accessibility = "CONTINUER")
 	private WebElement continueButton;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Authentication\"))")
+	private WebElement authenticationBiometricTitle;
+	
 	public BiometricDetailsPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
@@ -90,5 +93,9 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage{
 	public  PreviewPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new PreviewPageFrench(driver);
+	}
+	
+	public  boolean isAuthenticationBiometricTitleDisplayed() {
+		return isElementDisplayed(authenticationBiometricTitle);
 	}
 }

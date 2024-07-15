@@ -12,7 +12,7 @@ import regclient.page.RegistrationTasksPage;
 
 public class ConsentPageEnglish extends ConsentPage{
 
-	@AndroidFindBy(accessibility = "Consent")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Consent\"))")
 	private WebElement consentPage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().className(\"android.widget.CheckBox\"))")
@@ -26,6 +26,9 @@ public class ConsentPageEnglish extends ConsentPage{
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"I have read and accept terms and conditions to share my PII\"))")
 	private WebElement checkBoxDiscription;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Update UIN\"))")
+	private WebElement updateUINTitle;
 
 	public ConsentPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -52,6 +55,10 @@ public class ConsentPageEnglish extends ConsentPage{
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
 		return new  RegistrationTasksPageEnglish(driver);
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 	
 }

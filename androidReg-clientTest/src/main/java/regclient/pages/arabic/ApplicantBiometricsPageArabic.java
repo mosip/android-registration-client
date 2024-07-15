@@ -99,7 +99,8 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"الاستثناءات\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 	
-	
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'القياسات الحيوية للمصادقة')]")
+	private WebElement authenticationBiometricsPageTitle;
 	
 	public ApplicantBiometricsPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -254,5 +255,9 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+	
+	public  boolean isAuthenticationBiometricsPageDisplyed() {
+		return isElementDisplayed(authenticationBiometricsPageTitle);
 	}
 }

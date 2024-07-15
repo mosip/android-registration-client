@@ -99,6 +99,9 @@ public class ApplicantBiometricsPageTamil extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"விதிவிலக்குகள்\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 	
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'அங்கீகார பயோமெட்ரிக்ஸ்')]")
+	private WebElement authenticationBiometricsPageTitle;
+	
 	public ApplicantBiometricsPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -252,5 +255,9 @@ public class ApplicantBiometricsPageTamil extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+	
+	public  boolean isAuthenticationBiometricsPageDisplyed() {
+		return isElementDisplayed(authenticationBiometricsPageTitle);
 	}
 }

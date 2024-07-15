@@ -11,6 +11,9 @@ import regclient.page.PreviewPage;
 
 public class PreviewPageEnglish extends PreviewPage {
 
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Update UIN\"))")
+	private WebElement updateUINTitle;
+	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"New Registration\"))")
 	private WebElement newRegistrationTitle;
 	
@@ -64,6 +67,10 @@ public class PreviewPageEnglish extends PreviewPage {
 	
 	public boolean isNewRegistrationTitleDisplayed() {
 		return isElementDisplayed(newRegistrationTitle);
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 	
 	public boolean isApplicationIDPreviewPagePageDisplayed() {

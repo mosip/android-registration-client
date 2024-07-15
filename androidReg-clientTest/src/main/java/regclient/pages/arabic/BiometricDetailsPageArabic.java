@@ -13,6 +13,9 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"المقاييس الحيوية لمقدم الطلب \"))")
 	private WebElement applicantBiometricTitle;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"القياسات الحيوية للمصادقة\"))")
+	private WebElement authenticationBiometricTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"القزحية مسح\"))")
 	private WebElement irisScanIcon;
@@ -89,6 +92,10 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	public  PreviewPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new PreviewPageArabic(driver);
+	}
+	
+	public  boolean isAuthenticationBiometricTitleDisplayed() {
+		return isElementDisplayed(authenticationBiometricTitle);
 	}
 
 }

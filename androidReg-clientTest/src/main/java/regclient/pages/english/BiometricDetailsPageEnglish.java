@@ -14,6 +14,9 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Applicant Biometrics\"))")
 	private WebElement applicantBiometricTitle;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Authentication\"))")
+	private WebElement authenticationBiometricTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
@@ -46,8 +49,10 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	public  boolean isBiometricDetailsPageDisplayed() {
 		return isElementDisplayed(applicantBiometricTitle);
 	}
-
-	
+		
+	public  boolean isAuthenticationBiometricTitleDisplayed() {
+		return isElementDisplayed(authenticationBiometricTitle);
+	}
 	
 	public ApplicantBiometricsPage clickOnIrisScan() {
 		clickOnElement(irisScanIcon);

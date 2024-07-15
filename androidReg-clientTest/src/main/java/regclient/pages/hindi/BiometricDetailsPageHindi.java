@@ -38,6 +38,10 @@ public class BiometricDetailsPageHindi extends BiometricDetailsPage{
 	@AndroidFindBy(accessibility = "जारी रखें")
 	private WebElement continueButton;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"प्रमाणीकरण बायोमेट्रिक्स\"))")
+	private WebElement authenticationBiometricTitle;
+	
+	
 	public BiometricDetailsPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
@@ -91,4 +95,7 @@ public class BiometricDetailsPageHindi extends BiometricDetailsPage{
 		return new PreviewPageHindi(driver);
 	}
 
+	public  boolean isAuthenticationBiometricTitleDisplayed() {
+		return isElementDisplayed(authenticationBiometricTitle);
+	}
 }

@@ -26,6 +26,10 @@ public class ConsentPageArabic extends ConsentPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"الاسم الكامل الكامل الكامل\"))")
 	private WebElement checkBoxDiscription;
+		
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"تحديث UIN\"))")
+	private WebElement updateUINTitle;
+
 
 	public ConsentPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -54,5 +58,8 @@ public class ConsentPageArabic extends ConsentPage {
 		return new  RegistrationTasksPageArabic(driver);
 	}
 
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
+	}
 
 }

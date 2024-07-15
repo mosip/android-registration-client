@@ -6,7 +6,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
-import regclient.page.UpdateOperatorBiometricspage;
 
 public class OperationalTaskPageEnglish extends OperationalTaskPage{
 

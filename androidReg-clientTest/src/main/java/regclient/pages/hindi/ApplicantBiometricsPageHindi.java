@@ -99,6 +99,9 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage{
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"अस्तित्वाएं\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 	
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'प्रमाणीकरण बायोमेट्रिक्स')]")
+	private WebElement authenticationBiometricsPageTitle;
+	
 	public ApplicantBiometricsPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
@@ -252,5 +255,9 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage{
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+	
+	public  boolean isAuthenticationBiometricsPageDisplyed() {
+		return isElementDisplayed(authenticationBiometricsPageTitle);
 	}
 }

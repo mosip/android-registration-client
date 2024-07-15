@@ -17,4 +17,6 @@ public abstract class ConsentPage extends BasePage{
 	public abstract  DemographicDetailsPage clickOnInformedButton();
 	
 	public abstract  RegistrationTasksPage clickOnCancelButton();
+	
+	public abstract boolean updateUINTitleDisplayed();
 }

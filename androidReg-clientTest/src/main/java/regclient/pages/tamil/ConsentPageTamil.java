@@ -26,6 +26,10 @@ public class ConsentPageTamil extends ConsentPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"நான் என் பி ஐ ஐ ஐப் பகிர்ந்து கொள்வதற்கான விதிமுறைகளையும் நிபந்தனைகளையும் படித்து ஏற்றுக்கொண்டேன்\"))")
 	private WebElement checkBoxDiscription;
 
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN ஐப் புதுப்பிக்கவும்\"))")
+	private WebElement updateUINTitle;
+
+	
 	public ConsentPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -52,5 +56,9 @@ public class ConsentPageTamil extends ConsentPage{
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
 		return new  RegistrationTasksPageTamil(driver);
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 }

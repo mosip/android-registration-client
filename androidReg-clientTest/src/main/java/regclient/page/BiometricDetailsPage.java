@@ -27,4 +27,6 @@ public abstract class BiometricDetailsPage extends BasePage{
 	public abstract ApplicantBiometricsPage clickOnExceptionScanIcon();
 	
 	public abstract  PreviewPage clickOnContinueButton();
+	
+	public abstract  boolean isAuthenticationBiometricTitleDisplayed();
 }

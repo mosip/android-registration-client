@@ -25,6 +25,10 @@ public class ConsentPageFrench extends ConsentPage{
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"/J'ai lu et j'accepte les termes et conditions pour partager mes PII \"))")
 	private WebElement checkBoxDiscription;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Mettre à jour l'UIN\"))")
+	private WebElement updateUINTitle;
+
 
 
 	public ConsentPageFrench(AppiumDriver driver) {
@@ -55,5 +59,8 @@ public class ConsentPageFrench extends ConsentPage{
 		return new  RegistrationTasksPageFrench(driver);
 	}
 
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
+	}
 
 }

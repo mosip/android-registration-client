@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.DashboardPage;
 import regclient.page.OperationalTaskPage;
+import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
 
@@ -17,12 +18,18 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Dashboard\")")
 	private WebElement dashboardButton;
+	
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Profile\")")
+	private WebElement profileButton;
 
 	@AndroidFindBy(accessibility = "Operational Tasks")
 	private WebElement operationalTaskPageTitle;
 
 	@AndroidFindBy(accessibility = "New Registration")
 	private WebElement newRegistrationButton;
+	
+	@AndroidFindBy(accessibility = "Update UIN")
+	private WebElement updateUinButton;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.ImageView\").instance(0)")
 	private WebElement synchronizeDataButton ;
@@ -77,6 +84,20 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	public  OperationalTaskPage clickOnOperationalTasksTitle() {
 		clickOnElement(operationalTaskPageTitle);
 		return new OperationalTaskPageEnglish(driver);
+	}
+	
+	public boolean isProfileTitleDisplayed() {
+		return isElementDisplayed(profileButton);
+	}
+	
+	public  ProfilePage clickProfileButton() {
+		clickOnElement(profileButton);
+		return new ProfilePageEnglish(driver);
+	}
+	
+	public  SelectLanguagePage clickUpdateMyUINButton() {
+		clickOnElement(updateUinButton);
+		return new SelectLanguagePageEnglish(driver);
 	}
 
 }

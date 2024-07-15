@@ -27,5 +27,9 @@ public abstract class RegistrationTasksPage extends BasePage {
 	
 	public abstract  OperationalTaskPage clickOnOperationalTasksTitle();
 
-
+	public abstract boolean isProfileTitleDisplayed();
+	
+	public abstract  ProfilePage clickProfileButton();
+	
+	public abstract  SelectLanguagePage clickUpdateMyUINButton();
 }

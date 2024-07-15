@@ -5,9 +5,9 @@
 		<classes>
 			<class name="androidTestCases.logintest">
 				<methods>
-					<include name="initallLaunch" />
 					<include name="loginTest" />
 					<include name="getOnBoard" />
+					<include name="updateOperatorBiometrics" />
 				</methods>
 			</class>
 			<class name="androidTestCases.NewRegistrationAdult">
@@ -34,6 +34,26 @@
 			<class name="androidTestCases.NewRegistrationMinorException">
 				<methods>
 					<include name="newRegistrationMinorException" />
+				</methods>
+			</class>
+			<class name="androidTestCases.UpdateMyUinInfant">
+				<methods>
+					<include name="updateMyUinInfant" />
+				</methods>
+			</class>
+			<class name="androidTestCases.UpdateMyUinMinor">
+				<methods>
+					<include name="updateMyUinInfant" />
+				</methods>
+			</class>
+			<class name="androidTestCases.UpdateMyUINUpdateDemographicDetails">
+				<methods>
+					<include name="updateMyUINUpdateDemographicDetails" />
+				</methods>
+			</class>
+			<class name="androidTestCases.UpdateMyUinUpdateBiometrics">
+				<methods>
+					<include name="updateMyUINUpdatebiometrics" />
 				</methods>
 			</class>
 		</classes>

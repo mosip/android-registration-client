@@ -26,6 +26,10 @@ public class ConsentPageHindi extends ConsentPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"मैंने अपना पीआईआई साझा करने के लिए नियम और शर्तें पढ़ ली हैं और स्वीकार करता हूं \"))")
 	private WebElement checkBoxDiscription;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN अपडेट करें\"))")
+	private WebElement updateUINTitle;
+
+	
 	public ConsentPageHindi(AppiumDriver driver) {
 		super(driver);
 }
@@ -51,5 +55,9 @@ public class ConsentPageHindi extends ConsentPage{
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
 		return new  RegistrationTasksPageHindi(driver);
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 }

@@ -26,6 +26,10 @@ public class ConsentPageKannada extends ConsentPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ನನ್ನ ಪಿಐಐ ಹಂಚಿಕೊಳ್ಳಲು ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ\"))")
 	private WebElement checkBoxDiscription;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN ನವೀಕರಿಸಿ\"))")
+	private WebElement updateUINTitle;
+
+	
 	public ConsentPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -50,6 +54,10 @@ public class ConsentPageKannada extends ConsentPage{
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
 		return new  RegistrationTasksPageKannada(driver);
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 
 }

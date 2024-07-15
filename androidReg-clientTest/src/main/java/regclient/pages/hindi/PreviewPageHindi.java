@@ -37,9 +37,11 @@ public class PreviewPageHindi extends PreviewPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
 	private WebElement fingerExceptionText;
 	
-
 	@AndroidFindBy(accessibility = "जारी रखें")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN अपडेट करें\"))")
+	private WebElement updateUINTitle;
 	
 	public PreviewPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -90,5 +92,9 @@ public class PreviewPageHindi extends PreviewPage{
 	public String getAID() {
 		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
 		return applicationID;
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 }

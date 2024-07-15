@@ -37,6 +37,9 @@ public class BiometricDetailsPageKannada extends BiometricDetailsPage {
 	
 	@AndroidFindBy(accessibility = "ಮುಂದುವರಿಸಿ")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ಅಥೆನ್ ಟಿಕೇಶನ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್\"))")
+	private WebElement authenticationBiometricTitle;
 
 	public BiometricDetailsPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -89,6 +92,10 @@ public class BiometricDetailsPageKannada extends BiometricDetailsPage {
 	public  PreviewPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new PreviewPageKannada(driver);
+	}
+	
+	public  boolean isAuthenticationBiometricTitleDisplayed() {
+		return isElementDisplayed(authenticationBiometricTitle);
 	}
 
 }

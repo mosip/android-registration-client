@@ -44,25 +44,25 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 
 	@AndroidFindBy(accessibility = "Exported")
 	private WebElement exportedsOption;
-	
+
 	@AndroidFindBy(accessibility = "Dismiss")
 	private WebElement dismissButton;
-	
+
 	@AndroidFindBy(accessibility = "Displaying 0 Applications")
 	private WebElement displayZeroApplication;
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(0)")
 	private WebElement searchCheckBoxButton;
-	
+
 	@AndroidFindBy(accessibility = "Received")
 	private WebElement receivedValueDropdown;
-	
+
 	@AndroidFindBy(accessibility = "Processing")
 	private WebElement processingValueDropdown;
-	
+
 	@AndroidFindBy(accessibility = "Accepted")
 	private WebElement acceptedValueDropdown;
-	
+
 	@AndroidFindBy(accessibility = "Dismiss")
 	private WebElement deletionValueDropdown;
 
@@ -86,7 +86,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 		waitTime(2);
 		return isElementDisplayed(driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]")));
 	}
-	
+
 	public boolean isZeroApplicationDisplayed() {
 		waitTime(2);
 		return isElementDisplayed(displayZeroApplication);
@@ -105,7 +105,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 		else
 			return true;
 	}
-	
+
 	public boolean isPacketApproved(String AID) {
 		waitTime(2);
 		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
@@ -114,7 +114,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 		else
 			return false;
 	}
-	
+
 	public boolean isPacketSynned(String AID) {
 		waitTime(2);
 		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
@@ -163,21 +163,21 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 	public  void clickOnSearchCheckBox() {
 		clickOnElement(searchCheckBoxButton);
 	}
-	
+
 	public  void selectApprovedValueDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(approvedOption);
 	}	
-	
+
 	public  void selectSyncedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(syncedOption);
 	}
-	
+
 	public  void selectUploadedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(uploadedOption);
-		
+
 	}
 
 	public boolean isReceivedDropdownOptionDisplayed() {
@@ -194,5 +194,9 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
+	}
+
+	public void clickOnBackButton() {
+		driver.navigate().back();
 	}
 }

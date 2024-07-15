@@ -196,4 +196,7 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 		return isElementDisplayed(deletionValueDropdown);
 	}
 
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 }

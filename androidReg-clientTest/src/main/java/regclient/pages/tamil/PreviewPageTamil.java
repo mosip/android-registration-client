@@ -38,9 +38,11 @@ public class PreviewPageTamil extends PreviewPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
 	private WebElement fingerExceptionText;
 	
-
 	@AndroidFindBy(accessibility = "தொடர்க")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN ஐப் புதுப்பிக்கவும்\"))")
+	private WebElement updateUINTitle;
 	
 	public PreviewPageTamil(AppiumDriver driver) {
 		super(driver);
@@ -93,4 +95,7 @@ public class PreviewPageTamil extends PreviewPage {
 		return applicationID;
 	}
 
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
+	}
 }

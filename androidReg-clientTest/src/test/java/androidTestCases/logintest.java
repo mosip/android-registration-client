@@ -12,7 +12,7 @@ import regclient.page.LoginPage;
 import regclient.page.OnBoardPage;
 
 import regclient.page.OperationalTaskPage;
-
+import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 import regclient.page.UpdateOperatorBiometricspage;
@@ -20,6 +20,7 @@ import regclient.pages.arabic.DashboardPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.OnBoardPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
+import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SupervisorBiometricVerificationpageArabic;
 import regclient.pages.arabic.UpdateOperatorBiometricspageArabic;
@@ -27,6 +28,7 @@ import regclient.pages.english.DashboardPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.OnBoardPageEnglish;
 import regclient.pages.english.OperationalTaskPageEnglish;
+import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SupervisorBiometricVerificationpageEnglish;
 import regclient.pages.english.UpdateOperatorBiometricspageEnglish;
@@ -34,6 +36,7 @@ import regclient.pages.french.DashboardPageFrench;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.OnBoardPageFrench;
 import regclient.pages.french.OperationalTaskPageFrench;
+import regclient.pages.french.ProfilePageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SupervisorBiometricVerificationpageFrench;
 import regclient.pages.french.UpdateOperatorBiometricspageFrench;
@@ -41,6 +44,7 @@ import regclient.pages.hindi.DashboardPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.OnBoardPageHindi;
 import regclient.pages.hindi.OperationalTaskPageHindi;
+import regclient.pages.hindi.ProfilePageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SupervisorBiometricVerificationpageHindi;
 import regclient.pages.hindi.UpdateOperatorBiometricspageHindi;
@@ -48,6 +52,7 @@ import regclient.pages.kannada.DashboardPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.OnBoardPageKannada;
 import regclient.pages.kannada.OperationalTaskPageKannada;
+import regclient.pages.kannada.ProfilePageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SupervisorBiometricVerificationpageKannada;
 import regclient.pages.kannada.UpdateOperatorBiometricspageKannada;
@@ -55,6 +60,7 @@ import regclient.pages.tamil.DashboardPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.OnBoardPageTamil;
 import regclient.pages.tamil.OperationalTaskPageTamil;
+import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SupervisorBiometricVerificationpageTamil;
 import regclient.pages.tamil.UpdateOperatorBiometricspageTamil;
@@ -92,6 +98,7 @@ public class logintest  extends AndroidBaseTest {
 		OperationalTaskPage operationalTaskPage=null;
 		RegistrationTasksPage registrationTasksPage=null;
 		DashboardPage dashboardPage=null;
+		ProfilePage profilePage=null;
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			loginPage = new LoginPageEnglish(driver);
@@ -246,6 +253,35 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(dashboardPage.isUserIDDisplayed(),"Verify if user ID displayed");
 		assertTrue(dashboardPage.isUserNameDisplayed(),"Verify if user name displayed");
 		assertTrue(dashboardPage.isStatusTitleDisplayed(),"Verify if status displayed");
+		
+		assertTrue(registrationTasksPage.isProfileTitleDisplayed(),"Verify if profile title display on homepage");
+		registrationTasksPage.clickProfileButton();
+		
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			profilePage=new ProfilePageEnglish(driver);
+		} 
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			profilePage=new ProfilePageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			profilePage=new ProfilePageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			profilePage=new ProfilePageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			profilePage=new ProfilePageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			profilePage=new ProfilePageArabic(driver);
+		}
+		assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title display on Profilepage");
+		profilePage.clickOnLogoutButton();
+		
+		profilePage.clickOnLogoutButton();
+		
+		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded in Selected language");
+
 	}
 
 	@Test

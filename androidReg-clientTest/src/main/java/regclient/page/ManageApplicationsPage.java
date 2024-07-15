@@ -59,4 +59,6 @@ public abstract class ManageApplicationsPage extends BasePage{
 	public abstract boolean isAcceptedDropdownOptionDisplayed();
 
 	public abstract boolean isDeletionDropdownOptionDisplayed();
+	
+	public abstract void clickOnBackButton();
 }

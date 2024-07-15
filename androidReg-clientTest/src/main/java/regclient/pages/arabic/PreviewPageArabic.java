@@ -41,6 +41,9 @@ public class PreviewPageArabic extends PreviewPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
 	private WebElement fingerExceptionText;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"تحديث UIN\"))")
+	private WebElement updateUINTitle;
+	
 	public PreviewPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -90,6 +93,10 @@ public class PreviewPageArabic extends PreviewPage {
 	public String getAID() {
 		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
 		return applicationID;
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 	
 }

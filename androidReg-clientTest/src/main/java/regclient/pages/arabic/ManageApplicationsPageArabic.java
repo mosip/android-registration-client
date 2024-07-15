@@ -195,5 +195,9 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage{
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
 	}
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 
 }

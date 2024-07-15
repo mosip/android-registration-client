@@ -99,6 +99,9 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage{
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Des exceptions\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 	
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Authentication')]")
+	private WebElement authenticationBiometricsPageTitle;
+	
 	public ApplicantBiometricsPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
@@ -252,5 +255,9 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage{
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+	
+	public  boolean isAuthenticationBiometricsPageDisplyed() {
+		return isElementDisplayed(authenticationBiometricsPageTitle);
 	}
 }

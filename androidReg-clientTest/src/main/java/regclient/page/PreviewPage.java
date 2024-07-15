@@ -29,4 +29,6 @@ public abstract class PreviewPage extends BasePage{
 	public abstract boolean isFingerExceptionText() ;
 
 	public abstract String getAID();
+	
+	public abstract boolean updateUINTitleDisplayed();
 }

@@ -195,5 +195,9 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage{
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
 	}
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 
 }

@@ -40,6 +40,9 @@ public class PreviewPageKannada extends PreviewPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
 	private WebElement fingerExceptionText;
 	
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN ನವೀಕರಿಸಿ\"))")
+	private WebElement updateUINTitle;
+	
 	public PreviewPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -89,6 +92,10 @@ public class PreviewPageKannada extends PreviewPage {
 	public String getAID() {
 		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
 		return applicationID;
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed(updateUINTitle);
 	}
 
 }

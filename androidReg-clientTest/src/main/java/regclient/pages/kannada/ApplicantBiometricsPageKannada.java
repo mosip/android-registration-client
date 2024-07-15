@@ -99,6 +99,9 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"ಅಂಶಗಳು\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 	
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'ಅಥೆನ್ ಟಿಕೇಶನ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್')]")
+	private WebElement authenticationBiometricsPageTitle;
+	
 	public ApplicantBiometricsPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -252,5 +255,9 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+	
+	public  boolean isAuthenticationBiometricsPageDisplyed() {
+		return isElementDisplayed(authenticationBiometricsPageTitle);
 	}
 }
