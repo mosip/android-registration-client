@@ -140,23 +140,6 @@ class _TextBoxControlState extends State<TextBoxControl>
     String mandatoryLanguageCode =
         globalProvider.mandatoryLanguages[0] ?? "eng";
 
-    for (var e in choosenLang){
-      String lang = globalProvider.langToCode(e);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          String data = _getDataFromMap(lang);
-          if (!controllerMap.containsKey(lang)) {
-            controllerMap[lang] = TextEditingController(text: data);
-            controllerMap[lang]!.value =
-                controllerMap[lang]!.value.copyWith(text: data);
-            controllerMap[lang]!.selection = controllerMap[lang]!.selection.copyWith(baseOffset: data.length, extentOffset: data.length);
-          } else {
-            controllerMap[lang]!.text = data;
-            controllerMap[lang]!.selection = controllerMap[lang]!.selection.copyWith(baseOffset: data.length, extentOffset: data.length);
-          }
-        });
-      });
-    }
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -180,10 +163,10 @@ class _TextBoxControlState extends State<TextBoxControl>
               verticalGridSpacing: 12,
               children: choosenLang.map((code) {
                 String lang = globalProvider.langToCode(code);
-                setState(() {
-                  controllerMap.putIfAbsent(lang,
-                      () => TextEditingController(text: _getDataFromMap(lang)));
-                });
+                  setState(() {
+                    controllerMap.putIfAbsent(lang,
+                        () => TextEditingController(text: _getDataFromMap(lang)));
+                  });
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: TextFormField(

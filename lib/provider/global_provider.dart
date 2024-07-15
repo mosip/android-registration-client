@@ -48,10 +48,17 @@ class GlobalProvider with ChangeNotifier {
   String get updateUINNumber => _updateUINNumber;
   String get onboardingProcessName => _onboardingProcessName;
   bool get isPageChanged => _isPageChanged;
+  bool _preRegControllerRefresh = false;
+  bool get preRegControllerRefresh => _preRegControllerRefresh;
 
 
   set isPageChanged(bool value){
     _isPageChanged = value;
+    notifyListeners();
+  }
+
+  set preRegControllerRefresh(bool value) {
+    _preRegControllerRefresh = value;
     notifyListeners();
   }
 
