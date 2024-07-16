@@ -40,6 +40,7 @@ import regclient.pages.arabic.PreviewPageArabic;
 import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SelectLanguagePageArabic;
+import regclient.pages.arabic.UpdateUINPageArabic;
 import regclient.pages.english.AcknowledgementPageEnglish;
 import regclient.pages.english.ApplicantBiometricsPageEnglish;
 import regclient.pages.english.AuthenticationPageEnglish;
@@ -73,6 +74,7 @@ import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.ProfilePageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SelectLanguagePageFrench;
+import regclient.pages.french.UpdateUINPageFrench;
 import regclient.pages.hindi.AcknowledgementPageHindi;
 import regclient.pages.hindi.ApplicantBiometricsPageHindi;
 import regclient.pages.hindi.AuthenticationPageHindi;
@@ -89,6 +91,7 @@ import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.ProfilePageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SelectLanguagePageHindi;
+import regclient.pages.hindi.UpdateUINPageHindi;
 import regclient.pages.kannada.AcknowledgementPageKannada;
 import regclient.pages.kannada.ApplicantBiometricsPageKannada;
 import regclient.pages.kannada.AuthenticationPageKannada;
@@ -105,6 +108,7 @@ import regclient.pages.kannada.PreviewPageKannada;
 import regclient.pages.kannada.ProfilePageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SelectLanguagePageKannada;
+import regclient.pages.kannada.UpdateUINPageKannada;
 import regclient.pages.tamil.AcknowledgementPageTamil;
 import regclient.pages.tamil.ApplicantBiometricsPageTamil;
 import regclient.pages.tamil.AuthenticationPageTamil;
@@ -121,6 +125,7 @@ import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
+import regclient.pages.tamil.UpdateUINPageTamil;
 import regclient.utils.TestDataReader;
 
 public class UpdateMyUinInfant extends AndroidBaseTest {
@@ -222,25 +227,25 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(),"verify if the submit  button enabled");
 		selectLanguagePage.clickOnSubmitButton();
-		
+
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			updateUINPage =new UpdateUINPageEnglish(driver);
 		} 
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-		//			updateUINPage =new UpdateUINPageHindi(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-		//			updateUINPage =new UpdateUINPageFrench(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-		//			updateUINPage =new UpdateUINPageKannada(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-		//			updateUINPage =new UpdateUINPageTamil(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-		//			updateUINPage =new UpdateUINPageArabic(driver);
-		//		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			updateUINPage =new UpdateUINPageHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			updateUINPage =new UpdateUINPageFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			updateUINPage =new UpdateUINPageKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			updateUINPage =new UpdateUINPageTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			updateUINPage =new UpdateUINPageArabic(driver);
+		}
 
 		assertTrue(updateUINPage.isUpdateMyUINTitleDisplayed(),"verify if the update my uin page is displayed");
 		updateUINPage.clickOnContinueButton();
@@ -259,10 +264,10 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 		assertTrue(updateUINPage.isnGenderTitleDisplayed(),"verify if the gender title is displayed");
 		updateUINPage.clickOnGenderButton();
-		
+
 		assertTrue(updateUINPage.isnBiometricsTitleDisplayed(),"verify if the biometrics title is displayed");
 		updateUINPage.clickOnBiometricsButton();
-		
+
 		assertTrue(updateUINPage.isDocumentsTitleDisplayed(),"verify if the document title is displayed");
 		updateUINPage.clickOnDocumentsButton();	
 
@@ -319,7 +324,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
 		demographicPage.enterAge(TestDataReader.readData("infantAge"));
 		demographicPage.selectGender(TestDataReader.readData("gender"));
-		
+
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			biometricDetailsPage=new BiometricDetailsPageEnglish(driver);
@@ -393,7 +398,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		assertTrue(introducerBiometricPage.isIrisScan(),"Verify if iris scan 1st attempt");
 		introducerBiometricPage.closeScanCapturePopUp();
 		introducerBiometricPage.clickOnBackButton();
-		
+
 		assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 		biometricDetailsPage.clickOnContinueButton();
 
@@ -417,7 +422,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 			documentuploadPage=new DocumentuploadPageArabic(driver);
 		}
 		documentuploadPage.clickOnContinueButton();
-		
+
 		assertTrue(consentPage.updateUINTitleDisplayed(),"Verify if new update uin title is displayed");
 		documentuploadPage.selectIdentityProof();
 		documentuploadPage.closePopUpClose();
@@ -462,7 +467,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
 		identityProofPage.cropCaptureImage();
 		documentuploadPage=identityProofPage.clickOnSaveButton();
-		
+
 		assertTrue(documentuploadPage.isDeleteButtonDisplyed(),"Verify if delete button is displayed");
 		documentuploadPage.selectDobProof();
 		documentuploadPage.closePopUpClose();
@@ -477,7 +482,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		identityProofPage.cropCaptureImage();
 		identityProofPage.clickOnSaveButton();
 		documentuploadPage.clickOnContinueButton();
-		
+
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			previewPage=new PreviewPageEnglish(driver);
 		} 
