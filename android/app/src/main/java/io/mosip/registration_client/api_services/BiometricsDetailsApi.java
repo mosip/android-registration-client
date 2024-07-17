@@ -973,19 +973,24 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             } else {
                 currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId, currentModality);
 
-                biometricsDtoList.forEach(dto -> {
-                    try {
-                        this.registrationService.getRegistrationDto().addBiometric(fieldId,
-                                (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
-                                        ? currentModality.getAttributes().get(0)
-                                        : Modality.getBioAttribute(dto.getBioSubType()),
-                                currentAttempt, dto);
+                if(biometricsDtoList!=null){
+                    biometricsDtoList.forEach(dto -> {
+                        try {
+                            this.registrationService.getRegistrationDto().addBiometric(fieldId,
+                                    (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
+                                            ? currentModality.getAttributes().get(0)
+                                            : Modality.getBioAttribute(dto.getBioSubType()),
+                                    currentAttempt, dto);
 
-                        result1.success("Ok");
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.getMessage(), ex);
-                    }
-                });
+                            result1.success("Ok");
+                        } catch (Exception ex) {
+                            Log.e(TAG, ex.getMessage(), ex);
+                        }
+                    });
+                } else {
+                    Toast.makeText(activity.getApplicationContext(),
+                            "Biometrics Matched With Operator Biometrics, Please Try Again",Toast.LENGTH_SHORT).show();
+                }
             }
 
         } catch (Exception e) {

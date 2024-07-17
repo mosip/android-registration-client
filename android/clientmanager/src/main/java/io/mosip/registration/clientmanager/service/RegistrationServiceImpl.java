@@ -1,5 +1,13 @@
 package io.mosip.registration.clientmanager.service;
 
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_EXCEPTION;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_FORCE_CAPTURED;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_PAYLOAD;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_RETRIES;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_SDK_SCORE;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_SPEC_VERSION;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -8,6 +16,28 @@ import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
+
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.mosip.biometrics.util.face.FaceBDIR;
 import io.mosip.registration.clientmanager.BuildConfig;
@@ -30,30 +60,22 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
-import io.mosip.registration.packetmanager.dto.PacketWriter.*;
-import io.mosip.registration.packetmanager.util.DateUtils;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BDBInfo;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRInfo;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.ProcessedLevelType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.PurposeType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.QualityType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.RegistryIDType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.VersionType;
+import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
+import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
+import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
+import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 import lombok.NonNull;
-
-import org.json.JSONObject;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.*;
-
-import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.*;
 
 @Singleton
 public class RegistrationServiceImpl implements RegistrationService {

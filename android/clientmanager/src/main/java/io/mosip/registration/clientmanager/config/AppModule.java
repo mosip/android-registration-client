@@ -5,39 +5,54 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import javax.crypto.KeyGenerator;
-import javax.inject.Singleton;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
-import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
-import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
-import io.mosip.registration.clientmanager.entity.PreRegistrationList;
-import io.mosip.registration.clientmanager.service.*;
+import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
+import io.mosip.registration.clientmanager.repository.AuditRepository;
+import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
+import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
+import io.mosip.registration.clientmanager.repository.DynamicFieldRepository;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.JobTransactionRepository;
+import io.mosip.registration.clientmanager.repository.LanguageRepository;
+import io.mosip.registration.clientmanager.repository.LocationRepository;
+import io.mosip.registration.clientmanager.repository.MachineRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
+import io.mosip.registration.clientmanager.repository.TemplateRepository;
+import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
+import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
-import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
-import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandlingServiceImpl;
-import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
-import io.mosip.registration.clientmanager.util.DateUtil;
-import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
+import io.mosip.registration.clientmanager.service.PacketServiceImpl;
+import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.service.TemplateService;
+import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
-import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.clientmanager.util.SyncRestUtil;
-import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.util.DateUtil;
+import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
-import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
 import io.mosip.registration.keymanager.service.CertificateDBHelper;
+import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
 import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
@@ -51,8 +66,6 @@ import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.PacketKeeper;
 import io.mosip.registration.packetmanager.util.PacketManagerHelper;
-
-import java.security.Key;
 
 @Module
 public class AppModule {
@@ -229,8 +242,9 @@ public class AppModule {
     @Provides
     @Singleton
     Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, AuditManagerService auditManagerService,
-                                                     GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService) {
-        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService);
+                                                     GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService,
+                                                     UserBiometricRepository userBiometricRepository) {
+        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository);
     }
 
     @Provides
@@ -246,27 +260,5 @@ public class AppModule {
     @Singleton
     TemplateService TemplateService(MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository) {
         return new TemplateService(appContext, masterDataService, identitySchemaRepository);
-    }
-
-    @Provides
-    @Singleton
-    PreRegistrationDataSyncService PreRegistrationDataSyncService(PreRegistrationDataSyncDao preRegistrationDao, MasterDataService masterDataService, SyncRestService syncRestService, PreRegZipHandlingService preRegZipHandlingService, PreRegistrationList preRegistration,GlobalParamRepository globalParamRepository) {
-        return new PreRegistrationDataSyncServiceImpl(appContext, preRegistrationDao, masterDataService, syncRestService,preRegZipHandlingService,preRegistration,globalParamRepository);
-    }
-    @Provides
-    @Singleton
-    PreRegistrationDataSyncDao PreRegistrationDataSyncDao(PreRegistrationDataSyncRepositoryDao preRegistrationRepositoryDao) {
-        return new PreRegistrationDataSyncDaoImpl(preRegistrationRepositoryDao);
-    }
-
-    @Provides
-    @Singleton
-    PreRegZipHandlingService PreRegZipHandlingService(ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade, RegistrationService registrationService, CryptoManagerService cryptoManagerService,PacketKeeper packetKeeper,IPacketCryptoService iPacketCryptoService, MasterDataService masterDataService) {
-        return new PreRegZipHandlingServiceImpl(appContext, applicantValidDocumentDao,identitySchemaService,clientCryptoFacade,registrationService,cryptoManagerService,packetKeeper,iPacketCryptoService,masterDataService);
-    }
-    @Provides
-    @Singleton
-    PreRegistrationList PreRegistrationList() {
-        return new PreRegistrationList();
     }
 }
