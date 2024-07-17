@@ -38,17 +38,6 @@ public class ConsentPageTamil extends ConsentPage{
 	public boolean isCheckBoxReadable() {
 		return isElementDisplayed(checkBoxDiscription);
 	}
-	
-	public  void selectTermAndConditionCheckbox() {
-		clickOnElement(termAndConditionCheckBox);
-		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
-
-	}
-	
-	public  void UnSelectTermAndConditionCheckbox() {
-		clickOnElement(termAndConditionCheckBox);
-		clickOnCheckBox();//temporary solution to click on checkbox using x and y axis (MOSIP-31856)
-	}
 
 	public  boolean isInformedButtonEnabled() {
 		return isElementEnabled(informedButton);

@@ -94,7 +94,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 
 	public  void clickOnUploadButton() {
 		clickOnElement(uploadButton);
-		waitTime(20);
+		waitTime(10);
 	}
 
 	public boolean isPacketUploadDone(String AID) {

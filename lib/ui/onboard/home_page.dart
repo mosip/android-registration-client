@@ -156,14 +156,14 @@ class _HomePageState extends State<HomePage> {
                 .toLocal())
             .toString(),
       },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.download_pre_registration_data,
-        "onTap": () {},
-        "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
-      },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.download_pre_registration_data,
+      //   "onTap": () {},
+      //   "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
+      // },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",

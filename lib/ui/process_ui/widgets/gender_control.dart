@@ -150,13 +150,6 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     String mandatoryLang = globalProvider
             .codeToLanguageMapper[mandatoryLangCode] ??
         "English";
-    String langCode = globalProvider.mandatoryLanguages[0]!;
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey(widget.field.id ?? "")) {
-       _getSelectedValueFromMap(langCode);
-    }
 
     return FutureBuilder(
         future: _getFieldValues(widget.field.subType!, "eng"),
