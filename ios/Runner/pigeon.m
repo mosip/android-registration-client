@@ -32,6 +32,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
+@interface UpdatedTimeData ()
++ (UpdatedTimeData *)fromList:(NSArray *)list;
++ (nullable UpdatedTimeData *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @implementation DashBoardData
 + (instancetype)makeWithUserId:(NSString *)userId
     userName:(NSString *)userName
@@ -69,6 +75,27 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation UpdatedTimeData
++ (instancetype)makeWithUpdatedTime:(nullable NSString *)updatedTime {
+  UpdatedTimeData* pigeonResult = [[UpdatedTimeData alloc] init];
+  pigeonResult.updatedTime = updatedTime;
+  return pigeonResult;
+}
++ (UpdatedTimeData *)fromList:(NSArray *)list {
+  UpdatedTimeData *pigeonResult = [[UpdatedTimeData alloc] init];
+  pigeonResult.updatedTime = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable UpdatedTimeData *)nullableFromList:(NSArray *)list {
+  return (list) ? [UpdatedTimeData fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.updatedTime ?: [NSNull null]),
+  ];
+}
+@end
+
 @interface DashBoardApiCodecReader : FlutterStandardReader
 @end
 @implementation DashBoardApiCodecReader
@@ -76,6 +103,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   switch (type) {
     case 128: 
       return [DashBoardData fromList:[self readValue]];
+    case 129: 
+      return [UpdatedTimeData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -88,6 +117,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[DashBoardData class]]) {
     [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[UpdatedTimeData class]]) {
+    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -195,6 +227,23 @@ void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Dash
       NSCAssert([api respondsToSelector:@selector(getSyncedPacketDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getSyncedPacketDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api getSyncedPacketDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getUpdatedTime"
+        binaryMessenger:binaryMessenger
+        codec:DashBoardApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getUpdatedTimeWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getUpdatedTimeWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getUpdatedTimeWithCompletion:^(UpdatedTimeData *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

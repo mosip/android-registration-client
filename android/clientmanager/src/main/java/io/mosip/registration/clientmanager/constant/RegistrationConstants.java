@@ -22,6 +22,9 @@ public class RegistrationConstants {
     public static final List<String> FACE_ATTR = Arrays.asList("");
     public static final List<String> EXCEPTION_PHOTO_ATTR = Arrays.asList("unknown");
 
+    public static String DEDUPLICATION_ENABLE_FLAG = "mosip.registration.mds.deduplication.enable.flag";
+    public static final String ENABLE = "Y";
+    public static final String DISABLE = "N";
 
     //SBI intents
     public static final String DISCOVERY_INTENT_ACTION = "io.sbi.device";
