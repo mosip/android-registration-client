@@ -399,7 +399,14 @@ public class RegistrationDto extends Observable {
         this.AGE_GROUPS.clear();
         this.EXCEPTIONS.clear();
         this.selectedLanguages.removeIf(o->true);
+
         deleteObservers();
+    }
+
+    public void changeUpdatableFieldGroups() {
+        this.demographics.clear();
+        this.AGE_GROUPS.clear();
+        clearAndNotifyAllObservers();
     }
 
     @Override
@@ -441,7 +448,6 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.put("isBioException", this.EXCEPTIONS.size() > 0);
         if(!allIdentityDetails.containsKey(RegistrationConstants.AGE))
             allIdentityDetails.put(RegistrationConstants.AGE, 0);
-
         return allIdentityDetails;
     }
 

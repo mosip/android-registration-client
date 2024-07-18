@@ -96,7 +96,7 @@ class DemographicServiceImpl implements DemographicService {
     }
     return fieldValue;
   }
-  
+
   @override
   Future<void> addUpdatableFieldGroup(String fieldGroup) async {
     try {
@@ -107,7 +107,7 @@ class DemographicServiceImpl implements DemographicService {
       debugPrint('Updatable field group not added ${e.toString()}');
     }
   }
-  
+
   @override
   Future<void> addUpdatableFields(List<String> fieldIds) async {
     try {
@@ -118,7 +118,7 @@ class DemographicServiceImpl implements DemographicService {
       debugPrint('Updatable fields not added ${e.toString()}');
     }
   }
-  
+
   @override
   Future<void> removeUpdatableFieldGroup(String fieldGroup) async {
     try {
@@ -129,11 +129,22 @@ class DemographicServiceImpl implements DemographicService {
       debugPrint('Updatable field group not removed ${e.toString()}');
     }
   }
-  
+
   @override
   Future<void> removeUpdatableFields(List<String> fieldIds) async {
     try {
       await DemographicsApi().removeUpdatableFields(fieldIds);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Updatable fields not removed ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> changeUpdatableFieldGroups() async {
+    try {
+      await DemographicsApi().changeUpdatableFieldGroups();
     } on PlatformException {
       debugPrint('DemographicsApi call failed');
     } catch (e) {

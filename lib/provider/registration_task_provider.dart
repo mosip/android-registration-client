@@ -259,6 +259,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     await demographics.removeUpdatableFieldGroup(fieldGroup);
   }
 
+  changeUpdatableFieldGroups() async {
+    await demographics.changeUpdatableFieldGroups();
+  }
+
   getLastUpdatedTime() async {
     UpdatedTimeData lastUpdatedTime = await dashBoard.getUpdatedTime();
     setLastSuccessfulSyncTime(lastUpdatedTime.updatedTime!);
@@ -269,8 +273,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String?, Object?>>fetchPreRegistrationDetail(String preRegistrationId) async {
-    _preRegistrationData = await dynamicResponseService.fetchPreRegistrationDetails(preRegistrationId);
+  Future<Map<String?, Object?>> fetchPreRegistrationDetail(
+      String preRegistrationId) async {
+    _preRegistrationData = await dynamicResponseService
+        .fetchPreRegistrationDetails(preRegistrationId);
     return _preRegistrationData;
   }
 }
