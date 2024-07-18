@@ -219,4 +219,8 @@ class SyncProvider with ChangeNotifier {
   batchJob() async {
     await syncResponseService.batchJob();
   }
+
+  getPreRegistrationIds() async {
+    await syncResponseService.getPreRegIds();
+  }
 }

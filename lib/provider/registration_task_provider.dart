@@ -35,6 +35,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String _previewTemplate = "";
   String _acknowledgementTemplate = "";
   String _lastSuccessfulUpdatedTime = "";
+  Map<String?, Object?> _preRegistrationData = {};
 
   List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
@@ -44,6 +45,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get registrationStartError => _registrationStartError;
   bool get isRegistrationSaved => _isRegistrationSaved;
   String get lastSuccessfulUpdatedTime => _lastSuccessfulUpdatedTime;
+  Map<String?, Object?> get preRegistrationData => _preRegistrationData;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
@@ -265,5 +267,10 @@ class RegistrationTaskProvider with ChangeNotifier {
   setLastSuccessfulSyncTime(String syncTime) {
     _lastSuccessfulUpdatedTime = syncTime;
     notifyListeners();
+  }
+
+  Future<Map<String?, Object?>>fetchPreRegistrationDetail(String preRegistrationId) async {
+    _preRegistrationData = await dynamicResponseService.fetchPreRegistrationDetails(preRegistrationId);
+    return _preRegistrationData;
   }
 }

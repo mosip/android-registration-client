@@ -7,39 +7,65 @@
 
 package io.mosip.registration_client.api_services;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.apache.velocity.VelocityContext;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.packetmanager.dto.PacketWriter.DocumentType;
+import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 
 @Singleton
 public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseApi {
     MasterDataService masterDataService;
     AuditManagerService auditManagerService;
+    PreRegistrationDataSyncService preRegistrationData;
+    RegistrationService registrationService;
+    IdentitySchemaRepository identitySchemaService;
+    Context appContext;
 
     @Inject
-    public DynamicDetailsApi(MasterDataService masterDataService, AuditManagerService auditManagerService) {
+    public DynamicDetailsApi(Context appContext,MasterDataService masterDataService, AuditManagerService auditManagerService, PreRegistrationDataSyncService preRegistrationData,RegistrationService registrationService,IdentitySchemaRepository identitySchemaService) {
+        this.appContext = appContext;
         this.masterDataService = masterDataService;
         this.auditManagerService = auditManagerService;
+        this.preRegistrationData = preRegistrationData;
+        this.registrationService = registrationService;
+        this.identitySchemaService = identitySchemaService;
     }
 
 
@@ -191,5 +217,84 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
             Log.e(getClass().getSimpleName(), "Fetch location hierarchy map failed: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(hierarchyMap);
+    }
+
+    @Override
+    public void fetchPreRegistrationDetails(@NonNull String preRegId, @NonNull DynamicResponsePigeon.Result<Map<String, Object>> result) {
+        Map<String, Object> preRegistrationData = new HashMap<>();
+        try {
+            this.preRegistrationData.getPreRegistration(preRegId,false);
+            RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
+            List<FieldSpecDto> fieldList = this.identitySchemaService.getAllFieldSpec(appContext, registrationDto.getSchemaVersion());
+
+            for(FieldSpecDto field : fieldList) {
+                if(field.getId().equalsIgnoreCase("IDSchemaVersion"))
+                    continue;
+                switch (field.getType()) {
+                    case "documentType":
+                        Map<String, Object> docData = getDocumentData(field, registrationDto);
+                        if (docData != null) {
+                            preRegistrationData.put(field.getId(), docData);
+                        }
+                        break;
+                    case "biometricsType":
+                        break;
+                    default:
+                        JSONObject jsonObject = new JSONObject(String.valueOf(registrationDto));
+                        preRegistrationData = jsonObjectToMap(jsonObject);
+                        break;
+                };
+
+            }
+
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Fetch Application ID details failed: " + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(preRegistrationData);
+    }
+
+    public static Map<String, Object> jsonObjectToMap(JSONObject jsonObject) {
+        Map<String, Object> map = new HashMap<>();
+        jsonObject.keys().forEachRemaining(key -> {
+            Object value = null;
+            try {
+                value = jsonObject.get(key);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            if (value instanceof JSONArray) {
+                List<Object> list = new ArrayList<>();
+                JSONArray array = (JSONArray) value;
+                for (int i = 0; i < array.length(); i++) {
+                    Object item = null;
+                    try {
+                        item = array.get(i);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (item instanceof JSONObject) {
+                        list.add(jsonObjectToMap((JSONObject) item));
+                    } else {
+                        list.add(item);
+                    }
+                }
+                map.put(key, list);
+            } else if (value instanceof JSONObject) {
+                map.put(key, jsonObjectToMap((JSONObject) value));
+            } else {
+                map.put(key, value);
+            }
+        });
+        return map;
+    }
+
+    private Map<String, Object> getDocumentData(FieldSpecDto field, RegistrationDto registrationDto) {
+        Map<String, Object> data = null;
+        if (registrationDto.getDocuments().get(field.getId()) != null) {
+            data = new HashMap<>();
+          //  data.put("label", registrationDto.getDocuments().get(field.getId()));
+            data.put("value", registrationDto.getDocuments().get(field.getId()).getType());
+        }
+        return data;
     }
 }

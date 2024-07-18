@@ -16,7 +16,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -37,7 +36,6 @@ import javax.inject.Inject;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;

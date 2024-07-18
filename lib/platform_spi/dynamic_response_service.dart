@@ -24,5 +24,7 @@ abstract class DynamicResponseService {
 
   Future<Map<String?, String?>> fetchLocationHierarchyMap();
 
+  Future<Map<String?, Object?>> fetchPreRegistrationDetails(String preRegId);
+
   factory DynamicResponseService() => getDynamicResponseServiceImpl();
 }
