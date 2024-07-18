@@ -30,6 +30,7 @@ class AuthProvider with ChangeNotifier {
   String _userId = "";
   String _username = "";
   String _userEmail = "";
+  bool _isNetworkPresent = false;
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isSyncing => _isSyncing;
@@ -49,6 +50,7 @@ class AuthProvider with ChangeNotifier {
   String get userId => _userId;
   String get username => _username;
   String get userEmail => _userEmail;
+  bool get isNetworkPresent => _isNetworkPresent;
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -207,4 +209,10 @@ class AuthProvider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  setIsNetworkPresent(bool value){
+    _isNetworkPresent = value;
+    notifyListeners();
+  }
+
 }

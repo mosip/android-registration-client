@@ -18,7 +18,7 @@
   "next_button": "अगला",
   "password": "पासवर्ड",
   "enter_password": "पासवर्ड दर्ज करें",
-  "forgot_password": "पासवर्ड भूल गए?",
+  "forgot_password": "पासवर्ड भूल गए",
   "login_button": "लॉगिन",
   "back_button": "वापस",
   "user_validated": "उपयोगकर्ता मान्य!",
@@ -248,5 +248,8 @@
   "offline": "ऑफलाइन",
   "logout_success": "आप सफलता पूर्वक लॉगआउट कर चुके हैं!",
   "logout_failure": "कुछ गलती हो गई है, कृपया कुछ समय बाद पुनः प्रयास करें",
-  "go_to_home": "होम पर जाएं"
+  "go_to_home": "होम पर जाएं",
+  "no_internet_connection": "कोई इंटरनेट कनेक्शन नहीं!",
+  "connect_and_retry": "कृपया इंटरनेट से जुड़ें और पुनः प्रयास करें।",
+  "retry": "पुन: प्रयास"
 }
