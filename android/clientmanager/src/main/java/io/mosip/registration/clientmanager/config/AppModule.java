@@ -5,12 +5,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-<<<<<<< HEAD
-=======
-import javax.crypto.KeyGenerator;
-import javax.inject.Singleton;
-
->>>>>>> 380ae33c (RCF-456 Download pre-reg data (#393))
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.inject.Singleton;
@@ -19,7 +13,9 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
-<<<<<<< HEAD
+import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
+import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
+import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
@@ -44,27 +40,19 @@ import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.service.PacketServiceImpl;
+import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncDaoImpl;
+import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
-=======
-import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
-import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
-import io.mosip.registration.clientmanager.entity.PreRegistrationList;
-import io.mosip.registration.clientmanager.service.*;
-import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
-import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
 import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandlingServiceImpl;
-import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
-import io.mosip.registration.clientmanager.util.DateUtil;
-import io.mosip.registration.clientmanager.spi.JobManagerService;
->>>>>>> 380ae33c (RCF-456 Download pre-reg data (#393))
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.DateUtil;

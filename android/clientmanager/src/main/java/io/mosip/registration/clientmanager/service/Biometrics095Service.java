@@ -135,7 +135,7 @@ public class Biometrics095Service extends BiometricsService {
                         1, 0,
                         captureDto.getQualityScore()));
 
-                if(RegistrationConstants.ENABLE.equalsIgnoreCase(this.globalParamRepository
+                if(RegistrationConstants.DISABLE.equalsIgnoreCase(this.globalParamRepository
                         .getCachedStringGlobalParam(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG))) {
                     boolean isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
                     if(isMatched){
