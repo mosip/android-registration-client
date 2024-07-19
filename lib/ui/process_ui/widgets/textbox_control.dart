@@ -147,8 +147,12 @@ class _TextBoxControlState extends State<TextBoxControl>
           String data = _getDataFromMap(lang);
           if (!controllerMap.containsKey(lang)) {
             controllerMap[lang] = TextEditingController(text: data);
+            controllerMap[lang]!.value =
+                controllerMap[lang]!.value.copyWith(text: data);
+            controllerMap[lang]!.selection = controllerMap[lang]!.selection.copyWith(baseOffset: data.length, extentOffset: data.length);
           } else {
             controllerMap[lang]!.text = data;
+            controllerMap[lang]!.selection = controllerMap[lang]!.selection.copyWith(baseOffset: data.length, extentOffset: data.length);
           }
         });
       });
