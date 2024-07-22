@@ -28,17 +28,15 @@ import lombok.val;
 public class DashBoardDetailsApi implements DashBoardPigeon.DashBoardApi {
     private UserDetailDao userDetailDao;
     private RegistrationRepository registrationRepository;
-    private PreRegistrationDataSyncService preRegistrationData;
     public static final String PREFERRED_USERNAME = "preferred_username";
     SharedPreferences sharedPreferences;
     private Context context;
 
     @Inject
-    public DashBoardDetailsApi(Context context, UserDetailDao userDetailDao, RegistrationRepository registrationRepository,PreRegistrationDataSyncService preRegistrationData){
+    public DashBoardDetailsApi(Context context, UserDetailDao userDetailDao, RegistrationRepository registrationRepository){
         this.context = context;
         this.userDetailDao = userDetailDao;
         this.registrationRepository = registrationRepository;
-        this.preRegistrationData = preRegistrationData;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(io.mosip.registration.clientmanager.R.string.app_name),
                 Context.MODE_PRIVATE);

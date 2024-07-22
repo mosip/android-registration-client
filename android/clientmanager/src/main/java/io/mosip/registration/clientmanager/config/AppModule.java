@@ -11,7 +11,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
+import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
+import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
@@ -36,14 +40,19 @@ import io.mosip.registration.clientmanager.service.JobTransactionServiceImpl;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.MasterDataServiceImpl;
 import io.mosip.registration.clientmanager.service.PacketServiceImpl;
+import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncDaoImpl;
+import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
+import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
+import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandlingServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.DateUtil;
@@ -260,5 +269,26 @@ public class AppModule {
     @Singleton
     TemplateService TemplateService(MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository) {
         return new TemplateService(appContext, masterDataService, identitySchemaRepository);
+    }
+
+    @Provides
+    @Singleton
+    PreRegistrationDataSyncService PreRegistrationDataSyncService(PreRegistrationDataSyncDao preRegistrationDao, MasterDataService masterDataService, SyncRestService syncRestService, PreRegZipHandlingService preRegZipHandlingService, PreRegistrationList preRegistration, GlobalParamRepository globalParamRepository) {
+        return new PreRegistrationDataSyncServiceImpl(appContext, preRegistrationDao, masterDataService, syncRestService,preRegZipHandlingService,preRegistration,globalParamRepository);
+    }
+    @Provides
+    @Singleton
+    PreRegistrationDataSyncDao PreRegistrationDataSyncDao(PreRegistrationDataSyncRepositoryDao preRegistrationRepositoryDao) {
+        return new PreRegistrationDataSyncDaoImpl(preRegistrationRepositoryDao);
+    }
+    @Provides
+    @Singleton
+    PreRegZipHandlingService PreRegZipHandlingService(ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade, RegistrationService registrationService, CryptoManagerService cryptoManagerService, PacketKeeper packetKeeper, IPacketCryptoService iPacketCryptoService, MasterDataService masterDataService) {
+        return new PreRegZipHandlingServiceImpl(appContext, applicantValidDocumentDao,identitySchemaService,clientCryptoFacade,registrationService,cryptoManagerService,packetKeeper,iPacketCryptoService,masterDataService);
+    }
+    @Provides
+    @Singleton
+    PreRegistrationList PreRegistrationList() {
+        return new PreRegistrationList();
     }
 }
