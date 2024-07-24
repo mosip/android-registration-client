@@ -24,6 +24,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
@@ -231,5 +232,11 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             Log.e(getClass().getSimpleName(), "Failed to stop alarm service", e);
         }
         result.success(resultString);
+    }
+
+    @Override
+    public void forgotPasswordUrl(@NonNull AuthResponsePigeon.Result<String> result) {
+        String response = "https://"+ BuildConfig.FORGOT_PASSWORD_URL +"/auth/realms/master/protocol/openid-connect/auth?client_id=security-admin-console&redirect_uri=https%3A%2F%2F"+ BuildConfig.FORGOT_PASSWORD_URL +"%2Fauth%2Fadmin%2Fmaster%2Fconsole%2F&state=744b7212-725b-48cb-91a9-9b8e4c33a031&response_mode=fragment&response_type=code&scope=openid&nonce=08339536-3d88-4d24-a465-16e9d02e7dbe&code_challenge=OQREJKeFfdANcrZpB10WqFQe8Y2Br881eR628O1sJnU&code_challenge_method=S256";
+        result.success(response);
     }
 }

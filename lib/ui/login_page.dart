@@ -348,15 +348,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     }
   }
 
-  _getStringValueGlobalParamAction(BuildContext context, String key) async {
-    await context
-        .read<RegistrationTaskProvider>()
-        .getStringValueGlobalParam(key);
-    String res =
-        context.read<RegistrationTaskProvider>().stringValueGlobalParam;
-    await goToUrl(res);
-  }
-
   _getLoginAction() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
@@ -644,8 +635,17 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                     });
                   },
                   onTapForgotPassword: () async {
-                   // authProvider.setIsNetworkPresent(true);
-                    _getStringValueGlobalParamAction(context, "mosip.registration.reset_password_url");
+                    await connectivityProvider
+                        .checkNetworkConnection();
+                    bool isConnected =
+                        connectivityProvider.isConnected;
+                    if(isConnected) {
+                      await authProvider.getForgotPasswordUrl();
+                      String res =  authProvider.forgotPasswordUrl;
+                      await goToUrl(res);
+                    } else {
+                      authProvider.setIsNetworkPresent(true);
+                    }
                   },
                   onChanged: (v) {
                     setState(() {
@@ -657,8 +657,17 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
               : const SizedBox(),
           context.watch<AuthProvider>().isNetworkPresent?
                NetworkComponent(isMobile: isMobile,
-                 onTapRetry: (){
-                    authProvider.setIsNetworkPresent(false);
+                 onTapRetry: () async{
+                   await connectivityProvider
+                       .checkNetworkConnection();
+                   bool isConnected =
+                       connectivityProvider.isConnected;
+                   if(isConnected) {
+                     authProvider.setIsNetworkPresent(false);
+                     await authProvider.getForgotPasswordUrl();
+                     String res =  authProvider.forgotPasswordUrl;
+                     await goToUrl(res);
+                   }
                   })
               : const SizedBox(),
         ],
