@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      OperatorOnboardingBiometricsCaptureControl()));
+                      const OperatorOnboardingBiometricsCaptureControl()));
         },
         "subtitle": lastOperatorUpdateBiometricTime.toString(),
       },
@@ -201,7 +201,11 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.check_updates,
         "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
+            .format(DateTime.parse(
+                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                .toLocal())
+            .toString()
       },
       {
         "icon": SvgPicture.asset(
@@ -209,7 +213,11 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.center_remap_sync,
         "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
+            .format(DateTime.parse(
+                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                .toLocal())
+            .toString()
       },
       {
         "icon": SvgPicture.asset(
@@ -217,7 +225,11 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.sync_activities,
         "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
+            .format(DateTime.parse(
+                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                .toLocal())
+            .toString()
       },
     ];
 

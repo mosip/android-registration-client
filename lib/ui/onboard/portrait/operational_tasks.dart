@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -25,6 +27,14 @@ class OperationalTasks extends StatefulWidget {
 }
 
 class _OperationalTasksState extends State<OperationalTasks> {
+  late GlobalProvider globalProvider;
+
+  @override
+  void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -39,6 +49,9 @@ class _OperationalTasksState extends State<OperationalTasks> {
   }
 
   _getMemoryProvider() {
+    double percentUsed = (globalProvider.usedInternalStorage /
+            globalProvider.totalInternalStorage) *
+        100;
     return Container(
       // height: 186.h,
       color: appWhite,
@@ -109,7 +122,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   ),
                   LinearPercentIndicator(
                     lineHeight: 10.h,
-                    percent: 0.72,
+                    percent: percentUsed / 100,
                     backgroundColor: appWhite,
                     progressColor: appSolidPrimary,
                     barRadius: const Radius.circular(10),
@@ -120,7 +133,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   Row(
                     children: [
                       Text(
-                        'Used: 286 GB (72% used)',
+                        'Used: ${globalProvider.usedInternalStorage.toStringAsFixed(2)} GB (${percentUsed.toInt()}% used)',
                         style: TextStyle(
                           fontSize: isMobileSize ? 14 : 20,
                           color: const Color(0XFF4E4E4E),
@@ -131,7 +144,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                       ),
                       !isMobileSize
                           ? Text(
-                              'Available: 192 GB',
+                              'Available: ${globalProvider.totalInternalStorage.toStringAsFixed(2)} GB',
                               style: TextStyle(
                                 fontSize: isMobileSize ? 14 : 20,
                                 color: const Color(0XFF4E4E4E),
