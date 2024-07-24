@@ -179,25 +179,6 @@ public class KeycloakUserManager {
 		}
 	}
 
-	public static void removeUser() {
-		List<String> needsToBeRemovedUsers = List.of(ConfigManager.getIAMUsersToCreate().split(","));
-		Keycloak keycloakInstance = getKeycloakInstance();
-		for (String needsToBeRemovedUser : needsToBeRemovedUsers) {
-			String moduleSpecificUserToBeRemoved = BaseTestCase.currentModule +"-"+ needsToBeRemovedUser;
-			RealmResource realmResource = keycloakInstance.realm(ConfigManager.getIAMRealmId());
-			UsersResource usersRessource = realmResource.users();
-
-			List<UserRepresentation> usersFromDB = usersRessource.search(moduleSpecificUserToBeRemoved);
-			if (!usersFromDB.isEmpty()) {
-				UserResource userResource = usersRessource.get(usersFromDB.get(0).getId());
-				userResource.remove();
-				System.out.printf("User removed with name: %s%n", moduleSpecificUserToBeRemoved);
-			} else {
-				System.out.printf("User not found with name: %s%n", moduleSpecificUserToBeRemoved);
-			}
-
-		}
-	}
 
 	public static String getDateTime() {
 		LocalDateTime currentDateTime = LocalDateTime.now();

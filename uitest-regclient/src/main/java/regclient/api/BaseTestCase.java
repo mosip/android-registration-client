@@ -1,13 +1,11 @@
 package regclient.api;
 
 
-import io.restassured.response.Response;
 import regclient.utils.TestRunner;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.json.simple.JSONObject;
 
-import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -104,30 +102,6 @@ public class BaseTestCase {
 
 		logger.info("Configs from properties file are set.");
 
-	}
-
-	private static String targetEnvVersion = "";
-
-	public static boolean isTargetEnvLTS() {
-
-		if (targetEnvVersion.isEmpty()) {
-
-			Response response = null;
-			org.json.JSONObject responseJson = null;
-			String url = ApplnURI + "/v1/auditmanager/actuator/info";
-			try {
-				response = RestClient.getRequest(url, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON);
-				GlobalMethods.reportResponse(response.getHeaders().asList().toString(), url, response);
-
-				responseJson = new org.json.JSONObject(response.getBody().asString());
-
-				targetEnvVersion = responseJson.getJSONObject("build").getString("version");
-
-			} catch (Exception e) {
-				logger.error(GlobalConstants.EXCEPTION_STRING_2 + e);
-			}
-		}
-		return targetEnvVersion.contains("1.2");
 	}
 
 	private static Properties getLoggerPropertyConfig() {

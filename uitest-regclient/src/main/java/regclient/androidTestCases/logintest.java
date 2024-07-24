@@ -245,7 +245,7 @@ public class logintest  extends AndroidBaseTest {
 	}
 
 	@Test(priority=1)
-	public void getOnBoard() {
+	public void OnBoardTest() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
 		OnBoardPage onBoardPage=null;
@@ -433,7 +433,7 @@ public class logintest  extends AndroidBaseTest {
 		
 	}
 	
-	@Test(priority=3)
+	@Test(priority=2)
 	public void updateOperatorBiometrics() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;

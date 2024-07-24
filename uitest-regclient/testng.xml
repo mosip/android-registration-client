@@ -5,8 +5,8 @@
 		<classes>
 			<class name="regclient.androidTestCases.logintest">
 				<methods>
-					<include name="AloginTest" />
-					<include name="getOnBoard" />
+					<include name="ALoginTest" />
+					<include name="OnBoardTest" />
 					<include name="updateOperatorBiometrics" />
 				</methods>
 			</class>
