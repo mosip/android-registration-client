@@ -5,6 +5,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
 
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.time.Duration;
 
 import org.openqa.selenium.WebElement;
@@ -95,7 +97,7 @@ public class LoginPageEnglish extends LoginPage {
 
 	@AndroidFindBy(accessibility = "Sync Completed Successfully")
 	private WebElement syncCompletedSuccessfullyMessage;
-	
+
 	@AndroidFindBy(accessibility = "COPY TEXT")
 	private WebElement copyTextButton;
 
@@ -107,7 +109,7 @@ public class LoginPageEnglish extends LoginPage {
 	public  void clickOnCopyTextButton() {
 		clickOnElement(copyTextButton);
 	}
-	
+
 	public  void clickOnNextButton() {
 		clickOnElement(nextButton);
 	}
@@ -187,12 +189,20 @@ public class LoginPageEnglish extends LoginPage {
 	public boolean isSyncCompletedSuccessfullyMessageDisplayed() {
 		return isElementDisplayed(syncCompletedSuccessfullyMessage,2000);
 	}
-	
+
 	public void clickandHold() {
 		clickAndHold();
 	}
-	
-	public String getMachineDetails() {
-		 return getMachineDetails();
+
+	public  void getMachineDetails()  {
+		try {		
+			getMachineDetail();
+		} catch (UnsupportedFlavorException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

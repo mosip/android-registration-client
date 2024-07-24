@@ -15,6 +15,9 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static java.time.Duration.ofSeconds;
 
 import java.awt.Toolkit;
@@ -32,6 +35,9 @@ import java.util.Locale;
 
 public class BasePage {
 	protected AppiumDriver driver;
+	private static String signPublicKey;
+	private static String publicKey;
+	private static String name;
 
 	public BasePage(AppiumDriver driver) {
 		this.driver = driver;
@@ -102,14 +108,14 @@ public class BasePage {
 				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 		driver.perform(Collections.singletonList(sequence));
 	}
-	
+
 	private org.openqa.selenium.Point getCenterOfElement(org.openqa.selenium.Point point, Dimension size) {
-	    int x = (int) (point.getX() + size.getWidth() / 2);
-	    int y = (int) (point.getY() + size.getHeight()/ 2);
-	    return new org.openqa.selenium.Point(x, y);
+		int x = (int) (point.getX() + size.getWidth() / 2);
+		int y = (int) (point.getY() + size.getHeight()/ 2);
+		return new org.openqa.selenium.Point(x, y);
 	}
 
-	
+
 	protected void waitForElementToBeVisible(WebElement element, int waitTime) {
 		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(waitTime));
 		wait.until(ExpectedConditions.visibilityOf(element));
@@ -143,35 +149,35 @@ public class BasePage {
 	}
 
 	public static void disableAutoRotation() {
-	    try {
-	        ProcessBuilder processBuilder;
-	        String osName = System.getProperty("os.name");
-	        if (osName.contains("Windows")) {
-	            processBuilder = new ProcessBuilder("cmd.exe", "/c", "adb shell settings put system accelerometer_rotation 0");
-	           
-	        } else {
-	            processBuilder = new ProcessBuilder("/bin/bash", "-c", "adb shell settings put system accelerometer_rotation 0");
-	        }
-	        processBuilder.redirectErrorStream(true);
-	        processBuilder.start();
-	    } catch (IOException e) {
-	        throw new RuntimeException(e);
-	    }
+		try {
+			ProcessBuilder processBuilder;
+			String osName = System.getProperty("os.name");
+			if (osName.contains("Windows")) {
+				processBuilder = new ProcessBuilder("cmd.exe", "/c", "adb shell settings put system accelerometer_rotation 0");
+
+			} else {
+				processBuilder = new ProcessBuilder("/bin/bash", "-c", "adb shell settings put system accelerometer_rotation 0");
+			}
+			processBuilder.redirectErrorStream(true);
+			processBuilder.start();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
-	
+
 	protected String  getCurrentDate() {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");      
 		return  currentDateTime.format(formatter);
 	}
-	
+
 	protected String  getCurrentDateWord() {
-		 LocalDate today = LocalDate.now();
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.ENGLISH);
-	        String formattedDate = today.format(formatter);
-			return formattedDate;
+		LocalDate today = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.ENGLISH);
+		String formattedDate = today.format(formatter);
+		return formattedDate;
 	}
-	
+
 	public static void waitTime(int sec) {
 		try {
 			Thread.sleep(sec*1000);
@@ -179,31 +185,31 @@ public class BasePage {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public WebElement retryFindElement(WebElement element, Duration timeout) {
 		int attempts = 0;
-	    int maxAttempts = 5;
+		int maxAttempts = 5;
 
-	    while (attempts < maxAttempts) {
-	        try {
-	            WebDriverWait wait = new WebDriverWait(driver, timeout);
-	            wait.until(ExpectedConditions.visibilityOf(element));
-	            return element;
-	        } catch (StaleElementReferenceException e) {
-	            System.out.println("StaleElementReferenceException caught. Retrying... " + attempts);
-	            attempts++;
-	        } catch (TimeoutException e) {
-	            System.out.println("TimeoutException caught. Retrying... " + attempts);
-	            attempts++;
-	        }
-	    }
-	    throw new RuntimeException("Element not found after " + maxAttempts + " attempts");
-    }
-	
+		while (attempts < maxAttempts) {
+			try {
+				WebDriverWait wait = new WebDriverWait(driver, timeout);
+				wait.until(ExpectedConditions.visibilityOf(element));
+				return element;
+			} catch (StaleElementReferenceException e) {
+				System.out.println("StaleElementReferenceException caught. Retrying... " + attempts);
+				attempts++;
+			} catch (TimeoutException e) {
+				System.out.println("TimeoutException caught. Retrying... " + attempts);
+				attempts++;
+			}
+		}
+		throw new RuntimeException("Element not found after " + maxAttempts + " attempts");
+	}
 
-	
+
+
 	protected void clickAndHold() {
 		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
 		Sequence sequence = new Sequence(finger1, 1)
@@ -212,14 +218,35 @@ public class BasePage {
 				.addAction(new Pause(finger1, Duration.ofMillis(20000)));
 		driver.perform(Collections.singletonList(sequence));
 	}
-	
-	protected String getMachineDetails() throws UnsupportedFlavorException, IOException {
+
+	protected void getMachineDetail() throws UnsupportedFlavorException, IOException, InterruptedException {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Clipboard clipboard = toolkit.getSystemClipboard();
-        Transferable contents = clipboard.getContents(null);
-        String copiedText = (String) contents.getTransferData(DataFlavor.stringFlavor);
-        System.out.println("Copied Text: " + copiedText);
-		return copiedText;
+		Clipboard clipboard = toolkit.getSystemClipboard();
+		Transferable contents = clipboard.getContents(null);
+		if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+
+			String copiedText = (String) contents.getTransferData(DataFlavor.stringFlavor);
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(copiedText);
+
+			signPublicKey = jsonNode.get("signPublicKey").asText();
+			publicKey = jsonNode.get("publicKey").asText();
+			name = jsonNode.get("name").asText();
+		} else {
+			throw new UnsupportedFlavorException(DataFlavor.stringFlavor);
+		}
+	}
+
+	public static String getSignPublicKey() {
+		return signPublicKey;
+	}
+
+	public static String getPublicKey() {
+		return publicKey;
+	}
+
+	public static String getName() {
+		return name;
 	}
 
 }

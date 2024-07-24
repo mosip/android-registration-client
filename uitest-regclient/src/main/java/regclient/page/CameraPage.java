@@ -1,30 +1,24 @@
 package regclient.page;
 
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By;
 
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.utils.TestDataReader;
 ;
 
 public class CameraPage  extends BasePage{
-
-	@AndroidFindBy(id = "com.motorola.camera3:id/capture_bar_shutter_button")
-	private WebElement clickImageButton;
-	
-	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"OK\"]")
-	private WebElement okButton;
 	
 	public CameraPage(AppiumDriver driver) {
 		super(driver);
 	}
 	
 	public  void clickOkButton() {
-		if(isElementDisplayed(okButton))
-			clickOnElement(okButton);		
+		if(!TestDataReader.readData("okButton").equals("") || TestDataReader.readData("okButton").equals(null) )
+			clickOnElement(driver.findElement(By.id(TestDataReader.readData("okButton"))));		
 	}
 	
 	public  void clickimage() {
-		clickOnElement(clickImageButton);
+		clickOnElement(driver.findElement(By.id(TestDataReader.readData("id"))));
 	}
 
 }
