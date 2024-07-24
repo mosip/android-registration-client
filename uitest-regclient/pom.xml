@@ -71,7 +71,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>io.appium</groupId>
@@ -189,7 +188,6 @@
 			<artifactId>resteasy-jaxb-provider</artifactId>
 			<version>3.15.0.Final</version>
 		</dependency>
-
 	</dependencies>
-
 </project>
+

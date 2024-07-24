@@ -18,6 +18,7 @@ public class TestDataReader {
 		Object obj = null;
 		try {
 			obj = parser.parse(new FileReader(TestRunner.getResourcePath()+"/testdata.json"));
+
 		} catch (FileNotFoundException e) {
 			
 			e.printStackTrace();

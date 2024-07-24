@@ -7,7 +7,7 @@ import regclient.utils.TestDataReader;
 ;
 
 public class CameraPage  extends BasePage{
-	
+
 	public CameraPage(AppiumDriver driver) {
 		super(driver);
 	}
@@ -19,6 +19,7 @@ public class CameraPage  extends BasePage{
 	
 	public  void clickimage() {
 		clickOnElement(driver.findElement(By.id(TestDataReader.readData("id"))));
+
 	}
 
 }
