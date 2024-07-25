@@ -18,6 +18,7 @@ public class CameraPage  extends BasePage{
 	}
 	
 	public  void clickimage() {
+		isElementDisplayed(driver.findElement(By.id(TestDataReader.readData("id"))));
 		clickOnElement(driver.findElement(By.id(TestDataReader.readData("id"))));
 
 	}
