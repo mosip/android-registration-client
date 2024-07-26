@@ -18,7 +18,7 @@
   "next_button": "NEXT",
   "password": "Password",
   "enter_password": "Enter Password",
-  "forgot_password": "Forgot Password?",
+  "forgot_password": "FORGOT PASSWORD",
   "login_button": "LOGIN",
   "back_button": "BACK",
   "user_validated": "User Validated!",
@@ -248,5 +248,8 @@
   "offline": "Offline",
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
-  "go_to_home": "Go To Home"
+  "go_to_home": "Go To Home",
+  "no_internet_connection": "No Internet Connection!",
+  "connect_and_retry": "Please connect with internet and retry.",
+  "retry": "RETRY"
 }

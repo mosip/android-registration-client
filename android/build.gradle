@@ -43,6 +43,7 @@ ext {
     serverHealthCheckPath = "\"/v1/syncdata/actuator/health\""
     serverActuatorInfoPath = "\"/v1/syncdata/actuator/info\""
     debugPassword = "\"APTyKejHxACQyKBSRciR\""
+    serverForgotPasswordURL = "\"iam.qa-platform1.mosip.net\""
 }
 
 

@@ -85,6 +85,19 @@ class AuthServiceImpl implements AuthService {
     return stopAlarmServiceResponse;
   }
 
+  @override
+  Future<String> forgotPasswordUrl() async{
+    late String forgotPasswordResponse;
+    try {
+      forgotPasswordResponse = await AuthResponseApi().forgotPasswordUrl();
+    } on PlatformException {
+      debugPrint('forgotPassword call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return forgotPasswordResponse;
+  }
+
 
 }
 

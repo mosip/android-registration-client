@@ -19,8 +19,10 @@ import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
+import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
+import 'package:registration_client/ui/widgets/network_component.dart';
 import 'package:registration_client/ui/widgets/sync_alert_dialog.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
@@ -32,6 +34,7 @@ import 'package:registration_client/utils/responsive.dart';
 import 'package:registration_client/ui/widgets/password_component.dart';
 import 'package:registration_client/ui/widgets/username_component.dart';
 import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/life_cycle_event_handler.dart';
 
@@ -337,6 +340,14 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     return context.read<ConnectivityProvider>().isConnected;
   }
 
+  goToUrl(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url),mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   _getLoginAction() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
@@ -578,6 +589,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           SizedBox(
             height: isMobile && !isMobileSize ? 16.h : 34.h,
           ),
+          if(!context.watch<AuthProvider>().isNetworkPresent)...[
           Text(
             appLocalizations.login_text,
             style: isMobile && !isMobileSize
@@ -587,7 +599,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           SizedBox(
             height: context.watch<AuthProvider>().isValidUser ? 42.h : 38.h,
           ),
-          !context.watch<AuthProvider>().isValidUser
+          ],
+          !context.watch<AuthProvider>().isValidUser && !context.watch<AuthProvider>().isNetworkPresent
               ? UsernameComponent(
                   onTap: () {
                     _getUserValidation();
@@ -604,7 +617,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   },
                 )
               : const SizedBox(),
-          context.watch<AuthProvider>().isValidUser
+          context.watch<AuthProvider>().isValidUser && !context.watch<AuthProvider>().isNetworkPresent
               ? PasswordComponent(
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: () async {
@@ -621,6 +634,19 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       authProvider.setIsSyncing(false);
                     });
                   },
+                  onTapForgotPassword: () async {
+                    await connectivityProvider
+                        .checkNetworkConnection();
+                    bool isConnected =
+                        connectivityProvider.isConnected;
+                    if(isConnected) {
+                      await authProvider.getForgotPasswordUrl();
+                      String res =  authProvider.forgotPasswordUrl;
+                      await goToUrl(res);
+                    } else {
+                      authProvider.setIsNetworkPresent(true);
+                    }
+                  },
                   onChanged: (v) {
                     setState(() {
                       password = v;
@@ -628,6 +654,21 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   },
                   isLoggingIn: authProvider.isSyncing,
                 )
+              : const SizedBox(),
+          context.watch<AuthProvider>().isNetworkPresent?
+               NetworkComponent(isMobile: isMobile,
+                 onTapRetry: () async{
+                   await connectivityProvider
+                       .checkNetworkConnection();
+                   bool isConnected =
+                       connectivityProvider.isConnected;
+                   if(isConnected) {
+                     authProvider.setIsNetworkPresent(false);
+                     await authProvider.getForgotPasswordUrl();
+                     String res =  authProvider.forgotPasswordUrl;
+                     await goToUrl(res);
+                   }
+                  })
               : const SizedBox(),
         ],
       ),

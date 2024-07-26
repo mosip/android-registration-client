@@ -23,5 +23,7 @@ abstract class AuthService {
 
   Future<String> stopAlarmService();
 
+  Future<String> forgotPasswordUrl();
+
   factory AuthService() => getAuthServiceImpl();
 }

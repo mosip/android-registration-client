@@ -18,7 +18,7 @@
   "next_button": "مقبل",
   "password": "شعار",
   "enter_password": "أدخل كلمة المرور",
-  "forgot_password": "نسيت كلمة المرور?",
+  "forgot_password": "نسيت كلمة المرور",
   "login_button": "تسجيل الدخول",
   "back_button": "ظهر",
   "user_validated": "تم التحقق من صحة المستخدم!",
@@ -248,5 +248,8 @@
   "offline": "غير متصل على الانترنت",
   "logout_success": "لقد تم تسجيل بنجاح!",
   "logout_failure": "حدث خطأ ما، يرجى المحاولة مرة أخرى بعد مرور بعض الوقت",
-  "go_to_home": "اذهب إلى المنزل"
+  "go_to_home": "اذهب إلى المنزل",
+  "no_internet_connection": "لا يوجد اتصال بالإنترنت!",
+  "connect_and_retry": "يرجى الاتصال بالإنترنت وإعادة المحاولة.",
+  "retry": "إعادة المحاولة"
 }

@@ -18,7 +18,7 @@
   "next_button": "PROCHAINE",
   "password": "Mot de passe",
   "enter_password": "Entrez le mot de passe",
-  "forgot_password": "Mot de passe oublié?",
+  "forgot_password": "MOT DE PASSE OUBLIÉ",
   "login_button": "CONNECTEZ-VOUS",
   "back_button": "PRÉCÉDENT",
   "user_validated": "Utilisateur validé !",
@@ -248,5 +248,8 @@
   "offline": "Hors ligne",
   "logout_success": "Vous avez été déconnecté avec succès!",
   "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps",
-  "go_to_home": "Aller à la maison"
+  "go_to_home": "Aller à la maison",
+  "no_internet_connection": "Pas de connexion Internet!",
+  "connect_and_retry": "Veuillez vous connecter à Internet et réessayer.",
+  "retry": "RECOMMENCEZ"
 }
