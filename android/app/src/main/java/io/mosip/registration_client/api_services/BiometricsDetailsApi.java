@@ -973,7 +973,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             } else {
                 currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId, currentModality);
 
-                if(biometricsDtoList!=null){
+                if(!biometricsDtoList.isEmpty()){
                     biometricsDtoList.forEach(dto -> {
                         try {
                             this.registrationService.getRegistrationDto().addBiometric(fieldId,

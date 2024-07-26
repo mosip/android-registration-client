@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.service;
 import static io.mosip.registration.clientmanager.constant.RegistrationConstants.EXCEPTION_PHOTO_ATTR;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 
 
 import io.mosip.kernel.biometrics.spi.IBioApiV2;
+import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.Modality;
@@ -61,6 +63,7 @@ public class Biometrics095Service extends BiometricsService {
 
     private final UserBiometricRepository userBiometricRepository;
     private IBioApiV2 iBioApiV2;
+    SharedPreferences sharedPreferences;
 
 
     @Inject
@@ -73,6 +76,9 @@ public class Biometrics095Service extends BiometricsService {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userBiometricRepository = userBiometricRepository;
         this.iBioApiV2 = new MatchSDK();
+        sharedPreferences = this.context.getSharedPreferences(
+                this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
     }
 
     public CaptureRequest getRCaptureRequest(Modality modality, String deviceId, List<String> exceptionAttributes) {
@@ -135,12 +141,11 @@ public class Biometrics095Service extends BiometricsService {
                         1, 0,
                         captureDto.getQualityScore()));
 
-                if(RegistrationConstants.ENABLE.equalsIgnoreCase(this.globalParamRepository
-                        .getCachedStringGlobalParam(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG))) {
+                if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
                     boolean isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
                     if(isMatched){
                         Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
-                        return null;
+                        return new ArrayList<>();
                     }
                 }
             }
