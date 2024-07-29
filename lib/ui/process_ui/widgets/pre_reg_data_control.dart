@@ -252,26 +252,30 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       ),
                       onPressed: () async {
                         widget.onFetched();
-                        globalProvider.preRegControllerRefresh = true;
                         if(preRegIdController.text.isEmpty){
+                          globalProvider.preRegControllerRefresh = true;
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Please Enter Application ID"),
                           );
                           globalProvider.preRegControllerRefresh = false;
                         } else if(!RegExp(r'^\d{14}$').hasMatch(preRegIdController.text)){
+                          globalProvider.preRegControllerRefresh = true;
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
                           );
                           globalProvider.preRegControllerRefresh = false;
                         } else {
+                          globalProvider.preRegControllerRefresh = true;
                             Map<String?, Object?> value = await context.read<
                                 RegistrationTaskProvider>()
                                 .fetchPreRegistrationDetail(
                                 preRegIdController.text);
                             if (value.isNotEmpty) {
                               widgetValue(widget.screen, value);
+                            } else {
+                              globalProvider.preRegControllerRefresh = false;
                             }
                         }
                       },
@@ -295,7 +299,6 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       ),
                     ),
                     onPressed: () async {
-                      globalProvider.preRegControllerRefresh = true;
                       widget.onFetched();
                       var data = await Navigator.push(
                         context,
@@ -304,12 +307,14 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                                 QRCodeScannerApp()),
                       );
                       if(data!=null && !RegExp(r'^\d{14}$').hasMatch(data)){
+                        globalProvider.preRegControllerRefresh = true;
                         showDialog(
                           context: context,
                           builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
                         );
                         globalProvider.preRegControllerRefresh = false;
                       } else if(data!=null) {
+                        globalProvider.preRegControllerRefresh = true;
                         setState(() {
                           preRegIdController.text = data.toString();
                         });
@@ -320,6 +325,8 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             preRegIdController.text);
                         if (value.isNotEmpty) {
                           widgetValue(widget.screen, value);
+                        } else {
+                          globalProvider.preRegControllerRefresh = false;
                         }
                       }
                     },
