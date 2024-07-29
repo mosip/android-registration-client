@@ -14,11 +14,21 @@ public class BiometricsDto {
     private String bioValue;
     private String specVersion;
     private boolean isException;
+
+    public String getDecodedBioResponse() {
+        return decodedBioResponse;
+    }
+
     private String decodedBioResponse;
     private String signature;
     private boolean isForceCaptured;
     private int numOfRetries;
     private double sdkScore;
+
+    public float getQualityScore() {
+        return qualityScore;
+    }
+
     private float qualityScore;
 
     public void setIsException(boolean exception) {
