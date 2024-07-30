@@ -7,7 +7,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/user_dashboard.dart';
 import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
 import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart';
@@ -15,7 +17,6 @@ import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../profile/profile.dart';
-
 
 class MobileHomePage extends StatefulWidget {
   const MobileHomePage({
@@ -80,7 +81,27 @@ class _MobileHomePageState extends State<MobileHomePage> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _getBottomNavigationBar(),
-        body: bottomNavPages[selectedTab],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              bottomNavPages[selectedTab],
+              Text(
+                "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
+                style: TextStyle(
+                    color: const Color(0xff6F6E6E),
+                    fontSize: 14,
+                    fontWeight: regular),
+              ),
+              Text(
+                "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
+                style: TextStyle(
+                    color: const Color(0xff6F6E6E),
+                    fontSize: 14,
+                    fontWeight: regular),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -145,7 +166,6 @@ class _MobileHomePageState extends State<MobileHomePage> {
           ),
         )
       ],
-
     );
   }
 }
