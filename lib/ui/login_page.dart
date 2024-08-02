@@ -220,35 +220,35 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                     SizedBox(
                       height: 20.h,
                     ),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: isMobile ? 20.w : 80.w),
-                      child: InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: isMobileSize ? 46.h : 62.h,
-                          width: 129.w,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(
-                              color: appWhite,
-                            ),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(5),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(appLocalizations.help,
-                                style: isMobile && !isMobileSize
-                                    ? AppTextStyle.tabletPortraitHelpText
-                                    : AppTextStyle.mobileHelpText),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   alignment: Alignment.centerRight,
+                    //   padding: EdgeInsets.symmetric(
+                    //       horizontal: isMobile ? 20.w : 80.w),
+                    //   child: InkWell(
+                    //     onTap: () {},
+                    //     child: Container(
+                    //       height: isMobileSize ? 46.h : 62.h,
+                    //       width: 129.w,
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.transparent,
+                    //         border: Border.all(
+                    //           color: appWhite,
+                    //         ),
+                    //         borderRadius: const BorderRadius.all(
+                    //           Radius.circular(5),
+                    //         ),
+                    //       ),
+                    //       child: Center(
+                    //         child: Text(appLocalizations.help,
+                    //             style: isMobile && !isMobileSize
+                    //                 ? AppTextStyle.tabletPortraitHelpText
+                    //                 : AppTextStyle.mobileHelpText),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
-                      height: isMobileSize ? 72.h : 86.h,
+                      height: isMobileSize ? 78.h : 86.h,
                     ),
                     Flexible(
                       child: Column(
