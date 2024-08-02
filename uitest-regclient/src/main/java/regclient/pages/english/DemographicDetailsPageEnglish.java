@@ -154,6 +154,9 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 
 	@AndroidFindBy(accessibility = "Scrim")
 	private WebElement backgroundScreen;
+	
+	@AndroidFindBy(accessibility = "FETCH DATA")
+	private WebElement fetchDataButton;
 
 
 	public DemographicDetailsPageEnglish(AppiumDriver driver) {
@@ -459,5 +462,9 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 			return	true;
 		else
 			return false;
+	}
+	
+	public boolean isPreRegFetchDataTextBoxDisplay() {
+		return isElementDisplayed(fetchDataButton);
 	}
 }

@@ -42,7 +42,13 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage{
 	
 	@AndroidFindBy(accessibility = "UIN ನವೀಕರಿಸಿ")
 	private WebElement updateUinButton;
-
+	
+	@AndroidFindBy(accessibility = "UIN ಕಳೆದುಕೊಂಡಿದೆ")
+	private WebElement lostUinButton;
+	
+	@AndroidFindBy(accessibility = "Biometric correction")
+	private WebElement biometricCorrectionButton;
+	
 	public RegistrationTasksPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -98,6 +104,18 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage{
 	public  SelectLanguagePage clickUpdateMyUINButton() {
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageKannada(driver);
+	}
+	
+	public boolean isUpdateUINTitleDisplayed() {
+		return isElementDisplayed(updateUinButton);
+	}
+	
+	public boolean isLostUINTitleDisplayed() {
+		return isElementDisplayed(lostUinButton);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionButton);
 	}
 
 }

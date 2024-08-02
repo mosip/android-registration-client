@@ -63,6 +63,9 @@ public class UpdateUINPageKannada extends UpdateUINPage{
 	
 	@AndroidFindBy(accessibility = "ಮುಂದುವರಿಸಿ")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(accessibility = "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ UIN ಅನ್ನು ನಮೂದಿಸಿ")
+	private WebElement invalidUINErrorMessage;
 
 	public UpdateUINPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -290,5 +293,9 @@ public class UpdateUINPageKannada extends UpdateUINPage{
 	public  ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new ConsentPageKannada(driver);
+	}
+	
+	public boolean isInvalidUINErrorMessageDisplayed() {
+		return isElementDisplayed(invalidUINErrorMessage);
 	}
 }

@@ -13,11 +13,14 @@ public class CameraPage  extends BasePage{
 	}
 	
 	public  void clickOkButton() {
-		if(!TestDataReader.readData("okButton").equals("") || TestDataReader.readData("okButton").equals(null) )
+		if(!TestDataReader.readData("okButton").equals("")) {
+			waitTime(2);
 			clickOnElement(driver.findElement(By.id(TestDataReader.readData("okButton"))));		
+		}
 	}
 	
 	public  void clickimage() {
+		waitTime(2);
 		isElementDisplayed(driver.findElement(By.id(TestDataReader.readData("id"))));
 		clickOnElement(driver.findElement(By.id(TestDataReader.readData("id"))));
 

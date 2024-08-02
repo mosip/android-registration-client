@@ -160,6 +160,10 @@ public class logintest  extends AndroidBaseTest {
 			registrationTasksPage=new RegistrationTasksPageArabic(driver);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(), "Verify if registration tasks page is loaded");
+		assertTrue(registrationTasksPage.isUpdateUINTitleDisplayed(), "Verify if update uin title display");
+
+		assertTrue(registrationTasksPage.isLostUINTitleDisplayed(), "Verify if lost uin title display");
+		assertTrue(registrationTasksPage.isBiometricCorrectionTitleDisplayed(), "Verify if biometric correction title display ");
 
 		registrationTasksPage.clickOnOperationalTasksTitle();	
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {

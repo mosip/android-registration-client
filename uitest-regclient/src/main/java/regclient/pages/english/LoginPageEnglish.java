@@ -25,6 +25,9 @@ public class LoginPageEnglish extends LoginPage {
 
 	@AndroidFindBy(accessibility = "NEXT")
 	private WebElement nextButton;
+	
+	@AndroidFindBy(accessibility = "Machine not found!")
+	private WebElement machineNotFound;
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement passwordTextBox;
@@ -150,6 +153,10 @@ public class LoginPageEnglish extends LoginPage {
 
 	public boolean isWelcomeMessageDisplayed() {
 		return isElementDisplayed(welcomeMessageEnglish);
+	}
+	
+	public boolean isMachineNotFoundMessageDisplayed() {
+		return isElementDisplayed(machineNotFound);
 	}
 
 	public boolean isWelcomeMessageInSelectedLanguageDisplayed() {

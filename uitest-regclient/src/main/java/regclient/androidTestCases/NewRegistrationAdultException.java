@@ -251,10 +251,11 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 			demographicPage=new DemographicDetailsPageArabic(driver);
 		}
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
-		consentPage=demographicPage.clickOnConsentPageTitle();
+		assertTrue(demographicPage.isPreRegFetchDataTextBoxDisplay(),"Verify if pre reg fetch data text box is displayed");
+		demographicPage.clickOnConsentPageTitle();
 
 		assertTrue(consentPage.isConsentPageDisplayed(),"Verify if Consent page is loaded");
-		demographicPage=consentPage.clickOnInformedButton();
+		consentPage.clickOnInformedButton();
 
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
 		demographicPage.clickOnContinueButton();
@@ -546,6 +547,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			previewPage=new PreviewPageArabic(driver);
 		}
+		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
 		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),"Verify if Documents Information In PreviewPage is displayed");

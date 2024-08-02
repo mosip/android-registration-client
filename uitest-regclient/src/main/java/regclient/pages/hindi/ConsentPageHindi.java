@@ -11,7 +11,7 @@ import regclient.page.RegistrationTasksPage;
 
 public class ConsentPageHindi extends ConsentPage{
 
-	@AndroidFindBy(accessibility = "सहमति")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"सहमति\"))")
 	private WebElement consentPage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().className(\"android.widget.CheckBox\"))")

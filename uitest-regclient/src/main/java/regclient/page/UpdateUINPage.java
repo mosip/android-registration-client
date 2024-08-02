@@ -73,4 +73,7 @@ public abstract class UpdateUINPage extends BasePage{
 	    public abstract boolean isDocumentsTitleDisplayed();
 	    
 	    public abstract  ConsentPage clickOnContinueButton();
+	    
+	    public abstract boolean isInvalidUINErrorMessageDisplayed();
+
 }

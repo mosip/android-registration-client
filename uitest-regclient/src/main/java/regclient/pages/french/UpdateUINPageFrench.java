@@ -63,6 +63,9 @@ public class UpdateUINPageFrench extends UpdateUINPage{
 	
 	@AndroidFindBy(accessibility = "CONTINUER")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(accessibility = "Veuillez saisir un UIN valide")
+	private WebElement invalidUINErrorMessage;
 
 	public UpdateUINPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -290,5 +293,9 @@ public class UpdateUINPageFrench extends UpdateUINPage{
 	public  ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new ConsentPageFrench(driver);
+	}
+	
+	public boolean isInvalidUINErrorMessageDisplayed() {
+		return isElementDisplayed(invalidUINErrorMessage);
 	}
 }

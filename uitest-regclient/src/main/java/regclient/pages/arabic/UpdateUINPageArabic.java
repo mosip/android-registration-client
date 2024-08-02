@@ -63,6 +63,9 @@ public class UpdateUINPageArabic extends UpdateUINPage{
 	
 	@AndroidFindBy(accessibility = "يكمل")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(accessibility = "الرجاء إدخال رقم تعريف شخصي صالح")
+	private WebElement invalidUINErrorMessage;
 
 	public UpdateUINPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -290,5 +293,9 @@ public class UpdateUINPageArabic extends UpdateUINPage{
 	public  ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new ConsentPageArabic(driver);
+	}
+	
+	public boolean isInvalidUINErrorMessageDisplayed() {
+		return isElementDisplayed(invalidUINErrorMessage);
 	}
 }

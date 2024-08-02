@@ -30,6 +30,12 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	
 	@AndroidFindBy(accessibility = "Update UIN")
 	private WebElement updateUinButton;
+	
+	@AndroidFindBy(accessibility = "Lost UIN")
+	private WebElement lostUinButton;
+	
+	@AndroidFindBy(accessibility = "Biometric correction")
+	private WebElement biometricCorrectionButton;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.ImageView\").instance(0)")
 	private WebElement synchronizeDataButton ;
@@ -57,7 +63,7 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	}
 
 	public boolean isRegistrationTasksPageLoaded() {
-		return isElementDisplayed(registrationTasksTitle);
+		return isElementDisplayed(registrationTasksTitle,20);
 	}
 
 	public boolean isOperationalTaskDisplayed() {
@@ -98,6 +104,18 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	public  SelectLanguagePage clickUpdateMyUINButton() {
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageEnglish(driver);
+	}
+	
+	public boolean isUpdateUINTitleDisplayed() {
+		return isElementDisplayed(updateUinButton);
+	}
+	
+	public boolean isLostUINTitleDisplayed() {
+		return isElementDisplayed(lostUinButton);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionButton);
 	}
 
 }

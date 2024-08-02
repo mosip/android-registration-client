@@ -183,7 +183,6 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		} 
 		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
 			registrationTasksPage=new RegistrationTasksPageHindi(driver);
-
 		}
 		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
 			registrationTasksPage=new RegistrationTasksPageFrench(driver);

@@ -40,7 +40,13 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage{
 	private WebElement profileButton;
 	
 	@AndroidFindBy(accessibility = "تحديث UIN")
-	private WebElement updateUinButton;
+	private WebElement updateUinButton;	
+	
+	@AndroidFindBy(accessibility = "فقدت UIN")
+	private WebElement lostUinButton;
+	
+	@AndroidFindBy(accessibility = "التصحيح البيومتري")
+	private WebElement biometricCorrectionButton;
 	
 	public RegistrationTasksPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -97,6 +103,18 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage{
 	public  SelectLanguagePage clickUpdateMyUINButton() {
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageArabic(driver);
+	}
+	
+	public boolean isUpdateUINTitleDisplayed() {
+		return isElementDisplayed(updateUinButton);
+	}
+	
+	public boolean isLostUINTitleDisplayed() {
+		return isElementDisplayed(lostUinButton);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionButton);
 	}
 
 }

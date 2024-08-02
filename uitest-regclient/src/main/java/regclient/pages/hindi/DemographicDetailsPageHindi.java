@@ -18,13 +18,13 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"सहमति\"))")
 	private WebElement consentTitle;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(0)")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पूरा नाम\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
 	private WebElement fullNameTextBox;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(1)")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पूरा नाम\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
 	private WebElement fullNameTextBoxSecondLanguage;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(2)")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"जन्म तिथि\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")
 	private WebElement ageTextBox;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"स्थायी पता 1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
@@ -156,6 +156,9 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	@AndroidFindBy(accessibility = "स्क्रिम")
 	private WebElement backgroundScreen;
 	
+	@AndroidFindBy(accessibility = "FETCH DATA")
+	private WebElement fetchDataButton;
+	
 	public DemographicDetailsPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
@@ -163,11 +166,11 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 	public boolean isDemographicDetailsPageDisplayed() {
 		return isElementDisplayed(demographicDetailspage);
 	}
-	
+
 	public boolean isErrorMessageInvalidInputTextDisplayed() {
 		return isElementDisplayed(errorMessageInvalidInputText);
 	}
-	
+
 	public  ConsentPage clickOnConsentPageTitle() {
 		clickOnElement(consentTitle);
 		return new ConsentPageEnglish(driver);
@@ -209,6 +212,33 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 			return	true;
 	}
 
+	public boolean checkAddress1SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine1TextBoxSecondLangauge)==null || getTextFromLocator(addressLine1TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress2SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine2TextBoxSecondLangauge)==null || getTextFromLocator(addressLine2TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkAddress3SecondLanguageTextBoxNotNull() {
+		if(getTextFromLocator(addressLine3TextBoxSecondLangauge)==null || getTextFromLocator(addressLine3TextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
+
+	public boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull() {
+		if(getTextFromLocator(introducerNameTextBoxSecondLangauge)==null || getTextFromLocator(introducerNameTextBoxSecondLangauge)=="" )
+			return	false;
+		else
+			return	true;
+	}
 	public boolean isResidenceStatusHeaderDisplayed() {
 		while(!isElementDisplayedOnScreen(residenceStatusHeader)) {
 			swipeOrScroll();
@@ -264,11 +294,11 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 		}
 		return isElementDisplayed(emailHeader);
 	}
-	
+
 	public boolean isIntroducerNameHeaderDisplayed() {
 		return isElementDisplayed(introducerNameHeader);
 	}
-	
+
 	public boolean isIntroducerRidHeaderDisplayed() {
 		return isElementDisplayed(introducerRidHeader);
 	}
@@ -391,7 +421,7 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 			swipeOrScroll();
 			clickAndsendKeysToTextBox(mobileNumberTextBox,mobileNumber);
 		}else
-		clickAndsendKeysToTextBox(mobileNumberTextBox,mobileNumber);
+			clickAndsendKeysToTextBox(mobileNumberTextBox,mobileNumber);
 	}
 
 	public  void enterEmailID(String EmailID) {
@@ -399,33 +429,33 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 			swipeOrScroll();
 			clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 		}else
-		clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
+			clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
 	}
-	
+
 	public  void enterIntroducerName(String introducerName) {
 		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
 			swipeOrScroll();
 			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 		}else
-		clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
+			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
 	}
-	
+
 	public  void enterIntroducerRid(String introducerRid) {
 		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
 			swipeOrScroll();
 			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 		}else
-		clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
+			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
 	}
-	
+
 	public  void selectCurrentCalenderDate() {
 		clickOnElement(calenderIcon);		
 	}
-	
+
 	public  void closeCalender() {
 		clickOnElement(backgroundScreen);		
 	}
-	
+
 	public  boolean checkDateFormatAndCurrectDate() {
 		getTextFromLocator(getSelectedDate);
 		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
@@ -434,31 +464,7 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage{
 			return false;
 	}
 	
-	public boolean checkAddress1SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine1TextBoxSecondLangauge)==null || getTextFromLocator(addressLine1TextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
-	}
-
-	public boolean checkAddress2SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine2TextBoxSecondLangauge)==null || getTextFromLocator(addressLine2TextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
-	}
-
-	public boolean checkAddress3SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine3TextBoxSecondLangauge)==null || getTextFromLocator(addressLine3TextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
-	}
-
-	public boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull() {
-		if(getTextFromLocator(introducerNameTextBoxSecondLangauge)==null || getTextFromLocator(introducerNameTextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
+	public boolean isPreRegFetchDataTextBoxDisplay() {
+		return isElementDisplayed(fetchDataButton);
 	}
 }

@@ -253,6 +253,9 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		updateUINPage.clickOnContinueButton();
 
 		assertTrue(updateUINPage.isUpdateMyUINTitleDisplayed(),"verify if the update my uin page is still displayed after clicking continue button ");
+		updateUINPage.enterUIN(TestDataReader.readData("UINminor")+"123");
+		
+		assertTrue(updateUINPage.isInvalidUINErrorMessageDisplayed(),"verify if after enter invalid uin it should give error message  ");
 		updateUINPage.enterUIN(TestDataReader.readData("UINminor"));
 
 		assertTrue(updateUINPage.isConsentTitleDisplayed(),"verify if the consent title diplayed displayed");

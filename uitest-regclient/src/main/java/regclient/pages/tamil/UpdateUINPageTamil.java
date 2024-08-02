@@ -63,6 +63,9 @@ public class UpdateUINPageTamil extends UpdateUINPage{
 	
 	@AndroidFindBy(accessibility = "தொடர்க")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(accessibility = "சரியான UIN ஐ உள்ளிடவும்")
+	private WebElement invalidUINErrorMessage;
 
 	public UpdateUINPageTamil(AppiumDriver driver) {
 		super(driver);
@@ -290,5 +293,9 @@ public class UpdateUINPageTamil extends UpdateUINPage{
 	public  ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new ConsentPageTamil(driver);
+	}
+	
+	public boolean isInvalidUINErrorMessageDisplayed() {
+		return isElementDisplayed(invalidUINErrorMessage);
 	}
 }

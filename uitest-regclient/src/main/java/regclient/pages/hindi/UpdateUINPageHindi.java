@@ -63,6 +63,9 @@ public class UpdateUINPageHindi extends UpdateUINPage{
 	
 	@AndroidFindBy(accessibility = "जारी रखें")
 	private WebElement continueButton;
+	
+	@AndroidFindBy(accessibility = "कृपया एक वैध यूआईएन दर्ज करें")
+	private WebElement invalidUINErrorMessage;
 
 	public UpdateUINPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -290,5 +293,9 @@ public class UpdateUINPageHindi extends UpdateUINPage{
 	public  ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new ConsentPageHindi(driver);
+	}
+	
+	public boolean isInvalidUINErrorMessageDisplayed() {
+		return isElementDisplayed(invalidUINErrorMessage);
 	}
 }
