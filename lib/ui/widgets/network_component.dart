@@ -14,17 +14,17 @@ class NetworkComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.only(top: 80,bottom: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: 120,
+            height: 130,
             child: SvgPicture.asset(
                 "assets/svg/No internet connection.svg"),
           ),
           SizedBox(
-            height: 30.h,
+            height: 50.h,
           ),
           Text(AppLocalizations.of(context)!.no_internet_connection,
               style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontSize: 26)),
@@ -35,7 +35,7 @@ class NetworkComponent extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.w300,color: Colors.grey,fontSize: 22)),
           SizedBox(
-            height: 50.h,
+            height: 90.h,
           ),
           InkWell(
             onTap: onTapRetry,
