@@ -205,20 +205,20 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     await globalProvider.getAudit("REG-EVT-003", "REG-MOD-103");
   }
 
-  setScrollToTop(){
-      scrollController.animateTo(
-        scrollController.position.minScrollExtent,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-      );
-      globalProvider.isPageChanged = false;
+  setScrollToTop() {
+    scrollController.animateTo(
+      scrollController.position.minScrollExtent,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+    globalProvider.isPageChanged = false;
   }
 
   bool continueButton = false;
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if(globalProvider.isPageChanged){
+      if (globalProvider.isPageChanged) {
         setScrollToTop();
       }
     });
@@ -235,17 +235,15 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     final Process newProcess = arguments["process"];
     int size = newProcess.screens!.length;
 
-    evaluateMVELVisible(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool visible = await registrationTaskProvider.evaluateMVELVisible(
-          fieldData, expression!);
+    evaluateMVELVisible(String fieldData) async {
+      bool visible =
+          await registrationTaskProvider.evaluateMVELVisible(fieldData);
       return visible;
     }
 
-    evaluateMVELRequired(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool required = await registrationTaskProvider.evaluateMVELRequired(
-          fieldData, expression!);
+    evaluateMVELRequired(String fieldData) async {
+      bool required =
+          await registrationTaskProvider.evaluateMVELRequired(fieldData);
       return required;
     }
 
@@ -416,15 +414,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           if (screen.fields!.elementAt(i)!.requiredOn != null &&
               screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
             bool visible = await evaluateMVELVisible(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()));
             bool required = await evaluateMVELRequired(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()));
             if (visible && required) {
               if (screen.fields!.elementAt(i)!.inputRequired!) {
                 if (!(globalProvider.fieldInputValue
@@ -581,10 +573,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      continueButton = value &&
-          globalProvider.formKey.currentState != null &&
-          globalProvider.formKey.currentState!.validate();
-
+      setState(() {
+        continueButton = value &&
+            globalProvider.formKey.currentState != null &&
+            globalProvider.formKey.currentState!.validate();
+      });
       if (globalProvider.newProcessTabIndex >= size) {
         continueButton = true;
       }

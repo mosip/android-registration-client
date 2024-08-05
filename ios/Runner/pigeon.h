@@ -10,39 +10,28 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DashBoardData;
-@class UpdatedTimeData;
+@class RegistrationSubmitResponse;
 
-@interface DashBoardData : NSObject
+@interface RegistrationSubmitResponse : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithUserId:(NSString *)userId
-    userName:(NSString *)userName
-    userStatus:(NSNumber *)userStatus
-    userIsOnboarded:(NSNumber *)userIsOnboarded;
-@property(nonatomic, copy) NSString * userId;
-@property(nonatomic, copy) NSString * userName;
-@property(nonatomic, strong) NSNumber * userStatus;
-@property(nonatomic, strong) NSNumber * userIsOnboarded;
++ (instancetype)makeWithRId:(NSString *)rId
+    errorCode:(nullable NSString *)errorCode;
+@property(nonatomic, copy) NSString * rId;
+@property(nonatomic, copy, nullable) NSString * errorCode;
 @end
 
-@interface UpdatedTimeData : NSObject
-+ (instancetype)makeWithUpdatedTime:(nullable NSString *)updatedTime;
-@property(nonatomic, copy, nullable) NSString * updatedTime;
+/// The codec used by RegistrationDataApi.
+NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void);
+
+@protocol RegistrationDataApi
+- (void)startRegistrationLanguages:(NSArray<NSString *> *)languages flowType:(NSString *)flowType process:(NSString *)process completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)evaluateMVELVisibleFieldData:(NSString *)fieldData completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)evaluateMVELRequiredFieldData:(NSString *)fieldData completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPreviewTemplateIsPreview:(NSNumber *)isPreview templateValues:(NSDictionary<NSString *, NSString *> *)templateValues completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)submitRegistrationDtoMakerName:(NSString *)makerName completion:(void (^)(RegistrationSubmitResponse *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by DashBoardApi.
-NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
-
-@protocol DashBoardApi
-- (void)getDashBoardDetailsWithCompletion:(void (^)(NSArray<DashBoardData *> *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPacketUploadedDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getCreatedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getSyncedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)getUpdatedTimeWithCompletion:(void (^)(UpdatedTimeData *_Nullable, FlutterError *_Nullable))completion;
-@end
-
-extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
+extern void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
