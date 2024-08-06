@@ -479,14 +479,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get_storage_info:
-    dependency: "direct main"
-    description:
-      name: get_storage_info
-      sha256: "9679a74b67c06435b8386be38a8c288536b27fe3ff4b2c2cc21a9972a4b44525"
-      url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
-    source: hosted
-    version: "0.2.2"
   glob:
     dependency: transitive
     description:

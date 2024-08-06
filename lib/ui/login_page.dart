@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get_storage_info/get_storage_info.dart';
 import 'package:provider/provider.dart';
 
 import 'package:registration_client/main.dart';
@@ -108,10 +107,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     await globalProvider.initializeLanguageDataList(false);
     await globalProvider.initializeLocationHierarchyMap();
     await globalProvider.setGitHeadAttributes();
-    globalProvider.totalInternalStorage =
-        await GetStorageInfo.getStorageTotalSpaceInGB;
-    globalProvider.usedInternalStorage =
-        await GetStorageInfo.getStorageUsedSpaceInGB;
     await globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
   }
 

@@ -42,16 +42,12 @@ class _OperationalTasksState extends State<OperationalTasks> {
         SizedBox(
           height: 12.h,
         ),
-        _getMemoryProvider(),
         _getTasks(),
       ],
     );
   }
 
-  _getMemoryProvider() {
-    double percentUsed = (globalProvider.usedInternalStorage /
-            globalProvider.totalInternalStorage) *
-        100;
+  getMemoryProvider() {
     return Container(
       // height: 186.h,
       color: appWhite,
@@ -122,7 +118,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   ),
                   LinearPercentIndicator(
                     lineHeight: 10.h,
-                    percent: percentUsed / 100,
+                    percent: 0.72,
                     backgroundColor: appWhite,
                     progressColor: appSolidPrimary,
                     barRadius: const Radius.circular(10),
@@ -133,7 +129,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   Row(
                     children: [
                       Text(
-                        'Used: ${globalProvider.usedInternalStorage.toStringAsFixed(2)} GB (${percentUsed.toInt()}% used)',
+                        'Used: 286 GB (72% used)',
                         style: TextStyle(
                           fontSize: isMobileSize ? 14 : 20,
                           color: const Color(0XFF4E4E4E),
@@ -144,7 +140,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                       ),
                       !isMobileSize
                           ? Text(
-                              'Available: ${globalProvider.totalInternalStorage.toStringAsFixed(2)} GB',
+                              'Available: 192 GB',
                               style: TextStyle(
                                 fontSize: isMobileSize ? 14 : 20,
                                 color: const Color(0XFF4E4E4E),

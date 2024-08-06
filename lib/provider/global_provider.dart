@@ -820,20 +820,4 @@ class GlobalProvider with ChangeNotifier {
     selectedUpdateFields = {};
     updateUINNumber = "";
   }
-
-  double _totalInternalStorage = 0.0;
-  double _usedInternalStorage = 0.0;
-
-  double get totalInternalStorage => _totalInternalStorage;
-  double get usedInternalStorage => _usedInternalStorage;
-
-  set totalInternalStorage(double val) {
-    _totalInternalStorage = val;
-    notifyListeners();
-  }
-
-  set usedInternalStorage(double val) {
-    _usedInternalStorage = val;
-    notifyListeners();
-  }
 }
