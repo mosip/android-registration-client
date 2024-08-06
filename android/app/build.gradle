@@ -61,6 +61,10 @@ android {
             }
         }
     }
+    packagingOptions {
+        resources.merges.add("git.properties")
+        resources.excludes.add("META-INF/*")
+    }
 }
 
 flutter {
@@ -107,9 +111,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
 
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
@@ -173,9 +174,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
 
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
@@ -189,13 +187,11 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.4.2'
 
     implementation 'javax.inject:javax.inject:1'
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.0.1")
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
 
-    implementation('io.mosip.biometric.util:biometrics-util:1.2.0') {
-        exclude group: 'org.springframework.boot'
-        exclude group: 'com.fasterxml.jackson.core'
-        exclude group: 'org.projectlombok'
-    }
+
     implementation 'com.github.Tgo1014:JP2ForAndroid:1.0.4'
     implementation 'com.google.dagger:dagger:2.41'
     implementation 'com.google.dagger:dagger-android-support:2.41'
@@ -239,9 +235,6 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
 
     implementation 'org.apache.velocity:velocity:1.7'
     implementation 'org.mvel:mvel2:2.4.14.Final'
@@ -252,10 +245,11 @@ dependencies {
 
     implementation 'com.github.Tgo1014:JP2ForAndroid:1.0.4'
 
-    implementation('io.mosip.biometric.util:biometrics-util:1.2.0') {
+    implementation('io.mosip.biometric.util:biometrics-util:1.2.0.2') {
         exclude group: 'org.springframework.boot'
         exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'org.projectlombok'
+        exclude group: 'org.openpnp'
     }
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha7'

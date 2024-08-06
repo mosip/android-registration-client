@@ -102,8 +102,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    Clipboard.setData(ClipboardData(
-        text: registrationTaskProvider.listOfProcesses.toString()));
     if (process.id == "NEW" || process.id == "UPDATE") {
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");

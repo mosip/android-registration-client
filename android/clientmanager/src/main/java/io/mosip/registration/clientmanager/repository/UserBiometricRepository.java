@@ -50,6 +50,15 @@ public class UserBiometricRepository {
         return response;
     }
 
+    /**
+     * Retrieves list of operator biometrics from storage for biometric type
+     * @param biometricType biometric type
+     * @return {@link List<UserBiometric>}
+     */
+    public List<UserBiometric> findAllOperatorBiometrics(String biometricType){
+        return userBiometricDao.findAll(biometricType);
+    }
+
     public String saveOnboardStatus(String userId) {
         UserDetail userDetail = userDetailDao.getUserDetail(userId);
         Long updatedTime = System.currentTimeMillis();
