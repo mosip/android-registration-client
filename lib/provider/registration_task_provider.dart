@@ -197,9 +197,9 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   Future<List<GenericData?>> getLocationValues(
-      String fieldName, String langCode) async {
+      String fieldName, String langCode, List<String> languages) async {
     return await dynamicResponseService.fetchLocationValues(
-        fieldName, langCode);
+        fieldName, langCode,languages);
   }
 
   Future<List<String?>> getDocumentValues(

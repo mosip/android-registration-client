@@ -123,7 +123,12 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       );
                     }
                     if(e.id != "gender" && e.fieldType != "dynamic") {
-                      temp = await registrationTaskProvider.getLocationValues("$index", globalProvider.selectedLanguage);
+                      List<String> languages =[];
+                      for (var lang in globalProvider.chosenLang) {
+                        String langCode = globalProvider.langToCode(lang);
+                        languages.add(langCode);
+                      }
+                      temp = await registrationTaskProvider.getLocationValues("$index", globalProvider.selectedLanguage,languages);
                       for(var subData in temp) {
                         GenericData dataSubValue = GenericData(name: subData!.name, code: subData.code, langCode: lang);
                         if (language == lang) {
