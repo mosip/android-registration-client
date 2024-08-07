@@ -61,9 +61,21 @@ class _DateControlState extends State<DateControl> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(
-                    width: 50,
-                  ),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          dateController.clear();
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(AppLocalizations.of(context)!.clear,
+                            style: const TextStyle(
+                                color: appRed,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500)),
+                      )),
                   Text(
                     widget.field.label!['eng'] ?? "",
                     style: Theme.of(context)
