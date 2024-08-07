@@ -29,11 +29,11 @@ class DynamicResponseServiceImpl implements DynamicResponseService {
 
   @override
   Future<List<GenericData?>> fetchLocationValues(
-      String hierarchyLevelName, String langCode) async {
+      String hierarchyLevelName, String langCode, List<String> languages) async {
     List<GenericData?> locationValuesList = [];
     try {
       locationValuesList = await DynamicResponseApi()
-          .getLocationValues(hierarchyLevelName, langCode);
+          .getLocationValues(hierarchyLevelName, langCode, languages);
     } on PlatformException {
       debugPrint('DynamicServiceResponseApi call failed!');
     } catch (e) {
