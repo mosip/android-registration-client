@@ -102,7 +102,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
                   width: 150.h,
                   child: Center(
                     child: Text(
-                      "OKAY",
+                      AppLocalizations.of(context)!.okay,
                       style: TextStyle(
                           fontSize: isMobile && !isMobileSize ? 18 : 14,
                           color: appSolidPrimary),

@@ -257,5 +257,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fetch_data": "FETCH DATA",
+  "application_id_not_exist": "Application ID does not exist!",
+  "correct_application_id": "Please check the entered Application ID or enter a correct ID and try to fetch it again.",
+  "enter_application_id": "Please Enter Application ID",
+  "okay": "OKAY"
 }

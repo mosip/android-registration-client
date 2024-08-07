@@ -8,6 +8,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/scanner/qr_code_scanner.dart';
 import 'package:registration_client/ui/widgets/validator_alert.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PreRegDataControl extends StatefulWidget {
   final Screen screen;
@@ -256,14 +257,14 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                           globalProvider.preRegControllerRefresh = true;
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Please Enter Application ID"),
+                            builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.enter_application_id),
                           );
                           globalProvider.preRegControllerRefresh = false;
                         } else if(!RegExp(r'^\d{14}$').hasMatch(preRegIdController.text)){
                           globalProvider.preRegControllerRefresh = true;
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
+                            builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
                           );
                           globalProvider.preRegControllerRefresh = false;
                         } else {
@@ -280,7 +281,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                         }
                       },
                       child: Text(
-                        "FETCH DATA",
+                        AppLocalizations.of(context)!.fetch_data,
                         style: TextStyle(fontSize: isPortrait && !isMobileSize ? 22 : 14, color: solidPrimary,fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -310,7 +311,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                         globalProvider.preRegControllerRefresh = true;
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
+                          builder: (BuildContext context) =>  ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
                         );
                         globalProvider.preRegControllerRefresh = false;
                       } else if(data!=null) {
