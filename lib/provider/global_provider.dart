@@ -497,12 +497,12 @@ class GlobalProvider with ChangeNotifier {
   }
 
   syncPacket(String packetId) async {
-    await packetService.packetSync(packetId);
+    await packetService.packetSyncAll([packetId]);
     log("provider sync packet Success");
   }
 
   uploadPacket(String packetId) async {
-    await packetService.packetUpload(packetId);
+    await packetService.packetUploadAll([packetId]);
     log("provider upload packet Success");
   }
 

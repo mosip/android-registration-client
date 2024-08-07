@@ -129,6 +129,51 @@
   "upload_document": "ஆவணத்தைப் பதிவேற்றவும்",
   "synchronize_data": "தரவை ஒத்திசைக்கவும்",
   "registration_tasks": "பதிவு பணிகள்",
+
+
+
+
+  "manage_applications": "பயன்பாடுகளை நிர்வகிக்கவும்",
+  "search_application": "விண்ணப்ப ஐடி மூலம் தேடவும்",
+  "upload": "பதிவேற்றம்",
+  "export": "ஏற்றுமதி",
+  "number_of_application": "{number} பயன்பாடுகளைக் காட்டுகிறது",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} விண்ணப்பங்கள் தேர்ந்தெடுக்கப்பட்டன",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "வாடிக்கையாளர் நிலை",
+  "server_status": "சேவையக நிலை",
+  "clear_filter": "Clear Filter",
+  "serial_number": "எஸ்.என்",
+  "application_id": "விண்ணப்ப ஐடி",
+  "reg_date":"ரெஜி. தேதி",
+  "reg_type":"ரெஜி. வகை",
+  "operator_id": "ஆபரேட்டர் ஐடி",
+
+
+
+
+
   "operation_tasks": "செயல்பாட்டு பணிகள்",
   "system_storage_usage": "கணினி சேமிப்பக பயன்பாடு",
   "download_pre_registration_data": "முன் பதிவுத் தரவைப் பதிவிறக்கவும்",

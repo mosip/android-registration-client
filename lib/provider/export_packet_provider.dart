@@ -35,24 +35,6 @@ class ExportPacketsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> refreshPackets()  async{
-    List<String?> allPackets = await PacketServiceImpl().getAllRegistrationPacket();
-    packetsList.clear();
-
-    for (var element in allPackets) {
-      Registration newRegistration = Registration.fromJson(json.decode(element?? ""));
-      packetsList.add(newRegistration);
-      for(int i=0;i<matchingPackets.length;i++){
-        if(newRegistration.packetId == matchingPackets[i].packetId){
-          matchingPackets[i] = newRegistration;
-        }
-      }
-    }
-
-    log("REFRESHED ALL PACKETS");
-    notifyListeners();
-  }
-
   void getPackets()  async {
     List<String?> allPackets = await PacketServiceImpl().getAllRegistrationPacket();
 
@@ -138,11 +120,9 @@ class ExportPacketsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void uploadSelected() async {
-    await packetSyncAll();
-
+  Future<void> uploadSelected() async {
     List<String> toBeUploaded = [];
-    List<String> uploadStatus = [ClientStatus.EXPORTED.name,ClientStatus.SYNCED.name,];
+    List<String> uploadStatus = [ClientStatus.SYNCED.name, ClientStatus.EXPORTED.name,];
 
     for(int i=0; i<matchingPackets.length; i++){
       if(matchingSelected[i]){
@@ -152,22 +132,19 @@ class ExportPacketsProvider with ChangeNotifier {
       }
     }
 
+    log("$toBeUploaded : TO BE UPLOADED");
     if(toBeUploaded.isNotEmpty){
       await packetService.packetUploadAll(toBeUploaded);
     }
-    log("$toBeUploaded : TO BE UPLOADED");
 
     await refreshPackets();
     notifyListeners();
   }
 
-  void exportSelected() async{
-    await packetSyncAll();
-
+  Future<void> exportSelected() async{
     List<File> sourceFiles = [];
     List<String> toBeExported = [];
-    List<String> exportStatus = [ClientStatus.EXPORTED.name, ClientStatus.SYNCED.name, ];
-
+    List<String> exportStatus = [ ClientStatus.APPROVED.name, ClientStatus.SYNCED.name, ClientStatus.EXPORTED.name, ];
     for(int i=0;i<matchingPackets.length;i++){
       if(matchingSelected[i]){
         if(exportStatus.contains(matchingPackets[i].clientStatus)){
@@ -188,6 +165,7 @@ class ExportPacketsProvider with ChangeNotifier {
       }
     }
 
+    log("$toBeExported : TO BE EXPORTED");
     if(toBeExported.isNotEmpty){
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
       if (selectedDirectory != null) {
@@ -198,7 +176,7 @@ class ExportPacketsProvider with ChangeNotifier {
           final destinationPath = '$selectedDirectory/$fileName';
           try{
             sourceFiles[i].copySync(destinationPath);
-            packetService.updatePacketStatus(toBeExported[i], null, "EXPORTED");
+            packetService.updatePacketStatus(toBeExported[i], null, ClientStatus.EXPORTED.name);
             log("Files Exported");
           }catch(e){
             log(e.toString());
@@ -206,29 +184,45 @@ class ExportPacketsProvider with ChangeNotifier {
         }
       }
     }
-    log("$toBeExported : TO BE EXPORTED");
 
     await refreshPackets();
     notifyListeners();
   }
 
   Future<void> packetSyncAll() async {
-    // Exported packets show packet already synced
-    List<String> syncStatus = [ClientStatus.APPROVED.name,];
+    List<String> syncStatus = [ClientStatus.APPROVED.name,ClientStatus.EXPORTED.name,];
     List<String> toBeSynced = [];
-
     for(int i=0; i<matchingPackets.length; i++){
         if(syncStatus.contains(matchingPackets[i].clientStatus)){
           toBeSynced.add(matchingPackets[i].packetId);
         }
     }
 
+    log("$toBeSynced : TO BE SYNCED");
     if(toBeSynced.isNotEmpty){
       await packetService.packetSyncAll(toBeSynced);
     }
 
     await refreshPackets();
-    log("$toBeSynced : TO BE SYNCED");
+    notifyListeners();
+  }
+
+  Future<void> refreshPackets()  async{
+    List<String?> allPackets = await PacketServiceImpl().getAllRegistrationPacket();
+    packetsList.clear();
+
+    for (var element in allPackets) {
+      Registration newRegistration = Registration.fromJson(json.decode(element?? ""));
+      packetsList.add(newRegistration);
+      for(int i=0;i<matchingPackets.length;i++){
+        if(newRegistration.packetId == matchingPackets[i].packetId){
+          matchingPackets[i] = newRegistration;
+        }
+      }
+    }
+
+    log("REFRESHED ALL PACKETS");
+    notifyListeners();
   }
 
 }

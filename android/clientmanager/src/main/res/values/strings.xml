@@ -39,6 +39,8 @@
     <string name="reg_center">Registration Center</string>
     <string name="imp_guidelines">Important Guidelines</string>
     <string name="ack_slip">Acknowledgement</string>
+    <string name="default_toast_text">Loading...</string>
+    <string name="default_toast_img">Loader</string>
 
     <!-- biometrics -->
     <string name="face_label">Face</string>

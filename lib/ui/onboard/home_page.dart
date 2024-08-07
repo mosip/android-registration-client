@@ -150,11 +150,11 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.synchronize_data,
         "onTap": syncData,
-        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
+        "subtitle": context.watch<SyncProvider>().lastSuccessfulSyncTime!="" ? DateFormat("EEEE d MMMM, hh:mma")
             .format(DateTime.parse(
                     context.watch<SyncProvider>().lastSuccessfulSyncTime)
                 .toLocal())
-            .toString(),
+            .toString(): "Last Sync time not found",
       },
       // {
       //   "icon": SvgPicture.asset(
@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) =>
                       OperatorOnboardingBiometricsCaptureControl()));
         },
-        "subtitle": lastOperatorUpdateBiometricTime.toString(),
+        "subtitle": lastOperatorUpdateBiometricTime.toString() == "" ? "Not updated yet" :"Last Updated on ${lastOperatorUpdateBiometricTime.toString()}",
       },
       {
         "icon": SvgPicture.asset(
@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
               MaterialPageRoute(
                   builder: (context) => const ExportPacketsPage()));
         },
-        "subtitle": "3 application(s)"
+        "subtitle": "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
       },
       {
         "icon": SvgPicture.asset(
