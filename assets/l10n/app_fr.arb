@@ -40,8 +40,8 @@
   "cred_expired": "Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!",
   "not_initialized": "La machine n’a pas pu être initialisée!",
   "invalid_user": "Nom d’utilisateur non valide!",
-  "machine_inactive": "La machine n'est pas active !",
-  "center_inactive": "Le centre n'est pas actif !",
+  "machine_inactive": "La machine n'est pas active!",
+  "center_inactive": "Le centre n'est pas actif!",
   "sync_completed_succesfully": "Synchro. Complété avec succès",
   "sync_completed_message": "Le système redémarrera dans quelques secondes et vous serez redirigé vers la page de connexion.",
   "sync_failed": "Synchro. Échoué",
@@ -248,5 +248,14 @@
   "offline": "Hors ligne",
   "logout_success": "Vous avez été déconnecté avec succès!",
   "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps",
-  "go_to_home": "Aller à la maison"
+  "go_to_home": "Aller à la maison",
+  "errors": "{messages, select, REG_TRY_AGAIN{Echec de la connexion.. Réessayez!} REG_INVALID_REQUEST{Mot de passe incorrect!} REG_MACHINE_NOT_FOUND{Machine introuvable!} REG_NETWORK_ERROR{Échec de la connexion. Vérifiez la connexion réseau!} REG_CRED_EXPIRED{Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!} REG_MACHINE_INACTIVE{La machine n'est pas active!} REG_CENTER_INACTIVE{Le centre n'est pas actif!} other{'Some error occurred!'}}",
+  "@errors": {
+    "description": "Error messages",
+    "placeholders": {
+      "messages": {
+        "type": "String"
+      }
+    }
+  }
 }

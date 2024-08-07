@@ -221,8 +221,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository, PreRegistrationDataSyncService preRegistrationData) {
-        return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository,preRegistrationData);
+    DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
+        return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository);
     }
 }
 

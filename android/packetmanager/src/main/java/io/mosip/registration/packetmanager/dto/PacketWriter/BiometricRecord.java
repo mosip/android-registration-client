@@ -26,6 +26,12 @@ public class BiometricRecord implements Serializable {
 	protected VersionType version;
 	protected VersionType cbeffversion;
 	protected BIRInfo birInfo;
+
+
+	public List<BIR> getSegments() {
+		return segments;
+	}
+
 	/**
 	 * This can be of any modality, each subtype is an element in this list.
 	 * it has type and subtype info in it
