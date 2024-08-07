@@ -10,26 +10,39 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DashBoardData;
+@class UpdatedTimeData;
 
-/// The codec used by DemographicsApi.
-NSObject<FlutterMessageCodec> *DemographicsApiGetCodec(void);
-
-@protocol DemographicsApi
-- (void)addDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)getHashValueBytes:(FlutterStandardTypedData *)bytes completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)addSimpleTypeDemographicFieldFieldId:(NSString *)fieldId value:(NSString *)value language:(NSString *)language completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)getSimpleTypeDemographicFieldFieldId:(NSString *)fieldId language:(NSString *)language completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)setDateFieldFieldId:(NSString *)fieldId subType:(NSString *)subType day:(NSString *)day month:(NSString *)month year:(NSString *)year completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)removeDemographicFieldFieldId:(NSString *)fieldId completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)setConsentFieldConsentData:(NSString *)consentData completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)addUpdatableFieldsFieldIds:(NSArray<NSString *> *)fieldIds completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)addUpdatableFieldGroupFieldGroup:(NSString *)fieldGroup completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)removeUpdatableFieldsFieldIds:(NSArray<NSString *> *)fieldIds completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)removeUpdatableFieldGroupFieldGroup:(NSString *)fieldGroup completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)changeUpdatableFieldGroupsWithCompletion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+@interface DashBoardData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithUserId:(NSString *)userId
+    userName:(NSString *)userName
+    userStatus:(NSNumber *)userStatus
+    userIsOnboarded:(NSNumber *)userIsOnboarded;
+@property(nonatomic, copy) NSString * userId;
+@property(nonatomic, copy) NSString * userName;
+@property(nonatomic, strong) NSNumber * userStatus;
+@property(nonatomic, strong) NSNumber * userIsOnboarded;
 @end
 
-extern void DemographicsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DemographicsApi> *_Nullable api);
+@interface UpdatedTimeData : NSObject
++ (instancetype)makeWithUpdatedTime:(nullable NSString *)updatedTime;
+@property(nonatomic, copy, nullable) NSString * updatedTime;
+@end
+
+/// The codec used by DashBoardApi.
+NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
+
+@protocol DashBoardApi
+- (void)getDashBoardDetailsWithCompletion:(void (^)(NSArray<DashBoardData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCreatedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getSyncedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getUpdatedTimeWithCompletion:(void (^)(UpdatedTimeData *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

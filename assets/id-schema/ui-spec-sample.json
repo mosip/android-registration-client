@@ -1,0 +1,5541 @@
+[{
+    "autoSelectedGroups" : null,
+    "caption" : null,
+    "flow" : "NEW",
+    "icon" : "NewReg.png",
+    "id" : "NEW",
+    "label" : {
+      "ara" : "تسجيل جديد",
+      "tam" : "புதிய பதிவு",
+      "fra" : "Nouvelle inscription",
+      "kan" : "ಹೊಸ ನೋಂದಣಿ",
+      "hin" : "नया पंजीकरण",
+      "eng" : "New Registration"
+    },
+    "order" : 1,
+    "screens" : [ {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "html",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "consentText",
+        "groupLabel" : {
+          "tam" : "ஒப்புதல் உரை",
+          "ara" : "نص الموافقة",
+          "fra" : "Texte de consentement",
+          "kan" : "ಒಪ್ಪಿಗೆ ಪಠ್ಯ",
+          "hin" : "सहमति पाठ",
+          "eng" : "consent Text"
+        },
+        "id" : "consentText",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "ஒப்புதல் உரை",
+          "ara" : "نص الموافقة",
+          "fra" : "Texte de consentement",
+          "kan" : "ಒಪ್ಪಿಗೆ ಪಠ್ಯ",
+          "hin" : "सहमति पाठ",
+          "eng" : "consent Text"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consentText",
+        "templateName" : "Registration Consent",
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "checkbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "consent",
+        "groupLabel" : {
+          "tam" : "ஒப்புதல்",
+          "ara" : "موافقة",
+          "fra" : "consentement",
+          "kan" : "ಒಪ್ಪಿಗೆ",
+          "hin" : "सहमति",
+          "eng" : "consent"
+        },
+        "id" : "consent",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நான் என் பி ஐ ஐ ஐப் பகிர்ந்து கொள்வதற்கான விதிமுறைகளையும் நிபந்தனைகளையும் படித்து ஏற்றுக்கொண்டேன்",
+          "ara" : "الاسم الكامل الكامل الكامل",
+          "fra" : "J'ai lu et j'accepte les termes et conditions pour partager mes PII",
+          "kan" : "ನನ್ನ ಪಿಐಐ ಹಂಚಿಕೊಳ್ಳಲು ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ",
+          "hin" : "मैंने अपना पीआईआई साझा करने के लिए नियम और शर्तें पढ़ ली हैं और स्वीकार करता हूं",
+          "eng" : "I have read and accept terms and conditions to share my PII "
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consent",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "PreferredLanguage",
+        "groupLabel" : {
+          "tam" : "விருப்பமான மொழி",
+          "ara" : "اللغة المفضلة",
+          "fra" : "langue préférée",
+          "kan" : "ಆದ್ಯತೆಯ ಭಾಷೆ",
+          "hin" : "पसंदीदा भाषा",
+          "eng" : "Preferred Language"
+        },
+        "id" : "preferredLang",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "لغة الإخطار",
+          "tam" : "அறிவிப்பு மொழி",
+          "fra" : "Langue de notification",
+          "kan" : "ಅಧಿಸೂಚನೆ ಭಾಷೆ",
+          "hin" : "अधिसूचना भाषा",
+          "eng" : "Notification Langauge"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "preferredLang",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "tam" : "ஒப்புதல்",
+        "ara" : "موافقة",
+        "fra" : "Consentement",
+        "kan" : "ಒಪ್ಪಿಗೆ",
+        "hin" : "सहमति",
+        "eng" : "Consent"
+      },
+      "name" : "consentdet",
+      "order" : 1,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "FullName",
+        "groupLabel" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "id" : "fullName",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "ageDate",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "DateOfBirth",
+        "groupLabel" : {
+          "tam" : "DOB",
+          "ara" : "DOB",
+          "fra" : "DOB",
+          "kan" : "DOB",
+          "hin" : "जन्म तिथि",
+          "eng" : "DOB"
+        },
+        "id" : "dateOfBirth",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "DOB",
+          "ara" : "DOB",
+          "fra" : "DOB",
+          "kan" : "DOB",
+          "hin" : "जन्म तिथि",
+          "eng" : "DOB"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "dateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "",
+        "group" : "Gender",
+        "groupLabel" : {
+          "ara" : "جنس تذكير أو تأنيث",
+          "tam" : "பாலினம்",
+          "fra" : "Genre",
+          "kan" : "ಲಿಂಗ",
+          "hin" : "लिंग",
+          "eng" : "Gender"
+        },
+        "id" : "gender",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "جنس",
+          "tam" : "பாலினம்",
+          "fra" : "Le genre",
+          "kan" : "ಲಿಂಗ",
+          "hin" : "लिंग",
+          "eng" : "Gender"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "gender",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Address",
+        "groupLabel" : {
+          "tam" : "முகவரி",
+          "ara" : "تبوك",
+          "fra" : "Adresse",
+          "kan" : "ವಿಳಾಸ",
+          "hin" : "पता",
+          "eng" : "Address"
+        },
+        "id" : "addressLine1",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நிரந்தர முகவரி1",
+          "ara" : "عنوان دائم1",
+          "fra" : "addressLine1",
+          "kan" : "ಶಾಶ್ವತ ವಿಳಾಸ1",
+          "hin" : "स्थायी पता 1",
+          "eng" : "addressLine1"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "addressLine1",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Address",
+        "groupLabel" : {
+          "tam" : "முகவரி",
+          "ara" : "تبوك",
+          "fra" : "Adresse",
+          "kan" : "ವಿಳಾಸ",
+          "hin" : "पता",
+          "eng" : "Address"
+        },
+        "id" : "addressLine2",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தற்காலிக முகவரி",
+          "ara" : "عنوان مؤقت2",
+          "fra" : "addressLine2",
+          "kan" : "ತಾತ್ಕಾಲಿಕ ವಿಳಾಸ 2",
+          "hin" : "अस्थायी पता2",
+          "eng" : "addressLine2"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "addressLine2",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Address",
+        "groupLabel" : {
+          "tam" : "முகவரி",
+          "ara" : "تبوك",
+          "fra" : "Adresse",
+          "kan" : "ವಿಳಾಸ",
+          "hin" : "पता",
+          "eng" : "Address"
+        },
+        "id" : "addressLine3",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தற்காலிக முகவரி3",
+          "ara" : "عنوان مؤقت3",
+          "fra" : "addressLine3",
+          "kan" : "ತಾತ್ಕಾಲಿಕ ವಿಳಾಸ 3",
+          "hin" : "अस्थायी पता3",
+          "eng" : "addressLine3"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "addressLine3",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Marital Status",
+        "groupLabel" : {
+          "tam" : "திருமண நிலை",
+          "ara" : "الحالة الحالة الإجتماعية",
+          "fra" : "État civil",
+          "kan" : "ವೈವಾಹಿಕ ಸ್ಥಿತಿ",
+          "hin" : "वैवाहिक स्थिति",
+          "eng" : "Marital Status"
+        },
+        "id" : "maritalStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "சிவில் நிலை (திருமண நிலை)",
+          "ara" : "الأحوال المدنية (الحالة الاجتماعية)",
+          "fra" : "État civil (état matrimonial)",
+          "kan" : "ನಾಗರಿಕ ಸ್ಥಿತಿ (ವೈವಾಹಿಕ ಸ್ಥಿತಿ)",
+          "hin" : "नागरिक स्थिति (वैवाहिक स्थिति)",
+          "eng" : "Civil Status (Marital Status)"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "maritalStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "ApplicantLanguage",
+        "groupLabel" : {
+          "tam" : "விண்ணப்பதாரரின் மொழி",
+          "ara" : "لغة المتقدم",
+          "fra" : "Langue du candidat",
+          "kan" : "ಅರ್ಜಿದಾರರ ಭಾಷೆ",
+          "hin" : "आवेदक की भाषा",
+          "eng" : "Applicant Language"
+        },
+        "id" : "applicantLanguage",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "விண்ணப்பதாரரின் மொழி",
+          "ara" : "لغة مقدم الطلب",
+          "fra" : "Langue du candidat",
+          "kan" : "ಅರ್ಜಿದಾರರ ಭಾಷೆ",
+          "hin" : "आवेदक की भाषा",
+          "eng" : "Applicant's Language"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "applicantLanguage",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "National Identity",
+        "groupLabel" : {
+          "tam" : "தேசிய அடையாளம்",
+          "ara" : "الهوية الوطنية",
+          "fra" : "Identité nationale",
+          "kan" : "ರಾಷ್ಟ್ರೀಯ ಗುರುತು",
+          "hin" : "राष्ट्रीय पहचान",
+          "eng" : "National Identity"
+        },
+        "id" : "nicIssueDate",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "என்ஐசி வழங்கப்பட்ட தேதி",
+          "ara" : "تاريخ إصدار NIC",
+          "fra" : "Date d'émission de la carte réseau",
+          "kan" : "ಎನ್ಐಸಿ ನೀಡಿದ ದಿನಾಂಕ",
+          "hin" : "एनआईसी जारी तिथि",
+          "eng" : "NIC Issued Date"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Mode of Delivery",
+        "groupLabel" : {
+          "tam" : "விநியோக முறை",
+          "ara" : "طريقة التسليم",
+          "fra" : "Mode de livraison",
+          "kan" : "ವಿತರಣಾ ವಿಧಾನ",
+          "hin" : "वितरण की प्रणाली",
+          "eng" : "Mode of Delivery"
+        },
+        "id" : "modeOfdelivery",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "விநியோக முறை",
+          "ara" : "طريقة التسليم",
+          "fra" : "Mode de livraison",
+          "kan" : "ವಿತರಣಾ ವಿಧಾನ",
+          "hin" : "वितरण की प्रणाली",
+          "eng" : "Mode of Delivery"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "modeOfdelivery",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "ResidenceStatus",
+        "groupLabel" : {
+          "ara" : "حالة الإقامة",
+          "tam" : "குடியிருப்பு நிலை",
+          "fra" : "Statut de résidence",
+          "kan" : "ನಿವಾಸ ಸ್ಥಿತಿ",
+          "hin" : "आवास की स्थिति",
+          "eng" : "ResidenceStatus"
+        },
+        "id" : "residenceStatus",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "حالة الإقامة",
+          "tam" : "குடியிருப்பு நிலை",
+          "fra" : "Statut de résidence",
+          "kan" : "ನಿವಾಸ ಸ್ಥಿತಿ",
+          "hin" : "आवास की स्थिति",
+          "eng" : "Residence Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "residenceStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "region",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிராந்தியம்",
+          "ara" : "منطقة",
+          "fra" : "Région",
+          "kan" : "ಪ್ರದೇಶ",
+          "hin" : "ऊपरी क्षेत्र",
+          "eng" : "Region"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Region",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "province",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மாகாணம்",
+          "ara" : "المحافظة",
+          "fra" : "Province",
+          "kan" : "ಪ್ರಾಂತ್ಯ",
+          "hin" : "प्रांत",
+          "eng" : "Province"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Province",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "city",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நகரம்",
+          "ara" : "مدينة",
+          "fra" : "Ville",
+          "kan" : "ಸಿಟಿ",
+          "hin" : "शहर",
+          "eng" : "City"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "City",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "zone",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மண்டலம்",
+          "ara" : "منطقة",
+          "fra" : "Zone",
+          "kan" : "ವಲಯ",
+          "hin" : "क्षेत्र",
+          "eng" : "Zone"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Zone",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "postalCode",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "அஞ்சல்",
+          "ara" : "بريدي",
+          "fra" : "Postale",
+          "kan" : "ಅಂಚೆ",
+          "hin" : "डाक का",
+          "eng" : "Postal"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Postal Code",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[(?i)A-Z0-9]{5}$|^NA$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Phone",
+        "groupLabel" : {
+          "tam" : "தொலைபேசி",
+          "ara" : "هاتف",
+          "fra" : "Téléphoner",
+          "kan" : "ಫೋನ್",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "id" : "phone",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தொலைபேசி",
+          "ara" : "هاتف",
+          "fra" : "Téléphoner",
+          "kan" : "ಫೋನ್",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Phone",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[+]*([0-9]{1})([0-9]{9})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Email",
+        "groupLabel" : {
+          "tam" : "மின்னஞ்சல்",
+          "ara" : "البريد الإلكتروني",
+          "fra" : "E-mail",
+          "kan" : "ಇಮೇಲ್",
+          "hin" : "ईमेल",
+          "eng" : "Email"
+        },
+        "id" : "email",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மின்னஞ்சல்",
+          "ara" : "البريد الإلكتروني",
+          "fra" : "E-mail",
+          "kan" : "ಇಮೇಲ್",
+          "hin" : "ईमेल",
+          "eng" : "Email"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Email",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "tam" : "அறிமுகப்படுத்துபவர் விவரங்கள்",
+          "ara" : "تفاصيل المعرف",
+          "fra" : "Détails de l'introducteur",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerName",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "اسم مقدم العرض",
+          "tam" : "அறிமுகம் பெயர்",
+          "fra" : "nom del'introducteur",
+          "kan" : "ಪರಿಚಯಕಾರರ ಹೆಸರು",
+          "hin" : "परिचयकर्ता का नाम",
+          "eng" : "Introducer Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR' )"
+        } ],
+        "subType" : "introducerName",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : {
+          "engine" : "MVEL",
+          "expr" : "identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR'"
+        },
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "tam" : "அறிமுகப்படுத்துபவர் விவரங்கள்",
+          "ara" : "تفاصيل المعرف",
+          "fra" : "Détails de l'introducteur",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerRID",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "معرف RID",
+          "tam" : "அறிமுகம் RID",
+          "fra" : "Introducteur RID",
+          "kan" : "ಪರಿಚಯಕಾರ ಆರ್ಐಡಿ",
+          "hin" : "परिचयकर्ता RID",
+          "eng" : "Introducer RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "(identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR') && (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty)"
+        } ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([0-9]{29})$"
+        } ],
+        "visible" : {
+          "engine" : "MVEL",
+          "expr" : "(identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR') && (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty)"
+        },
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "tam" : "அறிமுகப்படுத்துபவர் விவரங்கள்",
+          "ara" : "تفاصيل المعرف",
+          "fra" : "Détails de l'introducteur",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerUIN",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "معرف المستخدم المعرّف",
+          "tam" : "அறிமுகம் UIN",
+          "fra" : "Introducteur UIN",
+          "kan" : "ಪರಿಚಯಕಾರ UIN",
+          "hin" : "परिचयकर्ता IN",
+          "eng" : "Introducer UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "(identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR') && (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty)"
+        } ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([0-9]{10})$"
+        } ],
+        "visible" : {
+          "engine" : "MVEL",
+          "expr" : "(identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR') && (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty)"
+        },
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "التفاصيل الديموغرافية",
+        "tam" : "மக்கள்தொகை விவரங்கள்",
+        "fra" : "Détails démographiques",
+        "kan" : "ಜನಸಂಖ್ಯಾ ವಿವರಗಳು",
+        "hin" : "जनसांख्यिकीय विवरण",
+        "eng" : "Demographic Details"
+      },
+      "name" : "DemographicDetails",
+      "order" : 2,
+      "preRegFetchRequired" : true
+    }, {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfAddress",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات العنوان",
+          "tam" : "முகவரி சான்று",
+          "fra" : "Address Proof",
+          "kan" : "ವಿಳಾಸ ಪುರಾವೆ",
+          "hin" : "निवास प्रमाण पत्र",
+          "eng" : "Address Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "POA",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfIdentity",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات الهوية",
+          "tam" : "அடையாளச் சான்று",
+          "fra" : "Identity Proof",
+          "kan" : "ಗುರುತಿನ ಪುರಾವೆ",
+          "hin" : "पहचान प्रमाण",
+          "eng" : "Identity Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "POI",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfRelationship",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات العلاقة",
+          "tam" : "உறவு சான்று",
+          "fra" : "Relationship Proof",
+          "kan" : "ಸಂಬಂಧ ಪುರಾವೆ",
+          "hin" : "संबंध प्रमाण",
+          "eng" : "Relationship Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR')"
+        } ],
+        "subType" : "POR",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfDateOfBirth",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "DOB إثبات",
+          "tam" : "DOB சான்று",
+          "fra" : "DOB Proof",
+          "kan" : "DOB ಪ್ರೂಫ್",
+          "hin" : "जन्मतिथि प्रमाण",
+          "eng" : "DOB Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "POB",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfException",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات الاستثناء",
+          "tam" : "விதிவிலக்கு சான்று",
+          "fra" : "Exception Proof",
+          "kan" : "ಎಕ್ಸೆಪ್ಶನ್ ಪ್ರೂಫ್",
+          "hin" : "अपवाद प्रमाण",
+          "eng" : "Exception Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "POE",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "تحميل الوثيقة",
+        "tam" : "ஆவணப் பதிவேற்றம்",
+        "fra" : "Des documents",
+        "kan" : "ಡಾಕ್ಯುಮೆಂಟ್ ಅಪ್ಲೋಡ್",
+        "hin" : "दस्तावेज़ अपलोड",
+        "eng" : "Document Upload"
+      },
+      "name" : "Documents",
+      "order" : 3,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+        "conditionalBioAttributes" : [ {
+          "ageGroup" : "INFANT",
+          "bioAttributes" : [ "face" ],
+          "process" : "ALL",
+          "validationExpr" : "face"
+        } ],
+        "controlType" : "biometrics",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Biometrics",
+        "groupLabel" : {
+          "tam" : "பயோமெட்ரிக்ஸ்",
+          "ara" : "القياسات الحيوية",
+          "fra" : "Biométrie",
+          "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "बॉयोमेट्रिक्स",
+          "eng" : "Biometrics"
+        },
+        "id" : "individualBiometrics",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "المقاييس الحيوية لمقدم الطلب",
+          "tam" : "விண்ணப்பதாரர் பயோமெட்ரிக்ஸ்",
+          "fra" : "Biométrie du candidat",
+          "kan" : "ಅರ್ಜಿದಾರ ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "आवेदक बायोमेट्रिक्स",
+          "eng" : "Applicant Biometrics"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "applicant",
+        "templateName" : null,
+        "type" : "biometricsType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : true
+      }, {
+        "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+        "conditionalBioAttributes" : [ {
+          "ageGroup" : "INFANT",
+          "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+          "process" : "ALL",
+          "validationExpr" : "face"
+        } ],
+        "controlType" : "biometrics",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Biometrics",
+        "groupLabel" : {
+          "tam" : "பயோமெட்ரிக்ஸ்",
+          "ara" : "القياسات الحيوية",
+          "fra" : "Biométrie",
+          "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "बॉयोमेट्रिक्स",
+          "eng" : "Biometrics"
+        },
+        "id" : "introducerBiometrics",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "المقاييس الحيوية المقدّمة",
+          "tam" : "அறிமுகம் பயோமெட்ரிக்ஸ்",
+          "fra" : "Introducteur BiomÃ©trie",
+          "kan" : "ಪರಿಚಯಕಾರ ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "परिचयकर्ता बायोमेट्रिक्स",
+          "eng" : "Introducer Biometrics"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "(identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR')"
+        } ],
+        "subType" : "introducer",
+        "templateName" : null,
+        "type" : "biometricsType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : true
+      } ],
+      "label" : {
+        "ara" : "التفاصيل البيومترية",
+        "tam" : "பயோமெட்ரிக் விவரங்கள்",
+        "fra" : "Détails biométriques",
+        "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ ವಿವರಗಳು",
+        "hin" : "बॉयोमीट्रिक विवरण",
+        "eng" : "Biometric Details"
+      },
+      "name" : "BiometricDetails",
+      "order" : 4,
+      "preRegFetchRequired" : false
+    } ],
+    "isActive" : true
+  }, {
+    "autoSelectedGroups" : [ "Consent", "PreferredLanguage", "Documents", "Biometrics" ],
+    "caption" : null,
+    "flow" : "UPDATE",
+    "icon" : "UINUpdate.png",
+    "id" : "UPDATE",
+    "label" : {
+      "ara" : "تحديث UIN",
+      "tam" : "UIN ஐப் புதுப்பிக்கவும்",
+      "fra" : "Mettre à jour l'UIN",
+      "kan" : "UIN ನವೀಕರಿಸಿ",
+      "hin" : "UIN अपडेट करें",
+      "eng" : "Update UIN"
+    },
+    "order" : 2,
+    "screens" : [ {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "html",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Consent",
+        "groupLabel" : {
+          "ara" : "موافقة",
+          "tam" : "ஒப்புதல்",
+          "fra" : "Consentement",
+          "kan" : "ಒಪ್ಪಿಗೆ",
+          "hin" : "पसहमति",
+          "eng" : "Consent"
+        },
+        "id" : "consentText",
+        "inputRequired" : true,
+        "label" : { },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consentText",
+        "templateName" : "Registration Consent",
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "checkbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Consent",
+        "groupLabel" : {
+          "ara" : "موافقة",
+          "tam" : "ஒப்புதல்",
+          "fra" : "Consentement",
+          "kan" : "ಒಪ್ಪಿಗೆ",
+          "hin" : "पसहमति",
+          "eng" : "Consent"
+        },
+        "id" : "consent",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "الاسم الكامل الكامل الكامل",
+          "tam" : "நான் என் PII ஐப் பகிர்ந்து கொள்வதற்கான விதிமுறைகளையும் நிபந்தனைகளையும் படித்து ஏற்றுக்கொண்டேன்",
+          "fra" : "J'ai lu et j'accepte les termes et conditions pour partager mes PII",
+          "kan" : "ನನ್ನ ಪಿಐಐ ಹಂಚಿಕೊಳ್ಳಲು ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ",
+          "hin" : "मैंने अपना पीआईआई साझा करने के लिए नियम और शर्तें पढ़ ली हैं और स्वीकार करता हूं",
+          "eng" : "I have read and accept terms and conditions to share my PII"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consent",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "PreferredLanguage",
+        "groupLabel" : {
+          "ara" : "اللغة المفضلة",
+          "tam" : "விருப்பமான மொழி",
+          "fra" : "langue préférée",
+          "kan" : "ಆದ್ಯತೆಯ ಭಾಷೆ",
+          "hin" : "पसंदीदा भाषा",
+          "eng" : "Preferred Language"
+        },
+        "id" : "preferredLang",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "لغة الإخطار",
+          "tam" : "அறிவிப்பு மொழி",
+          "fra" : "Langue de notification",
+          "kan" : "ಅಧಿಸೂಚನೆ ಭಾಷೆ",
+          "hin" : "अधिसूचना भाषा",
+          "eng" : "Notification Langauge"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "preferredLang",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "موافقة",
+        "tam" : "ஒப்புதல்",
+        "fra" : "Consentement",
+        "kan" : "ಒಪ್ಪಿಗೆ",
+        "hin" : "सहमति",
+        "eng" : "Consent"
+      },
+      "name" : "consentdet",
+      "order" : 1,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "FullName",
+        "groupLabel" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "id" : "fullName",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "ageDate",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "DateOfBirth",
+        "groupLabel" : {
+          "tam" : "DOB",
+          "ara" : "تاريخ الميلاد",
+          "fra" : "Date de naissance",
+          "kan" : "DOB",
+          "hin" : "जन्म तिथि",
+          "eng" : "DOB"
+        },
+        "id" : "dateOfBirth",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "DOB",
+          "ara" : "DOB",
+          "fra" : "DOB",
+          "kan" : "DOB",
+          "hin" : "जन्म तिथि",
+          "eng" : "DOB"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "(identity.updatableFieldGroups contains 'IntroducerDetails' || identity.updatableFieldGroups contains 'DateOfBirth')"
+        } ],
+        "subType" : "dateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "",
+        "group" : "Gender",
+        "groupLabel" : {
+          "ara" : "جنس تذكير أو تأنيث",
+          "tam" : "பாலினம்",
+          "fra" : "Genre",
+          "kan" : "ಲಿಂಗ",
+          "hin" : "लिंग",
+          "eng" : "Gender"
+        },
+        "id" : "gender",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "جنس",
+          "tam" : "பாலினம்",
+          "fra" : "Le genre",
+          "kan" : "ಲಿಂಗ",
+          "hin" : "लिंग",
+          "eng" : "Gender"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "gender",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Address",
+        "groupLabel" : {
+          "ara" : "عنوان",
+          "fra" : "Adresse",
+          "tam" : "முகவரி",
+          "kan" : "ವಿಳಾಸ",
+          "hin" : "पता",
+          "eng" : "Address"
+        },
+        "id" : "permanentAddress",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நிரந்தர முகவரி",
+          "kan" : "ಶಾಶ್ವತ ವಿಳಾಸ",
+          "hin" : "स्थायी पता 1",
+          "eng" : "permanent Address"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "permanentAddress",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Address",
+        "groupLabel" : {
+          "ara" : "عنوان",
+          "fra" : "Adresse",
+          "tam" : "முகவரி",
+          "kan" : "ವಿಳಾಸ",
+          "hin" : "पता",
+          "eng" : "Address"
+        },
+        "id" : "temporaryAddress",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தற்காலிக முகவரி",
+          "kan" : "ತಾತ್ಕಾಲಿಕ ವಿಳಾಸ 2",
+          "hin" : "अस्थायी पता",
+          "eng" : "temporary Address"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "temporaryAddress",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Marital Status",
+        "groupLabel" : {
+          "ara" : "الحالة الاجتماعية",
+          "fra" : "État civil",
+          "tam" : "திருமண நிலை",
+          "kan" : "ವೈವಾಹಿಕ ಸ್ಥಿತಿ",
+          "hin" : "वैवाहिक स्थिति",
+          "eng" : "Marital Status"
+        },
+        "id" : "maritalStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "சிவில் நிலை (திருமண நிலை)",
+          "kan" : "ನಾಗರಿಕ ಸ್ಥಿತಿ (ವೈವಾಹಿಕ ಸ್ಥಿತಿ)",
+          "hin" : "नागरिक स्थिति (वैवाहिक स्थिति)",
+          "eng" : "Civil Status (Marital Status)"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "maritalStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "ApplicantLanguage",
+        "groupLabel" : {
+          "ara" : "لغة مقدم الطلب",
+          "fra" : "Langue du candidat",
+          "tam" : "விண்ணப்பதாரர் மொழி",
+          "kan" : "ಅರ್ಜಿದಾರರ ಭಾಷೆ",
+          "hin" : "आवेदक की भाषा",
+          "eng" : "Applicant Language"
+        },
+        "id" : "applicantLanguage",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "விண்ணப்பதாரரின் மொழி",
+          "kan" : "ಅರ್ಜಿದಾರರ ಭಾಷೆ",
+          "hin" : "आवेदक की भाषा",
+          "eng" : "Applicant's Language"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "applicantLanguage",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "ResidenceStatus",
+        "groupLabel" : {
+          "ara" : "حالة الإقامة",
+          "tam" : "குடியிருப்பு நிலை",
+          "fra" : "Statut de résidence",
+          "kan" : "ನಿವಾಸ ಸ್ಥಿತಿ",
+          "hin" : "आवास की स्थिति",
+          "eng" : "Residence Status"
+        },
+        "id" : "residenceStatus",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "حالة الإقامة",
+          "tam" : "குடியிருப்பு நிலை",
+          "fra" : "Statut de résidence",
+          "kan" : "ನಿವಾಸ ಸ್ಥಿತಿ",
+          "hin" : "आवास की स्थिति",
+          "eng" : "Residence Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "residenceStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थानर",
+          "eng" : "Location"
+        },
+        "id" : "region",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிராந்தியம்",
+          "kan" : "ಪ್ರದೇಶ",
+          "hin" : "ऊपरी क्षेत्र",
+          "eng" : "Region"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Region",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थानर",
+          "eng" : "Location"
+        },
+        "id" : "province",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மாகாணம்",
+          "kan" : "ಪ್ರಾಂತ್ಯ",
+          "hin" : "प्रांत",
+          "eng" : "Province"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Province",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थानर",
+          "eng" : "Location"
+        },
+        "id" : "city",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நகரம்",
+          "kan" : "ಸಿಟಿ",
+          "hin" : "शहर",
+          "eng" : "City"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "City",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थानर",
+          "eng" : "Location"
+        },
+        "id" : "zone",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மண்டலம்",
+          "kan" : "ವಲಯ",
+          "hin" : "क्षेत्र",
+          "eng" : "Zone"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Zone",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "ara" : "موقع",
+          "fra" : "Emplacement",
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थानर",
+          "eng" : "Location"
+        },
+        "id" : "postalCode",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "அஞ்சல்",
+          "kan" : "ಅಂಚೆ",
+          "hin" : "डाक का",
+          "eng" : "Postal"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Postal Code",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[(?i)A-Z0-9]{5}$|^NA$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Phone",
+        "groupLabel" : {
+          "ara" : "هاتف",
+          "fra" : "Téléphone",
+          "tam" : "தொலைபேசி",
+          "kan" : "ದೂರವಾಣಿ",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "id" : "phone",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தொலைபேசி",
+          "kan" : "ಫೋನ್",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Phone",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[+]*([0-9]{1})([0-9]{9})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Phone",
+        "groupLabel" : {
+          "ara" : "هاتف",
+          "fra" : "Téléphone",
+          "tam" : "தொலைபேசி",
+          "kan" : "ದೂರವಾಣಿ",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "id" : "rNumber",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "குடியிருப்பு தொலைபேசி எண்",
+          "kan" : "ನಿವಾಸಿ ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+          "hin" : "निवासी फोन नंबर",
+          "eng" : "Resident Phone Number"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "Phone",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[+]*([0-9]{1})([0-9]{9})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Email",
+        "groupLabel" : {
+          "ara" : "بريد إلكتروني",
+          "fra" : "E-mail",
+          "tam" : "மின்னஞ்சல்",
+          "kan" : "ಇಮೇಲ್",
+          "hin" : "ईमेल",
+          "eng" : "Email"
+        },
+        "id" : "email",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மின்னஞ்சல்",
+          "kan" : "ಇಮೇಲ್",
+          "hin" : "ईमेल",
+          "eng" : "Email"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "Email",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "ara" : "تفاصيل المقدمة",
+          "fra" : "Détails de l'introducteur",
+          "tam" : "அறிமுகம் செய்பவர் விவரங்கள்",
+          "kan" : "ಪರಿಚಯಿಸುವವರ ವಿವರಗಳು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerName",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "اسم مقدم العرض",
+          "tam" : "அறிமுகம் பெயர்",
+          "fra" : "nom del'introducteur",
+          "kan" : "ಪರಿಚಯಕಾರರ ಹೆಸರು",
+          "hin" : "परिचयकर्ता का नाम",
+          "eng" : "Introducer Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR')"
+        } ],
+        "subType" : "introducerName",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "ara" : "تفاصيل المقدمة",
+          "fra" : "Détails de l'introducteur",
+          "tam" : "அறிமுக விவரங்கள்",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳುು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerRID",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "معرف RID",
+          "tam" : "அறிமுகம் RID",
+          "fra" : "Introducteur RID",
+          "kan" : "ಪರಿಚಯಕಾರ ಆರ್ಐಡಿ",
+          "hin" : "परिचयकर्ता RID",
+          "eng" : "Introducer RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( !(identity.get('introducerName') == nil || identity.get('introducerName') == empty) &&   (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty))"
+        } ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([0-9]{10,30})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "ara" : "تفاصيل المقدمة",
+          "fra" : "Détails de l'introducteur",
+          "tam" : "அறிமுக விவரங்கள்",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳುು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerUIN",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "معرف المستخدم المعرّف",
+          "tam" : "அறிமுகம் UIN",
+          "fra" : "Introducteur UIN",
+          "kan" : "ಪರಿಚಯಕಾರ UIN",
+          "hin" : "परिचयकर्ता IN",
+          "eng" : "Introducer UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( !(identity.get('introducerName') == nil || identity.get('introducerName') == empty) &&   (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty))"
+        } ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([0-9]{10,30})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "التفاصيل الديموغرافية",
+        "tam" : "மக்கள்தொகை விவரங்கள்",
+        "fra" : "Détails démographiques",
+        "kan" : "ಜನಸಂಖ್ಯಾ ವಿವರಗಳು",
+        "hin" : "जनसांख्यिकीय विवरण",
+        "eng" : "Demographic Details"
+      },
+      "name" : "DemographicDetails",
+      "order" : 2,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+        "conditionalBioAttributes" : [ {
+          "ageGroup" : "INFANT",
+          "bioAttributes" : [ "face" ],
+          "process" : "ALL",
+          "validationExpr" : "face"
+        } ],
+        "controlType" : "biometrics",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Biometrics",
+        "groupLabel" : {
+          "ara" : "القياسات الحيوية",
+          "fra" : "Biométrie",
+          "tam" : "பயோமெட்ரிக்ஸ்",
+          "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "बॉयोमेट्रिक्स",
+          "eng" : "Biometrics"
+        },
+        "id" : "individualBiometrics",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "المقاييس الحيوية لمقدم الطلب",
+          "tam" : "விண்ணப்பதாரர் பயோமெட்ரிக்ஸ்",
+          "fra" : "Applicant Biometrics",
+          "kan" : "ಅರ್ಜಿದಾರ ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "आवेदक बायोमेट्रिक्स",
+          "eng" : "Applicant Biometrics"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "(identity.updatableFieldGroups contains 'Biometrics')"
+        } ],
+        "subType" : "applicant",
+        "templateName" : null,
+        "type" : "biometricsType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : true
+      }, {
+        "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+        "conditionalBioAttributes" : [ {
+          "ageGroup" : "ALL",
+          "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+          "process" : "ALL",
+          "validationExpr" : "leftEye || rightEye || rightIndex || rightLittle || rightRing || rightMiddle || leftIndex || leftLittle || leftRing || leftMiddle || leftThumb || rightThumb || face"
+        } ],
+        "controlType" : "biometrics",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Biometrics",
+        "groupLabel" : {
+          "ara" : "القياسات الحيوية للمصادقة",
+          "tam" : "அங்கீகார பயோமெட்ரிக்ஸ்",
+          "fra" : "Authentication Biometrics",
+          "kan" : "ಅಥೆನ್ ಟಿಕೇಶನ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "प्रमाणीकरण बायोमेट्रिक्स",
+          "eng" : "Authentication Biometrics"
+        },
+        "id" : "individualAuthBiometrics",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "القياسات الحيوية للمصادقة",
+          "tam" : "அங்கீகார பயோமெட்ரிக்ஸ்",
+          "fra" : "Authentication Biometrics",
+          "kan" : "ಅಥೆನ್ ಟಿಕೇಶನ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "प्रमाणीकरण बायोमेट्रिक्स",
+          "eng" : "Authentication Biometrics"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "!(identity.updatableFieldGroups contains 'Biometrics')"
+        } ],
+        "subType" : "applicant-auth",
+        "templateName" : null,
+        "type" : "biometricsType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+        "conditionalBioAttributes" : [ {
+          "ageGroup" : "INFANT",
+          "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+          "process" : "ALL",
+          "validationExpr" : "leftEye || rightEye || rightIndex || rightLittle || rightRing || rightMiddle || leftIndex || leftLittle || leftRing || leftMiddle || leftThumb || rightThumb || face"
+        } ],
+        "controlType" : "biometrics",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Biometrics",
+        "groupLabel" : {
+          "ara" : "القياسات الحيوية",
+          "fra" : "Biométrie",
+          "tam" : "பயோமெட்ரிக்ஸ்",
+          "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "बॉयोमेट्रिक्स",
+          "eng" : "Biometrics"
+        },
+        "id" : "introducerBiometrics",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "المقاييس الحيوية المقدّمة",
+          "tam" : "அறிமுகம் பயோமெட்ரிக்ஸ்",
+          "fra" : "Introducteur BiomÃ©trie",
+          "kan" : "ಪರಿಚಯಕಾರ ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "परिचयकर्ता बायोमेट्रिक्स",
+          "eng" : "Introducer Biometrics"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "identity.updatableFieldGroups contains 'Biometrics' && (identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR' )"
+        } ],
+        "subType" : "applicant",
+        "templateName" : null,
+        "type" : "biometricsType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : true
+      } ],
+      "label" : {
+        "ara" : "التفاصيل البيومترية",
+        "tam" : "பயோமெட்ரிக் விவரங்கள்",
+        "fra" : "Détails biométriques",
+        "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ ವಿವರಗಳು",
+        "hin" : "बॉयोमीट्रिक विवरण",
+        "eng" : "Biometric Details"
+      },
+      "name" : "BiometricDetails",
+      "order" : 3,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfAddress",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات العنوان",
+          "tam" : "முகவரி சான்று",
+          "fra" : "Address Proof",
+          "kan" : "ವಿಳಾಸ ಪುರಾವೆ",
+          "hin" : "निवास प्रमाण पत्र",
+          "eng" : "Address Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "(identity.updatableFields contains 'permanentAddress')"
+        } ],
+        "subType" : "POA",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfIdentity",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات الهوية",
+          "tam" : "அடையாளச் சான்று",
+          "fra" : "Identity Proof",
+          "kan" : "ಗುರುತಿನ ಪುರಾವೆ",
+          "hin" : "पहचान प्रमाण",
+          "eng" : "Identity Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( identity.updatableFields contains 'fullName')"
+        } ],
+        "subType" : "POI",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfRelationship",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات العلاقة",
+          "tam" : "உறவு சான்று",
+          "fra" : "Relationship Proof",
+          "kan" : "ಸಂಬಂಧ ಪುರಾವೆ",
+          "hin" : "संबंध प्रमाण",
+          "eng" : "Relationship Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "(identity.updatableFieldGroups contains 'IntroducerDetails' || identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR' )"
+        } ],
+        "subType" : "POR",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfDateOfBirth",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "DOB إثبات",
+          "tam" : "DOB சான்று",
+          "fra" : "DOB Proof",
+          "kan" : "DOB ಪ್ರೂಫ್",
+          "hin" : "जन्मतिथि प्रमाण",
+          "eng" : "DOB Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "identity.updatableFields contains 'dateOfBirth'"
+        } ],
+        "subType" : "POB",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "ara" : "وثائق",
+          "fra" : "Documents",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfException",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "إثبات الاستثناء",
+          "tam" : "விதிவிலக்கு சான்று",
+          "fra" : "Exception Proof",
+          "kan" : "ಎಕ್ಸೆಪ್ಶನ್ ಪ್ರೂಫ್",
+          "hin" : "अपवाद प्रमाण",
+          "eng" : "Exception Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "POE",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "تحميل الوثيقة",
+        "fra" : "Des documents",
+        "eng" : "Document Upload"
+      },
+      "name" : "Documents",
+      "order" : 4,
+      "preRegFetchRequired" : false
+    } ],
+    "isActive" : true
+  }, {
+    "autoSelectedGroups" : null,
+    "caption" : null,
+    "flow" : "LOST",
+    "icon" : "LostUIN.png",
+    "id" : "LOST",
+    "label" : {
+      "ara" : "فقدت UIN",
+      "tam" : "தொலைந்த UIN",
+      "fra" : "UIN perdu",
+      "kan" : "UIN ಕಳೆದುಕೊಂಡಿದೆ",
+      "hin" : "खोया यूआईएन",
+      "eng" : "Lost UIN"
+    },
+    "order" : 3,
+    "screens" : [ {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "html",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "consentText",
+        "groupLabel" : {
+          "tam" : "ஒப்புதல் உரை",
+          "kan" : "ಒಪ್ಪಿಗೆ ಪಠ್ಯ",
+          "hin" : "सहमति पाठ",
+          "eng" : "consent Text"
+        },
+        "id" : "consentText",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "ஒப்புதல் உரை",
+          "kan" : "ಒಪ್ಪಿಗೆ ಪಠ್ಯ",
+          "hin" : "सहमति पाठ",
+          "eng" : "consent Text"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consentText",
+        "templateName" : "Registration Consent",
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "checkbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "consent",
+        "groupLabel" : {
+          "tam" : "ஒப்புதல்",
+          "kan" : "ಒಪ್ಪಿಗೆ",
+          "hin" : "सहमति",
+          "eng" : "consent"
+        },
+        "id" : "consent",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நான் என் PII ஐப் பகிர்ந்து கொள்வதற்கான விதிமுறைகளையும் நிபந்தனைகளையும் படித்து ஏற்றுக்கொண்டேன்",
+          "ara" : "الاسم الكامل الكامل الكامل",
+          "fra" : "J'ai lu et j'accepte les termes et conditions pour partager mes PII",
+          "kan" : "ನನ್ನ ಪಿಐಐ ಹಂಚಿಕೊಳ್ಳಲು ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ",
+          "hin" : "मैंने अपना पीआईआई साझा करने के लिए नियम और शर्तें पढ़ ली हैं और स्वीकार करता हूं",
+          "eng" : "I have read and accept terms and conditions to share my PII"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consent",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "PreferredLanguage",
+        "groupLabel" : {
+          "tam" : "விருப்பமான மொழி",
+          "kan" : "ಆದ್ಯತೆಯ ಭಾಷೆ",
+          "hin" : "पसंदीदा भाषा",
+          "eng" : "Preferred Language"
+        },
+        "id" : "preferredLang",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "لغة الإخطار",
+          "tam" : "அறிவிப்பு மொழி",
+          "fra" : "Langue de notification",
+          "kan" : "ಅಧಿಸೂಚನೆ ಭಾಷೆ",
+          "hin" : "अधिसूचना भाषा",
+          "eng" : "Notification Langauge"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "preferredLang",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "tam" : "ஒப்புதல்",
+        "ara" : "موافقة",
+        "fra" : "Consentement",
+        "kan" : "ಒಪ್ಪಿಗೆ",
+        "hin" : "सहमति",
+        "eng" : "Consent"
+      },
+      "name" : "consentdet",
+      "order" : 1,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "FullName",
+        "groupLabel" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "id" : "fullName",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "FullName",
+        "groupLabel" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "id" : "printedName",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "அச்சிடப்பட்ட பெயர்",
+          "kan" : "ಮುದ್ರಿತ ಹೆಸರು",
+          "hin" : "मुद्रित नाम",
+          "eng" : "Printed Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "FullName",
+        "groupLabel" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "id" : "shortenedPrintedName",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "சுருக்கப்பட்ட அச்சிடப்பட்ட பெயர்",
+          "kan" : "ಸಂಕ್ಷಿಪ್ತ ಮುದ್ರಿತ ಹೆಸರು",
+          "hin" : "पछोटा मुद्रित नाम",
+          "eng" : "shortened Printed Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "FullName",
+        "groupLabel" : {
+          "ara" : "الاسم الكامل",
+          "tam" : "முழு பெயர்",
+          "fra" : "Nom complet",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "id" : "layName",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "லே பெயர்",
+          "kan" : "ಲೇ ಹೆಸರು",
+          "hin" : "नाम रखना",
+          "eng" : "Lay Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "ageDate",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "DateOfBirth",
+        "groupLabel" : {
+          "tam" : "DOB",
+          "ara" : "DOB",
+          "fra" : "DOB",
+          "kan" : "DOB",
+          "hin" : "जन्म तिथि",
+          "eng" : "DOB"
+        },
+        "id" : "dateOfBirth",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "DOB",
+          "ara" : "DOB",
+          "fra" : "DOB",
+          "kan" : "DOB",
+          "hin" : "जन्म तिथि",
+          "eng" : "DOB"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "dateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "",
+        "group" : "Gender",
+        "groupLabel" : {
+          "ara" : "جنس تذكير أو تأنيث",
+          "tam" : "பாலினம்",
+          "fra" : "Genre",
+          "kan" : "ಲಿಂಗ",
+          "hin" : "लिंग",
+          "eng" : "Gender"
+        },
+        "id" : "gender",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "جنس",
+          "tam" : "பாலினம்",
+          "fra" : "Le genre",
+          "kan" : "ಲಿಂಗ",
+          "hin" : "लिंग",
+          "eng" : "Gender"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "gender",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Address",
+        "groupLabel" : {
+          "tam" : "முகவரி",
+          "kan" : "ವಿಳಾಸ",
+          "hin" : "पता",
+          "eng" : "Address"
+        },
+        "id" : "permanentAddress",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நிரந்தர முகவரி",
+          "kan" : "ಶಾಶ್ವತ ವಿಳಾಸ",
+          "hin" : "स्थायी पता 1",
+          "eng" : "permanent Address"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "permanentAddress",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Address",
+        "groupLabel" : {
+          "tam" : "முகவரி",
+          "kan" : "ವಿಳಾಸ",
+          "hin" : "पता",
+          "eng" : "Address"
+        },
+        "id" : "temporaryAddress",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தற்காலிக முகவரி",
+          "kan" : "ತಾತ್ಕಾಲಿಕ ವಿಳಾಸ 2",
+          "hin" : "अस्थायी पता",
+          "eng" : "temporary Address"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "temporaryAddress",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "birthcert",
+        "groupLabel" : {
+          "tam" : "பிறப்பு இசை நிகழ்ச்சி",
+          "kan" : "ಜನನಗೀತೆ",
+          "hin" : "जन्म प्रमाणपत्र",
+          "eng" : "birthcert"
+        },
+        "id" : "bcertificateAvailability",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிறப்பு சான்றிதழ் கிடைக்கும்",
+          "kan" : "ಜನನ ಪ್ರಮಾಣಪತ್ರ ಲಭ್ಯತೆ",
+          "hin" : "जन्म प्रमाणपत्र उपलब्धता",
+          "eng" : "Birth Certificate availability"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "bcertificateAvailability",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "birthcert",
+        "groupLabel" : {
+          "tam" : "பிறப்பு இசை நிகழ்ச்சி",
+          "kan" : "ಜನನಗೀತೆ",
+          "hin" : "जन्म प्रमाणपत्र",
+          "eng" : "birthcert"
+        },
+        "id" : "bcertificateNo",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிறப்புச் சான்றிதழ் எண்",
+          "kan" : "ಜನನ ಪ್ರಮಾಣಪತ್ರ ಸಂಖ್ಯೆ",
+          "hin" : "जन्म प्रमाण पत्र संख्या",
+          "eng" : "Birth Certificate No"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "bcertificateNo",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "birthcert",
+        "groupLabel" : {
+          "tam" : "பிறப்பு இசை நிகழ்ச்சி",
+          "kan" : "ಜನನಗೀತೆ",
+          "hin" : "जन्म प्रमाणपत्र",
+          "eng" : "birthcert"
+        },
+        "id" : "bcertificateIssueDate",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிறப்பு சான்றிதழ் வழங்கப்பட்ட தேதி",
+          "kan" : "ಜನನ ಪ್ರಮಾಣಪತ್ರ ವಿತರಿಸಿದ ದಿನಾಂಕ",
+          "hin" : "जन्म प्रमाण पत्र जारी करने की तिथि",
+          "eng" : "Birth Certificate Issued Date"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "birthcert",
+        "groupLabel" : {
+          "tam" : "பிறப்பு இசை நிகழ்ச்சி",
+          "kan" : "ಜನನಗೀತೆ",
+          "hin" : "जन्म प्रमाणपत्र",
+          "eng" : "birthcert"
+        },
+        "id" : "bcertificateCountry",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிறப்பு சான்றிதழ் நாடு",
+          "kan" : "ಜನನ ಪ್ರಮಾಣಪತ್ರ ದೇಶ",
+          "hin" : "जन्म प्रमाणपत्र देश",
+          "eng" : "Birth Certificate Country"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "birthcert",
+        "groupLabel" : {
+          "tam" : "பிறப்பு இசை நிகழ்ச்சி",
+          "kan" : "ಜನನಗೀತೆ",
+          "hin" : "जन्म प्रमाणपत्र",
+          "eng" : "birthcert"
+        },
+        "id" : "bcertificateDistrict",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முழு பெயர்",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "birthcert",
+        "groupLabel" : {
+          "tam" : "பிறப்பு இசை நிகழ்ச்சி",
+          "kan" : "ಜನನಗೀತೆ",
+          "hin" : "जन्म प्रमाणपत्र",
+          "eng" : "birthcert"
+        },
+        "id" : "bcertificateDivision",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிறப்பு சான்றிதழ் பிரிவு",
+          "kan" : "ಜನನ ಪ್ರಮಾಣಪತ್ರ ವಿಭಾಗ",
+          "hin" : "जन्म प्रमाण पत्र प्रभाग",
+          "eng" : "Birth Cerificate Division"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "birthcert",
+        "groupLabel" : {
+          "tam" : "பிறப்பு இசை நிகழ்ச்சி",
+          "kan" : "ಜನನಗೀತೆ",
+          "hin" : "जन्म प्रमाणपत्र",
+          "eng" : "birthcert"
+        },
+        "id" : "bcertificatePlaceOfBirth",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "சான்றிதழில் பிறந்த இடம்",
+          "kan" : "ಪ್ರಮಾಣಪತ್ರದಲ್ಲಿ ಹುಟ್ಟಿದ ಸ್ಥಳ",
+          "hin" : "प्रमाण पत्र में जन्म स्थान",
+          "eng" : "Place of Birth in certificate"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Marital Status",
+        "groupLabel" : {
+          "tam" : "திருமண நிலை",
+          "kan" : "ವೈವಾಹಿಕ ಸ್ಥಿತಿ",
+          "hin" : "वैवाहिक स्थिति",
+          "eng" : "Marital Status"
+        },
+        "id" : "maritalStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "சிவில் நிலை (திருமண நிலை)",
+          "kan" : "ನಾಗರಿಕ ಸ್ಥಿತಿ (ವೈವಾಹಿಕ ಸ್ಥಿತಿ)",
+          "hin" : "नागरिक स्थिति (वैवाहिक स्थिति)",
+          "eng" : "Civil Status (Marital Status)"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "maritalStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "ApplicantLanguage",
+        "groupLabel" : {
+          "tam" : "விண்ணப்பதாரரின் மொழி",
+          "kan" : "ಅರ್ಜಿದಾರರ ಭಾಷೆ",
+          "hin" : "आवेदक की भाषा",
+          "eng" : "Applicant Language"
+        },
+        "id" : "applicantLanguage",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "விண்ணப்பதாரரின் மொழி",
+          "kan" : "ಅರ್ಜಿದಾರರ ಭಾಷೆ",
+          "hin" : "आवेदक की भाषा",
+          "eng" : "Applicant's Language"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "applicantLanguage",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "kyc",
+        "group" : "National Identity",
+        "groupLabel" : {
+          "tam" : "தேசிய அடையாளம்",
+          "kan" : "ರಾಷ್ಟ್ರೀಯ ಗುರುತು",
+          "hin" : "राष्ट्रीय पहचान",
+          "eng" : "National Identity"
+        },
+        "id" : "nationalIdentityNumber",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தேசிய அடையாள எண்",
+          "kan" : "ರಾಷ್ಟ್ರೀಯ ಗುರುತಿನ ಸಂಖ್ಯೆ",
+          "hin" : "राष्ट्रीय पहचान नंबर",
+          "eng" : "National Identity Number"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([0-9]{9}[x|X|v|V]|[0-9]{12})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "National Identity",
+        "groupLabel" : {
+          "tam" : "தேசிய அடையாளம்",
+          "kan" : "ರಾಷ್ಟ್ರೀಯ ಗುರುತು",
+          "hin" : "राष्ट्रीय पहचान",
+          "eng" : "National Identity"
+        },
+        "id" : "nicIssueDate",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "என்ஐசி வழங்கப்பட்ட தேதி",
+          "kan" : "ಎನ್ಐಸಿ ನೀಡಿದ ದಿನಾಂಕ",
+          "hin" : "एनआईसी जारी तिथि",
+          "eng" : "NIC Issued Date"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "National Identity",
+        "groupLabel" : {
+          "tam" : "தேசிய அடையாளம்",
+          "kan" : "ರಾಷ್ಟ್ರೀಯ ಗುರುತು",
+          "hin" : "राष्ट्रीय पहचान",
+          "eng" : "National Identity"
+        },
+        "id" : "nicSerialNo",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "என்ஐசி வரிசை எண்",
+          "kan" : "ಎನ್ಐಸಿ ಸರಣಿ ಸಂಖ್ಯೆ",
+          "hin" : "एनआईसी सीरियल नंबर",
+          "eng" : "NIC Serial No"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([A-Z]{1}[0-9]{7})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Mode of Delivery",
+        "groupLabel" : {
+          "tam" : "விநியோக முறை",
+          "kan" : "ವಿತರಣಾ ವಿಧಾನ",
+          "hin" : "वितरण की प्रणाली",
+          "eng" : "Mode of Delivery"
+        },
+        "id" : "modeOfdelivery",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "விநியோக முறை",
+          "kan" : "ವಿತರಣಾ ವಿಧಾನ",
+          "hin" : "वितरण की प्रणाली",
+          "eng" : "Mode of Delivery"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "modeOfdelivery",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Dual Citizenship",
+        "groupLabel" : {
+          "tam" : "இரட்டை குடியுரிமை",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ",
+          "hin" : "दोहरी नागरिकता",
+          "eng" : "Dual Citizenship"
+        },
+        "id" : "dualCitizenshipAvailability",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரட்டை குடியுரிமை கிடைக்கும்",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ ಲಭ್ಯತೆ",
+          "hin" : "दोहरी नागरिकता उपलब्धता",
+          "eng" : "Dual Citizenship Availability"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "dualCitizenshipAvailability",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Dual Citizenship",
+        "groupLabel" : {
+          "tam" : "இரட்டை குடியுரிமை",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ",
+          "hin" : "दोहरी नागरिकता",
+          "eng" : "Dual Citizenship"
+        },
+        "id" : "dualCitizenshipCertificateNo",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரட்டை குடியுரிமை சான்றிதழ் எண்",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ ಪ್ರಮಾಣಪತ್ರ ಸಂಖ್ಯೆ",
+          "hin" : "दोहरी नागरिकता प्रमाणपत्र संख्या",
+          "eng" : "Dual Citizenship Certificate No"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[0-9]{3,20}$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Dual Citizenship",
+        "groupLabel" : {
+          "tam" : "இரட்டை குடியுரிமை",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ",
+          "hin" : "दोहरी नागरिकता",
+          "eng" : "Dual Citizenship"
+        },
+        "id" : "dualCitizenshipIssueDate",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரட்டை குடியுரிமை சான்றிதழ் வழங்கப்பட்ட தேதி",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ ಪ್ರಮಾಣಪತ್ರ ನೀಡಿದ ದಿನಾಂಕ",
+          "hin" : "दोहरी नागरिकता प्रमाणपत्र जारी करने की तिथि",
+          "eng" : "Dual Citizenship Certificate Issued Date"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Dual Citizenship",
+        "groupLabel" : {
+          "tam" : "இரட்டை குடியுரிமை",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ",
+          "hin" : "दोहरी नागरिकता",
+          "eng" : "Dual Citizenship"
+        },
+        "id" : "dualCitizenshipSectionNo",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரட்டை குடியுரிமை பிரிவு எண்",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ ವಿಭಾಗ ಸಂಖ್ಯೆ",
+          "hin" : "दोहरी नागरिकता अनुभाग संख्या",
+          "eng" : "Dual Citizenship Section No"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "none",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[0-9]{3,20}$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Dual Citizenship",
+        "groupLabel" : {
+          "tam" : "இரட்டை குடியுரிமை",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ",
+          "hin" : "दोहरी नागरिकता",
+          "eng" : "Dual Citizenship"
+        },
+        "id" : "dualCitizenshipOtherNationality",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரட்டை குடியுரிமை பிற தேசியம்",
+          "kan" : "ಉಭಯ ಪೌರತ್ವ ಇತರೆ ರಾಷ್ಟ್ರೀಯತೆ",
+          "hin" : "दोहरी नागरिकता अन्य राष्ट्रीयता",
+          "eng" : "Dual Citizenship Other Nationality"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "dualCitizenshipAvailability",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Profession/Occupation",
+        "groupLabel" : {
+          "tam" : "தொழில்/தொழில்",
+          "kan" : "ವೃತ್ತಿ/ಉದ್ಯೋಗ",
+          "hin" : "पेशा कमाई का जरिया",
+          "eng" : "Profession/Occupation"
+        },
+        "id" : "profession",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தொழில்/தொழில்",
+          "kan" : "ವೃತ್ತಿ/ಉದ್ಯೋಗ",
+          "hin" : "पेशा कमाई का जरिया",
+          "eng" : "Profession/Occupation"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "profession",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "ResidenceStatus",
+        "groupLabel" : {
+          "ara" : "حالة الإقامة",
+          "tam" : "குடியிருப்பு நிலை",
+          "fra" : "Statut de résidence",
+          "kan" : "ನಿವಾಸ ಸ್ಥಿತಿ",
+          "hin" : "आवास की स्थिति",
+          "eng" : "ResidenceStatus"
+        },
+        "id" : "residenceStatus",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "حالة الإقامة",
+          "tam" : "குடியிருப்பு நிலை",
+          "fra" : "Statut de résidence",
+          "kan" : "ನಿವಾಸ ಸ್ಥಿತಿ",
+          "hin" : "आवास की स्थिति",
+          "eng" : "Residence Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "residenceStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "region",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "பிராந்தியம்",
+          "kan" : "ಪ್ರದೇಶ",
+          "hin" : "ऊपरी क्षेत्र",
+          "eng" : "Region"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "ऊपरी क्षेत्र",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "province",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மாகாணம்",
+          "kan" : "ಪ್ರಾಂತ್ಯ",
+          "hin" : "प्रांत",
+          "eng" : "Province"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "प्रांत",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "city",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "நகரம்",
+          "kan" : "ಸಿಟಿ",
+          "hin" : "शहर",
+          "eng" : "City"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "शहर",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "zone",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மண்டலம்",
+          "kan" : "ವಲಯ",
+          "hin" : "क्षेत्र",
+          "eng" : "Zone"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "क्षेत्र",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Location",
+        "groupLabel" : {
+          "tam" : "இடம்",
+          "kan" : "ಸ್ಥಳ",
+          "hin" : "स्थान",
+          "eng" : "Location"
+        },
+        "id" : "postalCode",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "அஞ்சல்",
+          "kan" : "ಅಂಚೆ",
+          "hin" : "डाक का",
+          "eng" : "Postal"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "डाक कोड",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[(?i)A-Z0-9]{5}$|^NA$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Phone",
+        "groupLabel" : {
+          "tam" : "தொலைபேசி",
+          "kan" : "ಫೋನ್",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "id" : "phone",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தொலைபேசி",
+          "kan" : "ಫೋನ್",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "Phone",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[+]*([0-9]{1})([0-9]{9})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Phone",
+        "groupLabel" : {
+          "tam" : "தொலைபேசி",
+          "kan" : "ಫೋನ್",
+          "hin" : "फ़ोन",
+          "eng" : "Phone"
+        },
+        "id" : "rNumber",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "குடியிருப்பு தொலைபேசி எண்",
+          "kan" : "ನಿವಾಸಿ ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+          "hin" : "निवासी फोन नंबर",
+          "eng" : "Resident Phone Number"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "Phone",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[+]*([0-9]{1})([0-9]{9})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Email",
+        "groupLabel" : {
+          "tam" : "மின்னஞ்சல்",
+          "kan" : "ಇಮೇಲ್",
+          "hin" : "ईमेल",
+          "eng" : "Email"
+        },
+        "id" : "email",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மின்னஞ்சல்",
+          "kan" : "ಇಮೇಲ್",
+          "hin" : "ईमेल",
+          "eng" : "Email"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "Email",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Father Details",
+        "groupLabel" : {
+          "tam" : "தந்தையின் விவரங்கள்",
+          "kan" : "ತಂದೆಯ ವಿವರಗಳು",
+          "hin" : "पिता विवरण",
+          "eng" : "Father Details"
+        },
+        "id" : "fatherName",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தந்தையின் பெயர்",
+          "kan" : "ತಂದೆಯ ಹೆಸರು",
+          "hin" : "पिता का नाम",
+          "eng" : "Father's Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Father Details",
+        "groupLabel" : {
+          "tam" : "தந்தையின் விவரங்கள்",
+          "kan" : "ತಂದೆಯ ವಿವರಗಳು",
+          "hin" : "पिता विवरण",
+          "eng" : "Father Details"
+        },
+        "id" : "fatherDOB",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தந்தையின் பிறந்த தேதி",
+          "kan" : "ತಂದೆಯ ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+          "hin" : "पिता की जन्म तिथि",
+          "eng" : "Father's Date of Birth"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "fatherdateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Father Details",
+        "groupLabel" : {
+          "tam" : "தந்தையின் விவரங்கள்",
+          "kan" : "ತಂದೆಯ ವಿವರಗಳು",
+          "hin" : "पिता विवरण",
+          "eng" : "Father Details"
+        },
+        "id" : "fatherRID",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தந்தையின் ஆர்ஐடி",
+          "kan" : "ತಂದೆಯ RID",
+          "hin" : "पिता की RID",
+          "eng" : "Father's RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Father Details",
+        "groupLabel" : {
+          "tam" : "தந்தையின் விவரங்கள்",
+          "kan" : "ತಂದೆಯ ವಿವರಗಳು",
+          "hin" : "पिता विवरण",
+          "eng" : "Father Details"
+        },
+        "id" : "fatherUIN",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தந்தையின் UIN",
+          "kan" : "ತಂದೆಯ UIN",
+          "hin" : "पिता का यूआईएन",
+          "eng" : "Father's UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Father Details",
+        "groupLabel" : {
+          "tam" : "தந்தையின் விவரங்கள்",
+          "kan" : "ತಂದೆಯ ವಿವರಗಳು",
+          "hin" : "पिता विवरण",
+          "eng" : "Father Details"
+        },
+        "id" : "fatherLivingStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தந்தையின் வாழ்க்கை நிலை",
+          "kan" : "ತಂದೆಯ ಜೀವನ ಸ್ಥಿತಿ",
+          "hin" : "पिता के रहने की स्थिति",
+          "eng" : "Father's Living Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "fatherLivingStatus",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Mother Details",
+        "groupLabel" : {
+          "tam" : "தாயின் விவரங்கள்",
+          "kan" : "ತಾಯಿಯ ವಿವರಗಳು",
+          "hin" : "माता का विवरण",
+          "eng" : "Mother Details"
+        },
+        "id" : "motherName",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "அம்மாவின் பெயர்",
+          "kan" : "ತಾಯಿಯ ಹೆಸರು",
+          "hin" : "माता का नाम",
+          "eng" : "Mother's Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Mother Details",
+        "groupLabel" : {
+          "tam" : "தாயின் விவரங்கள்",
+          "kan" : "ತಾಯಿಯ ವಿವರಗಳು",
+          "hin" : "माता का विवरण",
+          "eng" : "Mother Details"
+        },
+        "id" : "motherDOB",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தாயின் பிறந்த தேதி",
+          "kan" : "ತಾಯಿಯ ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+          "hin" : "माता की जन्म तिथि",
+          "eng" : "Mother's Date of Birth"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "MotherdateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Mother Details",
+        "groupLabel" : {
+          "tam" : "தாயின் விவரங்கள்",
+          "kan" : "ತಾಯಿಯ ವಿವರಗಳು",
+          "hin" : "माता का विवरण",
+          "eng" : "Mother Details"
+        },
+        "id" : "motherRID",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "அம்மாவின் ஆர்.ஐ.டி.",
+          "kan" : "ತಾಯಿಯ RID",
+          "hin" : "माँ की RID",
+          "eng" : "Mother's RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Mother Details",
+        "groupLabel" : {
+          "tam" : "தாயின் விவரங்கள்",
+          "kan" : "ತಾಯಿಯ ವಿವರಗಳು",
+          "hin" : "माता का विवरण",
+          "eng" : "Mother Details"
+        },
+        "id" : "motherUIN",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "அம்மாவின் UIN",
+          "kan" : "ತಾಯಿಯ ಯುಐಎನ್",
+          "hin" : "मां का यूआईएन",
+          "eng" : "Mother's UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Mother Details",
+        "groupLabel" : {
+          "tam" : "தாயின் விவரங்கள்",
+          "kan" : "ತಾಯಿಯ ವಿವರಗಳು",
+          "hin" : "माता का विवरण",
+          "eng" : "Mother Details"
+        },
+        "id" : "motherLivingStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "தாயின் வாழ்க்கை நிலை",
+          "kan" : "ತಾಯಿಯ ಜೀವನ ಸ್ಥಿತಿ",
+          "hin" : "माँ के रहने की स्थिति",
+          "eng" : "Mother's Living Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "motherLivingStatus",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "tam" : "அறிமுகப்படுத்துபவர் விவரங்கள்",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerName",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "اسم مقدم العرض",
+          "tam" : "அறிமுகம் பெயர்",
+          "fra" : "nom del'introducteur",
+          "kan" : "ಪರಿಚಯಕಾರರ ಹೆಸರು",
+          "hin" : "परिचयकर्ता का नाम",
+          "eng" : "Introducer Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( identity.get('ageGroup') == 'INFANT' || identity.get('ageGroup') == 'MINOR' )"
+        } ],
+        "subType" : "introducerName",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "tam" : "அறிமுகப்படுத்துபவர் விவரங்கள்",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerRID",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "معرف RID",
+          "tam" : "அறிமுகம் RID",
+          "fra" : "Introducteur RID",
+          "kan" : "ಪರಿಚಯಕಾರ ಆರ್ಐಡಿ",
+          "hin" : "परिचयकर्ता RID",
+          "eng" : "Introducer RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( !(identity.get('introducerName') == nil || identity.get('introducerName') == empty) &&   (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty))"
+        } ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([0-9]{10,30})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "IntroducerDetails",
+        "groupLabel" : {
+          "tam" : "அறிமுகப்படுத்துபவர் விவரங்கள்",
+          "kan" : "ಪರಿಚಯದ ವಿವರಗಳು",
+          "hin" : "परिचयकर्ता विवरण",
+          "eng" : "Introducer Details"
+        },
+        "id" : "introducerUIN",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "معرف المستخدم المعرّف",
+          "tam" : "அறிமுகம் UIN",
+          "fra" : "Introducteur UIN",
+          "kan" : "ಪರಿಚಯಕಾರ UIN",
+          "hin" : "परिचयकर्ता IN",
+          "eng" : "Introducer UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ {
+          "engine" : "MVEL",
+          "expr" : "( !(identity.get('introducerName') == nil || identity.get('introducerName') == empty) &&   (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty))"
+        } ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^([0-9]{10,30})$"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Spouse Details",
+        "groupLabel" : {
+          "tam" : "மனைவி விவரங்கள்",
+          "kan" : "ಸಂಗಾತಿಯ ವಿವರಗಳು",
+          "hin" : "पति का विवरण",
+          "eng" : "Spouse Details"
+        },
+        "id" : "spouseName",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மனைவியின் பெயர்",
+          "kan" : "ಸಂಗಾತಿಯ ಹೆಸರು",
+          "hin" : "जीवनसाथी का नाम",
+          "eng" : "Spouse's Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Spouse Details",
+        "groupLabel" : {
+          "tam" : "மனைவி விவரங்கள்",
+          "kan" : "ಸಂಗಾತಿಯ ವಿವರಗಳು",
+          "hin" : "पति का विवरण",
+          "eng" : "Spouse Details"
+        },
+        "id" : "spouseDOB",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "வாழ்க்கைத் துணைவரின் பிறந்த தேதி",
+          "kan" : "ಸಂಗಾತಿಯ ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+          "hin" : "पति के जन्म की तारीख",
+          "eng" : "Spouse's Date of Birth"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "spousedateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Spouse Details",
+        "groupLabel" : {
+          "tam" : "மனைவி விவரங்கள்",
+          "kan" : "ಸಂಗಾತಿಯ ವಿವರಗಳು",
+          "hin" : "पति का विवरण",
+          "eng" : "Spouse Details"
+        },
+        "id" : "spouseRID",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மனைவியின் RID",
+          "kan" : "ಸಂಗಾತಿಯ RID",
+          "hin" : "जीवनसाथी की RID",
+          "eng" : "Spouse's RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Spouse Details",
+        "groupLabel" : {
+          "tam" : "மனைவி விவரங்கள்",
+          "kan" : "ಸಂಗಾತಿಯ ವಿವರಗಳು",
+          "hin" : "पति का विवरण",
+          "eng" : "Spouse Details"
+        },
+        "id" : "spouseUIN",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மனைவியின் UIN",
+          "kan" : "ಸಂಗಾತಿಯ ಯುಐಎನ್",
+          "hin" : "जीवनसाथी का यूआईएन",
+          "eng" : "Spouse's UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Spouse Details",
+        "groupLabel" : {
+          "tam" : "மனைவி விவரங்கள்",
+          "kan" : "ಸಂಗಾತಿಯ ವಿವರಗಳು",
+          "hin" : "पति का विवरण",
+          "eng" : "Spouse Details"
+        },
+        "id" : "spouseLivingStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "மனைவியின் வாழ்க்கை நிலை",
+          "kan" : "ಸಂಗಾತಿಯ ಜೀವನ ಸ್ಥಿತಿ",
+          "hin" : "जीवनसाथी के रहने की स्थिति",
+          "eng" : "Spouse's Living Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "livingStatus",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Sibling Details",
+        "groupLabel" : {
+          "tam" : "முதல் உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "पहले भाई का विवरण",
+          "eng" : "First Sibling Details"
+        },
+        "id" : "sibling1Name",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறப்பின் பெயர்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ಹೆಸರು",
+          "hin" : "पहले भाई का नाम",
+          "eng" : "First Sibling's Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Sibling Details",
+        "groupLabel" : {
+          "tam" : "முதல் உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "पहले भाई का विवरण",
+          "eng" : "First Sibling Details"
+        },
+        "id" : "sibling1DOB",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறப்பின் பிறந்த தேதி",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+          "hin" : "पहले भाई की जन्म तिथि",
+          "eng" : "First Sibling's Date of Birth"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "sibling1dateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "First Sibling Details",
+        "groupLabel" : {
+          "tam" : "முதல் உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "पहले भाई का विवरण",
+          "eng" : "First Sibling Details"
+        },
+        "id" : "sibling1CivilStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறப்பின் சிவில் நிலை",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ನಾಗರಿಕ ಸ್ಥಿತಿ",
+          "hin" : "पहले भाई की नागरिक स्थिति",
+          "eng" : "First Sibling's Civil Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "maritalStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "First Sibling Details",
+        "groupLabel" : {
+          "tam" : "முதல் உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "पहले भाई का विवरण",
+          "eng" : "First Sibling Details"
+        },
+        "id" : "sibling1Gender",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறந்த பாலினம்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ಲಿಂಗ",
+          "hin" : "पहले भाई का लिंग",
+          "eng" : "First Sibling's Gender"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "gender",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Sibling Details",
+        "groupLabel" : {
+          "tam" : "முதல் உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "पहले भाई का विवरण",
+          "eng" : "First Sibling Details"
+        },
+        "id" : "sibling1RID",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறப்பு RID",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ಆರ್ಐಡಿ",
+          "hin" : "पहले भाई की RID",
+          "eng" : "Full Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Sibling Details",
+        "groupLabel" : {
+          "tam" : "முதல் உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "पहले भाई का विवरण",
+          "eng" : "First Sibling Details"
+        },
+        "id" : "sibling1UIN",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறப்பு UIN",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ UIN",
+          "hin" : "पहले भाई-बहन का यूआईएन",
+          "eng" : "First Sibling's UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "First Sibling Details",
+        "groupLabel" : {
+          "tam" : "முதல் உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "पहले भाई का विवरण",
+          "eng" : "First Sibling Details"
+        },
+        "id" : "sibling1LivingStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறப்பின் வாழ்க்கை நிலை",
+          "kan" : "ಮೊದಲ ಒಡಹುಟ್ಟಿದವರ ಜೀವನ ಸ್ಥಿತಿ",
+          "hin" : "पहले भाई-बहन के रहने की स्थिति",
+          "eng" : "First Sibling's Living Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "livingStatus",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Sibling Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "दूसरा भाई विवरण",
+          "eng" : "Second Sibling Details"
+        },
+        "id" : "sibling2Name",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் உடன்பிறப்பின் வாழ்க்கை நிலை",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ಹೆಸರು",
+          "hin" : "दूसरे भाई का नाम",
+          "eng" : "Second Sibling's Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Sibling Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "दूसरा भाई विवरण",
+          "eng" : "Second Sibling Details"
+        },
+        "id" : "sibling2DOB",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது உடன்பிறந்தவரின் பிறந்த தேதி",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+          "hin" : "दूसरे भाई की जन्म तिथि",
+          "eng" : "Second Sibling's Date of Birth"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "sibling2dateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Second Sibling Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "दूसरा भाई विवरण",
+          "eng" : "Second Sibling Details"
+        },
+        "id" : "sibling2CivilStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பின் சிவில் நிலை",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ನಾಗರಿಕ ಸ್ಥಿತಿ",
+          "hin" : "दूसरे भाई की नागरिक स्थिति",
+          "eng" : "Second Sibling's Civil Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "maritalStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Second Sibling Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "दूसरा भाई विवरण",
+          "eng" : "Second Sibling Details"
+        },
+        "id" : "sibling2Gender",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது உடன்பிறந்தவரின் பிறந்த தேதி",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ಲಿಂಗ",
+          "hin" : "दूसरे भाई का लिंग",
+          "eng" : "Second Sibling's Gender"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "gender",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Sibling Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "दूसरा भाई विवरण",
+          "eng" : "Second Sibling Details"
+        },
+        "id" : "sibling2RID",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு RID",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ಆರ್ಐಡಿ",
+          "hin" : "दूसरे भाई की RID",
+          "eng" : "Second Sibling's RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Sibling Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "दूसरा भाई विवरण",
+          "eng" : "Second Sibling Details"
+        },
+        "id" : "sibling2UIN",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு IN",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರು IN",
+          "hin" : "दूसरा भाई IN",
+          "eng" : "Second Sibling's UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Second Sibling Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பு விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ವಿವರಗಳು",
+          "hin" : "दूसरा भाई विवरण",
+          "eng" : "Second Sibling Details"
+        },
+        "id" : "sibling2LivingStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது உடன்பிறப்பின் வாழ்க்கை நிலை",
+          "kan" : "ಎರಡನೇ ಒಡಹುಟ್ಟಿದವರ ಜೀವನ ಸ್ಥಿತಿ",
+          "hin" : "दूसरे भाई-बहन के रहने की स्थिति",
+          "eng" : "Second Sibling's Living Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "livingStatus",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Child Details",
+        "groupLabel" : {
+          "tam" : "முதல் குழந்தை விவரங்கள்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "पहले बच्चे का विवरण",
+          "eng" : "First Child Details"
+        },
+        "id" : "child1Name",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் குழந்தையின் பெயர்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ಹೆಸರು",
+          "hin" : "पहले बच्चे का नाम",
+          "eng" : "First Child's Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Child Details",
+        "groupLabel" : {
+          "tam" : "முதல் குழந்தை விவரங்கள்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "पहले बच्चे का विवरण",
+          "eng" : "First Child Details"
+        },
+        "id" : "child1DOB",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் குழந்தையின் பிறந்த தேதி",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+          "hin" : "पहले बच्चे की जन्म तिथि",
+          "eng" : "First Child's Date of Birth"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "child1dateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "First Child Details",
+        "groupLabel" : {
+          "tam" : "முதல் குழந்தை விவரங்கள்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "पहले बच्चे का विवरण",
+          "eng" : "First Child Details"
+        },
+        "id" : "child1CivilStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் குழந்தையின் சிவில் நிலை",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ನಾಗರಿಕ ಸ್ಥಿತಿ",
+          "hin" : "पहले बच्चे की नागरिक स्थिति",
+          "eng" : "First Child's Civil Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "maritalStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "First Child Details",
+        "groupLabel" : {
+          "tam" : "முதல் குழந்தை விவரங்கள்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "पहले बच्चे का विवरण",
+          "eng" : "First Child Details"
+        },
+        "id" : "child1Gender",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் குழந்தையின் பாலினம்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ಲಿಂಗ",
+          "hin" : "पहले बच्चे का लिंग",
+          "eng" : "First Child's Gender"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "gender",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Child Details",
+        "groupLabel" : {
+          "tam" : "முதல் குழந்தை விவரங்கள்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "पहले बच्चे का विवरण",
+          "eng" : "First Child Details"
+        },
+        "id" : "child1RID",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் குழந்தையின் RID",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ RID",
+          "hin" : "पहले बच्चे की RID",
+          "eng" : "First Child's RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "First Child Details",
+        "groupLabel" : {
+          "tam" : "முதல் குழந்தை விவரங்கள்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "पहले बच्चे का विवरण",
+          "eng" : "First Child Details"
+        },
+        "id" : "child1UIN",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் குழந்தையின் பாலினம்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ಯುಐಎನ್",
+          "hin" : "पहले बच्चे का यूआईएन",
+          "eng" : "First Child's UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "First Child Details",
+        "groupLabel" : {
+          "tam" : "முதல் குழந்தை விவரங்கள்",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "पहले बच्चे का विवरण",
+          "eng" : "First Child Details"
+        },
+        "id" : "child1LivingStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முதல் குழந்தையின் வாழ்க்கை நிலை",
+          "kan" : "ಮೊದಲ ಮಗುವಿನ ಜೀವನ ಸ್ಥಿತಿ",
+          "hin" : "पहले बच्चे के रहने की स्थिति",
+          "eng" : "First Child's Living Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "livingStatus",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Child Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது குழந்தை விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "दूसरा बच्चा विवरण",
+          "eng" : "Second Child Details"
+        },
+        "id" : "child2Name",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது குழந்தையின் பெயர்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ಹೆಸರು",
+          "hin" : "दूसरे बच्चे का नाम",
+          "eng" : "Second Child's Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "name",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{3,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "date",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Child Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது குழந்தை விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "दूसरा बच्चा विवरण",
+          "eng" : "Second Child Details"
+        },
+        "id" : "child2DOB",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது குழந்தையின் பிறந்த தேதி",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ಹುಟ್ಟಿದ ದಿನಾಂಕು",
+          "hin" : "दूसरे बच्चे की जन्म तिथि",
+          "eng" : "Second Child's Date of Birth"
+        },
+        "maximum" : 43800,
+        "minimum" : -43800,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "child2dateOfBirth",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Second Child Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது குழந்தை விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "दूसरा बच्चा विवरण",
+          "eng" : "Second Child Details"
+        },
+        "id" : "child2CivilStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "முழு பெயர்",
+          "kan" : "ಪೂರ್ಣ ಹೆಸರು",
+          "hin" : "पूरा नाम",
+          "eng" : "Full Name"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "maritalStatus",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Second Child Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது குழந்தை விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "दूसरा बच्चा विवरण",
+          "eng" : "Second Child Details"
+        },
+        "id" : "child2Gender",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது குழந்தையின் பாலினம்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ಲಿಂಗ",
+          "hin" : "दूसरे बच्चे का लिंग",
+          "eng" : "Second Child's Gender"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "gender",
+        "templateName" : null,
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Child Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது குழந்தை விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "दूसरा बच्चा विवरण",
+          "eng" : "Second Child Details"
+        },
+        "id" : "child2RID",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது குழந்தையின் ஆர்ஐடி",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ಆರ್ಐಡಿ",
+          "hin" : "दूसरे बच्चे की RID",
+          "eng" : "Second Child's RID"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "RID",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "textbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Second Child Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது குழந்தை விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "दूसरा बच्चा विवरण",
+          "eng" : "Second Child Details"
+        },
+        "id" : "child2UIN",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது குழந்தையின் UIN",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ UIN",
+          "hin" : "दूसरे बच्चे का यूआईएन",
+          "eng" : "Second Child's UIN"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "UIN",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ {
+          "langCode" : null,
+          "type" : "regex",
+          "validator" : "^(?=.{0,50}$).*"
+        } ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "dropdown",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "Second Child Details",
+        "groupLabel" : {
+          "tam" : "இரண்டாவது குழந்தை விவரங்கள்",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ವಿವರಗಳು",
+          "hin" : "दूसरा बच्चा विवरण",
+          "eng" : "Second Child Details"
+        },
+        "id" : "child2LivingStatus",
+        "inputRequired" : true,
+        "label" : {
+          "tam" : "இரண்டாவது குழந்தையின் வாழ்க்கை நிலை",
+          "kan" : "ಎರಡನೇ ಮಗುವಿನ ಜೀವನ ಸ್ಥಿತಿ",
+          "hin" : "दूसरे बच्चे के रहने की स्थिति",
+          "eng" : "Second Child's Living Status"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "livingStatus",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "التفاصيل الديموغرافية",
+        "tam" : "மக்கள்தொகை விவரங்கள்",
+        "fra" : "Détails démographiques",
+        "kan" : "ಜನಸಂಖ್ಯಾ ವಿವರಗಳು",
+        "hin" : "जनसांख्यिकीय विवरण",
+        "eng" : "Demographic Details"
+      },
+      "name" : "DemographicDetails",
+      "order" : 2,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+        "conditionalBioAttributes" : [ {
+          "ageGroup" : "INFANT",
+          "bioAttributes" : [ "face" ],
+          "process" : "ALL",
+          "validationExpr" : "face"
+        } ],
+        "controlType" : "biometrics",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Biometrics",
+        "groupLabel" : {
+          "tam" : "பயோமெட்ரிக்ஸ்",
+          "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "बॉयोमेट्रिक्स",
+          "eng" : "Biometrics"
+        },
+        "id" : "individualBiometrics",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "القياسات الحيوية الفردية",
+          "tam" : "விண்ணப்பதாரர் பயோமெட்ரிக்ஸ்",
+          "fra" : "Applicant Biometrics",
+          "kan" : "ಅರ್ಜಿದಾರ ಬಯೋಮೆಟ್ರಿಕ್ಸ್",
+          "hin" : "आवेदक बायोमेट्रिक्स",
+          "eng" : "Applicant Biometrics"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "applicant",
+        "templateName" : null,
+        "type" : "biometricsType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : true
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : {
+          "tam" : "ஆவணங்கள்",
+          "kan" : "ದಾಖಲೆಗಳು",
+          "hin" : "दस्तावेज़",
+          "eng" : "Documents"
+        },
+        "id" : "proofOfException",
+        "inputRequired" : false,
+        "label" : {
+          "ara" : "إثبات الاستثناء",
+          "tam" : "விதிவிலக்கு சான்று",
+          "fra" : "Exception Proof",
+          "kan" : "ಎಕ್ಸೆಪ್ಶನ್ ಪ್ರೂಫ್",
+          "hin" : "अपवाद प्रमाण",
+          "eng" : "Exception Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "POE",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "التفاصيل البيومترية",
+        "tam" : "பயோமெட்ரிக் விவரங்கள்",
+        "fra" : "Détails biométriques",
+        "kan" : "ಬಯೋಮೆಟ್ರಿಕ್ ವಿವರಗಳು",
+        "hin" : "बॉयोमीट्रिक विवरण",
+        "eng" : "Biometric Details"
+      },
+      "name" : "BiometricDetails",
+      "order" : 3,
+      "preRegFetchRequired" : false
+    } ],
+    "isActive" : true
+  }, {
+    "autoSelectedGroups" : null,
+    "caption" : {
+      "ara" : "التصحيح البيومتري",
+      "fra" : "Correction biométrique",
+      "eng" : "Biometric correction"
+    },
+    "flow" : "CORRECTION",
+    "icon" : "UINUpdate.png",
+    "id" : "BIOMETRIC_CORRECTION",
+    "label" : {
+      "ara" : "التصحيح البيومتري",
+      "fra" : "Correction biométrique",
+      "eng" : "Biometric correction"
+    },
+    "order" : 4,
+    "screens" : [ {
+      "fields" : [ {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "html",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "consentText",
+        "groupLabel" : null,
+        "id" : "consentText",
+        "inputRequired" : true,
+        "label" : { },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consentText",
+        "templateName" : "Registration Consent",
+        "type" : "simpleType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "checkbox",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "consent",
+        "groupLabel" : null,
+        "id" : "consent",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "الاسم الكامل الكامل الكامل",
+          "fra" : "J'ai lu et j'accepte les termes et conditions pour partager mes PII",
+          "eng" : "I have read and accept terms and conditions to share my PII"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "consent",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "button",
+        "fieldType" : "dynamic",
+        "format" : "none",
+        "group" : "PreferredLanguage",
+        "groupLabel" : null,
+        "id" : "preferredLang",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "لغة الإخطار",
+          "fra" : "Langue de notification",
+          "eng" : "Notification Langauge"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "preferredLang",
+        "templateName" : null,
+        "type" : "string",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "موافقة",
+        "fra" : "Consentement",
+        "eng" : "Consent"
+      },
+      "name" : "consentdet",
+      "order" : 1,
+      "preRegFetchRequired" : false
+    }, {
+      "fields" : [ {
+        "bioAttributes" : [ "leftEye", "rightEye", "rightIndex", "rightLittle", "rightRing", "rightMiddle", "leftIndex", "leftLittle", "leftRing", "leftMiddle", "leftThumb", "rightThumb", "face" ],
+        "conditionalBioAttributes" : [ {
+          "ageGroup" : "INFANT",
+          "bioAttributes" : [ "face" ],
+          "process" : "ALL",
+          "validationExpr" : "face"
+        } ],
+        "controlType" : "biometrics",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Biometrics",
+        "groupLabel" : null,
+        "id" : "individualBiometrics",
+        "inputRequired" : true,
+        "label" : {
+          "ara" : "القياسات الحيوية الفردية",
+          "fra" : "Applicant Biometrics",
+          "eng" : "Applicant Biometrics"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : true,
+        "requiredOn" : [ ],
+        "subType" : "applicant",
+        "templateName" : null,
+        "type" : "biometricsType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : true
+      }, {
+        "bioAttributes" : null,
+        "conditionalBioAttributes" : null,
+        "controlType" : "fileupload",
+        "fieldType" : "default",
+        "format" : "none",
+        "group" : "Documents",
+        "groupLabel" : null,
+        "id" : "proofOfException",
+        "inputRequired" : false,
+        "label" : {
+          "ara" : "إثبات الاستثناء",
+          "fra" : "Exception Proof",
+          "eng" : "Exception Proof"
+        },
+        "maximum" : 0,
+        "minimum" : 0,
+        "required" : false,
+        "requiredOn" : [ ],
+        "subType" : "POE",
+        "templateName" : null,
+        "type" : "documentType",
+        "validators" : [ ],
+        "visible" : null,
+        "exceptionPhotoRequired" : false
+      } ],
+      "label" : {
+        "ara" : "التفاصيل البيومترية",
+        "fra" : "Détails biométriques",
+        "eng" : "Biometric Details"
+      },
+      "name" : "BiometricDetails",
+      "order" : 2,
+      "preRegFetchRequired" : false
+    } ],
+    "isActive" : true
+  }]

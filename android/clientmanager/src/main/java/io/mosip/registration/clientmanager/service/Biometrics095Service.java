@@ -1,29 +1,50 @@
 package io.mosip.registration.clientmanager.service;
 
+import static io.mosip.registration.clientmanager.constant.RegistrationConstants.EXCEPTION_PHOTO_ATTR;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.mosip.registration.clientmanager.constant.*;
-import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
-import io.mosip.registration.clientmanager.dto.sbi.*;
-import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
-import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
-import io.mosip.registration.clientmanager.spi.AuditManagerService;
-import io.mosip.registration.clientmanager.spi.BiometricsService;
-import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
-import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
-import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
-import io.mosip.registration.keymanager.util.KeyManagerConstant;
 
-import javax.inject.Inject;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import static io.mosip.registration.clientmanager.constant.RegistrationConstants.EXCEPTION_PHOTO_ATTR;
+import javax.inject.Inject;
+
+
+import io.mosip.kernel.biometrics.spi.IBioApiV2;
+import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.constant.SBIError;
+import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
+import io.mosip.registration.clientmanager.dto.sbi.CaptureBioDetail;
+import io.mosip.registration.clientmanager.dto.sbi.CaptureDto;
+import io.mosip.registration.clientmanager.dto.sbi.CaptureRequest;
+import io.mosip.registration.clientmanager.dto.sbi.CaptureRespDetail;
+import io.mosip.registration.clientmanager.dto.sbi.CaptureResponse;
+import io.mosip.registration.clientmanager.dto.sbi.DeviceDto;
+import io.mosip.registration.clientmanager.dto.sbi.DigitalId;
+import io.mosip.registration.clientmanager.dto.sbi.InfoResponse;
+import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.BiometricsService;
+import io.mosip.registration.clientmanager.util.MatchUtil;
+import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
+import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
+import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.util.KeyManagerConstant;
+import io.mosip.registration.matchsdk.impl.MatchSDK;
 
 public class Biometrics095Service extends BiometricsService {
 
@@ -40,14 +61,24 @@ public class Biometrics095Service extends BiometricsService {
 
     private ClientCryptoManagerService clientCryptoManagerService;
 
+    private final UserBiometricRepository userBiometricRepository;
+    private IBioApiV2 iBioApiV2;
+    SharedPreferences sharedPreferences;
+
+
     @Inject
     public Biometrics095Service(Context context, ObjectMapper objectMapper,
-                                AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService) {
+                                AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService, UserBiometricRepository userBiometricRepository) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.auditManagerService = auditManagerService;
         this.globalParamRepository = globalParamRepository;
         this.clientCryptoManagerService = clientCryptoManagerService;
+        this.userBiometricRepository = userBiometricRepository;
+        this.iBioApiV2 = new MatchSDK();
+        sharedPreferences = this.context.getSharedPreferences(
+                this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
     }
 
     public CaptureRequest getRCaptureRequest(Modality modality, String deviceId, List<String> exceptionAttributes) {
@@ -109,6 +140,14 @@ public class Biometrics095Service extends BiometricsService {
                         false,
                         1, 0,
                         captureDto.getQualityScore()));
+
+                if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
+                    boolean isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+                    if(isMatched){
+                        Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
+                        return new ArrayList<>();
+                    }
+                }
             }
         } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
@@ -121,6 +160,7 @@ public class Biometrics095Service extends BiometricsService {
         }
         return biometricsDtoList;
     }
+
 
     public String[] handleDeviceInfoResponse(Modality modality, byte[] response) throws BiometricsServiceException {
         String callbackId = null;

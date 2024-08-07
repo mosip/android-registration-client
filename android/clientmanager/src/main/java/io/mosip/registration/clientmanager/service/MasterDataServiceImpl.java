@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -99,6 +100,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private FileSignatureDao fileSignatureDao;
     private String regCenterId;
     private String result = "";
+    SharedPreferences sharedPreferences;
 
     @Inject
     public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
@@ -139,6 +141,9 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
         this.fileSignatureDao = fileSignatureDao;
+        sharedPreferences = this.context.getSharedPreferences(
+                this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
     }
 
     @Override
@@ -380,6 +385,11 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
 
             globalParamRepository.saveGlobalParams(globalParamList);
+            SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                    Context.MODE_PRIVATE).edit();
+            editor.putString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, this.globalParamRepository
+                    .getCachedStringGlobalParam(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG));
+            editor.apply();
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);
         }
