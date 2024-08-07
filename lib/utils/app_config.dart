@@ -20,6 +20,8 @@ String mosipLogo = 'assets/svg/MOSIP Logo.svg';
 String syncDataIcon = 'assets/svg/Synchronising Data.svg';
 String dashboardSelectedIcon = 'assets/svg/DashboardSelected.svg';
 String settingsSelectedIcon = 'assets/svg/SettingsSelected.svg';
+String profileIcon = 'assets/svg/ProfileIcon.svg';
+String profileSelectedIcon = 'assets/svg/ProfileSelected.svg';
 Color solidPrimary = const Color(0xFF1C43A1);
 
 Color backgroundColor = const Color(0xFFF8FCFF);
