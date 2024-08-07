@@ -301,5 +301,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fetch_data": "RÉCUPÉRER DES DONNÉES",
+  "application_id_not_exist": "L'ID de l'application n'existe pas!",
+  "correct_application_id": "Veuillez vérifier l'ID d'application saisi ou saisir un ID correct et essayer de le récupérer à nouveau.",
+  "enter_application_id": "Veuillez saisir l'ID de la demande",
+  "okay": "D'ACCORD"
 }
