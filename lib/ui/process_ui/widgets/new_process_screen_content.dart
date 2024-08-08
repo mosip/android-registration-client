@@ -128,11 +128,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     }
   }
 
-  evaluateMVELVisible(
-      String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider
-        .evaluateMVELVisible(fieldData, expression!)
-        .then((value) {
+  evaluateMVELVisible(String fieldData, Field e) async {
+    registrationTaskProvider.evaluateMVELVisible(fieldData).then((value) {
       if (!value) {
         globalProvider.removeFieldFromMap(
             e.id!, globalProvider.fieldInputValue);
@@ -142,11 +139,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     });
   }
 
-  evaluateMVELRequired(
-      String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider
-        .evaluateMVELRequired(fieldData, expression!)
-        .then((value) {
+  evaluateMVELRequired(String fieldData, Field e) async {
+    registrationTaskProvider.evaluateMVELRequired(fieldData).then((value) {
       globalProvider.setMvelRequiredFields(e.id!, value);
     });
   }
@@ -154,10 +148,8 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   _checkMvelVisible(Field e) async {
     if (e.required == false) {
       if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
-        await evaluateMVELVisible(jsonEncode(e.toJson()),
-            e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
-        await evaluateMVELRequired(jsonEncode(e.toJson()),
-            e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
+        await evaluateMVELVisible(jsonEncode(e.toJson()), e);
+        await evaluateMVELRequired(jsonEncode(e.toJson()), e);
       }
     }
   }
@@ -166,30 +158,34 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if(widget.screen.preRegFetchRequired==true)...[
-          PreRegDataControl(screen:widget.screen,onFetched: (){
-            setState(() {
-              refreshValue = 1;
-            });
-          }),
+        if (widget.screen.preRegFetchRequired == true) ...[
+          PreRegDataControl(
+              screen: widget.screen,
+              onFetched: () {
+                setState(() {
+                  refreshValue = 1;
+                });
+              }),
         ],
-        (context.watch<GlobalProvider>().preRegControllerRefresh) ? const CircularProgressIndicator() : Form(
-          key: context.watch<GlobalProvider>().formKey,
-          child: Column(
-            children: [
-              ...widget.screen.fields!.map((e) {
-                _checkMvelVisible(e!);
-                if (e.inputRequired == true) {
-                  if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ??
-                      true) {
-                    return widgetType(e);
-                  }
-                }
-                return Container();
-              }).toList(),
-            ],
-          ),
-        ),
+        (context.watch<GlobalProvider>().preRegControllerRefresh)
+            ? const CircularProgressIndicator()
+            : Form(
+                key: context.watch<GlobalProvider>().formKey,
+                child: Column(
+                  children: [
+                    ...widget.screen.fields!.map((e) {
+                      _checkMvelVisible(e!);
+                      if (context
+                              .watch<GlobalProvider>()
+                              .mvelVisibleFields[e.id] ??
+                          true) {
+                        return widgetType(e);
+                      }
+                      return Container();
+                    }).toList(),
+                  ],
+                ),
+              ),
       ],
     );
   }

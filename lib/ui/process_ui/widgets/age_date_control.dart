@@ -44,8 +44,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
       globalProvider = Provider.of<GlobalProvider>(context, listen: false);
       registrationTaskProvider =
           Provider.of<RegistrationTaskProvider>(context, listen: false);
-      _getSavedDate();
     });
+    _getSavedDate();
     super.initState();
   }
 
