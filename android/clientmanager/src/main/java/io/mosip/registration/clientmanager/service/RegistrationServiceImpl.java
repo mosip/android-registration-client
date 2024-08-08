@@ -28,12 +28,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -48,9 +50,11 @@ import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
+import io.mosip.registration.clientmanager.exception.RegBaseCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
@@ -72,6 +76,7 @@ import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.VersionType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
+import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
@@ -252,13 +257,63 @@ public class RegistrationServiceImpl implements RegistrationService {
             JSONObject additionalInfo = new JSONObject();
             additionalInfo.put("langCode", this.registrationDto.getSelectedLanguages().get(0));
             //TODO add name, phone and email in additional info
+            List<String> fullName = new ArrayList<>();
+            String fullNameKey = getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_FULL_NAME);
+            if(fullNameKey != null) {
+                List<String> fullNameKeys = Arrays.asList(fullNameKey.split(RegistrationConstants.COMMA));
+                for (String key : fullNameKeys) {
+                    Object fullNameObj = this.registrationDto.getDemographics().get(key);
+                    fullName.add(getAdditionalInfo(fullNameObj));
+                }
+            }
 
+            Object emailObj = this.registrationDto.getDemographics().get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_EMAIL));
+            Object phoneObj = this.registrationDto.getDemographics().get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_PHONE));
+
+            additionalInfo.put("name", String.join(" ", fullName));
+            additionalInfo.put("email", getAdditionalInfo(emailObj));
+            additionalInfo.put("phone", getAdditionalInfo(phoneObj));
+            
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
                     centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo);
 
 //        } finally {
             clearRegistration();
 //        }
+    }
+
+    private String getKey(RegistrationDto registrationDTO, String subType) throws Exception {
+        List<String> key = new ArrayList<>();
+        List<FieldSpecDto> schemaFields = identitySchemaRepository.getProcessSpecFields(context, registrationDTO.getProcess());
+        for (FieldSpecDto schemaField : schemaFields) {
+            if (schemaField.getSubType() != null && schemaField.getSubType().equalsIgnoreCase(subType)) {
+                if (subType.equalsIgnoreCase(RegistrationConstants.UI_SCHEMA_SUBTYPE_FULL_NAME)) {
+                    key.add(schemaField.getId());
+                } else {
+                    key.add(schemaField.getId());
+                    break;
+                }
+            }
+        }
+        return String.join(RegistrationConstants.COMMA, key);
+    }
+
+    private String getAdditionalInfo(Object fieldValue) {
+        if(fieldValue == null) { return null; }
+
+        if (fieldValue instanceof List<?>) {
+            Optional<SimpleType> demoValueInRequiredLang = ((List<SimpleType>) fieldValue).stream()
+                    .filter(valueDTO -> valueDTO.getLanguage().equals(this.registrationDto.getSelectedLanguages().get(0))).findFirst();
+
+            if (demoValueInRequiredLang.isPresent()) {
+                return demoValueInRequiredLang.get().getValue();
+            }
+        }
+
+        if (fieldValue instanceof String) {
+            return (String) fieldValue;
+        }
+        return null;
     }
 
     private byte[] convertImageToBytes(String bioValue) {

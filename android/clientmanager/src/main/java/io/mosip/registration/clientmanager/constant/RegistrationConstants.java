@@ -80,4 +80,8 @@ public class RegistrationConstants {
     public static final String PRE_REGISTRATION_DUMMY_ID = "mosip.pre-registration.datasync.fetch.ids";
     public static final String VER = "1.0";
     public static final String PRE_REG_DAYS_LIMIT = "mosip.registration.pre_reg_no_of_days_limit";
+
+    public static final String UI_SCHEMA_SUBTYPE_FULL_NAME = "name";
+    public static final String UI_SCHEMA_SUBTYPE_EMAIL = "Email";
+    public static final String UI_SCHEMA_SUBTYPE_PHONE = "Phone";
 }
