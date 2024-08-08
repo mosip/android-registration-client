@@ -67,7 +67,7 @@ public class PacketServiceImpl implements PacketService {
     public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
-            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name(), PacketClientStatus.EXPORTED.name());
+            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
 
     public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name(), PacketServerStatus.UPLOAD_PENDING.name());
 
@@ -131,7 +131,11 @@ public class PacketServiceImpl implements PacketService {
             syncRIDRequest.setPacketId(registration.getPacketId());
             syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
         }
-        syncRIDRequest.setSupervisorStatus(PacketClientStatus.APPROVED.name());
+        if (String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.APPROVED.name()) || String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.REJECTED.name())) {
+            Log.i(getClass().getSimpleName(), "Inside Setting supervisor settings");
+            syncRIDRequest.setSupervisorStatus(registration.getClientStatus());
+            syncRIDRequest.setSupervisorComment(registration.getClientStatusComment());
+        }
 
         if (registration.getAdditionalInfo() != null) {
             String additionalInfo = new String(registration.getAdditionalInfo());

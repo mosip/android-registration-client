@@ -8,6 +8,7 @@ import 'package:registration_client/platform_android/packet_service_impl.dart';
 import 'package:registration_client/utils/constants.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
+import '../platform_android/sync_response_service_impl.dart';
 import '../platform_spi/packet_service.dart';
 
 class ApprovePacketsProvider with ChangeNotifier {
@@ -21,6 +22,31 @@ class ApprovePacketsProvider with ChangeNotifier {
   int currentInd = 1;
   int totalCreatedPackets = 0;
   WebViewPlusController? webViewPlusController;
+  List<String?> reasonList = [];
+  String? selectedReason;
+  bool rejectError = false;
+
+  void getAllReasonList() async {
+    List<String?> responseReasonList =
+        await SyncResponseServiceImpl().getReasonList("eng");
+    reasonList = responseReasonList;
+    log(reasonList.toString());
+    notifyListeners();
+  }
+
+  void showRejectError() {
+    rejectError = true;
+    notifyListeners();
+    Future.delayed(const Duration(seconds: 3), () {
+      rejectError = false;
+      notifyListeners();
+    });
+  }
+
+  void setSelectedReason(String? value) {
+    selectedReason = value;
+    notifyListeners();
+  }
 
   void setCurrentInd(int value) {
     currentInd = value;
@@ -36,6 +62,13 @@ class ApprovePacketsProvider with ChangeNotifier {
 
   void setSearchList(String value) {
     searchList = value;
+    notifyListeners();
+  }
+
+  void getTotalCreatedPackets() async {
+    List<String?> allPackets =
+        await PacketServiceImpl().getAllCreatedRegistrationPacket();
+    totalCreatedPackets = allPackets.length;
     notifyListeners();
   }
 
@@ -55,14 +88,19 @@ class ApprovePacketsProvider with ChangeNotifier {
     for (var element in allPackets) {
       Registration reg = Registration.fromJson(json.decode(element ?? ""));
       String review = ReviewStatus.NOACTIONTAKEN.name;
+      String reviewComment = "";
       for (var oldPacket in oldPackets) {
-        log(oldPacket['review_status'] as String);
         Registration oldReg = oldPacket['packet'] as Registration;
         if (reg.packetId == oldReg.packetId) {
           review = oldPacket['review_status'] as String;
+          reviewComment = oldPacket['review_comment'] as String;
         }
       }
-      packetsList.add({"packet": reg, "review_status": review});
+      packetsList.add({
+        "packet": reg,
+        "review_status": review,
+        "review_comment": reviewComment
+      });
     }
     // Setting matching packets
     for (var element in packetsList) {
@@ -70,7 +108,7 @@ class ApprovePacketsProvider with ChangeNotifier {
       matchingPackets.add(element);
     }
 
-    log("GOT ALL PACKETS");
+    log("GOT ALL PACKETS : $matchingPackets");
     notifyListeners();
   }
 
@@ -119,17 +157,19 @@ class ApprovePacketsProvider with ChangeNotifier {
   }
 
   Future<void> submitSelected() async {
-    log("Submit Selected");
     for (int i = 0; i < packetsList.length; i++) {
       if (matchingSelected[i]) {
         Registration regPacket = packetsList[i]["packet"] as Registration;
         String regReview = packetsList[i]["review_status"] as String;
+        String regComment = packetsList[i]["review_comment"] as String;
         if (regReview != ReviewStatus.NOACTIONTAKEN.name) {
-          packetService.updatePacketStatus(regPacket.packetId, null, regReview);
+          await packetService.supervisorReview(
+              regPacket.packetId, regReview, regComment);
           await storage.delete(key: regPacket.packetId);
         }
       }
     }
+    log("Submitted");
     getPackets();
     notifyListeners();
   }
@@ -140,14 +180,17 @@ class ApprovePacketsProvider with ChangeNotifier {
       if (reg.packetId == packetId) {
         packetsList[i] = {
           "packet": reg,
-          "review_status": ReviewStatus.REJECTED.name
+          "review_status": ReviewStatus.REJECTED.name,
+          "review_comment": selectedReason ?? "Rejected",
         };
         matchingPackets[i] = {
           "packet": reg,
-          "review_status": ReviewStatus.REJECTED.name
+          "review_status": ReviewStatus.REJECTED.name,
+          "review_comment": selectedReason ?? "Rejected",
         };
       }
     }
+    selectedReason = null;
     log("rejected");
     notifyListeners();
   }
@@ -158,14 +201,17 @@ class ApprovePacketsProvider with ChangeNotifier {
       if (reg.packetId == packetId) {
         packetsList[i] = {
           "packet": reg,
-          "review_status": ReviewStatus.APPROVED.name
+          "review_status": ReviewStatus.APPROVED.name,
+          "review_comment": "Approved",
         };
         matchingPackets[i] = {
           "packet": reg,
-          "review_status": ReviewStatus.APPROVED.name
+          "review_status": ReviewStatus.APPROVED.name,
+          "review_comment": "Approved",
         };
       }
     }
+    log("Approved");
     notifyListeners();
   }
 
@@ -175,11 +221,13 @@ class ApprovePacketsProvider with ChangeNotifier {
       if (reg.packetId == packetId) {
         packetsList[i] = {
           "packet": reg,
-          "review_status": ReviewStatus.NOACTIONTAKEN.name
+          "review_status": ReviewStatus.NOACTIONTAKEN.name,
+          "review_comment": "",
         };
         matchingPackets[i] = {
           "packet": reg,
-          "review_status": ReviewStatus.NOACTIONTAKEN.name
+          "review_status": ReviewStatus.NOACTIONTAKEN.name,
+          "review_comment": "",
         };
       }
     }

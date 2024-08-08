@@ -42,6 +42,9 @@ public interface RegistrationDao {
     @Query("Update registration set client_status = :clientStatus,  server_status = :serverStatus where packet_id = :packetId")
     void updateStatus(String packetId, String clientStatus, String serverStatus);
 
+    @Query("Update registration set client_status = :supervisorStatus,  client_status_comment = :supervisorComment where packet_id = :packetId")
+    void updateSupervisorReview(String packetId, String supervisorStatus, String supervisorComment);
+
     @Insert
     void insert(Registration registration);
 

@@ -142,6 +142,19 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
+  Future<List<String?>> getReasonList(String langCode) async {
+    late List<String?> reasonList;
+    try {
+      reasonList = await SyncApi().getReasonList("eng");
+    } on PlatformException {
+      debugPrint('KernelCerts Api call failed, PlatformException');
+    } catch (e) {
+      debugPrint('KernelCertsSync has failed! ${e.toString()}');
+    }
+    return reasonList;
+  }
+
+  @override
   Future<bool> getSyncAndUploadInProgressStatus() async{
     bool syncAndUploadResponse = false;
     try {

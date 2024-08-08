@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-Widget dialogBox(callback) {
+Widget dialogBox(callback, BuildContext context) {
   const double width = 600;
 
   return Dialog(
@@ -70,19 +74,25 @@ Widget dialogBox(callback) {
                             Icons.keyboard_arrow_down,
                             size: 32,
                           ),
+                          value: context
+                              .watch<ApprovePacketsProvider>()
+                              .selectedReason,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 18, vertical: 8),
-                          items: [
-                            'Details Incorrect',
-                            'Details Incorrect',
-                            'Details Incorrect'
-                          ].map((String value) {
+                          items: context
+                              .read<ApprovePacketsProvider>()
+                              .reasonList
+                              .map((String? value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child: Text(value ?? "No Value"),
                             );
                           }).toList(),
-                          onChanged: (_) {},
+                          onChanged: (value) {
+                            context
+                                .read<ApprovePacketsProvider>()
+                                .setSelectedReason(value);
+                          },
                           hint: const Text('Select Reason'),
                         ),
                       ),
@@ -99,8 +109,31 @@ Widget dialogBox(callback) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  context.watch<ApprovePacketsProvider>().rejectError
+                      ? Text(
+                          "Please select a reason...",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.red[900],
+                          ),
+                        )
+                      : const SizedBox(
+                          width: 2,
+                        ),
+                  const SizedBox(
+                    width: 25,
+                  ),
                   ElevatedButton(
                       onPressed: () {
+                        if (context
+                                .read<ApprovePacketsProvider>()
+                                .selectedReason ==
+                            null) {
+                          context
+                              .read<ApprovePacketsProvider>()
+                              .showRejectError();
+                          return;
+                        }
                         callback();
                       },
                       style: ElevatedButton.styleFrom(

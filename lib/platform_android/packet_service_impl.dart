@@ -15,7 +15,6 @@ import 'package:registration_client/pigeon/packet_auth_pigeon.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 
 class PacketServiceImpl implements PacketService {
-
   @override
   Future<List<String?>> getAllRegistrationPacket() async {
     List<String?> packetStatus = [];
@@ -45,9 +44,11 @@ class PacketServiceImpl implements PacketService {
   }
 
   @override
-  Future<void> updatePacketStatus(String packetId, String? serverStatus, String clientStatus) async {
+  Future<void> updatePacketStatus(
+      String packetId, String? serverStatus, String clientStatus) async {
     try {
-      await PacketAuthApi().updatePacketStatus(packetId, serverStatus, clientStatus);
+      await PacketAuthApi()
+          .updatePacketStatus(packetId, serverStatus, clientStatus);
       log("Sucess Status updated");
     } on PlatformException {
       debugPrint('PacketAuthenticationApi call failed!');
@@ -80,6 +81,19 @@ class PacketServiceImpl implements PacketService {
     }
   }
 
+  @override
+  Future<void> supervisorReview(String packetId, String supervisorStatus,
+      String supervisorComment) async {
+    try {
+      await PacketAuthApi()
+          .supervisorReview(packetId, supervisorStatus, supervisorComment);
+      log("Sucess Status updated");
+    } on PlatformException {
+      debugPrint('PacketAuthenticationApi call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }
 
 PacketService getPacketServiceImpl() => PacketServiceImpl();

@@ -188,7 +188,7 @@ class TemplateBottomSheet {
                                               reg.packetId);
                                         }
                                         Navigator.of(context).pop();
-                                      });
+                                      }, context);
                                     });
                               },
                         style: OutlinedButton.styleFrom(

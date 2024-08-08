@@ -5,11 +5,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
 
 import '../../provider/connectivity_provider.dart';
+import '../../provider/registration_task_provider.dart';
 import '../../utils/app_config.dart';
 import 'widget/approve_table.dart';
 import 'widget/authenticate_dialogbox.dart';
 import 'widget/search_box.dart';
-// import 'widget/submit_button.dart';
 
 class ApprovePacketsPage extends StatefulWidget {
   const ApprovePacketsPage({super.key});
@@ -27,6 +27,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     context.read<ApprovePacketsProvider>().getPackets();
+    context.read<ApprovePacketsProvider>().getAllReasonList();
     super.initState();
   }
 
@@ -93,6 +94,10 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
               size: 32,
             ),
             onPressed: () {
+              context
+                  .read<RegistrationTaskProvider>()
+                  .getApplicationUploadNumber();
+              context.read<ApprovePacketsProvider>().getTotalCreatedPackets();
               Navigator.of(context).pop();
             },
           ),
@@ -181,13 +186,16 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
             const SizedBox(
               height: 8,
             ),
-            const Expanded(
+            Expanded(
               child: Card(
                 margin: EdgeInsets.zero,
                 elevation: 2,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: ApproveTable(),
+                  child: ApproveTable(
+                    matchingPackets:
+                        context.watch<ApprovePacketsProvider>().matchingPackets,
+                  ),
                 ),
               ),
             )

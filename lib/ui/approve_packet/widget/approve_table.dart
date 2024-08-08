@@ -12,10 +12,11 @@ import '../../../utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ApproveTable extends StatefulWidget {
-  const ApproveTable({super.key});
+  const ApproveTable({super.key, required this.matchingPackets});
 
   @override
   State<ApproveTable> createState() => _ApproveTableState();
+  final List<Map<String, Object>> matchingPackets;
 }
 
 class _ApproveTableState extends State<ApproveTable> {
@@ -48,8 +49,7 @@ class _ApproveTableState extends State<ApproveTable> {
     return SizedBox(
       width: tableWidth,
       child: ListView.separated(
-        itemCount:
-            context.watch<ApprovePacketsProvider>().matchingPackets.length + 1,
+        itemCount: widget.matchingPackets.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             return Column(
@@ -70,10 +70,7 @@ class _ApproveTableState extends State<ApproveTable> {
                           : (context
                                       .watch<ApprovePacketsProvider>()
                                       .countSelected ==
-                                  context
-                                      .watch<ApprovePacketsProvider>()
-                                      .matchingPackets
-                                      .length
+                                  widget.matchingPackets.length
                               ? true
                               : null),
                       onChanged: (bool? value) {
@@ -134,12 +131,10 @@ class _ApproveTableState extends State<ApproveTable> {
               ],
             );
           }
-          Registration regCurrent = context
-              .watch<ApprovePacketsProvider>()
-              .matchingPackets[index - 1]['packet'] as Registration;
-          String reviewStatus = context
-              .watch<ApprovePacketsProvider>()
-              .matchingPackets[index - 1]['review_status'] as String;
+          Registration regCurrent =
+              widget.matchingPackets[index - 1]['packet'] as Registration;
+          String reviewStatus =
+              widget.matchingPackets[index - 1]['review_status'] as String;
 
           var dateTime = DateTime.fromMillisecondsSinceEpoch(
               regCurrent.crDtime ?? DateTime.now().millisecond);
