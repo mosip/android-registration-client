@@ -15,7 +15,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class TemplateBottomSheet {
   void loadHtmlData(WebViewPlusController? controller, String packetId) async {
     log(packetId);
-    const storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage(
+      aOptions: AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+    );
     String? data = await storage.read(key: packetId);
     if (controller != null) {
       controller.webViewController.loadHtmlString(data ?? "No Template...");

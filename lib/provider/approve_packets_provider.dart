@@ -12,7 +12,11 @@ import '../platform_android/sync_response_service_impl.dart';
 import '../platform_spi/packet_service.dart';
 
 class ApprovePacketsProvider with ChangeNotifier {
-  final storage = const FlutterSecureStorage();
+  final storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  );
 
   List<Map<String, Object>> packetsList = [];
   List<Map<String, Object>> matchingPackets = [];

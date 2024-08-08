@@ -32,7 +32,11 @@ class RegistrationTaskProvider with ChangeNotifier {
   final DashBoard dashBoard = DashBoard();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   final DocumentCategory documentCategory = DocumentCategory();
-  static const storage = FlutterSecureStorage();
+  static const storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  );
 
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
