@@ -480,10 +480,11 @@ public class MasterDataServiceImpl implements MasterDataService {
         Iterator<String> keys = jsonObject.keys();
         while (keys.hasNext()) {
             String key = keys.next();
-            if(key.toLowerCase().endsWith("process")) {
+            if (key.toLowerCase().endsWith("process")) {
                 try {
                     ProcessSpecDto processSpecDto = JsonUtils.jsonStringToJavaObject(jsonObject.get(key).toString(),
-                            new TypeReference<ProcessSpecDto>() {});
+                            new TypeReference<ProcessSpecDto>() {
+                            });
                     identitySchemaRepository.createProcessSpec(context, key, idSchemaResponse.getIdVersion(), processSpecDto);
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage(), e);
@@ -808,6 +809,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                 for (int i = 0; i < reasons.length(); i++) {
                     reasonListRepository.saveReasonList(new JSONObject(reasons.getString(i)));
                 }
+                break;
             case "Machine":
                 JSONArray machines = getDecryptedDataList(data);
                 machineRepository.saveMachineMaster(new JSONObject(machines.getString(0)));
