@@ -25,5 +25,8 @@ abstract class PacketAuthApi {
   List<String> getAllRegistrationPacket();
 
   @async
+  List<String> getAllCreatedRegistrationPacket();
+
+  @async
   void updatePacketStatus(String packetId, String? serverStatus, String clientStatus);
 }

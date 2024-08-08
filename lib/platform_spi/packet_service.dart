@@ -11,6 +11,7 @@ abstract class PacketService {
   Future<void> packetSyncAll(List<String> packetIds);
   Future<void> packetUploadAll(List<String> packetIds);
   Future<List<String?>> getAllRegistrationPacket();
+  Future<List<String?>> getAllCreatedRegistrationPacket();
   Future<void> updatePacketStatus(String packetId, String? serverStatus, String clientStatus);
 
   factory PacketService() => getPacketServiceImpl();

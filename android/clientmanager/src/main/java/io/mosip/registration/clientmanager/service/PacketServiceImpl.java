@@ -166,7 +166,7 @@ public class PacketServiceImpl implements PacketService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null && response.body().getResponse().get(0).getStatus().equalsIgnoreCase("SUCCESS")) {
-                        if(!PacketClientStatus.EXPORTED.name().equals(registration.getClientStatus())){
+                        if (!PacketClientStatus.EXPORTED.name().equals(registration.getClientStatus())) {
                             registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
                         }
                         callBack.onComplete(packetId, PacketTaskStatus.SYNC_COMPLETED);
@@ -264,7 +264,8 @@ public class PacketServiceImpl implements PacketService {
 
     @Override
     public List<Registration> getRegistrationsByStatus(String status, Integer batchSize) {
-        return this.registrationRepository.getRegistrationsByStatus(status, batchSize);
+        List<Registration> regList = this.registrationRepository.getRegistrationsByStatus(status, batchSize);
+        return regList;
     }
 
     @Override
@@ -277,7 +278,7 @@ public class PacketServiceImpl implements PacketService {
         String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
 
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId(serverVersion.startsWith("1.1.5") ? PACKET_STATUS_READER_ID :PACKET_EXTERNAL_STATUS_READER_ID);
+        packetStatusRequest.setId(serverVersion.startsWith("1.1.5") ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
         packetStatusRequest.setVersion(PACKET_SYNC_VERSION);
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         List<PacketIdDto> packets = new ArrayList<>();

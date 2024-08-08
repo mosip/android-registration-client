@@ -190,6 +190,7 @@
   "check_updates": "Vérifier les mises à jour",
   "center_remap_sync": "Synchronisation du remappage central.",
   "sync_activities": "Synchronisation. Activités",
+  "pending_approval": "En attente de validation",
   "dashboard": "Tableau de bord",
   "settings": "Paramètres",
   "notifications": "Notifications",

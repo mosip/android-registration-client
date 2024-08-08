@@ -69,7 +69,7 @@ public class RegistrationRepository {
         registration.setFilePath(containerPath);
         registration.setRegType(registrationType);
         registration.setCenterId(centerId);
-        registration.setClientStatus(PacketClientStatus.APPROVED.name());
+        registration.setClientStatus(PacketClientStatus.CREATED.name());
         registration.setServerStatus(null);
         registration.setCrDtime(System.currentTimeMillis());
         registration.setCrBy("110006");

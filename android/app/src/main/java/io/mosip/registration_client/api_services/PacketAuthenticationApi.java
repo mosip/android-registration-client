@@ -22,6 +22,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
@@ -197,7 +198,23 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     public void getAllRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
         List<String> packets = new ArrayList();
         try{
-            List<Registration> allRegistration = packetService.getAllNotUploadedRegistrations(1,20);
+            List<Registration> allRegistration = packetService.getAllNotUploadedRegistrations(1,40);
+            ObjectMapper mapper = new ObjectMapper();
+            for (Registration element : allRegistration) {
+                String json = mapper.writeValueAsString(element);
+                packets.add(json);
+            }
+        }catch(Exception e){
+            Log.e(getClass().getSimpleName(), "Unable to get packets", e);
+        }
+        result.success(packets);
+    }
+
+    @Override
+    public void getAllCreatedRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
+        List<String> packets = new ArrayList();
+        try{
+            List<Registration> allRegistration = packetService.getRegistrationsByStatus(PacketClientStatus.CREATED.name(), 40);
             ObjectMapper mapper = new ObjectMapper();
             for (Registration element : allRegistration) {
                 String json = mapper.writeValueAsString(element);
