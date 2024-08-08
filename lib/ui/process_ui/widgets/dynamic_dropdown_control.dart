@@ -50,17 +50,23 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     super.initState();
   }
 
-  void saveData(value) {
+  void saveData(value) async {
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         for (var element in globalProvider.chosenLang) {
           String code = globalProvider.languageToCodeMapper[element]!;
-          registrationTaskProvider.addSimpleTypeDemographicField(
-              widget.field.id ?? "", value, code);
+          List<DynamicFieldData?> temp =
+              await _getFieldValues(widget.field.id!, code);
+          for (var item in temp) {
+            if (item!.code == value.code) {
+              registrationTaskProvider.addSimpleTypeDemographicField(
+                  widget.field.id ?? "", item.name, code);
+            }
+          }
         }
       } else {
         registrationTaskProvider.addDemographicField(
-            widget.field.id ?? "", value);
+            widget.field.id ?? "", value.name);
       }
     }
   }
@@ -202,7 +208,7 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
                           onChanged: (value) {
                             for (var e in snapshot.data!) {
                               if (e!.name == value) {
-                                saveData(e.code);
+                                saveData(e);
                               }
                             }
                             _saveDataToMap(value);

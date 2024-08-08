@@ -28,13 +28,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
     super.initState();
   }
 
-  void _showInSnackBar(String value) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(value),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +36,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
     return AlertDialog(
       surfaceTintColor: Colors.transparent,
       backgroundColor: appWhite,
-      actionsPadding: const EdgeInsets.symmetric(horizontal: 10,vertical: 30),
+      actionsPadding: const EdgeInsets.symmetric(horizontal: 10,vertical: 20),
       title: Container(
         height: 130,
         width: 130,
@@ -60,34 +54,32 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
           horizontal: isMobileSize ? 5.w : 20.w, vertical: 20.h),
       content: SizedBox(
         width: MediaQuery.of(context).size.width / 1.4,
-        height: MediaQuery.of(context).size.height / 10,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: 15,
-              ),
-              Text(widget.errorMessage,
+        height: MediaQuery.of(context).size.height / 8,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              height: 15,
+            ),
+            Text(widget.errorMessage,
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: semiBold)),
+            if(widget.subError!=null)...[
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Text(widget.subError.toString(),
                   textAlign: TextAlign.center,
                   style: Theme.of(context)
                       .textTheme
-                      .titleLarge
-                      ?.copyWith(fontWeight: semiBold)),
-              if(widget.subError!=null)...[
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Text(widget.subError.toString(),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: regular)),
-              ),
+                      .titleSmall
+                      ?.copyWith(fontWeight: regular)),
+            ),
     ]
-            ],
-          ),
+          ],
         ),
       ),
       actions: [
@@ -110,7 +102,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
                   width: 150.h,
                   child: Center(
                     child: Text(
-                      "OKAY",
+                      AppLocalizations.of(context)!.okay,
                       style: TextStyle(
                           fontSize: isMobile && !isMobileSize ? 18 : 14,
                           color: appSolidPrimary),

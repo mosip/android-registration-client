@@ -26,57 +26,100 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface RegistrationSubmitResponse ()
-+ (RegistrationSubmitResponse *)fromList:(NSArray *)list;
-+ (nullable RegistrationSubmitResponse *)nullableFromList:(NSArray *)list;
+@interface DashBoardData ()
++ (DashBoardData *)fromList:(NSArray *)list;
++ (nullable DashBoardData *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
-@implementation RegistrationSubmitResponse
-+ (instancetype)makeWithRId:(NSString *)rId
-    errorCode:(nullable NSString *)errorCode {
-  RegistrationSubmitResponse* pigeonResult = [[RegistrationSubmitResponse alloc] init];
-  pigeonResult.rId = rId;
-  pigeonResult.errorCode = errorCode;
+@interface UpdatedTimeData ()
++ (UpdatedTimeData *)fromList:(NSArray *)list;
++ (nullable UpdatedTimeData *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@implementation DashBoardData
++ (instancetype)makeWithUserId:(NSString *)userId
+    userName:(NSString *)userName
+    userStatus:(NSNumber *)userStatus
+    userIsOnboarded:(NSNumber *)userIsOnboarded {
+  DashBoardData* pigeonResult = [[DashBoardData alloc] init];
+  pigeonResult.userId = userId;
+  pigeonResult.userName = userName;
+  pigeonResult.userStatus = userStatus;
+  pigeonResult.userIsOnboarded = userIsOnboarded;
   return pigeonResult;
 }
-+ (RegistrationSubmitResponse *)fromList:(NSArray *)list {
-  RegistrationSubmitResponse *pigeonResult = [[RegistrationSubmitResponse alloc] init];
-  pigeonResult.rId = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.rId != nil, @"");
-  pigeonResult.errorCode = GetNullableObjectAtIndex(list, 1);
++ (DashBoardData *)fromList:(NSArray *)list {
+  DashBoardData *pigeonResult = [[DashBoardData alloc] init];
+  pigeonResult.userId = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.userId != nil, @"");
+  pigeonResult.userName = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.userName != nil, @"");
+  pigeonResult.userStatus = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.userStatus != nil, @"");
+  pigeonResult.userIsOnboarded = GetNullableObjectAtIndex(list, 3);
+  NSAssert(pigeonResult.userIsOnboarded != nil, @"");
   return pigeonResult;
 }
-+ (nullable RegistrationSubmitResponse *)nullableFromList:(NSArray *)list {
-  return (list) ? [RegistrationSubmitResponse fromList:list] : nil;
++ (nullable DashBoardData *)nullableFromList:(NSArray *)list {
+  return (list) ? [DashBoardData fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.rId ?: [NSNull null]),
-    (self.errorCode ?: [NSNull null]),
+    (self.userId ?: [NSNull null]),
+    (self.userName ?: [NSNull null]),
+    (self.userStatus ?: [NSNull null]),
+    (self.userIsOnboarded ?: [NSNull null]),
   ];
 }
 @end
 
-@interface RegistrationDataApiCodecReader : FlutterStandardReader
+@implementation UpdatedTimeData
++ (instancetype)makeWithUpdatedTime:(nullable NSString *)updatedTime {
+  UpdatedTimeData* pigeonResult = [[UpdatedTimeData alloc] init];
+  pigeonResult.updatedTime = updatedTime;
+  return pigeonResult;
+}
++ (UpdatedTimeData *)fromList:(NSArray *)list {
+  UpdatedTimeData *pigeonResult = [[UpdatedTimeData alloc] init];
+  pigeonResult.updatedTime = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable UpdatedTimeData *)nullableFromList:(NSArray *)list {
+  return (list) ? [UpdatedTimeData fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.updatedTime ?: [NSNull null]),
+  ];
+}
 @end
-@implementation RegistrationDataApiCodecReader
+
+@interface DashBoardApiCodecReader : FlutterStandardReader
+@end
+@implementation DashBoardApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128: 
-      return [RegistrationSubmitResponse fromList:[self readValue]];
+      return [DashBoardData fromList:[self readValue]];
+    case 129: 
+      return [UpdatedTimeData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface RegistrationDataApiCodecWriter : FlutterStandardWriter
+@interface DashBoardApiCodecWriter : FlutterStandardWriter
 @end
-@implementation RegistrationDataApiCodecWriter
+@implementation DashBoardApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[RegistrationSubmitResponse class]]) {
+  if ([value isKindOfClass:[DashBoardData class]]) {
     [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[UpdatedTimeData class]]) {
+    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -84,42 +127,38 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface RegistrationDataApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface DashBoardApiCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation RegistrationDataApiCodecReaderWriter
+@implementation DashBoardApiCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[RegistrationDataApiCodecWriter alloc] initWithData:data];
+  return [[DashBoardApiCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[RegistrationDataApiCodecReader alloc] initWithData:data];
+  return [[DashBoardApiCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *RegistrationDataApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    RegistrationDataApiCodecReaderWriter *readerWriter = [[RegistrationDataApiCodecReaderWriter alloc] init];
+    DashBoardApiCodecReaderWriter *readerWriter = [[DashBoardApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<RegistrationDataApi> *api) {
+void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *api) {
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.startRegistration"
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getDashBoardDetails"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:DashBoardApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(startRegistrationLanguages:flowType:process:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(startRegistrationLanguages:flowType:process:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getDashBoardDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getDashBoardDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSArray<NSString *> *arg_languages = GetNullableObjectAtIndex(args, 0);
-        NSString *arg_flowType = GetNullableObjectAtIndex(args, 1);
-        NSString *arg_process = GetNullableObjectAtIndex(args, 2);
-        [api startRegistrationLanguages:arg_languages flowType:arg_flowType process:arg_process completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getDashBoardDetailsWithCompletion:^(NSArray<DashBoardData *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -130,15 +169,13 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.evaluateMVELVisible"
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getPacketUploadedDetails"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:DashBoardApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(evaluateMVELVisibleFieldData:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(evaluateMVELVisibleFieldData:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getPacketUploadedDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getPacketUploadedDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldData = GetNullableObjectAtIndex(args, 0);
-        [api evaluateMVELVisibleFieldData:arg_fieldData completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+        [api getPacketUploadedDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -149,15 +186,13 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.evaluateMVELRequired"
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getPacketUploadedPendingDetails"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:DashBoardApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(evaluateMVELRequiredFieldData:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(evaluateMVELRequiredFieldData:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getPacketUploadedPendingDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getPacketUploadedPendingDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_fieldData = GetNullableObjectAtIndex(args, 0);
-        [api evaluateMVELRequiredFieldData:arg_fieldData completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+        [api getPacketUploadedPendingDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -168,16 +203,13 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.getPreviewTemplate"
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getCreatedPacketDetails"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:DashBoardApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getPreviewTemplateIsPreview:templateValues:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(getPreviewTemplateIsPreview:templateValues:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getCreatedPacketDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getCreatedPacketDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSNumber *arg_isPreview = GetNullableObjectAtIndex(args, 0);
-        NSDictionary<NSString *, NSString *> *arg_templateValues = GetNullableObjectAtIndex(args, 1);
-        [api getPreviewTemplateIsPreview:arg_isPreview templateValues:arg_templateValues completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+        [api getCreatedPacketDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -188,15 +220,30 @@ void RegistrationDataApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObje
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.registration_client.RegistrationDataApi.submitRegistrationDto"
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getSyncedPacketDetails"
         binaryMessenger:binaryMessenger
-        codec:RegistrationDataApiGetCodec()];
+        codec:DashBoardApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(submitRegistrationDtoMakerName:completion:)], @"RegistrationDataApi api (%@) doesn't respond to @selector(submitRegistrationDtoMakerName:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getSyncedPacketDetailsWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getSyncedPacketDetailsWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_makerName = GetNullableObjectAtIndex(args, 0);
-        [api submitRegistrationDtoMakerName:arg_makerName completion:^(RegistrationSubmitResponse *_Nullable output, FlutterError *_Nullable error) {
+        [api getSyncedPacketDetailsWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.registration_client.DashBoardApi.getUpdatedTime"
+        binaryMessenger:binaryMessenger
+        codec:DashBoardApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getUpdatedTimeWithCompletion:)], @"DashBoardApi api (%@) doesn't respond to @selector(getUpdatedTimeWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getUpdatedTimeWithCompletion:^(UpdatedTimeData *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];

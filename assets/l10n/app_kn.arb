@@ -9,7 +9,7 @@
   "help": "ಸಹಾಯ",
   "mosip": "MOSIP",
   "welcome": "ಇದಕ್ಕೆ ಸ್ವಾಗತ",
-  "community_reg_text": "ಸಮುದಾಯ ನೋಂದಣಿ ಕ್ಲೈಂಟ್!",
+  "community_reg_text": "MOSIP ನೋಂದಣಿ ಗ್ರಾಹಕ!",
   "info_text": "ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಪ್ರವೇಶಿಸಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ.",
   "login_text": "ಲಾಗಿನ್ ಮಾಡಿ",
   "language": "ಭಾಷೆ",
@@ -138,6 +138,49 @@
   },
   "synchronize_data": "ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ",
   "registration_tasks": "ನೋಂದಣಿ ಕಾರ್ಯಗಳು",
+
+
+
+  "manage_applications": "ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ",
+  "search_application": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ ಮೂಲಕ ಹುಡುಕಿ",
+  "upload": "ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+  "export": "ರಫ್ತು ಮಾಡಿ",
+  "number_of_application": "{number} ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತಿದೆ",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} ಅಪ್ಲಿಕೇಶನ್\u200Cಗಳನ್ನು ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "ಕ್ಲೈಂಟ್ ಸ್ಥಿತಿ",
+  "server_status": "ಸರ್ವರ್ ಸ್ಥಿತಿ",
+  "clear_filter": "Clear Filter",
+  "serial_number": "ಎಸ್.ಎನ್",
+  "application_id": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ",
+  "reg_date":"ರೆಗ್. ದಿನಾಂಕ",
+  "reg_type":"ರೆಗ್. ಪ್ರಕಾರ",
+  "operator_id": "ಆಪರೇಟರ್ ಐಡಿ",
+
+
+
+
   "operation_tasks": "ಕಾರ್ಯಾಚರಣೆಯ ಕಾರ್ಯಗಳು",
   "system_storage_usage": "ಸಿಸ್ಟಮ್ ಶೇಖರಣಾ ಬಳಕೆ",
   "download_pre_registration_data": "ಪೂರ್ವ-ನೋಂದಣಿ ಡೇಟಾವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
@@ -257,5 +300,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fetch_data": "ಡೇಟಾವನ್ನು ಪಡೆದುಕೊಳ್ಳಿ",
+  "application_id_not_exist": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ!",
+  "correct_application_id": "ದಯವಿಟ್ಟು ನಮೂದಿಸಿದ ಅಪ್ಲಿಕೇಶನ್ ಐಡಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಸರಿಯಾದ ಐಡಿಯನ್ನು ನಮೂದಿಸಿ ಮತ್ತು ಅದನ್ನು ಮತ್ತೆ ಪಡೆಯಲು ಪ್ರಯತ್ನಿಸಿ.",
+  "enter_application_id": "ದಯವಿಟ್ಟು ಅಪ್ಲಿಕೇಶನ್ ಐಡಿಯನ್ನು ನಮೂದಿಸಿ",
+  "okay": "ಸರಿ"
 }

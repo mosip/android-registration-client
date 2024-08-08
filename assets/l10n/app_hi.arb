@@ -9,7 +9,7 @@
   "help": "मदद",
   "mosip": "MOSIP",
   "welcome": "आपका स्वागत है",
-  "community_reg_text": "सामुदायिक पंजीकरण ग्राहक!",
+  "community_reg_text": "MOSIP पंजीकरण ग्राहक!",
   "info_text": "सुविधाओं तक पहुँचने के लिए कृपया लॉगिन करें.",
   "login_text": "लॉगिन",
   "language": "भाषा",
@@ -138,6 +138,51 @@
   },
   "synchronize_data": "डेटा सिंक्रनाइज़ करें",
   "registration_tasks": "पंजीकरण कार्य",
+
+
+
+  "manage_applications": "अनुप्रयोगों का प्रबंधन",
+  "search_application": "एप्लिकेशन आईडी द्वारा खोजें",
+  "upload": "डालना",
+  "export": "निर्यात",
+  "number_of_application": "{number} एप्लिकेशन प्रदर्शित हो रहे हैं",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} आवेदन चयनित",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "ग्राहक स्थिति",
+  "server_status": "सर्वर की स्थिति",
+  "clear_filter": "फ़िल्टर साफ़ करें",
+  "serial_number": "क्र.सं",
+  "application_id": "आवेदन पहचान पत्र",
+  "reg_date":"रजि. तारीख",
+  "reg_type":"रजि. प्रकार",
+  "operator_id": "ऑपरेटर आईडी",
+
+
+
+
+
+
   "operation_tasks": "परिचालन कार्य",
   "system_storage_usage": "सिस्टम संग्रहण उपयोग",
   "download_pre_registration_data": "पूर्व-पंजीकरण डेटा डाउनलोड करें",
@@ -257,5 +302,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fetch_data": "डेटा प्राप्त करें",
+  "application_id_not_exist": "एप्लिकेशन आईडी मौजूद नहीं है!",
+  "correct_application_id": "कृपया दर्ज की गई एप्लिकेशन आईडी की जांच करें या सही आईडी दर्ज करें और इसे दोबारा लाने का प्रयास करें।",
+  "enter_application_id": "कृपया आवेदन आईडी दर्ज करें",
+  "okay": "ठीक है"
 }
