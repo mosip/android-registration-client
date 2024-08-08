@@ -406,6 +406,9 @@ class _UpdateProcessState extends State<UpdateProcess>
 
     customValidation(int currentIndex) async {
       if (currentIndex == 0) {
+        if (globalProvider.updateUINNumber.isEmpty) {
+          return false;
+        }
         return true;
       }
       if (globalProvider.newProcessTabIndex < size) {
@@ -531,7 +534,8 @@ class _UpdateProcessState extends State<UpdateProcess>
     customValidation(globalProvider.newProcessTabIndex).then((value) {
       if (globalProvider.newProcessTabIndex == 0) {
         if (!fieldSelectionCompleted) {
-          continueButton = globalProvider.updateFieldKey.currentState != null &&
+          continueButton = value &&
+              globalProvider.updateFieldKey.currentState != null &&
               globalProvider.updateFieldKey.currentState!.validate();
         } else {
           continueButton = true;

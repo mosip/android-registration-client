@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -28,10 +29,14 @@ class OperationalTasks extends StatefulWidget {
 }
 
 class _OperationalTasksState extends State<OperationalTasks> {
-
+  late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   @override
   void initState() {
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
     context.read<RegistrationTaskProvider>().getApplicationUploadNumber();
     super.initState();
   }
@@ -43,13 +48,12 @@ class _OperationalTasksState extends State<OperationalTasks> {
         SizedBox(
           height: 12.h,
         ),
-        _getMemoryProvider(),
         _getTasks(),
       ],
     );
   }
 
-  _getMemoryProvider() {
+  getMemoryProvider() {
     return Container(
       // height: 186.h,
       color: appWhite,
