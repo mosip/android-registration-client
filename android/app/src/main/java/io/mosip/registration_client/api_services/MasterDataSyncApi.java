@@ -62,6 +62,7 @@ import io.mosip.registration_client.utils.BatchJob;
 import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.UploadBackgroundService;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
+import io.mosip.registration_client.utils.NetworkUtils;
 
 @Singleton
 public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
@@ -112,7 +113,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              AuditManagerService auditManagerService,
                              MasterDataService masterDataService,
                              PacketService packetService,
-                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService) {
+                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -140,8 +141,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.preRegistrationDataSyncService = preRegistrationDataSyncService;
     }
 
-    public void setCallbackActivity(MainActivity mainActivity,  BatchJob batchJob){
-        this.activity=mainActivity;
+    public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob) {
+        this.activity = mainActivity;
         this.batchJob = batchJob;
     }
 
@@ -163,7 +164,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
 
-        if(centerMachineDto == null) {
+        if (centerMachineDto == null) {
             result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
             return;
         }
@@ -267,15 +268,13 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
 
-
-
     @Override
     public void getKernelCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
             masterDataService.syncCertificate(() -> {
                 Log.i(TAG, "Policy Key Sync Completed");
                 result.success(syncResult("KernelCertsSync", 7, masterDataService.onResponseComplete()));
-            },KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync);
+            }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -286,7 +285,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         result.success(batchJob.getInProgressStatus());
     }
 
-    void resetAlarm(String api){
+    void resetAlarm(String api) {
         Intent intent = new Intent(activity, UploadBackgroundService.class);
         PendingIntent pendingIntent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -314,7 +313,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             long alarmTime = batchJob.getIntervalMillis(api);
             long currentTime = System.currentTimeMillis();
             long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
-            Log.d(getClass().getSimpleName(), String.valueOf(delay)+ " Next Execution");
+            Log.d(getClass().getSimpleName(), String.valueOf(delay) + " Next Execution");
 
 //            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), 30000, pendingIntent);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
