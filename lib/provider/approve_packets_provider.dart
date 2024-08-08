@@ -183,6 +183,11 @@ class ApprovePacketsProvider with ChangeNotifier {
           "review_status": ReviewStatus.REJECTED.name,
           "review_comment": selectedReason ?? "Rejected",
         };
+      }
+    }
+    for (int i = 0; i < matchingPackets.length; i++) {
+      Registration reg = matchingPackets[i]["packet"] as Registration;
+      if (reg.packetId == packetId) {
         matchingPackets[i] = {
           "packet": reg,
           "review_status": ReviewStatus.REJECTED.name,
@@ -190,6 +195,7 @@ class ApprovePacketsProvider with ChangeNotifier {
         };
       }
     }
+
     selectedReason = null;
     log("rejected");
     notifyListeners();
@@ -204,6 +210,11 @@ class ApprovePacketsProvider with ChangeNotifier {
           "review_status": ReviewStatus.APPROVED.name,
           "review_comment": "Approved",
         };
+      }
+    }
+    for (int i = 0; i < matchingPackets.length; i++) {
+      Registration reg = matchingPackets[i]["packet"] as Registration;
+      if (reg.packetId == packetId) {
         matchingPackets[i] = {
           "packet": reg,
           "review_status": ReviewStatus.APPROVED.name,
@@ -211,6 +222,7 @@ class ApprovePacketsProvider with ChangeNotifier {
         };
       }
     }
+
     log("Approved");
     notifyListeners();
   }
@@ -224,6 +236,11 @@ class ApprovePacketsProvider with ChangeNotifier {
           "review_status": ReviewStatus.NOACTIONTAKEN.name,
           "review_comment": "",
         };
+      }
+    }
+    for (int i = 0; i < matchingPackets.length; i++) {
+      Registration reg = matchingPackets[i]["packet"] as Registration;
+      if (reg.packetId == packetId) {
         matchingPackets[i] = {
           "packet": reg,
           "review_status": ReviewStatus.NOACTIONTAKEN.name,
