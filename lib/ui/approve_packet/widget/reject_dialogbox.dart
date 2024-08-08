@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Widget dialogBox(callback, BuildContext context) {
   const double width = 600;
@@ -27,18 +26,19 @@ Widget dialogBox(callback, BuildContext context) {
                 width: 200.0,
               ),
               const SizedBox(height: 24.0),
-              const Text(
-                "Reject Packet?",
-                style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(context)!.reject_dialog_heading,
+                style: const TextStyle(
+                    fontSize: 28.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16.0),
-              const SizedBox(
+              SizedBox(
                 width: width * 0.80,
                 child: Text(
-                  "You do not have enough memory to export selected packets, please clear memory on your device or de-select a few packets.",
+                  AppLocalizations.of(context)!.reject_dialog_subheading,
                   textAlign: TextAlign.center,
                   softWrap: true,
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
               const SizedBox(height: 40.0),
@@ -46,15 +46,15 @@ Widget dialogBox(callback, BuildContext context) {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          "Reason for rejection ",
-                          style: TextStyle(
+                          "${AppLocalizations.of(context)!.reason_rejection} ",
+                          style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
-                        Text(
+                        const Text(
                           "*",
                           style: TextStyle(color: Colors.red, fontSize: 18),
                         )
@@ -93,7 +93,8 @@ Widget dialogBox(callback, BuildContext context) {
                                 .read<ApprovePacketsProvider>()
                                 .setSelectedReason(value);
                           },
-                          hint: const Text('Select Reason'),
+                          hint: Text(AppLocalizations.of(context)!
+                              .select_value_message),
                         ),
                       ),
                     ),
@@ -111,7 +112,7 @@ Widget dialogBox(callback, BuildContext context) {
                 children: [
                   context.watch<ApprovePacketsProvider>().rejectError
                       ? Text(
-                          "Please select a reason...",
+                          AppLocalizations.of(context)!.no_reason_selected,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.red[900],
@@ -140,9 +141,9 @@ Widget dialogBox(callback, BuildContext context) {
                           backgroundColor: solidPrimary,
                           padding: const EdgeInsets.symmetric(
                               vertical: 16, horizontal: 32)),
-                      child: const Text(
-                        "REJECT",
-                        style: TextStyle(fontSize: 18),
+                      child: Text(
+                        AppLocalizations.of(context)!.reject,
+                        style: const TextStyle(fontSize: 18),
                       )),
                 ],
               )

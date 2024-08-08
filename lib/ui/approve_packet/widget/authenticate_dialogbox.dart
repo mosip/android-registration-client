@@ -7,6 +7,7 @@ import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../provider/auth_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthenticateDialogBox extends StatefulWidget {
   const AuthenticateDialogBox({super.key});
@@ -136,19 +137,19 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                     ),
                   ),
                   const SizedBox(height: 24.0),
-                  const Text(
-                    "Supervisor's Authentication",
-                    style:
-                        TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context)!.supervisor_auth_heading,
+                    style: const TextStyle(
+                        fontSize: 28.0, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16.0),
-                  const SizedBox(
+                  SizedBox(
                     width: width * 0.80,
                     child: Text(
-                      "Supervisor’s Authentication using Password",
+                      AppLocalizations.of(context)!.supervisor_auth_subheading,
                       textAlign: TextAlign.center,
                       softWrap: true,
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
                   ),
                   const SizedBox(height: 24.0),
@@ -158,15 +159,15 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              "Username ",
-                              style: TextStyle(
+                              "${AppLocalizations.of(context)!.username} ",
+                              style: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.w500),
                             ),
-                            Text(
+                            const Text(
                               "*",
                               style: TextStyle(color: Colors.red, fontSize: 18),
                             )
@@ -211,15 +212,15 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              "Password ",
-                              style: TextStyle(
+                              "${AppLocalizations.of(context)!.password} ",
+                              style: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.w500),
                             ),
-                            Text(
+                            const Text(
                               "*",
                               style: TextStyle(color: Colors.red, fontSize: 18),
                             )
@@ -295,9 +296,9 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                                       color: Colors.white,
                                     ),
                                   )
-                                : const Text(
-                                    "SUBMIT",
-                                    style: TextStyle(fontSize: 18),
+                                : Text(
+                                    AppLocalizations.of(context)!.submit,
+                                    style: const TextStyle(fontSize: 18),
                                   )),
                       ),
                     ],

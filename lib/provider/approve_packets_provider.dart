@@ -26,9 +26,9 @@ class ApprovePacketsProvider with ChangeNotifier {
   String? selectedReason;
   bool rejectError = false;
 
-  void getAllReasonList() async {
+  void getAllReasonList(String langCode) async {
     List<String?> responseReasonList =
-        await SyncResponseServiceImpl().getReasonList("eng");
+        await SyncResponseServiceImpl().getReasonList(langCode);
     reasonList = responseReasonList;
     log(reasonList.toString());
     notifyListeners();

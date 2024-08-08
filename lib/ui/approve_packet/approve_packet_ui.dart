@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 
 import '../../provider/connectivity_provider.dart';
 import '../../provider/registration_task_provider.dart';
@@ -27,7 +28,11 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     context.read<ApprovePacketsProvider>().getPackets();
-    context.read<ApprovePacketsProvider>().getAllReasonList();
+    GlobalProvider globalProvider =
+        Provider.of<GlobalProvider>(context, listen: false);
+    context
+        .read<ApprovePacketsProvider>()
+        .getAllReasonList(globalProvider.selectedLanguage);
     super.initState();
   }
 

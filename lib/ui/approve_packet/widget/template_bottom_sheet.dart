@@ -10,6 +10,7 @@ import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 import '../../../model/registration.dart';
 import '../../../provider/approve_packets_provider.dart';
 import 'reject_dialogbox.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TemplateBottomSheet {
   void loadHtmlData(WebViewPlusController? controller, String packetId) async {
@@ -148,7 +149,7 @@ class TemplateBottomSheet {
                                       reg.packetId);
                                 }
                               },
-                        label: const Text('APPROVE'),
+                        label: Text(AppLocalizations.of(context)!.approve),
                       ),
                       const SizedBox(
                         width: 16,
@@ -201,9 +202,9 @@ class TemplateBottomSheet {
                                   : Colors.red,
                               width: 2),
                         ),
-                        label: const Text(
-                          'REJECT',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        label: Text(
+                          AppLocalizations.of(context)!.reject,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(
