@@ -5,8 +5,6 @@
  *
 */
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -46,8 +44,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
       globalProvider = Provider.of<GlobalProvider>(context, listen: false);
       registrationTaskProvider =
           Provider.of<RegistrationTaskProvider>(context, listen: false);
-      _getSavedDate();
     });
+    _getSavedDate();
     super.initState();
   }
 

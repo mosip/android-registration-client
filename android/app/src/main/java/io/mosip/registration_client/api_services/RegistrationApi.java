@@ -60,7 +60,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void evaluateMVELVisible(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void evaluateMVELVisible(@NonNull String fieldData, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
             FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {
             });
@@ -75,7 +75,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void evaluateMVELRequired(@NonNull String fieldData, @NonNull String expression, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
+    public void evaluateMVELRequired(@NonNull String fieldData, @NonNull RegistrationDataPigeon.Result<Boolean> result) {
         try {
             FieldSpecDto fieldSpecDto = JsonUtils.jsonStringToJavaObject(fieldData, new TypeReference<FieldSpecDto>() {
             });

@@ -134,11 +134,8 @@ class _UpdateProcessScreenContentState
     }
   }
 
-  evaluateMVELVisible(
-      String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider
-        .evaluateMVELVisible(fieldData, expression!)
-        .then((value) {
+  evaluateMVELVisible(String fieldData, Field e) async {
+    registrationTaskProvider.evaluateMVELVisible(fieldData).then((value) {
       if (!value) {
         globalProvider.removeFieldFromMap(
             e.id!, globalProvider.fieldInputValue);
@@ -148,11 +145,8 @@ class _UpdateProcessScreenContentState
     });
   }
 
-  evaluateMVELRequired(
-      String fieldData, String? engine, String? expression, Field e) async {
-    registrationTaskProvider
-        .evaluateMVELRequired(fieldData, expression!)
-        .then((value) {
+  evaluateMVELRequired(String fieldData, Field e) async {
+    registrationTaskProvider.evaluateMVELRequired(fieldData).then((value) {
       if (!value && globalProvider.selectedUpdateFields[e.group] == null) {
         globalProvider.removeFieldFromMap(
             e.id!, globalProvider.fieldInputValue);
@@ -164,10 +158,8 @@ class _UpdateProcessScreenContentState
 
   checkMvelVisible(Field e) async {
     if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
-      await evaluateMVELVisible(jsonEncode(e.toJson()),
-          e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
-      await evaluateMVELRequired(jsonEncode(e.toJson()),
-          e.requiredOn?[0]?.engine, e.requiredOn?[0]?.expr, e);
+      await evaluateMVELVisible(jsonEncode(e.toJson()), e);
+      await evaluateMVELRequired(jsonEncode(e.toJson()), e);
     }
   }
 

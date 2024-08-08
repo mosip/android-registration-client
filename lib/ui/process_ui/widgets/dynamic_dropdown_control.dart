@@ -50,16 +50,16 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     super.initState();
   }
 
-  void saveData(value) async{
+  void saveData(value) async {
     if (value != null) {
       if (widget.field.type == 'simpleType') {
         for (var element in globalProvider.chosenLang) {
           String code = globalProvider.languageToCodeMapper[element]!;
-          List<DynamicFieldData?> temp = await _getFieldValues(widget.field.id!, code);
-          for(var item in temp){
-            if(item!.code == value.code){
-              registrationTaskProvider
-                  .addSimpleTypeDemographicField(
+          List<DynamicFieldData?> temp =
+              await _getFieldValues(widget.field.id!, code);
+          for (var item in temp) {
+            if (item!.code == value.code) {
+              registrationTaskProvider.addSimpleTypeDemographicField(
                   widget.field.id ?? "", item.name, code);
             }
           }
@@ -117,25 +117,26 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
     }
   }
 
-  Future<List<DynamicFieldData?>> _getFieldValues(String fieldId, String langCode) async {
-    List<String> selectedLang =[];
+  Future<List<DynamicFieldData?>> _getFieldValues(
+      String fieldId, String langCode) async {
+    List<String> selectedLang = [];
     for (var lang in globalProvider.chosenLang) {
       String langCode = globalProvider.langToCode(lang);
       selectedLang.add(langCode);
     }
-    return await registrationTaskProvider
-        .getFieldValues(fieldId, langCode, selectedLang);
+    return await registrationTaskProvider.getFieldValues(
+        fieldId, langCode, selectedLang);
   }
 
   @override
   Widget build(BuildContext context) {
-    String lang = globalProvider.selectedLanguage;
-    if (context
-        .read<GlobalProvider>()
-        .fieldInputValue
-        .containsKey(widget.field.id ?? "")) {
-      _getSelectedValueFromMap(lang);
-    }
+    // String lang = globalProvider.selectedLanguage;
+    // if (context
+    //     .read<GlobalProvider>()
+    //     .fieldInputValue
+    //     .containsKey(widget.field.id ?? "")) {
+    //   _getSelectedValueFromMap(lang);
+    // }
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
