@@ -728,14 +728,14 @@ class _UpdateProcessState extends State<UpdateProcess>
               ),
               child: Column(
                 children: [
-                  isPortrait
-                      ? const SizedBox()
-                      : const Column(
-                          children: [
-                            TabletHeader(),
-                            TabletNavbar(),
-                          ],
-                        ),
+                  // isPortrait
+                  //     ? const SizedBox()
+                  //     : const Column(
+                  //         children: [
+                  //          // TabletHeader(),
+                  //           TabletNavbar(),
+                  //         ],
+                  //       ),
                   Container(
                     padding: isMobile && !isMobileSize
                         ? const EdgeInsets.fromLTRB(0, 46, 0, 0)

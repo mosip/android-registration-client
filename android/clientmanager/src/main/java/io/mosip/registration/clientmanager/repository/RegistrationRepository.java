@@ -26,6 +26,10 @@ public class RegistrationRepository {
         return this.registrationDao.findAll();
     }
 
+    public List<Registration> getAllNotUploadedRegistrations() {
+        return this.registrationDao.findAllNotUploaded();
+    }
+
     public List<Registration> getRegistrationsByStatus(String status, Integer batchSize) {
         return this.registrationDao.findRegistrationByStatus(status, batchSize);
     }

@@ -34,10 +34,10 @@ class MobileHomePage extends StatefulWidget {
 }
 
 class _MobileHomePageState extends State<MobileHomePage> {
-  int selectedTab = 2;
+  int selectedTab = 1;
 
   changeTab(int index) {
-    if (index == 0 || index == 2 || index == 4) {
+    if (index == 0 || index == 1 || index == 2) {
       setState(() {
         selectedTab = index;
       });
@@ -48,9 +48,9 @@ class _MobileHomePageState extends State<MobileHomePage> {
   Widget build(BuildContext context) {
     List bottomNavPages = [
       const UserDashBoard(),
-      const Center(
-        child: Text("Settings"),
-      ),
+      // const Center(
+      //   child: Text("Settings"),
+      // ),
       Container(
         height: ScreenUtil().screenHeight,
         width: ScreenUtil().screenWidth,
@@ -72,9 +72,9 @@ class _MobileHomePageState extends State<MobileHomePage> {
           },
         ),
       ),
-      const Center(
-        child: Text("Notifications"),
-      ),
+      // const Center(
+      //   child: Text("Notifications"),
+      // ),
       const ProfilePage(),
     ];
 
@@ -123,16 +123,16 @@ class _MobileHomePageState extends State<MobileHomePage> {
             title: AppLocalizations.of(context)!.dashboard,
           ),
         ),
-        BottomNavigationBarItem(
-          label: "",
-          icon: BottomNavBarWidget(
-            index: 1,
-            selectedIndex: selectedTab,
-            imagePath: settingsIcon,
-            selectedImagePath: settingsSelectedIcon,
-            title: AppLocalizations.of(context)!.settings,
-          ),
-        ),
+        // BottomNavigationBarItem(
+        //   label: "",
+        //   icon: BottomNavBarWidget(
+        //     index: 1,
+        //     selectedIndex: selectedTab,
+        //     imagePath: settingsIcon,
+        //     selectedImagePath: settingsSelectedIcon,
+        //     title: AppLocalizations.of(context)!.settings,
+        //   ),
+        // ),
         BottomNavigationBarItem(
           label: "",
           icon: SizedBox(
@@ -145,23 +145,23 @@ class _MobileHomePageState extends State<MobileHomePage> {
             ),
           ),
         ),
+        // BottomNavigationBarItem(
+        //   label: "",
+        //   icon: BottomNavBarWidget(
+        //     index: 3,
+        //     selectedIndex: selectedTab,
+        //     imagePath: notificationIcon,
+        //     selectedImagePath: notificationIcon,
+        //     title: AppLocalizations.of(context)!.notifications,
+        //   ),
+        // ),
         BottomNavigationBarItem(
           label: "",
           icon: BottomNavBarWidget(
-            index: 3,
+            index: 2,
             selectedIndex: selectedTab,
-            imagePath: notificationIcon,
-            selectedImagePath: notificationIcon,
-            title: AppLocalizations.of(context)!.notifications,
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: "",
-          icon: BottomNavBarWidget(
-            index: 4,
-            selectedIndex: selectedTab,
-            imagePath: dashboardIcon,
-            selectedImagePath: dashboardIcon,
+            imagePath: profileIcon,
+            selectedImagePath: profileSelectedIcon,
             title: AppLocalizations.of(context)!.profile,
           ),
         )

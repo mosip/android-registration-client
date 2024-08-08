@@ -53,7 +53,7 @@ abstract class DynamicResponseApi {
 
   @async
   List<GenericData> getLocationValues(
-      String hierarchyLevelName, String langCode);
+      String hierarchyLevelName, String langCode, List<String> languages);
 
   @async
   List<String> getDocumentValues(

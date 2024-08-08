@@ -15,6 +15,8 @@ import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
 
+import '../../../provider/registration_task_provider.dart';
+
 class OperationalTasks extends StatefulWidget {
   const OperationalTasks({
     super.key,
@@ -28,10 +30,14 @@ class OperationalTasks extends StatefulWidget {
 
 class _OperationalTasksState extends State<OperationalTasks> {
   late GlobalProvider globalProvider;
+  late RegistrationTaskProvider registrationTaskProvider;
 
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    registrationTaskProvider =
+        Provider.of<RegistrationTaskProvider>(context, listen: false);
+    context.read<RegistrationTaskProvider>().getApplicationUploadNumber();
     super.initState();
   }
 

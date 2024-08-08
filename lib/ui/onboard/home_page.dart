@@ -8,7 +8,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -150,11 +149,13 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.synchronize_data,
         "onTap": syncData,
-        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
-            .format(DateTime.parse(
-                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                .toLocal())
-            .toString(),
+        "subtitle": context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
+            ? DateFormat("EEEE d MMMM, hh:mma")
+                .format(DateTime.parse(
+                        context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                    .toLocal())
+                .toString()
+            : "Last Sync time not found",
       },
       // {
       //   "icon": SvgPicture.asset(
@@ -178,7 +179,9 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) =>
                       const OperatorOnboardingBiometricsCaptureControl()));
         },
-        "subtitle": lastOperatorUpdateBiometricTime.toString(),
+        "subtitle": lastOperatorUpdateBiometricTime.toString() == ""
+            ? "Not updated yet"
+            : "Last Updated on ${lastOperatorUpdateBiometricTime.toString()}",
       },
       {
         "icon": SvgPicture.asset(
@@ -191,44 +194,33 @@ class _HomePageState extends State<HomePage> {
               MaterialPageRoute(
                   builder: (context) => const ExportPacketsPage()));
         },
-        "subtitle": "3 application(s)"
+        "subtitle":
+            "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
       },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Onboarding Yourself.svg",
-        ),
-        "title": appLocalizations.check_updates,
-        "onTap": () {},
-        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
-            .format(DateTime.parse(
-                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                .toLocal())
-            .toString()
-      },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.center_remap_sync,
-        "onTap": () {},
-        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
-            .format(DateTime.parse(
-                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                .toLocal())
-            .toString()
-      },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.sync_activities,
-        "onTap": () {},
-        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
-            .format(DateTime.parse(
-                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                .toLocal())
-            .toString()
-      },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Onboarding Yourself.svg",
+      //   ),
+      //   "title": appLocalizations.check_updates,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.center_remap_sync,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.sync_activities,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
     ];
 
     return MobileHomePage(

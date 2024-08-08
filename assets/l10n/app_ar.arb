@@ -9,7 +9,7 @@
   "help": "تعليمات",
   "mosip": "موسيب",
   "welcome": "مرحبا بكم في",
-  "community_reg_text": "عميل تسجيل المجتمع!",
+  "community_reg_text": "عميل تسجيل MOSIP!",
   "info_text": "يرجى تسجيل الدخول للوصول إلى الميزات.",
   "login_text": "تسجيل الدخول",
   "language": "اللغة",
@@ -138,6 +138,50 @@
   },
   "synchronize_data": "مزامنة البيانات",
   "registration_tasks": "مهام التسجيل",
+
+
+  "manage_applications": "إدارة التطبيقات",
+  "search_application": "البحث عن طريق معرف التطبيق",
+  "upload": "رفع",
+  "export": "يصدّر",
+  "number_of_application": "عرض {number} تطبيقات",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} تم تحديد التطبيقات",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "  حالة العميل",
+  "server_status": "حالة الملقم",
+  "clear_filter": "مرشح واضح",
+  "serial_number": "س.ن",
+  "application_id": "رقم الاستمارة",
+  "reg_date":"ريج. تاريخ",
+  "reg_type":"ريج. يكتب",
+  "operator_id": "معرف المشغل",
+
+
+
+
+
+
   "operation_tasks": "المهام التشغيلية",
   "system_storage_usage": "استخدام تخزين النظام",
   "download_pre_registration_data": "تنزيل بيانات التسجيل المسبق",
@@ -257,5 +301,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fetch_data": "ابحث عن المعلومة",
+  "application_id_not_exist": "معرف التطبيق غير موجود!",
+  "correct_application_id": "يرجى التحقق من معرف التطبيق الذي تم إدخاله أو إدخال معرف صحيح ومحاولة جلبه مرة أخرى.",
+  "enter_application_id": "الرجاء إدخال معرف التطبيق",
+  "okay": "تمام"
 }

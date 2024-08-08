@@ -16,12 +16,6 @@ abstract class PacketAuthApi {
   PacketAuth authenticate(String username, String password);
 
   @async
-  void syncPacket(String packetId);
-
-  @async
-  void uploadPacket(String packetId);
-
-  @async
   void syncPacketAll(List<String> packetIds);
 
   @async
