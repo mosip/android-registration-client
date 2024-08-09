@@ -663,7 +663,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      globalProvider.newProcessTabIndex == size + 2
+                      /*globalProvider.newProcessTabIndex == size + 2
                           ? ElevatedButton(
                               onPressed: () async {
                                 await connectivityProvider
@@ -700,7 +700,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               },
                               child: Text(appLocalizations.upload_packet),
                             )
-                          : const SizedBox.shrink(),
+                          : const SizedBox.shrink(),*/
                       const Expanded(
                         child: SizedBox(),
                       ),
