@@ -196,10 +196,10 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      const ExportPacketsPage()));
+                  builder: (context) => const ExportPacketsPage()));
         },
-        "subtitle": "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
+        "subtitle":
+            "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
       },
       {
         "icon": SvgPicture.asset(

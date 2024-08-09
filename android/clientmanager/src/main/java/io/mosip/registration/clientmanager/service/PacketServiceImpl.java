@@ -66,7 +66,7 @@ public class PacketServiceImpl implements PacketService {
     public static final String PACKET_SYNC_ID = "mosip.registration.sync";
     public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
-    public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
+    public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(
             PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
 
     public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name(), PacketServerStatus.UPLOAD_PENDING.name());
@@ -110,6 +110,12 @@ public class PacketServiceImpl implements PacketService {
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
 
         Registration registration = registrationRepository.getRegistration(packetId);
+
+        if(registration.getClientStatus() != null && String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.CREATED.name())) {
+            Log.i(TAG, "Packet not reviewed >> " + registration.getClientStatus());
+            callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
+            return;
+        }
 
         if (registration.getClientStatus() != null && !PACKET_UNSYNCED_STATUS.contains(registration.getClientStatus())) {
             Log.i(TAG, "Packet already synced >> " + registration.getClientStatus());
