@@ -25,9 +25,12 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
+import 'package:registration_client/ui/common/tablet_header.dart';
+import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
 import 'package:registration_client/ui/post_registration/preview_page.dart';
+import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
@@ -534,7 +537,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               await registrationTaskProvider.getPreviewTemplate(
                   true, templateTitleMap!);
               await registrationTaskProvider.getAcknowledgementTemplate(
-                  false, templateTitleMap!);
+                  false, templateTitleMap!,
+              );
             }
 
             globalProvider.newProcessTabIndex =
@@ -556,6 +560,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
             return;
           }
           globalProvider.setRegId(registrationSubmitResponse.rId);
+
+          // Updating key to packetId after success creation of packet
+          registrationTaskProvider
+              .updateTemplateStorageKey(registrationSubmitResponse.rId);
+          registrationTaskProvider.deleteDefaultTemplateStored();
+
           setState(() {
             username = '';
             password = '';

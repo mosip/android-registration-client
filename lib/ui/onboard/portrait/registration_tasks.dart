@@ -26,6 +26,7 @@ class RegistrationTasks extends StatefulWidget {
     required this.getProcessUI,
     required this.syncData,
   });
+
   final Function getProcessUI;
   final Function syncData;
 
@@ -34,7 +35,8 @@ class RegistrationTasks extends StatefulWidget {
 }
 
 class _RegistrationTasksState extends State<RegistrationTasks> {
-  bool isPortrait= true;
+  bool isPortrait = true;
+
   @override
   void initState() {
     super.initState();
@@ -135,12 +137,15 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
             const Expanded(
               child: SizedBox(),
             ),
-            Text(context.watch<SyncProvider>().lastSuccessfulSyncTime!="" ?
-              DateFormat("EEEE d MMMM, hh:mma")
-                  .format(DateTime.parse(
-                          context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                      .toLocal())
-                  .toString(): "Last Sync time not found",
+            Text(
+              context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
+                  ? DateFormat("EEEE d MMMM, hh:mma")
+                      .format(DateTime.parse(context
+                              .watch<SyncProvider>()
+                              .lastSuccessfulSyncTime)
+                          .toLocal())
+                      .toString()
+                  : "Last Sync time not found",
               style: const TextStyle(
                 fontSize: 18,
                 color: appBlackShade2,
@@ -160,11 +165,17 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               context.watch<RegistrationTaskProvider>().listOfProcesses.length,
           shrinkWrap: true,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: (isPortrait)?2:4,
-            mainAxisSpacing: (isPortrait)?8.h:1.h,
-            crossAxisSpacing:(isPortrait)? 8.w:1.w,
+            crossAxisCount: (isPortrait) ? 2 : 4,
+            mainAxisSpacing: (isPortrait) ? 8.h : 1.h,
+            crossAxisSpacing: (isPortrait) ? 8.w : 1.w,
           ),
           itemBuilder: (BuildContext context, int index) {
+            Process process = Process.fromJson(jsonDecode(context
+                .watch<RegistrationTaskProvider>()
+                .listOfProcesses
+                .elementAt(index)
+                .toString()));
+
             return InkWell(
               onTap: () {
                 widget.getProcessUI(
@@ -213,12 +224,11 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                       height: 38.17.h,
                     ),
                     Text(
-                      Process.fromJson(jsonDecode(context
-                              .watch<RegistrationTaskProvider>()
-                              .listOfProcesses
-                              .elementAt(index)
-                              .toString()))
-                          .label![context.read<GlobalProvider>().selectedLanguage]!,
+                      process.label![context
+                              .read<GlobalProvider>()
+                              .selectedLanguage] ??
+                          process.label!["eng"] ??
+                          process.label!.values.first,
                       style: TextStyle(
                         fontSize: isMobileSize ? 18 : 27,
                         fontWeight: semiBold,

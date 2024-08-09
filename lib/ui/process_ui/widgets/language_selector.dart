@@ -22,6 +22,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LanguageSelector extends StatefulWidget {
   const LanguageSelector({super.key, required this.newProcess});
+
   final Process newProcess;
 
   @override
@@ -202,23 +203,27 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                         context.watch<GlobalProvider>().languages.map((e) {
                       return LanguageComponent(
                         title: context
-                            .watch<GlobalProvider>()
-                            .codeToLanguageMapper[e]!,
+                                .watch<GlobalProvider>()
+                                .codeToLanguageMapper[e] ??
+                            "English",
                         isDisabled:
                             globalProvider.disabledLanguageMap[e] ?? false,
                         isSelected: globalProvider.chosenLang.contains(context
-                            .watch<GlobalProvider>()
-                            .codeToLanguageMapper[e]!),
+                                .watch<GlobalProvider>()
+                                .codeToLanguageMapper[e] ??
+                            "English"),
                         onTap: () {
                           globalProvider.addRemoveLang(
                               globalProvider.codeToLanguageMapper[e]!,
                               !globalProvider.chosenLang.contains(
-                                  globalProvider.codeToLanguageMapper[e]!));
+                                  globalProvider.codeToLanguageMapper[e] ??
+                                      "English"));
                         },
                         isMobile: true,
                         isFreezed: globalProvider.mandatoryLanguageMap[context
-                                .watch<GlobalProvider>()
-                                .codeToLanguageMapper[e]!] ??
+                                    .watch<GlobalProvider>()
+                                    .codeToLanguageMapper[e] ??
+                                "English"] ??
                             false,
                       );
                     }).toList()),

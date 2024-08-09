@@ -45,19 +45,19 @@ public class BatchJob {
         this.syncJobDefRepository = syncJobDefRepository;
     }
 
-    public void setCallbackActivity(MainActivity mainActivity){
-        this.activity=mainActivity;
+    public void setCallbackActivity(MainActivity mainActivity) {
+        this.activity = mainActivity;
     }
 
-    public boolean getInProgressStatus(){
+    public boolean getInProgressStatus() {
         return syncAndUploadInProgressStatus;
     }
 
-    private List<Registration> getRegistrationList(List<String> statusList){
+    private List<Registration> getRegistrationList(List<String> statusList) {
         Integer batchSize = getBatchSize();
-        List<Registration> registrationList =  new ArrayList();
-        for(String status: statusList){
-            if(registrationList.size() >= batchSize){
+        List<Registration> registrationList = new ArrayList();
+        for (String status : statusList) {
+            if (registrationList.size() >= batchSize) {
                 break;
             }
             List<Registration> newList = packetService.getRegistrationsByStatus(status, (batchSize - registrationList.size()));
@@ -68,13 +68,13 @@ public class BatchJob {
 
     public void syncRegistrationPackets(Context context) {
         Log.d(getClass().getSimpleName(), "Sync Packets in Batch Job");
-        List<Registration> registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.APPROVED.name(), PacketClientStatus.EXPORTED.name()));
+        List<Registration> registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name()));
         final Integer[] remainingPack = {registrationList.size(), 0};
 
         Integer packetSize = registrationList.size();
         CustomToast newToast = new CustomToast(activity);
 
-        if(registrationList.isEmpty()){
+        if (registrationList.isEmpty()) {
             uploadRegistrationPackets(context);
             return;
         }
@@ -97,7 +97,7 @@ public class BatchJob {
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
-                        if(status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)){
+                        if (status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
                         }
                         remainingPack[0] -= 1;
@@ -105,21 +105,21 @@ public class BatchJob {
                         Integer remaining = packetSize - remainingPack[0];
                         newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
-                        if(remainingPack[0] == 0){
+                        if (remainingPack[0] == 0) {
                             syncAndUploadInProgressStatus = false;
-                            Integer failed = packetSize- remainingPack[1];
+                            Integer failed = packetSize - remainingPack[1];
                             newToast.setIcon(R.drawable.done);
                             String message = "Sync Packet Status :";
-                            if(remainingPack[1] != 0){
+                            if (remainingPack[1] != 0) {
                                 message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
                             }
-                            if(failed != 0){
+                            if (failed != 0) {
                                 message = message + String.format(" %s/%s Failed", failed, packetSize);
                             }
                             newToast.setText(message);
                             newToast.showToast();
 
-                            Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+                            Log.d(getClass().getSimpleName(), "Last Packet" + RID);
                             uploadRegistrationPackets(context);
                         }
                     }
@@ -133,7 +133,7 @@ public class BatchJob {
 
     public void uploadRegistrationPackets(Context context) {
         Log.d(getClass().getSimpleName(), "Upload Packets in Batch Job");
-        List<Registration>  registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.SYNCED.name(), PacketClientStatus.EXPORTED.name()));
+        List<Registration> registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.SYNCED.name(), PacketClientStatus.EXPORTED.name()));
 
         Integer packetSize = registrationList.size();
         final Integer[] remainingPack = {packetSize, 0};
@@ -158,7 +158,7 @@ public class BatchJob {
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
-                        if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)  || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)){
+                        if (status.equals(PacketTaskStatus.UPLOAD_COMPLETED) || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
                         }
                         remainingPack[0] -= 1;
@@ -166,15 +166,15 @@ public class BatchJob {
                         Integer remaining = packetSize - remainingPack[0];
                         newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
-                        if(remainingPack[0] == 0){
+                        if (remainingPack[0] == 0) {
                             syncAndUploadInProgressStatus = false;
-                            Integer failed = packetSize- remainingPack[1];
+                            Integer failed = packetSize - remainingPack[1];
                             newToast.setIcon(R.drawable.done);
                             String message = "Upload Packet Status :";
-                            if(remainingPack[1] != 0){
+                            if (remainingPack[1] != 0) {
                                 message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
                             }
-                            if(failed != 0){
+                            if (failed != 0) {
                                 message = message + String.format(" %s/%s Failed", failed, packetSize);
                             }
                             newToast.setText(message);
@@ -189,7 +189,7 @@ public class BatchJob {
         }
     }
 
-    public Integer getBatchSize(){
+    public Integer getBatchSize() {
         // Default batch size is 4
         List<GlobalParam> globalParams = globalParamDao.getGlobalParams();
         for (GlobalParam value : globalParams) {
@@ -200,7 +200,7 @@ public class BatchJob {
         return ClientManagerConstant.DEFAULT_BATCH_SIZE;
     }
 
-    public long getIntervalMillis(String api){
+    public long getIntervalMillis(String api) {
         // Default everyday at Noon - 12pm
         String cronExp = ClientManagerConstant.DEFAULT_UPLOAD_CRON;
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();

@@ -9,6 +9,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
@@ -31,6 +32,12 @@ class RegistrationTaskProvider with ChangeNotifier {
   final DashBoard dashBoard = DashBoard();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   final DocumentCategory documentCategory = DocumentCategory();
+  static const storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  );
+
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
@@ -141,10 +148,29 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  updateTemplateStorageKey(String key) async {
+    try {
+      String? data = await storage.read(key: "acknowledgeTemplateData");
+      await storage.write(key: key, value: data);
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  deleteDefaultTemplateStored() async {
+    await storage.delete(key: "acknowledgeTemplateData");
+  }
+
   getAcknowledgementTemplate(
       bool isAcknowledgement, Map<String, String> templateValues) async {
     _acknowledgementTemplate = await registrationService.getPreviewTemplate(
         isAcknowledgement, templateValues);
+    try {
+      await storage.write(
+          key: "acknowledgeTemplateData", value: _acknowledgementTemplate);
+    } catch (e) {
+      log(e.toString());
+    }
     notifyListeners();
   }
 
@@ -243,8 +269,9 @@ class RegistrationTaskProvider with ChangeNotifier {
     return await dashBoard.getPacketUploadedPendingDetails();
   }
 
-  void getApplicationUploadNumber() async{
-    List<String?> packets = await PacketServiceImpl().getAllRegistrationPacket();
+  void getApplicationUploadNumber() async {
+    List<String?> packets =
+        await PacketServiceImpl().getAllRegistrationPacket();
     log("Number of Packets: ${packets.length}");
     setNumberOfPackets(packets.length);
   }
