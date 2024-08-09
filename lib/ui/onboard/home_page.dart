@@ -15,13 +15,17 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/provider/approve_packets_provider.dart';
+import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/approve_packet/approve_packet_ui.dart';
 import 'package:registration_client/ui/export_packet/export_packet_ui.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
+// import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -157,14 +161,14 @@ class _HomePageState extends State<HomePage> {
                 .toString()
             : "Last Sync time not found",
       },
-      // {
-      //   "icon": SvgPicture.asset(
-      //     "assets/svg/Uploading Local - Registration Data.svg",
-      //   ),
-      //   "title": appLocalizations.download_pre_registration_data,
-      //   "onTap": () {},
-      //   "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
-      // },
+      {
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+        ),
+        "title": appLocalizations.download_pre_registration_data,
+        "onTap": () {},
+        "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
+      },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",
@@ -197,30 +201,45 @@ class _HomePageState extends State<HomePage> {
         "subtitle":
             "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
       },
-      // {
-      //   "icon": SvgPicture.asset(
-      //     "assets/svg/Onboarding Yourself.svg",
-      //   ),
-      //   "title": appLocalizations.check_updates,
-      //   "onTap": () {},
-      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      // },
-      // {
-      //   "icon": SvgPicture.asset(
-      //     "assets/svg/Uploading Local - Registration Data.svg",
-      //   ),
-      //   "title": appLocalizations.center_remap_sync,
-      //   "onTap": () {},
-      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      // },
-      // {
-      //   "icon": SvgPicture.asset(
-      //     "assets/svg/Uploading Local - Registration Data.svg",
-      //   ),
-      //   "title": appLocalizations.sync_activities,
-      //   "onTap": () {},
-      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      // },
+      {
+        "icon": SvgPicture.asset(
+          "assets/svg/Onboarding Yourself.svg",
+        ),
+        "title": appLocalizations.check_updates,
+        "onTap": () {},
+        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      },
+      {
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+        ),
+        "title": appLocalizations.center_remap_sync,
+        "onTap": () {},
+        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      },
+      {
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+        ),
+        "title": appLocalizations.sync_activities,
+        "onTap": () {},
+        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      },
+      if (Provider.of<AuthProvider>(context, listen: false).isSupervisor)
+        {
+          "icon": SvgPicture.asset(
+            "assets/svg/Uploading Local - Registration Data.svg",
+          ),
+          "title": appLocalizations.pending_approval,
+          "onTap": (context) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ApprovePacketsPage()));
+          },
+          "subtitle":
+              "${context.watch<ApprovePacketsProvider>().totalCreatedPackets} application(s)"
+        },
     ];
 
     return MobileHomePage(

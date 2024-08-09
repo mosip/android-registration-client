@@ -90,3 +90,9 @@ enum ClientStatus {
   UPLOADED,
   EXPORTED,
 }
+
+enum ReviewStatus {
+  APPROVED,
+  REJECTED,
+  NOACTIONTAKEN,
+}

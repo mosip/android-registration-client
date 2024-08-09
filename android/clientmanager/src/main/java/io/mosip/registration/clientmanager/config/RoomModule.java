@@ -41,6 +41,7 @@ import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
 import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
+import io.mosip.registration.clientmanager.dao.ReasonListDao;
 import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
@@ -49,6 +50,7 @@ import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
+import io.mosip.registration.clientmanager.entity.UserBiometric;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
@@ -162,6 +164,12 @@ public class RoomModule {
     @Provides
     RegistrationDao providesRegistrationDao(ClientDatabase clientDatabase) {
         return clientDatabase.registrationDao();
+    }
+
+    @Singleton
+    @Provides
+    ReasonListDao providesReasonListDao(ClientDatabase clientDatabase) {
+        return clientDatabase.reasonListDao();
     }
 
     @Singleton

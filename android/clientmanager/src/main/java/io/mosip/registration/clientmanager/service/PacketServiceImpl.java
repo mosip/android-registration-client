@@ -66,8 +66,8 @@ public class PacketServiceImpl implements PacketService {
     public static final String PACKET_SYNC_ID = "mosip.registration.sync";
     public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
-    public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(PacketClientStatus.CREATED.name(),
-            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name(), PacketClientStatus.EXPORTED.name());
+    public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(
+            PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
 
     public static final List<String> PACKET_UPLOAD_STATUS = Arrays.asList(PacketServerStatus.RESEND.name(), PacketServerStatus.UPLOAD_PENDING.name());
 
@@ -111,6 +111,12 @@ public class PacketServiceImpl implements PacketService {
 
         Registration registration = registrationRepository.getRegistration(packetId);
 
+        if(registration.getClientStatus() != null && String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.CREATED.name())) {
+            Log.i(TAG, "Packet not reviewed >> " + registration.getClientStatus());
+            callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
+            return;
+        }
+
         if (registration.getClientStatus() != null && !PACKET_UNSYNCED_STATUS.contains(registration.getClientStatus())) {
             Log.i(TAG, "Packet already synced >> " + registration.getClientStatus());
             callBack.onComplete(packetId, PacketTaskStatus.SYNC_ALREADY_COMPLETED);
@@ -131,7 +137,11 @@ public class PacketServiceImpl implements PacketService {
             syncRIDRequest.setPacketId(registration.getPacketId());
             syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
         }
-        syncRIDRequest.setSupervisorStatus(PacketClientStatus.APPROVED.name());
+        if (String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.APPROVED.name()) || String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.REJECTED.name())) {
+            Log.i(getClass().getSimpleName(), "Inside Setting supervisor settings");
+            syncRIDRequest.setSupervisorStatus(registration.getClientStatus());
+            syncRIDRequest.setSupervisorComment(registration.getClientStatusComment());
+        }
 
         if (registration.getAdditionalInfo() != null) {
             String additionalInfo = new String(registration.getAdditionalInfo());
@@ -166,7 +176,7 @@ public class PacketServiceImpl implements PacketService {
                 if (response.isSuccessful()) {
                     ServiceError error = SyncRestUtil.getServiceError(response.body());
                     if (error == null && response.body().getResponse().get(0).getStatus().equalsIgnoreCase("SUCCESS")) {
-                        if(!PacketClientStatus.EXPORTED.name().equals(registration.getClientStatus())){
+                        if (!PacketClientStatus.EXPORTED.name().equals(registration.getClientStatus())) {
                             registrationRepository.updateStatus(packetId, null, PacketClientStatus.SYNCED.name());
                         }
                         callBack.onComplete(packetId, PacketTaskStatus.SYNC_COMPLETED);
@@ -264,7 +274,8 @@ public class PacketServiceImpl implements PacketService {
 
     @Override
     public List<Registration> getRegistrationsByStatus(String status, Integer batchSize) {
-        return this.registrationRepository.getRegistrationsByStatus(status, batchSize);
+        List<Registration> regList = this.registrationRepository.getRegistrationsByStatus(status, batchSize);
+        return regList;
     }
 
     @Override
@@ -277,7 +288,7 @@ public class PacketServiceImpl implements PacketService {
         String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
 
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId(serverVersion.startsWith("1.1.5") ? PACKET_STATUS_READER_ID :PACKET_EXTERNAL_STATUS_READER_ID);
+        packetStatusRequest.setId(serverVersion.startsWith("1.1.5") ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
         packetStatusRequest.setVersion(PACKET_SYNC_VERSION);
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         List<PacketIdDto> packets = new ArrayList<>();

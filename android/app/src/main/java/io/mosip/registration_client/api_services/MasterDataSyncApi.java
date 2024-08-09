@@ -25,6 +25,9 @@ import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -37,6 +40,7 @@ import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 
+import io.mosip.registration.clientmanager.dto.ReasonListDto;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
 import io.mosip.registration.clientmanager.repository.BlocklistedWordRepository;
 import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
@@ -251,6 +255,16 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     public void batchJob(@NonNull MasterDataSyncPigeon.Result<String> result) {
         batchJob.syncRegistrationPackets(this.context);
         result.success("Registration Packet Sync Completed.");
+    }
+
+    @Override
+    public void getReasonList(@NonNull String langCode, @NonNull MasterDataSyncPigeon.Result<List<String>> result) {
+        List<ReasonListDto> reasons = masterDataService.getAllReasonsList(langCode);
+        List<String> reasonList = new ArrayList();
+        for (int i = 0; i < reasons.size(); i++) {
+            reasonList.add(reasons.get(i).getName().toString());
+        }
+        result.success(reasonList);
     }
 
     @Override

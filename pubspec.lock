@@ -432,6 +432,54 @@ packages:
       url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
     source: hosted
     version: "5.9.3"
+  flutter_secure_storage:
+    dependency: "direct main"
+    description:
+      name: flutter_secure_storage
+      sha256: "165164745e6afb5c0e3e3fcc72a012fb9e58496fb26ffb92cf22e16a821e85d0"
+      url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
+    source: hosted
+    version: "9.2.2"
+  flutter_secure_storage_linux:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_linux
+      sha256: "4d91bfc23047422cbcd73ac684bc169859ee766482517c22172c86596bf1464b"
+      url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
+    source: hosted
+    version: "1.2.1"
+  flutter_secure_storage_macos:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_macos
+      sha256: "1693ab11121a5f925bbea0be725abfcfbbcf36c1e29e571f84a0c0f436147a81"
+      url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
+    source: hosted
+    version: "3.1.2"
+  flutter_secure_storage_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_platform_interface
+      sha256: cf91ad32ce5adef6fba4d736a542baca9daf3beac4db2d04be350b87f69ac4a8
+      url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
+    source: hosted
+    version: "1.1.2"
+  flutter_secure_storage_web:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_web
+      sha256: f4ebff989b4f07b2656fb16b47852c0aab9fed9b4ec1c70103368337bc1886a9
+      url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
+    source: hosted
+    version: "1.2.1"
+  flutter_secure_storage_windows:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_windows
+      sha256: b20b07cb5ed4ed74fc567b78a72936203f587eba460af1df11281c9326cd3709
+      url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
+    source: hosted
+    version: "3.1.2"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -899,10 +947,10 @@ packages:
     dependency: transitive
     description:
       name: pdf
-      sha256: "81d5522bddc1ef5c28e8f0ee40b71708761753c163e0c93a40df56fd515ea0f0"
+      sha256: "05df53f8791587402493ac97b9869d3824eccbc77d97855f4545cf72df3cae07"
       url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
     source: hosted
-    version: "3.11.0"
+    version: "3.11.1"
   pdf_widget_wrapper:
     dependency: transitive
     description:
@@ -1003,10 +1051,10 @@ packages:
     dependency: "direct main"
     description:
       name: printing
-      sha256: cc4b256a5a89d5345488e3318897b595867f5181b8c5ed6fc63bfa5f2044aec3
+      sha256: de1889f30b34029fc46e5de6a9841498850b23d32942a9ee810ca36b0cb1b234
       url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
     source: hosted
-    version: "5.13.1"
+    version: "5.13.2"
   process:
     dependency: transitive
     description:
@@ -1360,10 +1408,10 @@ packages:
     dependency: transitive
     description:
       name: web
-      sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
+      sha256: d43c1d6b787bf0afad444700ae7f4db8827f701bc61c255ac8d328c6f4d52062
       url: "https://infyartifactory.jfrog.io/artifactory/api/pub/pub.dev-remote/"
     source: hosted
-    version: "0.5.1"
+    version: "1.0.0"
   web_socket:
     dependency: transitive
     description:

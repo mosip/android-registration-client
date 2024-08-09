@@ -3,9 +3,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
-*/
+ */
 
 package io.mosip.registration_client.api_services;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.app.Activity;
@@ -22,6 +23,7 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
@@ -47,13 +49,13 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     private Activity activity;
 
-    public void setCallbackActivity(MainActivity mainActivity){
-        this.activity=mainActivity;
+    public void setCallbackActivity(MainActivity mainActivity) {
+        this.activity = mainActivity;
     }
 
     @Inject
     public PacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                   LoginService loginService, PacketService packetService,RegistrationRepository registrationRepository ,
+                                   LoginService loginService, PacketService packetService, RegistrationRepository registrationRepository,
                                    AuditManagerService auditManagerService) {
         this.syncRestService = syncRestService;
         this.syncRestFactory = syncRestFactory;
@@ -96,7 +98,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
         Integer packetSize = packetIds.size();
         final Integer[] remainingPack = {packetSize, 0};
         CustomToast newToast = new CustomToast(activity);
-        for (String value: packetIds){
+        for (String value : packetIds) {
             try {
                 auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
 
@@ -112,7 +114,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
-                        if(status.equals(PacketTaskStatus.SYNC_COMPLETED)  || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)){
+                        if (status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
                         }
                         remainingPack[0] -= 1;
@@ -120,14 +122,14 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                         Integer remaining = packetSize - remainingPack[0];
                         newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
-                        if(remainingPack[0] == 0){
+                        if (remainingPack[0] == 0) {
                             Integer failed = packetSize - remainingPack[1];
                             newToast.setIcon(R.drawable.done);
                             String message = "Sync Packet Status :";
-                            if(remainingPack[1] != 0){
+                            if (remainingPack[1] != 0) {
                                 message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
                             }
-                            if(failed != 0){
+                            if (failed != 0) {
                                 message = message + String.format(" %s/%s Failed", failed, packetSize);
                             }
                             newToast.setText(message);
@@ -147,7 +149,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
         Integer packetSize = packetIds.size();
         final Integer[] remainingPack = {packetSize, 0};
         CustomToast newToast = new CustomToast(activity);
-        for (String value: packetIds){
+        for (String value : packetIds) {
             try {
                 auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
                 Integer remaining = packetSize - remainingPack[0];
@@ -163,7 +165,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
-                        if(status.equals(PacketTaskStatus.UPLOAD_COMPLETED)  || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)){
+                        if (status.equals(PacketTaskStatus.UPLOAD_COMPLETED) || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
                         }
                         remainingPack[0] -= 1;
@@ -171,14 +173,14 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                         Integer remaining = packetSize - remainingPack[0];
                         newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
 
-                        if(remainingPack[0] == 0){
+                        if (remainingPack[0] == 0) {
                             Integer failed = packetSize - remainingPack[1];
                             newToast.setIcon(R.drawable.done);
                             String message = "Upload Packet Status :";
-                            if(remainingPack[1] != 0){
+                            if (remainingPack[1] != 0) {
                                 message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
                             }
-                            if(failed != 0){
+                            if (failed != 0) {
                                 message = message + String.format(" %s/%s Failed", failed, packetSize);
                             }
                             newToast.setText(message);
@@ -196,14 +198,30 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     @Override
     public void getAllRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
         List<String> packets = new ArrayList();
-        try{
-            List<Registration> allRegistration = packetService.getAllNotUploadedRegistrations(1,20);
+        try {
+            List<Registration> allRegistration = packetService.getAllNotUploadedRegistrations(1, 40);
             ObjectMapper mapper = new ObjectMapper();
             for (Registration element : allRegistration) {
                 String json = mapper.writeValueAsString(element);
                 packets.add(json);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Unable to get packets", e);
+        }
+        result.success(packets);
+    }
+
+    @Override
+    public void getAllCreatedRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
+        List<String> packets = new ArrayList();
+        try {
+            List<Registration> allRegistration = packetService.getRegistrationsByStatus(PacketClientStatus.CREATED.name(), 40);
+            ObjectMapper mapper = new ObjectMapper();
+            for (Registration element : allRegistration) {
+                String json = mapper.writeValueAsString(element);
+                packets.add(json);
+            }
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Unable to get packets", e);
         }
         result.success(packets);
@@ -212,5 +230,12 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     @Override
     public void updatePacketStatus(@NonNull String packetId, @Nullable String serverStatus, @NonNull String clientStatus, @NonNull PacketAuthPigeon.Result<Void> result) {
         registrationRepository.updateStatus(packetId, serverStatus, clientStatus);
+        result.success(null);
+    }
+
+    @Override
+    public void supervisorReview(@NonNull String packetId, @NonNull String supervisorStatus, @NonNull String supervisorComment, @NonNull PacketAuthPigeon.Result<Void> result) {
+        registrationRepository.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
+        result.success(null);
     }
 }

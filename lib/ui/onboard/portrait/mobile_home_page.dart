@@ -85,20 +85,24 @@ class _MobileHomePageState extends State<MobileHomePage> {
           child: Column(
             children: [
               bottomNavPages[selectedTab],
-              Text(
-                "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
-                style: TextStyle(
-                    color: const Color(0xff6F6E6E),
-                    fontSize: 14,
-                    fontWeight: regular),
-              ),
-              Text(
-                "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
-                style: TextStyle(
-                    color: const Color(0xff6F6E6E),
-                    fontSize: 14,
-                    fontWeight: regular),
-              ),
+              selectedTab != 1
+                  ? Text(
+                      "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
+                      style: TextStyle(
+                          color: const Color(0xff6F6E6E),
+                          fontSize: 14,
+                          fontWeight: regular),
+                    )
+                  : const SizedBox(),
+              selectedTab != 1
+                  ? Text(
+                      "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
+                      style: TextStyle(
+                          color: const Color(0xff6F6E6E),
+                          fontSize: 14,
+                          fontWeight: regular),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),
