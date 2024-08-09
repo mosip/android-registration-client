@@ -43,7 +43,7 @@ class GlobalProvider with ChangeNotifier {
   final formKey = GlobalKey<FormState>();
   final updateFieldKey = GlobalKey<FormState>();
   String _updateUINNumber = "";
-  String _onboardingProcessName="";
+  String _onboardingProcessName = "";
   bool _isPageChanged = false;
   String get updateUINNumber => _updateUINNumber;
   String get onboardingProcessName => _onboardingProcessName;
@@ -51,8 +51,7 @@ class GlobalProvider with ChangeNotifier {
   bool _preRegControllerRefresh = false;
   bool get preRegControllerRefresh => _preRegControllerRefresh;
 
-
-  set isPageChanged(bool value){
+  set isPageChanged(bool value) {
     _isPageChanged = value;
     notifyListeners();
   }
@@ -322,7 +321,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setPreRegistrationId(String value){
+  setPreRegistrationId(String value) {
     _preRegId = value;
     notifyListeners();
   }
@@ -444,9 +443,9 @@ class GlobalProvider with ChangeNotifier {
     String x = '';
     for (var i in chosenLang) {
       String code = languageToCodeMapper[i]!;
-        if(label[code] != null) {
-          x = "$x${label[code] ?? ""}/ ";
-        }
+      if (label[code] != null) {
+        x = "$x${label[code] ?? ""}/ ";
+      }
     }
     return x.isEmpty ? x : x.substring(0, x.length - 2);
   }
@@ -497,12 +496,12 @@ class GlobalProvider with ChangeNotifier {
   }
 
   syncPacket(String packetId) async {
-    await packetService.packetSync(packetId);
+    await packetService.packetSyncAll([packetId]);
     log("provider sync packet Success");
   }
 
   uploadPacket(String packetId) async {
-    await packetService.packetUpload(packetId);
+    await packetService.packetUploadAll([packetId]);
     log("provider upload packet Success");
   }
 
@@ -797,7 +796,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   removeSelectedUpdateFieldKey(String key) {
-      _selectedUpdateFields.remove(key);
+    _selectedUpdateFields.remove(key);
     notifyListeners();
   }
 

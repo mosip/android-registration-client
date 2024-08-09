@@ -1,19 +1,17 @@
 package io.mosip.registration.clientmanager.spi;
 
-import org.json.JSONObject;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.dto.ReasonListDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 
 import java.util.List;
-import java.nio.file.Path;
 
 public interface MasterDataService {
 
     /**
-     *
      * @return CenterMachineDto
      */
     CenterMachineDto getRegistrationCenterMachineDetails();
@@ -29,24 +27,28 @@ public interface MasterDataService {
 
     /**
      * Fetches all the master data
+     *
      * @throws Exception
      */
     void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync) throws Exception;
 
     /**
      * Fetches all the global params from the server and sync locally.
+     *
      * @throws Exception
      */
     void syncGlobalParamsData(Runnable onFinish, boolean isManualSync) throws Exception;
 
     /**
      * Fetches latest Id schema and UI specs
+     *
      * @throws Exception
      */
     void syncLatestIdSchema(Runnable onFinish, boolean isManualSync) throws Exception;
 
     /**
      * Fetches all the user mapped to the center mapped to this machine
+     *
      * @throws Exception
      */
     void syncUserDetails(Runnable onFinish, boolean isManualSync) throws Exception;
@@ -57,7 +59,6 @@ public interface MasterDataService {
 
 
     /**
-     *
      * @param hierarchyLevelName
      * @return
      */
@@ -65,6 +66,7 @@ public interface MasterDataService {
 
     /**
      * Returns the list of supported location hierarchy levels
+     *
      * @param langCode
      * @return
      */
@@ -73,6 +75,7 @@ public interface MasterDataService {
     /**
      * Fetch possible list of values for the provided fieldName
      * fieldName is usually the subType in UI-Spec
+     *
      * @param fieldName
      * @param langCode
      * @return
@@ -83,6 +86,7 @@ public interface MasterDataService {
 
     /**
      * Returns the list of immediate children for the provided parent location code
+     *
      * @param parentCode
      * @param langCode
      * @return
@@ -91,6 +95,7 @@ public interface MasterDataService {
 
     /**
      * Returns the list of immediate children for the provided hierarchy Level
+     *
      * @param hierarchyLevel
      * @param langCode
      * @return
@@ -99,6 +104,7 @@ public interface MasterDataService {
 
     /**
      * Returns the element for the provided code and language code
+     *
      * @param code
      * @return
      */
@@ -106,7 +112,6 @@ public interface MasterDataService {
 
 
     /**
-     *
      * @param categoryCode
      * @param applicantType
      * @param langCode
@@ -115,7 +120,6 @@ public interface MasterDataService {
     List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode);
 
     /**
-     *
      * @param templateName
      * @param language
      * @return
@@ -123,12 +127,13 @@ public interface MasterDataService {
     String getTemplateContent(String templateName, String language);
 
     /**
-     *
      * @param templateTypeCode
      * @param language
      * @return
      */
     String getPreviewTemplateContent(String templateTypeCode, String language);
+
+    List<ReasonListDto> getAllReasonsList(String langCode);
 
     List<Language> getAllLanguages();
 

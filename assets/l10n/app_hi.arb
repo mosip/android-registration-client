@@ -9,7 +9,7 @@
   "help": "मदद",
   "mosip": "MOSIP",
   "welcome": "आपका स्वागत है",
-  "community_reg_text": "सामुदायिक पंजीकरण ग्राहक!",
+  "community_reg_text": "MOSIP पंजीकरण ग्राहक!",
   "info_text": "सुविधाओं तक पहुँचने के लिए कृपया लॉगिन करें.",
   "login_text": "लॉगिन",
   "language": "भाषा",
@@ -46,12 +46,12 @@
   "sync_completed_message": "सिस्टम कुछ सेकंड में पुनरारंभ हो जाएगा और आपको लॉगिन पृष्ठ पर रीडायरेक्ट किया जाएगा।",
   "sync_failed": "सिंक्रनाइज़ेशन असफल",
   "sync_failed_message": "कृपया मदद के लिए सिस्टम व्यवस्थापक या पर्यवेक्षक से कनेक्ट करें.",
-  "policy_key_sync_failed":"नीति कुंजी सिंक्रनाइज़ेशन विफल",
-  "ca_certs_sync_failed":"सीए प्रमाणपत्र सिंक विफल रहा",
-  "global_params_sync_failed":"Global Params Sync विफल",
-  "user_details_sync_failed":"उपयोगकर्ता विवरण सिंक्रनाइज़ेशन विफल रहा",
-  "id_schema_sync_failed":"IDSchena सिंक्रनाइज़ेशन विफल रहा",
-  "master_data_sync_failed":"मास्टर डेटा सिंक्रनाइज़ेशन विफल",
+  "policy_key_sync_failed": "नीति कुंजी सिंक्रनाइज़ेशन विफल",
+  "ca_certs_sync_failed": "सीए प्रमाणपत्र सिंक विफल रहा",
+  "global_params_sync_failed": "Global Params Sync विफल",
+  "user_details_sync_failed": "उपयोगकर्ता विवरण सिंक्रनाइज़ेशन विफल रहा",
+  "id_schema_sync_failed": "IDSchena सिंक्रनाइज़ेशन विफल रहा",
+  "master_data_sync_failed": "मास्टर डेटा सिंक्रनाइज़ेशन विफल",
   "network_error": "कोई नेटवर्क नहीं मिला!",
   "delete": "मिटाना",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
@@ -138,6 +138,42 @@
   },
   "synchronize_data": "डेटा सिंक्रनाइज़ करें",
   "registration_tasks": "पंजीकरण कार्य",
+  "manage_applications": "अनुप्रयोगों का प्रबंधन",
+  "search_application": "एप्लिकेशन आईडी द्वारा खोजें",
+  "upload": "डालना",
+  "export": "निर्यात",
+  "number_of_application": "{number} एप्लिकेशन प्रदर्शित हो रहे हैं",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} आवेदन चयनित",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "ग्राहक स्थिति",
+  "server_status": "सर्वर की स्थिति",
+  "clear_filter": "फ़िल्टर साफ़ करें",
+  "serial_number": "क्र.सं",
+  "application_id": "आवेदन पहचान पत्र",
+  "reg_date": "रजि. तारीख",
+  "reg_type": "रजि. प्रकार",
+  "operator_id": "ऑपरेटर आईडी",
   "operation_tasks": "परिचालन कार्य",
   "system_storage_usage": "सिस्टम संग्रहण उपयोग",
   "download_pre_registration_data": "पूर्व-पंजीकरण डेटा डाउनलोड करें",
@@ -146,6 +182,7 @@
   "check_updates": "अपडेट जांचें",
   "center_remap_sync": "केंद्र रीमैप सिंक.",
   "sync_activities": "साथ-साथ करना। गतिविधियाँ",
+  "pending_approval": "लंबित अनुमोदन",
   "dashboard": "डैशबोर्ड",
   "settings": "समायोजन",
   "notifications": "सूचनाएं",
@@ -193,18 +230,18 @@
   "temporary": "अस्थायी",
   "exceptions": "अस्तित्वाएं",
   "add_comments_for_marking_the_exception": "अस्तित्व चिह्नित करने के लिए टिप्पणियाँ जोड़ें",
-  "rescan":"पुन: स्कैन",
-  "marking_exceptions_on":"अपवादों को चिह्नित करना",
-  "is_not_allowed":"अनुमति नहीं है",
-  "capture":"कब्जा",
-  "attempts_left":"प्रयास बाकी हैं",
+  "rescan": "पुन: स्कैन",
+  "marking_exceptions_on": "अपवादों को चिह्नित करना",
+  "is_not_allowed": "अनुमति नहीं है",
+  "capture": "कब्जा",
+  "attempts_left": "प्रयास बाकी हैं",
   "left_hand": "बाएं हाथ",
   "left": "बाएं",
   "right": "दाएं",
   "right_hand": "दाएं हाथ",
   "iris": "आईरिस",
   "thumbs": "अंगूठे",
-  "exception":"अपवाद",
+  "exception": "अपवाद",
   "face": "चेहरा",
   "preview_page": "पूर्वावलोकन",
   "packet_auth_page": "प्रमाणीकरण",
@@ -235,6 +272,14 @@
   "help_topics": "सहायता के विषय",
   "onboard_request_message": "कृपया स्वयं को पोर्टल में शामिल करने के लिए गेट ऑनबोर्ड बटन पर टैप करें।",
   "hello_s": "नमस्ते ",
+  "approve": "मंज़ूरी देना",
+  "reject": "अस्वीकार करना",
+  "reject_dialog_heading": "पैकेट अस्वीकार करें?",
+  "reject_dialog_subheading": "कृपया पैकेट अस्वीकृति का एक कारण चुनें। आप बाद में समीक्षा की स्थिति को स्वीकृत करने या रीसेट करने के लिए अपनी समीक्षा बदल सकते हैं।",
+  "reason_rejection": "खारिज करने का कारण",
+  "no_reason_selected": "कृपया कोई कारण चुनें...",
+  "supervisor_auth_heading": "पर्यवेक्षक का प्रमाणीकरण",
+  "supervisor_auth_subheading": "पासवर्ड का उपयोग करके पर्यवेक्षक का प्रमाणीकरण",
   "uin_number": "यूआईएन नंबर",
   "valid_uin": "कृपया एक वैध यूआईएन दर्ज करें",
   "enter_uin": "यूआईएन नंबर दर्ज करें",
@@ -257,5 +302,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fetch_data": "डेटा प्राप्त करें",
+  "application_id_not_exist": "एप्लिकेशन आईडी मौजूद नहीं है!",
+  "correct_application_id": "कृपया दर्ज की गई एप्लिकेशन आईडी की जांच करें या सही आईडी दर्ज करें और इसे दोबारा लाने का प्रयास करें।",
+  "enter_application_id": "कृपया आवेदन आईडी दर्ज करें",
+  "okay": "ठीक है"
 }

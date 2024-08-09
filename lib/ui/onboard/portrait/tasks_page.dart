@@ -7,7 +7,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/operational_tasks.dart';
 import 'package:registration_client/ui/onboard/portrait/registration_tasks.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -60,9 +62,7 @@ class _TasksPageState extends State<TasksPage> {
                           topLeft: Radius.circular(6),
                           topRight: Radius.circular(6),
                         ),
-                        color: currentIndex == 0
-                            ? appSolidPrimary
-                            : appWhite,
+                        color: currentIndex == 0 ? appSolidPrimary : appWhite,
                       ),
                       child: Center(
                         child: Text(
@@ -70,9 +70,7 @@ class _TasksPageState extends State<TasksPage> {
                           style: TextStyle(
                             fontSize: isMobileSize ? 14 : 24,
                             fontWeight: semiBold,
-                            color: currentIndex == 0
-                                ? appWhite
-                                : appBlack,
+                            color: currentIndex == 0 ? appWhite : appBlack,
                           ),
                         ),
                       ),
@@ -100,9 +98,7 @@ class _TasksPageState extends State<TasksPage> {
                           topLeft: Radius.circular(6),
                           topRight: Radius.circular(6),
                         ),
-                        color: currentIndex == 1
-                            ? appSolidPrimary
-                            : appWhite,
+                        color: currentIndex == 1 ? appSolidPrimary : appWhite,
                       ),
                       child: Center(
                         child: Text(
@@ -110,9 +106,7 @@ class _TasksPageState extends State<TasksPage> {
                           style: TextStyle(
                             fontSize: isMobileSize ? 14 : 24,
                             fontWeight: semiBold,
-                            color: currentIndex == 1
-                                ? appWhite
-                                : appBlack,
+                            color: currentIndex == 1 ? appWhite : appBlack,
                           ),
                         ),
                       ),
@@ -139,6 +133,26 @@ class _TasksPageState extends State<TasksPage> {
               : OperationalTasks(
                   operationalTasks: widget.operationalTasks,
                 ),
+          SizedBox(
+            height: 25.h,
+          ),
+          Text(
+            "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
+            style: TextStyle(
+                color: const Color(0xff6F6E6E),
+                fontSize: 14,
+                fontWeight: regular),
+          ),
+          Text(
+            "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
+            style: TextStyle(
+                color: const Color(0xff6F6E6E),
+                fontSize: 14,
+                fontWeight: regular),
+          ),
+          SizedBox(
+            height: 150.h,
+          ),
         ],
       ),
     );

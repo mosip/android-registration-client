@@ -182,6 +182,9 @@ public class Biometrics095Service extends BiometricsService {
             byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
             DeviceDto deviceDto = objectMapper.readValue(decodedPayload, DeviceDto.class);
             callbackId = deviceDto.getCallbackId().replace(".info", "");
+            if(deviceDto.getCallbackId().contains(".Info")) {
+                callbackId = deviceDto.getCallbackId().replace(".Info", "");
+            }
             String digitalIdPayload = getJWTPayLoad(deviceDto.getDigitalId());
             byte[] decodedDigitalIdPayload = Base64.getUrlDecoder().decode(digitalIdPayload);
             DigitalId digitalId = objectMapper.readValue(decodedDigitalIdPayload, DigitalId.class);

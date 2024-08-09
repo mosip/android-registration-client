@@ -3,18 +3,19 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
-*/
+ */
 
 package io.mosip.registration_client.api_services;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import android.app.Activity;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,12 +28,14 @@ import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
-import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
+import io.mosip.registration_client.utils.CustomToast;
+import io.mosip.registration_client.MainActivity;
+import io.mosip.registration_client.R;
 import io.mosip.registration_client.model.PacketAuthPigeon;
 
 @Singleton
@@ -44,9 +47,15 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     PacketService packetService;
     RegistrationRepository registrationRepository;
 
+    private Activity activity;
+
+    public void setCallbackActivity(MainActivity mainActivity) {
+        this.activity = mainActivity;
+    }
+
     @Inject
     public PacketAuthenticationApi(SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                                   LoginService loginService, PacketService packetService,RegistrationRepository registrationRepository ,
+                                   LoginService loginService, PacketService packetService, RegistrationRepository registrationRepository,
                                    AuditManagerService auditManagerService) {
         this.syncRestService = syncRestService;
         this.syncRestFactory = syncRestFactory;
@@ -85,33 +94,18 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     }
 
     @Override
-    public void syncPacket(@NonNull String packetId, @NonNull PacketAuthPigeon.Result<Void> result) {
-        auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
-        try{
-            packetService.syncRegistration(packetId);
-        }catch(Exception e){
-            Log.e(getClass().getSimpleName(), "Error packet Sync", e);
-        }
-    }
-
-    @Override
-    public void uploadPacket(@NonNull String packetId, @NonNull PacketAuthPigeon.Result<Void> result) {
-        auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
-        try{
-            packetService.uploadRegistration(packetId);
-        }catch(Exception e){
-            Log.e(getClass().getSimpleName(), "Error packet Upload", e);
-        }
-    }
-
-    @Override
     public void syncPacketAll(@NonNull List<String> packetIds, @NonNull PacketAuthPigeon.Result<Void> result) {
-        Log.e(getClass().getSimpleName(), packetIds.toString());
-        final Integer[] remainingPack = {packetIds.size()};
-        for (String value: packetIds){
+        Integer packetSize = packetIds.size();
+        final Integer[] remainingPack = {packetSize, 0};
+        CustomToast newToast = new CustomToast(activity);
+        for (String value : packetIds) {
             try {
-                Log.d(getClass().getSimpleName(), "Syncing " + value);
                 auditManagerService.audit(AuditEvent.SYNC_PACKET, Components.REG_PACKET_LIST);
+
+                Integer remaining = packetSize - remainingPack[0];
+                newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                newToast.showToast();
+
                 packetService.syncRegistration(value, new AsyncPacketTaskCallBack() {
                     @Override
                     public void inProgress(String RID) {
@@ -120,10 +114,26 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
+                        if (status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)) {
+                            remainingPack[1] += 1;
+                        }
                         remainingPack[0] -= 1;
-                        Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
-                        if(remainingPack[0] == 0){
-                            Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+
+                        Integer remaining = packetSize - remainingPack[0];
+                        newToast.setText(String.format("Sync Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
+                        if (remainingPack[0] == 0) {
+                            Integer failed = packetSize - remainingPack[1];
+                            newToast.setIcon(R.drawable.done);
+                            String message = "Sync Packet Status :";
+                            if (remainingPack[1] != 0) {
+                                message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
+                            }
+                            if (failed != 0) {
+                                message = message + String.format(" %s/%s Failed", failed, packetSize);
+                            }
+                            newToast.setText(message);
+                            newToast.showToast();
                             result.success(null);
                         }
                     }
@@ -136,24 +146,45 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void uploadPacketAll(@NonNull List<String> packetIds, @NonNull PacketAuthPigeon.Result<Void> result) {
-        Log.e(getClass().getSimpleName(), packetIds.toString());
-        final Integer[] remainingPack = {packetIds.size()};
-        for (String value: packetIds){
+        Integer packetSize = packetIds.size();
+        final Integer[] remainingPack = {packetSize, 0};
+        CustomToast newToast = new CustomToast(activity);
+        for (String value : packetIds) {
             try {
-                Log.d(getClass().getSimpleName(), "Uploading " + value);
                 auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
+                Integer remaining = packetSize - remainingPack[0];
+                newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+                newToast.showToast();
+
                 packetService.uploadRegistration(value, new AsyncPacketTaskCallBack() {
                     @Override
                     public void inProgress(String RID) {
+                        newToast.showToast();
                         //Do nothing
                     }
 
                     @Override
                     public void onComplete(String RID, PacketTaskStatus status) {
+                        if (status.equals(PacketTaskStatus.UPLOAD_COMPLETED) || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)) {
+                            remainingPack[1] += 1;
+                        }
                         remainingPack[0] -= 1;
-                        Log.d(getClass().getSimpleName(), "Remaining pack"+ remainingPack[0]);
-                        if(remainingPack[0] == 0){
-                            Log.d(getClass().getSimpleName(), "Last Packet"+RID);
+
+                        Integer remaining = packetSize - remainingPack[0];
+                        newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
+
+                        if (remainingPack[0] == 0) {
+                            Integer failed = packetSize - remainingPack[1];
+                            newToast.setIcon(R.drawable.done);
+                            String message = "Upload Packet Status :";
+                            if (remainingPack[1] != 0) {
+                                message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
+                            }
+                            if (failed != 0) {
+                                message = message + String.format(" %s/%s Failed", failed, packetSize);
+                            }
+                            newToast.setText(message);
+                            newToast.showToast();
                             result.success(null);
                         }
                     }
@@ -167,14 +198,30 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     @Override
     public void getAllRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
         List<String> packets = new ArrayList();
-        try{
-            List<Registration> allRegistration = packetService.getAllRegistrations(1,20);
+        try {
+            List<Registration> allRegistration = packetService.getAllNotUploadedRegistrations(1, 40);
             ObjectMapper mapper = new ObjectMapper();
             for (Registration element : allRegistration) {
                 String json = mapper.writeValueAsString(element);
                 packets.add(json);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Unable to get packets", e);
+        }
+        result.success(packets);
+    }
+
+    @Override
+    public void getAllCreatedRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
+        List<String> packets = new ArrayList();
+        try {
+            List<Registration> allRegistration = packetService.getRegistrationsByStatus(PacketClientStatus.CREATED.name(), 40);
+            ObjectMapper mapper = new ObjectMapper();
+            for (Registration element : allRegistration) {
+                String json = mapper.writeValueAsString(element);
+                packets.add(json);
+            }
+        } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Unable to get packets", e);
         }
         result.success(packets);
@@ -183,5 +230,12 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     @Override
     public void updatePacketStatus(@NonNull String packetId, @Nullable String serverStatus, @NonNull String clientStatus, @NonNull PacketAuthPigeon.Result<Void> result) {
         registrationRepository.updateStatus(packetId, serverStatus, clientStatus);
+        result.success(null);
+    }
+
+    @Override
+    public void supervisorReview(@NonNull String packetId, @NonNull String supervisorStatus, @NonNull String supervisorComment, @NonNull PacketAuthPigeon.Result<Void> result) {
+        registrationRepository.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
+        result.success(null);
     }
 }
