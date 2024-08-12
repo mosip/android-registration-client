@@ -113,33 +113,66 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     });
   }
 
+  // Future<List<Map<String, String?>>> _getFieldValues(
+  //     String fieldId, String langCode) async {
+  //   List<List<DynamicFieldData?>> labelsData = [];
+  //   for (var lang in globalProvider.chosenLang) {
+  //     String langC = globalProvider.langToCode(lang);
+  //     List<DynamicFieldData?> data = await registrationTaskProvider
+  //         .getFieldValues(fieldId, langC, globalProvider.chosenLang);
+  //
+  //     if (data.isEmpty) {
+  //       data = await registrationTaskProvider
+  //           .getFieldValues(fieldId, 'eng', globalProvider.chosenLang);
+  //     }
+  //     labelsData.add(data);
+  //   }
+  //
+  //   List<Map<String, String?>> labels = [];
+  //
+  //   for (var i = 0; i < labelsData[0].length; i++) {
+  //     labels.add({});
+  //     List<String> choosenLang = globalProvider.chosenLang;
+  //     for (var j = 0; j < choosenLang.length; j++) {
+  //       labels[labels.length - 1]
+  //           .putIfAbsent(choosenLang[j], () => labelsData[j][i]!.name);
+  //     }
+  //   }
+  //   return labels;
+  // }
+
   Future<List<Map<String, String?>>> _getFieldValues(
       String fieldId, String langCode) async {
-    List<List<DynamicFieldData?>> labelsData = [];
-    for (var lang in globalProvider.chosenLang) {
+    // Fetch all languages in parallel
+    List<String> chosenLangs = globalProvider.chosenLang;
+    List<Future<List<DynamicFieldData?>>> futures = chosenLangs.map((lang) async {
       String langC = globalProvider.langToCode(lang);
       List<DynamicFieldData?> data = await registrationTaskProvider
           .getFieldValues(fieldId, langC, globalProvider.chosenLang);
-
       if (data.isEmpty) {
         data = await registrationTaskProvider
             .getFieldValues(fieldId, 'eng', globalProvider.chosenLang);
       }
-      labelsData.add(data);
-    }
+      return data;
+    }).toList();
 
+    // Await all futures
+    List<List<DynamicFieldData?>> labelsData = await Future.wait(futures);
+
+    // Process the data into the desired format
     List<Map<String, String?>> labels = [];
-
-    for (var i = 0; i < labelsData[0].length; i++) {
-      labels.add({});
-      List<String> choosenLang = globalProvider.chosenLang;
-      for (var j = 0; j < choosenLang.length; j++) {
-        labels[labels.length - 1]
-            .putIfAbsent(choosenLang[j], () => labelsData[j][i]!.name);
+    int itemCount = labelsData.isNotEmpty ? labelsData[0].length : 0;
+    for (var i = 0; i < itemCount; i++) {
+      Map<String, String?> labelMap = {};
+      for (var j = 0; j < chosenLangs.length; j++) {
+        labelMap[chosenLangs[j]] = labelsData[j][i]?.name;
       }
+      labels.add(labelMap);
     }
+
     return labels;
   }
+
 
   @override
   Widget build(BuildContext context) {
