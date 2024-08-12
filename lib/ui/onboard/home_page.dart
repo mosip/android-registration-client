@@ -35,6 +35,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
+
   const HomePage({super.key});
 
   @override
@@ -181,7 +182,8 @@ class _HomePageState extends State<HomePage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      const OperatorOnboardingBiometricsCaptureControl()));
+                      // Don't add const for loading the widget in a stateless class
+                      OperatorOnboardingBiometricsCaptureControl()));
         },
         "subtitle": lastOperatorUpdateBiometricTime.toString() == ""
             ? "Not updated yet"
@@ -456,4 +458,3 @@ class _HomePageState extends State<HomePage> {
 //               ],
 //             ),
 //           );
-  
